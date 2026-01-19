@@ -205,6 +205,3 @@ dist
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
-
-# Temporary monorepo state snapshots
-CURRENT_MONOREPO_STATE.md
