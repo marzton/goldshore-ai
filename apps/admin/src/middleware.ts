@@ -4,7 +4,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const response = await next();
 
   // Sentinel: Add security headers to protect against common attacks
-  // X-Frame-Options: Protects against Clickjacking
+  // X-Frame-Options: Protects against Clickjacking (DENY for admin to prevent any framing)
   response.headers.set("X-Frame-Options", "DENY");
 
   // X-Content-Type-Options: Protects against MIME sniffing
