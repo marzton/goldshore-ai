@@ -9,11 +9,12 @@ let results = [];
 <div class="search-box">
   <input
     type="search"
+    aria-label="Search documentation"
     placeholder="Search docs…"
     id="docs-search-input"
   />
 
-  <div id="results">
+  <div id="results" aria-live="polite">
   </div>
 </div>
 
@@ -95,3 +96,61 @@ let results = [];
     input.addEventListener('input', debouncedSearch);
   }
 </script>
+
+<style>
+  .search-box {
+    margin-bottom: var(--gs-space-4);
+    position: relative;
+  }
+
+  input[type="search"] {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background: var(--gs-bg-surface);
+    border: 1px solid var(--gs-border);
+    border-radius: var(--gs-radius-sm);
+    color: var(--gs-fg);
+    font-size: 0.875rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input[type="search"]:focus {
+    outline: none;
+    border-color: var(--gs-accent);
+    box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.1); /* Cyan glow */
+  }
+
+  input[type="search"]::placeholder {
+    color: var(--gs-fg-muted);
+  }
+
+  #results {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  /* Global selector because results are injected dynamically */
+  :global(#results a) {
+    display: block;
+    padding: 0.5rem;
+    background: var(--gs-bg-panel);
+    border: 1px solid var(--gs-border-subtle);
+    border-radius: var(--gs-radius-sm);
+    color: var(--gs-fg);
+    text-decoration: none;
+    font-size: 0.875rem;
+  }
+
+  :global(#results a:hover), :global(#results a:focus) {
+    background: var(--gs-bg-surface-hover);
+    border-color: var(--gs-accent);
+    color: var(--gs-accent);
+  }
+
+  :global(.search-error) {
+    font-size: 0.875rem;
+    padding: 0.5rem;
+  }
+</style>

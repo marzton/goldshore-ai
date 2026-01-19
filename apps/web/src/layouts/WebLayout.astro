@@ -2,6 +2,7 @@
 import '@goldshore/theme';
 import logo from '@goldshore/theme/assets/logo.svg';
 import { GSButton } from '@goldshore/ui';
+import Footer from '../components/Footer.astro';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -46,33 +47,7 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
         <slot />
       </main>
 
-      <footer class="gs-footer">
-        <div class="gs-section" style="padding: var(--gs-space-6) 0;">
-          <div class="gs-grid columns-2">
-            <div>
-              <div class="gs-logo" style="gap: var(--gs-space-2);">
-                <img src={logo} alt="GoldShore logo" width="32" height="32" loading="lazy" decoding="async" />
-                <span>GoldShore AI</span>
-              </div>
-              <p>Applied intelligence, resilient infrastructure, and responsive operations.</p>
-            </div>
-            <div class="gs-grid columns-2" style="gap: var(--gs-space-2);">
-              <div class="gs-nav gs-nav--vertical">
-                <strong>Company</strong>
-                <a href="/about">About</a>
-                <a href="/team">Team</a>
-                <a href="/services">Services</a>
-              </div>
-              <div class="gs-nav" style="flex-direction: column; align-items: flex-start; gap: var(--gs-space-2);">
-                <strong>Support</strong>
-                <a href="/contact">Contact</a>
-                <a href="/legal/privacy">Privacy</a>
-                <a href="/legal/terms">Terms</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   </body>
 </html>

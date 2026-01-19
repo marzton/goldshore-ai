@@ -1,31 +1,112 @@
-<footer class="footer">
-  <div>© {new Date().getFullYear()} GoldShore</div>
-  <div class="links">
-    <a href="/legal/privacy">Privacy</a>
-    <a href="/legal/terms">Terms</a>
-    <a href="/developer">Developers</a>
+---
+import logo from '@goldshore/theme/assets/logo.svg';
+---
+
+<footer class="gs-footer">
+  <div class="gs-section">
+    <div class="gs-grid columns-2">
+      <div class="brand-col">
+        <div class="gs-logo">
+          <img src={logo.src} alt="GoldShore logo" width="32" height="32" loading="lazy" decoding="async" />
+          <span>GoldShore AI</span>
+        </div>
+        <p class="tagline">Applied intelligence, resilient infrastructure, and responsive operations.</p>
+        <p class="copyright">© {new Date().getFullYear()} GoldShore AI. All rights reserved.</p>
+      </div>
+
+      <div class="links-col">
+        <div class="nav-group">
+          <strong>Company</strong>
+          <a href="/about">About</a>
+          <a href="/team">Team</a>
+          <a href="/services">Services</a>
+        </div>
+        <div class="nav-group">
+          <strong>Support</strong>
+          <a href="/contact">Contact</a>
+          <a href="/legal/privacy">Privacy</a>
+          <a href="/legal/terms">Terms</a>
+        </div>
+      </div>
+    </div>
   </div>
 </footer>
 
 <style>
-  .footer {
-    padding: 2rem;
-    border-top: 1px solid rgba(148,163,184,0.2);
-    background: #000;
+  .gs-footer {
+    border-top: 1px solid var(--gs-border);
+    background: var(--gs-bg-panel);
+    padding: var(--gs-space-6) 0;
+  }
+
+  .gs-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--gs-space-4);
+  }
+
+  .gs-grid {
+    display: grid;
+    gap: var(--gs-space-6);
+  }
+
+  .columns-2 {
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .columns-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .gs-logo {
     display: flex;
-    justify-content: space-between;
-    font-size: 0.9rem;
-    color: #94a3b8;
+    align-items: center;
+    gap: var(--gs-space-2);
+    font-weight: bold;
+    color: var(--gs-fg);
+    margin-bottom: var(--gs-space-3);
   }
-  .links a {
-    margin-left: 1.2rem;
-    color: #94a3b8;
+
+  .tagline {
+    color: var(--gs-fg-muted);
+    font-size: 0.875rem;
+    margin-bottom: var(--gs-space-4);
+    max-width: 300px;
+  }
+
+  .copyright {
+    color: var(--gs-fg-subtle);
+    font-size: 0.75rem;
+  }
+
+  .links-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gs-space-4);
+  }
+
+  .nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gs-space-2);
+  }
+
+  .nav-group strong {
+    color: var(--gs-fg);
+    font-size: 0.875rem;
+    margin-bottom: var(--gs-space-1);
+  }
+
+  .nav-group a {
+    color: var(--gs-fg-muted);
     text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.2s ease;
   }
-  .links a:hover {
-    color: #f8fafc;
+
+  .nav-group a:hover {
+    color: var(--gs-fg);
   }
 </style>
-<footer>
-  <p>&copy; {new Date().getFullYear()} GoldShore. All rights reserved.</p>
-</footer>
