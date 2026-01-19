@@ -25,7 +25,8 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
     <div class="gs-page-shell">
       <header class="gs-header">
         <a class="gs-logo" href="/" aria-label="GoldShore home">
-          <img src={logo} alt="GoldShore Penrose logo" width="36" height="36" />
+          {/* LCP Optimization: Load logo eagerly with high priority */}
+          <img src={logo.src} alt="GoldShore Penrose logo" width="36" height="36" fetchpriority="high" loading="eager" />
           <span>GoldShore</span>
         </a>
         <nav class="gs-nav" aria-label="Primary">
@@ -51,7 +52,7 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
           <div class="gs-grid columns-2">
             <div>
               <div class="gs-logo" style="gap: var(--gs-space-2);">
-                <img src={logo} alt="GoldShore logo" width="32" height="32" loading="lazy" decoding="async" />
+                <img src={logo.src} alt="GoldShore logo" width="32" height="32" loading="lazy" decoding="async" />
                 <span>GoldShore AI</span>
               </div>
               <p>Applied intelligence, resilient infrastructure, and responsive operations.</p>
