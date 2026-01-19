@@ -38,9 +38,10 @@ jobs:
           ref: ${{ steps.pr_data.outputs.branch_name }}
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v4
-        with:
-          run_install: false
+      - name: Enable pnpm via Corepack
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.12.2 --activate
 
       - name: Configure Git
         run: |
@@ -99,14 +100,11 @@ jobs:
           git push
 
       - name: Comment on PR after Fix
-        uses: marocchino/sticky-pull-request-comment@v2
         if: steps.sync.outputs.status == 'merge_fix'
-        with:
-          header: Jules AutoFix
-          message: |
-            ✔ Branch synced with \`main\` by merging.
-            ✔ Lockfile regenerated to resolve conflicts.
-            ✔ CI checks re-started.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment ${{ steps.pr_data.outputs.pr_number }} --body "✔ Branch synced with \`main\` by merging.\n✔ Lockfile regenerated to resolve conflicts.\n✔ CI checks re-started."
 
   code-fix:
     runs-on: ubuntu-latest
@@ -135,14 +133,15 @@ jobs:
           ref: ${{ steps.pr_data.outputs.branch_name }}
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v4
-        with:
-          run_install: false
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
+
+      - name: Enable pnpm via Corepack
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.12.2 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

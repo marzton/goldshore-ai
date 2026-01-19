@@ -21,14 +21,15 @@ jobs:
     steps:
       - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
 
-      - uses: pnpm/action-setup@v4
-        with:
-          run_install: false
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
+
+      - name: Enable pnpm via Corepack
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.12.2 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -40,11 +41,11 @@ jobs:
           PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
         run: pnpm build
 
+      - name: Install Wrangler
+        run: npm install -g wrangler@3.101.0
+
       - name: Deploy to Cloudflare Pages (preview)
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: preview-web
-          directory: apps/web/dist
-          branch: ${{ github.head_ref || github.ref_name }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: wrangler pages deploy apps/web/dist --project-name preview-web --branch "${{ github.head_ref || github.ref_name }}"
