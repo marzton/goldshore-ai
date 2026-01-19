@@ -7,9 +7,6 @@
     "infra/*"
   ],
   "packageManager": "pnpm@10.20.0",
-  "dependencies": {
-    "@astrojs/tailwind": "^6.0.2"
-  "packageManager": "pnpm@8.15.5",
   "scripts": {
     "dev": "turbo run dev --parallel",
     "build:openapi": "node scripts/build-openapi.mjs",
