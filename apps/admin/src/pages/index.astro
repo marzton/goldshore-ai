@@ -1,66 +1,349 @@
 ---
 import AdminLayout from "../layouts/AdminLayout.astro";
-import { GSButton, Card, Table } from "@goldshore/ui";
+import StatCard from '../components/StatCard.astro';
+import { ThemeManager } from '@goldshore/theme/manager';
 
-const stats = [
-  { label: "Active nodes", value: "142", meta: "All systems operational" },
-  { label: "Network load", value: "45%", meta: "Optimal efficiency" },
-  { label: "Transactions (24h)", value: "8,432", meta: "+12% vs prev" },
-  { label: "System alerts", value: "0", meta: "No open alerts" },
-];
+const API_BASE = import.meta.env.PUBLIC_API;
 
-const activity = [
-  { time: "10:42:05", event: "Node synchronization complete", status: "Success" },
-  { time: "10:40:12", event: "Admin login: marzton", status: "Success" },
-  { time: "10:35:00", event: "Daily backup routine started", status: "Pending" },
-  { time: "10:15:22", event: "API rate limit warning", status: "Warning" },
-];
+let systemInfo: any = null;
+
+try {
+  const res = await fetch(`${API_BASE}/system/info`, { cache: 'no-store' });
+  if (res.ok) {
+    systemInfo = await res.json();
+  }
+} catch (e) {
+  systemInfo = null;
+}
 ---
 
-<AdminLayout title="System Overview">
-  <section class="gs-grid columns-3">
-    {stats.map((stat) => (
-      <Card>
-        <div class="gs-kpi">
-          <span>{stat.label}</span>
-          <strong>{stat.value}</strong>
-          <div class="gs-helper">{stat.meta}</div>
-        </div>
-      </Card>
-    ))}
+<AdminLayout title="Overview">
+  <!-- Top Stats Row -->
+  <div class="dashboard-grid">
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">●</span> Active Nodes
+      </div>
+      <div class="stat-value">142</div>
+      <div class="stat-label text-green">All systems operational</div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">⚡</span> Network Load
+      </div>
+      <div class="stat-value text-orange">45%</div>
+      <div class="stat-label">Optimal efficiency zone</div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">⇄</span> Transactions (24h)
+      </div>
+      <div class="stat-value">8,432</div>
+      <div class="stat-label text-silver">+12% vs previous period</div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">⚠</span> System Alerts
+      </div>
+      <div class="stat-value text-yellow">0</div>
+      <div class="stat-label">No active alerts</div>
+    </div>
+  </div>
+
+  <section class="gs-grid">
+    <StatCard
+      label="API Status"
+      value={systemInfo ? 'Online' : 'Unknown'}
+      help={systemInfo ? `Timestamp: ${systemInfo.timestamp}` : 'No response'}
+    />
+
+    <StatCard
+      label="Gateway"
+      value="Configured"
+      help="Routing /api/* through gs-gateway"
+    />
+
+    <StatCard
+      label="Workers"
+      value="gs-api, gs-gateway, gs-control, gs-mail"
+      help="See Systems tab for detailed health."
+    />
   </section>
 
-  <section class="gs-grid columns-2 gs-mt-6">
-    <Card>
-      <div class="section-title"><span>⟳</span><h3>Real-time Traffic</h3></div>
-      <p class="gs-helper">Synthetic sparkline placeholder showing inbound and outbound volume.</p>
-      <div class="gs-banner">Traffic steady, latency within SLO.</div>
-      <div class="gs-form-actions">
-        <GSButton class="gs-button--small">Refresh</GSButton>
-        <GSButton variant="secondary" class="gs-button--small">Export</GSButton>
+  <div class="content-split">
+    <!-- Main Chart / Activity Area -->
+    <div class="card main-panel">
+      <div class="panel-header">
+        <h3>Real-time Traffic Analysis</h3>
+        <div class="controls">
+          <button class="btn-xs active">1H</button>
+          <button class="btn-xs">24H</button>
+          <button class="btn-xs">7D</button>
+        </div>
       </div>
-    </Card>
+      <div class="chart-placeholder">
+        <!-- Simulating a chart visualization -->
+        <div class="chart-line"></div>
+        <div class="chart-line"></div>
+        <div class="chart-line"></div>
+        <div class="chart-bars">
+          <div class="bar" style="height: 40%"></div>
+          <div class="bar" style="height: 60%"></div>
+          <div class="bar" style="height: 45%"></div>
+          <div class="bar" style="height: 80%"></div>
+          <div class="bar" style="height: 55%"></div>
+          <div class="bar" style="height: 70%"></div>
+          <div class="bar" style="height: 90%"></div>
+          <div class="bar" style="height: 65%"></div>
+        </div>
+      </div>
+    </div>
 
-    <Card class="gs-table-card">
-      <div class="section-title"><span>◎</span><h3>Recent Activity</h3></div>
-      <Table>
-        <thead>
-          <tr><th>Time</th><th>Event</th><th>Status</th></tr>
-        </thead>
-        <tbody>
-          {activity.map((item) => (
-            <tr>
-              <td>{item.time}</td>
-              <td>{item.event}</td>
-              <td>
-                <span class={`gs-badge ${item.status === 'Warning' ? 'warning' : item.status === 'Pending' ? 'info' : 'success'}`}>
-                  {item.status}
-                </span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </Card>
+    <!-- Activity Log -->
+    <div class="card side-panel">
+      <div class="panel-header">
+        <h3>Recent Activity</h3>
+      </div>
+      <div class="activity-list">
+        <div class="activity-item">
+          <div class="time">10:42:05</div>
+          <div class="event">Node synchronization complete</div>
+          <div class="status text-green">SUCCESS</div>
+        </div>
+        <div class="activity-item">
+          <div class="time">10:40:12</div>
+          <div class="event">Admin login: marzton</div>
+          <div class="status text-green">SUCCESS</div>
+        </div>
+        <div class="activity-item">
+          <div class="time">10:35:00</div>
+          <div class="event">Daily backup routine started</div>
+          <div class="status text-yellow">PENDING</div>
+        </div>
+        <div class="activity-item">
+          <div class="time">10:15:22</div>
+          <div class="event">API Rate limit warning (IP: 192.168.x.x)</div>
+          <div class="status text-orange">WARNING</div>
+        </div>
+        <div class="activity-item">
+          <div class="time">09:55:10</div>
+          <div class="event">Gateway configuration updated</div>
+          <div class="status text-green">SUCCESS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="gs-panel">
+    <h2>Quick Links</h2>
+    <div class="gs-link-grid">
+      <a href="/systems" class="gs-link-tile">Systems</a>
+      <a href="/trading" class="gs-link-tile">Trading</a>
+      <a href="/settings" class="gs-link-tile">Settings</a>
+      <a href="https://status.goldshore.ai" class="gs-link-tile">Status (ext)</a>
+    </div>
   </section>
 </AdminLayout>
+
+<style>
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .card {
+    background-color: var(--color-matte-grey);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    padding: var(--space-4);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+    font-family: var(--font-family-mono);
+  }
+
+  .stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-1);
+    font-family: var(--font-family-mono);
+    letter-spacing: -0.05em;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .content-split {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-4);
+  }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-4);
+  }
+
+  .panel-header h3 {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    color: var(--color-text-primary);
+    font-family: var(--font-family-mono);
+  }
+
+  .btn-xs {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    cursor: pointer;
+    font-family: var(--font-family-mono);
+  }
+
+  .btn-xs.active {
+    background: var(--color-utility-orange);
+    color: #000;
+    border-color: var(--color-utility-orange);
+  }
+
+  /* Chart Simulation */
+  .chart-placeholder {
+    height: 300px;
+    position: relative;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+    border: 1px dashed var(--color-border);
+    display: flex;
+    align-items: flex-end;
+    padding: 0 var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .chart-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    padding-top: var(--space-8);
+  }
+
+  .bar {
+    width: 100%;
+    background: var(--color-utility-orange);
+    opacity: 0.7;
+    margin: 0 4px;
+    border-top: 2px solid var(--color-neon-yellow);
+  }
+
+  /* Activity List */
+  .activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .activity-item {
+    padding: var(--space-3);
+    background-color: rgba(0,0,0,0.2);
+    border-left: 2px solid var(--color-border);
+  }
+
+  .activity-item:hover {
+    background-color: rgba(255,255,255,0.02);
+    border-left-color: var(--color-utility-orange);
+  }
+
+  .time {
+    font-family: var(--font-family-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    margin-bottom: 2px;
+  }
+
+  .event {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+    margin-bottom: 2px;
+  }
+
+  .status {
+    font-family: var(--font-family-mono);
+    font-size: 0.65rem;
+    font-weight: bold;
+  }
+
+  /* Helper Classes */
+  .text-green { color: var(--color-sports-car-green) !important; }
+  .text-orange { color: var(--color-utility-orange) !important; }
+  .text-yellow { color: var(--color-neon-yellow) !important; }
+  .text-silver { color: var(--color-silver) !important; }
+
+  @media (max-width: 1024px) {
+    .dashboard-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .content-split {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .gs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .gs-panel {
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: radial-gradient(circle at top, #020617, #000);
+  }
+
+  .gs-panel h2 {
+    margin-top: 0;
+    font-size: 1rem;
+  }
+
+  .gs-link-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .gs-link-tile {
+    display: block;
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    color: #e5e7eb;
+    font-size: 0.9rem;
+  }
+
+  .gs-link-tile:hover {
+    border-color: #22d3ee;
+  }
+</style>
