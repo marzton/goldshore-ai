@@ -201,5 +201,10 @@ dist
 ### Astro ###
 .astro/
 
+# Prevent lockfile wars during monorepo stabilization
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
 # Temporary monorepo state snapshots
 CURRENT_MONOREPO_STATE.md
