@@ -19,13 +19,14 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
     <a href="#content" class="skip-link">Skip to content</a>
     <div class="gs-page-shell">
       <header class="gs-header">
         <a class="gs-logo" href="/" aria-label="GoldShore home">
-          <img src={logo} alt="GoldShore Penrose logo" width="36" height="36" />
+          <img src={logo} alt="GoldShore Penrose logo" width="36" height="36" fetchpriority="high" />
           <span>GoldShore</span>
         </a>
         <nav class="gs-nav" aria-label="Primary">
