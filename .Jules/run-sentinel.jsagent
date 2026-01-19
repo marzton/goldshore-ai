@@ -252,7 +252,6 @@ function fixEnvTypes(content, filePath) {
 function fixMissingImports(content, filePath) {
     const importRegex = /import\s+(?:.*?\s+from\s+)?['"](\..*?)['"]/g;
     let modified = false;
-    const createdFiles = [];
     let match;
 
     while ((match = importRegex.exec(content)) !== null) {
