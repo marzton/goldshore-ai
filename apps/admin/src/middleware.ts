@@ -14,7 +14,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
 
   // Strict-Transport-Security: Enforce HTTPS (HSTS)
+  // max-age=31536000 (1 year), includeSubDomains, preload
   response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+
+  // Permissions-Policy: Restrict access to sensitive features not needed in admin dashboard
+  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), interest-cohort=()");
 
   return response;
 });
