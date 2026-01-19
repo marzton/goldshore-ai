@@ -15,3 +15,6 @@
 ## 2025-12-24 - Nested Route Navigation
 **Learning:** Basic equality checks (`currentPath === link.href`) fail for nested application routes (e.g. `/admin/settings/security` vs `/admin/settings`), causing the parent nav item to lose its active state.
 **Action:** Implemented a robust `isActive` utility in Sidebar components that uses `startsWith` logic (with trailing slash normalization) to maintain context for users deep in a section.
+## 2026-01-02 - Semantic Sticky Navigation
+**Learning:** Sidebars in long documentation pages often lose context when scrolling. Sticky positioning combined with explicit `aria-current="page"` provides persistent context for both sighted and screen reader users.
+**Action:** Apply `position: sticky` and `aria-current` to all sidebar navigation components to improve wayfinding.
