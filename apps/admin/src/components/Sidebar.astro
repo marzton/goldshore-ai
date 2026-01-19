@@ -1,6 +1,6 @@
 ---
 const links = [
-  { href: '/admin', label: 'Overview' },
+  { href: '/admin/overview', label: 'Overview' },
   { href: '/admin/dashboard', label: 'Dashboard' },
   { href: '/admin/systems', label: 'Systems' },
   { href: '/admin/users', label: 'Users' },
@@ -9,18 +9,34 @@ const links = [
 ];
 
 const { logo } = Astro.props;
+
+// Enhanced active state detection for nested routes
+const isActive = (href: string) => {
+  const currentPath = Astro.url.pathname;
+
+  // Clean trailing slashes for consistent comparison
+  const cleanCurrent = currentPath.endsWith('/') ? currentPath.slice(0, -1) : currentPath;
+  const cleanHref = href.endsWith('/') ? href.slice(0, -1) : href;
+
+  // Exact match
+  if (cleanCurrent === cleanHref) return true;
+
+  // Nested match (e.g., /admin/systems/details starts with /admin/systems)
+  // Ensure we don't partial match distinct roots (e.g. /admin/user vs /admin/users)
+  return cleanCurrent.startsWith(cleanHref + '/');
+};
 ---
 <aside class="gs-admin-sidebar" aria-label="Admin navigation">
-  <a class="gs-logo" href="/admin">
+  <a class="gs-logo" href="/admin/overview">
     {logo ? <img src={logo} alt="GoldShore logo" width="32" height="32" /> : <span aria-hidden="true">◆</span>}
     <span>GoldShore</span>
   </a>
   <nav class="gs-sidebar-links">
     {links.map((link) => (
       <a
-        class="gs-nav-block"
+        class={`gs-nav-block ${isActive(link.href) ? 'active' : ''}`}
         href={link.href}
-        aria-current={Astro.url.pathname === link.href ? 'page' : undefined}
+        aria-current={isActive(link.href) ? 'page' : undefined}
       >
         {link.label}
       </a>
