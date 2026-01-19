@@ -146,12 +146,14 @@
       return;
     }
 
-    // Show loading state
-    if (resultsList) {
-       // Keep old results or show specific loading UI if preferred
-       // For now, let's just use the status region for screen readers
-       updateStatus('Searching...');
-       input?.setAttribute('aria-busy', 'true');
+    // UX: Show loading state
+    if (resultsDiv) {
+      resultsDiv.textContent = '';
+      const loading = document.createElement('div');
+      loading.textContent = 'Searching...';
+      loading.style.color = 'var(--gs-color-subtle, #9fb2d4)';
+      loading.style.padding = '0.5rem';
+      resultsDiv.appendChild(loading);
     }
     showLoader(true);
     updateStatus('Searching...');
@@ -203,6 +205,18 @@
         throw new Error(`Status ${res.status}`);
       }
 
+      if (resultsDiv) {
+        resultsDiv.textContent = ''; // Clear previous results (including loading)
+
+        if (results.length === 0) {
+            // UX: Show empty state
+            const empty = document.createElement('div');
+            empty.textContent = 'No results found.';
+            empty.style.color = 'var(--gs-color-subtle, #9fb2d4)';
+            empty.style.padding = '0.5rem';
+            resultsDiv.appendChild(empty);
+            return;
+        }
       const results = await res.json() as SearchResult[];
       showLoader(false);
 
@@ -273,6 +287,14 @@
         updateStatus('Search failed.');
     } catch (e: any) {
       if (e.name === 'AbortError') return; // Ignore aborted requests
+      if (resultsDiv) {
+        resultsDiv.textContent = '';
+        const err = document.createElement('div');
+        err.className = 'search-error';
+        err.style.color = 'var(--gs-danger, #ef4444)';
+        err.style.marginTop = '0.5em';
+        err.textContent = 'Sorry, search failed. Please try again.';
+        resultsDiv.appendChild(err);
       input?.removeAttribute('aria-busy');
       if (resultsList) {
         resultsList.innerHTML = '';
