@@ -1,7 +1,42 @@
 {
-	"devDependencies": {
-		"@astrojs/tailwind": "^6.0.2",
-		"@tailwindcss/postcss": "^4.1.18",
-		"tailwindcss": "^3.4.19"
-	}
+  "name": "astro-goldshore",
+  "private": true,
+  "packageManager": "pnpm@8.15.5",
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build:openapi": "node scripts/build-openapi.mjs",
+    "build": "pnpm build:openapi && turbo run build",
+    "build:web": "turbo run build --filter=@goldshore/web",
+    "build:admin": "turbo run build --filter=@goldshore/admin",
+    "build:api": "turbo run build --filter=@goldshore/api-worker",
+    "build:gateway": "turbo run build --filter=@goldshore/gateway",
+    "build:control": "turbo run build --filter=@goldshore/control-worker",
+    "lint": "turbo run lint",
+    "test": "turbo run test"
+  },
+  "devDependencies": {
+    "@astrojs/tailwind": "^6.0.2",
+    "@types/node": "^25.0.1",
+    "astro": "^5.15.9",
+    "eslint": "^8.57.0",
+    "eslint-plugin-astro": "^1.5.0",
+    "form-data": "^4.0.5",
+    "octokit": "^5.0.5",
+    "prettier": "^3.2.5",
+    "prettier-plugin-astro": "^0.13.0",
+    "tailwindcss": "^3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.4.2",
+    "yaml": "^2.8.2"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.6.11",
+    "turbo": "^2.6.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "@astrojs/cloudflare": "latest",
+      "@astrojs/adapter-cloudflare": "latest"
+    }
+  }
 }

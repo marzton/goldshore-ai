@@ -7,7 +7,7 @@ import DocsLayout from '../../../layouts/DocsLayout.astro';
   <p>Everything begins with the API.</p>
 
   <h2 id="api">API Base</h2>
-  <pre>GET {import.meta.env.PUBLIC_API}/system/info</pre>
+  <pre>GET {String(import.meta.env.PUBLIC_API).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}/system/info</pre>
 
   <h2 id="gateway">Gateway</h2>
   <pre>{import.meta.env.PUBLIC_GATEWAY}/api/* → gs-api</pre>
