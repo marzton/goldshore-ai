@@ -12,6 +12,30 @@ OWNER="goldshore"
 REPO="Astro-goldshore"
 BASE_BRANCH="main"
 
+ensure_clean_worktree() {
+    if ! git diff --quiet || ! git diff --cached --quiet; then
+        echo "ERROR: Working tree has uncommitted changes. Please commit or stash before running."
+        exit 1
+    fi
+}
+
+abort_rebase_if_needed() {
+    if [ -d ".git/rebase-apply" ] || [ -d ".git/rebase-merge" ]; then
+        echo "  - Detected in-progress rebase. Aborting to restore clean state."
+        git rebase --abort || true
+    fi
+}
+
+sync_branch_to_remote() {
+    local branch="$1"
+    if git show-ref --verify --quiet "refs/heads/${branch}"; then
+        git checkout "${branch}"
+        git reset --hard "origin/${branch}"
+    else
+        git checkout -B "${branch}" "origin/${branch}"
+    fi
+}
+
 echo "--- JULES AI: GITHUB CONFLICT REPAIR INITIATED ---"
 echo "Targeting repository: ${OWNER}/${REPO}"
 
@@ -24,8 +48,9 @@ fi
 
 # 1. Fetch latest changes for synchronization
 echo "1. Fetching latest state of ${BASE_BRANCH}..."
-git fetch origin "${BASE_BRANCH}"
-git checkout "${BASE_BRANCH}"
+ensure_clean_worktree
+git fetch --prune origin
+sync_branch_to_remote "${BASE_BRANCH}"
 
 # 2. Get list of open Pull Requests that require conflict resolution
 PR_LIST=$(gh pr list --repo "${OWNER}/${REPO}" --state open --json number,headRefName,mergeableStatus --jq '.[] | select(.mergeableStatus == "dirty") | .headRefName')
@@ -46,11 +71,13 @@ for BRANCH in "${CONFLICT_BRANCHES[@]}"; do
 
     echo "  - Processing branch: ${BRANCH}"
 
-    if ! git checkout "${BRANCH}"; then
+    if ! sync_branch_to_remote "${BRANCH}"; then
         echo "  - ERROR: Cannot checkout branch ${BRANCH}"
-        git checkout "${BASE_BRANCH}"
+        sync_branch_to_remote "${BASE_BRANCH}"
         continue
     fi
+
+    abort_rebase_if_needed
 
     # Attempt rebase (relies on Jules/Codex to auto-resolve conflicts where possible)
     if git rebase "origin/${BASE_BRANCH}"; then
@@ -66,9 +93,10 @@ for BRANCH in "${CONFLICT_BRANCHES[@]}"; do
         fi
     else
         echo "  - FAILED: Branch ${BRANCH} still has complex conflicts. Leaving for manual review."
+        abort_rebase_if_needed
     fi
 
-    git checkout "${BASE_BRANCH}"
+    sync_branch_to_remote "${BASE_BRANCH}"
 done
 
 echo "--- GIT REPAIR COMPLETE. Check GitHub for mergeable PRs. ---"
