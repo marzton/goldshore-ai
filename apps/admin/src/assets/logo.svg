@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
+  <title id="title">Penrose Triangle Logo</title>
+  <desc id="desc">Interlocking triangular mark used for the GoldShore identity.</desc>
+  <defs>
+    <linearGradient id="penroseGradient" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#5b9dff" />
+      <stop offset="50%" stop-color="#6a5bff" />
+      <stop offset="100%" stop-color="#9b5bff" />
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#penroseGradient)" stroke-width="18" stroke-linejoin="round">
+    <path d="M80 14 18 122h48l31-54-29-54Z" />
+    <path d="m83 146 62-108-23-4-31 54 12 58Z" />
+    <path d="M46 131h94l-12-21H65l-19 21Z" />
+  </g>
+</svg>
