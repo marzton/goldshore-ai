@@ -11,9 +11,10 @@ let results = [];
     type="search"
     placeholder="Search docs…"
     id="docs-search-input"
+    aria-label="Search documentation"
   />
 
-  <div id="results">
+  <div id="results" aria-live="polite">
   </div>
 </div>
 
@@ -46,6 +47,16 @@ let results = [];
       return;
     }
 
+    // UX: Show loading state
+    if (resultsDiv) {
+      resultsDiv.textContent = '';
+      const loading = document.createElement('div');
+      loading.textContent = 'Searching...';
+      loading.style.color = 'var(--gs-color-subtle, #9fb2d4)';
+      loading.style.padding = '0.5rem';
+      resultsDiv.appendChild(loading);
+    }
+
     try {
       const res = await fetch('/api/docs-search?q=' + encodeURIComponent(query), { signal });
       if (!res.ok) {
@@ -56,7 +67,17 @@ let results = [];
       const results = await res.json();
 
       if (resultsDiv) {
-        resultsDiv.textContent = ''; // Clear previous results
+        resultsDiv.textContent = ''; // Clear previous results (including loading)
+
+        if (results.length === 0) {
+            // UX: Show empty state
+            const empty = document.createElement('div');
+            empty.textContent = 'No results found.';
+            empty.style.color = 'var(--gs-color-subtle, #9fb2d4)';
+            empty.style.padding = '0.5rem';
+            resultsDiv.appendChild(empty);
+            return;
+        }
 
         results.forEach((r) => {
             const a = document.createElement('a');
@@ -77,7 +98,7 @@ let results = [];
         resultsDiv.textContent = '';
         const err = document.createElement('div');
         err.className = 'search-error';
-        err.style.color = 'red';
+        err.style.color = 'var(--gs-danger, #ef4444)';
         err.style.marginTop = '0.5em';
         err.textContent = 'Sorry, search failed. Please try again.';
         resultsDiv.appendChild(err);
