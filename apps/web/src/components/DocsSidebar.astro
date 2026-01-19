@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import DocsSearch from './DocsSearch.astro';
 
 const { currentSlug } = Astro.props;
 const pages = await getCollection('docs');
@@ -13,6 +14,10 @@ function getHref(slug: string) {
 ---
 
 <aside class="gs-card docs-sidebar" aria-label="Documentation navigation">
+  <div class="sidebar-search">
+    <DocsSearch />
+  </div>
+
   <h3 class="section-title"><span>◎</span>Documentation</h3>
   <ul class="docs-nav">
     {pages.map((p) => (
@@ -20,6 +25,7 @@ function getHref(slug: string) {
         <a
           href={getHref(p.slug)}
           class={currentSlug === p.slug ? 'active' : ''}
+          aria-current={currentSlug === p.slug ? 'page' : undefined}
         >
           {p.data.title}
         </a>
@@ -30,6 +36,11 @@ function getHref(slug: string) {
 
 <style>
   .docs-sidebar { position: sticky; top: var(--gs-space-6); align-self: start; }
+
+  .sidebar-search {
+    margin-bottom: var(--gs-space-4);
+  }
+
   .docs-nav { list-style: none; padding-left: 0; display: flex; flex-direction: column; gap: var(--gs-space-2); }
   .docs-nav a { color: var(--gs-color-subtle); text-decoration: none; transition: color 0.2s ease; }
   .docs-nav a:hover { color: var(--gs-color-text); }

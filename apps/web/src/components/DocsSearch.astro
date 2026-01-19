@@ -1,97 +1,93 @@
 ---
-let q = '';
-let results = [];
-
-// Note: In a real implementation, this would likely be a client-side component or use a framework specific way to handle state.
-// Since this is an Astro component, the script below handles the client-side logic.
+// DocsSearch.astro: Accessible and Safe implementation
 ---
 
-<div class="search-box">
-  <input
-    type="search"
-    placeholder="Search docs…"
-    id="docs-search-input"
-  />
-
-  <div id="results">
-  </div>
+<div class="search-wrapper">
+  <label for="docs-search-input" class="sr-only">Search</label>
+  <input type="search" id="docs-search-input" placeholder="Search docs..." aria-controls="results" aria-expanded="false" />
+  <ul id="results" role="list" aria-live="polite"></ul>
 </div>
 
+<style>
+  .search-wrapper { position: relative; width: 100%; }
+  input { width: 100%; padding: 0.5rem; border: 1px solid var(--gs-color-border); border-radius: 4px; background: var(--gs-color-bg-surface); color: var(--gs-color-text); }
+  input:focus { outline: 2px solid var(--gs-color-primary); border-color: transparent; }
+  #results { position: absolute; top: 100%; left: 0; right: 0; background: var(--gs-color-bg-surface); border: 1px solid var(--gs-color-border); list-style: none; padding: 0; margin-top: 4px; display: none; z-index: 50; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 4px; max-height: 300px; overflow-y: auto; }
+  #results:not(:empty) { display: block; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+  /* Dynamic content styling */
+  :global(#results li) { padding: 0.25rem 0; }
+  :global(#results a) { display: block; padding: 0.5rem; text-decoration: none; color: var(--gs-color-text); }
+  :global(#results a:hover), :global(#results a:focus) { background: var(--gs-color-bg-subtle); outline: none; }
+  :global(#results .message) { padding: 0.5rem; color: var(--gs-color-subtle); }
+  :global(#results .error) { color: #ef4444; }
+</style>
+
 <script>
-  const input = document.getElementById('docs-search-input');
-  const resultsDiv = document.getElementById('results');
+  const input = document.getElementById('docs-search-input') as HTMLInputElement | null;
+  const list = document.getElementById('results');
+  let timer: ReturnType<typeof setTimeout>;
+  let controller: AbortController | null = null;
 
-  // Optimization: Debounce function to prevent API calls on every keystroke
-  function debounce(func, wait) {
-    let timeout;
-    return function(...args) {
-      const context = this;
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(context, args), wait);
-    };
-  }
+  if (input && list) {
+    input.addEventListener('input', (e) => {
+      clearTimeout(timer);
+      if (controller) controller.abort();
 
-  let searchController;
+      timer = setTimeout(async () => {
+        const q = (e.target as HTMLInputElement).value.trim();
+        if (!q) { list.innerHTML = ''; input.setAttribute('aria-expanded', 'false'); return; }
 
-  async function runSearch(query) {
-    // Abort previous request if it exists
-    if (searchController) {
-      searchController.abort();
-    }
-    searchController = new AbortController();
-    const signal = searchController.signal;
+        // Show loading state
+        list.textContent = '';
+        const loading = document.createElement('li');
+        loading.className = 'message';
+        loading.textContent = 'Searching...';
+        list.appendChild(loading);
+        input.setAttribute('aria-expanded', 'true');
 
-    if (!query.trim()) {
-      if(resultsDiv) resultsDiv.textContent = '';
-      return;
-    }
+        controller = new AbortController();
+        try {
+          const res = await fetch(`/api/docs-search?q=${encodeURIComponent(q)}`, { signal: controller.signal });
+          const data = await res.json();
+          list.textContent = ''; // Clear loading
 
-    try {
-      const res = await fetch('/api/docs-search?q=' + encodeURIComponent(query), { signal });
-      if (!res.ok) {
-        if (resultsDiv) resultsDiv.textContent = '';
-        console.error(`Search request failed with status ${res.status}: ${res.statusText}`);
-        return;
+          if (data.length === 0) {
+            const li = document.createElement('li');
+            li.className = 'message';
+            li.textContent = 'No results found';
+            list.appendChild(li);
+          } else {
+            data.forEach((r: any) => {
+               const li = document.createElement('li');
+               const a = document.createElement('a');
+               // Basic protection
+               if (r.url && !r.url.startsWith('javascript:')) {
+                   a.href = r.url;
+               } else {
+                   a.href = '#';
+               }
+               a.textContent = r.title;
+               li.appendChild(a);
+               list.appendChild(li);
+            });
+          }
+        } catch (err: any) {
+          if (err.name === 'AbortError') return;
+          list.textContent = '';
+          const li = document.createElement('li');
+          li.className = 'message error';
+          li.textContent = 'Error searching';
+          list.appendChild(li);
+        }
+      }, 300);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!input.contains(e.target as Node) && !list.contains(e.target as Node)) {
+        list.innerHTML = ''; input.setAttribute('aria-expanded', 'false');
       }
-      const results = await res.json();
-
-      if (resultsDiv) {
-        resultsDiv.textContent = ''; // Clear previous results
-
-        results.forEach((r) => {
-            const a = document.createElement('a');
-            // Sentinel: Basic protection against javascript: URIs
-            if (r.url && !r.url.trim().toLowerCase().startsWith('javascript:')) {
-                a.href = r.url;
-            } else {
-                a.href = '#';
-                console.warn('Blocked potentially unsafe URL in search results');
-            }
-            a.textContent = r.title; // Sentinel: Prevent XSS by using textContent instead of innerHTML
-            resultsDiv.appendChild(a);
-        });
-      }
-    } catch (e) {
-      if (e.name === 'AbortError') return; // Ignore aborted requests
-      if (resultsDiv) {
-        resultsDiv.textContent = '';
-        const err = document.createElement('div');
-        err.className = 'search-error';
-        err.style.color = 'red';
-        err.style.marginTop = '0.5em';
-        err.textContent = 'Sorry, search failed. Please try again.';
-        resultsDiv.appendChild(err);
-      }
-      console.error("Search failed", e);
-    }
-  }
-
-  if (input) {
-    // Wait 300ms after user stops typing before searching
-    const debouncedSearch = debounce((e) => {
-      runSearch((e.target as HTMLInputElement).value);
-    }, 300);
-
-    input.addEventListener('input', debouncedSearch);
+    });
   }
 </script>
