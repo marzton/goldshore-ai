@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
 import { verifyAccess } from '@goldshore/auth';
 import users from './routes/users';
@@ -15,6 +16,9 @@ type Env = {
 };
 
 const app = new Hono<{ Bindings: Env }>();
+
+// Sentinel: Add security headers to all responses (Defense in Depth)
+app.use('*', secureHeaders());
 
 // Sentinel: Security Middleware
 // Enforce CORS to allow legitimate browser clients (if any) and handle preflight
