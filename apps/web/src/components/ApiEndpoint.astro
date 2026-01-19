@@ -7,7 +7,7 @@ const { openapi, endpointId } = Astro.props;
 const methods = ['get', 'post', 'put', 'delete', 'patch'];
 
 const match = endpointId
-  ? Object.entries(openapi.paths || {}).find(([path]) => path.replace(/^\//, '') === endpointId)
+  ? Object.entries(openapi.paths ?? {}).find(([path]) => path.replace(/^\//, '') === endpointId)
   : null;
 
 const path = match?.[0];
@@ -19,10 +19,10 @@ const ops = match?.[1];
     <h1>{path}</h1>
 
     {methods.map((method) => (
-      ops[method] && (
+      ops?.[method] && (
         <article class="method-block">
           <h2>{method.toUpperCase()}</h2>
-          <p>{ops[method].description}</p>
+          <p>{ops[method].summary ?? ops[method].description}</p>
 
           <h3>Parameters</h3>
           <ApiSchema schema={ops[method].parameters} />

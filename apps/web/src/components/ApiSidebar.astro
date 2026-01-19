@@ -1,11 +1,14 @@
 ---
 const { openapi } = Astro.props;
+const paths = Object.keys(openapi.paths ?? {}).sort();
 ---
 <aside class="api-sidebar">
   <h3>{openapi.info.title}</h3>
   <ul>
-    {Object.keys(openapi.paths).map(path => (
-      <li><a href={`/developer/api${path}`}>{path}</a></li>
+    {paths.length ? paths.map((path) => (
+      <li><a href={encodeURI(`/developer/api${path}`)}>{path}</a></li>
+    )) : (
+      <li>No endpoints available.</li>
     ))}
   </ul>
 </aside>
