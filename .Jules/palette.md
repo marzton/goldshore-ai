@@ -12,6 +12,9 @@
 **Learning:** Standard HTML forms often lack explicit association between helper text and inputs, making them opaque to screen reader users. `aria-describedby` is the semantic bridge needed.
 **Action:** Enhanced Contact Form with `autocomplete` attributes for faster completion and linked helper text via `aria-describedby` for robust accessibility.
 
+## 2025-12-24 - Documentation Search UX
+**Learning:** Documentation search bars are high-frequency targets for power users. A simple visual hint (`⌘K`) combined with a global shortcut significantly reduces friction and aligns with industry standards (e.g., Algolia DocSearch, MDN).
+**Action:** Enhanced `DocsSearch.astro` with a `⌘K` keyboard shortcut, added visual hints using semantic `<kbd>` tags, and improved the "No results" state to reduce user frustration.
 ## 2024-05-21 - Active Navigation State
 **Learning:** The documentation sidebar relied solely on text color to indicate the active page, failing WCAG 1.4.1 (Use of Color). Visual indicators must be redundant (color + shape/weight).
 **Action:** Implemented `aria-current="page"` for semantic indication and added a left border + font weight change to `DocsSidebar` links for robust visual accessibility.
