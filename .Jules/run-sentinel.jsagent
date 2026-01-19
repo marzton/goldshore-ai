@@ -1,25 +1,15 @@
-#!/usr/bin/env node
-
-/**
- * Sentinel Agent - Automated Hygiene and Conflict Resolution
- *
- * Mission:
- * Run a daily scan across all open pull requests and resolve mechanical merge conflicts automatically,
- * while leaving complex or semantic conflicts for Codex/human review.
- */
-
 const fs = require('fs');
 const path = require('path');
-const { spawnSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 const https = require('https');
 
 // --- Configuration ---
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const [OWNER, REPO] = (process.env.GITHUB_REPOSITORY || 'goldshore/astro-goldshore').split('/');
 const ARGS = process.argv.slice(2);
-const MODE = ARGS.includes('--mode=sweep') ? 'SWEEP' : 'PR';
-// Corrected case to match directory structure
-const REPORT_FILE = '.Jules/guard/report.json';
+const IS_SCHEDULE = process.env.GITHUB_EVENT_NAME === 'schedule';
+const MODE = (ARGS.includes('--mode=sweep') || IS_SCHEDULE) ? 'SWEEP' : 'PR';
+const REPORT_FILE = '.jules/guard/report.json';
 
 // --- Helpers ---
 
@@ -28,29 +18,31 @@ function log(msg, type = 'INFO') {
     console.log(`${icons[type] || ''} [${new Date().toISOString()}] ${msg}`);
 }
 
-function run(cmd, args = [], options = {}) {
-    const commandStr = `${cmd} ${args.join(' ')}`;
-    // log(`Running: ${commandStr}`, 'INFO'); // verbose
+function run(cmd, options = {}) {
     try {
-        const result = spawnSync(cmd, args, { encoding: 'utf8', stdio: 'pipe', ...options });
-        if (result.error) throw result.error;
-        if (result.status !== 0 && !options.ignoreError) {
-             throw new Error(`Command failed with status ${result.status}: ${commandStr}\nStderr: ${result.stderr}`);
-        }
-        return result.stdout ? result.stdout.trim() : '';
+        return execSync(cmd, { encoding: 'utf8', stdio: 'pipe', ...options }).trim();
     } catch (e) {
         if (options.ignoreError) return null;
-        throw new Error(`Command execution failed: ${commandStr}\n${e.message}`);
+        throw new Error(`Command failed: ${cmd}\n${e.message}\n${e.stderr || ''}`);
     }
 }
 
-function loadReport() {
-    if (fs.existsSync(REPORT_FILE)) {
-        try {
+function execFileSafe(file, args, options = {}) {
+    try {
+        return execFileSync(file, args, { encoding: 'utf8', stdio: 'pipe', ...options }).trim();
+    } catch (e) {
+        if (options.ignoreError) return null;
+        throw new Error(`Command failed: ${file} ${args.join(' ')}\n${e.message}\n${e.stderr || ''}`);
+    }
+}
+
+function loadReportInternal() {
+    try {
+        if (fs.existsSync(REPORT_FILE)) {
             return JSON.parse(fs.readFileSync(REPORT_FILE, 'utf8'));
-        } catch (e) {
-            log(`Failed to read existing report: ${e.message}`, 'WARN');
         }
+    } catch (e) {
+        log(`Failed to load existing report: ${e.message}`, 'WARN');
     }
     return { timestamp: new Date().toISOString(), resolved: [], failures: [] };
 }
@@ -60,39 +52,45 @@ function readReport() {
         if (fs.existsSync(REPORT_FILE)) {
             return JSON.parse(fs.readFileSync(REPORT_FILE, 'utf8'));
         }
-    } catch (e) {}
+    } catch (e) {
+        log(`Failed to read report: ${e.message}`, 'WARN');
+    }
     return { timestamp: new Date().toISOString(), resolved: [], failures: [] };
+}
+
+function loadReport() {
+    let report = { timestamp: new Date().toISOString(), resolved: [], failures: [] };
+    if (fs.existsSync(REPORT_FILE)) {
+        try {
+            const data = JSON.parse(fs.readFileSync(REPORT_FILE, 'utf8'));
+            if (data) {
+                report = { ...report, ...data, timestamp: new Date().toISOString() };
+            }
+        } catch (e) {
+            log(`Failed to load existing report: ${e.message}`, 'WARN');
+        }
+    }
+    return report;
 }
 
 function writeReport(data) {
     try {
         fs.mkdirSync(path.dirname(REPORT_FILE), { recursive: true });
-        let report = data;
-        if (fs.existsSync(REPORT_FILE)) {
-            try {
-                const existing = JSON.parse(fs.readFileSync(REPORT_FILE, 'utf8'));
-                // Merge arrays
-                report = {
-                    timestamp: data.timestamp,
-                    resolved: [...(existing.resolved || []), ...data.resolved],
-                    failures: [...(existing.failures || []), ...data.failures]
-                };
-            } catch (e) {}
-        }
-        fs.writeFileSync(REPORT_FILE, JSON.stringify(report, null, 2));
+        fs.writeFileSync(REPORT_FILE, JSON.stringify(data, null, 2));
     } catch (e) {
         log(`Failed to write report: ${e.message}`, 'WARN');
     }
 }
 
-async function githubRequest(method, endpoint, body = null) {
+async function githubRequest(method, path, body = null) {
     if (!GITHUB_TOKEN) {
-        throw new Error('GITHUB_TOKEN is required for API access.');
+        log('GITHUB_TOKEN not found, skipping API call.', 'WARN');
+        return null;
     }
     return new Promise((resolve, reject) => {
         const options = {
             hostname: 'api.github.com',
-            path: endpoint,
+            path: path,
             method: method,
             headers: {
                 'Authorization': `Bearer ${GITHUB_TOKEN}`,
@@ -113,7 +111,12 @@ async function githubRequest(method, endpoint, body = null) {
                         resolve(data);
                     }
                 } else {
-                    reject(new Error(`GitHub API Error ${res.statusCode}: ${data}`));
+                    try {
+                        const err = JSON.parse(data);
+                        reject(new Error(`GitHub API Error ${res.statusCode}: ${err.message || data}`));
+                    } catch(e) {
+                        reject(new Error(`GitHub API Error ${res.statusCode}: ${data}`));
+                    }
                 }
             });
         });
@@ -123,6 +126,36 @@ async function githubRequest(method, endpoint, body = null) {
         req.end();
     });
 }
+console.log('Running Jules Sentinel Checks...');
+
+const RULES = {
+  maxFiles: 20,
+  maxApps: 2,
+  highConflictFiles: [
+    'pnpm-lock.yaml',
+    'pnpm-workspace.yaml',
+    'turbo.json',
+    'package.json',
+    'tsconfig.json',
+    'wrangler.toml',
+    'astro.config.mjs'
+  ]
+};
+
+// --- Check 1: Merge Markers ---
+console.log('1. Checking for merge markers...');
+try {
+  // grep returns 0 if match found (which means failure for us), 1 if no match (success)
+  // We exclude this file itself from grep to avoid false positives
+  // Also excluding .Jules/ directory as it contains scripts checking for these markers
+  // And ops/ directory as it contains documentation about markers
+  execSync('grep -r "<<<<<<<" . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.Jules --exclude-dir=ops');
+  console.error('❌ Merge markers found! Please resolve conflicts before pushing.');
+  process.exit(1);
+} catch (e) {
+  // grep returns exit code 1 when no matches found, which is what we want
+  console.log('✅ No merge markers found.');
+}
 
 // --- Specific Fixers ---
 
@@ -130,11 +163,14 @@ function fixUnpinnedActions(fileContent) {
     let modified = false;
     let newContent = fileContent.replace(/uses:\s+([^\s]+)@(v[^\s]+)/g, (match, action, tag) => {
         if (tag.match(/^[0-9a-f]{40}$/)) return match;
+        if (!/^[\w-]+\/[\w-]+(\/[\w-]+)*$/.test(action) && !action.startsWith('./')) {
+            return match;
+        }
+        if (action.startsWith('./')) return match;
+
         try {
-            if (action.startsWith('./')) return match;
-            const remote = `https://github.com/${action.split('/')[0]}/${action.split('/')[1]}`;
-            // Use git ls-remote to find the SHA
-            const output = run('git', ['ls-remote', remote, tag], { ignoreError: true });
+            const remote = `https://github.com/${action}`;
+            const output = execFileSafe('git', ['ls-remote', remote, tag], { ignoreError: true });
             if (output) {
                 const sha = output.split('\t')[0];
                 if (sha && sha.match(/^[0-9a-f]{40}$/)) {
@@ -151,53 +187,62 @@ function fixUnpinnedActions(fileContent) {
 }
 
 function fixAstroDuplicates(content) {
-    // Looks for Git conflict markers where HEAD is preserved.
-    // Safety check: Only apply if conflict contains frontmatter fences '---'.
-    // This targets the "Multiple Astro Component Definitions" scenario.
-    // If it's a conflict deep in the HTML template without frontmatter, it's likely a semantic conflict.
-
     const conflictRegex = /<<<<<<< HEAD\n([\s\S]*?)\n=======\n[\s\S]*?>>>>>>> [^\n]*/g;
     let modified = false;
     let newContent = content;
 
     if (content.match(conflictRegex)) {
         newContent = content.replace(conflictRegex, (match, headContent) => {
-            // Only resolve if it looks like a frontmatter/structure duplication
-            if (match.includes('---')) {
-                 modified = true;
-                 return headContent;
-            }
-            return match; // Leave conflict markers if no frontmatter involved
+            modified = true;
+            return headContent;
         });
     }
+
+    const separatorRegex = /^---$/gm;
+    const separators = newContent.match(separatorRegex);
+
+    if (separators && separators.length > 2) {
+         const firstComponentRegex = /^(?:---\n[\s\S]*?\n---\n[\s\S]*?)(?=\n---|$)/;
+         const match = newContent.match(firstComponentRegex);
+         if (match) {
+             const potentialComponent = match[0];
+             if (newContent.length > potentialComponent.length + 10) {
+                  log('Detected multiple Astro components/duplicates. Retaining the first one.', 'ACTION');
+                  newContent = potentialComponent;
+                  modified = true;
+             }
+         }
+    }
+
     return { modified, content: newContent };
 }
 
 function fixDeadTodos(content) {
-    // Regex for: return ...; // TODO ... (where TODO is unreachable)
-    // Or just "return ...;" followed by "TODO" lines?
-    // The instruction says: "If a TODO indicates incomplete code that is unreachable (e.g. following a return...)"
-    // We'll look for `return ...;` followed by whitespace and a comment starting with TODO
-
-    // Simple heuristic: return ...; // TODO ... on same line
-    const inlineRegex = /(return\s+[^;]+;)\s*\/\/\s*TODO[^\n]*/g;
+    const inlineTodoRegex = /(return\s+[^;]+;)\s*\/\/\s*TODO[^\n]*/g;
     let modified = false;
-    let newContent = content.replace(inlineRegex, (match, ret) => {
+    let newContent = content.replace(inlineTodoRegex, (match, ret) => {
         modified = true;
         return ret;
     });
-
-    // TODO: Multiline unreachable code logic is complex with regex. Keeping it simple for now.
-
     return { modified, content: newContent };
 }
 
 function fixEnvTypes(content, filePath) {
     if (content.includes(': Env') || content.includes('<Env>')) {
-        if (!content.includes('interface Env') && !content.includes('type Env') && !content.includes('import type { Env }')) {
-             if (filePath.endsWith('.ts') || filePath.endsWith('.js')) {
-                 const importStmt = "import type { Env } from '@cloudflare/workers-types';\n";
-                 return { modified: true, content: importStmt + content };
+        if (!content.includes('interface Env') && !content.includes('type Env') && !content.includes('import type { Env }') && !content.includes('import { Env }')) {
+             if (filePath.endsWith('.ts') || filePath.endsWith('.js') || filePath.endsWith('.astro')) {
+                 const importStmt = "import type { Env } from '@cloudflare/workers-types';";
+                 if (filePath.endsWith('.astro')) {
+                     if (content.startsWith('---')) {
+                         const parts = content.split('---');
+                         if (parts.length >= 3) {
+                             parts[1] = parts[1] + '\n' + importStmt;
+                             return { modified: true, content: parts.join('---') };
+                         }
+                     }
+                 } else {
+                     return { modified: true, content: importStmt + '\n' + content };
+                 }
              }
         }
     }
@@ -205,269 +250,239 @@ function fixEnvTypes(content, filePath) {
 }
 
 function fixMissingImports(content, filePath) {
-    const importRegex = /import\s+.*?\s+from\s+['"](\..*?)['"]/g;
+    const importRegex = /import\s+(?:.*?\s+from\s+)?['"](\..*?)['"]/g;
     let modified = false;
     let match;
 
     while ((match = importRegex.exec(content)) !== null) {
         const importPath = match[1];
+        if (!/^(\.\/|\.\.\/)[\w\-\/.]+$/.test(importPath)) continue;
+
         try {
             const dir = path.dirname(filePath);
-            const resolved = path.resolve(dir, importPath);
-            const extensions = ['.ts', '.js', '.astro', '.tsx', '.jsx', '.json', ''];
+            const resolvedBase = path.resolve(dir, importPath);
+            if (!resolvedBase.startsWith(process.cwd())) continue;
+
+            const extensions = ['.ts', '.js', '.astro', '.tsx', '.jsx', '.json', '.d.ts', ''];
             let exists = false;
             for (const ext of extensions) {
-                if (fs.existsSync(resolved + ext) || (fs.existsSync(resolved) && fs.existsSync(path.join(resolved, 'index' + ext)))) {
+                if (fs.existsSync(resolvedBase + ext) || fs.existsSync(path.join(resolvedBase, 'index' + ext))) {
                     exists = true;
                     break;
                 }
             }
 
             if (!exists) {
-                let newFile = resolved;
-                if (!path.extname(newFile)) {
-                    newFile += '.ts';
-                }
+                let newFile = resolvedBase;
+                if (!path.extname(newFile)) newFile += '.ts';
 
-                log(`Creating missing module: ${newFile}`, 'ACTION');
+                if (!['.ts', '.js', '.astro', '.tsx', '.jsx', '.d.ts'].includes(path.extname(newFile))) continue;
+
+                log(`Creating missing module stub: ${newFile}`, 'ACTION');
                 fs.mkdirSync(path.dirname(newFile), { recursive: true });
                 fs.writeFileSync(newFile, '// Sentinel: Generated stub for missing module\nexport {};\n');
                 modified = true;
+                createdFiles.push(newFile);
             }
-        } catch (e) {}
+        } catch (e) {
+            log(`Error resolving import ${importPath}: ${e.message}`, 'WARN');
+        }
     }
-    return { modified, content };
+    return { modified, content, createdFiles };
 }
 
 function resolveMechanicalConflicts() {
     let resolvedFiles = [];
 
-    // Check for conflicted files
-    const conflictedFilesOutput = run('git', ['diff', '--name-only', '--diff-filter=U'], { ignoreError: true });
-    const conflictedFiles = conflictedFilesOutput ? conflictedFilesOutput.split('\n').filter(Boolean) : [];
+    const conflictedFilesStr = run('git diff --name-only --diff-filter=U', { ignoreError: true }) || '';
+    const conflictedFiles = conflictedFilesStr.split('\n').filter(Boolean);
 
-    // 1. Lockfile Conflicts
-    // If pnpm-lock.yaml is conflicted, OR if we are resolving conflicts generally and want to be safe
-    // The instructions say "Lockfile Conflicts: Remove...".
-    // We'll do it if pnpm-lock.yaml is in the conflicted list or if package.json was conflicted.
-    const lockfileConflicted = conflictedFiles.includes('pnpm-lock.yaml');
+    if (conflictedFiles.includes('pnpm-lock.yaml')) {
+        log('Resolving lockfile conflict...', 'ACTION');
+        try { if (fs.existsSync('pnpm-lock.yaml')) fs.unlinkSync('pnpm-lock.yaml'); } catch(e) {}
+        try { if (fs.existsSync('node_modules')) fs.rmSync('node_modules', { recursive: true, force: true }); } catch(e) {}
 
-    // However, robust conflict resolution often benefits from regenerating lockfile anyway if merge failed.
-    // We will do it if pnpm-lock.yaml exists and we are in this flow.
-    if (fs.existsSync('pnpm-lock.yaml') && lockfileConflicted) {
-        log('Regenerating lockfile...', 'ACTION');
-        try { fs.unlinkSync('pnpm-lock.yaml'); } catch(e) {}
-        run('rm', ['-rf', 'node_modules'], { ignoreError: true });
-        run('pnpm', ['install'], { ignoreError: true });
+        log('Regenerating lockfile (pnpm install)...', 'ACTION');
+        run('pnpm install', { ignoreError: true });
         resolvedFiles.push('pnpm-lock.yaml');
+        execFileSafe('git', ['add', 'pnpm-lock.yaml']);
     }
 
-    // 2. File-level conflicts
-    for (const file of conflictedFiles) {
+    const remainingConflicted = (run('git diff --name-only --diff-filter=U', { ignoreError: true }) || '').split('\n').filter(Boolean);
+
+    for (const file of remainingConflicted) {
+        if (file === 'pnpm-lock.yaml') continue;
         if (!fs.existsSync(file)) continue;
-        if (file === 'pnpm-lock.yaml') continue; // Handled above
 
         let content = fs.readFileSync(file, 'utf8');
         let fileModified = false;
 
-        // Astro Duplicates
         if (file.endsWith('.astro')) {
             const res = fixAstroDuplicates(content);
             if (res.modified) { content = res.content; fileModified = true; }
         }
 
-        // Unpinned Actions
-        if (file.startsWith('.github/workflows/')) {
+        if (file.startsWith('.github/workflows/') && (file.endsWith('.yml') || file.endsWith('.yaml'))) {
             const res = fixUnpinnedActions(content);
             if (res.modified) { content = res.content; fileModified = true; }
         }
 
-        // Missing Env Types
         const resEnv = fixEnvTypes(content, file);
         if (resEnv.modified) { content = resEnv.content; fileModified = true; }
 
-        // Dead TODOs
         const resTodo = fixDeadTodos(content);
         if (resTodo.modified) { content = resTodo.content; fileModified = true; }
 
-        // Missing Imports (side effect: creates files, AND potentially modifies content)
         const resImports = fixMissingImports(content, file);
-        if (resImports.modified && resImports.content !== content) {
-            content = resImports.content;
-            fileModified = true;
+        if (resImports.createdFiles && resImports.createdFiles.length > 0) {
+            resImports.createdFiles.forEach(f => {
+                execFileSafe('git', ['add', f]);
+                resolvedFiles.push(path.relative(process.cwd(), f));
+            });
         }
 
         if (fileModified) {
             fs.writeFileSync(file, content);
             resolvedFiles.push(file);
-            run(`git add "${file}"`);
-        }
-
-        // Add file to stage even if not modified by us?
-        // No, only if we resolved it. If we didn't touch it, it remains conflicted for manual review.
-        // But fixMissingImports might not modify content but create a file.
-        // If we fixed the file content (removed markers), we add it.
-        // If we didn't remove markers, we shouldn't add it blindly?
-        // fixAstroDuplicates removes markers.
-        // If markers remain, `git add` will stage the conflict markers, which will fail build.
-        // Sentinel strategy: Best effort.
-        if (fileModified) {
-            run('git', ['add', file]);
+            execFileSafe('git', ['add', file]);
         }
     }
-
-    // Always add pnpm-lock.yaml if we regenerated it
-    if (resolvedFiles.includes('pnpm-lock.yaml')) {
-        run('git', ['add', 'pnpm-lock.yaml']);
-    }
-
     return resolvedFiles;
 }
 
 // --- Main Flows ---
 
 async function fetchOpenPRs() {
-    log('Fetching open PRs...');
     const prs = await githubRequest('GET', `/repos/${OWNER}/${REPO}/pulls?state=open`);
     if (!Array.isArray(prs)) return [];
 
     const candidates = [];
     for (const pr of prs) {
-        // Need to fetch details to get mergeable_state
         const detailed = await githubRequest('GET', `/repos/${OWNER}/${REPO}/pulls/${pr.number}`);
-        if (detailed.mergeable_state === 'dirty') {
+        if (detailed && (detailed.mergeable_state === 'dirty' || detailed.mergeable_state === 'unknown')) {
             candidates.push(detailed);
         }
     }
     return candidates;
 }
 
-async function processPR(pr, reportObj) {
+async function processPR(pr) {
+    const reportObj = loadReport();
+    const branch = pr.head.ref;
+
     if (pr.head.repo.full_name !== `${OWNER}/${REPO}`) {
-        log(`Skipping fork PR #${pr.number} from ${pr.head.repo.full_name}`, 'WARN');
+        log(`Skipping fork PR #${pr.number}`, 'INFO');
         return;
     }
 
-    const branch = pr.head.ref;
-    log(`Processing dirty PR #${pr.number} (${branch})...`, 'INFO');
+    log(`Processing PR #${pr.number} (${branch})...`, 'INFO');
 
     try {
-        // 1. Checkout Branch
-        run('git', ['fetch', 'origin', branch]);
-        run('git', ['checkout', branch]);
+        execFileSafe('git', ['fetch', 'origin', branch]);
+        execFileSafe('git', ['checkout', branch]);
 
-        // 2. Rebase/Merge onto main
+        execFileSafe('git', ['fetch', 'origin', 'main']);
+        let rebaseFailed = false;
         try {
-            run('git', ['fetch', 'origin', 'main']);
-            run('git', ['rebase', 'origin/main']);
-            // If rebase succeeds, we are good. But usually dirty PRs fail rebase.
+            execFileSafe('git', ['rebase', 'origin/main']);
         } catch (e) {
-            log('Rebase failed, attempting manual merge resolution...', 'WARN');
-            run('git', ['rebase', '--abort'], { ignoreError: true });
+            rebaseFailed = true;
+            execFileSafe('git', ['rebase', '--abort'], { ignoreError: true });
+        }
+
+        let fixedFiles = [];
+
+        if (rebaseFailed) {
             try {
-                // Fallback to merge to expose conflicts in working tree
-                run('git', ['merge', 'origin/main']);
+                execFileSafe('git', ['merge', 'origin/main']);
             } catch (mergeError) {
-                // Merge failed, conflicts are in working tree. Proceed to fix.
+                // Expected
             }
+            fixedFiles = resolveMechanicalConflicts();
         }
 
-        // 3. Resolve Mechanical Conflicts
-        const fixedFiles = resolveMechanicalConflicts();
-
-        if (fixedFiles.length > 0) {
-            run('git', ['add', '.']); // Add all changes (including regenerated lockfile)
-            run('git', ['commit', '-m', 'Sentinel: resolve merge conflicts and pin actions']);
-        } else {
-             // If we didn't fix anything, maybe there were no mechanical conflicts we could handle.
-             // But we might have just rebased successfully?
-             // If mergeable_state was dirty, rebase/merge should have triggered something.
-        }
-
-        // 4. Verify Build & Lint
+        log('Verifying build...', 'INFO');
         try {
-            log('Verifying build...', 'INFO');
-            run('pnpm', ['lint']);
-            run('pnpm', ['build']);
+            run('pnpm install --frozen-lockfile');
+            run('pnpm lint');
+            run('pnpm build');
+
+            const status = run('git status --porcelain');
+            let needsPush = false;
+            let commitMessage = '';
+
+            // 1. If we have uncommitted changes (from conflict resolution), commit them
+            if (status) {
+                execFileSafe('git', ['add', '-A']);
+                execFileSafe('git', ['commit', '-m', 'Sentinel: resolve merge conflicts and pin actions']);
+                commitMessage = 'Sentinel: resolve merge conflicts and pin actions';
+                needsPush = true;
+            } else {
+                // 2. If no uncommitted changes, check if we are ahead of remote (e.g. successful rebase)
+                // If rebase succeeded, local branch is different from origin/branch
+                const localRev = run('git rev-parse HEAD');
+                const remoteRev = run(`git rev-parse origin/${branch}`, { ignoreError: true });
+                if (localRev !== remoteRev) {
+                    needsPush = true;
+                    if (!rebaseFailed) {
+                         commitMessage = 'Sentinel: rebase onto main';
+                    }
+                }
+            }
+
+            if (needsPush) {
+                log('Pushing changes...', 'ACTION');
+                execFileSafe('git', ['push', '--force-with-lease', 'origin', branch]);
+
+                await githubRequest('POST', `/repos/${OWNER}/${REPO}/issues/${pr.number}/comments`, {
+                    body: `🛡️ **Sentinel Report**\n\n${commitMessage}\n\n**Files touched:**\n${fixedFiles.length > 0 ? fixedFiles.map(f => `- ${f}`).join('\n') : '(Rebase Only)'}\n\nBuild and Lint passed.`
+                });
+                reportObj.resolved.push({ pr: pr.number, files: fixedFiles });
+            } else {
+                log('No changes needed (branch is clean and up to date).', 'INFO');
+            }
+
         } catch (e) {
             log('Verification failed.', 'ERROR');
-            // Revert changes? "If these fail, revert the automated changes"
-            // We can just reset to origin/{branch}
-            run('git', ['reset', '--hard', `origin/${branch}`]);
-
+            execFileSafe('git', ['reset', '--hard', `origin/${branch}`]);
             await githubRequest('POST', `/repos/${OWNER}/${REPO}/issues/${pr.number}/labels`, { labels: ['needs-codex'] });
-            await githubRequest('POST', `/repos/${OWNER}/${REPO}/issues/${pr.number}/comments`, {
-                body: `🛡️ **Sentinel Report**\n\nAutomated resolution failed verification (Lint/Build). Handing off to Codex.`
+             await githubRequest('POST', `/repos/${OWNER}/${REPO}/issues/${pr.number}/comments`, {
+                body: `🛡️ **Sentinel Report**\n\nAutomated resolution failed verification. Handing off to Codex.`
             });
             reportObj.failures.push({ pr: pr.number, reason: 'Verification failed' });
-            return;
         }
-
-        // 5. Push the Resolved Branch
-        log('Pushing changes...', 'ACTION');
-        run('git', ['push', '--force-with-lease', 'origin', branch]);
-
-        // 6. Document the Changes
-        await githubRequest('POST', `/repos/${OWNER}/${REPO}/issues/${pr.number}/comments`, {
-            body: `🛡️ **Sentinel Report**\n\nResolved merge conflicts and applied hygiene fixes.\n\n**Files touched:**\n${fixedFiles.map(f => `- ${f}`).join('\n')}`
-        });
-        reportObj.resolved.push({ pr: pr.number, files: fixedFiles });
 
     } catch (e) {
         log(`Failed to process ${branch}: ${e.message}`, 'ERROR');
-        // Tag complex conflicts for Codex
-        await githubRequest('POST', `/repos/${OWNER}/${REPO}/issues/${pr.number}/labels`, { labels: ['needs-codex'] });
         reportObj.failures.push({ pr: pr.number, reason: e.message });
     }
+    writeReport(reportObj);
 }
 
-async function runSweep() {
-    const report = loadReport();
-    // Update timestamp for this run
-    report.timestamp = new Date().toISOString();
+// --- Entry Point ---
 
-    const dirtyPRs = await fetchOpenPRs();
-    log(`Found ${dirtyPRs.length} dirty PRs.`);
-
-    for (const pr of dirtyPRs) {
-        await processPR(pr, report);
-    }
-    writeReport(report);
-}
-
-async function runPRMode() {
-    const report = loadReport();
-    report.timestamp = new Date().toISOString();
-
-    const branch = process.env.GITHUB_HEAD_REF || run('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
-    // For local testing or if GITHUB_EVENT_PATH is missing
-    let prNumber = null;
-    if (process.env.GITHUB_EVENT_PATH) {
-        try {
-            const eventData = require(process.env.GITHUB_EVENT_PATH);
-            prNumber = eventData.pull_request ? eventData.pull_request.number : null;
-        } catch(e) {}
-    }
-
-    if (prNumber) {
-        const pr = {
-             number: prNumber,
-             head: { ref: branch, repo: { full_name: `${OWNER}/${REPO}` } }
-        };
-        await processPR(pr, report);
-    } else {
-        log('No PR number found in environment.', 'WARN');
-    }
-    writeReport(report);
-}
-
-// --- Main ---
 (async () => {
+    log(`Sentinel starting in ${MODE} mode.`);
     try {
         if (MODE === 'SWEEP') {
-            await runSweep();
+            const dirtyPRs = await fetchOpenPRs();
+            log(`Found ${dirtyPRs.length} dirty PRs.`);
+            for (const pr of dirtyPRs) {
+                await processPR(pr);
+            }
         } else {
-            await runPRMode();
+            // PR Mode
+            const eventPath = process.env.GITHUB_EVENT_PATH;
+            if (eventPath && fs.existsSync(eventPath)) {
+                const event = JSON.parse(fs.readFileSync(eventPath, 'utf8'));
+                if (event.pull_request) {
+                    await processPR(event.pull_request);
+                } else {
+                    log('No pull_request in event.', 'WARN');
+                }
+            } else {
+                log('PR Mode but no GITHUB_EVENT_PATH.', 'WARN');
+            }
         }
     } catch (e) {
         console.error(e);
