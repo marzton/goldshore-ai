@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import DocsSearch from './DocsSearch.astro';
 
 const { currentSlug } = Astro.props;
 const pages = await getCollection('docs');
@@ -14,15 +15,20 @@ function getHref(slug: string) {
 
 <aside class="gs-card docs-sidebar" aria-label="Documentation navigation">
   <h3 class="section-title"><span aria-hidden="true">◎</span>Documentation</h3>
+  <div class="search-container">
+    <DocsSearch />
+  </div>
+
+  <h3 class="section-title"><span>◎</span>Documentation</h3>
   <ul class="docs-nav">
-    {pages.map((p) => (
+    {pages.map((page) => (
       <li>
         <a
-          href={getHref(p.slug)}
-          class={currentSlug === p.slug ? 'active' : ''}
-          aria-current={currentSlug === p.slug ? 'page' : undefined}
+          href={getHref(page.slug)}
+          class={currentSlug === page.slug ? 'active' : ''}
+          aria-current={currentSlug === page.slug ? 'page' : undefined}
         >
-          {p.data.title}
+          {page.data.title}
         </a>
       </li>
     ))}
@@ -32,9 +38,21 @@ function getHref(slug: string) {
 <style>
   .docs-sidebar { position: sticky; top: var(--gs-space-6); align-self: start; }
   .docs-nav { list-style: none; padding-left: 0; display: flex; flex-direction: column; gap: var(--gs-space-2); }
-  .docs-nav a { color: var(--gs-color-subtle); text-decoration: none; transition: color 0.2s ease; }
-  .docs-nav a:hover { color: var(--gs-color-text); }
-  .docs-nav a.active { color: #22d3ee; }
+  .docs-nav a {
+    display: block;
+    color: var(--gs-color-subtle);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-left: 2px solid transparent;
+    padding-left: 0.75rem;
+  }
+  .docs-nav a:hover { color: var(--gs-color-text); border-left-color: var(--gs-color-border); }
+  .docs-nav a.active {
+    color: var(--gs-color-primary);
+    border-left-color: var(--gs-color-primary);
+    background: var(--gs-color-primary-soft);
+    border-radius: 0 var(--gs-radius-xs) var(--gs-radius-xs) 0;
+  }
 
   .section-title {
     margin-top: 0;

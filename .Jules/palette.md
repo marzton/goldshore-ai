@@ -15,3 +15,15 @@
 ## 2025-12-20 - Navigation State Consistency
 **Learning:** Visual active states (CSS classes) often lack the corresponding semantic `aria-current="page"` attribute, leaving screen reader users unaware of their current location. Also, "Index" pages often fail to highlight in navigation because of slug mismatches (undefined vs 'index').
 **Action:** Enforced pairing of visual active classes with `aria-current="page"` and ensured root pages pass explicit context to navigation components.
+## 2025-12-24 - Documentation Search UX
+**Learning:** Documentation search bars are high-frequency targets for power users. A simple visual hint (`⌘K`) combined with a global shortcut significantly reduces friction and aligns with industry standards (e.g., Algolia DocSearch, MDN).
+**Action:** Enhanced `DocsSearch.astro` with a `⌘K` keyboard shortcut, added visual hints using semantic `<kbd>` tags, and improved the "No results" state to reduce user frustration.
+## 2024-05-21 - Active Navigation State
+**Learning:** The documentation sidebar relied solely on text color to indicate the active page, failing WCAG 1.4.1 (Use of Color). Visual indicators must be redundant (color + shape/weight).
+**Action:** Implemented `aria-current="page"` for semantic indication and added a left border + font weight change to `DocsSidebar` links for robust visual accessibility.
+## 2025-12-24 - Nested Route Navigation
+**Learning:** Basic equality checks (`currentPath === link.href`) fail for nested application routes (e.g. `/admin/settings/security` vs `/admin/settings`), causing the parent nav item to lose its active state.
+**Action:** Implemented a robust `isActive` utility in Sidebar components that uses `startsWith` logic (with trailing slash normalization) to maintain context for users deep in a section.
+## 2026-01-02 - Semantic Sticky Navigation
+**Learning:** Sidebars in long documentation pages often lose context when scrolling. Sticky positioning combined with explicit `aria-current="page"` provides persistent context for both sighted and screen reader users.
+**Action:** Apply `position: sticky` and `aria-current` to all sidebar navigation components to improve wayfinding.

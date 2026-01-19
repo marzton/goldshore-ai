@@ -22,6 +22,49 @@ const { tabs = [] } = Astro.props;
   </div>
 </div>
 
+<script>
+  // Use event delegation or initialize tabs
+  function initTabs() {
+    document.querySelectorAll('.gs-tabs').forEach(container => {
+      const triggers = container.querySelectorAll('.gs-tab-trigger');
+      const panels = container.querySelectorAll('.gs-tab');
+
+      if (triggers.length === 0) return;
+
+      // Show first tab by default if none active
+      let activeId = triggers[0].getAttribute('data-target');
+
+      const setActive = (id: string | null) => {
+          if(!id) return;
+          // Toggle triggers
+          triggers.forEach(t => {
+              if(t.getAttribute('data-target') === id) {
+                  t.classList.add('active');
+              } else {
+                  t.classList.remove('active');
+              }
+          });
+          // Toggle panels
+          panels.forEach(p => {
+             if(p.id === id) {
+                 (p as HTMLElement).style.display = 'block';
+             } else {
+                 (p as HTMLElement).style.display = 'none';
+             }
+          });
+      };
+
+      // Bind clicks
+      triggers.forEach(t => {
+          t.addEventListener('click', (e) => {
+              const targetId = (e.currentTarget as HTMLElement).getAttribute('data-target');
+              setActive(targetId);
+          });
+      });
+
+      // Init
+      setActive(activeId);
+    });
 <script is:inline>
   window.showTab = function(event, id) {
     const container = event.target.closest('.gs-tabs');
@@ -36,9 +79,33 @@ const { tabs = [] } = Astro.props;
     const buttons = container.querySelectorAll('.gs-tabs-header button');
     buttons.forEach((btn) => btn.classList.toggle('active', btn === event.target));
   }
+
+  // Run on load and after Astro swaps (if using ViewTransitions)
+  initTabs();
+  document.addEventListener('astro:page-load', initTabs);
 </script>
 <style>
-  .gs-tab { display: none; }
-  .gs-tab.is-active { display: block; }
-  .gs-tabs-header button.active { background: var(--gs-accent-soft); color: var(--gs-accent-strong); }
+  .gs-tabs-header {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border, #333);
+  }
+  .gs-tab-trigger {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.5rem 1rem;
+    color: var(--color-text-secondary, #888);
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+  }
+  .gs-tab-trigger:hover {
+      color: var(--color-text-primary, #fff);
+  }
+  .gs-tab-trigger.active {
+      color: var(--color-utility-orange, #f59e0b);
+      border-bottom-color: var(--color-utility-orange, #f59e0b);
+  }
 </style>
