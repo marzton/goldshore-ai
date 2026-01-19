@@ -1,97 +1,79 @@
 ---
-let q = '';
-let results = [];
-
-// Note: In a real implementation, this would likely be a client-side component or use a framework specific way to handle state.
-// Since this is an Astro component, the script below handles the client-side logic.
 ---
-
-<div class="search-box">
-  <input
-    type="search"
-    placeholder="Search docs…"
-    id="docs-search-input"
-  />
-
-  <div id="results">
-  </div>
+<div class="search-wrap">
+  <input type="search" id="ds-input" placeholder="Search docs..." aria-label="Search docs" autocomplete="off" />
+  <ul id="ds-results" hidden></ul>
 </div>
 
 <script>
-  const input = document.getElementById('docs-search-input');
-  const resultsDiv = document.getElementById('results');
+  const inp = document.getElementById('ds-input') as HTMLInputElement;
+  const list = document.getElementById('ds-results');
+  let t;
+  let ctrl;
 
-  // Optimization: Debounce function to prevent API calls on every keystroke
-  function debounce(func, wait) {
-    let timeout;
-    return function(...args) {
-      const context = this;
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(context, args), wait);
-    };
-  }
+  inp?.addEventListener('input', () => {
+    clearTimeout(t);
+    // @ts-ignore
+    t = setTimeout(async () => {
+      const q = inp.value.trim();
+      if (!q) { list.hidden = true; return; }
 
-  let searchController;
+      if (ctrl) ctrl.abort();
+      ctrl = new AbortController();
 
-  async function runSearch(query) {
-    // Abort previous request if it exists
-    if (searchController) {
-      searchController.abort();
-    }
-    searchController = new AbortController();
-    const signal = searchController.signal;
+      try {
+        const res = await fetch(`/api/docs-search?q=${encodeURIComponent(q)}`, { signal: ctrl.signal });
+        if (!res.ok) return;
+        const items = await res.json();
 
-    if (!query.trim()) {
-      if(resultsDiv) resultsDiv.textContent = '';
-      return;
-    }
-
-    try {
-      const res = await fetch('/api/docs-search?q=' + encodeURIComponent(query), { signal });
-      if (!res.ok) {
-        if (resultsDiv) resultsDiv.textContent = '';
-        console.error(`Search request failed with status ${res.status}: ${res.statusText}`);
-        return;
+        list.innerHTML = '';
+        if (items.length) {
+            items.forEach(i => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = i.url;
+                a.textContent = i.title;
+                li.appendChild(a);
+                list.appendChild(li);
+            });
+        } else {
+            const li = document.createElement('li');
+            li.className = 'no-res';
+            li.textContent = 'No results';
+            list.appendChild(li);
+        }
+        list.hidden = false;
+      } catch (e) {
+        if (e.name !== 'AbortError') console.error(e);
       }
-      const results = await res.json();
-
-      if (resultsDiv) {
-        resultsDiv.textContent = ''; // Clear previous results
-
-        results.forEach((r) => {
-            const a = document.createElement('a');
-            // Sentinel: Basic protection against javascript: URIs
-            if (r.url && !r.url.trim().toLowerCase().startsWith('javascript:')) {
-                a.href = r.url;
-            } else {
-                a.href = '#';
-                console.warn('Blocked potentially unsafe URL in search results');
-            }
-            a.textContent = r.title; // Sentinel: Prevent XSS by using textContent instead of innerHTML
-            resultsDiv.appendChild(a);
-        });
-      }
-    } catch (e) {
-      if (e.name === 'AbortError') return; // Ignore aborted requests
-      if (resultsDiv) {
-        resultsDiv.textContent = '';
-        const err = document.createElement('div');
-        err.className = 'search-error';
-        err.style.color = 'red';
-        err.style.marginTop = '0.5em';
-        err.textContent = 'Sorry, search failed. Please try again.';
-        resultsDiv.appendChild(err);
-      }
-      console.error("Search failed", e);
-    }
-  }
-
-  if (input) {
-    // Wait 300ms after user stops typing before searching
-    const debouncedSearch = debounce((e) => {
-      runSearch((e.target as HTMLInputElement).value);
     }, 300);
+  });
 
-    input.addEventListener('input', debouncedSearch);
-  }
+  document.addEventListener('click', (e) => {
+    // @ts-ignore
+    if (!inp.contains(e.target) && !list.contains(e.target)) list.hidden = true;
+  });
 </script>
+
+<style>
+  .search-wrap { position: relative; margin-bottom: 1rem; }
+  input {
+    width: 100%; padding: 0.5rem 0.75rem; border-radius: var(--gs-radius-sm);
+    border: 1px solid var(--gs-color-border);
+    background: var(--gs-color-surface);
+    color: var(--gs-color-text);
+    font-size: 0.875rem;
+  }
+  input:focus { outline: 2px solid var(--gs-accent); border-color: transparent; }
+  ul {
+    position: absolute; width: 100%; margin-top: 4px; padding: 0;
+    background: var(--gs-color-surface); border: 1px solid var(--gs-color-border);
+    border-radius: var(--gs-radius-sm); list-style: none; z-index: 50;
+    box-shadow: var(--gs-shadow-lg);
+    max-height: 200px; overflow-y: auto;
+  }
+  /* Global styles for dynamic elements */
+  :global(#ds-results li a) { display: block; padding: 0.5rem 0.75rem; color: var(--gs-color-text); text-decoration: none; font-size: 0.875rem; }
+  :global(#ds-results li a:hover) { background: var(--gs-color-muted-surface); color: var(--gs-accent); }
+  :global(#ds-results .no-res) { padding: 0.5rem 0.75rem; color: var(--gs-color-subtle); font-size: 0.875rem; }
+</style>
