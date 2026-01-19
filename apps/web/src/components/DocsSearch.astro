@@ -1,40 +1,225 @@
 ---
-let q = '';
-let results = [];
-
+// apps/web/src/components/DocsSearch.astro
 // Note: In a real implementation, this would likely be a client-side component or use a framework specific way to handle state.
 // Since this is an Astro component, the script below handles the client-side logic.
 ---
 
-<div class="search-box">
-  <input
-    type="search"
-    placeholder="Search docs…"
-    id="docs-search-input"
-  />
-
-  <div id="results">
+<form class="search-box" role="search" onsubmit="return false;">
+  <label for="docs-search-input" class="visually-hidden">Search documentation</label>
+  <div class="search-input-wrapper">
+    <input
+      type="search"
+      id="docs-search-input"
+      placeholder="Search docs..."
+      aria-label="Search documentation"
+      aria-controls="search-results-list"
+      aria-autocomplete="list"
+      aria-expanded="false"
+      autocomplete="off"
+    />
+    <div id="search-loader" class="search-loader hidden" aria-hidden="true"></div>
   </div>
-</div>
+
+  <div id="search-status" class="visually-hidden" role="status" aria-live="polite"></div>
+
+  <ul id="search-results-list" class="search-results hidden" role="listbox"></ul>
+</form>
+
+<style>
+  .search-box {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  /* Visually Hidden Utility */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  #docs-search-input {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    padding-right: 2.5rem; /* Space for loader */
+    border: 1px solid var(--gs-color-border, #ccc);
+    border-radius: var(--gs-radius-sm, 4px);
+    background: var(--gs-color-surface, #fff);
+    color: var(--gs-color-text, #000);
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  #docs-search-input:focus {
+    outline: none;
+    border-color: var(--gs-accent, #0070f3);
+    box-shadow: 0 0 0 3px var(--gs-accent-soft, rgba(0, 112, 243, 0.2));
+  }
+
+  .search-loader {
+    position: absolute;
+    right: 0.75rem;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--gs-color-subtle, #888);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    pointer-events: none;
+  }
+
+  .search-loader.hidden {
+    display: none;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 0.5rem;
+    padding: 0;
+    list-style: none;
+    background: var(--gs-color-surface, #fff);
+    border: 1px solid var(--gs-color-border, #ccc);
+    border-radius: var(--gs-radius-sm, 4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 50;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .search-results.hidden {
+    display: none;
+  }
+
+  .search-results:empty {
+    display: none;
+  }
+</style>
+<style is:global>
+  .search-result-item {
+    margin: 0;
+    padding: 0;
+  }
+
+  .search-result-item a {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: var(--gs-color-text, #000);
+    text-decoration: none;
+    border-bottom: 1px solid var(--gs-color-border, #eee);
+    font-size: 0.95rem;
+  }
+
+  .search-result-item:last-child a {
+    border-bottom: none;
+  }
+
+  .search-result-item a:hover,
+  .search-result-item a:focus {
+    background-color: var(--gs-color-muted-surface, #f5f5f5);
+    outline: none;
+    color: var(--gs-accent, #0070f3);
+  }
+
+  .search-result-item a[aria-selected="true"] {
+     background-color: var(--gs-color-muted-surface, #f5f5f5);
+     color: var(--gs-accent, #0070f3);
+     position: relative;
+  }
+
+  .search-result-item a[aria-selected="true"]::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: var(--gs-accent, #0070f3);
+  }
+
+  .search-message {
+    padding: 0.75rem 1rem;
+    color: var(--gs-color-subtle, #666);
+    font-style: italic;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .search-error-msg {
+    color: var(--gs-danger, red);
+  }
+</style>
 
 <script>
+  interface SearchResult {
+    title: string;
+    url: string;
+  }
+
+  const input = document.getElementById('docs-search-input') as HTMLInputElement | null;
+  const resultsList = document.getElementById('search-results-list');
+  const loader = document.getElementById('search-loader');
+  const status = document.getElementById('search-status');
+
+<script lang="ts">
   const input = document.getElementById('docs-search-input');
   const resultsDiv = document.getElementById('results');
 
   // Optimization: Debounce function to prevent API calls on every keystroke
-  function debounce(func, wait) {
-    let timeout;
-    return function(...args) {
+  function debounce(func: Function, wait: number) {
+    let timeout: ReturnType<typeof setTimeout>;
+    return function(this: any, ...args: any[]) {
       const context = this;
       clearTimeout(timeout);
       timeout = setTimeout(() => func.apply(context, args), wait);
     };
   }
 
-  let searchController;
+  function showLoader(show: boolean) {
+    if (loader) {
+      if (show) loader.classList.remove('hidden');
+      else loader.classList.add('hidden');
+    }
+  }
 
-  async function runSearch(query) {
-    // Abort previous request if it exists
+  function showResults(show: boolean) {
+    if (resultsList && input) {
+      if (show) {
+        resultsList.classList.remove('hidden');
+        input.setAttribute('aria-expanded', 'true');
+      } else {
+        resultsList.classList.add('hidden');
+        input.setAttribute('aria-expanded', 'false');
+      }
+    }
+  }
+
+  function updateStatus(message: string) {
+    if (status) status.textContent = message;
+  }
+
+  let searchController: AbortController | null = null;
+
+  async function runSearch(query: string) {
     if (searchController) {
       searchController.abort();
     }
@@ -42,36 +227,91 @@ let results = [];
     const signal = searchController.signal;
 
     if (!query.trim()) {
-      if(resultsDiv) resultsDiv.textContent = '';
+      if(resultsList) resultsList.innerHTML = '';
+      showResults(false);
+      updateStatus('');
       return;
     }
 
+    showLoader(true);
+    updateStatus('Searching...');
+
     try {
       const res = await fetch('/api/docs-search?q=' + encodeURIComponent(query), { signal });
+
       if (!res.ok) {
-        if (resultsDiv) resultsDiv.textContent = '';
-        console.error(`Search request failed with status ${res.status}: ${res.statusText}`);
-        return;
+        throw new Error(`Status ${res.status}`);
       }
-      const results = await res.json();
 
-      if (resultsDiv) {
-        resultsDiv.textContent = ''; // Clear previous results
+      const results = await res.json() as SearchResult[];
+      showLoader(false);
 
-        results.forEach((r) => {
+      if (resultsList) {
+        resultsList.innerHTML = ''; // Clear previous results
+
+        if (results.length === 0) {
+            const li = document.createElement('li');
+            li.className = 'search-message';
+            li.textContent = 'No results found.';
+            resultsList.appendChild(li);
+            updateStatus('No results found.');
+            showResults(true);
+            return;
+        }
+
+        updateStatus(`Found ${results.length} results.`);
+
+        results.forEach((r: SearchResult, index: number) => {
+            const li = document.createElement('li');
+            li.className = 'search-result-item';
+            li.role = 'option';
+
             const a = document.createElement('a');
+            a.id = `search-result-${index}`;
             // Sentinel: Basic protection against javascript: URIs
             if (r.url && !r.url.trim().toLowerCase().startsWith('javascript:')) {
+        results.forEach((r: any) => {
+            const a = document.createElement('a');
+
+            // Sentinel: Stronger protection (Allowlist)
+            // Only allow http, https, mailto protocols.
+            // Relative paths resolve to the current origin (http/https), so they pass.
+            const isSafeUrl = (url: string) => {
+                try {
+                    const parsed = new URL(url, window.location.origin);
+                    return ['http:', 'https:', 'mailto:'].includes(parsed.protocol);
+                } catch (e) {
+                    return false;
+                }
+            };
+
+            if (r.url && isSafeUrl(r.url)) {
                 a.href = r.url;
             } else {
                 a.href = '#';
                 console.warn('Blocked potentially unsafe URL in search results');
             }
-            a.textContent = r.title; // Sentinel: Prevent XSS by using textContent instead of innerHTML
-            resultsDiv.appendChild(a);
+            a.textContent = r.title; // Sentinel: Prevent XSS
+            a.tabIndex = -1; // Manage focus manually with arrows
+
+            li.appendChild(a);
+            resultsList.appendChild(li);
         });
+
+        showResults(true);
       }
-    } catch (e) {
+    } catch (e: unknown) {
+      if (e instanceof Error && e.name === 'AbortError') return;
+      showLoader(false);
+      if (resultsList) {
+        resultsList.innerHTML = '';
+        const li = document.createElement('li');
+        li.className = 'search-message search-error-msg';
+        li.textContent = 'Search failed. Please try again.';
+        resultsList.appendChild(li);
+        showResults(true);
+        updateStatus('Search failed.');
+    } catch (e: any) {
       if (e.name === 'AbortError') return; // Ignore aborted requests
       if (resultsDiv) {
         resultsDiv.textContent = '';
@@ -88,10 +328,61 @@ let results = [];
 
   if (input) {
     // Wait 300ms after user stops typing before searching
-    const debouncedSearch = debounce((e) => {
+    const debouncedSearch = debounce((e: Event) => {
       runSearch((e.target as HTMLInputElement).value);
     }, 300);
 
-    input.addEventListener('input', debouncedSearch);
+    input.addEventListener('input', debouncedSearch as EventListener);
+
+    // Keyboard navigation
+    input.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (!resultsList || resultsList.classList.contains('hidden')) return;
+
+      const items = resultsList.querySelectorAll('a');
+      if (items.length === 0) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        (items[0] as HTMLElement).focus();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        showResults(false);
+        input.value = '';
+        updateStatus('Search cleared.');
+      }
+    });
+
+    // Close on click outside
+    document.addEventListener('click', (e: MouseEvent) => {
+        if (!input.contains(e.target as Node) && !resultsList?.contains(e.target as Node)) {
+            showResults(false);
+        }
+    });
+  }
+
+  if (resultsList) {
+    resultsList.addEventListener('keydown', (e: KeyboardEvent) => {
+        const items = Array.from(resultsList.querySelectorAll('a'));
+        const activeElement = document.activeElement as HTMLElement;
+        const index = items.indexOf(activeElement as HTMLAnchorElement);
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (index < items.length - 1) {
+                (items[index + 1] as HTMLElement).focus();
+            }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (index > 0) {
+                (items[index - 1] as HTMLElement).focus();
+            } else {
+                input?.focus();
+            }
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            showResults(false);
+            input?.focus();
+        }
+    });
   }
 </script>
