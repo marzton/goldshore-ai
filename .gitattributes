@@ -1,0 +1,2 @@
+# Prefer branch lockfile to avoid manual conflict resolution; regenerate as needed.
+pnpm-lock.yaml merge=ours
