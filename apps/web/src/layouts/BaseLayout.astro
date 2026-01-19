@@ -1,4 +1,99 @@
 ---
+import '@goldshore/theme/tokens';
+const { title = "GoldShore Labs" } = Astro.props;
+const description = "GoldShore Labs - AI-powered infrastructure for trading, automation, and applied intelligence.";
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content={description}>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <style>
+        /* Accessible skip link */
+        .skip-to-content {
+            position: absolute;
+            top: -9999px;
+            left: 0;
+            background: var(--gs-brand-blue);
+            color: white;
+            padding: 0.5rem 1rem;
+            z-index: 100;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 0 0 8px 0;
+            transition: top 0.2s;
+        }
+        .skip-to-content:focus {
+            top: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <a href="#main-content" class="skip-to-content">Skip to content</a>
+
+    <header class="w-full sticky top-0 z-10 p-4 border-b gs-header">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/" class="text-2xl gs-heading gs-brand-text">GoldShore</a>
+            <nav class="flex space-x-6 text-sm">
+                <a href="/about" class="gs-nav-link">About</a>
+                <a href="/app/dashboard" class="gs-nav-link">Portal</a>
+                <a href="/admin/overview" class="gs-nav-link">Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content" class="flex-grow">
+        <slot />
+    </main>
+
+    <footer class="w-full mt-16 p-6 border-t gs-footer">
+        <p class="text-center text-xs gs-footer-text">© 2025 GoldShore Labs. Engineered with precision.</p>
+    </footer>
+
+    <style>
+        /* Refactored inline styles to CSS */
+        .gs-header {
+            background-color: var(--gs-surface);
+            border-color: var(--gs-border);
+        }
+        .gs-brand-text {
+            color: var(--gs-brand-gold);
+        }
+        .gs-nav-link {
+            color: var(--gs-text-secondary);
+            transition: color 0.2s;
+        }
+        .gs-nav-link:hover {
+            color: var(--gs-text-primary);
+        }
+        .gs-footer {
+            background-color: var(--gs-surface);
+            border-color: var(--gs-border);
+        }
+        .gs-footer-text {
+            color: var(--gs-text-secondary);
+        }
+    </style>
+</body>
+</html>
+
+<style is:global>
+    body {
+        background-color: var(--gs-bg);
+        color: var(--gs-text-primary);
+        font-family: var(--gs-font-body);
+    }
+
+    /* Ensure sticky footer if content is short */
+    .gs-layout-wrapper {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+</style>
 import WebLayout from './WebLayout.astro';
 
 const { title, description } = Astro.props;

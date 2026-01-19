@@ -1,4 +1,24 @@
 ---
+import ApiSchema from './ApiSchema.astro';
+import TryItConsole from './TryItConsole.astro';
+
+const { openapi, endpointId, endpoint } = Astro.props;
+
+// Support both props for compatibility
+const targetEndpoint = endpointId || endpoint;
+// If endpoint is passed as relative path e.g. "users", we might need to find /users or /api/v1/users
+// But based on previous file, it seems it expects endpointId to be the key in openapi.paths stripped of leading slash?
+
+// Let's look for a match
+const match = Object.entries(openapi.paths || {})
+  .find(([p]) => p.replace(/^\//,'') === targetEndpoint || p === targetEndpoint || p === '/' + targetEndpoint);
+
+// If no match, and we are just rendering a placeholder (previous implementation had simple dump)
+// But we want to fix the build error which is duplicate code block.
+
+const [path, ops] = match || [targetEndpoint, null];
+
+const methods = ['get','post','put','delete','patch'];
 // Consolidated ApiEndpoint.astro
 import ApiSchema from './ApiSchema.astro';
 import TryItConsole from './TryItConsole.astro';
@@ -14,6 +34,7 @@ const methods = ['get', 'post', 'put', 'delete', 'patch'];
 
 ---
 
+{match ? (
 <section class="api-endpoint">
   <h2>{pathKey}</h2>
   {pathItem ? (
@@ -54,8 +75,15 @@ const methods = ['get', 'post', 'put', 'delete', 'patch'];
     <p>Endpoint not found: {endpoint}</p>
   )}
 </section>
+) : (
+<div class="endpoint">
+  <h2>{targetEndpoint}</h2>
+  <p>Endpoint not found.</p>
+</div>
+)}
 
 <style>
+  .endpoint { padding: 2rem; }
   .api-endpoint {
     padding: var(--space-4);
   }
