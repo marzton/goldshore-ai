@@ -27,21 +27,8 @@ const isActive = (href: string) => {
 };
 ---
 <aside class="gs-admin-sidebar" aria-label="Admin navigation">
-  <a class="gs-logo" href="/admin/overview">
-    {logo ? <img src={logo} alt="GoldShore logo" width="32" height="32" /> : <span aria-hidden="true">◆</span>}
   <a class="gs-logo" href="/admin">
-    {logo ? (
-      <img
-        src={logo}
-        alt="GoldShore logo"
-        width="32"
-        height="32"
-        loading="eager"
-        fetchpriority="high"
-      />
-    ) : (
-      <span aria-hidden="true">◆</span>
-    )}
+    {logo ? <img src={logo} alt="GoldShore logo" width="32" height="32" fetchpriority="high" loading="eager" /> : <span aria-hidden="true">◆</span>}
     <span>GoldShore</span>
   </a>
   <nav class="gs-sidebar-links">
