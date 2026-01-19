@@ -7,11 +7,16 @@ let results = [];
 ---
 
 <div class="search-box">
-  <input
-    type="search"
-    placeholder="Search docs…"
-    id="docs-search-input"
-  />
+  <div class="search-input-wrapper">
+    <input
+      type="search"
+      placeholder="Search docs…"
+      id="docs-search-input"
+      aria-keyshortcuts="Meta+K"
+      aria-label="Search documentation"
+    />
+    <kbd class="search-shortcut" aria-hidden="true">⌘K</kbd>
+  </div>
 
   <div id="results">
   </div>
@@ -58,7 +63,25 @@ let results = [];
       if (resultsDiv) {
         resultsDiv.textContent = ''; // Clear previous results
 
+        if (results.length === 0) {
+           const empty = document.createElement('div');
+           empty.className = 'search-empty';
+           empty.textContent = 'No results found.';
+           empty.style.padding = '0.5rem';
+           empty.style.color = 'var(--gs-color-subtle, #64748b)';
+           empty.style.fontSize = '0.875rem';
+           resultsDiv.appendChild(empty);
+           return;
+        }
+
+        const list = document.createElement('ul');
+        list.className = 'search-results-list';
+        list.style.listStyle = 'none';
+        list.style.padding = '0';
+        list.style.margin = '0';
+
         results.forEach((r) => {
+            const li = document.createElement('li');
             const a = document.createElement('a');
             // Sentinel: Basic protection against javascript: URIs
             if (r.url && !r.url.trim().toLowerCase().startsWith('javascript:')) {
@@ -68,8 +91,11 @@ let results = [];
                 console.warn('Blocked potentially unsafe URL in search results');
             }
             a.textContent = r.title; // Sentinel: Prevent XSS by using textContent instead of innerHTML
-            resultsDiv.appendChild(a);
+            a.className = 'search-result-link';
+            li.appendChild(a);
+            list.appendChild(li);
         });
+        resultsDiv.appendChild(list);
       }
     } catch (e) {
       if (e.name === 'AbortError') return; // Ignore aborted requests
@@ -77,7 +103,7 @@ let results = [];
         resultsDiv.textContent = '';
         const err = document.createElement('div');
         err.className = 'search-error';
-        err.style.color = 'red';
+        err.style.color = 'var(--gs-error, #ef4444)';
         err.style.marginTop = '0.5em';
         err.textContent = 'Sorry, search failed. Please try again.';
         resultsDiv.appendChild(err);
@@ -94,4 +120,91 @@ let results = [];
 
     input.addEventListener('input', debouncedSearch);
   }
+
+  // Palette: Add keyboard shortcut for search
+  console.log('DocsSearch: script loaded');
+  document.addEventListener('keydown', (e) => {
+    // console.log('Key pressed:', e.key, 'Meta:', e.metaKey, 'Ctrl:', e.ctrlKey);
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      console.log('DocsSearch: Shortcut triggered');
+      e.preventDefault();
+      const searchInput = document.getElementById('docs-search-input');
+      if (searchInput) {
+        searchInput.focus();
+        console.log('DocsSearch: Input focused');
+      } else {
+        console.error('DocsSearch: Input not found');
+      }
+    }
+  });
 </script>
+
+<style>
+  .search-box {
+    margin-bottom: 1.5rem;
+  }
+
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  input[type="search"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    padding-right: 3.5rem; /* Space for the shortcut */
+    border: 1px solid var(--gs-color-border, #e2e8f0);
+    border-radius: var(--gs-radius-sm, 0.375rem);
+    background: var(--gs-color-surface, #fff);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+  }
+
+  input[type="search"]:focus {
+    outline: none;
+    border-color: var(--gs-primary, #0f172a);
+    box-shadow: 0 0 0 2px var(--gs-primary-alpha, rgba(15, 23, 42, 0.1));
+  }
+
+  .search-shortcut {
+    position: absolute;
+    right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.5rem;
+    padding: 0 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gs-color-subtle, #94a3b8);
+    background: var(--gs-color-bg, #f8fafc);
+    border: 1px solid var(--gs-color-border, #e2e8f0);
+    border-radius: 4px;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  :global(.dark) .search-shortcut {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  #results {
+    margin-top: 0.5rem;
+  }
+
+  :global(.search-result-link) {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    text-decoration: none;
+    color: var(--gs-color-text, #334155);
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+
+  :global(.search-result-link:hover) {
+    background: var(--gs-color-bg-hover, #f1f5f9);
+    color: var(--gs-primary, #0f172a);
+  }
+</style>
