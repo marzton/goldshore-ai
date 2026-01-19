@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { secureHeaders } from "hono/secure-headers";
 import * as DNS from "./libs/dns";
 import * as Workers from "./libs/workers";
 import * as Pages from "./libs/pages";
@@ -8,6 +9,9 @@ import { syncDNS } from "./tasks/syncDNS";
 import { rotateKeys } from "./tasks/rotateKeys";
 
 const app = new Hono<{ Bindings: ControlEnv }>();
+
+// Sentinel: Add security headers
+app.use('*', secureHeaders());
 
 app.get("/", (c) => c.json({ service: "gs-control", ok: true }));
 
