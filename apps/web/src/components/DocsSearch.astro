@@ -1,335 +1,93 @@
 ---
-// apps/web/src/components/DocsSearch.astro
+// DocsSearch.astro: Accessible and Safe implementation
 ---
 
-<div class="search-box" role="search">
-  <input
-    type="search"
-    placeholder="Search docs…"
-    id="docs-search-input"
-    aria-label="Search documentation"
-    aria-controls="docs-search-results"
-    aria-expanded="false"
-  />
-  <div
-    id="docs-search-status"
-    class="sr-only"
-    aria-live="polite"
-    aria-atomic="true"
-  ></div>
-
-  <ul id="docs-search-results" class="search-results" aria-label="Search results">
-  </ul>
+<div class="search-wrapper">
+  <label for="docs-search-input" class="sr-only">Search</label>
+  <input type="search" id="docs-search-input" placeholder="Search docs..." aria-controls="results" aria-expanded="false" />
+  <ul id="results" role="list" aria-live="polite"></ul>
 </div>
 
 <style>
-  .search-box { position: relative; width: 100%; }
-  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
-  .search-status { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 0.85rem; color: var(--gs-color-subtle); pointer-events: none; }
-  .search-results { position: absolute; top: 100%; left: 0; width: 100%; background: var(--gs-color-surface); border: 1px solid var(--gs-color-border); border-radius: var(--gs-radius-sm); margin: 0.5rem 0 0 0; padding: 0; list-style: none; max-height: 300px; overflow-y: auto; z-index: 50; display: none; box-shadow: var(--gs-shadow-soft); }
-  .search-results:not(:empty) { display: block; padding: 0.5rem 0; }
-  :global(.search-results a) { display: block; padding: 0.5rem 1rem; color: var(--gs-color-text); text-decoration: none; transition: background 0.1s; }
-  :global(.search-results a:hover), :global(.search-results a:focus) { background: var(--gs-color-muted-surface); color: var(--gs-accent); outline: none; }
-  :global(.search-results .search-error) { padding: 0.5rem 1rem; color: var(--gs-danger); font-size: 0.9rem; }
+  .search-wrapper { position: relative; width: 100%; }
+  input { width: 100%; padding: 0.5rem; border: 1px solid var(--gs-color-border); border-radius: 4px; background: var(--gs-color-bg-surface); color: var(--gs-color-text); }
+  input:focus { outline: 2px solid var(--gs-color-primary); border-color: transparent; }
+  #results { position: absolute; top: 100%; left: 0; right: 0; background: var(--gs-color-bg-surface); border: 1px solid var(--gs-color-border); list-style: none; padding: 0; margin-top: 4px; display: none; z-index: 50; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 4px; max-height: 300px; overflow-y: auto; }
+  #results:not(:empty) { display: block; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+  /* Dynamic content styling */
+  :global(#results li) { padding: 0.25rem 0; }
+  :global(#results a) { display: block; padding: 0.5rem; text-decoration: none; color: var(--gs-color-text); }
+  :global(#results a:hover), :global(#results a:focus) { background: var(--gs-color-bg-subtle); outline: none; }
+  :global(#results .message) { padding: 0.5rem; color: var(--gs-color-subtle); }
+  :global(#results .error) { color: #ef4444; }
 </style>
 
 <script>
-  const input = document.getElementById('docs-search-input') as HTMLInputElement;
-  const list = document.getElementById('results');
-  const status = document.getElementById('search-status');
-  let ctrl;
-
-  function setLoad(loading) {
-    if (status) status.textContent = loading ? 'Searching...' : '';
-    if (input) input.setAttribute('aria-busy', String(loading));
-  }
-
-  async function search(q) {
-    if (ctrl) ctrl.abort();
-    if (!q.trim()) { if(list) list.textContent = ''; setLoad(false); return; }
-
-    ctrl = new AbortController();
-    setLoad(true);
-    try {
-      const res = await fetch('/api/docs-search?q=' + encodeURIComponent(q), { signal: ctrl.signal });
-      const data = await res.json();
-      setLoad(false);
-      if (list) {
-        list.textContent = '';
-        if (data.length === 0) {
-           const li = document.createElement('li');
-           li.innerHTML = '<div class="search-error" style="color:var(--gs-color-subtle)">No results found.</div>';
-           list.appendChild(li);
-        } else {
-            data.forEach(r => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = r.url && !r.url.startsWith('javascript:') ? r.url : '#';
-                a.textContent = r.title;
-                li.appendChild(a);
-                list.appendChild(li);
-            });
-        }
-        if (input) input.setAttribute('aria-expanded', 'true');
-      }
-    } catch (e) {
-      if (e.name === 'AbortError') return;
-      setLoad(false);
-      if (list) list.innerHTML = '<li><div class="search-error">Search failed.</div></li>';
-  interface SearchResult {
-    title: string;
-    url: string;
-  }
-
   const input = document.getElementById('docs-search-input') as HTMLInputElement | null;
-  const resultsList = document.getElementById('search-results-list');
-  const loader = document.getElementById('search-loader');
-  const status = document.getElementById('search-status');
+  const list = document.getElementById('results');
+  let timer: ReturnType<typeof setTimeout>;
+  let controller: AbortController | null = null;
 
-<script lang="ts">
-  const input = document.getElementById('docs-search-input');
-  const resultsList = document.getElementById('docs-search-results');
-  const statusRegion = document.getElementById('docs-search-status');
-
-  // Optimization: Debounce function to prevent API calls on every keystroke
-  function debounce(func: Function, wait: number) {
-    let timeout: ReturnType<typeof setTimeout>;
-    return function(this: any, ...args: any[]) {
-      const context = this;
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(context, args), wait);
-    };
-  }
-
-  function updateStatus(message) {
-    if (statusRegion) statusRegion.textContent = message;
-  }
-
-  let searchController;
-  function showLoader(show: boolean) {
-    if (loader) {
-      if (show) loader.classList.remove('hidden');
-      else loader.classList.add('hidden');
-    }
-  }
-
-  function showResults(show: boolean) {
-    if (resultsList && input) {
-      if (show) {
-        resultsList.classList.remove('hidden');
-        input.setAttribute('aria-expanded', 'true');
-      } else {
-        resultsList.classList.add('hidden');
-        input.setAttribute('aria-expanded', 'false');
-      }
-    }
-  }
-
-  function updateStatus(message: string) {
-    if (status) status.textContent = message;
-  }
-
-  let searchController: AbortController | null = null;
-
-  async function runSearch(query: string) {
-    if (searchController) {
-      searchController.abort();
-    }
-    searchController = new AbortController();
-    const signal = searchController.signal;
-
-    if (!query.trim()) {
-      if(resultsList) resultsList.innerHTML = '';
-      if(input) input.setAttribute('aria-expanded', 'false');
-      showResults(false);
-      updateStatus('');
-      return;
-    }
-
-    // Show loading state
-    if (resultsList) {
-       // Keep old results or show specific loading UI if preferred
-       // For now, let's just use the status region for screen readers
-       updateStatus('Searching...');
-       input?.setAttribute('aria-busy', 'true');
-    }
-    showLoader(true);
-    updateStatus('Searching...');
-
-    try {
-      const res = await fetch('/api/docs-search?q=' + encodeURIComponent(query), { signal });
-
-      if (!res.ok) {
-        if (resultsList) resultsList.innerHTML = '';
-        input?.setAttribute('aria-expanded', 'false');
-        console.error(`Search request failed with status ${res.status}: ${res.statusText}`);
-        updateStatus('Search failed. Please try again.');
-        input?.removeAttribute('aria-busy');
-        return;
-      }
-      const results = await res.json();
-      input?.removeAttribute('aria-busy');
-
-      if (resultsList) {
-        resultsList.innerHTML = ''; // Clear previous results
-
-        if (results.length === 0) {
-            const li = document.createElement('li');
-            li.textContent = 'No results found.';
-            li.style.padding = '0.5em 0';
-            resultsList.appendChild(li);
-            updateStatus('No results found.');
-            input?.setAttribute('aria-expanded', 'true');
-        } else {
-            results.forEach((r) => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                // Sentinel: Basic protection against javascript: URIs
-                if (r.url && !r.url.trim().toLowerCase().startsWith('javascript:')) {
-                    a.href = r.url;
-                } else {
-                    a.href = '#';
-                    console.warn('Blocked potentially unsafe URL in search results');
-                }
-                a.textContent = r.title; // Sentinel: Prevent XSS by using textContent instead of innerHTML
-                a.style.display = 'block'; // Ensure hit area is good
-                a.style.padding = '0.25em 0'; // Add some breathing room
-                li.appendChild(a);
-                resultsList.appendChild(li);
-            });
-            updateStatus(`${results.length} results found.`);
-            input?.setAttribute('aria-expanded', 'true');
-        }
-        throw new Error(`Status ${res.status}`);
-      }
-
-      const results = await res.json() as SearchResult[];
-      showLoader(false);
-
-      if (resultsList) {
-        resultsList.innerHTML = ''; // Clear previous results
-
-        if (results.length === 0) {
-            const li = document.createElement('li');
-            li.className = 'search-message';
-            li.textContent = 'No results found.';
-            resultsList.appendChild(li);
-            updateStatus('No results found.');
-            showResults(true);
-            return;
-        }
-
-        updateStatus(`Found ${results.length} results.`);
-
-        results.forEach((r: SearchResult, index: number) => {
-            const li = document.createElement('li');
-            li.className = 'search-result-item';
-            li.role = 'option';
-
-            const a = document.createElement('a');
-            a.id = `search-result-${index}`;
-            // Sentinel: Basic protection against javascript: URIs
-            if (r.url && !r.url.trim().toLowerCase().startsWith('javascript:')) {
-        results.forEach((r: any) => {
-            const a = document.createElement('a');
-
-            // Sentinel: Stronger protection (Allowlist)
-            // Only allow http, https, mailto protocols.
-            // Relative paths resolve to the current origin (http/https), so they pass.
-            const isSafeUrl = (url: string) => {
-                try {
-                    const parsed = new URL(url, window.location.origin);
-                    return ['http:', 'https:', 'mailto:'].includes(parsed.protocol);
-                } catch (e) {
-                    return false;
-                }
-            };
-
-            if (r.url && isSafeUrl(r.url)) {
-                a.href = r.url;
-            } else {
-                a.href = '#';
-                console.warn('Blocked potentially unsafe URL in search results');
-            }
-            a.textContent = r.title; // Sentinel: Prevent XSS
-            a.tabIndex = -1; // Manage focus manually with arrows
-
-            li.appendChild(a);
-            resultsList.appendChild(li);
-        });
-
-        showResults(true);
-      }
-    } catch (e: unknown) {
-      if (e instanceof Error && e.name === 'AbortError') return;
-      showLoader(false);
-      if (resultsList) {
-        resultsList.innerHTML = '';
-        const li = document.createElement('li');
-        li.className = 'search-message search-error-msg';
-        li.textContent = 'Search failed. Please try again.';
-        resultsList.appendChild(li);
-        showResults(true);
-        updateStatus('Search failed.');
-    } catch (e: any) {
-      if (e.name === 'AbortError') return; // Ignore aborted requests
-      input?.removeAttribute('aria-busy');
-      if (resultsList) {
-        resultsList.innerHTML = '';
-        const li = document.createElement('li');
-        li.className = 'search-error';
-        li.style.color = 'red';
-        li.style.marginTop = '0.5em';
-        li.textContent = 'Sorry, search failed. Please try again.';
-        resultsList.appendChild(li);
-      }
-      updateStatus('Search error.');
-      console.error("Search failed", e);
-    }
-  }
-
-  if (input) {
-    let t;
+  if (input && list) {
     input.addEventListener('input', (e) => {
-      clearTimeout(t);
-      t = setTimeout(() => search((e.target as HTMLInputElement).value), 300);
-    });
-    input.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') { if (list) list.textContent = ''; input.setAttribute('aria-expanded', 'false'); input.blur(); }
-    });
-    document.addEventListener('click', (e) => {
-        if (!input.contains(e.target as Node) && list && !list.contains(e.target as Node)) {
-             list.textContent = ''; input.setAttribute('aria-expanded', 'false');
-    // Wait 300ms after user stops typing before searching
-    const debouncedSearch = debounce((e: Event) => {
-      runSearch((e.target as HTMLInputElement).value);
-    }, 300);
+      clearTimeout(timer);
+      if (controller) controller.abort();
 
-    input.addEventListener('input', debouncedSearch as EventListener);
+      timer = setTimeout(async () => {
+        const q = (e.target as HTMLInputElement).value.trim();
+        if (!q) { list.innerHTML = ''; input.setAttribute('aria-expanded', 'false'); return; }
 
-    // Keyboard navigation
-    input.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (!resultsList || resultsList.classList.contains('hidden')) return;
+        // Show loading state
+        list.textContent = '';
+        const loading = document.createElement('li');
+        loading.className = 'message';
+        loading.textContent = 'Searching...';
+        list.appendChild(loading);
+        input.setAttribute('aria-expanded', 'true');
 
-      const items = resultsList.querySelectorAll('a');
-      if (items.length === 0) return;
+        controller = new AbortController();
+        try {
+          const res = await fetch(`/api/docs-search?q=${encodeURIComponent(q)}`, { signal: controller.signal });
+          const data = await res.json();
+          list.textContent = ''; // Clear loading
 
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        (items[0] as HTMLElement).focus();
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
-        showResults(false);
-        input.value = '';
-        updateStatus('Search cleared.');
-      }
-    });
-
-    // Close on click outside
-    document.addEventListener('click', (e: MouseEvent) => {
-        if (!input.contains(e.target as Node) && !resultsList?.contains(e.target as Node)) {
-            showResults(false);
+          if (data.length === 0) {
+            const li = document.createElement('li');
+            li.className = 'message';
+            li.textContent = 'No results found';
+            list.appendChild(li);
+          } else {
+            data.forEach((r: any) => {
+               const li = document.createElement('li');
+               const a = document.createElement('a');
+               // Basic protection
+               if (r.url && !r.url.startsWith('javascript:')) {
+                   a.href = r.url;
+               } else {
+                   a.href = '#';
+               }
+               a.textContent = r.title;
+               li.appendChild(a);
+               list.appendChild(li);
+            });
+          }
+        } catch (err: any) {
+          if (err.name === 'AbortError') return;
+          list.textContent = '';
+          const li = document.createElement('li');
+          li.className = 'message error';
+          li.textContent = 'Error searching';
+          list.appendChild(li);
         }
+      }, 300);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!input.contains(e.target as Node) && !list.contains(e.target as Node)) {
+        list.innerHTML = ''; input.setAttribute('aria-expanded', 'false');
+      }
     });
   }
 

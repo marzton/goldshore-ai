@@ -14,8 +14,7 @@ function getHref(slug: string) {
 ---
 
 <aside class="gs-card docs-sidebar" aria-label="Documentation navigation">
-  <h3 class="section-title"><span aria-hidden="true">◎</span>Documentation</h3>
-  <div class="search-container">
+  <div class="sidebar-search">
     <DocsSearch />
   </div>
 
@@ -37,6 +36,11 @@ function getHref(slug: string) {
 
 <style>
   .docs-sidebar { position: sticky; top: var(--gs-space-6); align-self: start; }
+
+  .sidebar-search {
+    margin-bottom: var(--gs-space-4);
+  }
+
   .docs-nav { list-style: none; padding-left: 0; display: flex; flex-direction: column; gap: var(--gs-space-2); }
   .docs-nav a {
     display: block;
