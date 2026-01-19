@@ -16,12 +16,10 @@ jobs:
     env:
       JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
     steps:
-      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
-        with:
-          fetch-depth: 0
-
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6b156bde92b7f4e0528cf49d
         with:
           node-version: 20
       - name: Preview CONFLICT-SWEEPER prompt
