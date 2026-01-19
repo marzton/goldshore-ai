@@ -21,14 +21,14 @@ function getHref(slug: string) {
 
   <h3 class="section-title"><span>◎</span>Documentation</h3>
   <ul class="docs-nav">
-    {pages.map((p) => (
+    {pages.map((page) => (
       <li>
         <a
-          href={getHref(p.slug)}
-          class={currentSlug === p.slug ? 'active' : ''}
-          aria-current={currentSlug === p.slug ? 'page' : undefined}
+          href={getHref(page.slug)}
+          class={currentSlug === page.slug ? 'active' : ''}
+          aria-current={currentSlug === page.slug ? 'page' : undefined}
         >
-          {p.data.title}
+          {page.data.title}
         </a>
       </li>
     ))}
@@ -48,9 +48,9 @@ function getHref(slug: string) {
   }
   .docs-nav a:hover { color: var(--gs-color-text); border-left-color: var(--gs-color-border); }
   .docs-nav a.active {
-    color: #22d3ee;
-    border-left-color: #22d3ee;
-    background: rgba(34, 211, 238, 0.05);
+    color: var(--gs-color-primary);
+    border-left-color: var(--gs-color-primary);
+    background: var(--gs-color-primary-soft);
     border-radius: 0 var(--gs-radius-xs) var(--gs-radius-xs) 0;
   }
 
