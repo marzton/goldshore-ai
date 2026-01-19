@@ -10,7 +10,7 @@ import { rotateKeys } from "./tasks/rotateKeys";
 
 const app = new Hono<{ Bindings: ControlEnv }>();
 
-// Sentinel: Add security headers
+// Sentinel: Add security headers to all responses (Defense in Depth)
 app.use('*', secureHeaders());
 
 app.get("/", (c) => c.json({ service: "gs-control", ok: true }));
