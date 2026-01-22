@@ -2,7 +2,9 @@
 import ApiSchema from './ApiSchema.astro';
 import TryItConsole from './TryItConsole.astro';
 
-const { openapi, endpointId, endpoint } = Astro.props;
+const { openapi, endpoint, endpointId } = Astro.props;
+// Support legacy endpointId prop if needed
+const targetEndpoint = endpoint || endpointId;
 
 // Support both props for compatibility
 const targetEndpoint = endpointId || endpoint;
