@@ -5,25 +5,22 @@ const { tabs = [] } = Astro.props;
 <div class="gs-tabs">
   <div class="gs-tabs-header">
     {tabs.map((t) => (
-      <button class="gs-button gs-button--ghost gs-button--small" onclick={`showTab(event, '${t.id}')`}>
+      <button
+        class="gs-button gs-button--ghost gs-button--small gs-tab-trigger"
+        data-target={t.id}
+        type="button"
+      >
         {t.label}
       </button>
     ))}
   </div>
 
-  <!--
-    Refactored to avoid dynamic slot names which are not supported in Astro.
-    Consumers should place content directly in the default slot,
-    or we can implement a specific content structure if needed in the future.
-    For now, we render the default slot.
-  -->
   <div class="gs-tab-content">
       <slot />
   </div>
 </div>
 
 <script>
-  // Use event delegation or initialize tabs
   function initTabs() {
     document.querySelectorAll('.gs-tabs').forEach(container => {
       const triggers = container.querySelectorAll('.gs-tab-trigger');
@@ -31,11 +28,9 @@ const { tabs = [] } = Astro.props;
 
       if (triggers.length === 0) return;
 
-      // Show first tab by default if none active
-      let activeId = triggers[0].getAttribute('data-target');
-
       const setActive = (id: string | null) => {
           if(!id) return;
+
           // Toggle triggers
           triggers.forEach(t => {
               if(t.getAttribute('data-target') === id) {
@@ -44,11 +39,15 @@ const { tabs = [] } = Astro.props;
                   t.classList.remove('active');
               }
           });
+
           // Toggle panels
           panels.forEach(p => {
+             // Handle both id matching and class toggling
              if(p.id === id) {
+                 p.classList.add('is-active');
                  (p as HTMLElement).style.display = 'block';
              } else {
+                 p.classList.remove('is-active');
                  (p as HTMLElement).style.display = 'none';
              }
           });
@@ -62,28 +61,21 @@ const { tabs = [] } = Astro.props;
           });
       });
 
-      // Init
-      setActive(activeId);
+      // Show first tab by default if none active
+      // Or verify if any is already active
+      const activeTrigger = Array.from(triggers).find(t => t.classList.contains('active'));
+      if (!activeTrigger) {
+         const firstId = triggers[0].getAttribute('data-target');
+         setActive(firstId);
+      }
     });
-<script is:inline>
-  window.showTab = function(event, id) {
-    const container = event.target.closest('.gs-tabs');
-    if (!container) return;
-
-    // Deactivate all content tabs in this container
-    const contentTabs = container.querySelectorAll('.gs-tab');
-    contentTabs.forEach((el) => {
-        el.classList.toggle('is-active', el.id === id);
-    });
-
-    const buttons = container.querySelectorAll('.gs-tabs-header button');
-    buttons.forEach((btn) => btn.classList.toggle('active', btn === event.target));
   }
 
-  // Run on load and after Astro swaps (if using ViewTransitions)
+  // Run on load and after Astro swaps
   initTabs();
   document.addEventListener('astro:page-load', initTabs);
 </script>
+
 <style>
   .gs-tabs-header {
     display: flex;
