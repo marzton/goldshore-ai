@@ -22,49 +22,6 @@ const { tabs = [] } = Astro.props;
   </div>
 </div>
 
-<script>
-  // Use event delegation or initialize tabs
-  function initTabs() {
-    document.querySelectorAll('.gs-tabs').forEach(container => {
-      const triggers = container.querySelectorAll('.gs-tab-trigger');
-      const panels = container.querySelectorAll('.gs-tab');
-
-      if (triggers.length === 0) return;
-
-      // Show first tab by default if none active
-      let activeId = triggers[0].getAttribute('data-target');
-
-      const setActive = (id: string | null) => {
-          if(!id) return;
-          // Toggle triggers
-          triggers.forEach(t => {
-              if(t.getAttribute('data-target') === id) {
-                  t.classList.add('active');
-              } else {
-                  t.classList.remove('active');
-              }
-          });
-          // Toggle panels
-          panels.forEach(p => {
-             if(p.id === id) {
-                 (p as HTMLElement).style.display = 'block';
-             } else {
-                 (p as HTMLElement).style.display = 'none';
-             }
-          });
-      };
-
-      // Bind clicks
-      triggers.forEach(t => {
-          t.addEventListener('click', (e) => {
-              const targetId = (e.currentTarget as HTMLElement).getAttribute('data-target');
-              setActive(targetId);
-          });
-      });
-
-      // Init
-      setActive(activeId);
-    });
 <script is:inline>
   window.showTab = function(event, id) {
     const container = event.target.closest('.gs-tabs');
@@ -79,10 +36,6 @@ const { tabs = [] } = Astro.props;
     const buttons = container.querySelectorAll('.gs-tabs-header button');
     buttons.forEach((btn) => btn.classList.toggle('active', btn === event.target));
   }
-
-  // Run on load and after Astro swaps (if using ViewTransitions)
-  initTabs();
-  document.addEventListener('astro:page-load', initTabs);
 </script>
 <style>
   .gs-tabs-header {
