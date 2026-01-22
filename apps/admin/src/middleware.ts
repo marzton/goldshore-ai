@@ -4,7 +4,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const response = await next();
 
   // Sentinel: Add security headers to protect against common attacks
-  // X-Frame-Options: Protects against Clickjacking - DENY for admin panel
+  // X-Frame-Options: Protects against Clickjacking (Admin panel should never be framed)
   response.headers.set("X-Frame-Options", "DENY");
 
   // X-Content-Type-Options: Protects against MIME sniffing
@@ -13,12 +13,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // Referrer-Policy: Controls how much referrer information is sent
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
 
-  // Strict-Transport-Security: Enforce HTTPS (HSTS)
-  // max-age=31536000 (1 year), includeSubDomains, preload
+  // Strict-Transport-Security: Enforce HTTPS (HSTS) - Critical for Admin
   response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-
-  // Permissions-Policy: Restrict access to sensitive features not needed in admin dashboard
-  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), interest-cohort=()");
 
   return response;
 });
