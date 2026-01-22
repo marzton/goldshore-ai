@@ -27,14 +27,14 @@ const users = [
           </select>
         </div>
         <div class="gs-form-actions">
-          <GSButton class="gs-button--small">Send invite</GSButton>
+          <GSButton type="submit" class="gs-button--small">Send invite</GSButton>
         </div>
       </form>
     </Card>
 
     <Card class="gs-table-card">
       <div class="section-title"><span>◎</span><h3>Directory</h3></div>
-      <Table>
+      <Table ariaLabel="User directory">
         <thead><tr><th>Name</th><th>Role</th><th>Status</th></tr></thead>
         <tbody>
           {users.map((user) => (

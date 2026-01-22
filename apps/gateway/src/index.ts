@@ -9,6 +9,7 @@ type Env = {
   AI: any;
   ENV: string;
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
+  // Sentinel: Added support for dynamic team domain
   CLOUDFLARE_TEAM_DOMAIN?: string;
 };
 
