@@ -27,3 +27,7 @@
 ## 2026-01-02 - Semantic Sticky Navigation
 **Learning:** Sidebars in long documentation pages often lose context when scrolling. Sticky positioning combined with explicit `aria-current="page"` provides persistent context for both sighted and screen reader users.
 **Action:** Apply `position: sticky` and `aria-current` to all sidebar navigation components to improve wayfinding.
+
+## 2026-01-05 - Semantic Form Structure
+**Learning:** Found a form where the submit button was placed outside the `<form>` element, breaking native submission (Enter key) and screen reader association.
+**Action:** Relocated the button inside the form and ensured it has `type="submit"`. Also reinforced the importance of cleaning up unrelated broken code (build blockers) to verify UX changes.
