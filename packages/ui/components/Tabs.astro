@@ -41,6 +41,17 @@ const { tabs = [] } = Astro.props;
         // If we want to toggle visual styles beyond 'active' class
     });
   }
+
+  // Initialize first tab
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.gs-tabs').forEach(container => {
+        const firstButton = container.querySelector('.gs-tabs-header button');
+        if (firstButton) {
+            // Trigger click to activate first tab logic
+            firstButton.click();
+        }
+    });
+  });
 </script>
 
 <style>
