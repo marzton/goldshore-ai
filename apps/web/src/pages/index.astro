@@ -1,35 +1,43 @@
 ---
 import '@goldshore/theme/tokens';
 import { GSButton } from '@goldshore/ui';
+import MarketingLayout from '../layouts/MarketingLayout.astro';
 
 // Goldshore Landing Page
 // Aesthetic: Military x Tech, Sports Car, Utility
-import MarketingLayout from '../layouts/MarketingLayout.astro';
 
 export const prerender = true;
 
-const capabilities = [
+const features = [
   {
     title: 'Algorithmic Precision',
-    body: 'Execution engines tuned for millisecond response and adaptive guardrails.',
+    body: 'High-frequency execution modeled on fluid dynamics. Zero latency expectations.',
   },
   {
-    title: 'Resilient Security',
-    body: 'Zero-trust defaults, observability built-in, and layered failover patterns.',
+    title: 'Military Grade',
+    body: 'Infrastructure built to withstand extreme volatility. Security first architecture.',
   },
   {
-    title: 'Global Presence',
-    body: 'Low-latency routes across regions with automated capacity scaling.',
+    title: 'Global Reach',
+    body: 'Connected to major liquidity pools across all timezones. 24/7 operations.',
   },
 ];
 
 const highlights = [
-  { label: 'Availability', value: '99.995%', tone: 'success' },
-  { label: 'Deploys / week', value: '48', tone: 'info' },
-  { label: 'Signals processed / day', value: '2.1B', tone: 'warning' },
+  { label: 'Uptime', value: '99.99%', tone: 'positive' },
+  { label: 'Latency', value: '< 20ms', tone: 'neutral' },
+  { label: 'Requests', value: '2.4M', tone: 'positive' },
+  { label: 'Security', value: 'Active', tone: 'warning' }
 ];
 ---
 
+    <div class="mt-12 flex justify-center gap-4">
+      <GSButton href="/about" variant="primary">
+        Learn More
+      </GSButton>
+      <GSButton href="/contact" variant="secondary">
+        Get in Touch
+      </GSButton>
 <MarketingLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
   <section class="gs-hero">
     <div>
@@ -43,30 +51,18 @@ const highlights = [
         <GSButton href="/contact" variant="secondary">Book a call</GSButton>
       </div>
     </div>
-    <div class="gs-card gs-pulse-frame">
-      <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
-      <div class="gs-grid columns-2">
-        {highlights.map((item) => (
-          <div class="gs-kpi">
-            <span>{item.label}</span>
-            <strong>{item.value}</strong>
-            <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
-          </div>
-        ))}
-      </div>
-      <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
-    </div>
   </section>
 
-  <section class="gs-section">
-    <div class="section-title"><span>◎</span><h2>Platform Values</h2></div>
-    <div class="gs-grid columns-3">
-      {capabilities.map((capability) => (
-        <article class="gs-card">
-          <h3>{capability.title}</h3>
-          <p>{capability.body}</p>
-        </article>
-      ))}
-    </div>
+  <div class="border-t-[var(--gs-border)]"></div>
+
+  <section class="max-w-7xl mx-auto py-24 px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
+    {features.map((feature) => (
+      <div class="space-y-4">
+        <h3 class="text-xl font-semibold" style="color: var(--gs-text-primary);">{feature.title}</h3>
+        <p class="text-[var(--gs-text-secondary)]">
+          {feature.body}
+        </p>
+      </div>
+    ))}
   </section>
 </MarketingLayout>
