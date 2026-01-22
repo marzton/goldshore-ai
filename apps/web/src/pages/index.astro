@@ -1,10 +1,10 @@
 ---
 import '@goldshore/theme/tokens';
 import { GSButton } from '@goldshore/ui';
+import MarketingLayout from '../layouts/MarketingLayout.astro';
 
 // Goldshore Landing Page
 // Aesthetic: Military x Tech, Sports Car, Utility
-import MarketingLayout from '../layouts/MarketingLayout.astro';
 
 export const prerender = true;
 
@@ -24,22 +24,18 @@ const features = [
 ];
 ---
 
-<MarketingLayout title="GoldShore | Shaping Waves">
-  <section class="max-w-4xl mx-auto py-32 px-6 text-center">
-    <h1 class="text-6xl font-bold mb-6 tracking-tight gs-heading text-[var(--gs-text-primary)]">
-      Shaping <span style="color: var(--gs-brand-gold);">Waves</span>
-    </h1>
-    <p class="text-xl text-[var(--gs-text-secondary)] max-w-2xl mx-auto leading-relaxed">
-      Gold Shore Labs builds AI-powered infrastructure for trading, automation, and applied intelligence.
-    </p>
-
-    <div class="mt-12 flex justify-center gap-4">
-      <GSButton href="/about" variant="primary">
-        Learn More
-      </GSButton>
-      <GSButton href="/contact" variant="secondary">
-        Get in Touch
-      </GSButton>
+<MarketingLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
+  <section class="gs-hero">
+    <div>
+      <p class="gs-badge" style="margin-bottom: var(--gs-space-3);">Modern ops for fluid markets</p>
+      <h1>Shaping Waves with Applied Intelligence</h1>
+      <p>
+        GoldShore builds resilient, automation-first systems for trading, control, and applied intelligence. Each surface ships with observability, safety, and responsive design baked in.
+      </p>
+      <div style="display:flex; gap: var(--gs-space-3); flex-wrap: wrap;">
+        <GSButton href="/services">View Services</GSButton>
+        <GSButton href="/contact" variant="secondary">Book a call</GSButton>
+      </div>
     </div>
   </section>
 
