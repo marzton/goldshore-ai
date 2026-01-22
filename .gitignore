@@ -4,3 +4,8 @@ dist/
 .astro/
 .turbo/
 .wrangler/
+.DS_Store
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
