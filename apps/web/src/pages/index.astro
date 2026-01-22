@@ -1,10 +1,10 @@
 ---
 import '@goldshore/theme/tokens';
 import { GSButton } from '@goldshore/ui';
-import MarketingLayout from '../layouts/MarketingLayout.astro';
 
 // Goldshore Landing Page
 // Aesthetic: Military x Tech, Sports Car, Utility
+import MarketingLayout from '../layouts/MarketingLayout.astro';
 
 export const prerender = true;
 
@@ -22,14 +22,16 @@ const features = [
     body: 'Connected to major liquidity pools across all timezones. 24/7 operations.',
   },
 ];
-
-const highlights = [
-  { label: 'Uptime', value: '99.99%', tone: 'positive' },
-  { label: 'Latency', value: '< 20ms', tone: 'neutral' },
-  { label: 'Requests', value: '2.4M', tone: 'positive' },
-  { label: 'Security', value: 'Active', tone: 'warning' }
-];
 ---
+
+<MarketingLayout title="GoldShore | Shaping Waves">
+  <section class="max-w-4xl mx-auto py-32 px-6 text-center">
+    <h1 class="text-6xl font-bold mb-6 tracking-tight gs-heading text-[var(--gs-text-primary)]">
+      Shaping <span style="color: var(--gs-brand-gold);">Waves</span>
+    </h1>
+    <p class="text-xl text-[var(--gs-text-secondary)] max-w-2xl mx-auto leading-relaxed">
+      Gold Shore Labs builds AI-powered infrastructure for trading, automation, and applied intelligence.
+    </p>
 
     <div class="mt-12 flex justify-center gap-4">
       <GSButton href="/about" variant="primary">
@@ -50,6 +52,19 @@ const highlights = [
         <GSButton href="/services">View Services</GSButton>
         <GSButton href="/contact" variant="secondary">Book a call</GSButton>
       </div>
+    </div>
+    <div class="gs-card gs-pulse-frame">
+      <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
+      <div class="gs-grid columns-2">
+        {highlights.map((item) => (
+          <div class="gs-kpi">
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+            <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
+          </div>
+        ))}
+      </div>
+      <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
     </div>
   </section>
 
