@@ -1,13 +1,16 @@
 ---
-import { initTheme } from '@goldshore/theme/src/theme-manager';
+import { ThemeManager } from '@goldshore/theme/manager';
 import Sidebar from '../components/Sidebar.astro';
 import Topbar from '../components/Topbar.astro';
-import '@goldshore/theme';
-import logo from '../assets/logo.svg';
 
 interface Props {
   title?: string;
 }
+
+import '@goldshore/theme';
+import logo from '../assets/logo.svg';
+import Sidebar from '../components/Sidebar.astro';
+import Topbar from '../components/Topbar.astro';
 
 const { title = 'GoldShore Admin' } = Astro.props;
 ---
@@ -18,8 +21,8 @@ const { title = 'GoldShore Admin' } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script>
-      import { initTheme } from '@goldshore/theme/src/theme-manager';
-      initTheme();
+      import { ThemeManager } from '@goldshore/theme/manager';
+      ThemeManager.init();
     </script>
   </head>
   <body>
@@ -33,5 +36,9 @@ const { title = 'GoldShore Admin' } = Astro.props;
         </main>
       </div>
     </div>
+    <script type="module">
+      import { initTheme } from '@goldshore/theme/manager';
+      initTheme();
+    </script>
   </body>
 </html>
