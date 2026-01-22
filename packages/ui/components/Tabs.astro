@@ -28,7 +28,20 @@ const { tabs = [] } = Astro.props;
     // Deactivate all content tabs in this container
     const contentTabs = container.querySelectorAll('.gs-tab');
     contentTabs.forEach((el) => {
-        el.classList.toggle('is-active', el.id === id);
+        if (el.id === id) {
+             el.style.display = 'block';
+             el.classList.add('active');
+        } else {
+             el.style.display = 'none';
+             el.classList.remove('active');
+        }
+    });
+
+    const buttons = container.querySelectorAll('.gs-tabs-header button');
+    buttons.forEach((btn) => {
+        const isTarget = btn === event.target;
+        btn.classList.toggle('active', isTarget);
+        // If we want to toggle visual styles beyond 'active' class
     });
   }
         const isActive = el.id === id;
@@ -81,7 +94,7 @@ const { tabs = [] } = Astro.props;
       color: var(--color-text-primary, #fff);
   }
   .gs-tabs-header button.active {
-      color: var(--color-utility-orange, #f59e0b);
-      border-bottom: 2px solid var(--color-utility-orange, #f59e0b);
+      color: var(--gs-primary, #f59e0b);
+      border-bottom-color: var(--gs-primary, #f59e0b);
   }
 </style>
