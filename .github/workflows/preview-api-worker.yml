@@ -27,11 +27,8 @@ jobs:
       - run: pnpm install
 
       - run: pnpm --filter @goldshore/api-worker build
-        env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-
-      - run: pnpm --filter @goldshore/api-worker deploy
+      - name: Deploy API Worker Preview
+        run: pnpm --filter @goldshore/api-worker deploy
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
