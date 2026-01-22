@@ -5,7 +5,11 @@ const { tabs = [] } = Astro.props;
 <div class="gs-tabs">
   <div class="gs-tabs-header">
     {tabs.map((t) => (
-      <button class="gs-button gs-button--ghost gs-button--small" onclick={`showTab(event, '${t.id}')`}>
+      <button
+        class="gs-button gs-button--ghost gs-button--small gs-tab-trigger"
+        data-target={t.id}
+        type="button"
+      >
         {t.label}
       </button>
     ))}

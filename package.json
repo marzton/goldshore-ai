@@ -35,8 +35,8 @@
     "yaml": "^2.8.2"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^12.6.11",
-    "turbo": "^2.6.1"
+    "@astrojs/cloudflare": "^12.6.12",
+    "turbo": "^2.7.5"
   },
   "pnpm": {
     "overrides": {
