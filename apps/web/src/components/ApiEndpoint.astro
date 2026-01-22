@@ -2,62 +2,71 @@
 import ApiSchema from './ApiSchema.astro';
 import TryItConsole from './TryItConsole.astro';
 
-const { openapi, endpoint } = Astro.props;
+const { openapi, endpoint, endpointId } = Astro.props;
+// Support legacy endpointId prop if needed
+const targetEndpoint = endpoint || endpointId;
+
+// Support both props for compatibility
+const targetEndpoint = endpointId || endpoint;
 
 // normalize endpoint to look up in paths
 // endpoint from props might be "system/status"
 // path keys in openapi are usually "/system/status"
-const pathKey = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
+const pathKey = targetEndpoint.startsWith('/') ? targetEndpoint : '/' + targetEndpoint;
 
 const pathItem = openapi?.paths?.[pathKey];
 const methods = ['get', 'post', 'put', 'delete', 'patch'];
 ---
 
-{pathItem ? (
 <section class="api-endpoint">
-  <h2>{pathKey}</h2>
-  <div class="methods">
-      {methods.map((method) => {
-        const op = pathItem[method];
-        if (!op) return null;
-        return (
-          <article class="method-block">
-            <header>
-              <span class={`method-badge ${method}`}>{method.toUpperCase()}</span>
-              <h3>{op.summary || op.operationId}</h3>
-            </header>
-            <p>{op.description}</p>
-             <div class="op-details">
+  {pathItem ? (
+    <>
+      <h2>{pathKey}</h2>
+      <div class="methods">
+        {methods.map((method) => {
+          const op = pathItem[method];
+          if (!op) return null;
+          return (
+            <article class="method-block">
+              <header>
+                <span class={`method-badge ${method}`}>{method.toUpperCase()}</span>
+                <h3>{op.summary || op.operationId}</h3>
+              </header>
+              <p>{op.description}</p>
+
+              <div class="op-details">
                 {op.parameters && (
-                    <div>
-                        <h4>Parameters</h4>
-                        <pre>{JSON.stringify(op.parameters, null, 2)}</pre>
-                    </div>
+                  <div>
+                    <h4>Parameters</h4>
+                    <pre>{JSON.stringify(op.parameters, null, 2)}</pre>
+                  </div>
                 )}
-             </div>
-          </article>
-        );
-      })}
+              </div>
+
+              <TryItConsole method={method} path={pathKey} openapi={openapi} />
+            </article>
+          );
+        })}
+      </div>
+    </>
+  ) : (
+    <div class="endpoint-not-found">
+        <h2>{targetEndpoint}</h2>
+        <p>Endpoint not found in specification.</p>
     </div>
+  )}
 </section>
-) : (
-<div class="endpoint">
-  <h2>{endpoint}</h2>
-  <p>Endpoint not found.</p>
-</div>
-)}
 
 <style>
-  .endpoint { padding: 2rem; }
   .api-endpoint {
-    padding: var(--space-4);
+    padding: 1rem;
   }
   .method-block {
-    margin-bottom: var(--space-4);
-    padding: var(--space-4);
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--gs-surface-2, #f8fafc);
+    border: 1px solid var(--gs-border, #e2e8f0);
+    border-radius: 0.5rem;
   }
   .method-badge {
     display: inline-block;
@@ -68,8 +77,16 @@ const methods = ['get', 'post', 'put', 'delete', 'patch'];
     margin-right: 1rem;
     text-transform: uppercase;
   }
-  .method-badge.get { background: var(--color-info); color: white; }
-  .method-badge.post { background: var(--color-success); color: white; }
-  .method-badge.put { background: var(--color-warning); color: black; }
-  .method-badge.delete { background: var(--color-danger); color: white; }
+  .method-badge.get { background: #0ea5e9; color: white; }
+  .method-badge.post { background: #22c55e; color: white; }
+  .method-badge.put { background: #eab308; color: black; }
+  .method-badge.delete { background: #ef4444; color: white; }
+
+  pre {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    overflow-x: auto;
+  }
 </style>
