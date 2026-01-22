@@ -37,6 +37,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: gs-admin
+          projectName: astro-gs-admin
           directory: apps/admin/dist
           branch: ${{ github.head_ref || github.ref_name }}
