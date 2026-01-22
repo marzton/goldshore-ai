@@ -1,97 +1,306 @@
 ---
-let q = '';
-let results = [];
-
-// Note: In a real implementation, this would likely be a client-side component or use a framework specific way to handle state.
-// Since this is an Astro component, the script below handles the client-side logic.
+// DocsSearch.astro: Accessible and Safe implementation
 ---
 
 <div class="search-box">
-  <input
-    type="search"
-    placeholder="Search docs…"
-    id="docs-search-input"
-  />
-
-  <div id="results">
+  <div class="search-input-wrapper">
+    <label class="sr-only search-label">Search documentation</label>
+    <input
+      type="search"
+      class="docs-search-input"
+      placeholder="Search docs..."
+      aria-expanded="false"
+      autocomplete="off"
+    />
+    <div class="search-shortcut" aria-hidden="true">
+      <kbd>⌘K</kbd>
+    </div>
   </div>
+  <ul class="docs-search-results" role="list" aria-live="polite"></ul>
 </div>
 
+<style>
+  /* Consolidated Styles */
+  .search-box {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  input[type="search"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    padding-right: 3.5rem; /* Space for the shortcut */
+    border: 1px solid var(--gs-color-border, #e2e8f0);
+    border-radius: var(--gs-radius-sm, 0.375rem);
+    background: var(--gs-color-surface, #fff);
+    color: var(--gs-color-text, #334155);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+  }
+
+  input[type="search"]:focus {
+    outline: none;
+    border-color: var(--gs-primary, #0f172a);
+    box-shadow: 0 0 0 2px var(--gs-primary-alpha, rgba(15, 23, 42, 0.1));
+  }
+
+  .search-shortcut {
+    position: absolute;
+    right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.5rem;
+    padding: 0 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gs-color-subtle, #94a3b8);
+    background: var(--gs-color-bg, #f8fafc);
+    border: 1px solid var(--gs-color-border, #e2e8f0);
+    border-radius: 4px;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .search-shortcut kbd {
+    font-family: inherit;
+  }
+
+  :global(.dark) .search-shortcut {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .docs-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--gs-color-surface, #fff);
+    border: 1px solid var(--gs-color-border, #e2e8f0);
+    list-style: none;
+    padding: 0;
+    margin-top: 4px;
+    display: none;
+    z-index: 50;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .docs-search-results:not(:empty) {
+    display: block;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+  }
+
+  .search-shortcut {
+    position: absolute;
+    right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.5rem;
+    padding: 0 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gs-color-subtle, #94a3b8);
+    background: var(--gs-color-bg, #f8fafc);
+    border: 1px solid var(--gs-color-border, #e2e8f0);
+    border-radius: 4px;
+    pointer-events: none;
+    user-select: none;
+    font-family: inherit;
+  }
+
+  :global(.dark) .search-shortcut {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  /* Dynamic content styling */
+  :global(.docs-search-results li) {
+    padding: 0.25rem 0;
+  }
+
+  :global(.docs-search-results a) {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    text-decoration: none;
+    color: var(--gs-color-text, #334155);
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+
+  :global(.docs-search-results a:hover),
+  :global(.docs-search-results a:focus) {
+    background: var(--gs-color-bg-hover, #f1f5f9);
+    color: var(--gs-primary, #0f172a);
+    outline: none;
+  }
+
+  :global(.docs-search-results .message) {
+    padding: 0.75rem;
+    color: var(--gs-color-subtle, #94a3b8);
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  :global(.docs-search-results .error) {
+    color: #ef4444;
+  }
+</style>
+
 <script>
-  const input = document.getElementById('docs-search-input');
-  const resultsDiv = document.getElementById('results');
+  function initSearch(container: HTMLElement) {
+    const input = container.querySelector('.docs-search-input') as HTMLInputElement | null;
+    const list = container.querySelector('.docs-search-results') as HTMLUListElement | null;
 
-  // Optimization: Debounce function to prevent API calls on every keystroke
-  function debounce(func, wait) {
-    let timeout;
-    return function(...args) {
-      const context = this;
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(context, args), wait);
-    };
-  }
+    if (!input || !list) return;
 
-  let searchController;
+    // Connect label and list
+    // We generate a unique ID for accessibility if one is not present
+    const uniqueId = 'search-' + Math.random().toString(36).slice(2, 11);
+    if (!input.id) input.id = uniqueId + '-input';
+    if (!list.id) list.id = uniqueId + '-list';
 
-  async function runSearch(query) {
-    // Abort previous request if it exists
-    if (searchController) {
-      searchController.abort();
-    }
-    searchController = new AbortController();
-    const signal = searchController.signal;
+    input.setAttribute('aria-controls', list.id);
+    const label = container.querySelector('.search-label');
+    if (label) label.setAttribute('for', input.id);
 
-    if (!query.trim()) {
-      if(resultsDiv) resultsDiv.textContent = '';
-      return;
-    }
+    let timer: ReturnType<typeof setTimeout>;
+    let controller: AbortController | null = null;
 
-    try {
-      const res = await fetch('/api/docs-search?q=' + encodeURIComponent(query), { signal });
-      if (!res.ok) {
-        if (resultsDiv) resultsDiv.textContent = '';
-        console.error(`Search request failed with status ${res.status}: ${res.statusText}`);
-        return;
+    function showResults(show: boolean) {
+      if (list) {
+        if (!show) {
+          list.innerHTML = '';
+          input?.setAttribute('aria-expanded', 'false');
+        }
       }
-      const results = await res.json();
+    }
 
-      if (resultsDiv) {
-        resultsDiv.textContent = ''; // Clear previous results
+    input.addEventListener('input', (e) => {
+      clearTimeout(timer);
+      if (controller) controller.abort();
 
-        results.forEach((r) => {
-            const a = document.createElement('a');
-            // Sentinel: Basic protection against javascript: URIs
-            if (r.url && !r.url.trim().toLowerCase().startsWith('javascript:')) {
-                a.href = r.url;
-            } else {
-                a.href = '#';
-                console.warn('Blocked potentially unsafe URL in search results');
+      timer = setTimeout(async () => {
+        const q = (e.target as HTMLInputElement).value.trim();
+        if (!q) {
+           showResults(false);
+           return;
+        }
+
+        // Show loading state
+        list.textContent = '';
+        const loading = document.createElement('li');
+        loading.className = 'message';
+        loading.textContent = 'Searching...';
+        list.appendChild(loading);
+        input.setAttribute('aria-expanded', 'true');
+
+        controller = new AbortController();
+        try {
+          const res = await fetch(`/api/docs-search?q=${encodeURIComponent(q)}`, { signal: controller.signal });
+          const data = await res.json();
+          list.textContent = ''; // Clear loading
+
+          if (data.length === 0) {
+            const li = document.createElement('li');
+            li.className = 'message';
+            li.textContent = 'No results found';
+            list.appendChild(li);
+          } else {
+            data.forEach((r: any) => {
+               const li = document.createElement('li');
+               const a = document.createElement('a');
+               // Basic protection
+               if (r.url && !r.url.startsWith('javascript:')) {
+                   a.href = r.url;
+               } else {
+                   a.href = '#';
+               }
+               a.textContent = r.title;
+               li.appendChild(a);
+               list.appendChild(li);
+            });
+          }
+        } catch (err: any) {
+          if (err.name === 'AbortError') return;
+          list.textContent = '';
+          const li = document.createElement('li');
+          li.className = 'message error';
+          li.textContent = 'Error searching';
+          list.appendChild(li);
+        }
+      }, 300);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!input.contains(e.target as Node) && !list.contains(e.target as Node)) {
+        showResults(false);
+      }
+    });
+
+    // Handle keyboard navigation in results
+    list.addEventListener('keydown', (e: KeyboardEvent) => {
+        const items = Array.from(list.querySelectorAll('a'));
+        const activeElement = document.activeElement as HTMLElement;
+        const index = items.indexOf(activeElement as HTMLAnchorElement);
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (index < items.length - 1) {
+                (items[index + 1] as HTMLElement).focus();
             }
-            a.textContent = r.title; // Sentinel: Prevent XSS by using textContent instead of innerHTML
-            resultsDiv.appendChild(a);
-        });
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (index > 0) {
+                (items[index - 1] as HTMLElement).focus();
+            } else {
+                input.focus();
+            }
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            showResults(false);
+            input.focus();
+        }
+    });
+  }
+
+  // Initialize all search boxes
+  document.querySelectorAll('.search-box').forEach((el) => {
+    initSearch(el as HTMLElement);
+  });
+
+  // Palette: Add keyboard shortcut for search (Global)
+  // Focuses the first visible search input
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      // Find the first visible search input
+      const inputs = document.querySelectorAll('.docs-search-input');
+      for (const input of inputs) {
+         if ((input as HTMLElement).offsetParent !== null) { // Check visibility
+             (input as HTMLElement).focus();
+             return;
+         }
       }
-    } catch (e) {
-      if (e.name === 'AbortError') return; // Ignore aborted requests
-      if (resultsDiv) {
-        resultsDiv.textContent = '';
-        const err = document.createElement('div');
-        err.className = 'search-error';
-        err.style.color = 'red';
-        err.style.marginTop = '0.5em';
-        err.textContent = 'Sorry, search failed. Please try again.';
-        resultsDiv.appendChild(err);
-      }
-      console.error("Search failed", e);
     }
-  }
-
-  if (input) {
-    // Wait 300ms after user stops typing before searching
-    const debouncedSearch = debounce((e) => {
-      runSearch((e.target as HTMLInputElement).value);
-    }, 300);
-
-    input.addEventListener('input', debouncedSearch);
-  }
+  });
 </script>

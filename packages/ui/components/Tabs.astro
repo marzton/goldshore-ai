@@ -5,18 +5,16 @@ const { tabs = [] } = Astro.props;
 <div class="gs-tabs">
   <div class="gs-tabs-header">
     {tabs.map((t) => (
-      <button class="gs-button gs-button--ghost gs-button--small" onclick={`showTab(event, '${t.id}')`}>
+      <button
+        class="gs-button gs-button--ghost gs-button--small gs-tab-trigger"
+        data-target={t.id}
+        type="button"
+      >
         {t.label}
       </button>
     ))}
   </div>
 
-  <!--
-    Refactored to avoid dynamic slot names which are not supported in Astro.
-    Consumers should place content directly in the default slot,
-    or we can implement a specific content structure if needed in the future.
-    For now, we render the default slot.
-  -->
   <div class="gs-tab-content">
       <slot />
   </div>
@@ -30,15 +28,56 @@ const { tabs = [] } = Astro.props;
     // Deactivate all content tabs in this container
     const contentTabs = container.querySelectorAll('.gs-tab');
     contentTabs.forEach((el) => {
-        el.classList.toggle('is-active', el.id === id);
+        if (el.id === id) {
+             el.style.display = 'block';
+             el.classList.add('active');
+        } else {
+             el.style.display = 'none';
+             el.classList.remove('active');
+        }
     });
 
     const buttons = container.querySelectorAll('.gs-tabs-header button');
-    buttons.forEach((btn) => btn.classList.toggle('active', btn === event.target));
+    buttons.forEach((btn) => {
+        const isTarget = btn === event.target;
+        btn.classList.toggle('active', isTarget);
+        // If we want to toggle visual styles beyond 'active' class
+    });
   }
+
+  // Initialize first tab as active if not set
+  document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.gs-tabs').forEach(container => {
+          const firstButton = container.querySelector('.gs-tabs-header button');
+          if (firstButton) {
+              firstButton.click();
+          }
+      });
+  });
 </script>
+
 <style>
-  .gs-tab { display: none; }
-  .gs-tab.is-active { display: block; }
-  .gs-tabs-header button.active { background: var(--gs-accent-soft); color: var(--gs-accent-strong); }
+  .gs-tabs-header {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--gs-border, #333);
+  }
+  .gs-tabs-header button {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.5rem 1rem;
+    color: var(--gs-text-secondary, #888);
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+  }
+  .gs-tabs-header button:hover {
+      color: var(--gs-text-primary, #fff);
+  }
+  .gs-tabs-header button.active {
+      color: var(--gs-primary, #f59e0b);
+      border-bottom-color: var(--gs-primary, #f59e0b);
+  }
 </style>
