@@ -3,6 +3,9 @@ import '@goldshore/theme/tokens';
 import { GSButton } from '@goldshore/ui';
 import MarketingLayout from '../layouts/MarketingLayout.astro';
 
+// Goldshore Landing Page
+// Aesthetic: Military x Tech, Sports Car, Utility
+
 export const prerender = true;
 
 const features = [
@@ -40,19 +43,6 @@ const highlights = [
         <GSButton href="/services">View Services</GSButton>
         <GSButton href="/contact" variant="secondary">Book a call</GSButton>
       </div>
-    </div>
-    <div class="gs-card gs-pulse-frame">
-      <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
-      <div class="gs-grid columns-2">
-        {highlights.map((item) => (
-          <div class="gs-kpi">
-            <span>{item.label}</span>
-            <strong>{item.value}</strong>
-            <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
-          </div>
-        ))}
-      </div>
-      <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
     </div>
   </section>
 
