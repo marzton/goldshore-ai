@@ -2,30 +2,112 @@
 // DocsSearch.astro: Accessible and Safe implementation
 ---
 
-<div class="search-wrapper">
-  <label for="docs-search-input" class="sr-only">Search</label>
+<div class="search-box">
   <div class="search-input-wrapper">
-    <input type="search" id="docs-search-input" placeholder="Search docs..." aria-controls="results" aria-expanded="false" />
-    <kbd class="search-shortcut">⌘K</kbd>
+    <label class="sr-only search-label">Search documentation</label>
+    <input
+      type="search"
+      class="docs-search-input"
+      placeholder="Search docs..."
+      aria-expanded="false"
+      autocomplete="off"
+    />
+    <div class="search-shortcut" aria-hidden="true">
+      <kbd>⌘K</kbd>
+    </div>
   </div>
-  <ul id="results" role="list" aria-live="polite"></ul>
+  <ul class="docs-search-results" role="list" aria-live="polite"></ul>
 </div>
 
 <style>
-  .search-wrapper { position: relative; width: 100%; }
-  /* Consolidated styles */
+  /* Consolidated Styles */
+  .search-box {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
   .search-input-wrapper {
     position: relative;
     display: flex;
     align-items: center;
+    width: 100%;
   }
 
-  input { width: 100%; padding: 0.5rem; padding-right: 3.5rem; border: 1px solid var(--gs-color-border); border-radius: 4px; background: var(--gs-color-bg-surface); color: var(--gs-color-text); }
-  input:focus { outline: 2px solid var(--gs-color-primary); border-color: transparent; }
+  input[type="search"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    padding-right: 3.5rem; /* Space for the shortcut */
+    border: 1px solid var(--gs-color-border, #e2e8f0);
+    border-radius: var(--gs-radius-sm, 0.375rem);
+    background: var(--gs-color-surface, #fff);
+    color: var(--gs-color-text, #334155);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+  }
 
-  #results { position: absolute; top: 100%; left: 0; right: 0; background: var(--gs-color-bg-surface); border: 1px solid var(--gs-color-border); list-style: none; padding: 0; margin-top: 4px; display: none; z-index: 50; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 4px; max-height: 300px; overflow-y: auto; }
-  #results:not(:empty) { display: block; }
-  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  input[type="search"]:focus {
+    outline: none;
+    border-color: var(--gs-primary, #0f172a);
+    box-shadow: 0 0 0 2px var(--gs-primary-alpha, rgba(15, 23, 42, 0.1));
+  }
+
+  .search-shortcut {
+    position: absolute;
+    right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.5rem;
+    padding: 0 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gs-color-subtle, #94a3b8);
+    background: var(--gs-color-bg, #f8fafc);
+    border: 1px solid var(--gs-color-border, #e2e8f0);
+    border-radius: 4px;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .search-shortcut kbd {
+    font-family: inherit;
+  }
+
+  :global(.dark) .search-shortcut {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .docs-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--gs-color-surface, #fff);
+    border: 1px solid var(--gs-color-border, #e2e8f0);
+    list-style: none;
+    padding: 0;
+    margin-top: 4px;
+    display: none;
+    z-index: 50;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .docs-search-results:not(:empty) {
+    display: block;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+  }
 
   .search-shortcut {
     position: absolute;
@@ -52,36 +134,77 @@
   }
 
   /* Dynamic content styling */
-  :global(#results li) { padding: 0.25rem 0; }
-  :global(#results a) { display: block; padding: 0.5rem; text-decoration: none; color: var(--gs-color-text); }
-  :global(#results a:hover), :global(#results a:focus) { background: var(--gs-color-bg-subtle); outline: none; }
-  :global(#results .message) { padding: 0.5rem; color: var(--gs-color-subtle); }
-  :global(#results .error) { color: #ef4444; }
+  :global(.docs-search-results li) {
+    padding: 0.25rem 0;
+  }
+
+  :global(.docs-search-results a) {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    text-decoration: none;
+    color: var(--gs-color-text, #334155);
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+
+  :global(.docs-search-results a:hover),
+  :global(.docs-search-results a:focus) {
+    background: var(--gs-color-bg-hover, #f1f5f9);
+    color: var(--gs-primary, #0f172a);
+    outline: none;
+  }
+
+  :global(.docs-search-results .message) {
+    padding: 0.75rem;
+    color: var(--gs-color-subtle, #94a3b8);
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  :global(.docs-search-results .error) {
+    color: #ef4444;
+  }
 </style>
 
 <script>
-  const input = document.getElementById('docs-search-input') as HTMLInputElement | null;
-  const list = document.getElementById('results');
-  let timer: ReturnType<typeof setTimeout>;
-  let controller: AbortController | null = null;
+  function initSearch(container: HTMLElement) {
+    const input = container.querySelector('.docs-search-input') as HTMLInputElement | null;
+    const list = container.querySelector('.docs-search-results') as HTMLUListElement | null;
 
-  // Platform detection for shortcut
-  if (typeof navigator !== 'undefined') {
-    const isMac = navigator.userAgent.toUpperCase().indexOf('MAC') >= 0;
-    if (!isMac) {
-      const shortcut = document.querySelector('.search-shortcut');
-      if (shortcut) shortcut.textContent = 'Ctrl K';
+    if (!input || !list) return;
+
+    // Connect label and list
+    // We generate a unique ID for accessibility if one is not present
+    const uniqueId = 'search-' + Math.random().toString(36).slice(2, 11);
+    if (!input.id) input.id = uniqueId + '-input';
+    if (!list.id) list.id = uniqueId + '-list';
+
+    input.setAttribute('aria-controls', list.id);
+    const label = container.querySelector('.search-label');
+    if (label) label.setAttribute('for', input.id);
+
+    let timer: ReturnType<typeof setTimeout>;
+    let controller: AbortController | null = null;
+
+    function showResults(show: boolean) {
+      if (list) {
+        if (!show) {
+          list.innerHTML = '';
+          input?.setAttribute('aria-expanded', 'false');
+        }
+      }
     }
-  }
 
-  if (input && list) {
     input.addEventListener('input', (e) => {
       clearTimeout(timer);
       if (controller) controller.abort();
 
       timer = setTimeout(async () => {
         const q = (e.target as HTMLInputElement).value.trim();
-        if (!q) { list.innerHTML = ''; input.setAttribute('aria-expanded', 'false'); return; }
+        if (!q) {
+           showResults(false);
+           return;
+        }
 
         // Show loading state
         list.textContent = '';
@@ -130,11 +253,11 @@
 
     document.addEventListener('click', (e) => {
       if (!input.contains(e.target as Node) && !list.contains(e.target as Node)) {
-        list.innerHTML = ''; input.setAttribute('aria-expanded', 'false');
+        showResults(false);
       }
     });
 
-    // Fix: use 'list' instead of 'resultsList'
+    // Handle keyboard navigation in results
     list.addEventListener('keydown', (e: KeyboardEvent) => {
         const items = Array.from(list.querySelectorAll('a'));
         const activeElement = document.activeElement as HTMLElement;
@@ -150,25 +273,33 @@
             if (index > 0) {
                 (items[index - 1] as HTMLElement).focus();
             } else {
-                input?.focus();
+                input.focus();
             }
         } else if (e.key === 'Escape') {
             e.preventDefault();
-            // Fix: implement showResults(false) logic inline
-            list.innerHTML = '';
-            input.setAttribute('aria-expanded', 'false');
-            input?.focus();
+            showResults(false);
+            input.focus();
         }
     });
   }
 
-  // Palette: Add keyboard shortcut for search
+  // Initialize all search boxes
+  document.querySelectorAll('.search-box').forEach((el) => {
+    initSearch(el as HTMLElement);
+  });
+
+  // Palette: Add keyboard shortcut for search (Global)
+  // Focuses the first visible search input
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
       e.preventDefault();
-      const searchInput = document.getElementById('docs-search-input');
-      if (searchInput) {
-        searchInput.focus();
+      // Find the first visible search input
+      const inputs = document.querySelectorAll('.docs-search-input');
+      for (const input of inputs) {
+         if ((input as HTMLElement).offsetParent !== null) { // Check visibility
+             (input as HTMLElement).focus();
+             return;
+         }
       }
     }
   });
