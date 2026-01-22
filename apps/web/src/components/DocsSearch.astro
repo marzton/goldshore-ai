@@ -109,6 +109,30 @@
     clip: rect(0,0,0,0);
   }
 
+  .search-shortcut {
+    position: absolute;
+    right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.5rem;
+    padding: 0 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gs-color-subtle, #94a3b8);
+    background: var(--gs-color-bg, #f8fafc);
+    border: 1px solid var(--gs-color-border, #e2e8f0);
+    border-radius: 4px;
+    pointer-events: none;
+    user-select: none;
+    font-family: inherit;
+  }
+
+  :global(.dark) .search-shortcut {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
   /* Dynamic content styling */
   :global(.docs-search-results li) {
     padding: 0.25rem 0;
