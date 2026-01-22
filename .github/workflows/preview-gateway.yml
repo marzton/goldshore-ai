@@ -26,6 +26,8 @@ jobs:
       - run: pnpm install
 
       - run: pnpm --filter @goldshore/gateway build
+      - name: Deploy Gateway Preview
+        run: pnpm --filter @goldshore/gateway deploy
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
