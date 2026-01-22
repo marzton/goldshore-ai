@@ -1,29 +1,33 @@
-import { defineConfig } from 'astro/config';
-import cloudflare from '@astrojs/cloudflare';
-import tailwind from '@astrojs/tailwind';
+import cloudflare from "@astrojs/cloudflare";
+import tailwind from "@astrojs/tailwind";
+import { defineConfig } from "astro/config";
 
 export default defineConfig({
   srcDir: './src',
-  output: 'server',
+  outDir: './dist',
   prefetch: true,
   adapter: cloudflare(),
-  prefetch: true,
-  integrations: [tailwind({
-    applyBaseStyles: false,
-    configFile: "../../tailwind.config.mjs"
-  })],
+  integrations: [
+    // tailwind({
+    //   applyBaseStyles: false,
+    //   configFile: "../../tailwind.config.mjs"
+    // })
+  ],
   vite: {
     publicDir: './openapi',
+    ssr: {
+      noExternal: [
+        '@goldshore/theme',
+        '@goldshore/ui',
+        '@goldshore/auth'
+      ]
+    },
     resolve: {
       alias: {
-        '@goldshore/ui': new URL('../../packages/ui', import.meta.url).pathname,
-        '@goldshore/theme': new URL('../../packages/theme', import.meta.url).pathname,
-        '@packages': new URL('../../packages', import.meta.url).pathname,
-        '@apps': new URL('../../apps', import.meta.url).pathname
+        // '@goldshore/ui': '../../packages/ui',
+        // '@goldshore/theme': '../../packages/theme',
+        // '@goldshore/auth': '../../packages/auth',
       }
-    },
-    ssr: {
-      noExternal: ['@goldshore/ui', '@goldshore/theme']
     }
   }
 });
