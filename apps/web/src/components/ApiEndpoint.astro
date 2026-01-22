@@ -6,65 +6,93 @@ const { openapi, endpointId, endpoint } = Astro.props;
 
 // Support both props for compatibility
 const targetEndpoint = endpointId || endpoint;
+// If endpoint is passed as relative path e.g. "users", we might need to find /users or /api/v1/users
+// But based on previous file, it seems it expects endpointId to be the key in openapi.paths stripped of leading slash?
 
+// Let's look for a match
+const match = Object.entries(openapi.paths || {})
+  .find(([p]) => p.replace(/^\//,'') === targetEndpoint || p === targetEndpoint || p === '/' + targetEndpoint);
+
+// If no match, and we are just rendering a placeholder (previous implementation had simple dump)
+// But we want to fix the build error which is duplicate code block.
+
+const [path, ops] = match || [targetEndpoint, null];
+
+const methods = ['get','post','put','delete','patch'];
+// Consolidated ApiEndpoint.astro
+import ApiSchema from './ApiSchema.astro';
+import TryItConsole from './TryItConsole.astro';
+
+const { openapi, endpoint } = Astro.props;
 // normalize endpoint to look up in paths
 // endpoint from props might be "system/status"
 // path keys in openapi are usually "/system/status"
-const pathKey = targetEndpoint.startsWith('/') ? targetEndpoint : '/' + targetEndpoint;
+const pathKey = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
 
 const pathItem = openapi?.paths?.[pathKey];
 const methods = ['get', 'post', 'put', 'delete', 'patch'];
+
 ---
 
+{match ? (
 <section class="api-endpoint">
+  <h2>{pathKey}</h2>
   {pathItem ? (
-    <>
-      <h2>{pathKey}</h2>
-      <div class="methods">
-        {methods.map((method) => {
-          const op = pathItem[method];
-          if (!op) return null;
-          return (
-            <article class="method-block">
-              <header>
-                <span class={`method-badge ${method}`}>{method.toUpperCase()}</span>
-                <h3>{op.summary || op.operationId}</h3>
-              </header>
-              <p>{op.description}</p>
+    <div class="methods">
+      {methods.map((method) => {
+        const op = pathItem[method];
+        if (!op) return null;
+        return (
+          <article class="method-block">
+            <header>
+              <span class={`method-badge ${method}`}>{method.toUpperCase()}</span>
+              <h3>{op.summary || op.operationId}</h3>
+            </header>
+            <p>{op.description}</p>
 
-              <div class="op-details">
+            {/* Parameters would go here, reusing ApiSchema if available */}
+             {/* <ApiSchema schema={op.parameters} /> */}
+
+             {/* For now, just dumping the op details if we don't have ApiSchema fully ready/imported in this context
+                 Wait, the import is at the top. But ApiSchema component file needs to be verified too.
+             */}
+
+             {/* Fallback simple display */}
+             <div class="op-details">
                 {op.parameters && (
-                  <div>
-                    <h4>Parameters</h4>
-                    <pre>{JSON.stringify(op.parameters, null, 2)}</pre>
-                  </div>
+                    <div>
+                        <h4>Parameters</h4>
+                        <pre>{JSON.stringify(op.parameters, null, 2)}</pre>
+                    </div>
                 )}
-              </div>
+             </div>
 
-              <TryItConsole method={method} path={pathKey} openapi={openapi} />
-            </article>
-          );
-        })}
-      </div>
-    </>
-  ) : (
-    <div class="endpoint-not-found">
-        <h2>{targetEndpoint}</h2>
-        <p>Endpoint not found in specification.</p>
+          </article>
+        );
+      })}
     </div>
+  ) : (
+    <p>Endpoint not found: {endpoint}</p>
   )}
 </section>
+) : (
+<div class="endpoint">
+  <h2>{targetEndpoint}</h2>
+  <p>Endpoint not found.</p>
+</div>
+)}
 
 <style>
+  .endpoint { padding: 2rem; }
   .api-endpoint {
-    padding: 1rem;
+    padding: var(--space-4);
   }
   .method-block {
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-    background: var(--gs-surface-2, #f8fafc);
-    border: 1px solid var(--gs-border, #e2e8f0);
-    border-radius: 0.5rem;
+    margin-bottom: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
   }
   .method-badge {
     display: inline-block;
@@ -75,16 +103,8 @@ const methods = ['get', 'post', 'put', 'delete', 'patch'];
     margin-right: 1rem;
     text-transform: uppercase;
   }
-  .method-badge.get { background: #0ea5e9; color: white; }
-  .method-badge.post { background: #22c55e; color: white; }
-  .method-badge.put { background: #eab308; color: black; }
-  .method-badge.delete { background: #ef4444; color: white; }
-
-  pre {
-    background: #1e293b;
-    color: #e2e8f0;
-    padding: 1rem;
-    border-radius: 0.375rem;
-    overflow-x: auto;
-  }
+  .method-badge.get { background: var(--color-info); color: white; }
+  .method-badge.post { background: var(--color-success); color: white; }
+  .method-badge.put { background: var(--color-warning); color: black; }
+  .method-badge.delete { background: var(--color-danger); color: white; }
 </style>

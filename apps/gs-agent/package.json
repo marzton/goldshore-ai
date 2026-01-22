@@ -9,7 +9,7 @@
     "build": "wrangler deploy src/index.ts --dry-run --outdir=dist --config ../../infra/cloudflare/gs-agent.wrangler.toml"
   },
   "devDependencies": {
-    "wrangler": "^4.59.1",
+    "wrangler": "^3.0.0",
     "typescript": "^5.0.0",
     "@cloudflare/workers-types": "^4.0.0"
   }
