@@ -1,6 +1,6 @@
 ---
 import '@goldshore/theme';
-import logo from '@goldshore/theme/assets/logo.svg';
+import logo from '../assets/logo.svg';
 import { GSButton } from '@goldshore/ui';
 
 const navLinks = [
@@ -8,7 +8,8 @@ const navLinks = [
   { href: '/about', label: 'About' },
   { href: '/services', label: 'Services' },
   { href: '/team', label: 'Team' },
-  { href: '/contact', label: 'Contact' }
+  { href: '/contact', label: 'Contact' },
+  { href: '/apps/risk-radar', label: 'Risk Radar' }
 ];
 
 const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.url.pathname } = Astro.props;
@@ -19,16 +20,25 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0" />
+    <link rel="stylesheet" href="https://unpkg.com/aria-icons@1.0.0/aria-icons.css" />
   </head>
   <body>
     <a href="#content" class="skip-link">Skip to content</a>
     <div class="gs-page-shell">
-      <header class="gs-header">
+      <header class="gs-header" data-menu-open="false">
         <a class="gs-logo" href="/" aria-label="GoldShore home">
           <img src={logo} alt="GoldShore Penrose logo" width="36" height="36" loading="eager" fetchpriority="high" />
           <span>GoldShore</span>
         </a>
-        <nav class="gs-nav" aria-label="Primary">
+        <button class="gs-nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
+          <span class="material-symbols-rounded" aria-hidden="true">menu</span>
+          <span class="sr-only">Toggle menu</span>
+        </button>
+        <nav class="gs-nav" id="primary-navigation" aria-label="Primary">
           {navLinks.map((link) => (
             <a
               href={link.href}
@@ -38,7 +48,10 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
               {link.label}
             </a>
           ))}
-          <GSButton href="/developer" variant="secondary" class="gs-button--small">Developer</GSButton>
+          <GSButton href="/developer" variant="secondary" class="gs-button--small gs-button--with-icon">
+            <span class="material-symbols-rounded" aria-hidden="true">terminal</span>
+            Developer
+          </GSButton>
         </nav>
       </header>
 
@@ -47,32 +60,52 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
       </main>
 
       <footer class="gs-footer">
-        <div class="gs-section" style="padding: var(--gs-space-6) 0;">
+        <div class="gs-section gs-section--padded">
           <div class="gs-grid columns-2">
             <div>
               <div class="gs-logo" style="gap: var(--gs-space-2);">
-                <img src={logo} alt="GoldShore logo" width="32" height="32" loading="lazy" decoding="async" />
+                <img src={logo.src} alt="GoldShore logo" width="32" height="32" loading="lazy" decoding="async" />
                 <span>GoldShore AI</span>
               </div>
               <p>Applied intelligence, resilient infrastructure, and responsive operations.</p>
             </div>
             <div class="gs-grid columns-2" style="gap: var(--gs-space-2);">
               <div class="gs-nav gs-nav--vertical">
-                <strong>Company</strong>
-                <a href="/about">About</a>
-                <a href="/team">Team</a>
-                <a href="/services">Services</a>
+                <strong><span class="aria-icon aria-icon-orbit" aria-hidden="true"></span>Company</strong>
+                <a href="/about" aria-current={currentPath === '/about' ? 'page' : undefined}>About</a>
+                <a href="/team" aria-current={currentPath === '/team' ? 'page' : undefined}>Team</a>
+                <a href="/services" aria-current={currentPath === '/services' ? 'page' : undefined}>Services</a>
               </div>
-              <div class="gs-nav" style="flex-direction: column; align-items: flex-start; gap: var(--gs-space-2);">
-                <strong>Support</strong>
-                <a href="/contact">Contact</a>
-                <a href="/legal/privacy">Privacy</a>
-                <a href="/legal/terms">Terms</a>
+              <div class="gs-nav gs-nav--vertical-support">
+                <strong><span class="aria-icon aria-icon-signal" aria-hidden="true"></span>Support</strong>
+                <a href="/contact" aria-current={currentPath === '/contact' ? 'page' : undefined}>Contact</a>
+                <a href="/legal/privacy" aria-current={currentPath === '/legal/privacy' ? 'page' : undefined}>Privacy</a>
+                <a href="/legal/terms" aria-current={currentPath === '/legal/terms' ? 'page' : undefined}>Terms</a>
               </div>
             </div>
           </div>
         </div>
       </footer>
     </div>
+    <script is:inline>
+      const header = document.querySelector('.gs-header');
+      const toggle = document.querySelector('.gs-nav-toggle');
+      const updateHeaderOpacity = () => {
+        if (!header) return;
+        const maxScroll = 160;
+        const progress = Math.min(window.scrollY / maxScroll, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        header.style.setProperty('--gs-header-opacity', (0.6 * eased).toFixed(3));
+        header.classList.toggle('is-scrolled', progress > 0.02);
+      };
+      updateHeaderOpacity();
+      window.addEventListener('scroll', updateHeaderOpacity, { passive: true });
+      toggle?.addEventListener('click', () => {
+        if (!header) return;
+        const isOpen = header.getAttribute('data-menu-open') === 'true';
+        header.setAttribute('data-menu-open', String(!isOpen));
+        toggle.setAttribute('aria-expanded', String(!isOpen));
+      });
+    </script>
   </body>
 </html>
