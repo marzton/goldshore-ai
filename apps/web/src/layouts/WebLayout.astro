@@ -21,8 +21,10 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- Resource Hinting for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://unpkg.com" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0" />
     <link rel="stylesheet" href="https://unpkg.com/aria-icons@1.0.0/aria-icons.css" />
   </head>
@@ -31,7 +33,7 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
     <div class="gs-page-shell">
       <header class="gs-header" data-menu-open="false">
         <a class="gs-logo" href="/" aria-label="GoldShore home">
-          <img src={logo} alt="GoldShore Penrose logo" width="36" height="36" loading="eager" fetchpriority="high" />
+          <img src={logo.src} alt="GoldShore Penrose logo" width="36" height="36" fetchpriority="high" />
           <span>GoldShore</span>
         </a>
         <button class="gs-nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
