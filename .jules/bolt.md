@@ -13,6 +13,11 @@
 ## 2026-01-09 - [Lockfile Hygiene]
 **Learning:** `pnpm install` modified the lockfile in an unrequested way, causing the PR to be flagged.
 **Action:** Always verify `git status` before committing and ensure lockfile changes are intentional and requested. Revert unexpected lockfile changes immediately.
+
 ## 2024-06-03 - [LCP & Dead Code]
 **Learning:** Found duplicate/broken implementation in `TryItConsole.astro` and missing `fetchpriority="high"` on LCP image.
 **Action:** Always check for duplicate implementations in components and ensure LCP images are prioritized.
+
+## 2025-05-24 - [Merge Conflicts & Build Integrity]
+**Learning:** Found multiple files (`BaseLayout.astro`, `index.astro`, `Tabs.astro`) with severe duplication/merge conflicts that broke the build and prevented performance verifications.
+**Action:** Always ensure the build passes (`pnpm build`) before attempting performance optimizations, as broken code can mask performance issues or prevent deployment.

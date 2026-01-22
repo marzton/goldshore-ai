@@ -8,21 +8,11 @@ type Env = {
   GATEWAY_KV: KVNamespace;
   AI: any;
   ENV: string;
-};
-
-const API_ORIGIN = 'https://api.goldshore.ai';
-const app = new Hono<{ Bindings: Env }>();
-
-// Sentinel: Add security headers to all responses (X-Frame-Options, X-XSS-Protection, etc.)
-app.use('*', secureHeaders());
-
-// Authentication Middleware
-app.use('*', async (c, next) => {
-    // Skip auth for health check and OPTIONS requests (CORS preflight)
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
   CLOUDFLARE_TEAM_DOMAIN?: string;
 };
 
+const API_ORIGIN = 'https://api.goldshore.ai';
 const app = new Hono<{ Bindings: Env }>();
 
 // Sentinel: Add security headers to all responses (X-Frame-Options, X-XSS-Protection, etc.)
