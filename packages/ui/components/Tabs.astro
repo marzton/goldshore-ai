@@ -5,18 +5,16 @@ const { tabs = [] } = Astro.props;
 <div class="gs-tabs">
   <div class="gs-tabs-header">
     {tabs.map((t) => (
-      <button class="gs-button gs-button--ghost gs-button--small" onclick={`showTab(event, '${t.id}')`}>
+      <button
+        class="gs-button gs-button--ghost gs-button--small gs-tab-trigger"
+        data-target={t.id}
+        type="button"
+      >
         {t.label}
       </button>
     ))}
   </div>
 
-  <!--
-    Refactored to avoid dynamic slot names which are not supported in Astro.
-    Consumers should place content directly in the default slot,
-    or we can implement a specific content structure if needed in the future.
-    For now, we render the default slot.
-  -->
   <div class="gs-tab-content">
       <slot />
   </div>
@@ -32,9 +30,6 @@ const { tabs = [] } = Astro.props;
     contentTabs.forEach((el) => {
         el.classList.toggle('is-active', el.id === id);
     });
-
-    const buttons = container.querySelectorAll('.gs-tabs-header button');
-    buttons.forEach((btn) => btn.classList.toggle('active', btn === event.target));
   }
 </script>
 
