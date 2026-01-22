@@ -44,15 +44,29 @@ const { tabs = [] } = Astro.props;
         // If we want to toggle visual styles beyond 'active' class
     });
   }
+        const isActive = el.id === id;
+        el.classList.toggle('is-active', isActive);
+        // Also toggle display directly if needed, or rely on CSS
+        el.style.display = isActive ? 'block' : 'none';
+    });
 
-  // Initialize first tab as active if not set
+    const buttons = container.querySelectorAll('.gs-tabs-header button');
+    buttons.forEach((btn) => {
+        const isTarget = btn === event.target;
+        btn.classList.toggle('active', isTarget);
+        // If we want to toggle visual styles beyond 'active' class
+    });
+  }
+
+  // Initialize first tab
   document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.gs-tabs').forEach(container => {
-          const firstButton = container.querySelector('.gs-tabs-header button');
-          if (firstButton) {
-              firstButton.click();
-          }
-      });
+    document.querySelectorAll('.gs-tabs').forEach(container => {
+        const firstButton = container.querySelector('.gs-tabs-header button');
+        if (firstButton) {
+            // Trigger click to activate first tab logic
+            firstButton.click();
+        }
+    });
   });
 </script>
 
@@ -63,6 +77,9 @@ const { tabs = [] } = Astro.props;
     margin-bottom: 1rem;
     border-bottom: 1px solid var(--gs-border, #333);
   }
+  /* Removed unused .gs-tab-trigger styles as the button uses gs-button classes */
+
+  /* Add styles for active state if not covered by gs-button active variants */
   .gs-tabs-header button {
     background: transparent;
     border: none;
@@ -74,7 +91,7 @@ const { tabs = [] } = Astro.props;
     font-weight: 500;
   }
   .gs-tabs-header button:hover {
-      color: var(--gs-text-primary, #fff);
+      color: var(--color-text-primary, #fff);
   }
   .gs-tabs-header button.active {
       color: var(--gs-primary, #f59e0b);
