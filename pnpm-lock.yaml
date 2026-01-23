@@ -62,10 +62,10 @@ importers:
   apps/admin:
     dependencies:
       '@goldshore/theme':
-        specifier: file:../../packages/theme
+        specifier: workspace:*
         version: link:../../packages/theme
       '@goldshore/ui':
-        specifier: file:../../packages/ui
+        specifier: workspace:*
         version: link:../../packages/ui
       astro:
         specifier: ^5.15.9
@@ -116,7 +116,7 @@ importers:
   apps/gateway:
     dependencies:
       '@goldshore/auth':
-        specifier: file:../../packages/auth
+        specifier: workspace:*
         version: link:../../packages/auth
       hono:
         specifier: ^4.0.0

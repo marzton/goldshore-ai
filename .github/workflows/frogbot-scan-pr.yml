@@ -24,7 +24,7 @@ jobs:
     # Read more here (Install Frogbot Using GitHub Actions): https://docs.jfrog-applications.jfrog.io/jfrog-applications/frogbot/setup-frogbot/setup-frogbot-using-github-actions
     environment: frogbot
     steps:
-      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 

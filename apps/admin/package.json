@@ -9,8 +9,8 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@goldshore/theme": "file:../../packages/theme",
-    "@goldshore/ui": "file:../../packages/ui",
+    "@goldshore/theme": "workspace:*",
+    "@goldshore/ui": "workspace:*",
     "astro": "^5.15.9"
   },
   "devDependencies": {
