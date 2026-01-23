@@ -79,6 +79,7 @@ pnpm --filter ./apps/web preview
 ## Deploy
 - Production deploy: `.github/workflows/deploy-web.yml`
 - Preview deploy: `.github/workflows/preview-web.yml`
+- Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 # GoldShore Web (Astro)
@@ -158,4 +159,4 @@ pnpm --filter ./apps/web preview
 ```
 
 ## Deploy
-Cloudflare Pages deploys via GitHub Actions. Preview branches publish to `{branch}.goldshore-pages.dev`.
+Cloudflare Pages deploys via GitHub Actions. For domains and preview URLs, see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).

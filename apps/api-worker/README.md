@@ -19,12 +19,17 @@ Configuration highlights (from `wrangler.toml`):
 - AI binding: `AI`
 
 ## Routes/Endpoints
+- `GET /` (status page)
 - `GET /health`
-- `GET /version`
-- `POST /auth/login`
-- `GET /auth/session`
-- `GET /content/:slug`
-- `POST /queue/task`
+- `GET /ai`
+- `GET /users`
+- `GET /user/:id`
+- `GET /system/info`
+- `GET /templates`
+- `GET /v1/users`
+- `GET /v1/agents`
+- `GET /v1/models`
+- `GET /v1/logs`
 
 ## Local Dev
 ```bash
