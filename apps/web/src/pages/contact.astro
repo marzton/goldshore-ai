@@ -13,8 +13,15 @@ export const prerender = true;
         Tell us about your systems, service levels, or the experiences you want
         to build. We will respond with a tailored plan.
       </p>
+      <p>
+        Prefer a structured intake? Use our
+        <a href="/intake">project qualification form</a>.
+      </p>
     </div>
     <form id="contact-form" class="gs-card" action="mailto:hello@goldshore.ai" method="post">
+    <form class="gs-card" action="/api/contact" method="post">
+      <input type="hidden" name="formType" value="contact" />
+      <input type="hidden" name="redirectTo" value="/thank-you" />
       <div class="gs-input-group">
         <label for="name">Name</label>
         <input id="name" name="name" type="text" autocomplete="name" required />
