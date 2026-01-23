@@ -14,6 +14,10 @@ Codex bot decision:
 
 ## Routes/Endpoints
 - No production routes are configured in the Wrangler config.
+The `gs-agent` worker is a queue-driven background agent. It currently returns a simple response for fetch requests and includes a stubbed queue consumer. The Wrangler configuration lives in `infra/cloudflare/gs-agent.wrangler.toml` and defines queue consumers for `goldshore-jobs`.
+
+## Routes/Endpoints
+- No production routes are configured in `wrangler.toml`.
 - Local dev exposes the worker via `wrangler dev`, returning `Hello from the GoldShore Agent!` from the fetch handler.
 
 ## Local Dev
@@ -29,3 +33,6 @@ pnpm --filter ./apps/gs-agent build
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
+```bash
+pnpm --filter ./apps/gs-agent deploy
+```

@@ -9,6 +9,14 @@ Cloudflare metadata (from `wrangler.toml`):
 - Compatibility date: `2025-01-10`
 - Bindings: `API_KV` (KV), `ASSETS` (R2), `DB` (D1), `AI` (AI Gateway)
 - Environment variable: `ENV=production`
+The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers. It uses KV, R2, D1, and the AI Gateway bindings configured in `wrangler.toml`.
+
+Configuration highlights (from `wrangler.toml`):
+- `ENV=production`
+- KV binding: `API_KV`
+- R2 binding: `ASSETS`
+- D1 binding: `DB`
+- AI binding: `AI`
 
 ## Routes/Endpoints
 - `GET /health`
@@ -31,3 +39,6 @@ pnpm --filter ./apps/api-worker build
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
+```bash
+pnpm --filter ./apps/api-worker deploy
+```

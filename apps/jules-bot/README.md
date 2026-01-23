@@ -2,6 +2,24 @@
 
 ## Overview
 A lightweight Node.js webhook server that listens for GitHub issue comment events and dispatches the `/palette` improvement workflow. It posts updates back to the PR via the GitHub API. This service remains separate from the `gs-agent` worker because it runs as a long-lived Node server rather than a queue-driven Worker.
+# Jules Bot
+
+Jules is the internal automation engineer for GoldShore.
+
+## Responsibilities
+*   **Hygiene:** Checks for missing documentation, stale TODOs, and unpinned actions.
+*   **Review:** Analyzes PRs for common issues.
+*   **Palette:** Improving UX micro-interactions.
+
+## Usage
+This bot is designed to run via GitHub Actions or as a standalone service.
+
+### Commands
+*   `/palette improve` - Triggers a UX improvement scan.
+# apps/jules-bot
+
+## Overview
+A lightweight Node.js webhook server that listens for GitHub issue comment events and dispatches the `/palette` improvement workflow. It posts updates back to the PR via the GitHub API.
 
 Required environment variables:
 - `GITHUB_TOKEN`

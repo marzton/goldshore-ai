@@ -17,6 +17,18 @@ Cloudflare metadata (from `wrangler.toml`):
 - `POST /workers/reconcile`
 - `POST /pages/deploy`
 - `POST /access/audit`
+The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers.
+
+Configuration highlights (from `wrangler.toml`):
+- `ENV=production`
+- KV binding: `CONTROL_LOGS`
+- R2 binding: `STATE`
+- Service bindings: `API` (`gs-api`), `GATEWAY` (`gs-gateway`)
+
+## Routes/Endpoints
+- `POST /system/sync`
+- `POST /dns/update`
+- `POST /preview/create`
 
 ## Local Dev
 ```bash
@@ -31,3 +43,6 @@ pnpm --filter ./apps/control-worker run-task
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
+```bash
+pnpm --filter ./apps/control-worker deploy
+```
