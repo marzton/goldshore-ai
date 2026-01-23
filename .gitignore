@@ -3,3 +3,14 @@ node_modules/
 
 # Temporary files
 test.txt
+dist/
+.turbo/
+.wrangler/
+.DS_Store
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.astro/
+.turbo/
+.wrangler/
