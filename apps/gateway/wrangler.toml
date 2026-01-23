@@ -26,5 +26,10 @@ queue = "gs-jobs"
 binding = "GATEWAY_KV"
 id = "goldshore-gw-kv"
 
+[[services]]
+binding = "API"
+service = "gs-api"
+environment = "production"
+
 [ai]
 binding = "AI"
