@@ -2,19 +2,30 @@
 import AdminLayout from "../layouts/AdminLayout.astro";
 import StatCard from '../components/StatCard.astro';
 import { ThemeManager } from '@goldshore/theme/manager';
+import { createAdminService } from '@goldshore/integrations';
 
 const API_BASE = import.meta.env.PUBLIC_API;
+const AUTH_TOKEN_URL = import.meta.env.PUBLIC_AUTH_TOKEN_URL;
+const AUTH_CLIENT_ID = import.meta.env.PUBLIC_AUTH_CLIENT_ID;
+const AUTH_CLIENT_SECRET = import.meta.env.PUBLIC_AUTH_CLIENT_SECRET;
+const AUDIT_ENDPOINT = import.meta.env.PUBLIC_ADMIN_AUDIT_ENDPOINT;
 
-let systemInfo: any = null;
+const authConfig = AUTH_TOKEN_URL && AUTH_CLIENT_ID && AUTH_CLIENT_SECRET
+  ? {
+      tokenUrl: AUTH_TOKEN_URL,
+      clientId: AUTH_CLIENT_ID,
+      clientSecret: AUTH_CLIENT_SECRET
+    }
+  : undefined;
 
-try {
-  const res = await fetch(`${API_BASE}/system/info`, { cache: 'no-store' });
-  if (res.ok) {
-    systemInfo = await res.json();
-  }
-} catch (e) {
-  systemInfo = null;
-}
+const adminService = createAdminService({
+  apiBaseUrl: API_BASE,
+  auth: authConfig,
+  auditEndpoint: AUDIT_ENDPOINT,
+  actor: 'admin-dashboard'
+});
+
+const systemInfo = await adminService.getSystemInfo();
 ---
 
 <AdminLayout title="Overview">
@@ -217,133 +228,5 @@ try {
     padding: 2px 8px;
     cursor: pointer;
     font-family: var(--font-family-mono);
-  }
-
-  .btn-xs.active {
-    background: var(--color-utility-orange);
-    color: #000;
-    border-color: var(--color-utility-orange);
-  }
-
-  /* Chart Simulation */
-  .chart-placeholder {
-    height: 300px;
-    position: relative;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
-    border: 1px dashed var(--color-border);
-    display: flex;
-    align-items: flex-end;
-    padding: 0 var(--space-4);
-    gap: var(--space-4);
-  }
-
-  .chart-bars {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    width: 100%;
-    height: 100%;
-    padding-top: var(--space-8);
-  }
-
-  .bar {
-    width: 100%;
-    background: var(--color-utility-orange);
-    opacity: 0.7;
-    margin: 0 4px;
-    border-top: 2px solid var(--color-neon-yellow);
-  }
-
-  /* Activity List */
-  .activity-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  .activity-item {
-    padding: var(--space-3);
-    background-color: rgba(0,0,0,0.2);
-    border-left: 2px solid var(--color-border);
-  }
-
-  .activity-item:hover {
-    background-color: rgba(255,255,255,0.02);
-    border-left-color: var(--color-utility-orange);
-  }
-
-  .time {
-    font-family: var(--font-family-mono);
-    font-size: 0.7rem;
-    color: var(--color-text-muted);
-    margin-bottom: 2px;
-  }
-
-  .event {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-primary);
-    margin-bottom: 2px;
-  }
-
-  .status {
-    font-family: var(--font-family-mono);
-    font-size: 0.65rem;
-    font-weight: bold;
-  }
-
-  /* Helper Classes */
-  .text-green { color: var(--color-sports-car-green) !important; }
-  .text-orange { color: var(--color-utility-orange) !important; }
-  .text-yellow { color: var(--color-neon-yellow) !important; }
-  .text-silver { color: var(--color-silver) !important; }
-
-  @media (max-width: 1024px) {
-    .dashboard-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    .content-split {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .gs-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.75rem;
-  }
-
-  .gs-panel {
-    border-radius: 1rem;
-    padding: 1.25rem 1.5rem;
-    border: 1px solid rgba(148, 163, 184, 0.25);
-    background: radial-gradient(circle at top, #020617, #000);
-  }
-
-  .gs-panel h2 {
-    margin-top: 0;
-    font-size: 1rem;
-  }
-
-  .gs-link-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 0.75rem;
-    margin-top: 1rem;
-  }
-
-  .gs-link-tile {
-    display: block;
-    text-decoration: none;
-    padding: 0.75rem 1rem;
-    border-radius: 0.75rem;
-    background: rgba(15, 23, 42, 0.9);
-    border: 1px solid rgba(148, 163, 184, 0.4);
-    color: #e5e7eb;
-    font-size: 0.9rem;
-  }
-
-  .gs-link-tile:hover {
-    border-color: #22d3ee;
   }
 </style>
