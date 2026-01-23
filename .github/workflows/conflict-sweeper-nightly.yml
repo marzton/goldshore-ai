@@ -1,9 +1,8 @@
 name: Conflict Sweeper (Nightly)
 
 on:
-  schedule:
-    - cron: "15 4 * * *"
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
