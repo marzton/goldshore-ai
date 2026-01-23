@@ -23,12 +23,7 @@ permissions:
   security-events: write
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  schedule:
-    - cron: '44 11 * * 5'
+  workflow_dispatch:
 
 jobs:
   MSDO:
