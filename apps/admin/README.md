@@ -1,46 +1,30 @@
-# @goldshore/admin
+# apps/admin
 
 ## Overview
+The GoldShore admin cockpit is an Astro SSR dashboard protected by Cloudflare Access. It uses the shared GoldShore UI kit and theme tokens.
 
-Admin cockpit dashboard built with Astro SSR and protected by Cloudflare Access. Uses the shared GoldShore UI kit and theme.
+## Routes/Endpoints
+Admin sections:
+- `/admin/overview`
+- `/admin/api-logs`
+- `/admin/workers/status`
+- `/admin/workers/bindings`
+- `/admin/workers/routes`
+- `/admin/users/list`
+- `/admin/users/sessions`
+- `/admin/users/permissions`
+- `/admin/system/dns`
+- `/admin/system/pages`
+- `/admin/system/storage`
+- `/admin/system/secrets`
 
-## Sections
-
-```
-/admin
-├── overview
-├── api-logs
-├── workers
-│   ├── status
-│   ├── bindings
-│   └── routes
-├── users
-│   ├── list
-│   ├── sessions
-│   └── permissions
-└── system
-    ├── dns
-    ├── pages
-    ├── storage
-    └── secrets
-```
-
-## Local Development
-
-From the repo root:
-
+## Local Dev
 ```bash
+pnpm install
 pnpm --filter ./apps/admin dev
-```
-
-Common scripts:
-
-```bash
 pnpm --filter ./apps/admin build
 pnpm --filter ./apps/admin preview
 ```
 
-## Dependencies
-
-- `@goldshore/ui`
-- `@goldshore/theme`
+## Deploy
+Cloudflare Pages deploys via GitHub Actions. Admin previews publish to `admin-preview.goldshore.ai`.

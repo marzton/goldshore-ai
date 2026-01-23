@@ -1,49 +1,30 @@
-# @goldshore/web
+# apps/web
 
 ## Overview
+The public GoldShore website and user portal built with Astro, shared theme, and UI components. It deploys to Cloudflare Pages as the primary marketing and customer-facing experience.
 
-Public marketing site and user portal built with Astro and Cloudflare Pages. Shared UI and theming come from `packages/ui` and `packages/theme`.
-
-## Routes
-
+## Routes/Endpoints
 Public routes:
-
-```
-/
-├── about
-├── pricing
-├── legal/privacy
-├── legal/terms
-└── contact
-```
+- `/`
+- `/about`
+- `/pricing`
+- `/legal/privacy`
+- `/legal/terms`
+- `/contact`
 
 Authenticated user portal:
+- `/app/dashboard`
+- `/app/profile`
+- `/app/logs`
+- `/app/settings`
 
-```
-/app
-├── dashboard
-├── profile
-├── logs
-└── settings
-```
-
-## Local Development
-
-From the repo root:
-
+## Local Dev
 ```bash
+pnpm install
 pnpm --filter ./apps/web dev
-```
-
-Common scripts:
-
-```bash
 pnpm --filter ./apps/web build
 pnpm --filter ./apps/web preview
-pnpm --filter ./apps/web astro check
 ```
 
-## Dependencies
-
-- `@goldshore/ui`
-- `@goldshore/theme`
+## Deploy
+Cloudflare Pages deploys via GitHub Actions. Preview branches publish to `{branch}.goldshore-pages.dev`.

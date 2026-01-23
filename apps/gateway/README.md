@@ -1,36 +1,28 @@
-# @goldshore/gateway
+# apps/gateway
 
 ## Overview
+The `gs-gateway` worker is the routing and queue ingress layer for GoldShore, served from `https://gw.goldshore.ai/*` on Cloudflare Workers. It handles proxying to the API, rate limiting, and preflight authorization checks.
 
-Edge gateway for routing, auth, throttling, and queue dispatch on Cloudflare Workers.
+Configuration highlights (from `wrangler.toml`):
+- `ENV=production`
+- `API_ORIGIN=https://api.goldshore.ai`
+- `CLOUDFLARE_ACCESS_AUDIENCE` (required for Access verification)
+- `CLOUDFLARE_TEAM_DOMAIN` (required for Access verification)
+- KV bindings: `gs-kv`, `GATEWAY_KV`
+- Queue producer: `JOB_QUEUE`
+- AI binding: `AI`
 
-```
-Route: https://gw.goldshore.ai/*
-```
+## Routes/Endpoints
+- `https://gw.goldshore.ai/*` (proxy + routing entrypoint)
 
-## Responsibilities
-
-- Reverse proxy → gs-api
-- Queue ingestion
-- Rate limiting
-- JWT / Access token verification
-- Preflight filtering (IP / SNI policies)
-
-## Local Development
-
-From the repo root:
-
+## Local Dev
 ```bash
+pnpm install
 pnpm --filter ./apps/gateway dev
+pnpm --filter ./apps/gateway build
 ```
 
-Build or deploy:
-
+## Deploy
 ```bash
-pnpm --filter ./apps/gateway build
 pnpm --filter ./apps/gateway deploy
 ```
-
-## Related Packages
-
-- `@goldshore/auth`

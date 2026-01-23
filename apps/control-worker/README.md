@@ -1,37 +1,27 @@
-# @goldshore/control (apps/control-worker)
+# apps/control-worker
 
 ## Overview
+The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers.
 
-Automation worker for infrastructure operations such as DNS updates, previews, and deployments.
+Configuration highlights (from `wrangler.toml`):
+- `ENV=production`
+- KV binding: `CONTROL_LOGS`
+- R2 binding: `STATE`
+- Service bindings: `API` (`gs-api`), `GATEWAY` (`gs-gateway`)
 
-```
-Route: https://ops.goldshore.ai/*
-```
+## Routes/Endpoints
+- `POST /system/sync`
+- `POST /dns/update`
+- `POST /preview/create`
 
-## Responsibilities
-
-- DNS updates
-- Preview environment creation
-- Worker deployment orchestration
-- Secret rotation
-- Observability sync
-
-## Local Development
-
-From the repo root:
-
+## Local Dev
 ```bash
+pnpm install
 pnpm --filter ./apps/control-worker dev
-```
-
-Run scheduled tasks locally:
-
-```bash
 pnpm --filter ./apps/control-worker run-task
 ```
 
-Deploy:
-
+## Deploy
 ```bash
 pnpm --filter ./apps/control-worker deploy
 ```

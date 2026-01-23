@@ -1,48 +1,31 @@
-# gs-api (apps/api-worker)
+# apps/api-worker
 
 ## Overview
+The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers. It uses KV, R2, D1, and the AI Gateway bindings configured in `wrangler.toml`.
 
-Hono-based API Worker deployed on Cloudflare Workers.
+Configuration highlights (from `wrangler.toml`):
+- `ENV=production`
+- KV binding: `API_KV`
+- R2 binding: `ASSETS`
+- D1 binding: `DB`
+- AI binding: `AI`
 
-```
-Route: https://api.goldshore.ai/*
-```
+## Routes/Endpoints
+- `GET /health`
+- `GET /version`
+- `POST /auth/login`
+- `GET /auth/session`
+- `GET /content/:slug`
+- `POST /queue/task`
 
-## Endpoints
-
-```
-GET   /health
-GET   /version
-POST  /auth/login
-GET   /auth/session
-GET   /content/:slug
-POST  /queue/task
-```
-
-## Bindings
-
-```
-KV = gs-kv
-R2 = gs-assets
-D1 = gs-db
-AI = AI (AI Gateway)
-```
-
-## Local Development
-
-From the repo root:
-
+## Local Dev
 ```bash
+pnpm install
 pnpm --filter ./apps/api-worker dev
+pnpm --filter ./apps/api-worker build
 ```
 
-Build or deploy:
-
+## Deploy
 ```bash
-pnpm --filter ./apps/api-worker build
 pnpm --filter ./apps/api-worker deploy
 ```
-
-## Related Packages
-
-- `@goldshore/auth`
