@@ -24,11 +24,7 @@
 name: "Mayhem for API"
 
 on:
-  schedule:
-    - cron: '17 19 * * 4'
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
 
 jobs:
   mayhem-for-api:

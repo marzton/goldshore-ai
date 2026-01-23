@@ -3,10 +3,8 @@ permissions:
   contents: read
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  schedule:
+    - cron: "0 3 * * 1"
 
 jobs:
   build:
@@ -14,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [22.x]
 
     steps:
     - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
