@@ -18,6 +18,7 @@ export const prerender = true;
         <a href="/intake">project qualification form</a>.
       </p>
     </div>
+    <form id="contact-form" class="gs-card" action="mailto:hello@goldshore.ai" method="post">
     <form class="gs-card" action="/api/contact" method="post">
       <input type="hidden" name="formType" value="contact" />
       <input type="hidden" name="redirectTo" value="/thank-you" />
@@ -50,5 +51,24 @@ export const prerender = true;
       </div>
       <GSButton type="submit">Send message</GSButton>
     </form>
+  </section>
+
+  <section class="gs-section">
+    <div class="gs-grid columns-2">
+      <div>
+        <h2>Snapshot</h2>
+        <p class="gs-text-lg">Direct, senior-led delivery that keeps programs steady and fast.</p>
+        <GSButton href="#contact-form" variant="secondary">Send your brief</GSButton>
+      </div>
+      <div class="gs-card">
+        <h3 class="section-title"><span>◆</span>Snapshot</h3>
+        <ul>
+          <li><strong>Current Focus:</strong> Automation layers, resilient infrastructure, and AI-assisted operations.</li>
+          <li><strong>What I build:</strong> End-to-end platforms, secure integrations, and operator-facing tooling.</li>
+          <li><strong>How I work:</strong> Clear scope, weekly checkpoints, and transparent delivery metrics.</li>
+          <li><strong>Availability:</strong> Full-time or contract engagements available.</li>
+        </ul>
+      </div>
+    </div>
   </section>
 </BaseLayout>
