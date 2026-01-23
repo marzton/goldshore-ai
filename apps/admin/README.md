@@ -44,6 +44,9 @@ Cloudflare metadata:
 - Pages bindings config: `infra/cloudflare/goldshore-admin.wrangler.toml`
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
 
+Documentation:
+- [Integrations hub](../../docs/integrations.md)
+
 ## Routes/Endpoints
 Admin sections:
 - `/admin/overview`
@@ -117,6 +120,9 @@ pnpm --filter @goldshore/admin dev
 
 ## Overview
 The GoldShore admin cockpit is an Astro SSR dashboard protected by Cloudflare Access. It uses the shared GoldShore UI kit and theme tokens.
+
+Documentation:
+- [Integrations hub](../../docs/integrations.md)
 
 ## Routes/Endpoints
 Admin sections:
