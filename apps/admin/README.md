@@ -44,7 +44,13 @@ Cloudflare metadata:
 - Pages bindings config: `infra/cloudflare/goldshore-admin.wrangler.toml`
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
 
+Documentation:
+- [Integrations hub](../../docs/integrations.md)
+- [Agent integration policy](../../docs/agent-integration.md)
+
 ## Routes/Endpoints
+Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
+
 Admin sections:
 - `/admin/overview`
 - `/admin/api-logs`
@@ -70,6 +76,12 @@ pnpm --filter ./apps/admin preview
 ## Deploy
 - Production deploy: `.github/workflows/deploy-admin.yml`
 - Preview deploy: `.github/workflows/preview-admin.yml`
+- Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
+
+## Preview Authentication
+- Preview builds reuse the centralized GitHub App callback handler; the handler completes the OAuth flow and redirects back to the preview hostname.
+- Cloudflare Access is enforced by the shared Access application and policies, with preview hostnames allowlisted alongside production.
+- See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 # GoldShore Admin (Astro)
@@ -118,7 +130,13 @@ pnpm --filter @goldshore/admin dev
 ## Overview
 The GoldShore admin cockpit is an Astro SSR dashboard protected by Cloudflare Access. It uses the shared GoldShore UI kit and theme tokens.
 
+Documentation:
+- [Integrations hub](../../docs/integrations.md)
+- [Agent integration policy](../../docs/agent-integration.md)
+
 ## Routes/Endpoints
+Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
+
 Admin sections:
 - `/admin/overview`
 - `/admin/api-logs`
@@ -143,3 +161,8 @@ pnpm --filter ./apps/admin preview
 
 ## Deploy
 Cloudflare Pages deploys via GitHub Actions. Admin previews publish to `admin-preview.goldshore.ai`.
+
+## Preview Authentication
+- Preview builds reuse the centralized GitHub App callback handler; the handler completes the OAuth flow and redirects back to the preview hostname.
+- Cloudflare Access is enforced by the shared Access application and policies, with preview hostnames allowlisted alongside production.
+- See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).

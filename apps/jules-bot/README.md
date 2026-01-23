@@ -28,6 +28,7 @@ Required environment variables:
 - `PORT` (optional, defaults to `3000`)
 
 ## Routes/Endpoints
+These are webhook API endpoints implemented in `src/index.mjs` (not HTML pages).
 - `POST /` for GitHub webhook payloads
   - Responds `200 OK` on success
   - Responds `413 Payload Too Large` when the body exceeds 1MB

@@ -1,20 +1,27 @@
 ---
 import { GSButton } from '@goldshore/ui';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import FlowSection from '../components/FlowSection.astro';
 
 export const prerender = true;
 ---
 
 <BaseLayout title="Contact | GoldShore" description="Reach the GoldShore team">
-  <section class="gs-hero">
+  <FlowSection variant="hero">
     <div>
       <h1>Contact</h1>
       <p>
         Tell us about your systems, service levels, or the experiences you want
         to build. We will respond with a tailored plan.
       </p>
+      <p>
+        Prefer a structured intake? Use our
+        <a href="/intake">project qualification form</a>.
+      </p>
     </div>
-    <form class="gs-card" action="mailto:hello@goldshore.ai" method="post">
+    <form id="contact-form" class="gs-card" action="/api/contact" method="post">
+      <input type="hidden" name="formType" value="contact" />
+      <input type="hidden" name="redirectTo" value="/thank-you" />
       <div class="gs-input-group">
         <label for="name">Name</label>
         <input id="name" name="name" type="text" autocomplete="name" required />
@@ -44,5 +51,24 @@ export const prerender = true;
       </div>
       <GSButton type="submit">Send message</GSButton>
     </form>
-  </section>
+  </FlowSection>
+
+  <FlowSection>
+    <div class="gs-grid columns-2">
+      <div>
+        <h2>Snapshot</h2>
+        <p class="gs-text-lg">Direct, senior-led delivery that keeps programs steady and fast.</p>
+        <GSButton href="#contact-form" variant="secondary">Send your brief</GSButton>
+      </div>
+      <div class="gs-card">
+        <h3 class="section-title"><span>◆</span>Snapshot</h3>
+        <ul>
+          <li><strong>Current Focus:</strong> Automation layers, resilient infrastructure, and AI-assisted operations.</li>
+          <li><strong>What I build:</strong> End-to-end platforms, secure integrations, and operator-facing tooling.</li>
+          <li><strong>How I work:</strong> Clear scope, weekly checkpoints, and transparent delivery metrics.</li>
+          <li><strong>Availability:</strong> Full-time or contract engagements available.</li>
+        </ul>
+      </div>
+    </div>
+  </FlowSection>
 </BaseLayout>
