@@ -26,7 +26,7 @@
 name: Debricked Scan
 
 on:
-  push:
+  workflow_dispatch:
 
 permissions:
   contents: read
