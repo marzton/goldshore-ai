@@ -1,43 +1,38 @@
-# Astro Starter Kit: Minimal
+# apps/admin
 
-```sh
-pnpm create astro@latest -- --template minimal
+## Overview
+The GoldShore admin cockpit is an Astro SSR dashboard protected by Cloudflare Access, built on the shared UI kit and theme.
+
+Cloudflare metadata:
+- Pages project name: `gs-admin` (production), `preview-admin` (preview)
+- Pages bindings config: `infra/cloudflare/goldshore-admin.wrangler.toml`
+- Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
+
+## Routes/Endpoints
+Admin sections:
+- `/admin/overview`
+- `/admin/api-logs`
+- `/admin/workers/status`
+- `/admin/workers/bindings`
+- `/admin/workers/routes`
+- `/admin/users/list`
+- `/admin/users/sessions`
+- `/admin/users/permissions`
+- `/admin/system/dns`
+- `/admin/system/pages`
+- `/admin/system/storage`
+- `/admin/system/secrets`
+
+## Local Dev
+```bash
+pnpm install
+pnpm --filter ./apps/admin dev
+pnpm --filter ./apps/admin build
+pnpm --filter ./apps/admin preview
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Deploy
+- Production deploy: `.github/workflows/deploy-admin.yml`
+- Preview deploy: `.github/workflows/preview-admin.yml`
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->

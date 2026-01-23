@@ -1,0 +1,31 @@
+# apps/gs-agent
+
+## Overview
+The `gs-agent` worker is a queue-driven background agent. It currently returns a simple response for fetch requests and includes a stubbed queue consumer. The deprecated `apps/goldshore-agent` directory has been consolidated into this app; legacy workflows still reference `infra/cloudflare/goldshore-agent.wrangler.toml`.
+
+Cloudflare metadata (from `infra/cloudflare/gs-agent.wrangler.toml`):
+- Worker base name: `gs-agent` (per-environment names: `gs-agent-dev`, `gs-agent-preview`, `gs-agent-prod`)
+- Queue consumer: `goldshore-jobs`
+- Compatibility date: `2024-03-20`
+
+Codex bot decision:
+- `jules-bot` remains a separate Node.js webhook service.
+- A placeholder `codex-bot` module now lives in `apps/gs-agent/src/bots/codex-bot.ts` for future queue-driven automation.
+
+## Routes/Endpoints
+- No production routes are configured in the Wrangler config.
+- Local dev exposes the worker via `wrangler dev`, returning `Hello from the GoldShore Agent!` from the fetch handler.
+
+## Local Dev
+```bash
+pnpm install
+pnpm --filter ./apps/gs-agent dev
+pnpm --filter ./apps/gs-agent build
+```
+
+## Deploy
+- Production deploy: `.github/workflows/deploy-agent.yml`
+- Preview deploy: `.github/workflows/preview-agent.yml`
+- Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
+
+<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
