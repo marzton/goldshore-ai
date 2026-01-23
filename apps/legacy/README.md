@@ -1,7 +1,7 @@
 # apps/legacy
 
 ## Overview
-Legacy worker artifacts live here. The `goldshore-api` directory contains an older `gs-api` Wrangler configuration that references a build command and static assets. No active GitHub Actions workflows target this legacy config.
+Legacy worker artifacts live here. The `goldshore-api` directory contains an older `gs-api` Wrangler configuration that references a build command and static assets.
 
 ## Routes/Endpoints
 - No routes are documented for the legacy worker configuration.
