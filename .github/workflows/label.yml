@@ -7,7 +7,16 @@
 # Verified: .github/labeler.yml exists.
 
 name: Labeler
-on: [pull_request_target]
+on:
+  pull_request_target:
+    paths:
+      - ".github/labeler.yml"
+      - ".github/workflows/**"
+      - "apps/**"
+      - "packages/**"
+      - "infra/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
 
 jobs:
   label:
