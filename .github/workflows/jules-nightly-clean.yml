@@ -4,8 +4,8 @@ permissions:
   actions: write
 
 on:
-  schedule:
-    - cron: "0 3 * * *" # 3 AM UTC
+  workflow_dispatch:
+  workflow_call:
 
 jobs:
   heal:
