@@ -6,7 +6,7 @@ Unified platform for the **GoldShore** ecosystem, built with:
 
 - **Astro** (Web + Admin SSR)
 - **Cloudflare Pages** (Frontend hosting)
-- **Cloudflare Workers** (API + Gateway + Control)
+- **Cloudflare Workers** (API + Gateway + Control + Agent)
 - **KV, R2, D1, Queues, AI Gateway**
 - **pnpm + Turborepo** (Monorepo orchestration)
 
@@ -16,6 +16,7 @@ The GoldShore Monorepo powers the entire GoldShore ecosystem, including:
 	•	Admin Cockpit Dashboard (Astro SSR + GoldShore UI Kit)
 	•	API Layer (Hono + Cloudflare Workers)
 	•	Gateway Layer (routing, throttling, AI gateway)
+	•	Agent Layer (Autonomous AI service)
 	•	Control Worker (DNS automation, binding sync, deployments)
 	•	Shared Design System (UI components, tokens, themes)
 	•	Infrastructure (Cloudflare + GitHub Actions)
@@ -30,36 +31,24 @@ The monorepo uses:
 
 ---
 
+# 🚀 Vibe Coding & Ecosystem
+
+We adhere to the **Vibe Coding** philosophy: Human-in-the-Loop (HITL) engineering where AI agents (Jules, Sentinel, GoldShore Agent) handle routine operations, security scanning, and hygiene, allowing humans to focus on high-value architecture.
+
+### Integrated Tech Stack
+*   **AI Models:** Google Gemini, OpenAI GPT-4, Anthropic Claude (via Cloudflare AI Gateway).
+*   **Financial Data:** Alpaca, Thinkorswim (Planned Integrations).
+*   **Automation:** Jules-Bot (GitHub Hygiene), Sentinel (Security), GoldShore Agent (Background Tasks).
+
+See [ECOSYSTEM.md](./ECOSYSTEM.md) for full details on our extensions and AI integrations.
+
 ---
 
 # 🚀 Architecture Overview
 
-```
-                        ┌──────────────────────────────┐
-                        │     goldshore.ai (Web)       │
-                        │      Cloudflare Pages        │
-                        └──────────────────────────────┘
-                                   │
-                                   ▼
-                   ┌──────────────────────────────────────┐
-                   │ admin.goldshore.ai (Admin Dashboard) │
-                   │     Cloudflare Pages + Access        │
-                   └──────────────────────────────────────┘
-                                   │
-                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                         Cloudflare Workers Layer                           │
-│────────────────────────────────────────────────────────────────────────────│
-│  gs-api        → Hono API Worker                                           │
-│  gs-gateway    → Router, proxy, auth, queues                               │
-│  gs-control    → Automation, DNS, previews, secret rotation                │
-└───────────────────────────────────────────────────────────────────────────┘
-                 │                 │                   │
-                 ▼                 ▼                   ▼
-       ┌──────────────┐   ┌──────────────┐   ┌────────────────────┐
-       │ KV Storage    │   │ R2 Static     │   │ D1 Database        │
-       └──────────────┘   └──────────────┘   └────────────────────┘
-```
+![GoldShore architecture diagram showing Cloudflare Pages for web and admin, Cloudflare Workers for API, gateway, agent, and control, and storage services (KV, R2, D1, Queues, AI Gateway).](docs/architecture/diagram.svg)
+
+Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd).
 
 ---
 
@@ -71,7 +60,10 @@ The monorepo uses:
 │   ├── web/               # Public website (Astro)
 │   ├── admin/             # Admin dashboard (Astro)
 │   ├── api-worker/        # Hono API (Workers)
-│   └── gateway/           # Router + jobs (Workers)
+│   ├── gateway/           # Router + jobs (Workers)
+│   ├── goldshore-agent/   # AI Agent Service (Workers)
+│   ├── control-worker/    # Infra automation
+│   └── jules-bot/         # GitHub Automation Bot
 │
 ├── packages/
 │   ├── ui/                # Shared component library
@@ -194,7 +186,18 @@ Responsibilities:
 
 ---
 
-## **5. gs-control (optional)**
+## **5. apps/goldshore-agent – gs-agent**
+
+Autonomous AI Agent Service.
+
+Responsibilities:
+- Background reasoning tasks
+- Integration with external AI models
+- Complex workflow orchestration
+
+---
+
+## **6. gs-control (optional)**
 
 System worker for automation:
 
