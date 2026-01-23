@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
+import { verifyAccess } from "@goldshore/auth";
 import * as DNS from "./libs/dns";
 import * as Workers from "./libs/workers";
 import * as Pages from "./libs/pages";
@@ -12,6 +13,21 @@ const app = new Hono<{ Bindings: ControlEnv }>();
 
 // Sentinel: Add security headers to all responses (Defense in Depth)
 app.use('*', secureHeaders());
+
+// Sentinel: CRITICAL - Enforce Authentication on all sensitive endpoints
+app.use('*', async (c, next) => {
+  // Allow root (status check) to remain public
+  if (c.req.path === '/') {
+    await next();
+    return;
+  }
+
+  const authorized = await verifyAccess(c.req.raw, c.env);
+  if (!authorized) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+  await next();
+});
 
 app.get("/", (c) => c.json({ service: "gs-control", ok: true }));
 
