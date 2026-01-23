@@ -1,12 +1,13 @@
 ---
 import { GSButton } from '@goldshore/ui';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import FlowSection from '../components/FlowSection.astro';
 
 export const prerender = true;
 ---
 
 <BaseLayout title="Contact | GoldShore" description="Reach the GoldShore team">
-  <section class="gs-hero">
+  <FlowSection variant="hero">
     <div>
       <h1>Contact</h1>
       <p>
@@ -18,8 +19,7 @@ export const prerender = true;
         <a href="/intake">project qualification form</a>.
       </p>
     </div>
-    <form id="contact-form" class="gs-card" action="mailto:hello@goldshore.ai" method="post">
-    <form class="gs-card" action="/api/contact" method="post">
+    <form id="contact-form" class="gs-card" action="/api/contact" method="post">
       <input type="hidden" name="formType" value="contact" />
       <input type="hidden" name="redirectTo" value="/thank-you" />
       <div class="gs-input-group">
@@ -51,9 +51,9 @@ export const prerender = true;
       </div>
       <GSButton type="submit">Send message</GSButton>
     </form>
-  </section>
+  </FlowSection>
 
-  <section class="gs-section">
+  <FlowSection>
     <div class="gs-grid columns-2">
       <div>
         <h2>Snapshot</h2>
@@ -70,5 +70,5 @@ export const prerender = true;
         </ul>
       </div>
     </div>
-  </section>
+  </FlowSection>
 </BaseLayout>
