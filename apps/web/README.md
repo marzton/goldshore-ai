@@ -1,43 +1,48 @@
-# Astro Starter Kit: Minimal
+# GoldShore Web (Astro)
 
-```sh
-pnpm create astro@latest -- --template minimal
+Public marketing site and content hub for GoldShore.
+
+## Goals
+
+- Keep **navbars, menus, and responsive containers** in shared layouts.
+- Keep **page content** in `src/pages` to remain lightweight.
+- Keep **search** as a reusable component that can be embedded in marketing, docs, and portals.
+
+## Template Page
+
+Use the template page as the default starting point for new marketing or campaign pages:
+
+- `src/pages/templates/index.astro`
+
+The template demonstrates:
+
+- Layout-driven navigation + menus.
+- Grid containers for desktop/tablet/mobile.
+- Search module integration.
+- CTA cards and campaign-ready sections.
+
+## Key Layouts + Components
+
+- `src/layouts/WebLayout.astro`: Global nav, menu toggle, and footer.
+- `src/layouts/MarketingLayout.astro`: Thin wrapper for marketing content.
+- `src/components/DocsSearch.astro`: Independent search widget.
+- `src/components/Hero.astro`, `FeatureGrid.astro`: Reusable marketing sections.
+
+## SEO + Marketing Guidance
+
+- Use descriptive `title` and `description` props on layouts.
+- Keep CTA blocks consistent with `@goldshore/ui` buttons.
+- Make every page responsive using `gs-grid` and `gs-section` helpers.
+
+## Integrations to Plan
+
+- AI: Google Gemini, ChatGPT, Jules, Cloudflare AI Gateway.
+- Marketing + CRM: HubSpot, Mailchimp, Salesforce.
+- Commerce: Stripe, Shopify, invoicing portals.
+- Market data landing pages: Alpaca, Thinkorswim, Polygon, Tradier.
+
+## Development
+
+```bash
+pnpm --filter @goldshore/web dev
 ```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).

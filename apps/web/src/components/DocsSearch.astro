@@ -27,6 +27,14 @@
 <script>
   const input = document.getElementById('docs-search-input') as HTMLInputElement | null;
   const list = document.getElementById('results');
+  const resultsList = list;
+  const showResults = (isOpen: boolean) => {
+    if (!input || !list) return;
+    input.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    if (!isOpen) {
+      list.innerHTML = '';
+    }
+  };
   let timer: ReturnType<typeof setTimeout>;
   let controller: AbortController | null = null;
 
