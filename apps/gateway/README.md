@@ -1,11 +1,11 @@
 # apps/gateway
 
 ## Overview
-The `gs-gateway` worker is the routing and queue ingress layer for GoldShore, served from `https://gw.goldshore.ai/*` on Cloudflare Workers. It is managed alongside the control worker as part of the Edge Workers deployment group.
+The `gs-gateway` worker is the routing and queue ingress layer for GoldShore on Cloudflare Workers. It is managed alongside the control worker as part of the Edge Workers deployment group.
 
 Cloudflare metadata (from `wrangler.toml`):
 - Worker name: `gs-gateway`
-- Route: `gw.goldshore.ai/*`
+- Route: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md)
 - Compatibility date: `2025-01-10`
 - Bindings: `gs-kv`, `GATEWAY_KV` (KV), `JOB_QUEUE` (Queues producer), `AI` (AI Gateway)
 - Environment variables: `ENV=production`, `API_ORIGIN=https://api.goldshore.ai`, `CLOUDFLARE_ACCESS_AUDIENCE`, `CLOUDFLARE_TEAM_DOMAIN`
@@ -39,6 +39,7 @@ pnpm --filter ./apps/gateway build
 - Production deploy: `.github/workflows/deploy-gateway.yml`
 - Preview deploy: `.github/workflows/preview-gateway.yml`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
+- Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 ```bash
