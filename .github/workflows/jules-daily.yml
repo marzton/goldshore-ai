@@ -1,9 +1,8 @@
 name: Jules Daily Guardian
 
 on:
-  schedule:
-    - cron: "17 12 * * *" # daily; adjust as desired
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   guardian:
