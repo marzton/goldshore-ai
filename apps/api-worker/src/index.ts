@@ -10,7 +10,7 @@ import system from './routes/system';
 import templates from './routes/templates';
 
 type Env = {
-  API_KV: KVNamespace;
+  KV: KVNamespace;
   DB: D1Database;
   ASSETS: R2Bucket;
   AI: any;
