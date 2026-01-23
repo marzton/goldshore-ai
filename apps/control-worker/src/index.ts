@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
-import { verifyAccess } from "@goldshore/auth";
+import { verifyAccessWithClaims, type AccessTokenPayload } from "@goldshore/auth";
 import * as DNS from "./libs/dns";
 import * as Workers from "./libs/workers";
 import * as Pages from "./libs/pages";
@@ -8,8 +8,14 @@ import * as Access from "./libs/access";
 import type { ControlEnv } from "./libs/types";
 import { syncDNS } from "./tasks/syncDNS";
 import { rotateKeys } from "./tasks/rotateKeys";
+import { cloudflareRoutes } from "./routes/cloudflare";
 
-const app = new Hono<{ Bindings: ControlEnv }>();
+const app = new Hono<{
+  Bindings: ControlEnv;
+  Variables: {
+    accessClaims: AccessTokenPayload;
+  };
+}>();
 
 // Sentinel: Add security headers to all responses (Defense in Depth)
 app.use('*', secureHeaders());
@@ -22,10 +28,11 @@ app.use('*', async (c, next) => {
     return;
   }
 
-  const authorized = await verifyAccess(c.req.raw, c.env);
-  if (!authorized) {
+  const claims = await verifyAccessWithClaims(c.req.raw, c.env);
+  if (!claims) {
     return c.json({ error: 'Unauthorized' }, 401);
   }
+  c.set('accessClaims', claims);
   await next();
 });
 
@@ -50,6 +57,8 @@ app.post("/access/audit", async (c) => {
   const report = await Access.audit(c.env);
   return c.json(report);
 });
+
+app.route("/cloudflare", cloudflareRoutes);
 
 export default {
   fetch: app.fetch,
