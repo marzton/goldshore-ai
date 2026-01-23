@@ -1,7 +1,6 @@
 ---
 import AdminLayout from "../layouts/AdminLayout.astro";
 import StatCard from '../components/StatCard.astro';
-import { ThemeManager } from '@goldshore/theme/manager';
 
 const API_BASE = import.meta.env.PUBLIC_API;
 
@@ -154,10 +153,18 @@ try {
   }
 
   .card {
-    background-color: var(--color-matte-grey);
-    border: 1px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: var(--border-radius-sm);
     padding: var(--space-4);
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(34, 211, 238, 0.2);
+    transform: translateY(-2px);
   }
 
   .card-header {
@@ -175,7 +182,7 @@ try {
   .stat-value {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--color-text-primary);
+    color: #fff;
     margin-bottom: var(--space-1);
     font-family: var(--font-family-mono);
     letter-spacing: -0.05em;
@@ -197,7 +204,7 @@ try {
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--space-4);
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
     padding-bottom: var(--space-4);
   }
 
@@ -229,8 +236,8 @@ try {
   .chart-placeholder {
     height: 300px;
     position: relative;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
-    border: 1px dashed var(--color-border);
+    background: linear-gradient(180deg, rgba(34, 211, 238, 0.02) 0%, transparent 100%);
+    border: 1px dashed rgba(255,255,255,0.1);
     display: flex;
     align-items: flex-end;
     padding: 0 var(--space-4);
@@ -249,9 +256,10 @@ try {
   .bar {
     width: 100%;
     background: var(--color-utility-orange);
-    opacity: 0.7;
+    opacity: 0.8;
     margin: 0 4px;
     border-top: 2px solid var(--color-neon-yellow);
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.2);
   }
 
   /* Activity List */
@@ -263,12 +271,13 @@ try {
 
   .activity-item {
     padding: var(--space-3);
-    background-color: rgba(0,0,0,0.2);
-    border-left: 2px solid var(--color-border);
+    background-color: rgba(255,255,255,0.02);
+    border-left: 2px solid rgba(255,255,255,0.1);
+    transition: all 0.2s;
   }
 
   .activity-item:hover {
-    background-color: rgba(255,255,255,0.02);
+    background-color: rgba(255,255,255,0.05);
     border-left-color: var(--color-utility-orange);
   }
 
@@ -292,8 +301,8 @@ try {
   }
 
   /* Helper Classes */
-  .text-green { color: var(--color-sports-car-green) !important; }
-  .text-orange { color: var(--color-utility-orange) !important; }
+  .text-green { color: var(--color-sports-car-green) !important; text-shadow: 0 0 8px rgba(0, 255, 0, 0.3); }
+  .text-orange { color: var(--color-utility-orange) !important; text-shadow: 0 0 8px rgba(255, 165, 0, 0.3); }
   .text-yellow { color: var(--color-neon-yellow) !important; }
   .text-silver { color: var(--color-silver) !important; }
 
@@ -316,13 +325,15 @@ try {
   .gs-panel {
     border-radius: 1rem;
     padding: 1.25rem 1.5rem;
-    border: 1px solid rgba(148, 163, 184, 0.25);
-    background: radial-gradient(circle at top, #020617, #000);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(5, 5, 5, 0.5);
+    backdrop-filter: blur(10px);
   }
 
   .gs-panel h2 {
     margin-top: 0;
     font-size: 1rem;
+    color: #fff;
   }
 
   .gs-link-grid {
@@ -337,13 +348,16 @@ try {
     text-decoration: none;
     padding: 0.75rem 1rem;
     border-radius: 0.75rem;
-    background: rgba(15, 23, 42, 0.9);
-    border: 1px solid rgba(148, 163, 184, 0.4);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     color: #e5e7eb;
     font-size: 0.9rem;
+    transition: all 0.2s;
   }
 
   .gs-link-tile:hover {
     border-color: #22d3ee;
+    background: rgba(34, 211, 238, 0.05);
+    color: #fff;
   }
 </style>
