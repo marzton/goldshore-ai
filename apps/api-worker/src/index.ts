@@ -9,7 +9,7 @@ import user from './routes/user';
 import system from './routes/system';
 
 type Env = {
-  API_KV: KVNamespace;
+  KV: KVNamespace;
   DB: D1Database;
   ASSETS: R2Bucket;
   AI: any;
