@@ -51,6 +51,7 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 │   ├── admin/             # Admin dashboard (Astro)
 │   ├── api-worker/        # Hono API (Workers)
 │   └── gateway/           # Router + jobs (Workers)
+│   └── gs-agent/          # HITL agent worker
 │
 ├── packages/
 │   ├── ui/                # Shared component library
@@ -173,7 +174,23 @@ Responsibilities:
 
 ---
 
-## **5. gs-control (optional)**
+## **5. apps/gs-agent – gs-agent**
+
+Human-in-the-loop (HITL) worker for AI orchestration and operational workflows.
+
+```
+Route: https://agent.goldshore.ai/*
+```
+
+Template endpoint:
+
+```
+GET /templates
+```
+
+---
+
+## **6. gs-control (optional)**
 
 System worker for automation:
 
@@ -207,6 +224,47 @@ Component library:
 - Cards, Tables
 - Navbars, Sidebars
 - Tailwind/Vanilla CSS compatible
+
+---
+
+# 🧩 Template Pages & Modules
+
+Template pages are kept alongside each app so navigation, menus, containers, and search remain pluggable.
+
+| App | Template Location | Notes |
+| --- | --- | --- |
+| Web | `apps/web/src/pages/templates/index.astro` | Marketing + search composition |
+| Admin | `apps/admin/src/pages/templates/index.astro` | Dashboard shell + table samples |
+| API Worker | `apps/api-worker/src/routes/templates.ts` | Module checklist for API growth |
+| Gateway | `apps/gateway/src/index.ts` (`/templates`) | Routing + AI dispatch template |
+| Agent | `apps/gs-agent/src/index.ts` (`/templates`) | HITL orchestration template |
+
+---
+
+# 🔗 Integration Matrix (Current + Planned)
+
+GoldShore templates are designed to integrate with:
+
+- **AI Providers**: Google Gemini, OpenAI ChatGPT, Anthropic Claude (via AI Gateway).
+- **Operational Assistants**: Jules, GitHub Copilot, and custom HITL review workflows.
+- **Cloudflare**: Workers, Pages, Queues, D1, R2, and AI Gateway.
+- **DevOps**: GitHub Actions, GitHub Issues/Projects, and deploy previews.
+- **Market Data + Trading**: Alpaca, Thinkorswim, Polygon, Tradier, and FIX gateways.
+- **Ecommerce + CRM**: Stripe, Shopify, HubSpot, Salesforce, and outbound messaging.
+
+Use these integrations to expand website management, SEO automation, admin analytics,
+AI agent tooling, and market data services without rebuilding existing modules.
+
+---
+
+# 🧭 Continuity Tracking
+
+To keep issues, workflows, PRs, branches, and components aligned:
+
+- Track work in **GitHub Issues/Projects** and the templates in `.github/ISSUE_TEMPLATE/`.
+- Review deployment flow in `infra/github/workflows/`.
+- Use `ops/pr-playbook.md` and `ops/maintenance-playbook.md` for release continuity.
+- Document component ownership in the admin dashboard templates and UI kit README.
 
 ## **packages/utils**
 TypeScript utilities:
