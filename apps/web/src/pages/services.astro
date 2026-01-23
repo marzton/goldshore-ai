@@ -1,6 +1,7 @@
 ---
 import { GSButton } from '@goldshore/ui';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import FlowSection from '../components/FlowSection.astro';
 
 export const prerender = true;
 
@@ -29,7 +30,7 @@ const services = [
 ];
 ---
 <BaseLayout title="Services | GoldShore" description="Service catalog for GoldShore AI">
-  <section class="gs-hero">
+  <FlowSection variant="hero">
     <div>
       <h1>Services</h1>
       <p>Crafted delivery engagements that combine platform engineering, AI execution, and operational rigor.</p>
@@ -43,9 +44,9 @@ const services = [
         <li>Security reviews with access and automation policy updates</li>
       </ul>
     </div>
-  </section>
+  </FlowSection>
 
-  <section class="gs-section">
+  <FlowSection>
     <div class="gs-grid columns-3">
       {services.map((service) => (
         <article class="gs-card">
@@ -55,9 +56,9 @@ const services = [
         </article>
       ))}
     </div>
-  </section>
+  </FlowSection>
 
-  <section class="gs-section">
+  <FlowSection>
     <div class="gs-grid columns-2">
       <div>
         <h2>Snapshot</h2>
@@ -74,5 +75,5 @@ const services = [
         </ul>
       </div>
     </div>
-  </section>
+  </FlowSection>
 </BaseLayout>
