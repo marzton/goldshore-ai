@@ -19,6 +19,12 @@ const services = [
     name: 'Edge Intelligence',
     detail: 'Low-latency inference and routing tuned for reliability across regions.',
     cta: '/contact'
+  },
+  {
+    name: 'Client Intake',
+    detail:
+      'Lead capture forms, CRM integrations (HubSpot/Salesforce), billing flows (Stripe/PayPal), and an opportunity ranking pipeline surfaced in admin KPIs.',
+    cta: '/contact'
   }
 ];
 ---
@@ -48,6 +54,25 @@ const services = [
           <GSButton href={service.cta} variant="secondary" class="gs-button--small">Talk to us</GSButton>
         </article>
       ))}
+    </div>
+  </section>
+
+  <section class="gs-section">
+    <div class="gs-grid columns-2">
+      <div>
+        <h2>Snapshot</h2>
+        <p class="gs-text-lg">Focused delivery for teams that need reliable systems, fast.</p>
+        <GSButton href="/contact" variant="secondary">Plan the engagement</GSButton>
+      </div>
+      <div class="gs-card">
+        <h3 class="section-title"><span>◆</span>Snapshot</h3>
+        <ul>
+          <li><strong>Current Focus:</strong> High-availability automation, observability, and AI execution.</li>
+          <li><strong>What I build:</strong> Control planes, incident workflows, and operator-grade interfaces.</li>
+          <li><strong>How I work:</strong> Scoped pilots, rapid delivery, and hardening with shared KPIs.</li>
+          <li><strong>Availability:</strong> Full-time or contract, tailored to your delivery window.</li>
+        </ul>
+      </div>
     </div>
   </section>
 </BaseLayout>

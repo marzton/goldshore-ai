@@ -1,9 +1,6 @@
 ---
 import '@goldshore/theme/tokens';
 import { GSButton } from '@goldshore/ui';
-
-// Goldshore Landing Page
-// Aesthetic: Military x Tech, Sports Car, Utility
 import MarketingLayout from '../layouts/MarketingLayout.astro';
 
 export const prerender = true;
@@ -22,24 +19,15 @@ const features = [
     body: 'Connected to major liquidity pools across all timezones. 24/7 operations.',
   },
 ];
+
+const highlights = [
+  { label: 'Uptime', value: '99.99%', tone: 'success' },
+  { label: 'Latency', value: '<50ms', tone: 'success' },
+  { label: 'Threats Blocked', value: '14k/day', tone: 'warning' },
+  { label: 'Active Agents', value: '42', tone: 'info' }
+];
 ---
 
-<MarketingLayout title="GoldShore | Shaping Waves">
-  <section class="max-w-4xl mx-auto py-32 px-6 text-center">
-    <h1 class="text-6xl font-bold mb-6 tracking-tight gs-heading text-[var(--gs-text-primary)]">
-      Shaping <span style="color: var(--gs-brand-gold);">Waves</span>
-    </h1>
-    <p class="text-xl text-[var(--gs-text-secondary)] max-w-2xl mx-auto leading-relaxed">
-      Gold Shore Labs builds AI-powered infrastructure for trading, automation, and applied intelligence.
-    </p>
-
-    <div class="mt-12 flex justify-center gap-4">
-      <GSButton href="/about" variant="primary">
-        Learn More
-      </GSButton>
-      <GSButton href="/contact" variant="secondary">
-        Get in Touch
-      </GSButton>
 <MarketingLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
   <section class="gs-hero">
     <div>
@@ -81,3 +69,54 @@ const features = [
     ))}
   </section>
 </MarketingLayout>
+
+<style>
+  .gs-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gs-space-8);
+    align-items: center;
+    padding: var(--gs-space-12) var(--gs-space-6);
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  @media (max-width: 900px) {
+    .gs-hero { grid-template-columns: 1fr; }
+  }
+  h1 {
+    font-size: 3.5rem;
+    line-height: 1.1;
+    margin-bottom: var(--gs-space-4);
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  p {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: var(--gs-color-text-secondary);
+    margin-bottom: var(--gs-space-6);
+  }
+  .gs-kpi {
+    background: var(--gs-color-bg-surface);
+    padding: var(--gs-space-3);
+    border-radius: var(--gs-radius-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .gs-kpi span { font-size: 0.75rem; text-transform: uppercase; color: var(--gs-color-subtle); letter-spacing: 0.05em; }
+  .gs-kpi strong { font-size: 1.5rem; color: var(--gs-color-text); }
+  .section-title {
+    margin-top: 0;
+    margin-bottom: var(--gs-space-4);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gs-color-subtle);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>
