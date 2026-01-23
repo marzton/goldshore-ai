@@ -79,6 +79,7 @@ pnpm --filter ./apps/web preview
 ## Deploy
 - Production deploy: `.github/workflows/deploy-web.yml`
 - Preview deploy: `.github/workflows/preview-web.yml`
+- Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 ## Preview Authentication
 - Preview builds reuse the centralized GitHub App callback handler; the handler completes the OAuth flow and redirects back to the preview hostname.
