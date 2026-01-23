@@ -46,33 +46,9 @@ See [ECOSYSTEM.md](./ECOSYSTEM.md) for full details on our extensions and AI int
 
 # 🚀 Architecture Overview
 
-```
-                        ┌──────────────────────────────┐
-                        │     goldshore.ai (Web)       │
-                        │      Cloudflare Pages        │
-                        └──────────────────────────────┘
-                                   │
-                                   ▼
-                   ┌──────────────────────────────────────┐
-                   │ admin.goldshore.ai (Admin Dashboard) │
-                   │     Cloudflare Pages + Access        │
-                   └──────────────────────────────────────┘
-                                   │
-                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                         Cloudflare Workers Layer                           │
-│────────────────────────────────────────────────────────────────────────────│
-│  gs-api        → Hono API Worker                                           │
-│  gs-gateway    → Router, proxy, auth, queues                               │
-│  gs-agent      → Autonomous AI Agent Service                               │
-│  gs-control    → Automation, DNS, previews, secret rotation                │
-└───────────────────────────────────────────────────────────────────────────┘
-                 │                 │                   │
-                 ▼                 ▼                   ▼
-       ┌──────────────┐   ┌──────────────┐   ┌────────────────────┐
-       │ KV Storage    │   │ R2 Static     │   │ D1 Database        │
-       └──────────────┘   └──────────────┘   └────────────────────┘
-```
+![GoldShore architecture diagram showing Cloudflare Pages for web and admin, Cloudflare Workers for API, gateway, agent, and control, and storage services (KV, R2, D1, Queues, AI Gateway).](docs/architecture/diagram.svg)
+
+Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd).
 
 ---
 

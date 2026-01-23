@@ -132,6 +132,22 @@ importers:
         specifier: ^3.0.0
         version: 3.114.17(@cloudflare/workers-types@4.20260122.0)
 
+  apps/goldshore-agent:
+    dependencies:
+      hono:
+        specifier: ^4.0.0
+        version: 4.11.5
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20240208.0
+        version: 4.20260122.0
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+      wrangler:
+        specifier: ^3.0.0
+        version: 3.114.17(@cloudflare/workers-types@4.20260122.0)
+
   apps/gs-agent:
     devDependencies:
       '@cloudflare/workers-types':
