@@ -24,11 +24,11 @@
 name: "Mayhem for API"
 
 on:
+  schedule:
+    - cron: '17 19 * * 4'
   push:
-    branches: [ "main" ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ "main" ]
+    tags:
+      - 'v*'
 
 jobs:
   mayhem-for-api:
