@@ -1,38 +1,33 @@
-# Domains and Auth
+# Domains & Auth (Single Source of Truth)
 
-This document tracks the domains that must be wired into GitHub App settings, Cloudflare Access, and any edge proxy configuration so preview branches can authenticate correctly.
+This document is the canonical reference for GoldShore domains, preview URLs, Cloudflare Access policy coverage, and GitHub App callback endpoints.
 
-## Preview domains referenced by apps
+## Production domains
 
-Preview environments for `apps/web` and `apps/admin` reference the following domains (from app docs and Cloudflare bindings):
+- `goldshore.ai`
+- `api.goldshore.ai`
+- `gw.goldshore.ai`
+- `ops.goldshore.ai`
 
-| Area | Preview domain | Source |
-| --- | --- | --- |
-| Web (Pages) | `preview.goldshore.ai` | Cloudflare bindings map |
-| Web (Pages per-branch) | `{branch}.goldshore-pages.dev` | Web app README |
-| Admin (Pages) | `admin-preview.goldshore.ai` | Admin app README + Cloudflare bindings map |
-| API worker | `api-preview.goldshore.ai` | Cloudflare bindings map |
-| Gateway worker | `gw-preview.goldshore.ai` | Cloudflare bindings map |
+## Preview domains
 
-## GitHub App preview callback URLs
+- `*-preview.goldshore.ai`
+- `{branch}.goldshore-pages.dev`
 
-Add the preview callback URLs for **each preview domain above that hosts the OAuth callback route** in GitHub App settings. Use the same callback path as production, but swap the host to the preview domain.
+## Cloudflare Access policies
 
-Example (replace `<callback-path>` with the production path configured in the GitHub App):
+Cloudflare Access is enforced only where required for internal tooling and private endpoints.
 
-- `https://preview.goldshore.ai/<callback-path>`
-- `https://{branch}.goldshore-pages.dev/<callback-path>`
-- `https://admin-preview.goldshore.ai/<callback-path>`
+| Area | Domains | Access policy | Notes |
+| --- | --- | --- | --- |
+| Public web | `goldshore.ai` | No | Public marketing site. |
+| Admin cockpit | `admin.goldshore.ai` | Yes | Internal admin dashboard, email allowlist + IdP/OTP. |
+| Control worker | `ops.goldshore.ai` | Yes | Internal ops workflows and automation. |
+| API worker | `api.goldshore.ai` | Optional | Enable for private endpoints only. |
+| Gateway worker | `gw.goldshore.ai` | Optional | Depends on routing/auth design. |
+| Mail handler | `mail.goldshore.ai` | No | Cloudflare mail routing cannot authenticate. |
 
-If the GitHub App callback is routed through API or gateway previews, include them as well:
+## GitHub App callback URLs
 
-- `https://api-preview.goldshore.ai/<callback-path>`
-- `https://gw-preview.goldshore.ai/<callback-path>`
-
-## Cloudflare Access / edge proxy alignment
-
-When Cloudflare Access or an edge proxy is enabled for preview domains:
-
-- Ensure Access applications include the **same preview hostnames** as the GitHub App callback URLs.
-- Confirm the OAuth callback path is **not blocked** by Access policies or edge rules.
-- Keep allowlists (email, identity provider, or IP) in sync between preview and production so GitHub App auth flows match production behavior.
+- Production: `https://ops.goldshore.ai/auth/github/callback`
+- Preview: `https://ops-preview.goldshore.ai/auth/github/callback`
