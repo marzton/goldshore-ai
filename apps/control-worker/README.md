@@ -25,11 +25,6 @@ Configuration highlights (from `wrangler.toml`):
 - R2 binding: `STATE`
 - Service bindings: `API` (`gs-api`), `GATEWAY` (`gs-gateway`)
 
-## Routes/Endpoints
-- `POST /system/sync`
-- `POST /dns/update`
-- `POST /preview/create`
-
 ## Local Dev
 ```bash
 pnpm install
