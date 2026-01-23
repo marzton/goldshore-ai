@@ -1,8 +1,7 @@
 name: Sentinel Nightly Scan
 on:
-  schedule:
-    - cron: "30 2 * * *"
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: write
