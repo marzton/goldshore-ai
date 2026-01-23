@@ -71,6 +71,11 @@ pnpm --filter ./apps/admin preview
 - Production deploy: `.github/workflows/deploy-admin.yml`
 - Preview deploy: `.github/workflows/preview-admin.yml`
 
+## Preview Authentication
+- Preview builds reuse the centralized GitHub App callback handler; the handler completes the OAuth flow and redirects back to the preview hostname.
+- Cloudflare Access is enforced by the shared Access application and policies, with preview hostnames allowlisted alongside production.
+- See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
+
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 # GoldShore Admin (Astro)
 
@@ -143,3 +148,8 @@ pnpm --filter ./apps/admin preview
 
 ## Deploy
 Cloudflare Pages deploys via GitHub Actions. Admin previews publish to `admin-preview.goldshore.ai`.
+
+## Preview Authentication
+- Preview builds reuse the centralized GitHub App callback handler; the handler completes the OAuth flow and redirects back to the preview hostname.
+- Cloudflare Access is enforced by the shared Access application and policies, with preview hostnames allowlisted alongside production.
+- See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).

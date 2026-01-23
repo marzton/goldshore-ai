@@ -80,6 +80,11 @@ pnpm --filter ./apps/web preview
 - Production deploy: `.github/workflows/deploy-web.yml`
 - Preview deploy: `.github/workflows/preview-web.yml`
 
+## Preview Authentication
+- Preview builds reuse the centralized GitHub App callback handler; the handler completes the OAuth flow and redirects back to the preview hostname.
+- Cloudflare Access is enforced by the shared Access application and policies, with preview hostnames allowlisted alongside production.
+- See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
+
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 # GoldShore Web (Astro)
 
@@ -159,3 +164,8 @@ pnpm --filter ./apps/web preview
 
 ## Deploy
 Cloudflare Pages deploys via GitHub Actions. Preview branches publish to `{branch}.goldshore-pages.dev`.
+
+## Preview Authentication
+- Preview builds reuse the centralized GitHub App callback handler; the handler completes the OAuth flow and redirects back to the preview hostname.
+- Cloudflare Access is enforced by the shared Access application and policies, with preview hostnames allowlisted alongside production.
+- See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
