@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Logs | GoldShore</title><meta name="description" content="GoldShore AI"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0"><link rel="stylesheet" href="https://unpkg.com/aria-icons@1.0.0/aria-icons.css"><link rel="stylesheet" href="/_astro/_path_.CHe-i0ce.css"><script type="module" src="/_astro/page.D1uwR3nK.js"></script></head> <body> <a href="#content" class="skip-link">Skip to content</a> <div class="gs-page-shell"> <header class="gs-header" data-menu-open="false"> <a class="gs-logo" href="/" aria-label="GoldShore home"> <img src="(...args) => {
+    if (!validateArgs(args)) {
+      throw new AstroError({
+        ...InvalidComponentArgs,
+        message: InvalidComponentArgs.message(name)
+      });
+    }
+    return cb(...args);
+  }" alt="GoldShore Penrose logo" width="36" height="36" fetchpriority="high"> <span>GoldShore</span> </a> <button class="gs-nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation"> <span class="material-symbols-rounded" aria-hidden="true">menu</span> <span class="sr-only">Toggle menu</span> </button> <nav class="gs-nav" id="primary-navigation" aria-label="Primary"> <a href="/" data-astro-prefetch> Home </a><a href="/about" data-astro-prefetch> About </a><a href="/services" data-astro-prefetch> Services </a><a href="/team" data-astro-prefetch> Team </a><a href="/contact" data-astro-prefetch> Contact </a><a href="/apps/risk-radar" data-astro-prefetch> Risk Radar </a> <a href="/developer" class="gs-button gs-button--secondary gs-button--small gs-button--with-icon" aria-disabled="false" data-astro-cid-bome3wnk="true"> <span class="material-symbols-rounded" aria-hidden="true">terminal</span>
+Developer
+ </a>  </nav> </header> <main id="content" class="gs-page-content">   <section class="max-w-4xl mx-auto py-24 px-6"> <h1 class="text-4xl gs-heading mb-4">Activity Logs</h1> <p class="text-[var(--gs-text-secondary)]">
+System logs and user event history will be shown here.
+</p> </section>   </main> <footer class="gs-footer"> <div class="gs-section gs-section--padded"> <div class="gs-grid columns-2"> <div> <div class="gs-logo" style="gap: var(--gs-space-2);"> <img src="/_astro/logo.BT6EfVX3.svg" alt="GoldShore logo" width="32" height="32" loading="lazy" decoding="async"> <span>GoldShore AI</span> </div> <p>Applied intelligence, resilient infrastructure, and responsive operations.</p> </div> <div class="gs-grid columns-2" style="gap: var(--gs-space-2);"> <div class="gs-nav gs-nav--vertical"> <strong><span class="aria-icon aria-icon-orbit" aria-hidden="true"></span>Company</strong> <a href="/about">About</a> <a href="/team">Team</a> <a href="/services">Services</a> </div> <div class="gs-nav gs-nav--vertical-support"> <strong><span class="aria-icon aria-icon-signal" aria-hidden="true"></span>Support</strong> <a href="/contact">Contact</a> <a href="/legal/privacy">Privacy</a> <a href="/legal/terms">Terms</a> </div> </div> </div> </div> </footer> </div> <script>
+      const header = document.querySelector('.gs-header');
+      const toggle = document.querySelector('.gs-nav-toggle');
+      const updateHeaderOpacity = () => {
+        if (!header) return;
+        const maxScroll = 160;
+        const progress = Math.min(window.scrollY / maxScroll, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        header.style.setProperty('--gs-header-opacity', (0.6 * eased).toFixed(3));
+        header.classList.toggle('is-scrolled', progress > 0.02);
+      };
+      updateHeaderOpacity();
+      window.addEventListener('scroll', updateHeaderOpacity, { passive: true });
+      toggle?.addEventListener('click', () => {
+        if (!header) return;
+        const isOpen = header.getAttribute('data-menu-open') === 'true';
+        header.setAttribute('data-menu-open', String(!isOpen));
+        toggle.setAttribute('aria-expanded', String(!isOpen));
+      });
+    </script> </body> </html>
