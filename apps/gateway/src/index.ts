@@ -9,7 +9,6 @@ type Env = {
   AI: any;
   ENV: string;
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
-  // Sentinel: Added support for dynamic team domain
   CLOUDFLARE_TEAM_DOMAIN?: string;
 };
 
@@ -44,6 +43,31 @@ app.use('*', async (c, next) => {
 });
 
 app.get('/health', (c) => c.json({ status: 'ok', service: 'gs-gateway' }));
+app.get('/templates', (c) =>
+  c.json({
+    service: 'gs-gateway',
+    description: 'Gateway template routes for routing, auth, and AI dispatch.',
+    modules: [
+      {
+        name: 'routing',
+        purpose: 'Proxy requests to gs-api or partner services with consistent observability.'
+      },
+      {
+        name: 'ai-dispatch',
+        purpose: 'Send AI requests to Gemini, ChatGPT, Jules, or Cloudflare AI Gateway.'
+      },
+      {
+        name: 'market-streams',
+        purpose: 'Broker market data connections for Alpaca, Thinkorswim, and other feeds.'
+      }
+    ],
+    nextSteps: [
+      'Add per-route rate limits and request shaping.',
+      'Define queue-backed workflows for bursty workloads.',
+      'Publish route maps to admin dashboards.'
+    ]
+  })
+);
 
 // Root Status Page
 app.get('/', (c) => {
