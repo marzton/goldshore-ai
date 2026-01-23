@@ -1,4 +1,4 @@
-import { createRemoteJWKSet, jwtVerify } from "jose";
+import { createRemoteJWKSet, jwtVerify, type JWTPayload } from "jose";
 
 export interface Env {
     // Sentinel: Added support for Audience verification to prevent auth bypass
@@ -20,9 +20,16 @@ function getJwks(domain: string) {
     return jwksCache.get(domain)!;
 }
 
-export async function verifyAccess(req: Request, env: Env) {
+export type AccessTokenPayload = JWTPayload & {
+  email?: string;
+  groups?: string[] | string;
+  roles?: string[] | string;
+  role?: string;
+};
+
+export async function verifyAccessWithClaims(req: Request, env: Env) {
   const token = req.headers.get("CF-Access-Jwt-Assertion");
-  if (!token) return false;
+  if (!token) return null;
 
   const teamDomain = (env && env.CLOUDFLARE_TEAM_DOMAIN) || DEFAULT_TEAM_DOMAIN;
   const JWKS = getJwks(teamDomain);
@@ -38,10 +45,15 @@ export async function verifyAccess(req: Request, env: Env) {
         options.audience = env.CLOUDFLARE_ACCESS_AUDIENCE;
     }
 
-    await jwtVerify(token, JWKS, options);
-    return true;
+    const { payload } = await jwtVerify(token, JWKS, options);
+    return payload as AccessTokenPayload;
   } catch (e) {
     console.error("Token verification failed", e);
-    return false;
+    return null;
   }
+}
+
+export async function verifyAccess(req: Request, env: Env) {
+  const payload = await verifyAccessWithClaims(req, env);
+  return Boolean(payload);
 }
