@@ -1,69 +1,143 @@
 # 🟦 GoldShore Monorepo (README v2)
 
-Unified platform for the **GoldShore** ecosystem, built with:
+Unified platform for the **GoldShore** ecosystem, built with **Astro**, **Cloudflare**, and a shared design system. This monorepo ships the public website, admin cockpit, edge workers, and shared packages that power GoldShore in production.
 
-- **Astro** (web + admin SSR)
-- **Cloudflare Pages** (frontend hosting)
-- **Cloudflare Workers** (API + gateway + control)
+- **Astro** (Web + Admin SSR)
+- **Cloudflare Pages** (Frontend hosting)
+- **Cloudflare Workers** (API + Gateway + Control + Agent)
 - **KV, R2, D1, Queues, AI Gateway**
-- **pnpm + Turborepo** (monorepo orchestration)
+- **pnpm + Turborepo** (Monorepo orchestration)
 
-This repository contains all applications, shared packages, and infrastructure code used in production.
+> Looking for the earlier README? See `README.md`.
 
----
+## Table of Contents
 
-## Overview
+- [Vibe Coding & Human-in-the-Loop](#vibe-coding--human-in-the-loop)
+- [Tech Stack & Integrations](#tech-stack--integrations)
+- [Repository Structure](#repository-structure)
+- [Architecture Overview](#architecture-overview)
+- [Applications](#applications)
+- [Shared Packages](#shared-packages)
+- [Domains & DNS](#domains--dns)
+- [API + Gateway Routing](#api--gateway-routing)
+- [CI/CD Workflows](#cicd-workflows)
+- [Local Development](#local-development)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Versioning Strategy](#versioning-strategy)
+- [License](#license)
 
-The GoldShore Monorepo powers the entire GoldShore ecosystem, including:
+## Vibe Coding & Human-in-the-Loop
 
-- Public website (Astro + Cloudflare Pages)
-- Admin cockpit dashboard (Astro SSR + GoldShore UI Kit)
-- API layer (Hono + Cloudflare Workers)
-- Gateway layer (routing, throttling, AI gateway)
-- Control worker (DNS automation, binding sync, deployments)
-- Shared design system (UI components, tokens, themes)
-- Infrastructure (Cloudflare + GitHub Actions)
+This repository embodies the **Vibe Coding** philosophy: rapid iteration, intuitive interfaces, and AI-assisted development. We follow a **Human-in-the-Loop (HITL)** approach where automated agents handle routine tasks, hygiene, and security, so humans can focus on architecture and creative problem-solving.
 
----
+### Core Principles
 
-## Architecture
+1. **AI Augmentation:** Integrate best-in-class AI models (Gemini, Claude, GPT-4) via the Gateway and Agent layers.
+2. **Resilience:** Infrastructure is built on Cloudflare Workers and Pages for edge-native performance.
+3. **Security:** Automated scanning (Frogbot, Sentinel) and zero-trust access policies keep systems secure.
+
+## Tech Stack & Integrations
+
+### Primary Infrastructure
+
+- **Cloudflare:** Workers (API, Gateway, Agent), Pages (Web, Admin), D1 (Database), R2 (Storage), KV (Cache).
+- **GitHub Actions:** CI/CD pipelines, automated PR reviews, and security scanning.
+- **Turborepo:** High-performance build system for the monorepo.
+
+### AI & Agents
+
+- **Jules (Bot):** Internal automated engineer assistant for repo hygiene and refactors.
+- **GoldShore Agent:** Autonomous service for background tasks and reasoning workflows.
+- **Models:** Google Gemini, OpenAI GPT-4, Anthropic Claude (via Cloudflare AI Gateway).
+
+### External Integrations (Planned/Supported)
+
+- **Alpaca:** Stock market data and trading APIs.
+- **Thinkorswim:** Advanced charting and trading analysis.
+- **Google Gemini:** Multimodal processing for content analysis and generation.
+- **ChatGPT:** Conversational interfaces and support bots.
+
+### Utility Extensions
+
+- **GitHub Copilot** for inline suggestions.
+- **Cloudflare Wrangler** for local Workers development.
+- **Biome/Prettier** for formatting.
+- **Jules Extension** (internal) via `apps/jules-bot`.
+
+See [ECOSYSTEM.md](./ECOSYSTEM.md) for full details on extensions and integrations.
+
+## Repository Structure
 
 ```
-                        ┌──────────────────────────────┐
-                        │     goldshore.ai (Web)       │
-                        │      Cloudflare Pages        │
-                        └──────────────────────────────┘
-                                   │
-                                   ▼
-                   ┌──────────────────────────────────────┐
-                   │ admin.goldshore.ai (Admin Dashboard) │
-                   │     Cloudflare Pages + Access        │
-                   └──────────────────────────────────────┘
-                                   │
-                                   ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                         Cloudflare Workers Layer                           │
-│────────────────────────────────────────────────────────────────────────────│
-│  gs-api        → Hono API Worker                                           │
-│  gs-gateway    → Router, proxy, auth, queues                               │
-│  gs-control    → Automation, DNS, previews, secret rotation                │
-└───────────────────────────────────────────────────────────────────────────┘
-                 │                 │                   │
-                 ▼                 ▼                   ▼
-       ┌──────────────┐   ┌──────────────┐   ┌────────────────────┐
-       │ KV Storage    │   │ R2 Static     │   │ D1 Database        │
-       └──────────────┘   └──────────────┘   └────────────────────┘
+/
+├── apps/
+│   ├── web/               # Public website (Astro)
+│   ├── admin/             # Admin dashboard (Astro)
+│   ├── api-worker/        # Hono API (Workers)
+│   ├── gateway/           # Router + jobs (Workers)
+│   ├── gs-agent/          # Autonomous AI service (Workers)
+│   ├── control-worker/    # Infra automation
+│   ├── jules-bot/         # GitHub automation bot
+│   └── legacy/            # Legacy services
+│
+├── packages/
+│   ├── ui/                # Shared component library
+│   ├── theme/             # Design tokens + CSS
+│   ├── utils/             # Shared helpers
+│   ├── auth/              # Cloudflare Access JWT utils
+│   └── config/            # TS/ESLint/Prettier configs
+│
+└── infra/
+    ├── cloudflare/        # wrangler.toml templates
+    └── github/            # GitHub Actions CI/CD
 ```
 
----
+## Architecture Overview
 
-## Apps
+The following diagram is defined in [`docs/architecture/diagram.mmd`](./docs/architecture/diagram.mmd):
 
-### apps/web — Public Website (Astro)
+```mermaid
+flowchart TB
+  web[goldshore.ai (Web)\nCloudflare Pages]
+  admin[admin.goldshore.ai (Admin)\nCloudflare Pages + Access]
 
-- Marketing site + user portal
+  subgraph workers[Cloudflare Workers Layer]
+    api[gs-api\nHono API Worker]
+    gateway[gs-gateway\nRouter, proxy, auth, queues]
+    agent[gs-agent\nAutonomous AI Agent Service]
+    control[gs-control\nAutomation, DNS, previews]
+  end
+
+  web --> admin
+  admin --> gateway
+  gateway --> api
+  gateway --> agent
+  gateway --> control
+
+  subgraph storage[Storage + Data]
+    kv[KV Storage]
+    r2[R2 Static]
+    d1[D1 Database]
+    queues[Queues]
+    ai[AI Gateway]
+  end
+
+  api --> kv
+  api --> r2
+  api --> d1
+  gateway --> queues
+  agent --> ai
+```
+
+## Applications
+
+### 1) `apps/web` — Public Website (Astro)
+
+- Marketing site
+- User portal
 - OAuth/Access session integration
-- Light/dark themes from `packages/theme`
+- Theming from `packages/theme`
 
 Public routes:
 
@@ -76,7 +150,7 @@ Public routes:
 └── contact
 ```
 
-Authenticated portal:
+Authenticated user portal:
 
 ```
 /app
@@ -86,7 +160,7 @@ Authenticated portal:
 └── settings
 ```
 
-### apps/admin — Admin Dashboard (Astro)
+### 2) `apps/admin` — Admin Dashboard (Astro SSR)
 
 Protected by **Cloudflare Access**.
 
@@ -109,9 +183,7 @@ Protected by **Cloudflare Access**.
     └── secrets
 ```
 
-### apps/api-worker — gs-api
-
-Hono-based API worker.
+### 3) `apps/api-worker` — gs-api (Hono API Worker)
 
 ```
 Route: https://api.goldshore.ai/*
@@ -137,9 +209,7 @@ D1 = gs-db
 AI = AI (AI Gateway)
 ```
 
-### apps/gateway — gs-gateway
-
-Request router + queue dispatcher.
+### 4) `apps/gateway` — gs-gateway
 
 ```
 Route: https://gw.goldshore.ai/*
@@ -153,9 +223,17 @@ Responsibilities:
 - JWT / Access token verification
 - Preflight filtering (IP / SNI policies)
 
-### apps/control-worker — gs-control (optional)
+### 5) `apps/gs-agent` — Autonomous AI Agent Service
 
-System worker for automation:
+- Background reasoning tasks
+- External AI model integration
+- Workflow orchestration
+
+### 6) `apps/control-worker` — Automation Worker
+
+```
+Route: https://ops.goldshore.ai/*
+```
 
 - DNS updates
 - Preview environment creation
@@ -163,34 +241,34 @@ System worker for automation:
 - Secret rotation
 - Observability sync
 
-```
-Route: https://ops.goldshore.ai/*
-```
+### 7) `apps/jules-bot` — GitHub Automation Bot
 
----
+- PR hygiene
+- Repository maintenance
+- Automated checks
 
-## Packages
+## Shared Packages
 
-### packages/theme
+### `packages/theme`
 
 Design tokens:
 
-- tokens.css
-- colors / radii / spacing
+- `tokens.css`
+- Colors / radii / spacing
 - Astro CSS variables
-- Used by both web + admin
+- Shared across web + admin
 
-### packages/ui
+### `packages/ui`
 
 Component library:
 
 - Typography
-- Buttons, inputs
-- Cards, tables
-- Navbars, sidebars
+- Buttons, Inputs
+- Cards, Tables
+- Navbars, Sidebars
 - Tailwind/Vanilla CSS compatible
 
-### packages/utils
+### `packages/utils`
 
 TypeScript utilities:
 
@@ -199,15 +277,15 @@ TypeScript utilities:
 - request helpers
 - error handling
 
-### packages/auth
+### `packages/auth`
 
 Cloudflare Access helpers:
 
 - JWKS retrieval
 - Audience validation
-- getUser(request)
+- `getUser(request)`
 
-### packages/config
+### `packages/config`
 
 Monorepo-wide:
 
@@ -215,17 +293,48 @@ Monorepo-wide:
 - prettier
 - tsconfig base
 
----
+## Domains & DNS
 
-## CI/CD
+| Component      | Domain                     | Hosting            |
+|----------------|----------------------------|--------------------|
+| Web            | https://goldshore.ai       | Pages              |
+| Admin          | https://admin.goldshore.ai | Pages + Access     |
+| API Worker     | https://api.goldshore.ai   | Workers            |
+| Gateway Worker | https://gw.goldshore.ai    | Workers            |
+| Control Worker | https://ops.goldshore.ai   | Workers            |
 
-Workflows live in:
+## API + Gateway Routing
+
+```
+Client → Gateway → API → Storage
+```
+
+Example flow:
+
+```
+GET https://gw.goldshore.ai/content/slug
+   → routes internally to gs-api
+   → fetches content
+   → returns JSON
+```
+
+Control worker routes:
+
+```
+POST /system/sync
+POST /dns/update
+POST /preview/create
+```
+
+## CI/CD Workflows
+
+Location:
 
 ```
 infra/github/workflows/
 ```
 
-Key workflows:
+Workflows include:
 
 ```
 preview-web.yml
@@ -238,14 +347,12 @@ deploy-control.yml
 Features:
 
 - pnpm install
-- pinned SHA for all actions
-- preview deploys for PRs
-- automatic production deploy on main
+- Pinned SHA for all actions
+- Preview deploys for PRs
+- Automatic production deploy on main
 - Cloudflare Pages + Workers deploy
 
----
-
-## Dev Workflow
+## Local Development
 
 Install dependencies:
 
@@ -259,12 +366,14 @@ Run everything:
 pnpm dev
 ```
 
-Run individual app:
+Run individual apps:
 
 ```bash
-pnpm --filter @goldshore/web dev
-pnpm --filter @goldshore/admin dev
-pnpm --filter @goldshore/api-worker dev
+pnpm --filter ./apps/web dev
+pnpm --filter ./apps/admin dev
+pnpm --filter ./apps/api-worker dev
+pnpm --filter ./apps/gateway dev
+pnpm --filter ./apps/gs-agent dev
 ```
 
 Build all:
@@ -273,7 +382,20 @@ Build all:
 pnpm build
 ```
 
----
+## Testing
+
+Playwright tests live in:
+
+```
+apps/admin/tests
+apps/web/tests
+```
+
+Run:
+
+```bash
+pnpm test
+```
 
 ## Deployment
 
@@ -282,22 +404,19 @@ Pages deploy automatically via GitHub Actions.
 Workers deploy:
 
 ```bash
-pnpm --filter @goldshore/api-worker deploy
-pnpm --filter @goldshore/gateway deploy
-pnpm --filter @goldshore/control-worker deploy
+pnpm --filter ./apps/api-worker deploy
+pnpm --filter ./apps/gateway deploy
+pnpm --filter ./apps/control-worker deploy
+pnpm --filter ./apps/gs-agent deploy
 ```
 
-Preview branches automatically deploy to:
+## Versioning Strategy
 
-```
-{branch}.goldshore-pages.dev
-api-preview.goldshore.ai
-gw-preview.goldshore.ai
-admin-preview.goldshore.ai
-```
+- `main` → Production
+- `feature/*` → Preview Deployments
+- `release/*` → Staging
 
----
+## License
 
-## Licensing
-
-Proprietary © GoldShore Labs. All rights reserved.
+Proprietary © GoldShore Labs
+All rights reserved.

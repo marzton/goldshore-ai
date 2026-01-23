@@ -1,5 +1,7 @@
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # 🟦 GoldShore Monorepo
+
+> Looking for the updated documentation? See [README-v2.md](./README-v2.md).
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Unified platform for the **GoldShore** ecosystem, built with:

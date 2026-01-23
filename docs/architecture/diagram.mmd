@@ -1,41 +1,30 @@
 flowchart TB
-  subgraph pages[Cloudflare Pages]
-    web[Web (goldshore.ai)]
-    admin[Admin (admin.goldshore.ai)]
+  web[goldshore.ai (Web)\nCloudflare Pages]
+  admin[admin.goldshore.ai (Admin)\nCloudflare Pages + Access]
+
+  subgraph workers[Cloudflare Workers Layer]
+    api[gs-api\nHono API Worker]
+    gateway[gs-gateway\nRouter, proxy, auth, queues]
+    agent[gs-agent\nAutonomous AI Agent Service]
+    control[gs-control\nAutomation, DNS, previews]
   end
 
-  subgraph workers[Cloudflare Workers]
-    api[API Worker (gs-api)]
-    gateway[Gateway Worker (gs-gateway)]
-    agent[Agent Worker (gs-agent)]
-    control[Control Worker (gs-control)]
-  end
+  web --> admin
+  admin --> gateway
+  gateway --> api
+  gateway --> agent
+  gateway --> control
 
-  subgraph storage[Storage & AI]
-    kv[KV]
-    r2[R2]
-    d1[D1]
+  subgraph storage[Storage + Data]
+    kv[KV Storage]
+    r2[R2 Static]
+    d1[D1 Database]
     queues[Queues]
     ai[AI Gateway]
   end
 
-  web --> gateway
-  admin --> gateway
-  gateway --> api
-  gateway --> agent
-  control --> api
   api --> kv
   api --> r2
   api --> d1
-  api --> queues
-  api --> ai
-  agent --> kv
-  agent --> r2
-  agent --> d1
-  agent --> queues
+  gateway --> queues
   agent --> ai
-  control --> kv
-  control --> r2
-  control --> d1
-  control --> queues
-  control --> ai

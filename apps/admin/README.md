@@ -1,43 +1,46 @@
-# Astro Starter Kit: Minimal
+# @goldshore/admin
 
-```sh
-pnpm create astro@latest -- --template minimal
+## Overview
+
+Admin cockpit dashboard built with Astro SSR and protected by Cloudflare Access. Uses the shared GoldShore UI kit and theme.
+
+## Sections
+
+```
+/admin
+├── overview
+├── api-logs
+├── workers
+│   ├── status
+│   ├── bindings
+│   └── routes
+├── users
+│   ├── list
+│   ├── sessions
+│   └── permissions
+└── system
+    ├── dns
+    ├── pages
+    ├── storage
+    └── secrets
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Local Development
 
-## 🚀 Project Structure
+From the repo root:
 
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```bash
+pnpm --filter ./apps/admin dev
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Common scripts:
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+```bash
+pnpm --filter ./apps/admin build
+pnpm --filter ./apps/admin preview
+```
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Dependencies
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- `@goldshore/ui`
+- `@goldshore/theme`
