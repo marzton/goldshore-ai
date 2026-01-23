@@ -1,43 +1,49 @@
-# Astro Starter Kit: Minimal
+# @goldshore/web
 
-```sh
-pnpm create astro@latest -- --template minimal
+## Overview
+
+Public marketing site and user portal built with Astro and Cloudflare Pages. Shared UI and theming come from `packages/ui` and `packages/theme`.
+
+## Routes
+
+Public routes:
+
 ```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
 /
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+├── about
+├── pricing
+├── legal/privacy
+├── legal/terms
+└── contact
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Authenticated user portal:
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+```
+/app
+├── dashboard
+├── profile
+├── logs
+└── settings
+```
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Local Development
 
-## 🧞 Commands
+From the repo root:
 
-All commands are run from the root of the project, from a terminal:
+```bash
+pnpm --filter ./apps/web dev
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+Common scripts:
 
-## 👀 Want to learn more?
+```bash
+pnpm --filter ./apps/web build
+pnpm --filter ./apps/web preview
+pnpm --filter ./apps/web astro check
+```
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Dependencies
+
+- `@goldshore/ui`
+- `@goldshore/theme`
