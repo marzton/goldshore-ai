@@ -1,6 +1,5 @@
 ---
 import '@goldshore/theme';
-import logo from '../assets/logo.svg';
 import { GSButton } from '@goldshore/ui';
 
 const navLinks = [
@@ -13,6 +12,7 @@ const navLinks = [
 ];
 
 const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.url.pathname } = Astro.props;
+const logoSrc = '/assets/logo.svg';
 ---
 <html lang="en">
   <head>
@@ -33,7 +33,7 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
     <div class="gs-page-shell">
       <header class="gs-header" data-menu-open="false">
         <a class="gs-logo" href="/" aria-label="GoldShore home">
-          <img src={logo.src} alt="GoldShore Penrose logo" width="36" height="36" fetchpriority="high" />
+          <img src={logoSrc} alt="GoldShore logo" width="36" height="36" fetchpriority="high" />
           <span>GoldShore</span>
         </a>
         <button class="gs-nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
@@ -66,7 +66,7 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
           <div class="gs-grid columns-2">
             <div>
               <div class="gs-logo" style="gap: var(--gs-space-2);">
-                <img src={logo.src} alt="GoldShore logo" width="32" height="32" loading="lazy" decoding="async" />
+                <img src={logoSrc} alt="GoldShore logo" width="32" height="32" loading="lazy" decoding="async" />
                 <span>GoldShore AI</span>
               </div>
               <p>Applied intelligence, resilient infrastructure, and responsive operations.</p>
