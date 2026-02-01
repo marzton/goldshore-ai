@@ -14,7 +14,7 @@ importers:
     dependencies:
       '@astrojs/cloudflare':
         specifier: latest
-        version: 12.6.12(@types/node@25.0.9)(astro@5.16.11(@types/node@25.0.9)(jiti@1.21.7)(rollup@4.55.2)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
+        version: 12.6.12(@types/node@25.0.10)(astro@5.16.14(@types/node@25.0.10)(jiti@1.21.7)(rollup@4.56.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
       turbo:
         specifier: ^2.7.5
         version: 2.7.5
@@ -24,7 +24,7 @@ importers:
         version: 6.0.2(astro@5.16.11(@types/node@25.0.9)(jiti@1.21.7)(rollup@4.55.2)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))
       '@types/node':
         specifier: ^25.0.1
-        version: 25.0.9
+        version: 25.0.10
       astro:
         specifier: ^5.15.9
         version: 5.16.11(@types/node@25.0.9)(jiti@1.21.7)(rollup@4.55.2)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
@@ -42,7 +42,7 @@ importers:
         version: 5.0.5
       prettier:
         specifier: ^3.2.5
-        version: 3.8.0
+        version: 3.8.1
       prettier-plugin-astro:
         specifier: ^0.13.0
         version: 0.13.0
@@ -69,7 +69,7 @@ importers:
         version: link:../../packages/ui
       astro:
         specifier: ^5.15.9
-        version: 5.16.11(@types/node@25.0.9)(jiti@1.21.7)(rollup@4.55.2)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
+        version: 5.16.14(@types/node@25.0.10)(jiti@1.21.7)(rollup@4.56.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
     devDependencies:
       '@astrojs/cloudflare':
         specifier: latest
@@ -85,11 +85,11 @@ importers:
         version: link:../../packages/auth
       hono:
         specifier: ^4.0.0
-        version: 4.11.4
+        version: 4.11.5
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20240512.0
-        version: 4.20260120.0
+        version: 4.20260122.0
       typescript:
         specifier: ^5.4.0
         version: 5.9.3
@@ -104,11 +104,11 @@ importers:
         version: link:../../packages/auth
       hono:
         specifier: ^4.0.0
-        version: 4.11.4
+        version: 4.11.5
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4
-        version: 4.20260120.0
+        version: 4.20260122.0
       typescript:
         specifier: ^5.4.0
         version: 5.9.3
@@ -123,11 +123,27 @@ importers:
         version: link:../../packages/auth
       hono:
         specifier: ^4.0.0
-        version: 4.11.4
+        version: 4.11.5
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.0.0
-        version: 4.20260120.0
+        version: 4.20260122.0
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+      wrangler:
+        specifier: ^3.0.0
+        version: 3.114.17(@cloudflare/workers-types@4.20260122.0)
+
+  apps/goldshore-agent:
+    dependencies:
+      hono:
+        specifier: ^4.0.0
+        version: 4.11.5
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20240208.0
+        version: 4.20260122.0
       typescript:
         specifier: ^5.0.0
         version: 5.9.3
@@ -155,7 +171,7 @@ importers:
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.0.0
-        version: 4.20260120.0
+        version: 4.20260122.0
       typescript:
         specifier: ^5.0.0
         version: 5.9.3
@@ -179,10 +195,10 @@ importers:
     devDependencies:
       '@astrojs/check':
         specifier: ^0.9.6
-        version: 0.9.6(prettier-plugin-astro@0.13.0)(prettier@3.8.0)(typescript@5.9.3)
+        version: 0.9.6(prettier-plugin-astro@0.13.0)(prettier@3.8.1)(typescript@5.9.3)
       '@astrojs/cloudflare':
         specifier: latest
-        version: 12.6.12(@types/node@25.0.9)(astro@5.16.11(@types/node@25.0.9)(jiti@1.21.7)(rollup@4.55.2)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
+        version: 12.6.12(@types/node@25.0.10)(astro@5.16.14(@types/node@25.0.10)(jiti@1.21.7)(rollup@4.56.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
       '@astrojs/tailwind':
         specifier: ^6.0.2
         version: 6.0.2(astro@5.16.11(@types/node@25.0.9)(jiti@1.21.7)(rollup@4.55.2)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))
@@ -1624,8 +1640,8 @@ packages:
   '@types/nlcst@2.0.3':
     resolution: {integrity: sha512-vSYNSDe6Ix3q+6Z7ri9lyWqgGhJTmzRjZRqyq15N0Z/1/UnVsno9G/N40NBijoYx2seFDIl0+B2mgAb9mezUCA==}
 
-  '@types/node@25.0.9':
-    resolution: {integrity: sha512-/rpCXHlCWeqClNBwUhDcusJxXYDjZTyE8v5oTO7WbL8eij2nKhUeU89/6xgjU7N4/Vh3He0BtyhJdQbDyhiXAw==}
+  '@types/node@25.0.10':
+    resolution: {integrity: sha512-zWW5KPngR/yvakJgGOmZ5vTBemDoSqF3AcV/LrO5u5wTWyEAVVh+IT39G4gtyAkh3CtTZs8aX/yRM82OfzHJRg==}
 
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
@@ -1788,8 +1804,8 @@ packages:
   base-64@1.0.0:
     resolution: {integrity: sha512-kwDPIFCGx0NZHog36dj+tHiwP4QMzsZ3AgMViUBKI0+V5n4U0ufTCUMhnQ04diaRI8EX/QcPfql7zlhZ7j4zgg==}
 
-  baseline-browser-mapping@2.9.15:
-    resolution: {integrity: sha512-kX8h7K2srmDyYnXRIppo4AH/wYgzWVCs+eKr3RusRSQ5PvRYoEFmR/I0PbdTjKFAoKqp5+kbxnNTFO9jOfSVJg==}
+  baseline-browser-mapping@2.9.17:
+    resolution: {integrity: sha512-agD0MgJFUP/4nvjqzIB29zRPUuCF7Ge6mEv9s8dHrtYD7QWXRcx75rOADE/d5ah1NI+0vkDl0yorDd5U852IQQ==}
     hasBin: true
 
   before-after-hook@4.0.0:
@@ -2386,8 +2402,8 @@ packages:
   hastscript@9.0.1:
     resolution: {integrity: sha512-g7df9rMFX/SPi34tyGCyUBREQoKkapwdY/T04Qn9TDWfHhAYt4/I0gMVirzK5wEzeUqIjEB+LXC/ypb7Aqno5w==}
 
-  hono@4.11.4:
-    resolution: {integrity: sha512-U7tt8JsyrxSRKspfhtLET79pU8K+tInj5QZXs1jSugO1Vq5dFj3kmZsRldo29mTBfcjDRVRXrEZ6LS63Cog9ZA==}
+  hono@4.11.5:
+    resolution: {integrity: sha512-WemPi9/WfyMwZs+ZUXdiwcCh9Y+m7L+8vki9MzDw3jJ+W9Lc+12HGsd368Qc1vZi1xwW8BWMMsnK5efYKPdt4g==}
     engines: {node: '>=16.9.0'}
 
   html-escaper@3.0.3:
@@ -2952,8 +2968,8 @@ packages:
     resolution: {integrity: sha512-5HrJNnPmZqTUNoA97zn4gNQv9BgVhv+et03314WpQ9H9N8m2L9OSV798olwmG2YLXPl1iSstlJCR1zB3x5xG4g==}
     engines: {node: ^14.15.0 || >=16.0.0}
 
-  prettier@3.8.0:
-    resolution: {integrity: sha512-yEPsovQfpxYfgWNhCfECjG5AQaO+K3dp6XERmOepyPDVqcJm+bjyCVO3pmU+nAPe0N5dDvekfGezt/EIiRe1TA==}
+  prettier@3.8.1:
+    resolution: {integrity: sha512-UOnG6LftzbdaHZcKoPFtOcCKztrQ57WkHDeRD9t/PTQtmT0NHSeWWepj6pS0z/N7+08BHFDQVUrfmfMRcZwbMg==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -3773,9 +3789,9 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@astrojs/check@0.9.6(prettier-plugin-astro@0.13.0)(prettier@3.8.0)(typescript@5.9.3)':
+  '@astrojs/check@0.9.6(prettier-plugin-astro@0.13.0)(prettier@3.8.1)(typescript@5.9.3)':
     dependencies:
-      '@astrojs/language-server': 2.16.3(prettier-plugin-astro@0.13.0)(prettier@3.8.0)(typescript@5.9.3)
+      '@astrojs/language-server': 2.16.3(prettier-plugin-astro@0.13.0)(prettier@3.8.1)(typescript@5.9.3)
       chokidar: 4.0.3
       kleur: 4.1.5
       typescript: 5.9.3
@@ -3791,8 +3807,8 @@ snapshots:
       '@cloudflare/workers-types': 4.20260120.0
       astro: 5.16.11(@types/node@25.0.9)(jiti@1.21.7)(rollup@4.55.2)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
       tinyglobby: 0.2.15
-      vite: 6.4.1(@types/node@25.0.9)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
-      wrangler: 4.50.0(@cloudflare/workers-types@4.20260120.0)
+      vite: 6.4.1(@types/node@25.0.10)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
+      wrangler: 4.50.0(@cloudflare/workers-types@4.20260122.0)
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -3814,7 +3830,7 @@ snapshots:
 
   '@astrojs/internal-helpers@0.7.5': {}
 
-  '@astrojs/language-server@2.16.3(prettier-plugin-astro@0.13.0)(prettier@3.8.0)(typescript@5.9.3)':
+  '@astrojs/language-server@2.16.3(prettier-plugin-astro@0.13.0)(prettier@3.8.1)(typescript@5.9.3)':
     dependencies:
       '@astrojs/compiler': 2.13.0
       '@astrojs/yaml2ts': 0.2.2
@@ -3828,14 +3844,14 @@ snapshots:
       volar-service-css: 0.0.68(@volar/language-service@2.4.27)
       volar-service-emmet: 0.0.68(@volar/language-service@2.4.27)
       volar-service-html: 0.0.68(@volar/language-service@2.4.27)
-      volar-service-prettier: 0.0.68(@volar/language-service@2.4.27)(prettier@3.8.0)
+      volar-service-prettier: 0.0.68(@volar/language-service@2.4.27)(prettier@3.8.1)
       volar-service-typescript: 0.0.68(@volar/language-service@2.4.27)
       volar-service-typescript-twoslash-queries: 0.0.68(@volar/language-service@2.4.27)
       volar-service-yaml: 0.0.68(@volar/language-service@2.4.27)
       vscode-html-languageservice: 5.6.1
       vscode-uri: 3.1.0
     optionalDependencies:
-      prettier: 3.8.0
+      prettier: 3.8.1
       prettier-plugin-astro: 0.13.0
     transitivePeerDependencies:
       - typescript
@@ -3870,7 +3886,7 @@ snapshots:
     dependencies:
       prismjs: 1.30.0
 
-  '@astrojs/tailwind@6.0.2(astro@5.16.11(@types/node@25.0.9)(jiti@1.21.7)(rollup@4.55.2)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))':
+  '@astrojs/tailwind@6.0.2(astro@5.16.14(@types/node@25.0.10)(jiti@1.21.7)(rollup@4.56.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))':
     dependencies:
       astro: 5.16.11(@types/node@25.0.9)(jiti@1.21.7)(rollup@4.55.2)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
       autoprefixer: 10.4.23(postcss@8.5.6)
@@ -4715,75 +4731,78 @@ snapshots:
       estree-walker: 2.0.2
       picomatch: 4.0.3
     optionalDependencies:
-      rollup: 4.55.2
+      rollup: 4.56.0
 
-  '@rollup/rollup-android-arm-eabi@4.55.2':
+  '@rollup/rollup-android-arm-eabi@4.56.0':
     optional: true
 
-  '@rollup/rollup-android-arm64@4.55.2':
+  '@rollup/rollup-android-arm64@4.56.0':
     optional: true
 
-  '@rollup/rollup-darwin-arm64@4.55.2':
+  '@rollup/rollup-darwin-arm64@4.56.0':
     optional: true
 
-  '@rollup/rollup-darwin-x64@4.55.2':
+  '@rollup/rollup-darwin-x64@4.56.0':
     optional: true
 
-  '@rollup/rollup-freebsd-arm64@4.55.2':
+  '@rollup/rollup-freebsd-arm64@4.56.0':
     optional: true
 
-  '@rollup/rollup-freebsd-x64@4.55.2':
+  '@rollup/rollup-freebsd-x64@4.56.0':
     optional: true
 
-  '@rollup/rollup-linux-arm-gnueabihf@4.55.2':
+  '@rollup/rollup-linux-arm-gnueabihf@4.56.0':
     optional: true
 
-  '@rollup/rollup-linux-arm-musleabihf@4.55.2':
+  '@rollup/rollup-linux-arm-musleabihf@4.56.0':
     optional: true
 
-  '@rollup/rollup-linux-arm64-gnu@4.55.2':
+  '@rollup/rollup-linux-arm64-gnu@4.56.0':
     optional: true
 
-  '@rollup/rollup-linux-arm64-musl@4.55.2':
+  '@rollup/rollup-linux-arm64-musl@4.56.0':
     optional: true
 
-  '@rollup/rollup-linux-loong64-gnu@4.55.2':
+  '@rollup/rollup-linux-loong64-gnu@4.56.0':
     optional: true
 
-  '@rollup/rollup-linux-loong64-musl@4.55.2':
+  '@rollup/rollup-linux-loong64-musl@4.56.0':
     optional: true
 
-  '@rollup/rollup-linux-ppc64-gnu@4.55.2':
+  '@rollup/rollup-linux-ppc64-gnu@4.56.0':
     optional: true
 
-  '@rollup/rollup-linux-ppc64-musl@4.55.2':
+  '@rollup/rollup-linux-ppc64-musl@4.56.0':
     optional: true
 
-  '@rollup/rollup-linux-riscv64-gnu@4.55.2':
+  '@rollup/rollup-linux-riscv64-gnu@4.56.0':
     optional: true
 
-  '@rollup/rollup-linux-riscv64-musl@4.55.2':
+  '@rollup/rollup-linux-riscv64-musl@4.56.0':
     optional: true
 
-  '@rollup/rollup-linux-s390x-gnu@4.55.2':
+  '@rollup/rollup-linux-s390x-gnu@4.56.0':
     optional: true
 
-  '@rollup/rollup-linux-x64-gnu@4.55.2':
+  '@rollup/rollup-linux-x64-gnu@4.56.0':
     optional: true
 
-  '@rollup/rollup-linux-x64-musl@4.55.2':
+  '@rollup/rollup-linux-x64-musl@4.56.0':
     optional: true
 
-  '@rollup/rollup-openbsd-x64@4.55.2':
+  '@rollup/rollup-openbsd-x64@4.56.0':
     optional: true
 
-  '@rollup/rollup-openharmony-arm64@4.55.2':
+  '@rollup/rollup-openharmony-arm64@4.56.0':
     optional: true
 
-  '@rollup/rollup-win32-arm64-msvc@4.55.2':
+  '@rollup/rollup-win32-arm64-msvc@4.56.0':
     optional: true
 
-  '@rollup/rollup-win32-ia32-msvc@4.55.2':
+  '@rollup/rollup-win32-ia32-msvc@4.56.0':
+    optional: true
+
+  '@rollup/rollup-win32-x64-gnu@4.56.0':
     optional: true
 
   '@rollup/rollup-win32-x64-gnu@4.55.2':
@@ -4851,7 +4870,7 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
-  '@types/node@25.0.9':
+  '@types/node@25.0.10':
     dependencies:
       undici-types: 7.16.0
 
@@ -5056,8 +5075,8 @@ snapshots:
       unist-util-visit: 5.1.0
       unstorage: 1.17.4
       vfile: 6.0.3
-      vite: 6.4.1(@types/node@25.0.9)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
-      vitefu: 1.1.1(vite@6.4.1(@types/node@25.0.9)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2))
+      vite: 6.4.1(@types/node@25.0.10)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
+      vitefu: 1.1.1(vite@6.4.1(@types/node@25.0.10)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2))
       xxhash-wasm: 1.1.0
       yargs-parser: 21.1.1
       yocto-spinner: 0.2.3
@@ -5125,7 +5144,7 @@ snapshots:
 
   base-64@1.0.0: {}
 
-  baseline-browser-mapping@2.9.15: {}
+  baseline-browser-mapping@2.9.17: {}
 
   before-after-hook@4.0.0: {}
 
@@ -5159,7 +5178,7 @@ snapshots:
 
   browserslist@4.28.1:
     dependencies:
-      baseline-browser-mapping: 2.9.15
+      baseline-browser-mapping: 2.9.17
       caniuse-lite: 1.0.30001765
       electron-to-chromium: 1.5.267
       node-releases: 2.0.27
@@ -5881,7 +5900,7 @@ snapshots:
       property-information: 7.1.0
       space-separated-tokens: 2.0.2
 
-  hono@4.11.4: {}
+  hono@4.11.5: {}
 
   html-escaper@3.0.3: {}
 
@@ -6584,10 +6603,10 @@ snapshots:
   prettier-plugin-astro@0.13.0:
     dependencies:
       '@astrojs/compiler': 1.8.2
-      prettier: 3.8.0
+      prettier: 3.8.1
       sass-formatter: 0.7.9
 
-  prettier@3.8.0: {}
+  prettier@3.8.1: {}
 
   prettier@3.8.1: {}
 
@@ -7213,7 +7232,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite@6.4.1(@types/node@25.0.9)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2):
+  vite@6.4.1(@types/node@25.0.10)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2):
     dependencies:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.3)
@@ -7222,15 +7241,15 @@ snapshots:
       rollup: 4.55.2
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 25.0.9
+      '@types/node': 25.0.10
       fsevents: 2.3.3
       jiti: 1.21.7
       tsx: 4.21.0
       yaml: 2.8.2
 
-  vitefu@1.1.1(vite@6.4.1(@types/node@25.0.9)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)):
+  vitefu@1.1.1(vite@6.4.1(@types/node@25.0.10)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)):
     optionalDependencies:
-      vite: 6.4.1(@types/node@25.0.9)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
+      vite: 6.4.1(@types/node@25.0.10)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
 
   volar-service-css@0.0.68(@volar/language-service@2.4.27):
     dependencies:
@@ -7257,12 +7276,12 @@ snapshots:
     optionalDependencies:
       '@volar/language-service': 2.4.27
 
-  volar-service-prettier@0.0.68(@volar/language-service@2.4.27)(prettier@3.8.0):
+  volar-service-prettier@0.0.68(@volar/language-service@2.4.27)(prettier@3.8.1):
     dependencies:
       vscode-uri: 3.1.0
     optionalDependencies:
       '@volar/language-service': 2.4.27
-      prettier: 3.8.0
+      prettier: 3.8.1
 
   volar-service-typescript-twoslash-queries@0.0.68(@volar/language-service@2.4.27):
     dependencies:
@@ -7372,7 +7391,7 @@ snapshots:
       unenv: 2.0.0-rc.14
       workerd: 1.20250718.0
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20260120.0
+      '@cloudflare/workers-types': 4.20260122.0
       fsevents: 2.3.3
       sharp: 0.33.5
     transitivePeerDependencies:
@@ -7390,7 +7409,7 @@ snapshots:
       unenv: 2.0.0-rc.24
       workerd: 1.20251118.0
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20260120.0
+      '@cloudflare/workers-types': 4.20260122.0
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil
@@ -7422,7 +7441,7 @@ snapshots:
       ajv: 8.17.1
       ajv-draft-04: 1.0.0(ajv@8.17.1)
       lodash: 4.17.21
-      prettier: 3.8.0
+      prettier: 3.8.1
       request-light: 0.5.8
       vscode-json-languageservice: 4.1.8
       vscode-languageserver: 9.0.1

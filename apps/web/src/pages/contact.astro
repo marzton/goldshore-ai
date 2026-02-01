@@ -19,7 +19,8 @@ export const prerender = true;
         <a href="/intake">project qualification form</a>.
       </p>
     </div>
-    <form id="contact-form" class="gs-card" action="/api/contact" method="post">
+    <form id="contact-form" class="gs-card" action="mailto:hello@goldshore.ai" method="post">
+    <form class="gs-card" action="/api/contact" method="post">
       <input type="hidden" name="formType" value="contact" />
       <input type="hidden" name="redirectTo" value="/thank-you" />
       <div class="gs-input-group">
@@ -51,9 +52,9 @@ export const prerender = true;
       </div>
       <GSButton type="submit">Send message</GSButton>
     </form>
-  </FlowSection>
+  </section>
 
-  <FlowSection>
+  <section class="gs-section">
     <div class="gs-grid columns-2">
       <div>
         <h2>Snapshot</h2>
@@ -70,5 +71,5 @@ export const prerender = true;
         </ul>
       </div>
     </div>
-  </FlowSection>
+  </section>
 </BaseLayout>
