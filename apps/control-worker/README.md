@@ -12,6 +12,7 @@ Cloudflare metadata (from `wrangler.toml`):
 - Environment variable: `ENV=production`
 
 ## Routes/Endpoints
+These are worker API endpoints implemented in `src/index.ts` (not HTML pages).
 - `GET /` (service health)
 - `POST /dns/apply`
 - `POST /workers/reconcile`
@@ -24,6 +25,12 @@ Configuration highlights (from `wrangler.toml`):
 - KV binding: `CONTROL_LOGS`
 - R2 binding: `STATE`
 - Service bindings: `API` (`gs-api`), `GATEWAY` (`gs-gateway`)
+
+## Routes/Endpoints
+These are worker API endpoints implemented in `src/index.ts` (not HTML pages).
+- `POST /system/sync`
+- `POST /dns/update`
+- `POST /preview/create`
 
 ## Local Dev
 ```bash
