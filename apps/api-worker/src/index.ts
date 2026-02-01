@@ -14,6 +14,8 @@ type Env = {
   DB: D1Database;
   ASSETS: R2Bucket;
   AI: any;
+  OPENAI_API_KEY?: string;
+  GEMINI_API_KEY?: string;
 };
 
 const app = new Hono<{ Bindings: Env }>();
