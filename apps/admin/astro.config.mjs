@@ -13,8 +13,6 @@ export default defineConfig({
   vite: {
     resolve: {
       alias: {
-        '@goldshore/ui': new URL('../../packages/ui', import.meta.url).pathname,
-        '@goldshore/theme': new URL('../../packages/theme', import.meta.url).pathname,
         '@packages': new URL('../../packages', import.meta.url).pathname,
         '@apps': new URL('../../apps', import.meta.url).pathname
       }
