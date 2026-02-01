@@ -27,3 +27,7 @@
 ## 2026-01-02 - Semantic Sticky Navigation
 **Learning:** Sidebars in long documentation pages often lose context when scrolling. Sticky positioning combined with explicit `aria-current="page"` provides persistent context for both sighted and screen reader users.
 **Action:** Apply `position: sticky` and `aria-current` to all sidebar navigation components to improve wayfinding.
+
+## 2025-05-24 - Accessible Tabs
+**Learning:** Tab interfaces often neglect keyboard navigation, failing WAI-ARIA standards. Users expect Arrow keys to switch tabs, not just Tab key (which should only land on the *active* tab).
+**Action:** Implemented "roving tabindex" in `Tabs` component: only the active tab is focusable (`tabindex="0"`), others are skipped (`tabindex="-1"`). Arrow keys move focus and selection.
