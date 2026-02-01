@@ -1,0 +1,446 @@
+#!/usr/bin/env node
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
+
+const repoRoot = path.resolve(__dirname, '..');
+process.chdir(repoRoot);
+
+const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+
+const cliArgs = process.argv.slice(2);
+const optionMap = buildOptions(cliArgs);
+if (optionMap.dryRun) {
+  optionMap.branchScope = 'current';
+}
+
+main().catch((error) => {
+  console.error(`\n[error] ${error.message}`);
+  process.exit(1);
+});
+
+async function main() {
+  console.log('Starting Jules daily runner...');
+  const startingBranch = currentBranch();
+  const startingRef = currentRef();
+
+  const branches = determineBranches(optionMap);
+  if (branches.length === 0) {
+    console.log('No branches to process.');
+    return;
+  }
+
+  if (!optionMap.dryRun && optionMap.branchScope !== 'current') {
+    runCommand('git', ['fetch', '--all', '--prune'], { label: 'git fetch --all --prune' });
+  }
+
+  const summary = [];
+  for (const branch of branches) {
+    console.log(`\n=== Branch: ${branch} ===`);
+    const branchResult = { branch, scripts: [], checks: {} };
+
+    if (!optionMap.dryRun) {
+      checkoutBranch(branch);
+    }
+
+    branchResult.scripts = runQualityScripts(optionMap);
+    branchResult.checks.workspaceIntegrity = collectWorkspaceIntegrity();
+    branchResult.checks.wrangler = collectWranglerFindings();
+    branchResult.checks.astro = collectAstroFindings();
+    branchResult.checks.artifacts = collectArtifactIssues(optionMap);
+    summary.push(branchResult);
+
+    if (!optionMap.dryRun) {
+      resetWorkingTree();
+    }
+  }
+
+  if (!optionMap.dryRun) {
+    restoreBranch(startingBranch, startingRef);
+  }
+
+  printSummary(summary);
+}
+
+function buildOptions(args) {
+  const options = {
+    applyFixes: args.includes('--apply-fixes'),
+    formatRequested: args.includes('--format'),
+    lintFixRequested: args.includes('--fix'),
+    branchScope: process.env.JULES_BRANCH_SCOPE || 'all',
+    branchList: process.env.JULES_BRANCHES,
+    dryRun: args.includes('--dry-run'),
+    forceRecursive: process.env.JULES_FORCE_RECURSIVE === '1',
+  };
+
+  const branchScopeIndex = args.indexOf('--branch-scope');
+  if (branchScopeIndex !== -1 && args[branchScopeIndex + 1]) {
+    options.branchScope = args[branchScopeIndex + 1];
+  }
+
+  const branchListIndex = args.indexOf('--branches');
+  if (branchListIndex !== -1 && args[branchListIndex + 1]) {
+    options.branchList = args[branchListIndex + 1];
+  }
+
+  if (options.applyFixes) {
+    options.formatRequested = true;
+    options.lintFixRequested = true;
+  }
+
+  return options;
+}
+
+function determineBranches(options) {
+  if (options.branchScope === 'current') {
+    return [currentBranch()];
+  }
+
+  if (options.branchList) {
+    return options.branchList
+      .split(',')
+      .map((value) => value.trim())
+      .filter(Boolean);
+  }
+
+  const remoteOutput = spawnSync('git', ['for-each-ref', '--format=%(refname:short)', 'refs/remotes/origin'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+
+  if (remoteOutput.status !== 0) {
+    throw new Error('Unable to read remote branches');
+  }
+
+  const branches = remoteOutput.stdout
+    .split('\n')
+    .map((value) => value.trim())
+    .filter((value) => value && value !== 'origin/HEAD')
+    .map((value) => value.replace(/^origin\//, ''));
+
+  return [...new Set(branches)].sort();
+}
+
+function currentBranch() {
+  const output = spawnSync('git', ['rev-parse', '--abbrev-ref', 'HEAD'], { cwd: repoRoot, encoding: 'utf8' });
+  if (output.status !== 0) {
+    throw new Error('Unable to determine current branch');
+  }
+  return output.stdout.trim();
+}
+
+function currentRef() {
+  const output = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: repoRoot, encoding: 'utf8' });
+  if (output.status !== 0) {
+    throw new Error('Unable to read current commit');
+  }
+  return output.stdout.trim();
+}
+
+function checkoutBranch(branch) {
+  const branchRef = spawnSync('git', ['show-ref', '--verify', '--quiet', `refs/heads/${branch}`], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+
+  if (branchRef.status !== 0) {
+    runCommand('git', ['switch', '-C', branch, `origin/${branch}`], { label: `git switch -C ${branch}` });
+  } else {
+    runCommand('git', ['switch', branch], { label: `git switch ${branch}` });
+  }
+}
+
+function restoreBranch(branch, ref) {
+  if (branch === 'HEAD') {
+    runCommand('git', ['checkout', ref], { label: `git checkout ${ref}` });
+    return;
+  }
+  runCommand('git', ['switch', branch], { label: `git switch ${branch}` });
+}
+
+function resetWorkingTree() {
+  runCommand('git', ['reset', '--hard', 'HEAD'], { label: 'git reset --hard HEAD' });
+  runCommand('git', ['clean', '-fd'], { label: 'git clean -fd' });
+}
+
+function runQualityScripts(options) {
+  const results = [];
+  const scripts = [
+    { name: 'build' },
+    { name: 'lint', lintFix: options.lintFixRequested },
+    { name: 'test' },
+    { name: 'typecheck' },
+  ];
+
+  if (options.formatRequested) {
+    scripts.push({ name: 'format' });
+  }
+
+  for (const script of scripts) {
+    if (!scriptExists(script.name)) {
+      results.push({ script: script.name, status: 'skipped', reason: 'missing script' });
+      continue;
+    }
+
+    const command = ['pnpm'];
+    if (options.forceRecursive) {
+      command.push('-r');
+    }
+
+    command.push(script.name);
+
+    if (script.name === 'lint' && script.lintFix && !options.forceRecursive) {
+      command.push('--', '--fix');
+    } else if (script.name === 'lint' && script.lintFix && options.forceRecursive) {
+      command.push('--fix');
+    }
+
+    const result = runCommand(command[0], command.slice(1), { label: command.join(' '), allowFail: true });
+    results.push({ script: script.name, status: result ? 'passed' : 'failed', lintFix: !!script.lintFix });
+  }
+
+  return results;
+}
+
+function scriptExists(name) {
+  return Boolean(packageJson.scripts && Object.prototype.hasOwnProperty.call(packageJson.scripts, name));
+}
+
+function runCommand(command, args, options = {}) {
+  const label = options.label || `${command} ${args.join(' ')}`;
+  console.log(`\n[run] ${label}`);
+  const result = spawnSync(command, args, {
+    cwd: repoRoot,
+    stdio: 'inherit',
+    env: { ...process.env },
+  });
+
+  if (result.status !== 0 && !options.allowFail) {
+    throw new Error(`${label} failed`);
+  }
+
+  return result.status === 0;
+}
+
+function collectWorkspaceIntegrity() {
+  const repoName = path.basename(repoRoot);
+  const findings = [];
+  walkDirectories(repoRoot, (dir, entries) => {
+    const relativePath = path.relative(repoRoot, dir) || '.';
+    if (relativePath === '.') {
+      return;
+    }
+
+    const entryNames = new Set(entries.map((entry) => entry.name));
+    const reasons = new Set();
+
+    const recursionPattern = `${path.sep}${repoName}${path.sep}${repoName}${path.sep}`;
+    if (dir.includes(recursionPattern)) {
+      reasons.add('recursive-path');
+    }
+
+    if (entryNames.has('.git')) {
+      reasons.add('nested-.git');
+    }
+
+    const hasMonorepoConfig = entryNames.has('pnpm-workspace.yaml') || entryNames.has('turbo.json');
+    if (hasMonorepoConfig) {
+      reasons.add('nested-monorepo-config');
+    }
+
+    if (entryNames.has('package.json') && hasMonorepoConfig) {
+      reasons.add('nested-package-root');
+    }
+
+    if (reasons.size > 0) {
+      findings.push({ path: relativePath, reasons: Array.from(reasons).sort() });
+    }
+  });
+
+  return findings.sort((a, b) => a.path.localeCompare(b.path));
+}
+
+function collectWranglerFindings() {
+  const wranglerFiles = [];
+  walkDirectories(repoRoot, (dir, entries) => {
+    for (const entry of entries) {
+      if (entry.isFile() && entry.name === 'wrangler.toml') {
+        wranglerFiles.push(path.join(dir, entry.name));
+      }
+    }
+  });
+
+  const requiredKeys = ['name', 'main', 'compatibility_date'];
+  const secretMarkers = ['CF_API_TOKEN=', 'CLOUDFLARE_API_TOKEN=', 'ACCOUNT_ID=', 'SECRET=', 'PRIVATE_KEY='];
+
+  return wranglerFiles
+    .map((filePath) => {
+      const content = fs.readFileSync(filePath, 'utf8');
+      const missingKeys = requiredKeys.filter((key) => !new RegExp(`^\\s*${key}\\s*=`, 'm').test(content));
+      const secretHits = secretMarkers.filter((marker) => content.includes(marker));
+      const hasRoutes = /\broutes?\s*=/.test(content);
+
+      return {
+        path: path.relative(repoRoot, filePath),
+        missingKeys,
+        secretHits,
+        hasRoutes,
+      };
+    })
+    .sort((a, b) => a.path.localeCompare(b.path));
+}
+
+function collectAstroFindings() {
+  const astroConfigs = [];
+  walkDirectories(repoRoot, (dir, entries) => {
+    for (const entry of entries) {
+      if (!entry.isFile()) continue;
+      if (/^astro\.config\./.test(entry.name) && dir.includes(`${path.sep}apps${path.sep}`)) {
+        astroConfigs.push(path.join(dir, entry.name));
+      }
+    }
+  });
+
+  return astroConfigs
+    .map((configPath) => {
+      const content = fs.readFileSync(configPath, 'utf8');
+      const hasCloudflare = /@astrojs\/(adapter-)?cloudflare/.test(content);
+      const serverOutput = /output\s*:\s*['"]server['"]/.test(content);
+      const envPath = path.join(path.dirname(configPath), 'src', 'env.d.ts');
+      const envExists = fs.existsSync(envPath);
+
+      const issues = [];
+      if (serverOutput && !hasCloudflare) {
+        issues.push('server-output-without-cloudflare-adapter');
+      }
+      if (!envExists) {
+        issues.push('missing-src/env.d.ts');
+      }
+
+      return {
+        path: path.relative(repoRoot, configPath),
+        hasCloudflare,
+        serverOutput,
+        envExists,
+        issues,
+      };
+    })
+    .sort((a, b) => a.path.localeCompare(b.path));
+}
+
+function collectArtifactIssues(options) {
+  const patterns = [
+    { label: '.astro', test: (file) => file.includes('/.astro/') || file.startsWith('.astro/') },
+    { label: 'dist', test: (file) => file.includes('/dist/') || file.startsWith('dist/') },
+    { label: '.wrangler', test: (file) => file.includes('/.wrangler/') || file.startsWith('.wrangler/') },
+    { label: '.turbo', test: (file) => file.includes('/.turbo/') || file.startsWith('.turbo/') },
+    { label: 'coverage', test: (file) => file.includes('/coverage/') || file.startsWith('coverage/') },
+    { label: 'openapi-json', test: (file) => /openapi.*\.json$/i.test(file) },
+  ];
+
+  const trackedOutput = spawnSync('git', ['ls-files'], { cwd: repoRoot, encoding: 'utf8' });
+  if (trackedOutput.status !== 0) {
+    throw new Error('Unable to read tracked files');
+  }
+
+  const issues = [];
+  trackedOutput.stdout
+    .split('\n')
+    .map((file) => file.trim())
+    .filter(Boolean)
+    .forEach((file) => {
+      const normalized = file.replace(/\\/g, '/');
+      const match = patterns.find((pattern) => pattern.test(normalized));
+      if (match) {
+        issues.push({ path: normalized, reason: match.label });
+      }
+    });
+
+  const uniqueIssues = issues.sort((a, b) => a.path.localeCompare(b.path));
+
+  if (options.applyFixes) {
+    uniqueIssues.forEach((issue) => {
+      const removal = spawnSync('git', ['rm', '--cached', issue.path], { cwd: repoRoot, stdio: 'inherit' });
+      if (removal.status === 0) {
+        console.log(`[fix] removed tracked artifact: ${issue.path}`);
+      }
+    });
+  }
+
+  return uniqueIssues;
+}
+
+function walkDirectories(start, onDir) {
+  const queue = [start];
+  const skip = new Set(['node_modules', '.git', '.turbo', '.wrangler', '.astro', 'dist', 'coverage']);
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+    const entries = fs.readdirSync(current, { withFileTypes: true });
+    onDir(current, entries);
+
+    for (const entry of entries) {
+      if (entry.isDirectory() && !skip.has(entry.name)) {
+        queue.push(path.join(current, entry.name));
+      }
+    }
+  }
+}
+
+function printSummary(summary) {
+  console.log('\n=== Summary ===');
+  for (const branch of summary) {
+    console.log(`\nBranch: ${branch.branch}`);
+    branch.scripts.forEach((result) => {
+      console.log(` - script ${result.script}: ${result.status}${result.reason ? ` (${result.reason})` : ''}${result.lintFix ? ' [fix]' : ''}`);
+    });
+
+    console.log(' - workspace integrity findings:');
+    if (branch.checks.workspaceIntegrity.length === 0) {
+      console.log('   none');
+    } else {
+      branch.checks.workspaceIntegrity.forEach((finding) => {
+        console.log(`   ${finding.path}: ${finding.reasons.join(', ')}`);
+      });
+    }
+
+    console.log(' - wrangler checks:');
+    if (branch.checks.wrangler.length === 0) {
+      console.log('   none');
+    } else {
+      branch.checks.wrangler.forEach((finding) => {
+        const parts = [];
+        if (finding.missingKeys.length) parts.push(`missing keys [${finding.missingKeys.join(', ')}]`);
+        if (finding.secretHits.length) parts.push(`secret markers [${finding.secretHits.join(', ')}]`);
+        if (!finding.hasRoutes) parts.push('no routes defined');
+        console.log(`   ${finding.path}: ${parts.join('; ') || 'ok'}`);
+      });
+    }
+
+    console.log(' - astro checks:');
+    if (branch.checks.astro.length === 0) {
+      console.log('   none');
+    } else {
+      branch.checks.astro.forEach((finding) => {
+        const info = [];
+        if (finding.serverOutput) info.push('output=server');
+        if (finding.hasCloudflare) info.push('cloudflare-adapter');
+        if (!finding.envExists) info.push('missing env.d.ts');
+        if (finding.issues.length === 0) info.push('ok');
+        else info.push(`issues: ${finding.issues.join(', ')}`);
+        console.log(`   ${finding.path}: ${info.join(' | ')}`);
+      });
+    }
+
+    console.log(' - tracked artifact findings:');
+    if (branch.checks.artifacts.length === 0) {
+      console.log('   none');
+    } else {
+      branch.checks.artifacts.forEach((issue) => {
+        console.log(`   ${issue.path} (${issue.reason})`);
+      });
+    }
+  }
+}
