@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
 @import './tokens.css';
 
 * { box-sizing: border-box; }
@@ -8,6 +9,7 @@ body {
   color: var(--gs-color-text);
   font-family: var(--gs-font-body);
   line-height: var(--gs-line-height);
+  font-size: var(--gs-font-size-body);
   min-height: 100vh;
 }
 
@@ -23,7 +25,15 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.02em;
   margin: var(--gs-space-6) 0 var(--gs-space-3);
   color: var(--gs-color-text);
+  line-height: var(--gs-line-height-heading);
 }
+
+h1 { font-size: var(--gs-font-size-h1); }
+h2 { font-size: var(--gs-font-size-h2); }
+h3 { font-size: var(--gs-font-size-h3); }
+h4 { font-size: var(--gs-font-size-h4); }
+h5 { font-size: var(--gs-font-size-h5); }
+h6 { font-size: var(--gs-font-size-h6); }
 
 p { color: var(--gs-color-subtle); margin: 0 0 var(--gs-space-4); }
 
