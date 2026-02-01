@@ -1,37 +1,50 @@
-# @goldshore/control (apps/control-worker)
+# apps/control-worker
 
 ## Overview
+The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers. It is managed alongside the gateway worker as part of the Edge Workers deployment group.
 
-Automation worker for infrastructure operations such as DNS updates, previews, and deployments.
+Cloudflare metadata (from `wrangler.toml`):
+- Worker name: `gs-control`
+- Route: `ops.goldshore.ai/*`
+- Compatibility date: `2025-01-10`
+- Bindings: `CONTROL_LOGS` (KV), `STATE` (R2)
+- Service bindings: `API` (`gs-api`), `GATEWAY` (`gs-gateway`)
+- Environment variable: `ENV=production`
 
-```
-Route: https://ops.goldshore.ai/*
-```
+## Routes/Endpoints
+These are worker API endpoints implemented in `src/index.ts` (not HTML pages).
+- `GET /` (service health)
+- `POST /dns/apply`
+- `POST /workers/reconcile`
+- `POST /pages/deploy`
+- `POST /access/audit`
+The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers.
 
-## Responsibilities
+Configuration highlights (from `wrangler.toml`):
+- `ENV=production`
+- KV binding: `CONTROL_LOGS`
+- R2 binding: `STATE`
+- Service bindings: `API` (`gs-api`), `GATEWAY` (`gs-gateway`)
 
-- DNS updates
-- Preview environment creation
-- Worker deployment orchestration
-- Secret rotation
-- Observability sync
+## Routes/Endpoints
+These are worker API endpoints implemented in `src/index.ts` (not HTML pages).
+- `POST /system/sync`
+- `POST /dns/update`
+- `POST /preview/create`
 
-## Local Development
-
-From the repo root:
-
+## Local Dev
 ```bash
+pnpm install
 pnpm --filter ./apps/control-worker dev
-```
-
-Run scheduled tasks locally:
-
-```bash
 pnpm --filter ./apps/control-worker run-task
 ```
 
-Deploy:
+## Deploy
+- Production deploy: `.github/workflows/deploy-control-worker.yml`
+- Preview deploy: `.github/workflows/preview-control-worker.yml`
+- Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 
+<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 ```bash
 pnpm --filter ./apps/control-worker deploy
 ```

@@ -1,10 +1,13 @@
 # apps/goldshore-agent
 
 ## Overview
+`apps/goldshore-agent` is a deprecated placeholder. The agent worker was renamed to `gs-agent`, and the legacy Wrangler config lives in `infra/cloudflare/goldshore-agent.wrangler.toml` to keep older workflows working.
 
-This directory is reserved for the legacy/placeholder GoldShore Agent. The active agent worker lives in `apps/gs-agent`.
+## Routes/Endpoints
+- None (deprecated).
 
-## Next Steps
+## Local Dev
+- No local dev scripts exist in this directory. Use `apps/gs-agent` with the legacy config if needed.
 
-- Use `apps/gs-agent` for current development.
-- Migrate any legacy agent assets into the new worker if needed.
+## Deploy
+- Deploy the `gs-agent` worker using the legacy config (`infra/cloudflare/goldshore-agent.wrangler.toml`) if a workflow still references this path.
