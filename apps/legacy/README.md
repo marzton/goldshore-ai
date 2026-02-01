@@ -11,3 +11,5 @@ Legacy worker artifacts live here. The `goldshore-api` directory contains an old
 
 ## Deploy
 - No deploy scripts are defined here. If you need to resurrect the legacy worker, start from `apps/legacy/goldshore-api/wrangler.toml`.
+
+<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
