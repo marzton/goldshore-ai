@@ -54,6 +54,8 @@ Cloudflare metadata:
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
 
 ## Routes/Endpoints
+Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
+
 Public routes:
 - `/`
 - `/about`
@@ -141,6 +143,8 @@ pnpm --filter @goldshore/web dev
 The public GoldShore website and user portal built with Astro, shared theme, and UI components. It deploys to Cloudflare Pages as the primary marketing and customer-facing experience.
 
 ## Routes/Endpoints
+Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
+
 Public routes:
 - `/`
 - `/about`
