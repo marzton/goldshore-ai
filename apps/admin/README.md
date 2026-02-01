@@ -46,8 +46,11 @@ Cloudflare metadata:
 
 Documentation:
 - [Integrations hub](../../docs/integrations.md)
+- [Agent integration policy](../../docs/agent-integration.md)
 
 ## Routes/Endpoints
+Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
+
 Admin sections:
 - `/admin/overview`
 - `/admin/api-logs`
@@ -129,8 +132,11 @@ The GoldShore admin cockpit is an Astro SSR dashboard protected by Cloudflare Ac
 
 Documentation:
 - [Integrations hub](../../docs/integrations.md)
+- [Agent integration policy](../../docs/agent-integration.md)
 
 ## Routes/Endpoints
+Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
+
 Admin sections:
 - `/admin/overview`
 - `/admin/api-logs`
