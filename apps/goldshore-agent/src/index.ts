@@ -1,10 +1,46 @@
 import { Hono } from 'hono';
+import { secureHeaders } from 'hono/secure-headers';
+import { cors } from 'hono/cors';
+import { verifyAccess } from '@goldshore/auth';
 
 type Env = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   AI: any;
+  // Sentinel: Added support for Audience verification to prevent auth bypass
+  CLOUDFLARE_ACCESS_AUDIENCE?: string;
+  // Sentinel: Added support for dynamic team domain
+  CLOUDFLARE_TEAM_DOMAIN?: string;
 };
 
 const app = new Hono<{ Bindings: Env }>();
+
+// Sentinel: Add security headers to all responses (Defense in Depth)
+app.use('*', secureHeaders());
+
+// Sentinel: Add CORS protection
+app.use('*', cors({
+  origin: '*', // Public agent API
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
+  exposeHeaders: ['Content-Length'],
+  maxAge: 600,
+}));
+
+// Sentinel: CRITICAL - Enforce Authentication on all sensitive endpoints
+app.use('*', async (c, next) => {
+  // Allow health checks, root, and CORS preflight
+  if (c.req.path === '/health' || c.req.path === '/' || c.req.method === 'OPTIONS') {
+    await next();
+    return;
+  }
+
+  // Verify Cloudflare Access JWT
+  const authorized = await verifyAccess(c.req.raw, c.env);
+  if (!authorized) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+  await next();
+});
 
 app.get('/', (c) => {
   return c.html(`

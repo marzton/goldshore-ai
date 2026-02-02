@@ -92,9 +92,9 @@ const logoSrc = '/assets/logo.svg';
     <script is:inline>
       const header = document.querySelector('.gs-header');
       const toggle = document.querySelector('.gs-nav-toggle');
+      let ticking = false;
       const updateHeaderOpacity = () => {
         if (!header) return;
-        const maxScroll = 100;
         const scrollY = window.scrollY;
 
         if (scrollY > 10) {
@@ -102,14 +102,65 @@ const logoSrc = '/assets/logo.svg';
         } else {
           header.classList.remove('is-scrolled');
         }
+        ticking = false;
       };
+
+      updateHeaderOpacity();
+      window.addEventListener('scroll', onScroll, { passive: true });
       updateHeaderOpacity();
       window.addEventListener('scroll', updateHeaderOpacity, { passive: true });
-      toggle?.addEventListener('click', () => {
+      const setMenuState = (isOpen) => {
+        if (!header || !toggle) return;
+        header.setAttribute('data-menu-open', String(isOpen));
+        toggle.setAttribute('aria-expanded', String(isOpen));
+      };
+
+      toggle?.addEventListener('click', (e) => {
+        e.stopPropagation();
         if (!header) return;
         const isOpen = header.getAttribute('data-menu-open') === 'true';
-        header.setAttribute('data-menu-open', String(!isOpen));
-        toggle.setAttribute('aria-expanded', String(!isOpen));
+        setMenuState(!isOpen);
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          setMenuState(false);
+          toggle?.focus();
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+      const closeMenu = () => {
+        if (!header || !toggle) return;
+        header.setAttribute('data-menu-open', 'false');
+        toggle.setAttribute('aria-expanded', 'false');
+      };
+
+      toggle?.addEventListener('click', (e) => {
+        if (!header) return;
+        e.stopPropagation();
+        const isOpen = header.getAttribute('data-menu-open') === 'true';
+        if (isOpen && !header.contains(e.target)) {
+          setMenuState(false);
+        if (isOpen) {
+          closeMenu();
+        } else {
+          header.setAttribute('data-menu-open', 'true');
+          toggle.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeMenu();
+          toggle?.focus();
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (header && !header.contains(e.target)) {
+          closeMenu();
+        }
       });
 
       // Close menu on Escape key
