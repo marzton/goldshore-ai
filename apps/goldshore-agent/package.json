@@ -5,9 +5,11 @@
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy --minify src/index.ts",
+    "build": "wrangler deploy --dry-run --outdir=dist",
     "lint": "eslint src/**"
   },
   "dependencies": {
+    "@goldshore/auth": "workspace:*",
     "hono": "^4.0.0"
   },
   "devDependencies": {

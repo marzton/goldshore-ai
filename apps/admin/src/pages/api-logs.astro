@@ -19,28 +19,10 @@ const logs = [
       </div>
     </div>
 
-    <Table>
-      <thead>
-        <tr>
-          <th>Time</th>
-          <th>Method</th>
-          <th>Path</th>
-          <th>Status</th>
-          <th>Latency</th>
-        </tr>
-      </thead>
-      <tbody>
-        {logs.map((l) => (
-          <tr>
-            <td>{l.time}</td>
-            <td>{l.method}</td>
-            <td>{l.path}</td>
-            <td>{l.status}</td>
-            <td>{l.latency}</td>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
+    <Table
+      headers={['Time', 'Method', 'Path', 'Status', 'Latency']}
+      rows={logs.map(l => [l.time, l.method, l.path, l.status, l.latency])}
+    />
   </div>
 </AdminLayout>
 
