@@ -92,6 +92,7 @@ const logoSrc = '/assets/logo.svg';
     <script is:inline>
       const header = document.querySelector('.gs-header');
       const toggle = document.querySelector('.gs-nav-toggle');
+      let ticking = false;
       const updateHeaderOpacity = () => {
         if (!header) return;
         const maxScroll = 100;
@@ -102,9 +103,15 @@ const logoSrc = '/assets/logo.svg';
         } else {
           header.classList.remove('is-scrolled');
         }
+        ticking = false;
       };
       updateHeaderOpacity();
-      window.addEventListener('scroll', updateHeaderOpacity, { passive: true });
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(updateHeaderOpacity);
+          ticking = true;
+        }
+      }, { passive: true });
       toggle?.addEventListener('click', () => {
         if (!header) return;
         const isOpen = header.getAttribute('data-menu-open') === 'true';

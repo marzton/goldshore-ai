@@ -23,13 +23,14 @@ const features = [
     icon: 'psychology'
   },
 ];
+
+const highlights = [
+  { label: 'Uptime', value: '99.99%', tone: 'gs-badge--success' },
+  { label: 'Latency', value: '24ms', tone: 'gs-badge--info' },
+  { label: 'Requests', value: '1.2M/s' }
+];
 ---
 
-<MarketingLayout title="GoldShore | Provable Experience" description="Cinematic AI infrastructure for the modern web.">
-  <div class="cinematic-wrapper">
-    <!-- Starfield Background -->
-    <div class="stars-container">
-      <div class="stars"></div>
 <MarketingLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
   <section class="gs-hero home-hero parallax-section">
     <div class="parallax-layer layer-grid" data-parallax="0.08" aria-hidden="true"></div>
@@ -93,6 +94,7 @@ const features = [
           <GSButton href="/contact" variant="secondary" class="glass-button">Contact Sales</GSButton>
         </div>
       </div>
+    ))}
 
       <!-- 3D/Parallax Element -->
       <div class="hero-visual fade-in-up" style="animation-delay: 1s;">
@@ -144,7 +146,6 @@ const features = [
       </div>
     </section>
   </div>
-    ))}
     </div>
   </section>
 </MarketingLayout>
@@ -443,15 +444,22 @@ const features = [
     revealTargets.forEach((el) => revealObserver.observe(el));
 
     const parallaxLayers = Array.from(document.querySelectorAll('[data-parallax]'));
+    let ticking = false;
     const updateParallax = () => {
       const scrollY = window.scrollY || window.pageYOffset;
       parallaxLayers.forEach((layer) => {
         const speed = parseFloat(layer.dataset.parallax || '0');
         layer.style.transform = `translate3d(0, ${scrollY * speed * -0.12}px, 0)`;
       });
+      ticking = false;
     };
     updateParallax();
-    window.addEventListener('scroll', () => requestAnimationFrame(updateParallax), { passive: true });
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }, { passive: true });
   } else {
     document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
   }
