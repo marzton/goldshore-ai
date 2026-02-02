@@ -158,6 +158,55 @@ const highlights = [
 </MarketingLayout>
 
 <style>
+  .gs-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gs-space-8);
+    align-items: center;
+    padding: var(--gs-space-12) var(--gs-space-6);
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  @media (max-width: 900px) {
+    .gs-hero { grid-template-columns: 1fr; }
+  }
+  h1 {
+    font-size: 3.5rem;
+    line-height: 1.1;
+    margin-bottom: var(--gs-space-4);
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  p {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: var(--gs-color-text-secondary);
+    margin-bottom: var(--gs-space-6);
+  }
+  .gs-kpi {
+    background: var(--gs-color-bg-surface);
+    padding: var(--gs-space-3);
+    border-radius: var(--gs-radius-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .gs-kpi span { font-size: 0.75rem; text-transform: uppercase; color: var(--gs-color-subtle); letter-spacing: 0.05em; }
+  .gs-kpi strong { font-size: 1.5rem; color: var(--gs-color-text); }
+  .section-title {
+    margin-top: 0;
+    margin-bottom: var(--gs-space-4);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gs-color-subtle);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>
   :global(body) {
     background-color: #050505;
     color: #e5e7eb;
