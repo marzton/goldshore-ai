@@ -21,12 +21,5 @@ export async function verifyAccess(req: Request, env: Env) {
     console.error("Token verification failed", e);
     return false;
   }
-  // Validate via Access JWKS
-  const res = await fetch(
-    "https://goldshore.cloudflareaccess.com/cdn-cgi/access/certs"
-  );
 
-  // TODO: add JOSE verification
-
-  return true;
 }
