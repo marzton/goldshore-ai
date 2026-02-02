@@ -1,13 +1,17 @@
 ---
 import WebLayout from './WebLayout.astro';
 import DocsSidebar from '../components/DocsSidebar.astro';
+import DocsSearch from '../components/DocsSearch.astro';
 
 const { title, page } = Astro.props;
 const currentSlug = page ? page.slug : undefined;
 ---
+
 <WebLayout title={`${title} | Docs`} description="GoldShore developer documentation">
   <section class="gs-section docs-shell">
-    <DocsSidebar currentSlug={currentSlug} />
+    <div class="sidebar-wrapper">
+       <DocsSidebar currentSlug={currentSlug} />
+    </div>
     <article class="gs-card docs-main">
       <h1>{title}</h1>
       <slot />
@@ -15,111 +19,15 @@ const currentSlug = page ? page.slug : undefined;
   </section>
 </WebLayout>
 
-<script>
-  const copyIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
-  const checkIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-
-  function setupCopyButtons() {
-    const preTags = document.querySelectorAll('pre');
-    preTags.forEach(pre => {
-      if (pre.closest('.gs-code-wrapper')) return;
-
-      const wrapper = document.createElement('div');
-      wrapper.className = 'gs-code-wrapper group';
-
-      pre.parentNode?.insertBefore(wrapper, pre);
-      wrapper.appendChild(pre);
-
-      const button = document.createElement('button');
-      button.className = 'gs-copy-btn';
-      button.setAttribute('aria-label', 'Copy code to clipboard');
-      button.innerHTML = `<span class="icon-copy">${copyIcon}</span><span class="icon-check">${checkIcon}</span>`;
-
-      button.addEventListener('click', async () => {
-        const code = pre.querySelector('code')?.innerText || pre.innerText;
-        try {
-          await navigator.clipboard.writeText(code);
-          button.classList.add('copied');
-          button.setAttribute('aria-label', 'Copied!');
-          setTimeout(() => {
-            button.classList.remove('copied');
-            button.setAttribute('aria-label', 'Copy code to clipboard');
-          }, 2000);
-        } catch (err) {
-          console.error('Failed to copy:', err);
-        }
-      });
-
-      wrapper.appendChild(button);
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', setupCopyButtons);
-  document.addEventListener('astro:page-load', setupCopyButtons);
-</script>
-
-<style is:global>
-  .gs-code-wrapper {
-    position: relative;
-    margin: 1.5rem 0;
-    border-radius: var(--gs-radius-sm);
-  }
-
-  .gs-code-wrapper pre {
-    margin: 0 !important;
-    padding: 1.25rem !important;
-    border: 1px solid var(--gs-color-border);
-    border-radius: var(--gs-radius-sm);
-  }
-
-  .gs-copy-btn {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    background: var(--gs-color-surface);
-    border: 1px solid var(--gs-color-border);
-    color: var(--gs-color-subtle);
-    border-radius: var(--gs-radius-xs);
-    cursor: pointer;
-    opacity: 0;
-    transition: all 0.2s ease;
-    z-index: 10;
-  }
-
-  /* Accessible visibility */
-  .gs-code-wrapper:hover .gs-copy-btn,
-  .gs-copy-btn:focus-visible {
-    opacity: 1;
-  }
-
-  .gs-copy-btn:hover {
-    background: var(--gs-color-muted-surface);
-    color: var(--gs-color-text);
-    border-color: var(--gs-color-subtle);
-  }
-
-  .gs-copy-btn:focus-visible {
-    opacity: 1;
-    outline: 2px solid var(--gs-accent);
-    outline-offset: 2px;
-  }
-
-  .gs-copy-btn .icon-check { display: none; color: var(--gs-success); }
-  .gs-copy-btn.copied .icon-copy { display: none; }
-  .gs-copy-btn.copied .icon-check { display: block; }
-  .gs-copy-btn.copied {
-    border-color: var(--gs-success);
-    background: rgba(34, 197, 94, 0.1);
-  }
-</style>
-
 <style>
   .docs-shell { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: var(--gs-space-5); }
+
+  .sidebar-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gs-space-4);
+  }
+
   @media (max-width: 900px) {
     .docs-shell { grid-template-columns: 1fr; }
   }

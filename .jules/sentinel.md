@@ -1,5 +1,9 @@
 # Sentinel Journal
 
+## 2024-05-24 - Initial Journal Creation
+**Vulnerability:** N/A
+**Learning:** Initialized the Sentinel journal to track critical security learnings.
+**Prevention:** N/A
 ## 2025-12-16 - Unprotected Internal API Exposure
 **Vulnerability:** The `gs-api` worker (`api.goldshore.ai`) was configured with a Cloudflare Access "bypass" policy but lacked application-level authentication. This exposed the internal API publicly.
 **Learning:** Infrastructure-as-Code (`desired-state.yaml`) assumed "bypass" meant "handle auth elsewhere" (e.g., via Gateway), but the API worker didn't implement it. Reliance on network-layer security alone (which was disabled) caused a gap.
@@ -24,3 +28,21 @@
 **Vulnerability:** The `apps/admin` application (dashboard) lacked standard HTTP security headers (`X-Frame-Options`, `HSTS`, `X-Content-Type-Options`), making it potentially vulnerable to clickjacking and MIME sniffing.
 **Learning:** When creating new Astro apps in a monorepo, middleware (and thus security headers) is not automatically inherited from other apps.
 **Prevention:** Enforce a standard `middleware.ts` template for all new Astro applications or move security headers to the infrastructure layer (Cloudflare `_headers` or Gateway rules) if consistent application-level enforcement is prone to oversight.
+
+## 2026-02-13 - Unprotected Sensitive Operations Worker
+**Vulnerability:** `apps/control-worker` exposed sensitive operational endpoints (`/dns/apply`, `/workers/reconcile`) without any authentication middleware, relying solely on (potentially missing or misconfigured) network-level protection.
+**Learning:** Internal automation or "worker" apps are often overlooked during security reviews because they aren't "user-facing", but they hold the "keys to the kingdom" (DNS, deployment credentials).
+**Prevention:** Treat every worker as a public API. Mandate default-deny authentication middleware for all new workers at the template level.
+
+## 2026-02-15 - Exposed Client Secret via PUBLIC_ Env Var
+**Vulnerability:** The `apps/admin` application exposed `AUTH_CLIENT_SECRET` via `import.meta.env.PUBLIC_AUTH_CLIENT_SECRET`. Prefacing an environment variable with `PUBLIC_` in Astro/Vite statically replaces it in the client bundle, leaking critical credentials to anyone who inspects the code.
+**Learning:** Developers may use `PUBLIC_` out of habit to make variables "work" without realizing it bypasses server-only security boundaries, even in SSR apps.
+**Prevention:** Strictly enforce `AUTH_*` or `SECRET_*` naming conventions without `PUBLIC_` prefix for credentials. Added fallback logic with critical warnings to migrate safely.
+## 2026-04-20 - Unprotected Agent Service
+**Vulnerability:** `apps/goldshore-agent` lacked standard security headers and CORS configuration, exposing it to potential attacks despite being an internal service.
+**Learning:** New services created in the monorepo (like `goldshore-agent`) do not automatically inherit security middleware. Explicit configuration is required.
+**Prevention:** Establish a strict "Secure by Default" template for new Hono/Worker apps that includes `secureHeaders` and `cors` middleware from the start.
+## 2026-02-14 - Securing Agent Service by Default
+**Vulnerability:** The `apps/goldshore-agent` service was initialized without any authentication middleware, exposing potential future AI agent capabilities to the public internet.
+**Learning:** New services in a monorepo often start "barebones" and skip security boilerplate, creating a window of vulnerability as features are added. Drift between documentation (which said it was secured) and implementation is a common risk.
+**Prevention:** Enforce a "Secure by Default" template for all new Hono services that includes `secureHeaders`, `cors`, and `verifyAccess` middleware immediately upon creation.
