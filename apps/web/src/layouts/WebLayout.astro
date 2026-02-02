@@ -92,6 +92,10 @@ const logoSrc = '/assets/logo.svg';
     <script is:inline>
       const header = document.querySelector('.gs-header');
       const toggle = document.querySelector('.gs-nav-toggle');
+      let ticking = false;
+      const updateHeaderOpacity = () => {
+        if (!header) return;
+        const scrollY = window.scrollY;
 
       // Bolt: Optimize scroll listener with requestAnimationFrame and state tracking
       // to avoid layout thrashing and excessive DOM updates.
@@ -120,17 +124,15 @@ const logoSrc = '/assets/logo.svg';
           window.requestAnimationFrame(updateHeader);
           isTicking = true;
         }
+        ticking = false;
       };
-
-      // Initialize
-      if (header) {
-        // Set initial state immediately
-        wasScrolled = window.scrollY > 10;
-        header.classList.toggle('is-scrolled', wasScrolled);
-
-        window.addEventListener('scroll', onScroll, { passive: true });
-      }
-
+      updateHeaderOpacity();
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(updateHeaderOpacity);
+          ticking = true;
+        }
+      }, { passive: true });
       toggle?.addEventListener('click', () => {
         if (!header) return;
         e.stopPropagation();
