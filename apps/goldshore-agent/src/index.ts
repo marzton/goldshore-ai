@@ -1,10 +1,28 @@
 import { Hono } from 'hono';
+import { secureHeaders } from 'hono/secure-headers';
+import { cors } from 'hono/cors';
 
 type Env = {
   AI: any;
 };
 
 const app = new Hono<{ Bindings: Env }>();
+
+// Sentinel: Security Headers (Defense in Depth)
+app.use('*', secureHeaders());
+
+// Sentinel: CORS Policy
+app.use('*', cors({
+  origin: '*', // TODO: Restrict this to specific origins in production
+  allowMethods: ['GET', 'POST', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
+  exposeHeaders: ['Content-Length'],
+  maxAge: 600,
+}));
+
+// TODO: Sentinel - Add Authentication Middleware
+// Critical: This service is currently unprotected.
+// Must implement verifyAccess() from @goldshore/auth before handling sensitive data.
 
 app.get('/', (c) => {
   return c.html(`
