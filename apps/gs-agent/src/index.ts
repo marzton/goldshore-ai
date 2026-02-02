@@ -27,6 +27,34 @@ export interface Env {
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+		const url = new URL(request.url);
+
+		if (url.pathname === '/templates') {
+			return Response.json({
+				service: 'gs-agent',
+				description: 'Agent templates for HITL workflows, AI orchestration, and ops automation.',
+				modules: [
+					{
+						name: 'operator-assist',
+						purpose: 'Human-in-the-loop review queues for approvals, escalations, and audits.',
+					},
+					{
+						name: 'ai-routing',
+						purpose: 'Route prompts to Gemini, ChatGPT, Jules, or internal models.',
+					},
+					{
+						name: 'market-intel',
+						purpose: 'Fuse Alpaca, Thinkorswim, and internal signals for market operations.',
+					},
+				],
+				nextSteps: [
+					'Add durable objects for stateful agent sessions.',
+					'Attach queue consumers for long-running tasks.',
+					'Expose admin telemetry endpoints for observability.',
+				],
+			});
+		}
+
 		return new Response('Hello from the GoldShore Agent!');
 	},
 

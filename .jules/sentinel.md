@@ -28,3 +28,8 @@
 **Vulnerability:** The `apps/admin` application (dashboard) lacked standard HTTP security headers (`X-Frame-Options`, `HSTS`, `X-Content-Type-Options`), making it potentially vulnerable to clickjacking and MIME sniffing.
 **Learning:** When creating new Astro apps in a monorepo, middleware (and thus security headers) is not automatically inherited from other apps.
 **Prevention:** Enforce a standard `middleware.ts` template for all new Astro applications or move security headers to the infrastructure layer (Cloudflare `_headers` or Gateway rules) if consistent application-level enforcement is prone to oversight.
+
+## 2026-02-13 - Unprotected Sensitive Operations Worker
+**Vulnerability:** `apps/control-worker` exposed sensitive operational endpoints (`/dns/apply`, `/workers/reconcile`) without any authentication middleware, relying solely on (potentially missing or misconfigured) network-level protection.
+**Learning:** Internal automation or "worker" apps are often overlooked during security reviews because they aren't "user-facing", but they hold the "keys to the kingdom" (DNS, deployment credentials).
+**Prevention:** Treat every worker as a public API. Mandate default-deny authentication middleware for all new workers at the template level.
