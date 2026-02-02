@@ -1,5 +1,5 @@
 
-from playwright.sync_api import sync_playwright, expect
+from playwright.sync_api import sync_playwright
 import os
 
 def test_copy_button():
