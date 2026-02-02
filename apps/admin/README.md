@@ -160,7 +160,7 @@ pnpm --filter ./apps/admin preview
 ```
 
 ## Deploy
-Cloudflare Pages deploys via GitHub Actions. Admin previews publish to `admin-preview.goldshore.ai`.
+Cloudflare Pages deploys via GitHub Actions. Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 ## Preview Authentication
 - Preview builds reuse the centralized GitHub App callback handler; the handler completes the OAuth flow and redirects back to the preview hostname.
