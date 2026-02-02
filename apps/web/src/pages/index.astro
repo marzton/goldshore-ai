@@ -26,6 +26,9 @@ const features = [
 
 const highlights = [
   { label: 'Uptime', value: '99.99%', tone: 'success' },
+  { label: 'Latency', value: '12ms', tone: 'info' },
+  { label: 'Requests', value: '1.2M', tone: 'warning' },
+  { label: 'Errors', value: '0.01%', tone: 'danger' },
   { label: 'Latency', value: '<50ms', tone: 'info' },
   { label: 'Security', value: 'Audited', tone: 'success' },
   { label: 'Support', value: '24/7', tone: 'info' },
@@ -214,12 +217,25 @@ const highlights = [
         <p class="text-[var(--gs-text-secondary)]">
           {feature.body}
         </p>
-
-        <div class="cta-group fade-in-up" style="animation-delay: 0.8s;">
-          <GSButton href="/services" class="glow-button">Start the Experience</GSButton>
-          <GSButton href="/contact" variant="secondary" class="glass-button">Contact Sales</GSButton>
+        <div style="display:flex; gap: var(--gs-space-3); flex-wrap: wrap;">
+          <GSButton href="/services">View Services</GSButton>
+          <GSButton href="/contact" variant="secondary">Book a call</GSButton>
         </div>
       </div>
+      <div class="gs-card gs-pulse-frame hero-card reveal">
+        <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
+        <div class="gs-grid columns-2">
+          {highlights.map((item) => (
+            <div class="gs-kpi">
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
+            </div>
+          ))}
+        </div>
+        <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
+      </div>
+    </section>
     ))}
 
     <!-- Features Section -->
