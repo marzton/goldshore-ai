@@ -45,7 +45,7 @@ Cloudflare metadata:
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
 
 Documentation:
-- [Integrations hub](../../docs/integrations.md)
+- [Integrations hub (docs + admin config)](../../docs/integrations.md)
 - [Agent integration policy](../../docs/agent-integration.md)
 
 ## Routes/Endpoints
@@ -131,7 +131,7 @@ pnpm --filter @goldshore/admin dev
 The GoldShore admin cockpit is an Astro SSR dashboard protected by Cloudflare Access. It uses the shared GoldShore UI kit and theme tokens.
 
 Documentation:
-- [Integrations hub](../../docs/integrations.md)
+- [Integrations hub (docs + admin config)](../../docs/integrations.md)
 - [Agent integration policy](../../docs/agent-integration.md)
 
 ## Routes/Endpoints
@@ -160,7 +160,7 @@ pnpm --filter ./apps/admin preview
 ```
 
 ## Deploy
-Cloudflare Pages deploys via GitHub Actions. Admin previews publish to `admin-preview.goldshore.ai`.
+Cloudflare Pages deploys via GitHub Actions. Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 ## Preview Authentication
 - Preview builds reuse the centralized GitHub App callback handler; the handler completes the OAuth flow and redirects back to the preview hostname.
