@@ -138,7 +138,7 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
               li.textContent = 'No results found';
               list.appendChild(li);
             } else {
-              data.forEach((r: any) => {
+              data.forEach((r: { url?: string; title: string }) => {
                 const li = document.createElement('li');
                 const a = document.createElement('a');
                 // Basic protection
@@ -152,7 +152,7 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
                 list.appendChild(li);
               });
             }
-          } catch (err: any) {
+          } catch (err: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
             if (err.name === 'AbortError') return;
             list.textContent = '';
             const li = document.createElement('li');
