@@ -1,12 +1,7 @@
 {
   "name": "astro-goldshore",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*",
-    "infra/*"
-  ],
-  "packageManager": "pnpm@10.20.0",
+  "packageManager": "pnpm@9.0.0",
   "scripts": {
     "dev": "turbo run dev --parallel",
     "build:openapi": "node scripts/build-openapi.mjs",
