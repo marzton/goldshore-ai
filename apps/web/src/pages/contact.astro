@@ -71,4 +71,30 @@ export const prerender = true;
       </div>
     </div>
   </section>
+
+  <script>
+    const form = document.getElementById('contact-form');
+    const submitBtn = form?.querySelector('button[type="submit"]');
+
+    form?.addEventListener('submit', () => {
+      if (submitBtn) {
+        submitBtn.setAttribute('disabled', 'true');
+        submitBtn.innerHTML = '<span class="material-symbols-rounded gs-spin" aria-hidden="true">progress_activity</span> Sending...';
+      }
+    });
+  </script>
+
+  <style>
+    .gs-spin {
+      display: inline-block;
+      animation: spin 1s linear infinite;
+      vertical-align: middle;
+      margin-right: 0.5rem;
+      font-size: 1.25em;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </BaseLayout>
