@@ -64,8 +64,8 @@ cloudflare:
 
   workers:
     services:
-      - name: "astro-gs-api"
-        script_path: "apps/api-worker/dist/index.js"
+      - name: "gs-api"
+        script_path: "apps/goldshore-api/dist/index.js"
         routes:
           - pattern: "api.goldshore.ai/*"
           - pattern: "api-preview.goldshore.ai/*"
@@ -91,11 +91,28 @@ cloudflare:
         bindings:
           services:
             - binding: "API"
-              service: "astro-gs-api"
+              service: "gs-api"
               environment: "production"
           kv:
             - name: "GATEWAY_KV"
               namespace: "goldshore-gw-kv"
+
+      - name: "gs-control"
+        script_path: "apps/control-worker/dist/index.js"
+        routes:
+          - pattern: "ops.goldshore.ai/*"
+        bindings:
+          services:
+            - binding: "API"
+              service: "gs-api"
+            - binding: "GATEWAY"
+              service: "gs-gateway"
+          kv:
+            - name: "CONTROL_LOGS"
+              namespace: "gs-control-logs"
+          r2:
+            - name: "STATE"
+              bucket_name: "gs-control-state"
 
   email:
     routing:

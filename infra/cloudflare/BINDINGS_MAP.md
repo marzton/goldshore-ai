@@ -48,8 +48,8 @@
 
 ### 3. API Worker
 
-- Service Name: `astro-gs-api`
-- Code: `apps/api-worker`
+- Service Name: `gs-api`
+- Code: `apps/goldshore-api`
 - Routes:
   - `api.goldshore.ai/*`
   - `api-preview.goldshore.ai/*`
@@ -79,12 +79,12 @@
   - `gw.goldshore.ai/*`
   - `gw-preview.goldshore.ai/*`
 
-**Bindings:**
+  **Bindings:**
 
-- Service:
-  - Binding: `API`
-  - Service: `astro-gs-api`
-  - Environment: `production`
+  - Service:
+    - Binding: `API`
+    - Service: `gs-api`
+    - Environment: `production`
 - KV:
   - Binding: `GATEWAY_KV`
   - Namespace: `goldshore-gw-kv`
@@ -96,14 +96,23 @@
 
 ### 5. Control Worker
 
-- Service Name: `goldshore-control-worker`
+- Service Name: `gs-control`
 - Code: `apps/control-worker`
 - Routes:
-  - `ops.goldshore.ai/*` (optional, or workers.dev only)
+  - `ops.goldshore.ai/*`
 
 **Bindings:**
 
+- KV:
+  - Binding: `CONTROL_LOGS`
+  - Namespace: `gs-control-logs`
+- R2:
+  - Binding: `STATE`
+  - Bucket: `gs-control-state`
+- Services:
+  - Binding: `API`
+  - Service: `gs-api`
+  - Binding: `GATEWAY`
+  - Service: `gs-gateway`
 - Env Vars:
-  - `CLOUDFLARE_API_TOKEN` (secret)
-  - `CLOUDFLARE_ACCOUNT_ID` (secret)
   - `ENVIRONMENT=production`
