@@ -34,6 +34,10 @@
 **Learning:** Internal automation or "worker" apps are often overlooked during security reviews because they aren't "user-facing", but they hold the "keys to the kingdom" (DNS, deployment credentials).
 **Prevention:** Treat every worker as a public API. Mandate default-deny authentication middleware for all new workers at the template level.
 
+## 2026-02-14 - Unprotected Goldshore Agent
+**Vulnerability:** The newly created `apps/goldshore-agent` service was deployed without any authentication or security headers, exposing it to public access.
+**Learning:** Even with established patterns (like in `api-worker`), new services are susceptible to "copy-paste incomplete" errors or being started from scratch without security defaults.
+**Prevention:** Enforce a strict "Security First" template for all new services that includes authentication and security headers by default.
 ## 2026-02-15 - Exposed Client Secret via PUBLIC_ Env Var
 **Vulnerability:** The `apps/admin` application exposed `AUTH_CLIENT_SECRET` via `import.meta.env.PUBLIC_AUTH_CLIENT_SECRET`. Prefacing an environment variable with `PUBLIC_` in Astro/Vite statically replaces it in the client bundle, leaking critical credentials to anyone who inspects the code.
 **Learning:** Developers may use `PUBLIC_` out of habit to make variables "work" without realizing it bypasses server-only security boundaries, even in SSR apps.

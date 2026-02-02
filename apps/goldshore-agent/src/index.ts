@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
+import { verifyAccess } from '@goldshore/auth';
 
 type Env = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,16 +17,29 @@ const app = new Hono<{ Bindings: Env }>();
 // Sentinel: Add security headers to all responses (Defense in Depth)
 app.use('*', secureHeaders());
 
-// Sentinel: Add CORS protection (Permissive for now, but explicit)
+// Sentinel: Add CORS protection
 app.use('*', cors({
-  origin: '*',
-  allowMethods: ['GET', 'POST', 'OPTIONS'],
-  allowHeaders: ['Content-Type'],
+  origin: '*', // Adjust if stricter policy is needed
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
+  exposeHeaders: ['Content-Length'],
   maxAge: 600,
 }));
 
-// Sentinel: TODO - Add Authentication Middleware (CRITICAL)
-// Currently this service is unprotected. Needs @goldshore/auth integration.
+// Sentinel: CRITICAL - Enforce Authentication on all sensitive endpoints
+app.use('*', async (c, next) => {
+  // Allow root (status check) and health check to remain public
+  if (c.req.path === '/' || c.req.path === '/health') {
+    await next();
+    return;
+  }
+
+  const authorized = await verifyAccess(c.req.raw, c.env);
+  if (!authorized) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+  await next();
+});
 
 app.get('/', (c) => {
   return c.html(`
