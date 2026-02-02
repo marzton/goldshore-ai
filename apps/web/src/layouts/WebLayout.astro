@@ -18,6 +18,8 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Sentinel: Add Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https://goldshore.ai; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; object-src 'none'; upgrade-insecure-requests;" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
