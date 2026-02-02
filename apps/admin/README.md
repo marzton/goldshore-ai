@@ -1,3 +1,39 @@
+# GoldShore Admin (Astro)
+
+Secure operational console for GoldShore teams.
+
+## Goals
+
+- Keep **navigation, menus, and layout shell** in `AdminLayout`.
+- Keep **dashboard modules** (tables, cards, charts) as reusable components.
+- Ensure templates make it easy to extend operations, staffing, and workflow views.
+
+## Template Page
+
+Use the admin template to scaffold new operational modules:
+
+- `src/pages/templates/index.astro`
+
+The template demonstrates:
+
+- Layout shell with sidebar + topbar.
+- Stats cards for KPI summaries.
+- Table patterns for logs, runs, and staffing.
+
+## Key Layouts + Components
+
+- `src/layouts/AdminLayout.astro`: Admin shell (sidebar + topbar).
+- `src/components/Sidebar.astro`: Navigation tree.
+- `src/components/Topbar.astro`: Global actions + page title.
+- `src/components/StatCard.astro`: KPI tiles.
+- `src/components/Table.astro`: Structured tabular data.
+
+## Operations + HITL Guidance
+
+- Track PRs, issues, and workflows in admin table views.
+- Pair with gateway + agent template endpoints for real-time status.
+- Plan future staffing dashboards for human-in-the-loop approvals.
+
 # apps/admin
 
 ## Overview
@@ -8,7 +44,13 @@ Cloudflare metadata:
 - Pages bindings config: `infra/cloudflare/goldshore-admin.wrangler.toml`
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
 
+Documentation:
+- [Integrations hub](../../docs/integrations.md)
+- [Agent integration policy](../../docs/agent-integration.md)
+
 ## Routes/Endpoints
+Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
+
 Admin sections:
 - `/admin/overview`
 - `/admin/api-logs`
@@ -34,6 +76,12 @@ pnpm --filter ./apps/admin preview
 ## Deploy
 - Production deploy: `.github/workflows/deploy-admin.yml`
 - Preview deploy: `.github/workflows/preview-admin.yml`
+- Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
+
+## Preview Authentication
+- Preview builds reuse the centralized GitHub App callback handler; the handler completes the OAuth flow and redirects back to the preview hostname.
+- Cloudflare Access is enforced by the shared Access application and policies, with preview hostnames allowlisted alongside production.
+- See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 # GoldShore Admin (Astro)
@@ -82,7 +130,13 @@ pnpm --filter @goldshore/admin dev
 ## Overview
 The GoldShore admin cockpit is an Astro SSR dashboard protected by Cloudflare Access. It uses the shared GoldShore UI kit and theme tokens.
 
+Documentation:
+- [Integrations hub](../../docs/integrations.md)
+- [Agent integration policy](../../docs/agent-integration.md)
+
 ## Routes/Endpoints
+Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
+
 Admin sections:
 - `/admin/overview`
 - `/admin/api-logs`
@@ -107,3 +161,8 @@ pnpm --filter ./apps/admin preview
 
 ## Deploy
 Cloudflare Pages deploys via GitHub Actions. Admin previews publish to `admin-preview.goldshore.ai`.
+
+## Preview Authentication
+- Preview builds reuse the centralized GitHub App callback handler; the handler completes the OAuth flow and redirects back to the preview hostname.
+- Cloudflare Access is enforced by the shared Access application and policies, with preview hostnames allowlisted alongside production.
+- See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
