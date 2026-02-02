@@ -30,35 +30,10 @@ const features = [
     <!-- Starfield Background -->
     <div class="stars-container">
       <div class="stars"></div>
-<MarketingLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
-  <section class="gs-hero home-hero parallax-section">
-    <div class="parallax-layer layer-grid" data-parallax="0.08" aria-hidden="true"></div>
-    <div class="parallax-layer layer-glow" data-parallax="0.14" aria-hidden="true"></div>
-    <div class="parallax-layer layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
-    <div class="hero-content reveal">
-      <p class="gs-badge" style="margin-bottom: var(--gs-space-3);">Modern ops for fluid markets</p>
-      <h1>Shaping Waves with Applied Intelligence</h1>
-      <p>
-        GoldShore builds resilient, automation-first systems for trading, control, and applied intelligence. Each surface ships with observability, safety, and responsive design baked in.
-      </p>
-      <div style="display:flex; gap: var(--gs-space-3); flex-wrap: wrap;">
-        <GSButton href="/services">View Services</GSButton>
-        <GSButton href="/contact" variant="secondary">Book a call</GSButton>
-      </div>
     </div>
-    <div class="gs-card gs-pulse-frame hero-card reveal">
-      <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
-      <div class="gs-grid columns-2">
-        {highlights.map((item) => (
-          <div class="gs-kpi">
-            <span>{item.label}</span>
-            <strong>{item.value}</strong>
-            <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
-          </div>
-        ))}
-      </div>
-      <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
-    </div>
+
+    <div class="parallax-layer layer-grid" data-parallax="0.05" aria-hidden="true"></div>
+    <div class="parallax-layer layer-glow" data-parallax="0.08" aria-hidden="true"></div>
 
     <!-- Hero Section -->
     <section class="cinematic-hero">
@@ -77,15 +52,6 @@ const features = [
 
         <p class="hero-desc fade-in-up" style="animation-delay: 0.6s;">
           GoldShore isn't just code. It's a provable experience. We build resilient, cinematic systems where automation meets art.
-  <section class="home-features parallax-section">
-    <div class="parallax-layer layer-grid" data-parallax="0.05" aria-hidden="true"></div>
-    <div class="parallax-layer layer-glow" data-parallax="0.1" aria-hidden="true"></div>
-    <div class="max-w-7xl mx-auto py-24 px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
-    {features.map((feature) => (
-      <div class="feature-card reveal">
-        <h3 class="text-xl font-semibold" style="color: var(--gs-text-primary);">{feature.title}</h3>
-        <p class="text-[var(--gs-text-secondary)]">
-          {feature.body}
         </p>
 
         <div class="cta-group fade-in-up" style="animation-delay: 0.8s;">
@@ -144,9 +110,6 @@ const features = [
       </div>
     </section>
   </div>
-    ))}
-    </div>
-  </section>
 </MarketingLayout>
 
 <style>
@@ -428,31 +391,33 @@ const features = [
 <script is:inline>
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!prefersReducedMotion) {
-    const revealTargets = document.querySelectorAll('.reveal');
-    const revealObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.18 }
-    );
-    revealTargets.forEach((el) => revealObserver.observe(el));
+    const parallaxLayers = Array.from(document.querySelectorAll('[data-parallax]')).map((layer) => ({
+      element: layer,
+      speed: parseFloat(layer.dataset.parallax || '0'),
+    }));
 
-    const parallaxLayers = Array.from(document.querySelectorAll('[data-parallax]'));
+    let ticking = false;
+
     const updateParallax = () => {
       const scrollY = window.scrollY || window.pageYOffset;
-      parallaxLayers.forEach((layer) => {
-        const speed = parseFloat(layer.dataset.parallax || '0');
-        layer.style.transform = `translate3d(0, ${scrollY * speed * -0.12}px, 0)`;
+      parallaxLayers.forEach(({ element, speed }) => {
+        element.style.transform = `translate3d(0, ${scrollY * speed * -0.12}px, 0)`;
       });
+      ticking = false;
     };
+
     updateParallax();
-    window.addEventListener('scroll', () => requestAnimationFrame(updateParallax), { passive: true });
-  } else {
-    document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
+
+    // Optimized scroll listener using requestAnimationFrame for performance
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          window.requestAnimationFrame(updateParallax);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
   }
 </script>
