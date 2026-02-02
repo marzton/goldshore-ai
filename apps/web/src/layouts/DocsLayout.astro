@@ -10,6 +10,7 @@ const currentSlug = page ? page.slug : undefined;
 <WebLayout title={`${title} | Docs`} description="GoldShore developer documentation">
   <section class="gs-section docs-shell">
     <div class="sidebar-wrapper">
+       <DocsSearch />
        <DocsSidebar currentSlug={currentSlug} />
     </div>
     <article class="gs-card docs-main">

@@ -8,10 +8,10 @@ export default defineConfig({
   prefetch: true,
   adapter: cloudflare(),
   integrations: [
-    // tailwind({
-    //   applyBaseStyles: false,
-    //   configFile: "../../tailwind.config.mjs"
-    // })
+    tailwind({
+      applyBaseStyles: false,
+      configFile: "../../tailwind.config.mjs"
+    })
   ],
   vite: {
     publicDir: './openapi',
