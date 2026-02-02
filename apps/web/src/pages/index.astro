@@ -26,9 +26,9 @@ const features = [
 
 const highlights = [
   { label: 'Uptime', value: '99.99%', tone: 'success' },
-  { label: 'Latency', value: '12ms', tone: 'info' },
-  { label: 'Agents', value: 'Active', tone: 'success' },
-  { label: 'Security', value: 'Max', tone: 'info' }
+  { label: 'Latency', value: '24ms', tone: 'info' },
+  { label: 'Security', value: 'Sentinel', tone: 'success' },
+  { label: 'Agents', value: 'Active', tone: 'info' },
 ];
 ---
 
@@ -89,13 +89,26 @@ const highlights = [
         <p class="hero-desc fade-in-up" style="animation-delay: 0.6s;">
           GoldShore isn't just code. It's a provable experience. We build resilient, cinematic systems where automation meets art.
         </p>
+      </div>
+    </section>
+
+  <section class="home-features parallax-section">
+    <div class="parallax-layer layer-grid" data-parallax="0.05" aria-hidden="true"></div>
+    <div class="parallax-layer layer-glow" data-parallax="0.1" aria-hidden="true"></div>
+    <div class="max-w-7xl mx-auto py-24 px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
+    {features.map((feature) => (
+      <div class="feature-card reveal">
+        <h3 class="text-xl font-semibold" style="color: var(--gs-text-primary);">{feature.title}</h3>
+        <p class="text-[var(--gs-text-secondary)]">
+          {feature.body}
+        </p>
 
         <div class="cta-group fade-in-up" style="animation-delay: 0.8s;">
           <GSButton href="/services" class="glow-button">Start the Experience</GSButton>
           <GSButton href="/contact" variant="secondary" class="glass-button">Contact Sales</GSButton>
         </div>
       </div>
-    </section>
+    ))}
 
     <!-- Features Section -->
     <section class="home-features parallax-section">
@@ -153,6 +166,8 @@ const highlights = [
       </div>
     </section>
   </div>
+    </div>
+  </section>
 </MarketingLayout>
 
 <style>
