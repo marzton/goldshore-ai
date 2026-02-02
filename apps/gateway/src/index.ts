@@ -8,9 +8,7 @@ type Env = {
   GATEWAY_KV: KVNamespace;
   AI: any;
   ENV: string;
-  // Sentinel: Added support for Audience verification to prevent auth bypass
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
-  // Sentinel: Added support for dynamic team domain
   CLOUDFLARE_TEAM_DOMAIN?: string;
 };
 
