@@ -25,6 +25,9 @@ const features = [
 ];
 
 const highlights = [
+  { label: 'Uptime', value: '99.99%', tone: 'gs-badge--success' },
+  { label: 'Latency', value: '24ms', tone: 'gs-badge--info' },
+  { label: 'Requests', value: '1.2M/s' },
   { label: 'Uptime', value: '99.99%', tone: 'success' },
   { label: 'Latency', value: '24ms', tone: 'info' },
   { label: 'Security', value: 'Sentinel', tone: 'success' },
@@ -525,6 +528,12 @@ const highlights = [
 
     // Initial call
     updateParallax();
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }, { passive: true });
   } else {
     document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
     updateParallax();

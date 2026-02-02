@@ -92,8 +92,6 @@ const logoSrc = '/assets/logo.svg';
     <script is:inline>
       const header = document.querySelector('.gs-header');
       const toggle = document.querySelector('.gs-nav-toggle');
-
-      // Bolt: Use requestAnimationFrame for smoother scroll handling
       let ticking = false;
       const updateHeaderOpacity = () => {
         if (!header) return;
@@ -107,13 +105,6 @@ const logoSrc = '/assets/logo.svg';
         ticking = false;
       };
 
-      const onScroll = () => {
-        if (!ticking) {
-          window.requestAnimationFrame(updateHeaderOpacity);
-          ticking = true;
-        }
-      };
-
       updateHeaderOpacity();
       window.addEventListener('scroll', onScroll, { passive: true });
       updateHeaderOpacity();
@@ -123,7 +114,6 @@ const logoSrc = '/assets/logo.svg';
           ticking = true;
         }
       }, { passive: true });
-
       toggle?.addEventListener('click', () => {
         if (!header) return;
         const isOpen = header.getAttribute('data-menu-open') === 'true';
