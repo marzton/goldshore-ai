@@ -19,7 +19,7 @@ These are worker API endpoints implemented in `src/index.ts` (not HTML pages). R
 - `GET /user/login`
 - `POST /v1/chat`
 - `*` (proxy passthrough to `gs-api` when no matching route)
-The `gs-gateway` worker is the routing and queue ingress layer for GoldShore, served from `https://gw.goldshore.ai/*` on Cloudflare Workers. It handles proxying to the API, rate limiting, and preflight authorization checks.
+The `gs-gateway` worker is the routing and queue ingress layer for GoldShore, served from the gateway hostname documented in [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md). It handles proxying to the API, rate limiting, and preflight authorization checks.
 
 Configuration highlights (from `wrangler.toml`):
 - `ENV=production`
