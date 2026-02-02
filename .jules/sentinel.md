@@ -33,3 +33,8 @@
 **Vulnerability:** `apps/control-worker` exposed sensitive operational endpoints (`/dns/apply`, `/workers/reconcile`) without any authentication middleware, relying solely on (potentially missing or misconfigured) network-level protection.
 **Learning:** Internal automation or "worker" apps are often overlooked during security reviews because they aren't "user-facing", but they hold the "keys to the kingdom" (DNS, deployment credentials).
 **Prevention:** Treat every worker as a public API. Mandate default-deny authentication middleware for all new workers at the template level.
+
+## 2026-02-14 - Unprotected Goldshore Agent
+**Vulnerability:** The newly created `apps/goldshore-agent` service was deployed without any authentication or security headers, exposing it to public access.
+**Learning:** Even with established patterns (like in `api-worker`), new services are susceptible to "copy-paste incomplete" errors or being started from scratch without security defaults.
+**Prevention:** Enforce a strict "Security First" template for all new services that includes authentication and security headers by default.
