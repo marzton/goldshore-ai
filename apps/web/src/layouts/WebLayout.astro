@@ -109,6 +109,27 @@ const logoSrc = '/assets/logo.svg';
       window.addEventListener('scroll', onScroll, { passive: true });
       updateHeaderOpacity();
       window.addEventListener('scroll', updateHeaderOpacity, { passive: true });
+      const setMenuState = (isOpen) => {
+        if (!header || !toggle) return;
+        header.setAttribute('data-menu-open', String(isOpen));
+        toggle.setAttribute('aria-expanded', String(isOpen));
+      };
+
+      toggle?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!header) return;
+        const isOpen = header.getAttribute('data-menu-open') === 'true';
+        setMenuState(!isOpen);
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          setMenuState(false);
+          toggle?.focus();
+        }
+      });
+
+      document.addEventListener('click', (e) => {
       const closeMenu = () => {
         if (!header || !toggle) return;
         header.setAttribute('data-menu-open', 'false');
@@ -119,6 +140,8 @@ const logoSrc = '/assets/logo.svg';
         if (!header) return;
         e.stopPropagation();
         const isOpen = header.getAttribute('data-menu-open') === 'true';
+        if (isOpen && !header.contains(e.target)) {
+          setMenuState(false);
         if (isOpen) {
           closeMenu();
         } else {
