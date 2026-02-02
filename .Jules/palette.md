@@ -31,3 +31,7 @@
 ## 2025-05-24 - Accessible Tabs
 **Learning:** Tab interfaces often neglect keyboard navigation, failing WAI-ARIA standards. Users expect Arrow keys to switch tabs, not just Tab key (which should only land on the *active* tab).
 **Action:** Implemented "roving tabindex" in `Tabs` component: only the active tab is focusable (`tabindex="0"`), others are skipped (`tabindex="-1"`). Arrow keys move focus and selection.
+
+## 2025-05-25 - Interaction Interception
+**Learning:** High-level overlay elements (like mobile menus) can inadvertently intercept pointer events for elements underneath even when visually hidden or partially obscured if not carefully managed, or if test scripts attempt to interact with covered elements.
+**Action:** Ensure verification scripts account for overlay states by clicking clear "safe zones" or scrolling elements into view.
