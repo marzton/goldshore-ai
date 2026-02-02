@@ -25,10 +25,9 @@ const features = [
 ];
 
 const highlights = [
-  { label: 'Global Latency', value: '< 30ms', tone: 'success' },
-  { label: 'System Status', value: 'Normal', tone: 'success' },
-  { label: 'Active Nodes', value: '24/24', tone: 'info' },
-  { label: 'Threat Level', value: 'None', tone: '' },
+  { label: 'Uptime', value: '99.99%', tone: 'gs-badge--success' },
+  { label: 'Latency', value: '<25ms', tone: 'gs-badge--info' },
+  { label: 'Security', value: 'Shielded', tone: 'gs-badge--warning' },
 ];
 ---
 
@@ -39,6 +38,31 @@ const highlights = [
       <div class="stars"></div>
     </div>
 
+    <section class="gs-hero home-hero parallax-section">
+      <div class="parallax-layer layer-grid" data-parallax="0.08" aria-hidden="true"></div>
+      <div class="parallax-layer layer-glow" data-parallax="0.14" aria-hidden="true"></div>
+      <div class="parallax-layer layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
+
+      <div class="hero-content reveal">
+        <div class="badge-container fade-in-up" style="animation-delay: 0.2s;">
+          <span class="vibe-badge">
+            <span class="pulse-dot"></span>
+            System Operational
+          </span>
+        </div>
+
+        <h1 class="fade-in-up" style="animation-delay: 0.4s;">
+          Shaping Waves with <br/>
+          <span class="text-gradient">Applied Intelligence</span>
+        </h1>
+
+        <p class="hero-desc fade-in-up" style="animation-delay: 0.6s;">
+          GoldShore isn't just code. It's a provable experience. We build resilient, cinematic systems where automation meets art.
+        </p>
+
+        <div class="cta-group fade-in-up" style="animation-delay: 0.8s;">
+          <GSButton href="/services" class="glow-button">Start the Experience</GSButton>
+          <GSButton href="/contact" variant="secondary" class="glass-button">Contact Sales</GSButton>
     <!-- Main Hero Section -->
     <section class="cinematic-hero">
         <div class="hero-content">
@@ -127,6 +151,20 @@ const highlights = [
             <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
         </div>
     </section>
+
+    <div class="gs-card gs-pulse-frame hero-card reveal" style="max-width: 1280px; margin: 0 auto 4rem; position: relative; z-index: 10;">
+      <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
+      <div class="gs-grid columns-3">
+        {highlights.map((item) => (
+          <div class="gs-kpi">
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+            <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
+          </div>
+        ))}
+      </div>
+      <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
+    </div>
 
     <!-- Features Section -->
     <section class="features-section">
