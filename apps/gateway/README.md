@@ -11,8 +11,8 @@ Cloudflare metadata (from `wrangler.toml`):
 - Environment variables: `ENV=production`, `API_ORIGIN=https://api.goldshore.ai`, `CLOUDFLARE_ACCESS_AUDIENCE`, `CLOUDFLARE_TEAM_DOMAIN`
 
 ## Routes/Endpoints
-These are worker API endpoints implemented in `src/index.ts` (not HTML pages).
-- Gateway hostnames: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
+These are worker API endpoints implemented in `src/index.ts` (not HTML pages). Route handlers are defined in `src/index.ts`.
+- `https://gw.goldshore.ai/*` (proxy + routing entrypoint)
 - `GET /` (status page)
 - `GET /health`
 - `GET /templates`
@@ -31,8 +31,8 @@ Configuration highlights (from `wrangler.toml`):
 - AI binding: `AI`
 
 ## Routes/Endpoints
-These are worker API endpoints implemented in `src/index.ts` (not HTML pages).
-- Gateway hostnames: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
+These are worker API endpoints implemented in `src/index.ts` (not HTML pages). Route handlers are defined in `src/index.ts`.
+- `https://gw.goldshore.ai/*` (proxy + routing entrypoint)
 
 ## Local Dev
 ```bash
