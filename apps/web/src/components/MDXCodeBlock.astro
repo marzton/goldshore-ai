@@ -3,45 +3,40 @@ const props = Astro.props;
 ---
 
 <div class="code-block">
-  <button class="copy-button" aria-label="Copy code">
-    <span class="icon copy-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-      </svg>
-    </span>
-    <span class="icon check-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"></polyline>
-      </svg>
-    </span>
-  </button>
+  <button class="copy" aria-label="Copy code">Copy</button>
   <pre {...props}><slot /></pre>
 </div>
 
 <script>
+  // Use event delegation for better performance and to handle dynamically added blocks if any
   document.addEventListener('click', async (e) => {
-    const target = (e.target as HTMLElement).closest('.copy');
+    const target = (e.target as HTMLElement).closest('.copy') as HTMLElement | null;
     if (!target) return;
 
-    const button = target as HTMLButtonElement;
-    const codeBlock = button.parentElement;
-    const pre = codeBlock?.querySelector('pre');
+    const codeBlock = target.closest('.code-block');
+    if (!codeBlock) return;
 
-    if (pre && pre.innerText) {
-      try {
-        await navigator.clipboard.writeText(pre.innerText);
+    const pre = codeBlock.querySelector('pre') as HTMLElement | null;
+    if (!pre) return;
 
-        button.classList.add('copied');
-        button.setAttribute('aria-label', 'Copied!');
+    const code = pre.innerText;
 
-        setTimeout(() => {
-          button.classList.remove('copied');
-          button.setAttribute('aria-label', 'Copy code');
-        }, 2000);
-      } catch (err) {
-        console.error('Failed to copy:', err);
-      }
+    try {
+      await navigator.clipboard.writeText(code);
+      const originalText = target.innerText;
+      target.innerText = 'Copied!';
+      target.setAttribute('aria-label', 'Copied to clipboard');
+
+      setTimeout(() => {
+        target.innerText = originalText;
+        target.setAttribute('aria-label', 'Copy code');
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      target.innerText = 'Error';
+      setTimeout(() => {
+        target.innerText = 'Copy';
+      }, 2000);
     }
   });
 </script>
@@ -77,73 +72,19 @@ const props = Astro.props;
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transition: all 0.2s ease;
+    transition: opacity 0.2s, background-color 0.2s;
   }
-  .copy-button:hover,
-  .copy-button:focus-visible {
+  .code-block:hover .copy,
+  .code-block:focus-within .copy {
     opacity: 1;
-    background: rgba(255,255,255,0.2);
-    color: #fff;
-  }
-  .copy-button:focus-visible {
-    outline: 2px solid #22d3ee; /* GS Cyan */
-    outline-offset: 2px;
-  }
-
-  .icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-  }
-
-  .check-icon {
-    position: absolute;
-    opacity: 0;
-    transform: scale(0.5);
-  }
-
-  .copy-button.copied {
-    border-color: #22c55e; /* Green */
-    color: #22c55e;
-  }
-
-  .copy-button.copied .copy-icon {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-
-  .copy-button.copied .check-icon {
-    opacity: 1;
-    transform: scale(1);
-  }
-  .code-block .copy:hover {
-    background: rgba(255,255,255,0.2);
-    color: #fff;
   }
   .code-block .copy:focus-visible {
+    opacity: 1;
     outline: 2px solid white;
     outline-offset: 2px;
   }
-  .code-block .copy.copied {
-    color: #4ade80;
-    background: rgba(74, 222, 128, 0.1);
-    border-color: rgba(74, 222, 128, 0.2);
-  }
-
-  /* Icon switching */
-  .code-block .copy .icon-copy {
-    display: block;
-  }
-  .code-block .copy .icon-check {
-    display: none;
-  }
-
-  .code-block .copy.copied .icon-copy {
-    display: none;
-  }
-  .code-block .copy.copied .icon-check {
-    display: block;
+  .code-block .copy:hover {
+    background: rgba(255,255,255,0.2);
   }
 </style>
 
