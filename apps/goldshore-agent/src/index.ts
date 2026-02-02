@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
-import { verifyAccess } from '@goldshore/auth';
 
 type Env = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,30 +16,16 @@ const app = new Hono<{ Bindings: Env }>();
 // Sentinel: Add security headers to all responses (Defense in Depth)
 app.use('*', secureHeaders());
 
-// Sentinel: Add CORS protection
+// Sentinel: Add CORS protection (Permissive for now, but explicit)
 app.use('*', cors({
-  origin: '*', // Public agent API
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
-  exposeHeaders: ['Content-Length'],
+  origin: '*',
+  allowMethods: ['GET', 'POST', 'OPTIONS'],
+  allowHeaders: ['Content-Type'],
   maxAge: 600,
 }));
 
-// Sentinel: CRITICAL - Enforce Authentication on all sensitive endpoints
-app.use('*', async (c, next) => {
-  // Allow health checks, root, and CORS preflight
-  if (c.req.path === '/health' || c.req.path === '/' || c.req.method === 'OPTIONS') {
-    await next();
-    return;
-  }
-
-  // Verify Cloudflare Access JWT
-  const authorized = await verifyAccess(c.req.raw, c.env);
-  if (!authorized) {
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
-  await next();
-});
+// Sentinel: TODO - Add Authentication Middleware (CRITICAL)
+// Currently this service is unprotected. Needs @goldshore/auth integration.
 
 app.get('/', (c) => {
   return c.html(`
