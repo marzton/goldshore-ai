@@ -1,0 +1,25 @@
+
+> @goldshore/web@0.1.0 dev /app/apps/web
+> astro dev
+
+04:21:36 [@astrojs/cloudflare] Enabling sessions with Cloudflare KV with the "SESSION" KV binding.
+04:21:36 [@astrojs/cloudflare] If you see the error "Invalid binding `SESSION`" in your build output, you need to add the binding to your wrangler config file.
+04:21:36 [WARN] [adapter] Cloudflare does not support sharp at runtime. However, you can configure `imageService: "compile"` to optimize images with sharp on prerendered pages during build time.
+04:21:37 [types] Generated 1ms
+04:21:37 [content] Syncing content
+04:21:38 [content] Synced content
+04:21:38 [vite] Re-optimizing dependencies because vite config has changed
+
+ astro  v5.16.15 ready in 4099 ms
+
+┃ Local    http://localhost:4321/
+┃ Network  use --host to expose
+
+04:21:38 watching for file changes...
+04:22:24 [200] / 296ms
+04:22:24 [200] /assets/logo.svg 15ms
+04:22:25 [200] /assets/logo.svg 13ms
+04:22:25 [200] /assets/logo.svg 8ms
+04:22:25 [200] /assets/logo.svg 8ms
+04:26:41 [watch] /src/pages/index.astro?astro&type=style&index=0&lang.css
+04:26:48 [watch] /src/layouts/WebLayout.astro?astro&type=style&index=0&lang.css
