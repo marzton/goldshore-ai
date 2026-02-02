@@ -16,18 +16,22 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20.11.0
+          cache: pnpm
 
-      - run: npm install
+      - name: Enable pnpm via corepack
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.15.5 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build Admin
-        run: |
-          cd apps/admin
-          npm run build
+        run: pnpm -C apps/admin run build
 
       - name: Deploy Admin
-        working-directory: apps/admin
-        run: npx wrangler pages deploy dist
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: npx wrangler@3.80.4 pages deploy apps/admin/dist --project-name=goldshore-admin --config infra/cloudflare/goldshore-admin.wrangler.toml
