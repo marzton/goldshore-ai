@@ -4,6 +4,7 @@ import { cors } from 'hono/cors';
 import { verifyAccess } from '@goldshore/auth';
 
 type Env = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   AI: any;
   // Sentinel: Added support for Audience verification to prevent auth bypass
   CLOUDFLARE_ACCESS_AUDIENCE?: string;

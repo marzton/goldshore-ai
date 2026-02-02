@@ -38,3 +38,15 @@
 **Vulnerability:** The newly created `apps/goldshore-agent` service was deployed without any authentication or security headers, exposing it to public access.
 **Learning:** Even with established patterns (like in `api-worker`), new services are susceptible to "copy-paste incomplete" errors or being started from scratch without security defaults.
 **Prevention:** Enforce a strict "Security First" template for all new services that includes authentication and security headers by default.
+## 2026-02-15 - Exposed Client Secret via PUBLIC_ Env Var
+**Vulnerability:** The `apps/admin` application exposed `AUTH_CLIENT_SECRET` via `import.meta.env.PUBLIC_AUTH_CLIENT_SECRET`. Prefacing an environment variable with `PUBLIC_` in Astro/Vite statically replaces it in the client bundle, leaking critical credentials to anyone who inspects the code.
+**Learning:** Developers may use `PUBLIC_` out of habit to make variables "work" without realizing it bypasses server-only security boundaries, even in SSR apps.
+**Prevention:** Strictly enforce `AUTH_*` or `SECRET_*` naming conventions without `PUBLIC_` prefix for credentials. Added fallback logic with critical warnings to migrate safely.
+## 2026-04-20 - Unprotected Agent Service
+**Vulnerability:** `apps/goldshore-agent` lacked standard security headers and CORS configuration, exposing it to potential attacks despite being an internal service.
+**Learning:** New services created in the monorepo (like `goldshore-agent`) do not automatically inherit security middleware. Explicit configuration is required.
+**Prevention:** Establish a strict "Secure by Default" template for new Hono/Worker apps that includes `secureHeaders` and `cors` middleware from the start.
+## 2026-02-14 - Securing Agent Service by Default
+**Vulnerability:** The `apps/goldshore-agent` service was initialized without any authentication middleware, exposing potential future AI agent capabilities to the public internet.
+**Learning:** New services in a monorepo often start "barebones" and skip security boilerplate, creating a window of vulnerability as features are added. Drift between documentation (which said it was secured) and implementation is a common risk.
+**Prevention:** Enforce a "Secure by Default" template for all new Hono services that includes `secureHeaders`, `cors`, and `verifyAccess` middleware immediately upon creation.
