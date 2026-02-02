@@ -3,21 +3,17 @@ const props = Astro.props;
 ---
 
 <div class="code-block">
-  <button class="copy" type="button" aria-label="Copy code">
-    <svg class="icon-copy" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-    </svg>
-    <svg class="icon-check" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="20 6 9 17 4 12"></polyline>
-    </svg>
-<div class="code-block group">
-  <button class="copy-btn" aria-label="Copy code to clipboard" title="Copy code">
+  <button class="copy-button" aria-label="Copy code">
     <span class="icon copy-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
     </span>
     <span class="icon check-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
     </span>
   </button>
   <pre {...props}><slot /></pre>
@@ -66,28 +62,60 @@ const props = Astro.props;
     color: #e4e4e7;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
-
-  /* Copy Button - Hidden by default, visible on hover/focus */
-  .copy-btn {
+  .copy-button {
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
     background: rgba(255,255,255,0.1);
-    border: 1px solid transparent;
-    color: rgba(255,255,255,0.7);
-    padding: 0.4rem;
-    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #a1a1aa;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 4px;
     cursor: pointer;
-    opacity: 0;
-    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
+    opacity: 0;
+    transition: all 0.2s ease;
   }
-  .code-block:hover .copy,
-  .code-block .copy:focus-visible {
+  .copy-button:hover,
+  .copy-button:focus-visible {
     opacity: 1;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+  }
+  .copy-button:focus-visible {
+    outline: 2px solid #22d3ee; /* GS Cyan */
+    outline-offset: 2px;
+  }
+
+  .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .check-icon {
+    position: absolute;
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  .copy-button.copied {
+    border-color: #22c55e; /* Green */
+    color: #22c55e;
+  }
+
+  .copy-button.copied .copy-icon {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  .copy-button.copied .check-icon {
+    opacity: 1;
+    transform: scale(1);
   }
   .code-block .copy:hover {
     background: rgba(255,255,255,0.2);
@@ -120,33 +148,39 @@ const props = Astro.props;
 </style>
 
 <script>
-  // One-time event delegation setup
-  if (!(window as any)._codeBlockCopyInitialized) {
-      (window as any)._codeBlockCopyInitialized = true;
+  function setupCopyButtons() {
+    const buttons = document.querySelectorAll('.copy-button');
 
-      document.addEventListener('click', async (e) => {
-          const target = e.target as HTMLElement;
-          const btn = target.closest('.copy-btn');
-          if (!btn) return;
+    buttons.forEach(button => {
+      // Avoid double binding
+      if (button.hasAttribute('data-initialized')) return;
+      button.setAttribute('data-initialized', 'true');
 
-          const pre = btn.parentElement?.querySelector('pre') as HTMLElement;
-          if (!pre) return;
+      button.addEventListener('click', async () => {
+        const pre = button.nextElementSibling;
+        if (!pre) return;
 
-          try {
-             await navigator.clipboard.writeText(pre.innerText);
+        const text = pre.textContent || '';
 
-             // Visual feedback
-             btn.classList.add('copied');
-             btn.setAttribute('aria-label', 'Copied!');
+        try {
+          await navigator.clipboard.writeText(text);
 
-             // Reset after 2s
-             setTimeout(() => {
-                btn.classList.remove('copied');
-                btn.setAttribute('aria-label', 'Copy code to clipboard');
-             }, 2000);
-          } catch(err) {
-              console.error('Copy failed', err);
-          }
+          // Feedback
+          button.classList.add('copied');
+          button.setAttribute('aria-label', 'Copied');
+
+          setTimeout(() => {
+            button.classList.remove('copied');
+            button.setAttribute('aria-label', 'Copy code');
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy:', err);
+        }
       });
+    });
   }
+
+  // Run on load and after view transitions/astro swaps
+  setupCopyButtons();
+  document.addEventListener('astro:page-load', setupCopyButtons);
 </script>
