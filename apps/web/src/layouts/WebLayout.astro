@@ -105,11 +105,32 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
       };
       updateHeaderOpacity();
       window.addEventListener('scroll', updateHeaderOpacity, { passive: true });
-      toggle?.addEventListener('click', () => {
+      const setMenuState = (isOpen) => {
+        if (!header || !toggle) return;
+        header.setAttribute('data-menu-open', String(isOpen));
+        toggle.setAttribute('aria-expanded', String(isOpen));
+      };
+
+      toggle?.addEventListener('click', (e) => {
+        e.stopPropagation();
         if (!header) return;
         const isOpen = header.getAttribute('data-menu-open') === 'true';
-        header.setAttribute('data-menu-open', String(!isOpen));
-        toggle.setAttribute('aria-expanded', String(!isOpen));
+        setMenuState(!isOpen);
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          setMenuState(false);
+          toggle?.focus();
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!header) return;
+        const isOpen = header.getAttribute('data-menu-open') === 'true';
+        if (isOpen && !header.contains(e.target)) {
+          setMenuState(false);
+        }
       });
     </script>
     <style is:global>
