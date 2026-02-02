@@ -23,13 +23,49 @@ const features = [
     icon: 'psychology'
   },
 ];
+
+const highlights = [
+  { label: 'Uptime', value: '99.99%', tone: 'success' },
+  { label: 'Latency', value: '12ms', tone: 'info' },
+  { label: 'Agents', value: 'Active', tone: 'success' },
+  { label: 'Security', value: 'Max', tone: 'info' }
+];
 ---
 
-<MarketingLayout title="GoldShore | Provable Experience" description="Cinematic AI infrastructure for the modern web.">
+<MarketingLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
   <div class="cinematic-wrapper">
     <!-- Starfield Background -->
     <div class="stars-container">
       <div class="stars"></div>
+    </div>
+
+  <section class="gs-hero home-hero parallax-section">
+    <div class="parallax-layer layer-grid" data-parallax="0.08" aria-hidden="true"></div>
+    <div class="parallax-layer layer-glow" data-parallax="0.14" aria-hidden="true"></div>
+    <div class="parallax-layer layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
+    <div class="hero-content reveal">
+      <p class="gs-badge" style="margin-bottom: var(--gs-space-3);">Modern ops for fluid markets</p>
+      <h1>Shaping Waves with Applied Intelligence</h1>
+      <p>
+        GoldShore builds resilient, automation-first systems for trading, control, and applied intelligence. Each surface ships with observability, safety, and responsive design baked in.
+      </p>
+      <div style="display:flex; gap: var(--gs-space-3); flex-wrap: wrap;">
+        <GSButton href="/services">View Services</GSButton>
+        <GSButton href="/contact" variant="secondary">Book a call</GSButton>
+      </div>
+    </div>
+    <div class="gs-card gs-pulse-frame hero-card reveal">
+      <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
+      <div class="gs-grid columns-2">
+        {highlights.map((item) => (
+          <div class="gs-kpi">
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+            <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
+          </div>
+        ))}
+      </div>
+      <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
     </div>
 
     <div class="parallax-layer layer-grid" data-parallax="0.05" aria-hidden="true"></div>
@@ -113,6 +149,55 @@ const features = [
 </MarketingLayout>
 
 <style>
+  .gs-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gs-space-8);
+    align-items: center;
+    padding: var(--gs-space-12) var(--gs-space-6);
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  @media (max-width: 900px) {
+    .gs-hero { grid-template-columns: 1fr; }
+  }
+  h1 {
+    font-size: 3.5rem;
+    line-height: 1.1;
+    margin-bottom: var(--gs-space-4);
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  p {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: var(--gs-color-text-secondary);
+    margin-bottom: var(--gs-space-6);
+  }
+  .gs-kpi {
+    background: var(--gs-color-bg-surface);
+    padding: var(--gs-space-3);
+    border-radius: var(--gs-radius-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .gs-kpi span { font-size: 0.75rem; text-transform: uppercase; color: var(--gs-color-subtle); letter-spacing: 0.05em; }
+  .gs-kpi strong { font-size: 1.5rem; color: var(--gs-color-text); }
+  .section-title {
+    margin-top: 0;
+    margin-bottom: var(--gs-space-4);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gs-color-subtle);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>
   :global(body) {
     background-color: #050505;
     color: #e5e7eb;
