@@ -1,6 +1,5 @@
 ---
 import '@goldshore/theme';
-import logo from '../assets/logo.svg';
 import { GSButton } from '@goldshore/ui';
 
 const navLinks = [
@@ -13,6 +12,7 @@ const navLinks = [
 ];
 
 const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.url.pathname } = Astro.props;
+const logoSrc = '/assets/logo.svg';
 ---
 <html lang="en">
   <head>
@@ -21,6 +21,10 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- Bolt: Preconnect to external origins to speed up resource loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://unpkg.com" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0" />
     <link rel="stylesheet" href="https://unpkg.com/aria-icons@1.0.0/aria-icons.css" />
   </head>
@@ -29,7 +33,7 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
     <div class="gs-page-shell">
       <header class="gs-header" data-menu-open="false">
         <a class="gs-logo" href="/" aria-label="GoldShore home">
-          <img src={logo.src} alt="GoldShore Penrose logo" width="36" height="36" fetchpriority="high" />
+          <img src={logoSrc} alt="GoldShore logo" width="36" height="36" fetchpriority="high" />
           <span>GoldShore</span>
         </a>
         <button class="gs-nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
@@ -62,7 +66,7 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
           <div class="gs-grid columns-2">
             <div>
               <div class="gs-logo" style="gap: var(--gs-space-2);">
-                <img src={logo.src} alt="GoldShore logo" width="32" height="32" loading="lazy" decoding="async" />
+                <img src={logoSrc} alt="GoldShore logo" width="32" height="32" loading="lazy" decoding="async" />
                 <span>GoldShore AI</span>
               </div>
               <p>Applied intelligence, resilient infrastructure, and responsive operations.</p>
@@ -90,11 +94,14 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
       const toggle = document.querySelector('.gs-nav-toggle');
       const updateHeaderOpacity = () => {
         if (!header) return;
-        const maxScroll = 160;
-        const progress = Math.min(window.scrollY / maxScroll, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        header.style.setProperty('--gs-header-opacity', (0.6 * eased).toFixed(3));
-        header.classList.toggle('is-scrolled', progress > 0.02);
+        const maxScroll = 100;
+        const scrollY = window.scrollY;
+
+        if (scrollY > 10) {
+          header.classList.add('is-scrolled');
+        } else {
+          header.classList.remove('is-scrolled');
+        }
       };
       updateHeaderOpacity();
       window.addEventListener('scroll', updateHeaderOpacity, { passive: true });
@@ -105,5 +112,109 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
         toggle.setAttribute('aria-expanded', String(!isOpen));
       });
     </script>
+    <style is:global>
+      :root {
+        --gs-header-height: 72px;
+      }
+      /* Cinematic Header Overrides */
+      .gs-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        height: var(--gs-header-height);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2rem;
+        background: rgba(3, 3, 5, 0.7); /* Deep dark tint */
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .gs-header.is-scrolled {
+        background: rgba(0, 0, 0, 0.95);
+        border-bottom-color: rgba(34, 211, 238, 0.15); /* Cyan hint */
+        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.8);
+      }
+
+      .gs-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        color: #fff;
+        font-weight: 600;
+        font-size: 1.1rem;
+        letter-spacing: -0.01em;
+      }
+
+      .gs-logo img {
+        height: 40px;
+        width: auto;
+        /* Ensure logo blends if it has a dark bg */
+        mix-blend-mode: normal;
+      }
+
+      .gs-nav {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .gs-nav a {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition: color 0.2s ease;
+        position: relative;
+      }
+
+      .gs-nav a:hover,
+      .gs-nav a[aria-current="page"] {
+        color: #fff;
+      }
+
+      .gs-nav a[aria-current="page"]::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #22d3ee; /* Cyan accent */
+        box-shadow: 0 0 8px #22d3ee;
+      }
+
+      /* Mobile toggle */
+      .gs-nav-toggle {
+        display: none; /* Hidden by default on desktop */
+        background: none;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+      }
+
+      @media (max-width: 768px) {
+        .gs-header { padding: 0 1rem; }
+        .gs-nav { display: none; } /* Simplified mobile handling for now */
+        .gs-nav-toggle { display: block; }
+
+        .gs-header[data-menu-open="true"] .gs-nav {
+          display: flex;
+          flex-direction: column;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: #000;
+          padding: 2rem;
+          border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+      }
+    </style>
   </body>
 </html>
