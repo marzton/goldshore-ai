@@ -1,0 +1,205 @@
+diff --git a/README.md b/README.md
+index b17201416efb01fbad1a9252e5ec0db4d6990fad..d5b1b53b2711199ae837608596f91154b8ffe095 100644
+--- a/README.md
++++ b/README.md
+@@ -12,76 +12,53 @@ Unified platform for the **GoldShore** ecosystem, built with:
+
+ This repository contains *all* applications, shared packages, and infrastructure code used in production.
+ The GoldShore Monorepo powers the entire GoldShore ecosystem, including:
+	•	Public Website (Astro + Cloudflare Pages)
+	•	Admin Cockpit Dashboard (Astro SSR + GoldShore UI Kit)
+	•	API Layer (Hono + Cloudflare Workers)
+	•	Gateway Layer (routing, throttling, AI gateway)
+	•	Control Worker (DNS automation, binding sync, deployments)
+	•	Shared Design System (UI components, tokens, themes)
+	•	Infrastructure (Cloudflare + GitHub Actions)
+
+ The monorepo uses:
+	•	pnpm for workspace management
+	•	Turborepo for task orchestration
+	•	TypeScript everywhere
+	•	Astro for frontend
+	•	Cloudflare Workers for backend
+	•	A unified theme + UI kit across apps
+
+ ---
+
+ ---
+
+ # 🚀 Architecture Overview
+
+-```
+-                        ┌──────────────────────────────┐
+-                        │     goldshore.ai (Web)       │
+-                        │      Cloudflare Pages        │
+-                        └──────────────────────────────┘
+-                                   │
+-                                   ▼
+-                   ┌──────────────────────────────────────┐
+-                   │ admin.goldshore.ai (Admin Dashboard) │
+-                   │     Cloudflare Pages + Access        │
+-                   └──────────────────────────────────────┘
+-                                   │
+-                                   ▼
+-┌───────────────────────────────────────────────────────────────────────────┐
+-│                         Cloudflare Workers Layer                           │
+-│────────────────────────────────────────────────────────────────────────────│
+-│  gs-api        → Hono API Worker                                           │
+-│  gs-gateway    → Router, proxy, auth, queues                               │
+-│  gs-control    → Automation, DNS, previews, secret rotation                │
+-└───────────────────────────────────────────────────────────────────────────┘
+-                 │                 │                   │
+-                 ▼                 ▼                   ▼
+-       ┌──────────────┐   ┌──────────────┐   ┌────────────────────┐
+-       │ KV Storage    │   │ R2 Static     │   │ D1 Database        │
+-       └──────────────┘   └──────────────┘   └────────────────────┘
+-```
++![GoldShore architecture diagram showing Cloudflare Pages for web and admin, Cloudflare Workers for API, gateway, agent, and control, and storage services (KV, R2, D1, Queues, AI Gateway).](docs/architecture/diagram.svg)
++
++Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd).
+
+ ---
+
+ # 📁 Repository Structure
+
+ ```
+ /
+ ├── apps/
+ │   ├── web/               # Public website (Astro)
+ │   ├── admin/             # Admin dashboard (Astro)
+ │   ├── api-worker/        # Hono API (Workers)
+ │   └── gateway/           # Router + jobs (Workers)
+ │
+ ├── packages/
+ │   ├── ui/                # Shared component library
+ │   ├── theme/             # Design tokens + CSS
+ │   ├── utils/             # Shared helpers
+ │   ├── auth/              # Cloudflare Access JWT utils
+ │   └── config/            # TS/ESLint/Prettier configs
+ │
+ └── infra/
+     ├── cloudflare/        # wrangler.toml templates
+     └── github/            # GitHub Actions CI/CD
+ ```
+
+diff --git a/docs/architecture/diagram.mmd b/docs/architecture/diagram.mmd
+new file mode 100644
+index 0000000000000000000000000000000000000000..8c79bb1dde722727b43b04cb343c0e635b75d48c
+--- /dev/null
++++ b/docs/architecture/diagram.mmd
+@@ -0,0 +1,41 @@
++flowchart TB
++  subgraph pages[Cloudflare Pages]
++    web[Web (goldshore.ai)]
++    admin[Admin (admin.goldshore.ai)]
++  end
++
++  subgraph workers[Cloudflare Workers]
++    api[API Worker (gs-api)]
++    gateway[Gateway Worker (gs-gateway)]
++    agent[Agent Worker (gs-agent)]
++    control[Control Worker (gs-control)]
++  end
++
++  subgraph storage[Storage & AI]
++    kv[KV]
++    r2[R2]
++    d1[D1]
++    queues[Queues]
++    ai[AI Gateway]
++  end
++
++  web --> gateway
++  admin --> gateway
++  gateway --> api
++  gateway --> agent
++  control --> api
++  api --> kv
++  api --> r2
++  api --> d1
++  api --> queues
++  api --> ai
++  agent --> kv
++  agent --> r2
++  agent --> d1
++  agent --> queues
++  agent --> ai
++  control --> kv
++  control --> r2
++  control --> d1
++  control --> queues
++  control --> ai
+diff --git a/docs/architecture/diagram.svg b/docs/architecture/diagram.svg
+new file mode 100644
+index 0000000000000000000000000000000000000000..7d03296823ef5e72d7a91a0c9a2052b8e9cf053e
+--- /dev/null
++++ b/docs/architecture/diagram.svg
+@@ -0,0 +1,68 @@
++<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-labelledby="title desc">
++  <title id="title">GoldShore architecture overview</title>
++  <desc id="desc">Diagram showing Cloudflare Pages for web and admin feeding Cloudflare Workers for API, gateway, agent, and control, which connect to storage services KV, R2, D1, Queues, and AI Gateway.</desc>
++  <defs>
++    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
++      <path d="M0,0 L0,6 L9,3 z" fill="#1f2933" />
++    </marker>
++    <style>
++      .group { fill: #f5f7fb; stroke: #c7d2e0; stroke-width: 1.5; rx: 12; }
++      .box { fill: #ffffff; stroke: #5b6b82; stroke-width: 1.2; rx: 8; }
++      .title { font-family: 'Inter', Arial, sans-serif; font-size: 16px; font-weight: 600; fill: #1f2933; }
++      .label { font-family: 'Inter', Arial, sans-serif; font-size: 13px; fill: #1f2933; }
++      .arrow { stroke: #1f2933; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
++    </style>
++  </defs>
++
++  <rect class="group" x="40" y="30" width="820" height="120" />
++  <text class="title" x="60" y="55">Cloudflare Pages</text>
++  <rect class="box" x="80" y="75" width="320" height="55" />
++  <rect class="box" x="500" y="75" width="320" height="55" />
++  <text class="label" x="110" y="108">Web (goldshore.ai)</text>
++  <text class="label" x="530" y="108">Admin (admin.goldshore.ai)</text>
++
++  <rect class="group" x="40" y="190" width="820" height="150" />
++  <text class="title" x="60" y="215">Cloudflare Workers</text>
++  <rect class="box" x="70" y="235" width="180" height="70" />
++  <rect class="box" x="270" y="235" width="180" height="70" />
++  <rect class="box" x="470" y="235" width="180" height="70" />
++  <rect class="box" x="670" y="235" width="180" height="70" />
++  <text class="label" x="100" y="273">API (gs-api)</text>
++  <text class="label" x="295" y="273">Gateway (gs-gateway)</text>
++  <text class="label" x="505" y="273">Agent (gs-agent)</text>
++  <text class="label" x="700" y="273">Control (gs-control)</text>
++
++  <rect class="group" x="40" y="370" width="820" height="120" />
++  <text class="title" x="60" y="395">Storage &amp; AI</text>
++  <rect class="box" x="70" y="410" width="140" height="55" />
++  <rect class="box" x="230" y="410" width="140" height="55" />
++  <rect class="box" x="390" y="410" width="140" height="55" />
++  <rect class="box" x="550" y="410" width="140" height="55" />
++  <rect class="box" x="710" y="410" width="140" height="55" />
++  <text class="label" x="125" y="443">KV</text>
++  <text class="label" x="285" y="443">R2</text>
++  <text class="label" x="445" y="443">D1</text>
++  <text class="label" x="585" y="443">Queues</text>
++  <text class="label" x="740" y="443">AI Gateway</text>
++
++  <line class="arrow" x1="240" y1="130" x2="360" y2="235" />
++  <line class="arrow" x1="660" y1="130" x2="360" y2="235" />
++
++  <line class="arrow" x1="360" y1="305" x2="160" y2="410" />
++  <line class="arrow" x1="360" y1="305" x2="320" y2="410" />
++  <line class="arrow" x1="360" y1="305" x2="460" y2="410" />
++  <line class="arrow" x1="360" y1="305" x2="620" y2="410" />
++  <line class="arrow" x1="360" y1="305" x2="780" y2="410" />
++
++  <line class="arrow" x1="560" y1="305" x2="160" y2="410" />
++  <line class="arrow" x1="560" y1="305" x2="320" y2="410" />
++  <line class="arrow" x1="560" y1="305" x2="460" y2="410" />
++  <line class="arrow" x1="560" y1="305" x2="620" y2="410" />
++  <line class="arrow" x1="560" y1="305" x2="780" y2="410" />
++
++  <line class="arrow" x1="760" y1="305" x2="160" y2="410" />
++  <line class="arrow" x1="760" y1="305" x2="320" y2="410" />
++  <line class="arrow" x1="760" y1="305" x2="460" y2="410" />
++  <line class="arrow" x1="760" y1="305" x2="620" y2="410" />
++  <line class="arrow" x1="760" y1="305" x2="780" y2="410" />
++</svg>

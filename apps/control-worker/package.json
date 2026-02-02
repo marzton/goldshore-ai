@@ -8,6 +8,7 @@
     "run-task": "wrangler dev src/index.ts --test-scheduled"
   },
   "dependencies": {
+    "@goldshore/auth": "workspace:*",
     "hono": "^4.0.0"
   },
   "devDependencies": {
