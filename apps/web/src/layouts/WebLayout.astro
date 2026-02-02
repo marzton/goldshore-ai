@@ -97,46 +97,43 @@ const logoSrc = '/assets/logo.svg';
         if (!header) return;
         const scrollY = window.scrollY;
 
-        if (scrollY > 10) {
-          header.classList.add('is-scrolled');
-        } else {
-          header.classList.remove('is-scrolled');
+      // Bolt: Optimize scroll listener with requestAnimationFrame and state tracking
+      // to avoid layout thrashing and excessive DOM updates.
+      let isTicking = false;
+      let wasScrolled = false;
+
+      const updateHeader = () => {
+        if (!header) {
+          isTicking = false;
+          return;
+        }
+
+        const isScrolled = window.scrollY > 10;
+
+        // Only update DOM if state changed
+        if (isScrolled !== wasScrolled) {
+          header.classList.toggle('is-scrolled', isScrolled);
+          wasScrolled = isScrolled;
+        }
+
+        isTicking = false;
+      };
+
+      const onScroll = () => {
+        if (!isTicking) {
+          window.requestAnimationFrame(updateHeader);
+          isTicking = true;
         }
         ticking = false;
       };
-
       updateHeaderOpacity();
-      window.addEventListener('scroll', onScroll, { passive: true });
-      updateHeaderOpacity();
-      window.addEventListener('scroll', updateHeaderOpacity, { passive: true });
-      const setMenuState = (isOpen) => {
-        if (!header || !toggle) return;
-        header.setAttribute('data-menu-open', String(isOpen));
-        toggle.setAttribute('aria-expanded', String(isOpen));
-      };
-
-      toggle?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (!header) return;
-        const isOpen = header.getAttribute('data-menu-open') === 'true';
-        setMenuState(!isOpen);
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          setMenuState(false);
-          toggle?.focus();
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(updateHeaderOpacity);
+          ticking = true;
         }
-      });
-
-      document.addEventListener('click', (e) => {
-      const closeMenu = () => {
-        if (!header || !toggle) return;
-        header.setAttribute('data-menu-open', 'false');
-        toggle.setAttribute('aria-expanded', 'false');
-      };
-
-      toggle?.addEventListener('click', (e) => {
+      }, { passive: true });
+      toggle?.addEventListener('click', () => {
         if (!header) return;
         e.stopPropagation();
         const isOpen = header.getAttribute('data-menu-open') === 'true';
