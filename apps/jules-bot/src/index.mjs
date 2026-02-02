@@ -6,10 +6,14 @@
 // GITHUB_TOKEN
 // GITHUB_ORG
 // GITHUB_REPO
+// WEBHOOK_SECRET
+
+import crypto from 'node:crypto';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_ORG = process.env.GITHUB_ORG;
 const GITHUB_REPO = process.env.GITHUB_REPO;
+const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
 
 // Validate required environment variables
 if (!GITHUB_TOKEN) {
@@ -23,6 +27,33 @@ if (!GITHUB_ORG) {
 if (!GITHUB_REPO) {
   console.error("Missing required environment variable: GITHUB_REPO");
   process.exit(1);
+}
+if (!WEBHOOK_SECRET) {
+  console.error("Missing required environment variable: WEBHOOK_SECRET");
+  process.exit(1);
+}
+
+// Helper: Verify GitHub Webhook Signature (Sentinel Protection)
+function verifySignature(secret, header, payload) {
+  if (!header) return false;
+
+  const parts = header.split('=');
+  if (parts.length !== 2) return false;
+
+  const algorithm = parts[0];
+  const signature = parts[1];
+
+  if (algorithm !== 'sha256') return false;
+
+  const hmac = crypto.createHmac('sha256', secret);
+  const digest = hmac.update(payload).digest('hex');
+
+  const signatureBuffer = Buffer.from(signature, 'hex');
+  const digestBuffer = Buffer.from(digest, 'hex');
+
+  if (signatureBuffer.length !== digestBuffer.length) return false;
+
+  return crypto.timingSafeEqual(signatureBuffer, digestBuffer);
 }
 
 // Helper to post a comment using fetch (no external dependencies)
@@ -118,6 +149,16 @@ const server = http.createServer(async (req, res) => {
     });
     req.on('end', async () => {
       if (bodyTooLarge) return;
+
+      // Sentinel: Verify Webhook Signature
+      const signature = req.headers['x-hub-signature-256'];
+      if (!verifySignature(WEBHOOK_SECRET, signature, body)) {
+        console.error('Sentinel: Invalid webhook signature');
+        res.writeHead(401, { 'Content-Type': 'text/plain' });
+        res.end('Unauthorized');
+        return;
+      }
+
       try {
         const payload = JSON.parse(body);
         const eventName = req.headers['x-github-event'];

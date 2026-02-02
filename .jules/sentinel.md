@@ -50,3 +50,8 @@
 **Vulnerability:** The `apps/goldshore-agent` service was initialized without any authentication middleware, exposing potential future AI agent capabilities to the public internet.
 **Learning:** New services in a monorepo often start "barebones" and skip security boilerplate, creating a window of vulnerability as features are added. Drift between documentation (which said it was secured) and implementation is a common risk.
 **Prevention:** Enforce a "Secure by Default" template for all new Hono services that includes `secureHeaders`, `cors`, and `verifyAccess` middleware immediately upon creation.
+
+## 2026-05-21 - Unverified Webhooks in Jules Bot
+**Vulnerability:** `apps/jules-bot` accepted GitHub webhooks without verifying the `X-Hub-Signature-256`, allowing potential attackers to spoof events and trigger unauthorized actions.
+**Learning:** Standalone Node.js scripts/bots in the monorepo often bypass the standard security middleware available to Hono/Cloudflare apps, requiring manual implementation of crypto verification.
+**Prevention:** Enforce a standard webhook verification utility or template for all Node.js-based bot integrations to ensure signature validation is never skipped.
