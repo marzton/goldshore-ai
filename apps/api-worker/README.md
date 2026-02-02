@@ -1,6 +1,14 @@
 # apps/api-worker
 
 ## Overview
+The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers.
+
+Cloudflare metadata (from `wrangler.toml`):
+- Worker name: `gs-api`
+- Route: `api.goldshore.ai/*`
+- Compatibility date: `2025-01-10`
+- Bindings: `API_KV` (KV), `ASSETS` (R2), `DB` (D1), `AI` (AI Gateway)
+- Environment variable: `ENV=production`
 The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers. It uses KV, R2, D1, and the AI Gateway bindings configured in `wrangler.toml`.
 
 Configuration highlights (from `wrangler.toml`):
@@ -11,12 +19,18 @@ Configuration highlights (from `wrangler.toml`):
 - AI binding: `AI`
 
 ## Routes/Endpoints
+These are API endpoints handled by the worker in `src/index.ts` (not HTML pages).
+- `GET /` (status page)
 - `GET /health`
-- `GET /version`
-- `POST /auth/login`
-- `GET /auth/session`
-- `GET /content/:slug`
-- `POST /queue/task`
+- `GET /ai`
+- `GET /users`
+- `GET /user/:id`
+- `GET /system/info`
+- `GET /templates`
+- `GET /v1/users`
+- `GET /v1/agents`
+- `GET /v1/models`
+- `GET /v1/logs`
 
 ## Local Dev
 ```bash
@@ -26,6 +40,11 @@ pnpm --filter ./apps/api-worker build
 ```
 
 ## Deploy
+- Production deploy: `.github/workflows/deploy-api-worker.yml`
+- Preview deploy: `.github/workflows/preview-api-worker.yml`
+- Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
+
+<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 ```bash
 pnpm --filter ./apps/api-worker deploy
 ```

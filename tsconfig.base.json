@@ -7,6 +7,7 @@
       "@goldshore/utils/*": ["packages/utils/*"],
       "@goldshore/auth/*": ["packages/auth/*"],
       "@goldshore/theme/*": ["packages/theme/*"],
+      "@goldshore/ai-providers/*": ["packages/ai-providers/*"],
       "@packages/*": ["packages/*"],
       "@apps/*": ["apps/*"]
     }
