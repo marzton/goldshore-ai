@@ -39,37 +39,8 @@ const highlights = [
       <div class="stars"></div>
     </div>
 
-    <section class="gs-hero home-hero parallax-section">
-        <div class="parallax-layer layer-grid" data-parallax="0.08" aria-hidden="true"></div>
-        <div class="parallax-layer layer-glow" data-parallax="0.14" aria-hidden="true"></div>
-        <div class="parallax-layer layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
-        <div class="hero-content reveal">
-        <p class="gs-badge" style="margin-bottom: var(--gs-space-3);">Modern ops for fluid markets</p>
-        <h1>Shaping Waves with Applied Intelligence</h1>
-        <p>
-            GoldShore builds resilient, automation-first systems for trading, control, and applied intelligence. Each surface ships with observability, safety, and responsive design baked in.
-        </p>
-        <div style="display:flex; gap: var(--gs-space-3); flex-wrap: wrap;">
-            <GSButton href="/services">View Services</GSButton>
-            <GSButton href="/contact" variant="secondary">Book a call</GSButton>
-        </div>
-        </div>
-        <div class="gs-card gs-pulse-frame hero-card reveal">
-        <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
-        <div class="gs-grid columns-2">
-            {highlights.map((item) => (
-            <div class="gs-kpi">
-                <span>{item.label}</span>
-                <strong>{item.value}</strong>
-                <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
-            </div>
-            ))}
-        </div>
-        <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
-        </div>
-
-        <!-- Hero Section -->
-        <section class="cinematic-hero">
+    <!-- Main Hero Section -->
+    <section class="cinematic-hero">
         <div class="hero-content">
             <div class="badge-container fade-in-up" style="animation-delay: 0.2s;">
             <span class="vibe-badge">
@@ -119,17 +90,46 @@ const highlights = [
                 <div class="bar" style="height: 60%"></div>
                 </div>
                 <div class="terminal-output">
-                > Initializing cinematic protocols...<br/>
-                > Optimizing user experience...<br/>
-                > Done.
+                &gt; Initializing cinematic protocols...<br/>
+                &gt; Optimizing user experience...<br/>
+                &gt; Done.
                 </div>
             </div>
             </div>
         </div>
-        </section>
+    </section>
 
-        <!-- Features Section -->
-        <section class="features-section">
+    <!-- Performance Section (Secondary Hero) -->
+    <section class="gs-hero home-hero parallax-section" style="padding-top: 0;">
+        <div class="parallax-layer layer-grid" data-parallax="0.08" aria-hidden="true"></div>
+        <div class="parallax-layer layer-glow" data-parallax="0.14" aria-hidden="true"></div>
+        <div class="parallax-layer layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
+
+        <div class="hero-content reveal">
+            <p class="gs-badge" style="margin-bottom: var(--gs-space-3);">Modern ops for fluid markets</p>
+            <h2>Built for Resiliency</h2>
+            <p>
+                GoldShore builds resilient, automation-first systems for trading, control, and applied intelligence. Each surface ships with observability, safety, and responsive design baked in.
+            </p>
+        </div>
+
+        <div class="gs-card gs-pulse-frame hero-card reveal">
+            <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
+            <div class="gs-grid columns-2">
+                {highlights.map((item) => (
+                <div class="gs-kpi">
+                    <span>{item.label}</span>
+                    <strong>{item.value}</strong>
+                    <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
+                </div>
+                ))}
+            </div>
+            <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
         <div class="features-grid">
             {features.map((feature, i) => (
             <div class="feature-card glass-panel fade-in-up" style={`animation-delay: ${1.2 + (i * 0.2)}s;`}>
@@ -141,181 +141,12 @@ const highlights = [
             </div>
             ))}
         </div>
-        </section>
-    </section>
-  </div>
-    </div>
-
-  <section class="gs-hero home-hero parallax-section">
-    <div class="parallax-layer layer-grid" data-parallax="0.08" aria-hidden="true"></div>
-    <div class="parallax-layer layer-glow" data-parallax="0.14" aria-hidden="true"></div>
-    <div class="parallax-layer layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
-    <div class="hero-content reveal">
-      <p class="gs-badge" style="margin-bottom: var(--gs-space-3);">Modern ops for fluid markets</p>
-      <h1>Shaping Waves with Applied Intelligence</h1>
-      <p>
-        GoldShore builds resilient, automation-first systems for trading, control, and applied intelligence. Each surface ships with observability, safety, and responsive design baked in.
-      </p>
-      <div style="display:flex; gap: var(--gs-space-3); flex-wrap: wrap;">
-        <GSButton href="/services">View Services</GSButton>
-        <GSButton href="/contact" variant="secondary">Book a call</GSButton>
-      </div>
-    </div>
-    <div class="gs-card gs-pulse-frame hero-card reveal">
-      <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
-      <div class="gs-grid columns-2">
-        {highlights.map((item) => (
-          <div class="gs-kpi">
-            <span>{item.label}</span>
-            <strong>{item.value}</strong>
-            <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
-          </div>
-        ))}
-      </div>
-      <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
-    </div>
-
-    <div class="parallax-layer layer-grid" data-parallax="0.05" aria-hidden="true"></div>
-    <div class="parallax-layer layer-glow" data-parallax="0.08" aria-hidden="true"></div>
-
-    <!-- Hero Section -->
-    <section class="cinematic-hero">
-      <div class="hero-content">
-        <div class="badge-container fade-in-up" style="animation-delay: 0.2s;">
-          <span class="vibe-badge">
-            <span class="pulse-dot"></span>
-            System Operational
-          </span>
-        </div>
-
-        <h1 class="fade-in-up" style="animation-delay: 0.4s;">
-          Shaping Waves with <br/>
-          <span class="text-gradient">Applied Intelligence</span>
-        </h1>
-
-        <p class="hero-desc fade-in-up" style="animation-delay: 0.6s;">
-          GoldShore isn't just code. It's a provable experience. We build resilient, cinematic systems where automation meets art.
-        </p>
-        <div style="display:flex; gap: var(--gs-space-3); flex-wrap: wrap;">
-          <GSButton href="/services">View Services</GSButton>
-          <GSButton href="/contact" variant="secondary">Book a call</GSButton>
-        </div>
-      </div>
-    ))}
-
-      <!-- 3D/Parallax Element -->
-      <div class="hero-visual fade-in-up" style="animation-delay: 1s;">
-        <div class="glass-card tilt-card">
-          <div class="card-header">
-            <span class="dot red"></span>
-            <span class="dot yellow"></span>
-            <span class="dot green"></span>
-            <span class="card-title">GoldShore Agent</span>
-          </div>
-          <div class="card-body">
-            <div class="data-row">
-              <span class="label">STATUS</span>
-              <span class="value success">ACTIVE</span>
-            </div>
-            <div class="data-row">
-              <span class="label">MODE</span>
-              <span class="value info">VIBE_CODING</span>
-            </div>
-            <div class="chart-viz">
-              <div class="bar" style="height: 40%"></div>
-              <div class="bar" style="height: 70%"></div>
-              <div class="bar" style="height: 55%"></div>
-              <div class="bar" style="height: 90%"></div>
-              <div class="bar" style="height: 60%"></div>
-      <div class="gs-card gs-pulse-frame hero-card reveal">
-        <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
-        <div class="gs-grid columns-2">
-          {highlights.map((item) => (
-            <div class="gs-kpi">
-              <span>{item.label}</span>
-              <strong>{item.value}</strong>
-              <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
-            </div>
-            <div class="terminal-output">
-              &gt; Initializing cinematic protocols...<br/>
-              &gt; Optimizing user experience...<br/>
-              &gt; Done.
-            </div>
-          </div>
-        </div>
-        <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
-      </div>
-    </section>
-    ))}
-
-    <!-- Features Section -->
-    <section class="features-section parallax-section">
-      <div class="parallax-layer layer-grid" data-parallax="0.05" aria-hidden="true"></div>
-      <div class="parallax-layer layer-glow" data-parallax="0.1" aria-hidden="true"></div>
-
-      <div class="features-grid">
-        {features.map((feature, i) => (
-          <div class="feature-card glass-panel fade-in-up" style={`animation-delay: ${1.2 + (i * 0.2)}s;`}>
-            <div class="icon-box">
-              <span class="material-symbols-rounded">{feature.icon}</span>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
   </div>
 </MarketingLayout>
 
 <style>
-  .gs-hero {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--gs-space-8);
-    align-items: center;
-    padding: var(--gs-space-12) var(--gs-space-6);
-    max-width: 1280px;
-    margin: 0 auto;
-  }
-  @media (max-width: 900px) {
-    .gs-hero { grid-template-columns: 1fr; }
-  }
-  h1 {
-    font-size: 3.5rem;
-    line-height: 1.1;
-    margin-bottom: var(--gs-space-4);
-    background: linear-gradient(to right, #fff, #94a3b8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  p {
-    font-size: 1.25rem;
-    line-height: 1.6;
-    color: var(--gs-color-text-secondary);
-    margin-bottom: var(--gs-space-6);
-  }
-  .gs-kpi {
-    background: var(--gs-color-bg-surface);
-    padding: var(--gs-space-3);
-    border-radius: var(--gs-radius-sm);
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  .gs-kpi span { font-size: 0.75rem; text-transform: uppercase; color: var(--gs-color-subtle); letter-spacing: 0.05em; }
-  .gs-kpi strong { font-size: 1.5rem; color: var(--gs-color-text); }
-  .section-title {
-    margin-top: 0;
-    margin-bottom: var(--gs-space-4);
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--gs-color-subtle);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-</style>
+  /* Base Overrides */
   :global(body) {
     background-color: #050505;
     color: #e5e7eb;
@@ -372,8 +203,21 @@ const highlights = [
     align-items: center;
   }
 
-  .hero-content {
-    z-index: 10;
+  .gs-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gs-space-8);
+    align-items: center;
+    padding: var(--gs-space-12) var(--gs-space-6);
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 900px) {
+    .gs-hero, .cinematic-hero { grid-template-columns: 1fr; text-align: center; }
+    .hero-visual { display: none; }
+    h1 { font-size: 2.5rem; }
+    .cta-group { justify-content: center; }
   }
 
   h1 {
@@ -382,6 +226,15 @@ const highlights = [
     font-weight: 800;
     margin-bottom: 1.5rem;
     letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: 3rem;
+    line-height: 1.1;
+    margin-bottom: var(--gs-space-4);
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .text-gradient {
@@ -396,6 +249,30 @@ const highlights = [
     color: #94a3b8;
     margin-bottom: 2.5rem;
     max-width: 540px;
+  }
+
+  /* KPI & Performance Cards */
+  .gs-kpi {
+    background: var(--gs-color-bg-surface);
+    padding: var(--gs-space-3);
+    border-radius: var(--gs-radius-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .gs-kpi span { font-size: 0.75rem; text-transform: uppercase; color: var(--gs-color-subtle); letter-spacing: 0.05em; }
+  .gs-kpi strong { font-size: 1.5rem; color: var(--gs-color-text); }
+  .section-title {
+    margin-top: 0;
+    margin-bottom: var(--gs-space-4);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gs-color-subtle);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   /* Badge */
@@ -430,7 +307,6 @@ const highlights = [
     gap: 1rem;
   }
 
-  /* We use global here because GSButton might apply styles we want to override or augment */
   :global(.glow-button) {
     box-shadow: 0 0 20px rgba(34, 211, 238, 0.3) !important;
     transition: transform 0.2s, box-shadow 0.2s !important;
@@ -518,15 +394,13 @@ const highlights = [
 
   /* Features */
   .features-section {
-    position: relative; /* Added for parallax context */
+    position: relative;
     padding: 4rem 2rem;
     max-width: 1280px;
     margin: 0 auto;
   }
 
   .features-grid {
-    position: relative; /* Ensure it is above parallax layers */
-    z-index: 1;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
@@ -585,34 +459,17 @@ const highlights = [
   @keyframes fadeInUp {
     to { opacity: 1; transform: translateY(0); }
   }
-
-  @media (max-width: 768px) {
-    .cinematic-hero { grid-template-columns: 1fr; text-align: center; padding-top: 6rem; }
-    .hero-visual { display: none; }
-    h1 { font-size: 2.5rem; }
-    .cta-group { justify-content: center; }
-  }
 </style>
 
 <script is:inline>
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   if (!prefersReducedMotion) {
     const parallaxLayers = Array.from(document.querySelectorAll('[data-parallax]')).map((layer) => ({
       element: layer,
       speed: parseFloat(layer.dataset.parallax || '0'),
     }));
 
-    let ticking = false;
-
-    const parallaxLayers = Array.from(document.querySelectorAll('[data-parallax]')).map((layer) => ({
-      element: layer,
-      speed: parseFloat(layer.dataset.parallax || '0'),
-    }));
-
-    let ticking = false;
-    const updateParallax = () => {
-      const scrollY = window.scrollY;
-    const parallaxLayers = Array.from(document.querySelectorAll('[data-parallax]'));
     let ticking = false;
     const updateParallax = () => {
       const scrollY = window.scrollY || window.pageYOffset;
@@ -623,6 +480,7 @@ const highlights = [
     };
 
     updateParallax();
+
     window.addEventListener(
       'scroll',
       () => {
@@ -635,18 +493,5 @@ const highlights = [
     );
   } else {
     document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
-    updateParallax();
-
-    // Optimized scroll listener using requestAnimationFrame for performance
-    window.addEventListener(
-      'scroll',
-      () => {
-        if (!ticking) {
-          window.requestAnimationFrame(updateParallax);
-          ticking = true;
-        }
-      },
-      { passive: true }
-    );
   }
 </script>

@@ -8,7 +8,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check"
+    "check": "astro check",
+    "lint": "eslint .",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "dependencies": {
     "@goldshore/theme": "workspace:*",
