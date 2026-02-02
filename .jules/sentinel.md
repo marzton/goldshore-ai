@@ -33,3 +33,8 @@
 **Vulnerability:** `apps/control-worker` exposed sensitive operational endpoints (`/dns/apply`, `/workers/reconcile`) without any authentication middleware, relying solely on (potentially missing or misconfigured) network-level protection.
 **Learning:** Internal automation or "worker" apps are often overlooked during security reviews because they aren't "user-facing", but they hold the "keys to the kingdom" (DNS, deployment credentials).
 **Prevention:** Treat every worker as a public API. Mandate default-deny authentication middleware for all new workers at the template level.
+
+## 2026-04-20 - Unprotected Agent Service
+**Vulnerability:** `apps/goldshore-agent` lacked standard security headers and CORS configuration, exposing it to potential attacks despite being an internal service.
+**Learning:** New services created in the monorepo (like `goldshore-agent`) do not automatically inherit security middleware. Explicit configuration is required.
+**Prevention:** Establish a strict "Secure by Default" template for new Hono/Worker apps that includes `secureHeaders` and `cors` middleware from the start.

@@ -1,10 +1,18 @@
 import { Hono } from 'hono';
+import { secureHeaders } from 'hono/secure-headers';
+import { cors } from 'hono/cors';
 
 type Env = {
   AI: any;
 };
 
 const app = new Hono<{ Bindings: Env }>();
+
+// Sentinel: Add security headers to all responses (Defense in Depth)
+app.use('*', secureHeaders());
+
+// Sentinel: Add CORS protection
+app.use('*', cors());
 
 app.get('/', (c) => {
   return c.html(`
