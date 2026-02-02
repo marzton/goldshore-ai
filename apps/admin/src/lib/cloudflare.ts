@@ -142,7 +142,7 @@ export const getCloudflareMetrics = async (
       source: payload.source ?? 'live',
       note: payload.note ?? 'Live metrics pulled from secure backend.',
     });
-  } catch (error) {
+  } catch {
     return mergeMetrics({
       note: 'Secure backend unavailable; presenting mock data.',
       source: 'mock',
