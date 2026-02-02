@@ -11,6 +11,14 @@ const props = Astro.props;
     <svg class="icon-check" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <polyline points="20 6 9 17 4 12"></polyline>
     </svg>
+<div class="code-block group">
+  <button class="copy-btn" aria-label="Copy code to clipboard" title="Copy code">
+    <span class="icon copy-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+    </span>
+    <span class="icon check-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </span>
   </button>
   <pre {...props}><slot /></pre>
 </div>
@@ -50,6 +58,7 @@ const props = Astro.props;
     margin: 1rem 0;
     overflow: hidden;
   }
+
   .code-block pre {
     margin: 0;
     padding: 1rem;
@@ -57,7 +66,9 @@ const props = Astro.props;
     color: #e4e4e7;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
-  .code-block .copy {
+
+  /* Copy Button - Hidden by default, visible on hover/focus */
+  .copy-btn {
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
@@ -107,3 +118,35 @@ const props = Astro.props;
     display: block;
   }
 </style>
+
+<script>
+  // One-time event delegation setup
+  if (!(window as any)._codeBlockCopyInitialized) {
+      (window as any)._codeBlockCopyInitialized = true;
+
+      document.addEventListener('click', async (e) => {
+          const target = e.target as HTMLElement;
+          const btn = target.closest('.copy-btn');
+          if (!btn) return;
+
+          const pre = btn.parentElement?.querySelector('pre') as HTMLElement;
+          if (!pre) return;
+
+          try {
+             await navigator.clipboard.writeText(pre.innerText);
+
+             // Visual feedback
+             btn.classList.add('copied');
+             btn.setAttribute('aria-label', 'Copied!');
+
+             // Reset after 2s
+             setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.setAttribute('aria-label', 'Copy code to clipboard');
+             }, 2000);
+          } catch(err) {
+              console.error('Copy failed', err);
+          }
+      });
+  }
+</script>

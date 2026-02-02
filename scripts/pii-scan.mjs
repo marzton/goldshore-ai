@@ -75,8 +75,6 @@ const piiPatterns = [
   }
 ];
 
-const severityOrder = ['low', 'medium', 'high'];
-
 const getRepoFiles = () => {
   if (args.has('--staged')) {
     return execSync('git diff --name-only --cached', { encoding: 'utf8' })
