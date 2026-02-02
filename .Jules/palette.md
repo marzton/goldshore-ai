@@ -31,3 +31,7 @@
 ## 2025-05-24 - Accessible Tabs
 **Learning:** Tab interfaces often neglect keyboard navigation, failing WAI-ARIA standards. Users expect Arrow keys to switch tabs, not just Tab key (which should only land on the *active* tab).
 **Action:** Implemented "roving tabindex" in `Tabs` component: only the active tab is focusable (`tabindex="0"`), others are skipped (`tabindex="-1"`). Arrow keys move focus and selection.
+
+## 2026-05-25 - Code Block Feedback
+**Learning:** Standard Markdown rendering in Astro (`.md` files) often bypasses custom component mappings defined in `.astro` pages, limiting the ability to enhance code blocks with interactive features like copy buttons.
+**Action:** Implemented a robust `MDXCodeBlock` component with global event delegation for copy functionality and accessibility (ARIA labels, focus states). Used manual `MDXCodeBlock` in `.astro` pages where `.md` limitations prevented automatic replacement.
