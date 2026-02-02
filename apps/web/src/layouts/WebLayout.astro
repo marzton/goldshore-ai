@@ -105,11 +105,35 @@ const logoSrc = '/assets/logo.svg';
       };
       updateHeaderOpacity();
       window.addEventListener('scroll', updateHeaderOpacity, { passive: true });
-      toggle?.addEventListener('click', () => {
+      const closeMenu = () => {
+        if (!header || !toggle) return;
+        header.setAttribute('data-menu-open', 'false');
+        toggle.setAttribute('aria-expanded', 'false');
+      };
+
+      toggle?.addEventListener('click', (e) => {
         if (!header) return;
+        e.stopPropagation();
         const isOpen = header.getAttribute('data-menu-open') === 'true';
-        header.setAttribute('data-menu-open', String(!isOpen));
-        toggle.setAttribute('aria-expanded', String(!isOpen));
+        if (isOpen) {
+          closeMenu();
+        } else {
+          header.setAttribute('data-menu-open', 'true');
+          toggle.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeMenu();
+          toggle?.focus();
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (header && !header.contains(e.target)) {
+          closeMenu();
+        }
       });
     </script>
     <style is:global>
