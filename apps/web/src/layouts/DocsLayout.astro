@@ -20,16 +20,58 @@ const currentSlug = page ? page.slug : undefined;
   </section>
 </WebLayout>
 
+<script>
+  // Robust clipboard handling for Markdown code blocks
+  const copySVG = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+  const checkSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+  function enhanceCodeBlocks() {
+    document.querySelectorAll('.docs-main pre').forEach((pre) => {
+      if (pre.closest('.code-block-wrapper') || pre.closest('.code-block')) return;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block-wrapper';
+      pre.parentNode?.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      const button = document.createElement('button');
+      button.className = 'copy-button';
+      button.setAttribute('aria-label', 'Copy code to clipboard');
+      button.innerHTML = `<span class="copy-icon">${copySVG}</span><span class="check-icon">${checkSVG}</span>`;
+      wrapper.appendChild(button);
+
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(pre.innerText);
+          button.classList.add('copied');
+          button.setAttribute('aria-label', 'Copied!');
+          setTimeout(() => {
+            button.classList.remove('copied');
+            button.setAttribute('aria-label', 'Copy code to clipboard');
+          }, 2000);
+        } catch (e) { console.error('Copy failed', e); }
+      });
+    });
+  }
+
+  enhanceCodeBlocks();
+  document.addEventListener('astro:page-load', enhanceCodeBlocks);
+</script>
+
 <style>
   .docs-shell { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: var(--gs-space-5); }
+  .sidebar-wrapper { display: flex; flex-direction: column; gap: var(--gs-space-4); }
+  @media (max-width: 900px) { .docs-shell { grid-template-columns: 1fr; } }
+</style>
 
-  .sidebar-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gs-space-4);
-  }
-
-  @media (max-width: 900px) {
-    .docs-shell { grid-template-columns: 1fr; }
-  }
+<style is:global>
+  .code-block-wrapper { position: relative; background: #1e1e1e; border-radius: 0.5rem; margin: 1.5rem 0; border: 1px solid rgba(255, 255, 255, 0.1); overflow: hidden; }
+  .code-block-wrapper pre { margin: 0 !important; padding: 1.25rem !important; overflow-x: auto; color: #e4e4e7; font-family: monospace; font-size: 0.9rem; background: transparent !important; }
+  .copy-button { position: absolute; top: 0.5rem; right: 0.5rem; z-index: 10; display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #a1a1aa; border-radius: 0.375rem; cursor: pointer; transition: all 0.2s; opacity: 0; }
+  .code-block-wrapper:hover .copy-button, .copy-button:focus-visible, .copy-button.copied { opacity: 1; }
+  .copy-button:hover { background: rgba(255,255,255,0.15); color: #fff; }
+  .copy-button:focus-visible { outline: 2px solid var(--gs-accent, #38bdf8); outline-offset: 2px; }
+  .check-icon { display: none; color: var(--gs-success, #22c55e); }
+  .copy-button.copied .copy-icon { display: none; }
+  .copy-button.copied .check-icon { display: flex; }
 </style>
