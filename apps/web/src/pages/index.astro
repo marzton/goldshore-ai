@@ -23,6 +23,13 @@ const features = [
     icon: 'psychology'
   },
 ];
+
+const highlights = [
+  { label: 'Global Latency', value: '< 30ms', tone: 'success' },
+  { label: 'System Status', value: 'Normal', tone: 'success' },
+  { label: 'Active Nodes', value: '24/24', tone: 'info' },
+  { label: 'Threat Level', value: 'None', tone: '' },
+];
 ---
 
 <MarketingLayout title="GoldShore | Provable Experience" description="Cinematic AI infrastructure for the modern web.">
@@ -93,6 +100,7 @@ const features = [
           <GSButton href="/contact" variant="secondary" class="glass-button">Contact Sales</GSButton>
         </div>
       </div>
+    ))}
 
       <!-- 3D/Parallax Element -->
       <div class="hero-visual fade-in-up" style="animation-delay: 1s;">
@@ -144,7 +152,6 @@ const features = [
       </div>
     </section>
   </div>
-    ))}
     </div>
   </section>
 </MarketingLayout>
@@ -443,15 +450,22 @@ const features = [
     revealTargets.forEach((el) => revealObserver.observe(el));
 
     const parallaxLayers = Array.from(document.querySelectorAll('[data-parallax]'));
+    let ticking = false;
     const updateParallax = () => {
       const scrollY = window.scrollY || window.pageYOffset;
       parallaxLayers.forEach((layer) => {
         const speed = parseFloat(layer.dataset.parallax || '0');
         layer.style.transform = `translate3d(0, ${scrollY * speed * -0.12}px, 0)`;
       });
+      ticking = false;
     };
     updateParallax();
-    window.addEventListener('scroll', () => requestAnimationFrame(updateParallax), { passive: true });
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }, { passive: true });
   } else {
     document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
   }
