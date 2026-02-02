@@ -31,3 +31,7 @@
 ## 2025-05-24 - Accessible Tabs
 **Learning:** Tab interfaces often neglect keyboard navigation, failing WAI-ARIA standards. Users expect Arrow keys to switch tabs, not just Tab key (which should only land on the *active* tab).
 **Action:** Implemented "roving tabindex" in `Tabs` component: only the active tab is focusable (`tabindex="0"`), others are skipped (`tabindex="-1"`). Arrow keys move focus and selection.
+
+## 2025-01-31 - Accessible Code Copy
+**Learning:** Code blocks often lack accessible copy buttons. Inline `onclick` handlers provide no feedback and are invisible to screen readers if opacity is managed only on hover.
+**Action:** Implemented `MDXCodeBlock.astro` with a copy button that is visible on focus, uses ARIA labels for state ('Copy code' -> 'Copied'), and provides visual feedback via icon swap.
