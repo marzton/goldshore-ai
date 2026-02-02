@@ -101,9 +101,9 @@ const highlights = [
 
     <!-- Performance Section (Secondary Hero) -->
     <section class="gs-hero home-hero parallax-section" style="padding-top: 0;">
-        <div class="parallax-layer layer-grid" data-parallax="0.08" aria-hidden="true"></div>
-        <div class="parallax-layer layer-glow" data-parallax="0.14" aria-hidden="true"></div>
-        <div class="parallax-layer layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
+        <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.08" aria-hidden="true"></div>
+        <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.14" aria-hidden="true"></div>
+        <div class="parallax-layer gs-parallax layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
 
         <div class="hero-content reveal">
             <p class="gs-badge" style="margin-bottom: var(--gs-space-3);">Modern ops for fluid markets</p>
@@ -461,36 +461,13 @@ const highlights = [
   }
 </style>
 
-<script is:inline>
+<script type="module">
+  import { initParallax } from '../components/parallax';
+
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (!prefersReducedMotion) {
-    const parallaxLayers = Array.from(document.querySelectorAll('[data-parallax]')).map((layer) => ({
-      element: layer,
-      speed: parseFloat(layer.dataset.parallax || '0'),
-    }));
-
-    let ticking = false;
-    const updateParallax = () => {
-      const scrollY = window.scrollY || window.pageYOffset;
-      parallaxLayers.forEach(({ element, speed }) => {
-        element.style.transform = `translate3d(0, ${scrollY * speed * -0.12}px, 0)`;
-      });
-      ticking = false;
-    };
-
-    updateParallax();
-
-    window.addEventListener(
-      'scroll',
-      () => {
-        if (!ticking) {
-          window.requestAnimationFrame(updateParallax);
-          ticking = true;
-        }
-      },
-      { passive: true }
-    );
+    initParallax();
   } else {
     document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
   }
