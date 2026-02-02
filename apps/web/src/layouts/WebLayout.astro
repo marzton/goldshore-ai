@@ -92,19 +92,45 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
     <script is:inline>
       const header = document.querySelector('.gs-header');
       const toggle = document.querySelector('.gs-nav-toggle');
-      const updateHeaderOpacity = () => {
-        if (!header) return;
-        const maxScroll = 100;
-        const scrollY = window.scrollY;
 
-        if (scrollY > 10) {
-          header.classList.add('is-scrolled');
-        } else {
-          header.classList.remove('is-scrolled');
+      // Bolt: Optimize scroll listener with requestAnimationFrame and state tracking
+      // to avoid layout thrashing and excessive DOM updates.
+      let isTicking = false;
+      let wasScrolled = false;
+
+      const updateHeader = () => {
+        if (!header) {
+          isTicking = false;
+          return;
+        }
+
+        const isScrolled = window.scrollY > 10;
+
+        // Only update DOM if state changed
+        if (isScrolled !== wasScrolled) {
+          header.classList.toggle('is-scrolled', isScrolled);
+          wasScrolled = isScrolled;
+        }
+
+        isTicking = false;
+      };
+
+      const onScroll = () => {
+        if (!isTicking) {
+          window.requestAnimationFrame(updateHeader);
+          isTicking = true;
         }
       };
-      updateHeaderOpacity();
-      window.addEventListener('scroll', updateHeaderOpacity, { passive: true });
+
+      // Initialize
+      if (header) {
+        // Set initial state immediately
+        wasScrolled = window.scrollY > 10;
+        header.classList.toggle('is-scrolled', wasScrolled);
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+      }
+
       toggle?.addEventListener('click', () => {
         if (!header) return;
         const isOpen = header.getAttribute('data-menu-open') === 'true';
