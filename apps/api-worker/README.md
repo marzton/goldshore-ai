@@ -19,7 +19,7 @@ Configuration highlights (from `wrangler.toml`):
 - AI binding: `AI`
 
 ## Routes/Endpoints
-These are API endpoints handled by the worker in `src/index.ts` (not HTML pages).
+These are API endpoints handled by the worker in `src/index.ts` (not HTML pages). Route handlers are defined in `src/index.ts`.
 - `GET /` (status page)
 - `GET /health`
 - `GET /ai`
