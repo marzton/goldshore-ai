@@ -3,9 +3,43 @@ const props = Astro.props;
 ---
 
 <div class="code-block">
-  <button class="copy" onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText)">Copy</button>
+  <button class="copy" aria-label="Copy code">Copy</button>
   <pre {...props}><slot /></pre>
 </div>
+
+<script>
+  // Use event delegation for better performance and to handle dynamically added blocks if any
+  document.addEventListener('click', async (e) => {
+    const target = (e.target as HTMLElement).closest('.copy') as HTMLElement | null;
+    if (!target) return;
+
+    const codeBlock = target.closest('.code-block');
+    if (!codeBlock) return;
+
+    const pre = codeBlock.querySelector('pre') as HTMLElement | null;
+    if (!pre) return;
+
+    const code = pre.innerText;
+
+    try {
+      await navigator.clipboard.writeText(code);
+      const originalText = target.innerText;
+      target.innerText = 'Copied!';
+      target.setAttribute('aria-label', 'Copied to clipboard');
+
+      setTimeout(() => {
+        target.innerText = originalText;
+        target.setAttribute('aria-label', 'Copy code');
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      target.innerText = 'Error';
+      setTimeout(() => {
+        target.innerText = 'Copy';
+      }, 2000);
+    }
+  });
+</script>
 
 <style>
   .code-block {
@@ -32,9 +66,18 @@ const props = Astro.props;
     cursor: pointer;
     font-size: 0.8rem;
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s, background-color 0.2s;
   }
-  .code-block:hover .copy {
+  .code-block:hover .copy,
+  .code-block:focus-within .copy {
     opacity: 1;
+  }
+  .code-block .copy:focus-visible {
+    opacity: 1;
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+  .code-block .copy:hover {
+    background: rgba(255,255,255,0.2);
   }
 </style>
