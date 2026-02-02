@@ -19,11 +19,11 @@ jobs:
     name: Deploy Control Worker
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          run_install: false
 
       - uses: actions/setup-node@v4
         with:

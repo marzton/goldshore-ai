@@ -7,13 +7,12 @@ export default defineConfig({
   output: 'server',
   adapter: cloudflare(),
   integrations: [tailwind({
-    applyBaseStyles: false
+    applyBaseStyles: false,
+    configFile: "../../tailwind.config.mjs"
   })],
   vite: {
     resolve: {
       alias: {
-        '@goldshore/ui': new URL('../../packages/ui/src', import.meta.url).pathname,
-        '@goldshore/theme': new URL('../../packages/theme', import.meta.url).pathname,
         '@packages': new URL('../../packages', import.meta.url).pathname,
         '@apps': new URL('../../apps', import.meta.url).pathname
       }

@@ -4,10 +4,10 @@ cloudflare_project: astro-gs-web
 scope: web_frontend
 
 cloudflare_permissions:
-  can_manage_dns: true
-  can_manage_workers: true
-  can_manage_pages: true
-  can_manage_bindings: true
-  can_manage_email_routing: true
+  can_manage_dns: false
+  can_manage_workers: false
+  can_manage_pages: false
+  can_manage_bindings: false
+  can_manage_email_routing: false
 
 repo_lock: true

@@ -1,46 +1,46 @@
 ---
-import AdminLayout from '@apps/web/src/layouts/BaseLayout.astro';
-import GSButton from '@packages/ui/GSButton.astro';
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { GSButton } from '@goldshore/ui';
 
 // Initial UI state
 const initialStatus = { worker: 'Unknown', lastSync: 'N/A' };
 ---
 <AdminLayout title="Admin | Operational Overview">
     <div class="max-w-7xl mx-auto p-8 space-y-8">
-        <h1 class="text-4xl gs-heading" style="color: var(--gs-brand-gold);">Operational Overview</h1>
-        <p class="text-lg" style="color: var(--gs-text-secondary);">Protected access to monitor Workers, Data, and System Health.</p>
+        <h1 class="text-4xl gs-heading gs-text-accent">Operational Overview</h1>
+        <p class="text-lg gs-text-subtle">Protected access to monitor Workers, Data, and System Health.</p>
 
         <!-- Status & Bindings -->
         <div class="grid md:grid-cols-3 gap-6">
             <div class="gs-card space-y-3">
                 <h2 class="text-xl font-semibold">gs-api Status</h2>
-                <p id="api-status" class="text-2xl font-bold" style="color: var(--gs-brand-blue);">{initialStatus.worker}</p>
-                <p class="text-sm" style="color: var(--gs-text-secondary);">Last checked: <span id="last-sync">{initialStatus.lastSync}</span></p>
-                <GSButton href="#" variant="secondary" id="check-api">Check Health</GSButton>
+                <p id="api-status" class="text-2xl font-bold gs-text-info">{initialStatus.worker}</p>
+                <p class="text-sm gs-text-subtle">Last checked: <span id="last-sync">{initialStatus.lastSync}</span></p>
+                <GSButton variant="secondary" id="check-api">Check Health</GSButton>
             </div>
 
             <div class="gs-card space-y-3">
                 <h2 class="text-xl font-semibold">Active Workers</h2>
-                <p class="text-2xl font-bold" style="color: var(--gs-success);">3/3</p>
-                <p class="text-sm" style="color: var(--gs-text-secondary);">API, Gateway, Control are online.</p>
+                <p class="text-2xl font-bold gs-text-success">3/3</p>
+                <p class="text-sm gs-text-subtle">API, Gateway, Control are online.</p>
                 <GSButton href="/admin/workers" variant="secondary">View Bindings</GSButton>
             </div>
 
             <div class="gs-card space-y-3">
                 <h2 class="text-xl font-semibold">Git Conflicts</h2>
-                <p id="conflict-count" class="text-2xl font-bold text-red-500">7 Open</p>
-                <p class="text-sm" style="color: var(--gs-text-secondary);">Requires immediate SOP-001 execution.</p>
-                <GSButton href="#" variant="primary" id="run-sop">Execute Git Repair</GSButton>
+                <p id="conflict-count" class="text-2xl font-bold gs-text-danger">7 Open</p>
+                <p class="text-sm gs-text-subtle">Requires immediate SOP-001 execution.</p>
+                <GSButton variant="primary" id="run-sop">Execute Git Repair</GSButton>
             </div>
         </div>
 
         <!-- Deployment Actions (Simulated Frontend Controls) -->
         <div class="gs-card space-y-4">
             <h2 class="text-2xl font-semibold">Deployment Actions</h2>
-            <p class="text-sm" style="color: var(--gs-text-secondary);">Initiate a controlled preview deployment or production rollback (UI only; backend triggers to be wired later).</p>
+            <p class="text-sm gs-text-subtle">Initiate a controlled preview deployment or production rollback (UI only; backend triggers to be wired later).</p>
             <div class="flex space-x-4">
-                <GSButton href="#" variant="primary" id="preview-deploy">Run Preview Deploy</GSButton>
-                <GSButton href="#" variant="secondary" id="prod-rollback" class="opacity-50 cursor-not-allowed">Production Rollback</GSButton>
+                <GSButton variant="primary" id="preview-deploy">Run Preview Deploy</GSButton>
+                <GSButton variant="secondary" id="prod-rollback" disabled>Production Rollback</GSButton>
             </div>
         </div>
     </div>
@@ -55,7 +55,7 @@ const initialStatus = { worker: 'Unknown', lastSync: 'N/A' };
 
             const checkApiHealth = async () => {
                 apiStatusEl.textContent = 'Checking...';
-                apiStatusEl.style.color = 'var(--gs-brand-gold)';
+                apiStatusEl.style.color = 'var(--gs-accent)';
 
                 // Simulated delay; later this can be replaced by a real fetch to gs-api /health.
                 await new Promise(resolve => setTimeout(resolve, 1500));
@@ -63,7 +63,7 @@ const initialStatus = { worker: 'Unknown', lastSync: 'N/A' };
                 const isHealthy = Math.random() > 0.1;
 
                 apiStatusEl.textContent = isHealthy ? 'HEALTHY' : 'DEGRADED';
-                apiStatusEl.style.color = isHealthy ? 'var(--gs-success)' : 'red';
+                apiStatusEl.style.color = isHealthy ? 'var(--gs-success)' : 'var(--gs-danger)';
                 lastSyncEl.textContent = new Date().toLocaleTimeString();
             };
 

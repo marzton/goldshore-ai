@@ -1,27 +1,25 @@
-# wrangler.toml for the background Agent Worker
-
-name = "goldshore-agent" # Base name, will be suffixed per environment
-main = "../../apps/goldshore-agent/src/index.ts"
+# Deprecated shim: the agent worker was renamed to `gs-agent`.
+# Keep this file in sync with `gs-agent.wrangler.toml` so workflows or
+# scripts referencing the legacy path continue to work.
+name = "gs-agent"
+main = "../../apps/gs-agent/src/index.ts"
 compatibility_date = "2024-03-20"
-tsconfig = "../../apps/goldshore-agent/tsconfig.json"
+tsconfig = "../../apps/gs-agent/tsconfig.json"
 
-# This worker is queue-driven, so we define the consumer here.
 [[queues.consumers]]
-  # The queue binding name should match what's in the environment bindings.
-  # Example: QUEUES_JOBS
   queue = "goldshore-jobs"
 
 [env.dev]
-name = "goldshore-agent-dev"
+name = "gs-agent-dev"
 # Dev bindings for the agent
 # [[queues.producers]]
 # binding = "QUEUES_JOBS"
 # queue = "goldshore-jobs-dev"
 
 [env.preview]
-name = "goldshore-agent-preview"
+name = "gs-agent-preview"
 # Preview bindings for the agent
 
 [env.prod]
-name = "goldshore-agent-prod"
+name = "gs-agent-prod"
 # Production bindings for the agent

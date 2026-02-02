@@ -1,20 +1,27 @@
-<table class="gs-table">
-  <slot />
-</table>
+---
+interface Props {
+  ariaLabel?: string;
+}
+
+const { ariaLabel = "Data table" } = Astro.props;
+---
+
+<div class="gs-table-container" role="region" aria-label={ariaLabel} tabindex="0">
+  <table class="gs-table">
+    <slot />
+  </table>
+</div>
 
 <style>
-  .gs-table {
+  .gs-table-container {
     width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
+    overflow-x: auto;
+    /* Ensure focus visibility for keyboard users */
+    outline: none;
   }
-  .gs-table th, .gs-table td {
-    padding: var(--gs-space-3);
-    border-bottom: 1px solid var(--gs-border);
-  }
-  .gs-table th {
-    color: var(--gs-fg-muted);
-    text-align: left;
-    font-weight: 500;
+  .gs-table-container:focus-visible {
+    outline: 2px solid var(--gs-accent);
+    outline-offset: 2px;
+    border-radius: var(--gs-radius-sm);
   }
 </style>

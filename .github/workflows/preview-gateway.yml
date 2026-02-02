@@ -5,25 +5,32 @@ permissions:
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+      - ready_for_review
     paths:
       - "apps/gateway/**"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
-  push:
-    branches:
-      - "feature/**"
 
 jobs:
   deploy-preview-gateway:
     runs-on: ubuntu-latest
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'preview') ||
+      (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          run_install: false
 
       - uses: actions/setup-node@v4
         with:

@@ -1,3 +1,5 @@
-export const reconcile = async (env: any) => {
+import type { ControlEnv } from "./types";
+
+export const reconcile = async (_env: ControlEnv) => {
   return { status: "workers reconciled", ok: true };
 };

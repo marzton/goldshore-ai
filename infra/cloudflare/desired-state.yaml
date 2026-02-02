@@ -46,12 +46,12 @@ cloudflare:
           require:
             - identity_provider: "github"
 
-      - name: "GoldShore-API-ZT"
+      - name: "GoldShore-API-Bypass"
         domain: "api.goldshore.ai"
-        action: "service_auth"
+        action: "bypass"
         rules:
           include:
-            - any_valid_service_token: true
+            - everyone: true
 
   pages:
     projects:
@@ -125,6 +125,6 @@ cloudflare:
         destination: "inbox@goldshore.ai"
       addresses:
         - address: "ops@goldshore.ai"
-          destination: "your.personal.email@example.com"
+          destination: "your.personal.email@goldshore.ai"
         - address: "support@goldshore.ai"
-          destination: "your.personal.email@example.com"
+          destination: "your.personal.email@goldshore.ai"

@@ -1,38 +1,35 @@
 ---
-import '@goldshore/theme';
-import Nav from '../components/Nav.astro';
-const { title } = Astro.props;
+import WebLayout from './WebLayout.astro';
+import DocsSidebar from '../components/DocsSidebar.astro';
+import DocsSearch from '../components/DocsSearch.astro';
+
+const { title, page } = Astro.props;
+const currentSlug = page ? page.slug : undefined;
 ---
-<html>
-  <head>
-    <title>{title} | Docs</title>
-  </head>
-  <body>
-    <Nav />
-    <div class="docs-container">
-       <aside class="docs-sidebar">
-          <h3>Documentation</h3>
-          <ul>
-            <li><a href="/developer/docs/intro">Introduction</a></li>
-            <li><a href="/developer/docs/getting-started">Getting Started</a></li>
-          </ul>
-       </aside>
-       <main>
-         <h1>{title}</h1>
-         <slot />
-       </main>
+
+<WebLayout title={`${title} | Docs`} description="GoldShore developer documentation">
+  <section class="gs-section docs-shell">
+    <div class="sidebar-wrapper">
+       <DocsSearch />
+       <DocsSidebar currentSlug={currentSlug} />
     </div>
-  </body>
-</html>
+    <article class="gs-card docs-main">
+      <h1>{title}</h1>
+      <slot />
+    </article>
+  </section>
+</WebLayout>
+
 <style>
-  .docs-container { display: flex; min-height: 100vh; }
-  .docs-sidebar {
-    width: 250px;
-    border-right: 1px solid var(--gs-border);
-    padding: 2rem;
-    background: var(--gs-bg-panel);
+  .docs-shell { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: var(--gs-space-5); }
+
+  .sidebar-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gs-space-4);
   }
-  .docs-sidebar ul { list-style: none; padding: 0; }
-  .docs-sidebar li { margin-bottom: 0.5rem; }
-  main { flex: 1; padding: 4rem; max-width: 800px; }
+
+  @media (max-width: 900px) {
+    .docs-shell { grid-template-columns: 1fr; }
+  }
 </style>

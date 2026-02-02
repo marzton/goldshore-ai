@@ -1,72 +1,108 @@
 ---
-const { openapi, endpoint } = Astro.props;
-const pathItem = openapi.paths['/' + endpoint] || openapi.paths[endpoint];
----
-<div class="endpoint">
-  <h2>{endpoint}</h2>
-  {pathItem ? (
-    <pre>{JSON.stringify(pathItem, null, 2)}</pre>
-  ) : (
-    <p>Endpoint not found.</p>
-  )}
-</div>
-<style>
-  .endpoint { padding: 2rem; }
-  pre { background: var(--gs-bg-elevated); padding: 1rem; border-radius: var(--gs-radius-md); }
-import ApiSchema from './ApiSchema.astro';
 import TryItConsole from './TryItConsole.astro';
 
-const { openapi, endpointId } = Astro.props;
+const { openapi, endpoint } = Astro.props;
 
-const methods = ['get','post','put','delete','patch'];
+// Normalize endpoint to look up in paths
+// endpoint from props might be "system/status"
+// path keys in openapi are usually "/system/status"
+const pathKey = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
 
-const match = Object.entries(openapi.paths)
-  .find(([p]) => p.replace(/^\//,'') === endpointId);
-
-if (!match) {
-  throw new Error(`Endpoint ${endpointId} not found`);
-}
-
-const [path, ops] = match;
+// Find the path item in the openapi spec
+const pathItem = openapi?.paths?.[pathKey];
+const methods = ['get', 'post', 'put', 'delete', 'patch'];
 ---
 
+{pathItem ? (
 <section class="api-endpoint">
-  <h1>{path}</h1>
+  <h2>{pathKey}</h2>
+  <div class="methods">
+    {methods.map((method) => {
+      const op = pathItem[method];
+      if (!op) return null;
+      return (
+        <article class="method-block">
+          <header>
+            <span class={`method-badge ${method}`}>{method.toUpperCase()}</span>
+            <h3>{op.summary || op.operationId || 'Operation'}</h3>
+          </header>
+          {op.description && <p class="description">{op.description}</p>}
 
-  {methods.map((m) => (
-    ops[m] && (
-      <article class="method-block">
-        <h2>{m.toUpperCase()}</h2>
-        <p>{ops[m].description}</p>
+          <div class="op-details">
+             {/* Parameters Display */}
+             {op.parameters && op.parameters.length > 0 && (
+                 <div class="parameters">
+                     <h4>Parameters</h4>
+                     <ul>
+                     {op.parameters.map((param: { name: string; in: string; required?: boolean; description?: string }) => (
+                         <li>
+                             <code>{param.name}</code> ({param.in}) - {param.required ? 'Required' : 'Optional'}
+                             {param.description && <span>: {param.description}</span>}
+                         </li>
+                     ))}
+                     </ul>
+                 </div>
+             )}
 
-        <h3>Parameters</h3>
-        <ApiSchema schema={ops[m].parameters} />
+             {/* Try It Console Integration */}
+             <TryItConsole method={method} path={pathKey} />
+          </div>
 
-        <h3>Request Body</h3>
-        {ops[m].requestBody && (
-          <ApiSchema schema={ops[m].requestBody.content} />
-        )}
-
-        <h3>Responses</h3>
-        <ApiSchema schema={ops[m].responses} />
-
-        <h3>Try It</h3>
-        <TryItConsole
-          method={m}
-          path={path}
-          openapi={openapi}
-        />
-      </article>
-    )
-  ))}
+        </article>
+      );
+    })}
+  </div>
 </section>
+) : (
+<div class="endpoint-error">
+  <h2>{pathKey}</h2>
+  <p>Endpoint definition not found in OpenAPI spec.</p>
+</div>
+)}
 
 <style>
-  .method-block {
-    margin-bottom: 2.5rem;
-    padding: 1.5rem;
-    border-radius: 1rem;
-    background: rgba(15,23,42,0.8);
-    border: 1px solid rgba(148,163,184,0.3);
+  .api-endpoint {
+    margin-bottom: var(--gs-space-6);
   }
+  .method-block {
+    margin-bottom: var(--gs-space-4);
+    padding: var(--gs-space-4);
+    background: var(--gs-color-bg-surface);
+    border: 1px solid var(--gs-color-border);
+    border-radius: var(--gs-radius-md);
+  }
+  .method-block header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .method-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .method-badge.get { background: #3b82f6; }
+  .method-badge.post { background: #22c55e; }
+  .method-badge.put { background: #f59e0b; }
+  .method-badge.delete { background: #ef4444; }
+  .method-badge.patch { background: #8b5cf6; }
+
+  h3 { margin: 0; font-size: 1.1rem; }
+  .description { color: var(--gs-color-subtle); font-size: 0.9rem; margin-bottom: 1rem; }
+
+  .parameters {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--gs-color-bg-subtle);
+      border-radius: 4px;
+  }
+  .parameters h4 { margin-top: 0; font-size: 0.9rem; }
+  .parameters ul { padding-left: 1.2rem; margin-bottom: 0; }
+  .parameters li { font-size: 0.85rem; }
+  .endpoint-error { padding: 2rem; color: #ef4444; border: 1px dashed #ef4444; border-radius: 8px; }
 </style>
