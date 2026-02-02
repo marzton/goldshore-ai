@@ -1,12 +1,5 @@
 {
   "name": "@goldshore/utils",
   "version": "0.0.1",
-  "private": true,
-  "main": "index.ts",
-  "scripts": {
-    "build": "echo 'No build script yet'"
-  },
-  "devDependencies": {
-    "typescript": "^5.0.0"
-  }
+  "main": "index.ts"
 }
