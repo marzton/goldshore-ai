@@ -32,7 +32,7 @@ const highlights = [
 ];
 ---
 
-<MarketingLayout title="GoldShore | Provable Experience" description="Cinematic AI infrastructure for the modern web.">
+<MarketingLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
   <div class="cinematic-wrapper">
     <!-- Starfield Background -->
     <div class="stars-container">
@@ -67,6 +67,9 @@ const highlights = [
       </div>
       <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
     </div>
+
+    <div class="parallax-layer layer-grid" data-parallax="0.05" aria-hidden="true"></div>
+    <div class="parallax-layer layer-glow" data-parallax="0.08" aria-hidden="true"></div>
 
     <!-- Hero Section -->
     <section class="cinematic-hero">
@@ -107,53 +110,59 @@ const highlights = [
       </div>
     ))}
 
-      <!-- 3D/Parallax Element -->
-      <div class="hero-visual fade-in-up" style="animation-delay: 1s;">
-        <div class="glass-card tilt-card">
-          <div class="card-header">
-            <span class="dot red"></span>
-            <span class="dot yellow"></span>
-            <span class="dot green"></span>
-            <span class="card-title">GoldShore Agent</span>
-          </div>
-          <div class="card-body">
-            <div class="data-row">
-              <span class="label">STATUS</span>
-              <span class="value success">ACTIVE</span>
+    <!-- Features Section -->
+    <section class="home-features parallax-section">
+      <div class="parallax-layer layer-grid" data-parallax="0.05" aria-hidden="true"></div>
+      <div class="parallax-layer layer-glow" data-parallax="0.1" aria-hidden="true"></div>
+
+      <div class="max-w-7xl mx-auto py-24 px-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-24">
+          {features.map((feature, i) => (
+            <div class="feature-card reveal glass-panel" style={`animation-delay: ${0.2 * i}s`}>
+              <div class="icon-box">
+                <span class="material-symbols-rounded">{feature.icon}</span>
+              </div>
+              <h3 class="text-xl font-semibold mb-2" style="color: #fff;">{feature.title}</h3>
+              <p style="color: #94a3b8;">
+                {feature.body}
+              </p>
             </div>
-            <div class="data-row">
-              <span class="label">MODE</span>
-              <span class="value info">VIBE_CODING</span>
+          ))}
+        </div>
+
+        <!-- 3D/Parallax Element -->
+        <div class="hero-visual fade-in-up" style="animation-delay: 1s;">
+          <div class="glass-card tilt-card">
+            <div class="card-header">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+              <span class="card-title">GoldShore Agent</span>
             </div>
-            <div class="chart-viz">
-              <div class="bar" style="height: 40%"></div>
-              <div class="bar" style="height: 70%"></div>
-              <div class="bar" style="height: 55%"></div>
-              <div class="bar" style="height: 90%"></div>
-              <div class="bar" style="height: 60%"></div>
-            </div>
-            <div class="terminal-output">
-              > Initializing cinematic protocols...<br/>
-              > Optimizing user experience...<br/>
-              > Done.
+            <div class="card-body">
+              <div class="data-row">
+                <span class="label">STATUS</span>
+                <span class="value success">ACTIVE</span>
+              </div>
+              <div class="data-row">
+                <span class="label">MODE</span>
+                <span class="value info">VIBE_CODING</span>
+              </div>
+              <div class="chart-viz">
+                <div class="bar" style="height: 40%"></div>
+                <div class="bar" style="height: 70%"></div>
+                <div class="bar" style="height: 55%"></div>
+                <div class="bar" style="height: 90%"></div>
+                <div class="bar" style="height: 60%"></div>
+              </div>
+              <div class="terminal-output">
+                > Initializing cinematic protocols...<br/>
+                > Optimizing user experience...<br/>
+                > Done.
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features-section">
-      <div class="features-grid">
-        {features.map((feature, i) => (
-          <div class="feature-card glass-panel fade-in-up" style={`animation-delay: ${1.2 + (i * 0.2)}s;`}>
-            <div class="icon-box">
-              <span class="material-symbols-rounded">{feature.icon}</span>
-            </div>
-            <h3>{feature.title}</h3>
-            <p>{feature.body}</p>
-          </div>
-        ))}
       </div>
     </section>
   </div>
@@ -162,6 +171,55 @@ const highlights = [
 </MarketingLayout>
 
 <style>
+  .gs-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gs-space-8);
+    align-items: center;
+    padding: var(--gs-space-12) var(--gs-space-6);
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  @media (max-width: 900px) {
+    .gs-hero { grid-template-columns: 1fr; }
+  }
+  h1 {
+    font-size: 3.5rem;
+    line-height: 1.1;
+    margin-bottom: var(--gs-space-4);
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  p {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: var(--gs-color-text-secondary);
+    margin-bottom: var(--gs-space-6);
+  }
+  .gs-kpi {
+    background: var(--gs-color-bg-surface);
+    padding: var(--gs-space-3);
+    border-radius: var(--gs-radius-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .gs-kpi span { font-size: 0.75rem; text-transform: uppercase; color: var(--gs-color-subtle); letter-spacing: 0.05em; }
+  .gs-kpi strong { font-size: 1.5rem; color: var(--gs-color-text); }
+  .section-title {
+    margin-top: 0;
+    margin-bottom: var(--gs-space-4);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gs-color-subtle);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>
   :global(body) {
     background-color: #050505;
     color: #e5e7eb;
@@ -440,31 +498,47 @@ const highlights = [
 <script is:inline>
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!prefersReducedMotion) {
-    const revealTargets = document.querySelectorAll('.reveal');
-    const revealObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.18 }
-    );
-    revealTargets.forEach((el) => revealObserver.observe(el));
+    const parallaxLayers = Array.from(document.querySelectorAll('[data-parallax]')).map((layer) => ({
+      element: layer,
+      speed: parseFloat(layer.dataset.parallax || '0'),
+    }));
+
+    let ticking = false;
 
     const parallaxLayers = Array.from(document.querySelectorAll('[data-parallax]'));
+    let ticking = false;
+
     const updateParallax = () => {
       const scrollY = window.scrollY || window.pageYOffset;
-      parallaxLayers.forEach((layer) => {
-        const speed = parseFloat(layer.dataset.parallax || '0');
-        layer.style.transform = `translate3d(0, ${scrollY * speed * -0.12}px, 0)`;
+      parallaxLayers.forEach(({ element, speed }) => {
+        element.style.transform = `translate3d(0, ${scrollY * speed * -0.12}px, 0)`;
       });
+      ticking = false;
     };
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Initial call
     updateParallax();
-    window.addEventListener('scroll', () => requestAnimationFrame(updateParallax), { passive: true });
   } else {
     document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
+    updateParallax();
+
+    // Optimized scroll listener using requestAnimationFrame for performance
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          window.requestAnimationFrame(updateParallax);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
   }
 </script>
