@@ -54,4 +54,13 @@ Cloudflare Access is enforced only where required for internal tooling and priva
 ## GitHub App callback URLs
 
 - Production: `https://ops.goldshore.ai/auth/github/callback`
-- Preview: `https://ops-preview.goldshore.ai/auth/github/callback`
+- Preview (ops worker): `https://ops-preview.goldshore.ai/auth/github/callback`
+- Preview (admin cockpit): `https://admin-preview.goldshore.ai/auth/github/callback`
+- Preview (web Pages branches): `https://{branch}.goldshore-pages.dev/auth/github/callback`
+
+### Access + edge proxy alignment
+
+When adding preview callback URLs in GitHub App settings, ensure the same hostnames are:
+
+- Included in the Cloudflare Access application allowlist when Access is enforced for previews.
+- Routed through any edge proxy rules so the callback path (`/auth/github/callback`) resolves to the expected worker/service.
