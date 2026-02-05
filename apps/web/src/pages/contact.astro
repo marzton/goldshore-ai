@@ -106,6 +106,21 @@ export const prerender = true;
 
     @keyframes spin {
       to { transform: rotate(360deg); }
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      border: 2px solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: gs-spin 0.75s linear infinite;
+      margin-right: 0.5em;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes gs-spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
   </style>
 </BaseLayout>
