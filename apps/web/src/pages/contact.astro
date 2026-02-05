@@ -97,10 +97,28 @@ export const prerender = true;
       border: 2px solid rgba(255,255,255,0.4);
       border-top-color: rgba(255,255,255,0.9);
       animation: spin 0.8s linear infinite;
+      margin-right: 0.5rem;
+      display: inline-block;
+      vertical-align: middle;
     }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      border: 2px solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: gs-spin 0.75s linear infinite;
+      margin-right: 0.5em;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes gs-spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
   </style>
 </BaseLayout>
