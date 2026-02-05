@@ -73,22 +73,20 @@ export const prerender = true;
   </section>
 
   <script>
-    const form = document.getElementById('contact-form') as HTMLFormElement;
-    if (form) {
-      form.addEventListener('submit', () => {
-        const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
-        if (btn) {
-          btn.disabled = true;
-          // Check if loader already exists
-          if (!btn.querySelector('.gs-loader')) {
-            const loader = document.createElement('span');
-            loader.className = 'gs-loader';
-            loader.setAttribute('aria-hidden', 'true');
-            btn.prepend(loader);
-          }
-        }
-      });
-    }
+    const form = document.getElementById('contact-form');
+    form?.addEventListener('submit', () => {
+      const btn = form.querySelector('button[type="submit"]');
+      if (btn) {
+        btn.setAttribute('disabled', 'true');
+        btn.setAttribute('aria-busy', 'true');
+
+        const loader = document.createElement('span');
+        loader.className = 'gs-loader';
+        loader.setAttribute('aria-hidden', 'true');
+
+        btn.prepend(loader);
+      }
+    });
   </script>
 
   <style is:global>
