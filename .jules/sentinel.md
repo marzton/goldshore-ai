@@ -43,10 +43,14 @@
 **Learning:** Developers may use `PUBLIC_` out of habit to make variables "work" without realizing it bypasses server-only security boundaries, even in SSR apps.
 **Prevention:** Strictly enforce `AUTH_*` or `SECRET_*` naming conventions without `PUBLIC_` prefix for credentials. Added fallback logic with critical warnings to migrate safely.
 ## 2026-04-20 - Unprotected Agent Service
-**Vulnerability:** `apps/goldshore-agent` lacked standard security headers and CORS configuration, exposing it to potential attacks despite being an internal service.
+**Vulnerability:** `apps/goldshore-agent` lacked standard security headers and CORS configuration, exposing it to public access.
 **Learning:** New services created in the monorepo (like `goldshore-agent`) do not automatically inherit security middleware. Explicit configuration is required.
 **Prevention:** Establish a strict "Secure by Default" template for new Hono/Worker apps that includes `secureHeaders` and `cors` middleware from the start.
 ## 2026-02-14 - Securing Agent Service by Default
 **Vulnerability:** The `apps/goldshore-agent` service was initialized without any authentication middleware, exposing potential future AI agent capabilities to the public internet.
 **Learning:** New services in a monorepo often start "barebones" and skip security boilerplate, creating a window of vulnerability as features are added. Drift between documentation (which said it was secured) and implementation is a common risk.
 **Prevention:** Enforce a "Secure by Default" template for all new Hono services that includes `secureHeaders`, `cors`, and `verifyAccess` middleware immediately upon creation.
+## 2026-05-25 - Unverified GitHub Webhooks
+**Vulnerability:** `apps/jules-bot` accepted webhook payloads without verifying the `X-Hub-Signature-256` header, allowing attackers to forge events.
+**Learning:** Services handling webhooks must verify signatures before parsing the body. Raw body access is required for correct HMAC verification.
+**Prevention:** Enforce signature verification middleware on all webhook endpoints.
