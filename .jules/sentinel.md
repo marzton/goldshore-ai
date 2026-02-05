@@ -43,10 +43,24 @@
 **Learning:** Developers may use `PUBLIC_` out of habit to make variables "work" without realizing it bypasses server-only security boundaries, even in SSR apps.
 **Prevention:** Strictly enforce `AUTH_*` or `SECRET_*` naming conventions without `PUBLIC_` prefix for credentials. Added fallback logic with critical warnings to migrate safely.
 ## 2026-04-20 - Unprotected Agent Service
-**Vulnerability:** `apps/goldshore-agent` lacked standard security headers and CORS configuration, exposing it to potential attacks despite being an internal service.
+**Vulnerability:** `apps/goldshore-agent` lacked standard security headers and CORS configuration, exposing it to public access.
 **Learning:** New services created in the monorepo (like `goldshore-agent`) do not automatically inherit security middleware. Explicit configuration is required.
 **Prevention:** Establish a strict "Secure by Default" template for new Hono/Worker apps that includes `secureHeaders` and `cors` middleware from the start.
 ## 2026-02-14 - Securing Agent Service by Default
 **Vulnerability:** The `apps/goldshore-agent` service was initialized without any authentication middleware, exposing potential future AI agent capabilities to the public internet.
 **Learning:** New services in a monorepo often start "barebones" and skip security boilerplate, creating a window of vulnerability as features are added. Drift between documentation (which said it was secured) and implementation is a common risk.
 **Prevention:** Enforce a "Secure by Default" template for all new Hono services that includes `secureHeaders`, `cors`, and `verifyAccess` middleware immediately upon creation.
+
+## 2026-05-28 - Missing CSP in Web App
+**Vulnerability:** The `apps/web` application lacked a Content Security Policy (CSP), allowing potentially unrestricted script execution and resource loading.
+**Learning:** Static sites (Astro SSG) deployed to Cloudflare Pages require explicit `_headers` configuration or `<meta>` tags for security headers, as they don't run a server that can easily inject middleware headers for all responses (unlike SSR apps).
+**Prevention:** For Cloudflare Pages deployments, always include a `public/_headers` file with strict CSP and security headers as part of the initial setup.
+## 2026-05-25 - Unverified GitHub Webhooks
+**Vulnerability:** `apps/jules-bot` accepted webhook payloads without verifying the `X-Hub-Signature-256` header, allowing attackers to forge events.
+**Learning:** Services handling webhooks must verify signatures before parsing the body. Raw body access is required for correct HMAC verification.
+**Prevention:** Enforce signature verification middleware on all webhook endpoints.
+
+## 2026-05-21 - Unprotected Webhook Handler
+**Vulnerability:** `apps/jules-bot` accepted GitHub webhooks without verifying the `x-hub-signature-256` header, allowing attackers to spoof events and trigger bot actions.
+**Learning:** Standalone scripts or "bots" often lack the middleware infrastructure of larger frameworks (like Hono/Express) where signature verification might be a standard plug-in.
+**Prevention:** Always implement HMAC signature verification for any public endpoint receiving webhooks, checking against a shared secret before parsing the payload.

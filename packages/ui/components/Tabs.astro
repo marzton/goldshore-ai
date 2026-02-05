@@ -58,7 +58,7 @@ const { tabs = [] } = Astro.props;
       };
 
       // Bind events
-      triggers.forEach((t, index) => {
+      triggers.forEach((t) => {
           t.addEventListener('click', (e) => {
               const targetId = (e.currentTarget as HTMLElement).getAttribute('data-target');
               // Click naturally focuses, but we ensure state is correct
