@@ -64,6 +64,7 @@ const { tabs = [] } = Astro.props;
               // Click naturally focuses, but we ensure state is correct
               setActive(targetId, false);
           });
+      });
 
       // Init: Activate first tab if none active
       const firstTrigger = triggers[0];
