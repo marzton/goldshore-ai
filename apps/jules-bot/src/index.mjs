@@ -11,6 +11,8 @@ import crypto from 'node:crypto';
 // GITHUB_REPO
 // WEBHOOK_SECRET
 
+import crypto from 'node:crypto';
+
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_ORG = process.env.GITHUB_ORG;
 const GITHUB_REPO = process.env.GITHUB_REPO;
@@ -144,6 +146,7 @@ const server = http.createServer(async (req, res) => {
     req.on('end', async () => {
       if (bodyTooLarge) return;
 
+      // Verify Signature
       const signature = req.headers['x-hub-signature-256'];
       if (!signature) {
         res.writeHead(401, { 'Content-Type': 'text/plain' });
@@ -162,6 +165,16 @@ const server = http.createServer(async (req, res) => {
         console.error('Signature verification error:', err);
         res.writeHead(400, { 'Content-Type': 'text/plain' });
         res.end('Verification Error');
+      const hmac = crypto.createHmac('sha256', WEBHOOK_SECRET);
+      hmac.update(body);
+      const expectedSignature = `sha256=${hmac.digest('hex')}`;
+
+      const signatureBuffer = Buffer.from(signature);
+      const expectedSignatureBuffer = Buffer.from(expectedSignature);
+
+      if (signatureBuffer.length !== expectedSignatureBuffer.length || !crypto.timingSafeEqual(signatureBuffer, expectedSignatureBuffer)) {
+        res.writeHead(401, { 'Content-Type': 'text/plain' });
+        res.end('Invalid Signature');
         return;
       }
 
@@ -173,6 +186,7 @@ const server = http.createServer(async (req, res) => {
         res.end('OK');
       } catch (err) {
         console.error(`Error handling event:`, err);
+        console.error(`Error handling event "${req.headers['x-github-event']}":`, err);
         res.writeHead(500);
         res.end('Error');
       }

@@ -54,3 +54,8 @@
 **Vulnerability:** `apps/jules-bot` accepted webhook payloads without verifying the `X-Hub-Signature-256` header, allowing attackers to forge events.
 **Learning:** Services handling webhooks must verify signatures before parsing the body. Raw body access is required for correct HMAC verification.
 **Prevention:** Enforce signature verification middleware on all webhook endpoints.
+
+## 2026-05-21 - Unprotected Webhook Handler
+**Vulnerability:** `apps/jules-bot` accepted GitHub webhooks without verifying the `x-hub-signature-256` header, allowing attackers to spoof events and trigger bot actions.
+**Learning:** Standalone scripts or "bots" often lack the middleware infrastructure of larger frameworks (like Hono/Express) where signature verification might be a standard plug-in.
+**Prevention:** Always implement HMAC signature verification for any public endpoint receiving webhooks, checking against a shared secret before parsing the payload.
