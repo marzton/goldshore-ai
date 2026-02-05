@@ -20,12 +20,40 @@ export const initParallax = (options: ParallaxOptions = {}) => {
     factor = -0.12
   } = options;
 
+  // Bolt: Use Map to store state and track visibility
+  const layers = new Map<HTMLElement, { speed: number; isVisible: boolean }>();
   const elements = document.querySelectorAll<HTMLElement>(selector);
 
   if (elements.length === 0) {
     return () => undefined;
   }
 
+  // Bolt: Optimization - Use IntersectionObserver to skip updates for off-screen elements
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const state = layers.get(entry.target as HTMLElement);
+        if (state) {
+          state.isVisible = entry.isIntersecting;
+          // Force an immediate update when becoming visible to avoid jump
+          if (state.isVisible) {
+             const scrollY = window.scrollY || window.pageYOffset;
+             const offset = scrollY * state.speed * factor;
+             (entry.target as HTMLElement).style.setProperty('--gs-parallax-offset', `${offset}px`);
+          }
+        }
+      });
+    },
+    { rootMargin: '200px' } // Pre-calculate before entering viewport
+  );
+
+  elements.forEach((element) => {
+    layers.set(element, {
+      speed: parseFloat(element.getAttribute(speedAttribute) || '0'),
+      isVisible: true // Start visible to ensure initial position is calculated
+    });
+    observer.observe(element);
+  });
   // Bolt: Optimize by tracking visibility to avoid layout thrashing for off-screen elements
   const layers = Array.from(elements).map((element) => ({
     element,
@@ -47,14 +75,17 @@ export const initParallax = (options: ParallaxOptions = {}) => {
   let ticking = false;
   const updateParallax = () => {
     const scrollY = window.scrollY || window.pageYOffset;
-    layers.forEach(({ element, speed, isVisible }) => {
-      if (!isVisible) return;
-      const offset = scrollY * speed * factor;
+
+    layers.forEach((state, element) => {
+      if (!state.isVisible) return;
+
+      const offset = scrollY * state.speed * factor;
       element.style.setProperty('--gs-parallax-offset', `${offset}px`);
     });
     ticking = false;
   };
 
+  // Initial update
   updateParallax();
 
   const handleScroll = () => {
