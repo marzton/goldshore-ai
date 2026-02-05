@@ -20,19 +20,35 @@ export const initParallax = (options: ParallaxOptions = {}) => {
     factor = -0.12
   } = options;
 
-  const layers = Array.from(document.querySelectorAll<HTMLElement>(selector)).map((element) => ({
-    element,
-    speed: parseFloat(element.getAttribute(speedAttribute) || '0')
-  }));
+  const elements = document.querySelectorAll<HTMLElement>(selector);
 
-  if (layers.length === 0) {
+  if (elements.length === 0) {
     return () => undefined;
   }
+
+  // Bolt: Optimize by tracking visibility to avoid layout thrashing for off-screen elements
+  const layers = Array.from(elements).map((element) => ({
+    element,
+    speed: parseFloat(element.getAttribute(speedAttribute) || '0'),
+    isVisible: true // Start visible to ensure initial position is set, IntersectionObserver will correct this
+  }));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const layer = layers.find((l) => l.element === entry.target);
+      if (layer) {
+        layer.isVisible = entry.isIntersecting;
+      }
+    });
+  }, { rootMargin: '200px' });
+
+  layers.forEach((l) => observer.observe(l.element));
 
   let ticking = false;
   const updateParallax = () => {
     const scrollY = window.scrollY || window.pageYOffset;
-    layers.forEach(({ element, speed }) => {
+    layers.forEach(({ element, speed, isVisible }) => {
+      if (!isVisible) return;
       const offset = scrollY * speed * factor;
       element.style.setProperty('--gs-parallax-offset', `${offset}px`);
     });
@@ -54,5 +70,6 @@ export const initParallax = (options: ParallaxOptions = {}) => {
   return () => {
     window.removeEventListener('scroll', handleScroll);
     window.removeEventListener('resize', updateParallax);
+    observer.disconnect();
   };
 };
