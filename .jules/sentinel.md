@@ -50,3 +50,8 @@
 **Vulnerability:** The `apps/goldshore-agent` service was initialized without any authentication middleware, exposing potential future AI agent capabilities to the public internet.
 **Learning:** New services in a monorepo often start "barebones" and skip security boilerplate, creating a window of vulnerability as features are added. Drift between documentation (which said it was secured) and implementation is a common risk.
 **Prevention:** Enforce a "Secure by Default" template for all new Hono services that includes `secureHeaders`, `cors`, and `verifyAccess` middleware immediately upon creation.
+
+## 2026-05-28 - Missing CSP in Web App
+**Vulnerability:** The `apps/web` application lacked a Content Security Policy (CSP), allowing potentially unrestricted script execution and resource loading.
+**Learning:** Static sites (Astro SSG) deployed to Cloudflare Pages require explicit `_headers` configuration or `<meta>` tags for security headers, as they don't run a server that can easily inject middleware headers for all responses (unlike SSR apps).
+**Prevention:** For Cloudflare Pages deployments, always include a `public/_headers` file with strict CSP and security headers as part of the initial setup.
