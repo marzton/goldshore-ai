@@ -71,4 +71,38 @@ export const prerender = true;
       </div>
     </div>
   </section>
+
+  <script>
+    const form = document.getElementById('contact-form');
+    const button = form?.querySelector('button[type="submit"]');
+
+    if (form && button) {
+      form.addEventListener('submit', () => {
+        if (button.hasAttribute('disabled')) return;
+
+        button.setAttribute('disabled', 'true');
+        button.innerHTML = '<span class="gs-loader" aria-hidden="true"></span> Sending...';
+      });
+    }
+  </script>
+
+  <style is:global>
+    .gs-loader {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      border: 2px solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: gs-spin 0.75s linear infinite;
+      margin-right: 0.5em;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes gs-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </BaseLayout>
