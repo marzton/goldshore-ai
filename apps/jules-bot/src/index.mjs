@@ -36,6 +36,29 @@ if (!WEBHOOK_SECRET) {
   process.exit(1);
 }
 
+// Helper: Verify GitHub Webhook Signature (Sentinel Protection)
+function verifySignature(secret, header, payload) {
+  if (!header) return false;
+
+  const parts = header.split('=');
+  if (parts.length !== 2) return false;
+
+  const algorithm = parts[0];
+  const signature = parts[1];
+
+  if (algorithm !== 'sha256') return false;
+
+  const hmac = crypto.createHmac('sha256', secret);
+  const digest = hmac.update(payload).digest('hex');
+
+  const signatureBuffer = Buffer.from(signature, 'hex');
+  const digestBuffer = Buffer.from(digest, 'hex');
+
+  if (signatureBuffer.length !== digestBuffer.length) return false;
+
+  return crypto.timingSafeEqual(signatureBuffer, digestBuffer);
+}
+
 // Helper to post a comment using fetch (no external dependencies)
 async function postComment(prNumber, body) {
   const url = `https://api.github.com/repos/${GITHUB_ORG}/${GITHUB_REPO}/issues/${prNumber}/comments`;
