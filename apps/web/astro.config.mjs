@@ -14,7 +14,6 @@ export default defineConfig({
     })
   ],
   vite: {
-    publicDir: './openapi',
     ssr: {
       noExternal: [
         '@goldshore/theme',
