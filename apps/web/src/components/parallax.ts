@@ -54,24 +54,6 @@ export const initParallax = (options: ParallaxOptions = {}) => {
     });
     observer.observe(element);
   });
-  // Bolt: Optimize by tracking visibility to avoid layout thrashing for off-screen elements
-  const layers = Array.from(elements).map((element) => ({
-    element,
-    speed: parseFloat(element.getAttribute(speedAttribute) || '0'),
-    isVisible: true // Start visible to ensure initial position is set, IntersectionObserver will correct this
-  }));
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      const layer = layers.find((l) => l.element === entry.target);
-      if (layer) {
-        layer.isVisible = entry.isIntersecting;
-      }
-    });
-  }, { rootMargin: '200px' });
-
-  layers.forEach((l) => observer.observe(l.element));
-
   let ticking = false;
   const updateParallax = () => {
     const scrollY = window.scrollY || window.pageYOffset;
