@@ -1,13 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap');
 @import './tokens.css';
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
 body {
   margin: 0;
   background: var(--gs-color-bg);
   color: var(--gs-color-text);
   font-family: var(--gs-font-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
   line-height: var(--gs-line-height);
   font-size: var(--gs-font-size-body);
   min-height: 100vh;

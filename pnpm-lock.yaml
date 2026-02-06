@@ -89,6 +89,9 @@ importers:
 
   apps/api-worker:
     dependencies:
+      '@goldshore/ai-providers':
+        specifier: workspace:^
+        version: link:../../packages/ai-providers
       '@goldshore/auth':
         specifier: workspace:^
         version: link:../../packages/auth
