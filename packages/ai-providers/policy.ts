@@ -1,4 +1,4 @@
-import type { AnalysisRequest, AnalysisInput } from './types';
+import type { AnalysisRequest, AnalysisInput, ProviderName } from './types';
 
 type RedactionResult = {
   text: string;
@@ -81,6 +81,11 @@ export const applyAnalysisPolicy = (request: AnalysisRequest): PolicyResult => {
     throw new Error('provider is required');
   }
 
+  const allowedProviders: ProviderName[] = ['openai', 'gemini'];
+  if (!allowedProviders.includes(request.provider)) {
+    throw new Error('provider must be openai or gemini');
+  }
+
   if (!request.input) {
     throw new Error('input is required');
   }
@@ -96,13 +101,27 @@ export const applyAnalysisPolicy = (request: AnalysisRequest): PolicyResult => {
     return result.text;
   });
 
+  let metadata: AnalysisInput['metadata'];
+  if (request.input.metadata) {
+    metadata = Object.fromEntries(
+      Object.entries(request.input.metadata).map(([key, value]) => {
+        if (typeof value === 'string') {
+          const result = redactText(value);
+          redactions += result.redactions;
+          return [key, result.text];
+        }
+        return [key, value];
+      }),
+    );
+  }
+
   return {
     sanitized: {
       provider: request.provider,
       input: {
         prompt: promptResult.text,
         context,
-        metadata: request.input.metadata,
+        metadata,
       },
     },
     redactions,
