@@ -72,4 +72,67 @@ export const prerender = true;
       </div>
     </div>
   </section>
+
+  <script>
+    const form = document.getElementById('contact-form');
+    const submitBtn = form?.querySelector('button[type="submit"]');
+
+    form?.addEventListener('submit', () => {
+      if (submitBtn) {
+        submitBtn.setAttribute('disabled', 'true');
+        submitBtn.innerHTML = '<span class="material-symbols-rounded gs-spin" aria-hidden="true">progress_activity</span> Sending...';
+    form?.addEventListener('submit', () => {
+      const btn = form.querySelector('button[type="submit"]');
+      if (btn) {
+        btn.setAttribute('disabled', 'true');
+        btn.setAttribute('aria-busy', 'true');
+
+        const loader = document.createElement('span');
+        loader.className = 'gs-loader';
+        loader.setAttribute('aria-hidden', 'true');
+
+        btn.prepend(loader);
+      }
+    });
+  </script>
+
+  <style>
+    .gs-spin {
+      display: inline-block;
+      animation: spin 1s linear infinite;
+      vertical-align: middle;
+      margin-right: 0.5rem;
+      font-size: 1.25em;
+  <style is:global>
+    .gs-loader {
+      width: 1rem;
+      height: 1rem;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: rgba(255,255,255,0.9);
+      animation: spin 0.8s linear infinite;
+      margin-right: 0.5rem;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      border: 2px solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: gs-spin 0.75s linear infinite;
+      margin-right: 0.5em;
+      vertical-align: text-bottom;
+    }
+
+    @keyframes gs-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </BaseLayout>
