@@ -23,7 +23,7 @@ Private routes are restricted to staff or authenticated users and must be protec
 
 Private routes must enforce access at the edge or application layer:
 
-- **Cloudflare Access**: Configure Access policies to require identity verification for private route paths and preview environments.
+- **Cloudflare Access config**: Configure Access policies to require identity verification for private route paths and preview environments.
 - **Application middleware**: Ensure SSR middleware or edge handlers validate sessions before serving private content.
 
 When introducing new routes, update this policy and ensure enforcement is in place before deployment.
