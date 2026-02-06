@@ -8,8 +8,8 @@ This document captures the Cloudflare Access applications and policies that prot
 
 | Access application | Policy name | Domain coverage | Notes |
 | --- | --- | --- | --- |
-| GoldShore Admin | GoldShore-Admin-ZT | `admin.goldshore.ai`, `admin-preview.goldshore.ai`, `*-preview.goldshore.ai` (admin preview branches) | Admin cockpit is protected by Access with an email allowlist + identity provider requirement. Preview domains should be attached to the same application to match production enforcement. |
-| GoldShore Web (Preview) | GoldShore-Web-Preview | `preview.goldshore.ai`, `{branch}.goldshore-pages.dev` | Web production (`goldshore.ai`, `www.goldshore.ai`) is public, but preview domains must be gated behind Access. |
+| GoldShore Admin | GoldShore-Admin-ZT | `admin.goldshore.ai`, `admin-preview.goldshore.ai`, `*-preview.goldshore.ai` (admin preview branches), `{branch}.goldshore-pages.dev` (admin preview pages) | Admin cockpit is protected by Access with an email allowlist + identity provider requirement. Preview domains should be attached to the same application to match production enforcement. |
+| GoldShore Web (Preview) | GoldShore-Web-Preview | `preview.goldshore.ai`, `*-preview.goldshore.ai` (web preview branches), `{branch}.goldshore-pages.dev` (web preview pages) | Web production (`goldshore.ai`, `www.goldshore.ai`) is public, but preview domains must be gated behind Access. |
 
 ## Identity providers and session policy alignment
 
@@ -44,8 +44,9 @@ Cloudflare Access is enforced only where required for internal tooling and priva
 
 | Area | Domains | Access policy | Notes |
 | --- | --- | --- | --- |
-| Public web | `goldshore.ai` | No | Public marketing site. |
-| Admin cockpit | `admin.goldshore.ai` | Yes | Internal admin dashboard, email allowlist + IdP/OTP. |
+| Public web | `goldshore.ai`, `www.goldshore.ai` | No | Public marketing site. |
+| Web previews | `preview.goldshore.ai`, `*-preview.goldshore.ai`, `{branch}.goldshore-pages.dev` | Yes (GoldShore-Web-Preview) | Preview builds for the marketing site should remain Access gated. |
+| Admin cockpit | `admin.goldshore.ai`, `admin-preview.goldshore.ai`, `*-preview.goldshore.ai`, `{branch}.goldshore-pages.dev` | Yes (GoldShore-Admin-ZT) | Internal admin dashboard, email allowlist + IdP/OTP. |
 | Control worker | `ops.goldshore.ai` | Yes | Internal ops workflows and automation. |
 | API worker | `api.goldshore.ai` | Optional | Enable for private endpoints only. |
 | Gateway worker | `gw.goldshore.ai` | Optional | Depends on routing/auth design. |
