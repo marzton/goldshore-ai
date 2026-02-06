@@ -3,6 +3,91 @@ import { buildLeadAutoResponder } from '../../emails/leadAutoResponder';
 
 const CONTACT_TTL_SECONDS = 60 * 60 * 24 * 90;
 
+type Submission = {
+  id: string;
+  formType: string;
+  name: string;
+  email: string;
+  company: string;
+  role: string;
+  website: string;
+  teamSize: string;
+  industry: string;
+  timeline: string;
+  budget: string;
+  goals: string;
+  message: string;
+  receivedAt: string;
+  ipAddress?: string;
+  userAgent?: string;
+};
+
+const storeInKv = async (
+  kv: KVNamespace,
+  submission: Submission,
+  autoResponder: ReturnType<typeof buildLeadAutoResponder>
+) => {
+  await kv.put(`contact:${submission.id}`, JSON.stringify({ submission, autoResponder }), {
+    expirationTtl: CONTACT_TTL_SECONDS,
+    metadata: {
+      formType: submission.formType,
+    },
+  });
+};
+
+const storeInD1 = async (
+  db: D1Database,
+  submission: Submission,
+  autoResponder: ReturnType<typeof buildLeadAutoResponder>
+) => {
+  await db
+    .prepare(
+      `INSERT INTO lead_submissions (
+        id,
+        form_type,
+        name,
+        email,
+        company,
+        role,
+        website,
+        team_size,
+        industry,
+        timeline,
+        budget,
+        goals,
+        message,
+        received_at,
+        ip_address,
+        user_agent,
+        auto_responder_subject,
+        auto_responder_text,
+        auto_responder_html
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    )
+    .bind(
+      submission.id,
+      submission.formType,
+      submission.name || null,
+      submission.email || null,
+      submission.company || null,
+      submission.role || null,
+      submission.website || null,
+      submission.teamSize || null,
+      submission.industry || null,
+      submission.timeline || null,
+      submission.budget || null,
+      submission.goals || null,
+      submission.message || null,
+      submission.receivedAt,
+      submission.ipAddress || null,
+      submission.userAgent || null,
+      autoResponder.subject,
+      autoResponder.text,
+      autoResponder.html
+    )
+    .run();
+};
+
 const extractString = (value: FormDataEntryValue | null) =>
   typeof value === 'string' ? value.trim() : '';
 
@@ -22,7 +107,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const formType = extractString(formData.get('formType')) || 'contact';
   const redirectTo = extractString(formData.get('redirectTo'));
 
-  const submission = {
+  const submission: Submission = {
     id: crypto.randomUUID(),
     formType,
     name: extractString(formData.get('name')),
@@ -43,7 +128,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const env = locals.runtime?.env as Env | undefined;
 
-  if (!env?.KV) {
+  if (!env?.KV && !env?.DB) {
     return new Response('Storage unavailable.', { status: 503 });
   }
 
@@ -52,16 +137,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
     formType: submission.formType,
   });
 
-  await env.KV.put(
-    `contact:${submission.id}`,
-    JSON.stringify({ submission, autoResponder }),
-    {
-      expirationTtl: CONTACT_TTL_SECONDS,
-      metadata: {
-        formType: submission.formType,
-      },
-    }
-  );
+  const storageTasks: Promise<unknown>[] = [];
+  if (env?.KV) storageTasks.push(storeInKv(env.KV, submission, autoResponder));
+  if (env?.DB) storageTasks.push(storeInD1(env.DB, submission, autoResponder));
+
+  const storageResults = await Promise.allSettled(storageTasks);
+  const storedSuccessfully = storageResults.some((result) => result.status === 'fulfilled');
+
+  if (!storedSuccessfully) {
+    console.error('Contact submission storage failed.', storageResults);
+    return new Response('Storage unavailable.', { status: 503 });
+  }
 
   const redirectUrl = safeRedirect(redirectTo, new URL(request.url).origin);
   return Response.redirect(redirectUrl, 303);
