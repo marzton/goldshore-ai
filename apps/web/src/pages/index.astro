@@ -40,7 +40,10 @@ const highlights = [
     </div>
 
     <!-- Main Hero Section -->
-    <section class="cinematic-hero">
+    <section class="cinematic-hero blueprint-section parallax-section">
+        <div class="parallax-layer layer-blueprint" data-parallax="0.05" aria-hidden="true"></div>
+        <div class="parallax-layer layer-sheen" data-parallax="0.12" aria-hidden="true"></div>
+        <div class="parallax-layer layer-shadow" data-parallax="0.18" aria-hidden="true"></div>
         <div class="hero-content">
             <div class="badge-container fade-in-up" style="animation-delay: 0.2s;">
             <span class="vibe-badge">
@@ -66,7 +69,7 @@ const highlights = [
 
         <!-- 3D/Parallax Element -->
         <div class="hero-visual fade-in-up" style="animation-delay: 1s;">
-            <div class="glass-card tilt-card">
+            <div class="glass-card tilt-card lux-card">
             <div class="card-header">
                 <span class="dot red"></span>
                 <span class="dot yellow"></span>
@@ -129,10 +132,13 @@ const highlights = [
     </section>
 
     <!-- Features Section -->
-    <section class="features-section">
+    <section class="features-section blueprint-section parallax-section">
+        <div class="parallax-layer layer-blueprint" data-parallax="0.04" aria-hidden="true"></div>
+        <div class="parallax-layer layer-glow" data-parallax="0.1" aria-hidden="true"></div>
+        <div class="parallax-layer layer-sheen" data-parallax="0.16" aria-hidden="true"></div>
         <div class="features-grid">
             {features.map((feature, i) => (
-            <div class="feature-card glass-panel fade-in-up" style={`animation-delay: ${1.2 + (i * 0.2)}s;`}>
+            <div class="feature-card glass-panel reveal lux-card" style={`transition-delay: ${0.1 + (i * 0.1)}s;`}>
                 <div class="icon-box">
                 <span class="material-symbols-rounded">{feature.icon}</span>
                 </div>
@@ -491,6 +497,21 @@ const highlights = [
       },
       { passive: true }
     );
+
+    const revealItems = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    revealItems.forEach((item) => observer.observe(item));
   } else {
     document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
   }
