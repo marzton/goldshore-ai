@@ -23,8 +23,13 @@ const services = [
   },
   {
     name: 'Client Intake',
-    detail:
-      'Lead capture forms, CRM integrations (HubSpot/Salesforce), billing flows (Stripe/PayPal), and an opportunity ranking pipeline surfaced in admin KPIs.',
+    detail: 'Capture and qualify inbound opportunities with automation-ready workflows.',
+    bullets: [
+      'Lead capture form',
+      'CRM integration (HubSpot/Salesforce)',
+      'Billing integration (Stripe/PayPal)',
+      'Opportunity ranking pipeline surfaced in admin dashboards with KPIs'
+    ],
     cta: '/contact'
   }
 ];
@@ -52,6 +57,13 @@ const services = [
         <article class="gs-card">
           <h3>{service.name}</h3>
           <p>{service.detail}</p>
+          {service.bullets ? (
+            <ul class="gs-text-sm">
+              {service.bullets.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          ) : null}
           <GSButton href={service.cta} variant="secondary" class="gs-button--small">Talk to us</GSButton>
         </article>
       ))}
