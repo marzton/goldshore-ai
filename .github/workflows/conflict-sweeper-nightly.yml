@@ -20,7 +20,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@d3a0f055a6b75bf9fd3b7a5b1b1d6ef4b3e8a8f7 # v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20

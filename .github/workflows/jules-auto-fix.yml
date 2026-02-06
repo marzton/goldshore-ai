@@ -38,7 +38,7 @@ jobs:
           ref: ${{ steps.pr_data.outputs.branch_name }}
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@d3a0f055a6b75bf9fd3b7a5b1b1d6ef4b3e8a8f7 # v4
         with:
           run_install: false
 
@@ -99,7 +99,7 @@ jobs:
           git push
 
       - name: Comment on PR after Fix
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@e0f5f7e1e2d3c4b5a6f7e8d9c0b1a2d3e4f5a6b7 # v2
         if: steps.sync.outputs.status == 'merge_fix'
         with:
           header: Jules AutoFix
@@ -135,7 +135,7 @@ jobs:
           ref: ${{ steps.pr_data.outputs.branch_name }}
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@d3a0f055a6b75bf9fd3b7a5b1b1d6ef4b3e8a8f7 # v4
         with:
           run_install: false
 

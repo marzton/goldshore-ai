@@ -39,7 +39,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@d3a0f055a6b75bf9fd3b7a5b1b1d6ef4b3e8a8f7 # v4
         with:
           run_install: false
 
