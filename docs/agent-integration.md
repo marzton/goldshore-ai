@@ -2,7 +2,7 @@
 
 ## When to use Jules/Agent
 
-Use Jules/Agent for **automation and operational workflows** that benefit from repeatable execution and audit trails, such as:
+Use Jules/Agent for **automation tasks and operational workflows** that benefit from repeatable execution and audit trails, such as:
 
 - Routine content formatting and publishing steps.
 - Data syncing, report generation, and batch updates.
