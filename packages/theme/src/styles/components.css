@@ -218,6 +218,22 @@
   z-index: 0;
   pointer-events: none;
 }
+.gs-flow-section__flow {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  height: 120px;
+  background: linear-gradient(180deg, rgba(15, 18, 23, 0), rgba(15, 18, 23, 0.7), rgba(15, 18, 23, 0));
+  filter: blur(32px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.gs-flow-section__flow--top {
+  top: -60px;
+}
+.gs-flow-section__flow--bottom {
+  bottom: -60px;
+}
 .gs-flow-section__layer {
   position: absolute;
   inset: -30%;
