@@ -1,0 +1,48 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+
+const team = [
+  {
+    name: 'Avery Shore',
+    role: 'Systems Lead',
+    initials: 'AS',
+    bio: 'Avery leads platform reliability programs across edge and cloud environments. Focus areas include deployment safety, incident operations, and practical automation. Known for translating architecture decisions into operating rules teams can actually execute under pressure.',
+  },
+  {
+    name: 'Mina Kade',
+    role: 'AI Integration Lead',
+    initials: 'MK',
+    bio: 'Mina designs AI routing and model-governance layers for production teams. Her work emphasizes policy-aware orchestration, latency control, and measurable quality outcomes. She keeps inference systems aligned with both operator workflows and compliance requirements.',
+  },
+  {
+    name: 'Jon Calder',
+    role: 'Observability Engineer',
+    initials: 'JC',
+    bio: 'Jon builds observability systems that reduce detection and triage lag. He specializes in telemetry pipelines, runbook automation, and dashboard clarity. His operating principle is simple: if an alert fires, the next action should already be obvious.',
+  },
+];
+---
+
+<SiteLayout title="Team | GoldShore AI" description="GoldShore team profiles.">
+  <section>
+    <p class="kicker">Team</p>
+    <h1>Human operators, minimal overhead.</h1>
+  </section>
+  <section class="card-grid">
+    {team.map((member) => (
+      <article class="card">
+        <div aria-hidden="true" style="width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);font-weight:700;margin-bottom:0.6rem;">{member.initials}</div>
+        <h2>{member.name}</h2>
+        <p class="muted">{member.role}</p>
+        <p>{member.bio}</p>
+      </article>
+    ))}
+  </section>
+
+  <section>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="/contact">Start planning</a>
+      <a class="btn btn-secondary" href="/contact">Talk to us</a>
+    </div>
+  </section>
+</SiteLayout>
