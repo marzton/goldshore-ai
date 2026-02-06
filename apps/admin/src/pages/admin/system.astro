@@ -74,7 +74,9 @@ import { GSButton } from '@goldshore/ui';
 
         document.getElementById('dns-list')?.addEventListener('click', async () => {
             setOutput('dns-output', 'Loading...');
-            const response = await fetch(`${opsBase}/dns/records`);
+            const response = await fetch(`${opsBase}/dns/records`, {
+                credentials: 'include',
+            });
             const { payload } = await handleResponse(response);
             setOutput('dns-output', payload);
         });
@@ -90,7 +92,8 @@ import { GSButton } from '@goldshore/ui';
             const response = await fetch(`${opsBase}/dns/records/${recordId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content })
+                body: JSON.stringify({ content }),
+                credentials: 'include',
             });
             const { payload } = await handleResponse(response);
             setOutput('dns-update-output', payload);
@@ -98,7 +101,9 @@ import { GSButton } from '@goldshore/ui';
 
         document.getElementById('workers-status')?.addEventListener('click', async () => {
             setOutput('workers-output', 'Loading...');
-            const response = await fetch(`${opsBase}/workers/status`);
+            const response = await fetch(`${opsBase}/workers/status`, {
+                credentials: 'include',
+            });
             const { payload } = await handleResponse(response);
             setOutput('workers-output', payload);
         });
@@ -110,7 +115,9 @@ import { GSButton } from '@goldshore/ui';
                 return;
             }
             setOutput('access-output', 'Loading...');
-            const response = await fetch(`${opsBase}/access/policies?appId=${encodeURIComponent(appId)}`);
+            const response = await fetch(`${opsBase}/access/policies?appId=${encodeURIComponent(appId)}`, {
+                credentials: 'include',
+            });
             const { payload } = await handleResponse(response);
             setOutput('access-output', payload);
         });
