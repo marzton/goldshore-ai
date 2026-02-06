@@ -33,6 +33,7 @@ The template demonstrates:
 - Track PRs, issues, and workflows in admin table views.
 - Pair with gateway + agent template endpoints for real-time status.
 - Plan future staffing dashboards for human-in-the-loop approvals.
+- Reference the [agent integration policy](../../docs/agent-integration.md) for when to use Jules/Agent and required approvals.
 
 # apps/admin
 
@@ -119,6 +120,7 @@ The template demonstrates:
 - Track PRs, issues, and workflows in admin table views.
 - Pair with gateway + agent template endpoints for real-time status.
 - Plan future staffing dashboards for human-in-the-loop approvals.
+- Reference the [agent integration policy](../../docs/agent-integration.md) for when to use Jules/Agent and required approvals.
 
 ## Development
 
