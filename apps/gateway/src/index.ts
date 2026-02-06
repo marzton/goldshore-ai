@@ -34,7 +34,14 @@ app.use('*', secureHeaders());
 app.use('*', cors({
   origin: '*', // Public gateway
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
+  allowHeaders: [
+    'Content-Type',
+    'Authorization',
+    'CF-Access-Jwt-Assertion',
+    'X-Data-Classification',
+    'X-Secrets-Access-Policy',
+    'X-Audit-Trace-Id'
+  ],
   exposeHeaders: ['Content-Length'],
   maxAge: 600,
 }));
@@ -83,7 +90,7 @@ app.use('*', async (c, next) => {
     );
   }
 
-  const auditTraceId = c.req.header('X-Audit-Trace-Id');
+  const auditTraceId = c.req.header('X-Audit-Trace-Id')?.trim();
   if (!auditTraceId) {
     return c.json({ error: 'Missing audit trace id.' }, 400);
   }
