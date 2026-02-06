@@ -30,6 +30,13 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      - name: Verify pnpm lockfile
+        run: |
+          if [ ! -f pnpm-lock.yaml ]; then
+            echo "pnpm-lock.yaml is required for pnpm --frozen-lockfile installs."
+            exit 1
+          fi
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
