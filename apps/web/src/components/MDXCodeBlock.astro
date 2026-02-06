@@ -57,23 +57,12 @@ const props = Astro.props;
     color: #e4e4e7;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
-  .copy-button {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #a1a1aa;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.2s, background-color 0.2s;
-  }
+
+  /*
+    Note: The button styles might rely on global styles or require future implementation.
+    Removed dead .copy-button styles that did not match the markup.
+  */
+
   .code-block:hover .copy,
   .code-block:focus-within .copy {
     opacity: 1;
@@ -87,41 +76,3 @@ const props = Astro.props;
     background: rgba(255,255,255,0.2);
   }
 </style>
-
-<script>
-  function setupCopyButtons() {
-    const buttons = document.querySelectorAll('.copy-button');
-
-    buttons.forEach(button => {
-      // Avoid double binding
-      if (button.hasAttribute('data-initialized')) return;
-      button.setAttribute('data-initialized', 'true');
-
-      button.addEventListener('click', async () => {
-        const pre = button.nextElementSibling;
-        if (!pre) return;
-
-        const text = pre.textContent || '';
-
-        try {
-          await navigator.clipboard.writeText(text);
-
-          // Feedback
-          button.classList.add('copied');
-          button.setAttribute('aria-label', 'Copied');
-
-          setTimeout(() => {
-            button.classList.remove('copied');
-            button.setAttribute('aria-label', 'Copy code');
-          }, 2000);
-        } catch (err) {
-          console.error('Failed to copy:', err);
-        }
-      });
-    });
-  }
-
-  // Run on load and after view transitions/astro swaps
-  setupCopyButtons();
-  document.addEventListener('astro:page-load', setupCopyButtons);
-</script>

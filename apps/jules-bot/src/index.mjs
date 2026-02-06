@@ -2,6 +2,9 @@
 // This is a placeholder/starter implementation for the Jules/Palette bot server.
 // It includes the logic for handling the /palette improve command.
 
+import http from 'http';
+import crypto from 'node:crypto';
+
 // Assuming some environment variables are set:
 // GITHUB_TOKEN
 // GITHUB_ORG
@@ -31,6 +34,29 @@ if (!GITHUB_REPO) {
 if (!WEBHOOK_SECRET) {
   console.error("Missing required environment variable: WEBHOOK_SECRET");
   process.exit(1);
+}
+
+// Helper: Verify GitHub Webhook Signature (Sentinel Protection)
+function verifySignature(secret, header, payload) {
+  if (!header) return false;
+
+  const parts = header.split('=');
+  if (parts.length !== 2) return false;
+
+  const algorithm = parts[0];
+  const signature = parts[1];
+
+  if (algorithm !== 'sha256') return false;
+
+  const hmac = crypto.createHmac('sha256', secret);
+  const digest = hmac.update(payload).digest('hex');
+
+  const signatureBuffer = Buffer.from(signature, 'hex');
+  const digestBuffer = Buffer.from(digest, 'hex');
+
+  if (signatureBuffer.length !== digestBuffer.length) return false;
+
+  return crypto.timingSafeEqual(signatureBuffer, digestBuffer);
 }
 
 // Helper to post a comment using fetch (no external dependencies)
@@ -105,9 +131,25 @@ async function handleEvent(eventName, payload) {
   }
 }
 
-// Example server setup (using Node http for simplicity, but could be Express/Fastify/Hono)
-// This part is just to make the file runnable/valid if needed.
-import http from 'http';
+function verifySignature(secret, header, payload) {
+  if (!header || !header.startsWith('sha256=')) return false;
+
+  const sigHex = header.slice(7); // Remove 'sha256='
+  if (!sigHex) return false;
+
+  const hmac = crypto.createHmac('sha256', secret);
+  const digest = hmac.update(payload).digest('hex');
+
+  const sigBuffer = Buffer.from(sigHex, 'hex');
+  const digestBuffer = Buffer.from(digest, 'hex');
+
+  // Avoid timing attacks and length errors
+  if (sigBuffer.length !== digestBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(sigBuffer, digestBuffer);
+}
 
 const MAX_BODY_SIZE = 1024 * 1024; // 1MB max body size
 const server = http.createServer(async (req, res) => {
@@ -135,6 +177,17 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
+      try {
+        if (!verifySignature(WEBHOOK_SECRET, signature, body)) {
+          console.warn('Invalid signature attempt');
+          res.writeHead(401, { 'Content-Type': 'text/plain' });
+          res.end('Invalid Signature');
+          return;
+        }
+      } catch (err) {
+        console.error('Signature verification error:', err);
+        res.writeHead(400, { 'Content-Type': 'text/plain' });
+        res.end('Verification Error');
       const hmac = crypto.createHmac('sha256', WEBHOOK_SECRET);
       hmac.update(body);
       const expectedSignature = `sha256=${hmac.digest('hex')}`;
@@ -155,6 +208,7 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(200);
         res.end('OK');
       } catch (err) {
+        console.error(`Error handling event:`, err);
         console.error(`Error handling event "${req.headers['x-github-event']}":`, err);
         res.writeHead(500);
         res.end('Error');

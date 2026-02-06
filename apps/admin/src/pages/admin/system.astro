@@ -57,8 +57,16 @@ import { GSButton } from '@goldshore/ui';
         </div>
     </section>
 
-    <script is:inline>
+    <script>
+        import { createAdminService } from '@goldshore/integrations';
+
         const opsBase = 'https://ops.goldshore.ai/cloudflare';
+        const auditEndpoint = import.meta.env.PUBLIC_ADMIN_AUDIT_ENDPOINT;
+        const adminService = createAdminService({
+            apiBaseUrl: opsBase,
+            auditEndpoint,
+            actor: 'admin-system'
+        });
 
         const setOutput = (elementId, data) => {
             const el = document.getElementById(elementId);
@@ -67,14 +75,13 @@ import { GSButton } from '@goldshore/ui';
             }
         };
 
-        const handleResponse = async (response) => {
-            const payload = await response.json().catch(() => ({ error: 'Invalid JSON response' }));
-            return { ok: response.ok, payload };
-        };
-
         document.getElementById('dns-list')?.addEventListener('click', async () => {
             setOutput('dns-output', 'Loading...');
-            const response = await fetch(`${opsBase}/dns/records`);
+            const result = await adminService.listDnsRecords();
+            setOutput('dns-output', result.payload);
+            const response = await fetch(`${opsBase}/dns/records`, {
+                credentials: 'include',
+            });
             const { payload } = await handleResponse(response);
             setOutput('dns-output', payload);
         });
@@ -87,10 +94,13 @@ import { GSButton } from '@goldshore/ui';
                 return;
             }
             setOutput('dns-update-output', 'Updating...');
+            const result = await adminService.updateDnsRecord(recordId, content);
+            setOutput('dns-update-output', result.payload);
             const response = await fetch(`${opsBase}/dns/records/${recordId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content })
+                body: JSON.stringify({ content }),
+                credentials: 'include',
             });
             const { payload } = await handleResponse(response);
             setOutput('dns-update-output', payload);
@@ -98,7 +108,11 @@ import { GSButton } from '@goldshore/ui';
 
         document.getElementById('workers-status')?.addEventListener('click', async () => {
             setOutput('workers-output', 'Loading...');
-            const response = await fetch(`${opsBase}/workers/status`);
+            const result = await adminService.getWorkersStatus();
+            setOutput('workers-output', result.payload);
+            const response = await fetch(`${opsBase}/workers/status`, {
+                credentials: 'include',
+            });
             const { payload } = await handleResponse(response);
             setOutput('workers-output', payload);
         });
@@ -110,7 +124,11 @@ import { GSButton } from '@goldshore/ui';
                 return;
             }
             setOutput('access-output', 'Loading...');
-            const response = await fetch(`${opsBase}/access/policies?appId=${encodeURIComponent(appId)}`);
+            const result = await adminService.listAccessPolicies(appId);
+            setOutput('access-output', result.payload);
+            const response = await fetch(`${opsBase}/access/policies?appId=${encodeURIComponent(appId)}`, {
+                credentials: 'include',
+            });
             const { payload } = await handleResponse(response);
             setOutput('access-output', payload);
         });
