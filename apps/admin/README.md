@@ -33,6 +33,7 @@ The template demonstrates:
 - Track PRs, issues, and workflows in admin table views.
 - Pair with gateway + agent template endpoints for real-time status.
 - Plan future staffing dashboards for human-in-the-loop approvals.
+- Reference the [agent integration policy](../../docs/agent-integration.md) for when to use Jules/Agent and required approvals.
 
 # apps/admin
 
@@ -79,8 +80,8 @@ pnpm --filter ./apps/admin preview
 - Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 ## Preview Authentication
-- Preview builds reuse the centralized GitHub App callback handler; the handler completes the OAuth flow and redirects back to the preview hostname.
-- Cloudflare Access is enforced by the shared Access application and policies, with preview hostnames allowlisted alongside production.
+- Preview builds reuse the centralized GitHub App callback handler; OAuth completes in the shared callback service, which redirects back to the preview hostname instead of registering per-branch callbacks.
+- Cloudflare Access is enforced by the shared Access application and policy set, with preview hostnames allowlisted alongside production domains.
 - See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
@@ -119,6 +120,7 @@ The template demonstrates:
 - Track PRs, issues, and workflows in admin table views.
 - Pair with gateway + agent template endpoints for real-time status.
 - Plan future staffing dashboards for human-in-the-loop approvals.
+- Reference the [agent integration policy](../../docs/agent-integration.md) for when to use Jules/Agent and required approvals.
 
 ## Development
 
@@ -163,6 +165,6 @@ pnpm --filter ./apps/admin preview
 Cloudflare Pages deploys via GitHub Actions. Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 ## Preview Authentication
-- Preview builds reuse the centralized GitHub App callback handler; the handler completes the OAuth flow and redirects back to the preview hostname.
-- Cloudflare Access is enforced by the shared Access application and policies, with preview hostnames allowlisted alongside production.
+- Preview builds reuse the centralized GitHub App callback handler; OAuth completes in the shared callback service, which redirects back to the preview hostname instead of registering per-branch callbacks.
+- Cloudflare Access is enforced by the shared Access application and policy set, with preview hostnames allowlisted alongside production domains.
 - See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).

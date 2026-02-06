@@ -11,7 +11,7 @@ Cloudflare metadata (from `wrangler.toml`):
 - Environment variables: `ENV=production`, `API_ORIGIN=https://api.goldshore.ai`, `CLOUDFLARE_ACCESS_AUDIENCE`, `CLOUDFLARE_TEAM_DOMAIN`
 
 ## Routes/Endpoints
-These are worker API endpoints implemented in `src/index.ts` (not HTML pages). Route handlers are defined in `src/index.ts`.
+These are worker API endpoints implemented in `src/index.ts` (not HTML pages). The router file is the source of truth.
 - `https://gw.goldshore.ai/*` (proxy + routing entrypoint)
 - `GET /` (status page)
 - `GET /health`
