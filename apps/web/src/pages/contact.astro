@@ -76,12 +76,44 @@ export const prerender = true;
     const form = document.getElementById('contact-form');
     const button = form?.querySelector('button[type="submit"]');
 
-    if (form && button) {
-      form.addEventListener('submit', () => {
+    if (form instanceof HTMLFormElement && button) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
         if (button.hasAttribute('disabled')) return;
 
+        const originalText = button.innerHTML;
         button.setAttribute('disabled', 'true');
         button.innerHTML = '<span class="gs-loader" aria-hidden="true"></span> Sending...';
+
+        try {
+          const formData = new FormData(form);
+          const response = await fetch(form.getAttribute('action') || '/api/contact', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (response.ok || response.redirected) {
+             window.location.href = response.url;
+          } else {
+            throw new Error('Submission failed');
+          }
+        } catch (err) {
+          console.error(err);
+          button.removeAttribute('disabled');
+          button.innerHTML = originalText;
+
+          let errorMsg = form.querySelector('.gs-form-error');
+          if (!errorMsg) {
+             errorMsg = document.createElement('div');
+             errorMsg.className = 'gs-form-error';
+             form.appendChild(errorMsg);
+          }
+          if (errorMsg instanceof HTMLElement) {
+             errorMsg.style.marginTop = '1rem';
+             errorMsg.style.color = '#ef4444';
+             errorMsg.textContent = 'Unable to send message. System may be busy.';
+          }
+        }
       });
     }
   </script>
