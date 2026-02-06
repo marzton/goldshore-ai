@@ -1,24 +1,59 @@
-import { createRemoteJWKSet, jwtVerify } from "jose";
+import { createRemoteJWKSet, jwtVerify, type JWTPayload } from "jose";
 
 export interface Env {
-    // Add bindings if needed here
+    // Sentinel: Added support for Audience verification to prevent auth bypass
+    CLOUDFLARE_ACCESS_AUDIENCE?: string;
+    // Sentinel: Added support for dynamic team domain
+    CLOUDFLARE_TEAM_DOMAIN?: string;
 }
 
-const JWKS = createRemoteJWKSet(
-  new URL("https://goldshore.cloudflareaccess.com/cdn-cgi/access/certs")
-);
+// Sentinel: Default to existing hardcoded values if not provided in Env
+const DEFAULT_TEAM_DOMAIN = "goldshore.cloudflareaccess.com";
 
-export async function verifyAccess(req: Request, env: Env) {
+// Cache JWKS sets by domain to avoid recreation on every request while supporting multiple domains if needed
+const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
+
+function getJwks(domain: string) {
+    if (!jwksCache.has(domain)) {
+        jwksCache.set(domain, createRemoteJWKSet(new URL(`https://${domain}/cdn-cgi/access/certs`)));
+    }
+    return jwksCache.get(domain)!;
+}
+
+export type AccessTokenPayload = JWTPayload & {
+  email?: string;
+  groups?: string[] | string;
+  roles?: string[] | string;
+  role?: string;
+};
+
+export async function verifyAccessWithClaims(req: Request, env: Env) {
   const token = req.headers.get("CF-Access-Jwt-Assertion");
-  if (!token) return false;
+  if (!token) return null;
+
+  const teamDomain = (env && env.CLOUDFLARE_TEAM_DOMAIN) || DEFAULT_TEAM_DOMAIN;
+  const JWKS = getJwks(teamDomain);
 
   try {
-    await jwtVerify(token, JWKS, {
-      issuer: "https://goldshore.cloudflareaccess.com",
-    });
-    return true;
+    const options: { issuer: string; audience?: string } = {
+      issuer: `https://${teamDomain}`,
+    };
+
+    // Sentinel: Verify audience if provided.
+    // This is a CRITICAL security enhancement to prevent a token from one app being used in another.
+    if (env && env.CLOUDFLARE_ACCESS_AUDIENCE) {
+        options.audience = env.CLOUDFLARE_ACCESS_AUDIENCE;
+    }
+
+    const { payload } = await jwtVerify(token, JWKS, options);
+    return payload as AccessTokenPayload;
   } catch (e) {
     console.error("Token verification failed", e);
-    return false;
+    return null;
   }
+}
+
+export async function verifyAccess(req: Request, env: Env) {
+  const payload = await verifyAccessWithClaims(req, env);
+  return Boolean(payload);
 }

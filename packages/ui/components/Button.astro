@@ -1,54 +1,15 @@
 ---
-const { kind = 'primary', size = 'md', href } = Astro.props;
+const { kind = 'primary', size = 'md', href, class: className, ...attrs } = Astro.props;
 const Tag = href ? 'a' : 'button';
+const variantClass = {
+  primary: '',
+  secondary: 'gs-button--secondary',
+  destructive: 'gs-button--destructive',
+  ghost: 'gs-button--ghost',
+}[kind] ?? '';
+const sizeClass = size === 'sm' ? 'gs-button--small' : size === 'lg' ? 'gs-button--large' : '';
 ---
 
-<Tag class={`gs-btn ${kind} ${size}`} href={href}>
+<Tag class={`gs-button ${variantClass} ${sizeClass} ${className || ''}`.trim()} href={href} {...attrs}>
   <slot />
 </Tag>
-
-<style>
-  .gs-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1.4rem;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: 120ms ease;
-  }
-  .primary {
-    background: linear-gradient(90deg,#22c55e,#22d3ee);
-    color: #020617;
-  }
-  .secondary {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(148,163,184,0.4);
-    color: #e2e8f0;
-    padding: var(--gs-space-2) var(--gs-space-4);
-    border-radius: var(--gs-radius-md);
-    font-size: 0.9rem;
-    cursor: pointer;
-    border: none;
-    transition: var(--gs-trans);
-  }
-
-  .primary {
-    background: linear-gradient(90deg, var(--gs-lime), var(--gs-cyan));
-    color: #020617;
-    font-weight: 600;
-  }
-
-  .secondary {
-    border: 1px solid var(--gs-border-strong);
-    background: var(--gs-bg-panel);
-    color: var(--gs-fg-muted);
-  }
-
-  .ghost {
-    background: transparent;
-    color: var(--gs-fg-muted);
-  }
-</style>

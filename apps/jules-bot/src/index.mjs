@@ -2,14 +2,62 @@
 // This is a placeholder/starter implementation for the Jules/Palette bot server.
 // It includes the logic for handling the /palette improve command.
 
+import http from 'http';
+import crypto from 'node:crypto';
+
 // Assuming some environment variables are set:
 // GITHUB_TOKEN
 // GITHUB_ORG
 // GITHUB_REPO
+// WEBHOOK_SECRET
+
+import crypto from 'node:crypto';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_ORG = process.env.GITHUB_ORG;
 const GITHUB_REPO = process.env.GITHUB_REPO;
+const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+
+// Validate required environment variables
+if (!GITHUB_TOKEN) {
+  console.error("Missing required environment variable: GITHUB_TOKEN");
+  process.exit(1);
+}
+if (!GITHUB_ORG) {
+  console.error("Missing required environment variable: GITHUB_ORG");
+  process.exit(1);
+}
+if (!GITHUB_REPO) {
+  console.error("Missing required environment variable: GITHUB_REPO");
+  process.exit(1);
+}
+if (!WEBHOOK_SECRET) {
+  console.error("Missing required environment variable: WEBHOOK_SECRET");
+  process.exit(1);
+}
+
+// Helper: Verify GitHub Webhook Signature (Sentinel Protection)
+function verifySignature(secret, header, payload) {
+  if (!header) return false;
+
+  const parts = header.split('=');
+  if (parts.length !== 2) return false;
+
+  const algorithm = parts[0];
+  const signature = parts[1];
+
+  if (algorithm !== 'sha256') return false;
+
+  const hmac = crypto.createHmac('sha256', secret);
+  const digest = hmac.update(payload).digest('hex');
+
+  const signatureBuffer = Buffer.from(signature, 'hex');
+  const digestBuffer = Buffer.from(digest, 'hex');
+
+  if (signatureBuffer.length !== digestBuffer.length) return false;
+
+  return crypto.timingSafeEqual(signatureBuffer, digestBuffer);
+}
 
 // Helper to post a comment using fetch (no external dependencies)
 async function postComment(prNumber, body) {
@@ -28,7 +76,7 @@ async function postComment(prNumber, body) {
 
   if (!res.ok) {
     const safePrNumber = String(prNumber).replace(/\r|\n/g, '');
-    console.error('Failed to post comment to PR #%s', safePrNumber, res.status, await res.text());
+    console.error(`Failed to post comment to PR #${safePrNumber}: ${res.status} ${res.statusText}: ${await res.text()}`);
   }
 }
 
@@ -51,7 +99,7 @@ async function dispatchPaletteAction(type, data) {
   });
 
   if (!res.ok) {
-    console.error('Failed to dispatch Palette Action', res.status, await res.text());
+    console.error(`Failed to dispatch Palette Action: ${res.status} ${await res.text()}`);
   }
 }
 
@@ -68,7 +116,7 @@ async function handleEvent(eventName, payload) {
     if (!prNumber) return;
 
     // Command: /palette improve
-    if (body.startsWith('/palette') || body.startsWith('/palette improve')) {
+    if (body.startsWith('/palette')) {
       await postComment(prNumber, '🎨 Palette: scanning this PR for a micro-UX improvement…');
 
       await dispatchPaletteAction('PALETTE_RUN', {
@@ -83,17 +131,76 @@ async function handleEvent(eventName, payload) {
   }
 }
 
-// Example server setup (using Node http for simplicity, but could be Express/Fastify/Hono)
-// This part is just to make the file runnable/valid if needed.
-import http from 'http';
+function verifySignature(secret, header, payload) {
+  if (!header || !header.startsWith('sha256=')) return false;
 
+  const sigHex = header.slice(7); // Remove 'sha256='
+  if (!sigHex) return false;
+
+  const hmac = crypto.createHmac('sha256', secret);
+  const digest = hmac.update(payload).digest('hex');
+
+  const sigBuffer = Buffer.from(sigHex, 'hex');
+  const digestBuffer = Buffer.from(digest, 'hex');
+
+  // Avoid timing attacks and length errors
+  if (sigBuffer.length !== digestBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(sigBuffer, digestBuffer);
+}
+
+const MAX_BODY_SIZE = 1024 * 1024; // 1MB max body size
 const server = http.createServer(async (req, res) => {
   if (req.method === 'POST') {
     let body = '';
+    let bodyTooLarge = false;
     req.on('data', chunk => {
-      body += chunk.toString();
+      if (bodyTooLarge) return;
+      body += chunk.toString('utf8');
+      if (body.length > MAX_BODY_SIZE) {
+        bodyTooLarge = true;
+        res.writeHead(413, { 'Content-Type': 'text/plain' });
+        res.end('Payload Too Large');
+        req.destroy();
+      }
     });
     req.on('end', async () => {
+      if (bodyTooLarge) return;
+
+      // Verify Signature
+      const signature = req.headers['x-hub-signature-256'];
+      if (!signature) {
+        res.writeHead(401, { 'Content-Type': 'text/plain' });
+        res.end('Missing Signature');
+        return;
+      }
+
+      try {
+        if (!verifySignature(WEBHOOK_SECRET, signature, body)) {
+          console.warn('Invalid signature attempt');
+          res.writeHead(401, { 'Content-Type': 'text/plain' });
+          res.end('Invalid Signature');
+          return;
+        }
+      } catch (err) {
+        console.error('Signature verification error:', err);
+        res.writeHead(400, { 'Content-Type': 'text/plain' });
+        res.end('Verification Error');
+      const hmac = crypto.createHmac('sha256', WEBHOOK_SECRET);
+      hmac.update(body);
+      const expectedSignature = `sha256=${hmac.digest('hex')}`;
+
+      const signatureBuffer = Buffer.from(signature);
+      const expectedSignatureBuffer = Buffer.from(expectedSignature);
+
+      if (signatureBuffer.length !== expectedSignatureBuffer.length || !crypto.timingSafeEqual(signatureBuffer, expectedSignatureBuffer)) {
+        res.writeHead(401, { 'Content-Type': 'text/plain' });
+        res.end('Invalid Signature');
+        return;
+      }
+
       try {
         const payload = JSON.parse(body);
         const eventName = req.headers['x-github-event'];
@@ -101,7 +208,8 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(200);
         res.end('OK');
       } catch (err) {
-        console.error(err);
+        console.error(`Error handling event:`, err);
+        console.error(`Error handling event "${req.headers['x-github-event']}":`, err);
         res.writeHead(500);
         res.end('Error');
       }

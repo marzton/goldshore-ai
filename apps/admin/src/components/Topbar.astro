@@ -1,54 +1,15 @@
 ---
+import { GSButton } from '@goldshore/ui';
+
 const { title } = Astro.props;
-const envLabel =
-  import.meta.env.PUBLIC_API?.includes('preview') ? 'Preview' : 'Production';
+const envLabel = import.meta.env.PUBLIC_API?.includes('preview') ? 'Preview' : 'Production';
 ---
-
-<header class="gs-topbar">
-  <div class="gs-topbar-left">
-    <h1>{title}</h1>
-    <span class="gs-env-pill">{envLabel}</span>
+<header class="gs-admin-topbar">
+  <div class="gs-row">
+    <h1 class="gs-no-margin">{title}</h1>
+    <span class="gs-badge info">{envLabel}</span>
   </div>
-
-  <div class="gs-topbar-right">
-    <span class="gs-user-chip">Admin</span>
+  <div class="gs-row">
+    <GSButton href="/" variant="secondary" class="gs-button--small">View site</GSButton>
   </div>
 </header>
-
-<style>
-  .gs-topbar {
-    padding: 1rem 2rem 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .gs-topbar-left {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .gs-topbar h1 {
-    font-size: 1.1rem;
-    margin: 0;
-  }
-
-  .gs-env-pill {
-    padding: 0.15rem 0.5rem;
-    border-radius: 999px;
-    border: 1px solid rgba(148, 163, 184, 0.7);
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #e5e7eb;
-  }
-
-  .gs-user-chip {
-    border-radius: 999px;
-    padding: 0.35rem 0.75rem;
-    font-size: 0.8rem;
-    background: rgba(15, 23, 42, 0.9);
-    border: 1px solid rgba(148, 163, 184, 0.4);
-  }
-</style>

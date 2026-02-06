@@ -11,16 +11,16 @@ This playbook defines how to handle:
 
 ## 0. Principles
 
-1. **Lockfiles are never hand-edited.**  
+1. **Lockfiles are never hand-edited.**
    If `pnpm-lock.yaml` has conflicts, we delete and regenerate it.
 
-2. **`main` is the source of truth.**  
+2. **`main` is the source of truth.**
    Conflicted PR branches sync to `origin/main` first, then are fixed.
 
-3. **High-impact files come first.**  
+3. **High-impact files come first.**
    PRs touching infra, workers, or layouts get resolved before copy-only or minor tweaks.
 
-4. **Automate where possible.**  
+4. **Automate where possible.**
    Use `gh` and (later) Jules bot/Actions to clean branches, not manual gymnastics.
 
 ---
@@ -189,40 +189,39 @@ gh pr view <id> \
 ```
 
 Flag PRs that touch:
-*   `package.json`, `pnpm-lock.yaml`
-*   `apps/admin/*`
-*   `apps/web/*`
-*   `apps/api-worker/*`, `apps/gateway/*`, `apps/control-worker/*`
-*   `tsconfig.json`, `astro.config.mjs`, `wrangler.toml`
-*   `shared packages/*` (`theme`, `ui`, `auth`, `utils`, etc.)
+- package.json, pnpm-lock.yaml
+- apps/admin/*
+- apps/web/*
+- apps/api-worker/*, apps/gateway/*, apps/control-worker/*
+- tsconfig.json, astro.config.mjs, wrangler.toml
+- shared packages/* (theme, ui, auth, utils, etc.)
 
 Those are high-impact and should be cleaned/merged before small copy changes.
 
----
+⸻
 
 ### 3.3 Decide Merge Order
 
-**Recommended priority:**
+Recommended priority:
+1. Infra / config PRs
+   - Root package.json
+   - tsconfig.json
+   - .github/workflows/*
+   - infra/cloudflare/*
+   - wrangler.toml changes
+2. Workers
+   - apps/api-worker
+   - apps/gateway
+   - apps/control-worker
+3. Web/Admin frameworks
+   - apps/web/astro.config.mjs, apps/admin/astro.config.mjs
+   - WebLayout, AdminLayout, NavBar, Footer
+4. Pages and content
+   - apps/web/src/pages/*
+   - apps/admin/src/pages/*
+5. Docs / README / comment-only PRs
 
-1.  **Infra / config PRs**
-    *   Root `package.json`
-    *   `tsconfig.json`
-    *   `.github/workflows/*`
-    *   `infra/cloudflare/*`
-    *   `wrangler.toml` changes
-2.  **Workers**
-    *   `apps/api-worker`
-    *   `apps/gateway`
-    *   `apps/control-worker`
-3.  **Web/Admin frameworks**
-    *   `apps/web/astro.config.mjs`, `apps/admin/astro.config.mjs`
-    *   WebLayout, AdminLayout, NavBar, Footer
-4.  **Pages and content**
-    *   `apps/web/src/pages/*`
-    *   `apps/admin/src/pages/*`
-5.  **Docs / README / comment-only PRs**
-
----
+⸻
 
 ## 4. Using Jules (Automation Layer)
 
@@ -230,7 +229,7 @@ As Jules evolves into a hybrid GitHub App + Actions bot, the idea is:
 - Let Jules handle:
   - Lockfile regeneration
   - Resetting branches against main
-  - Deleting dead directories (apps/goldshore-agent, old prototypes, etc.)
+  - Deleting dead directories (apps/gs-agent, old prototypes, etc.)
   - Re-running CI after fixes
 - Let you handle:
   - Semantic decisions in conflicted source files

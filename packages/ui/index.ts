@@ -1,4 +1,5 @@
 export { default as Button } from './components/Button.astro';
+export { default as GSButton } from './GSButton.astro';
 export { default as Card } from './components/Card.astro';
 export { default as Panel } from './components/Panel.astro';
 export { default as Badge } from './components/Badge.astro';

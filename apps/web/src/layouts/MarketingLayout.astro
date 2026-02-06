@@ -1,34 +1,8 @@
 ---
-import '@goldshore/theme';
-import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
-const { title = 'GoldShore' } = Astro.props;
+import WebLayout from './WebLayout.astro';
+
+const { title, description } = Astro.props;
 ---
-
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>{title}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-  </head>
-
-  <body class="gs-body">
-    <Nav />
-    <main class="gs-main">
-      <slot />
-    </main>
-    <Footer />
-  </body>
-</html>
-
-<style>
-  .gs-body {
-    margin: 0;
-    background: #020617;
-    color: #f8fafc;
-    font-family: system-ui, sans-serif;
-  }
-  .gs-main {
-    padding-top: 80px;
-  }
-</style>
+<WebLayout title={title} description={description}>
+  <slot />
+</WebLayout>

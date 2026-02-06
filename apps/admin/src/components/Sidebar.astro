@@ -1,91 +1,47 @@
 ---
 const links = [
-  { href: '/', label: 'Overview' },
-  { href: '/systems', label: 'Systems' },
-  { href: '/trading', label: 'Trading' },
-  { href: '/settings', label: 'Settings' }
+  { href: '/admin/overview', label: 'Overview' },
+  { href: '/admin/analytics', label: 'Analytics' },
+  { href: '/admin/dashboard', label: 'Dashboard' },
+  { href: '/admin/systems', label: 'Systems' },
+  { href: '/admin/users', label: 'Users' },
+  { href: '/admin/pii-scans', label: 'PII Scans' },
+  { href: '/admin/logs', label: 'Logs' },
+  { href: '/admin/settings', label: 'Settings' }
 ];
+
+const { logo } = Astro.props;
+
+// Enhanced active state detection for nested routes
+const isActive = (href: string) => {
+  const currentPath = Astro.url.pathname;
+
+  // Clean trailing slashes for consistent comparison
+  const cleanCurrent = currentPath.endsWith('/') ? currentPath.slice(0, -1) : currentPath;
+  const cleanHref = href.endsWith('/') ? href.slice(0, -1) : href;
+
+  // Exact match
+  if (cleanCurrent === cleanHref) return true;
+
+  // Nested match (e.g., /admin/systems/details starts with /admin/systems)
+  // Ensure we don't partial match distinct roots (e.g. /admin/user vs /admin/users)
+  return cleanCurrent.startsWith(cleanHref + '/');
+};
 ---
-
-<aside class="gs-sidebar">
-  <div class="gs-sidebar-logo">
-    <span class="gs-logo-mark">◆</span>
-    <span class="gs-logo-text">GoldShore</span>
-  </div>
-
-  <nav class="gs-nav">
+<aside class="gs-admin-sidebar" aria-label="Admin navigation">
+  <a class="gs-logo" href="/admin">
+    {logo ? <img src={logo.src || logo} alt="GoldShore logo" width="24" height="32" fetchpriority="high" loading="eager" /> : <span aria-hidden="true">◆</span>}
+    <span>GoldShore</span>
+  </a>
+  <nav class="gs-sidebar-links">
     {links.map((link) => (
       <a
+        class={`gs-nav-block ${isActive(link.href) ? 'active' : ''}`}
         href={link.href}
-        class="gs-nav-link"
-        aria-current={Astro.url.pathname === link.href ? 'page' : undefined}
+        aria-current={isActive(link.href) ? 'page' : undefined}
       >
         {link.label}
       </a>
     ))}
   </nav>
 </aside>
-
-<style>
-  .gs-sidebar {
-    padding: 1.5rem 1.25rem;
-    background: radial-gradient(circle at top, #020617, #000);
-    border-right: 1px solid rgba(148, 163, 184, 0.2);
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
-
-  .gs-sidebar-logo {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    color: #e5e7eb;
-  }
-
-  .gs-logo-mark {
-    width: 26px;
-    height: 26px;
-    border-radius: 999px;
-    background: conic-gradient(
-      from 220deg,
-      #22d3ee,
-      #a855f7,
-      #facc15,
-      #22d3ee
-    );
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-  }
-
-  .gs-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-
-  .gs-nav-link {
-    padding: 0.55rem 0.75rem;
-    border-radius: 0.5rem;
-    color: #9ca3af;
-    text-decoration: none;
-    font-size: 0.9rem;
-  }
-
-  .gs-nav-link:hover {
-    background: rgba(31, 41, 55, 0.9);
-    color: #e5e7eb;
-  }
-
-  .gs-nav-link[aria-current='page'] {
-    background: linear-gradient(90deg, #22c55e33, #22d3ee33);
-    color: #f9fafb;
-    font-weight: 500;
-  }
-</style>
