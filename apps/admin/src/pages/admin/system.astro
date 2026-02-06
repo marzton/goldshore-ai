@@ -79,6 +79,11 @@ import { GSButton } from '@goldshore/ui';
             setOutput('dns-output', 'Loading...');
             const result = await adminService.listDnsRecords();
             setOutput('dns-output', result.payload);
+            const response = await fetch(`${opsBase}/dns/records`, {
+                credentials: 'include',
+            });
+            const { payload } = await handleResponse(response);
+            setOutput('dns-output', payload);
         });
 
         document.getElementById('dns-update')?.addEventListener('click', async () => {
@@ -91,12 +96,25 @@ import { GSButton } from '@goldshore/ui';
             setOutput('dns-update-output', 'Updating...');
             const result = await adminService.updateDnsRecord(recordId, content);
             setOutput('dns-update-output', result.payload);
+            const response = await fetch(`${opsBase}/dns/records/${recordId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content }),
+                credentials: 'include',
+            });
+            const { payload } = await handleResponse(response);
+            setOutput('dns-update-output', payload);
         });
 
         document.getElementById('workers-status')?.addEventListener('click', async () => {
             setOutput('workers-output', 'Loading...');
             const result = await adminService.getWorkersStatus();
             setOutput('workers-output', result.payload);
+            const response = await fetch(`${opsBase}/workers/status`, {
+                credentials: 'include',
+            });
+            const { payload } = await handleResponse(response);
+            setOutput('workers-output', payload);
         });
 
         document.getElementById('access-list')?.addEventListener('click', async () => {
@@ -108,6 +126,11 @@ import { GSButton } from '@goldshore/ui';
             setOutput('access-output', 'Loading...');
             const result = await adminService.listAccessPolicies(appId);
             setOutput('access-output', result.payload);
+            const response = await fetch(`${opsBase}/access/policies?appId=${encodeURIComponent(appId)}`, {
+                credentials: 'include',
+            });
+            const { payload } = await handleResponse(response);
+            setOutput('access-output', payload);
         });
     </script>
 </AdminLayout>
