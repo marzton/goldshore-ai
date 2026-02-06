@@ -3,7 +3,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 import { Card, Table, GSButton } from '@goldshore/ui';
 import scanResults from '../../data/pii-scan-results.json';
 
-const { summary, sources, findings, remediation, generatedAt } = scanResults;
+const { summary, sources, findings, remediation, generatedAt, alerts } = scanResults;
 
 const statusClass = summary.status === 'Critical'
   ? 'danger'
@@ -83,6 +83,34 @@ const formattedDate = new Date(generatedAt).toLocaleString('en-US', {
 
   <section class="gs-mt-6">
     <Card class="gs-table-card">
+      <div class="section-title"><span>⚑</span><h3>Alert routing</h3></div>
+      <p class="gs-helper">Escalation paths for this scan run.</p>
+      <div class="gs-pill-list gs-mt-2">
+        <span class={`gs-badge ${statusClass}`}>{alerts.status}</span>
+      </div>
+      <Table class="gs-mt-3">
+        <thead>
+          <tr>
+            <th>Channel</th>
+            <th>Owner</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {alerts.channels.map((channel) => (
+            <tr>
+              <td>{channel.channel}</td>
+              <td>{channel.owner}</td>
+              <td>{channel.action}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </Card>
+  </section>
+
+  <section class="gs-mt-6">
+    <Card class="gs-table-card">
       <div class="section-title"><span>✸</span><h3>Findings</h3></div>
       <Table>
         <thead>
@@ -92,6 +120,7 @@ const formattedDate = new Date(generatedAt).toLocaleString('en-US', {
             <th>Severity</th>
             <th>Location</th>
             <th>Snippet</th>
+            <th>Guidance</th>
           </tr>
         </thead>
         <tbody>
@@ -102,6 +131,7 @@ const formattedDate = new Date(generatedAt).toLocaleString('en-US', {
               <td><span class={`gs-badge ${severityClass(finding.severity)}`}>{finding.severity}</span></td>
               <td>{finding.location}</td>
               <td>{finding.snippet}</td>
+              <td>{finding.guidance}</td>
             </tr>
           ))}
         </tbody>

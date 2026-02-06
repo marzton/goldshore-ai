@@ -67,7 +67,7 @@ This hub documents external integrations used by GoldShore services and the admi
 
 ## Integration Catalog
 
-### Cloudflare API
+### Cloudflare API (Zones, Workers, Access, DNS)
 
 | Field | Details |
 | --- | --- |
