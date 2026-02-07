@@ -1,3 +1,5 @@
+import { escapeHtml } from '../utils/security';
+
 type AutoResponderInput = {
   name?: string;
   formType?: string;
@@ -6,7 +8,7 @@ type AutoResponderInput = {
 const DEFAULT_SIGN_OFF = '— The GoldShore team';
 
 export function buildLeadAutoResponder({ name, formType }: AutoResponderInput) {
-  const friendlyName = name?.trim() || 'there';
+  const friendlyName = name?.trim() ? escapeHtml(name.trim()) : 'there';
   const title =
     formType === 'lead-qualification'
       ? 'Thanks for sharing your project intake'
