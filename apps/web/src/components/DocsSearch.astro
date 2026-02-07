@@ -100,7 +100,7 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
   :global(.docs-search-results .error) { color: #ef4444; }
 </style>
 
-<script>
+<script lang="ts">
   function initDocsSearch(wrapper: HTMLElement) {
       const input = wrapper.querySelector('input[type="search"]') as HTMLInputElement;
       const list = wrapper.querySelector('.docs-search-results') as HTMLUListElement;
