@@ -69,6 +69,9 @@ See [ECOSYSTEM.md](./ECOSYSTEM.md) for full details on extensions and integratio
 
 ## Repository Structure
 
+![GoldShore architecture diagram showing Cloudflare Pages for web and admin, Cloudflare Workers for API, gateway, agent, and control, and storage services (KV, R2, D1, Queues, AI Gateway).](docs/architecture/diagram.svg)
+
+Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd).
 ```
 /
 ├── apps/

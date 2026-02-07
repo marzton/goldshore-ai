@@ -12,6 +12,9 @@
 **Learning:** Standard HTML forms often lack explicit association between helper text and inputs, making them opaque to screen reader users. `aria-describedby` is the semantic bridge needed.
 **Action:** Enhanced Contact Form with `autocomplete` attributes for faster completion and linked helper text via `aria-describedby` for robust accessibility.
 
+## 2025-12-24 - Documentation Search UX
+**Learning:** Documentation search bars are high-frequency targets for power users. A simple visual hint (`⌘K`) combined with a global shortcut significantly reduces friction and aligns with industry standards (e.g., Algolia DocSearch, MDN).
+**Action:** Enhanced `DocsSearch.astro` with a `⌘K` keyboard shortcut, added visual hints using semantic `<kbd>` tags, and improved the "No results" state to reduce user frustration.
 ## 2025-12-20 - Navigation State Consistency
 **Learning:** Visual active states (CSS classes) often lack the corresponding semantic `aria-current="page"` attribute, leaving screen reader users unaware of their current location. Also, "Index" pages often fail to highlight in navigation because of slug mismatches (undefined vs 'index').
 **Action:** Enforced pairing of visual active classes with `aria-current="page"` and ensured root pages pass explicit context to navigation components.
@@ -44,3 +47,7 @@
 ## 2026-05-25 - Code Block Feedback
 **Learning:** Standard Markdown rendering in Astro (`.md` files) often bypasses custom component mappings defined in `.astro` pages, limiting the ability to enhance code blocks with interactive features like copy buttons.
 **Action:** Implemented a robust `MDXCodeBlock` component with global event delegation for copy functionality and accessibility (ARIA labels, focus states). Used manual `MDXCodeBlock` in `.astro` pages where `.md` limitations prevented automatic replacement.
+
+## 2026-05-26 - Playwright Clipboard Permissions
+**Learning:** Automated tests involving `navigator.clipboard` will fail in headless environments unless specific permissions (`clipboard-read`, `clipboard-write`) are explicitly granted in the browser context.
+**Action:** When testing copy-to-clipboard functionality, always initialize the Playwright browser context with the necessary permissions.
