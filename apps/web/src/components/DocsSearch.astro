@@ -153,6 +153,23 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
         list.style.padding = '0';
         list.style.margin = '0';
 
+        if (results.length === 0) {
+           const empty = document.createElement('div');
+           empty.className = 'search-empty';
+           empty.textContent = 'No results found.';
+           empty.style.padding = '0.5rem';
+           empty.style.color = 'var(--gs-color-subtle, #64748b)';
+           empty.style.fontSize = '0.875rem';
+           resultsDiv.appendChild(empty);
+           return;
+        }
+
+        const list = document.createElement('ul');
+        list.className = 'search-results-list';
+        list.style.listStyle = 'none';
+        list.style.padding = '0';
+        list.style.margin = '0';
+
         results.forEach((r) => {
             const li = document.createElement('li');
             const a = document.createElement('a');
