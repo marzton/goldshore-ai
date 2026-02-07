@@ -63,7 +63,8 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 │   ├── admin/             # Admin dashboard (Astro)
 │   ├── api-worker/        # Hono API (Workers)
 │   ├── gateway/           # Router + jobs (Workers)
-│   ├── goldshore-agent/   # AI Agent Service (Workers)
+│   ├── gs-agent/          # AI Agent Service (Workers)
+│   ├── goldshore-agent/   # Deprecated agent shim (legacy workflows)
 │   ├── control-worker/    # Infra automation
 │   └── jules-bot/         # GitHub Automation Bot
 │
