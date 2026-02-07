@@ -80,6 +80,7 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 │   ├── api-worker/        # Hono API (Workers)
 │   ├── gateway/           # Router + jobs (Workers)
 │   ├── gs-agent/          # Autonomous AI service (Workers)
+│   ├── goldshore-agent/   # Deprecated agent shim (legacy workflows)
 │   ├── control-worker/    # Infra automation
 │   ├── jules-bot/         # GitHub automation bot
 │   └── legacy/            # Legacy services
