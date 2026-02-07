@@ -8,7 +8,7 @@
     "build": "wrangler deploy --dry-run --outdir=dist"
   },
   "dependencies": {
-    "@goldshore/auth": "file:../../packages/auth",
+    "@goldshore/auth": "workspace:*",
     "hono": "^4.0.0"
   },
   "devDependencies": {

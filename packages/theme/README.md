@@ -24,3 +24,14 @@ import logo from '@goldshore/theme/assets/logo.svg';
 - `src/styles/layout.css`: layout primitives for the web and admin shells.
 - `src/theme-manager.ts`: helper to load, apply, and persist theme preferences.
 - `assets/`: Penrose logo assets for headers and sidebars.
+
+## Responsive Guidance
+
+- Use `gs-section`, `gs-grid`, and `gs-card` classes for consistent spacing.
+- Keep navigation + menu styling inside layouts, not individual pages.
+- Templates in `apps/web` and `apps/admin` demonstrate recommended usage.
+
+## Integration Notes
+
+Theme tokens are shared by public web, admin, and Cloudflare Worker templates to ensure consistent
+visual language across AI tooling, market data dashboards, and ecommerce experiences.

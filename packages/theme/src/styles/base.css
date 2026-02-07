@@ -1,13 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap');
 @import './tokens.css';
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
 body {
   margin: 0;
   background: var(--gs-color-bg);
   color: var(--gs-color-text);
   font-family: var(--gs-font-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
   line-height: var(--gs-line-height);
+  font-size: var(--gs-font-size-body);
   min-height: 100vh;
 }
 
@@ -23,7 +30,15 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.02em;
   margin: var(--gs-space-6) 0 var(--gs-space-3);
   color: var(--gs-color-text);
+  line-height: var(--gs-line-height-heading);
 }
+
+h1 { font-size: var(--gs-font-size-h1); }
+h2 { font-size: var(--gs-font-size-h2); }
+h3 { font-size: var(--gs-font-size-h3); }
+h4 { font-size: var(--gs-font-size-h4); }
+h5 { font-size: var(--gs-font-size-h5); }
+h6 { font-size: var(--gs-font-size-h6); }
 
 p { color: var(--gs-color-subtle); margin: 0 0 var(--gs-space-4); }
 
@@ -51,14 +66,23 @@ input:focus, select:focus, textarea:focus {
 .skip-link {
   position: absolute;
   top: -100px;
-  left: var(--gs-space-4);
-  background: var(--gs-color-text);
-  color: #000;
-  padding: var(--gs-space-3) var(--gs-space-4);
-  border-radius: var(--gs-radius-sm);
-  z-index: 1000;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gs-accent);
+  color: var(--gs-accent-contrast);
+  font-weight: 700;
+  padding: var(--gs-space-3) var(--gs-space-5);
+  border-radius: var(--gs-radius-md);
+  z-index: 9999;
+  box-shadow: var(--gs-shadow-hard);
+  transition: top 0.3s cubic-bezier(.22, .61, .36, 1);
+  text-decoration: none;
 }
-.skip-link:focus { top: var(--gs-space-4); }
+.skip-link:focus {
+  top: var(--gs-space-4);
+  outline: 2px solid var(--gs-color-text);
+  outline-offset: 4px;
+}
 
 .section-title {
   display: flex;
