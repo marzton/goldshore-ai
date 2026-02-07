@@ -68,3 +68,8 @@
 **Vulnerability:** `apps/jules-bot` accepted GitHub webhooks without verifying the `x-hub-signature-256` header, allowing attackers to spoof events and trigger bot actions.
 **Learning:** Standalone scripts or "bots" often lack the middleware infrastructure of larger frameworks (like Hono/Express) where signature verification might be a standard plug-in.
 **Prevention:** Always implement HMAC signature verification for any public endpoint receiving webhooks, checking against a shared secret before parsing the payload.
+
+## 2026-06-15 - Double Escaping Risk in Email Auto-Responder
+**Vulnerability:** The contact form API (`apps/web/src/pages/api/contact.ts`) was vulnerable to HTML injection in auto-responder emails. An initial fix attempted to sanitize input at the API layer *and* the email template layer.
+**Learning:** Sanitizing inputs at the ingress (API) level for text fields that are later escaped again at the egress (Email) level leads to "double escaping" (e.g., `O'Neal` becomes `O&#039;Neal` in the database and `O&amp;#039;Neal` in the email).
+**Prevention:** Rely on **Contextual Output Encoding**. Store data raw in the database to preserve integrity, and escape it only when rendering it into a specific format (HTML, JSON, etc.). This avoids data corruption and ensures correct rendering across different contexts.

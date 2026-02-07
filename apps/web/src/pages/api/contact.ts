@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { buildLeadAutoResponder } from '../../emails/leadAutoResponder';
+import { isValidEmail } from '../../utils/security';
 
 const CONTACT_TTL_SECONDS = 60 * 60 * 24 * 90;
 
@@ -125,6 +126,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     ipAddress: request.headers.get('CF-Connecting-IP') ?? undefined,
     userAgent: request.headers.get('User-Agent') ?? undefined,
   };
+
+  if (submission.email && !isValidEmail(submission.email)) {
+    return new Response('Invalid email address.', { status: 400 });
+  }
 
   const env = locals.runtime?.env as Env | undefined;
 
