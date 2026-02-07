@@ -1,5 +1,0 @@
-127.0.0.1 - - [03/Feb/2026 04:40:25] "GET /contact HTTP/1.1" 301 -
-127.0.0.1 - - [03/Feb/2026 04:40:25] "GET /contact/ HTTP/1.1" 200 -
-127.0.0.1 - - [03/Feb/2026 04:40:25] "GET /_astro/page.D1uwR3nK.js HTTP/1.1" 200 -
-127.0.0.1 - - [03/Feb/2026 04:40:25] "GET /_astro/_path_.Cc96V2aS.css HTTP/1.1" 200 -
-127.0.0.1 - - [03/Feb/2026 04:40:25] "GET /logo.png HTTP/1.1" 200 -
