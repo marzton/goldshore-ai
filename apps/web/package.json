@@ -15,7 +15,8 @@
   "dependencies": {
     "@goldshore/theme": "workspace:*",
     "@goldshore/ui": "workspace:*",
-    "astro": "^5.15.9"
+    "astro": "^5.15.9",
+    "tailwindcss": "^3.4.19"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
