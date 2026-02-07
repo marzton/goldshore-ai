@@ -3,7 +3,7 @@ import HeaderLink from './HeaderLink.astro';
 import { SITE_TITLE } from '../consts';
 ---
 
-<header class="starfield">
+<header>
 	<nav>
 		<h2><a href="/">{SITE_TITLE}</a></h2>
 		<div class="internal-links">
@@ -46,59 +46,8 @@ import { SITE_TITLE } from '../consts';
 	header {
 		margin: 0;
 		padding: 0 1em;
-		background: radial-gradient(circle at top, rgba(46, 74, 255, 0.2), rgba(5, 7, 20, 0.95));
-		box-shadow: 0 2px 8px rgba(var(--black), 35%);
-		position: relative;
-		overflow: hidden;
-		color: #f8f9ff;
-	}
-
-	.starfield::before,
-	.starfield::after {
-		content: "";
-		position: absolute;
-		inset: -200% 0 0 0;
-		background-repeat: repeat;
-		opacity: 0.7;
-		pointer-events: none;
-	}
-
-	.starfield::before {
-		background-image:
-			radial-gradient(1px 1px at 15% 20%, rgba(255, 255, 255, 0.9) 0, transparent 100%),
-			radial-gradient(1px 1px at 70% 80%, rgba(255, 255, 255, 0.7) 0, transparent 100%),
-			radial-gradient(1px 1px at 40% 60%, rgba(255, 255, 255, 0.6) 0, transparent 100%),
-			radial-gradient(1px 1px at 85% 35%, rgba(255, 255, 255, 0.8) 0, transparent 100%);
-		background-size: 320px 320px;
-		animation: star-drift 18s linear infinite;
-	}
-
-	.starfield::after {
-		background-image:
-			radial-gradient(2px 2px at 10% 30%, rgba(255, 255, 255, 0.6) 0, transparent 100%),
-			radial-gradient(2px 2px at 55% 15%, rgba(255, 255, 255, 0.5) 0, transparent 100%),
-			radial-gradient(2px 2px at 75% 55%, rgba(255, 255, 255, 0.7) 0, transparent 100%),
-			radial-gradient(2px 2px at 30% 75%, rgba(255, 255, 255, 0.4) 0, transparent 100%);
-		background-size: 520px 520px;
-		animation: star-drift 32s linear infinite reverse;
-		opacity: 0.4;
-	}
-
-	@keyframes star-drift {
-		0% {
-			transform: translate3d(0, 0, 0);
-		}
-		100% {
-			transform: translate3d(0, 35%, 0);
-		}
-	}
-
-	nav {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		position: relative;
-		z-index: 1;
+		background: white;
+		box-shadow: 0 2px 8px rgba(var(--black), 5%);
 	}
 	h2 {
 		margin: 0;
@@ -108,17 +57,21 @@ import { SITE_TITLE } from '../consts';
 	h2 a,
 	h2 a.active {
 		text-decoration: none;
-		color: inherit;
+	}
+	nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 	}
 	nav a {
 		padding: 1em 0.5em;
-		color: #f8f9ff;
+		color: var(--black);
 		border-bottom: 4px solid transparent;
 		text-decoration: none;
 	}
 	nav a.active {
 		text-decoration: none;
-		border-bottom-color: rgba(255, 255, 255, 0.65);
+		border-bottom-color: var(--accent);
 	}
 	.social-links,
 	.social-links a {
