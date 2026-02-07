@@ -75,6 +75,14 @@ import { GSButton } from '@goldshore/ui';
             }
         };
 
+        const handleResponse = async (response) => {
+            if (!response.ok) {
+                const text = await response.text();
+                return { payload: `Error ${response.status}: ${text}` };
+            }
+            return await response.json();
+        };
+
         document.getElementById('dns-list')?.addEventListener('click', async () => {
             setOutput('dns-output', 'Loading...');
             const result = await adminService.listDnsRecords();
