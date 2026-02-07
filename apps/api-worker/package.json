@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "@goldshore/auth": "workspace:^",
-    "hono": "^4.0.0"
+    "hono": "^4.0.0",
+    "@goldshore/ai-providers": "workspace:^"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240512.0",

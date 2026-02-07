@@ -27,3 +27,20 @@
 ## 2026-01-02 - Semantic Sticky Navigation
 **Learning:** Sidebars in long documentation pages often lose context when scrolling. Sticky positioning combined with explicit `aria-current="page"` provides persistent context for both sighted and screen reader users.
 **Action:** Apply `position: sticky` and `aria-current` to all sidebar navigation components to improve wayfinding.
+
+## 2025-05-24 - Accessible Tabs
+**Learning:** Tab interfaces often neglect keyboard navigation, failing WAI-ARIA standards. Users expect Arrow keys to switch tabs, not just Tab key (which should only land on the *active* tab).
+**Action:** Implemented "roving tabindex" in `Tabs` component: only the active tab is focusable (`tabindex="0"`), others are skipped (`tabindex="-1"`). Arrow keys move focus and selection.
+
+## 2025-05-25 - Interaction Interception
+**Learning:** High-level overlay elements (like mobile menus) can inadvertently intercept pointer events for elements underneath even when visually hidden or partially obscured if not carefully managed, or if test scripts attempt to interact with covered elements.
+**Action:** Ensure verification scripts account for overlay states by clicking clear "safe zones" or scrolling elements into view.
+## 2025-01-31 - Accessible Code Copy
+**Learning:** Code blocks often lack accessible copy buttons. Inline `onclick` handlers provide no feedback and are invisible to screen readers if opacity is managed only on hover.
+**Action:** Implemented `MDXCodeBlock.astro` with a copy button that is visible on focus, uses ARIA labels for state ('Copy code' -> 'Copied'), and provides visual feedback via icon swap.
+## 2026-03-01 - Accessible Overlays & Stacking Contexts
+**Learning:** Elements designed to be accessible overlays (like skip links) can be visually obscured by fixed headers if their z-index isn't explicitly higher than the header's stacking context, even if they appear earlier in the DOM.
+**Action:** Always ensure accessibility overlays use a high z-index (e.g., 9999) to guarantee visibility above all UI layers, regardless of DOM order.
+## 2026-05-25 - Code Block Feedback
+**Learning:** Standard Markdown rendering in Astro (`.md` files) often bypasses custom component mappings defined in `.astro` pages, limiting the ability to enhance code blocks with interactive features like copy buttons.
+**Action:** Implemented a robust `MDXCodeBlock` component with global event delegation for copy functionality and accessibility (ARIA labels, focus states). Used manual `MDXCodeBlock` in `.astro` pages where `.md` limitations prevented automatic replacement.
