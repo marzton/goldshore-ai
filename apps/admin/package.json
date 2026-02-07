@@ -6,11 +6,14 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "lint": "eslint .",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "dependencies": {
-    "@goldshore/theme": "file:../../packages/theme",
-    "@goldshore/ui": "file:../../packages/ui",
+    "@goldshore/integrations": "workspace:*",
+    "@goldshore/theme": "workspace:*",
+    "@goldshore/ui": "workspace:*",
     "astro": "^5.15.9"
   },
   "devDependencies": {

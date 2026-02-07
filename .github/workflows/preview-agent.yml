@@ -5,21 +5,27 @@ permissions:
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+      - ready_for_review
     paths:
       - "apps/gs-agent/**"
-      - "apps/goldshore-agent/**"
       - "infra/cloudflare/gs-agent.wrangler.toml"
       - "infra/cloudflare/goldshore-agent.wrangler.toml"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
-  push:
-    branches:
-      - "feature/**"
 
 jobs:
   preview-agent:
     runs-on: ubuntu-latest
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'preview') ||
+      (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
 
     steps:
       - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
@@ -42,3 +48,5 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: pnpm exec wrangler deploy --env preview --config ../../infra/cloudflare/gs-agent.wrangler.toml
+
+# // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43
