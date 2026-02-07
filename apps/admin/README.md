@@ -1,43 +1,170 @@
-# Astro Starter Kit: Minimal
+# GoldShore Admin (Astro)
 
-```sh
-pnpm create astro@latest -- --template minimal
+Secure operational console for GoldShore teams.
+
+## Goals
+
+- Keep **navigation, menus, and layout shell** in `AdminLayout`.
+- Keep **dashboard modules** (tables, cards, charts) as reusable components.
+- Ensure templates make it easy to extend operations, staffing, and workflow views.
+
+## Template Page
+
+Use the admin template to scaffold new operational modules:
+
+- `src/pages/templates/index.astro`
+
+The template demonstrates:
+
+- Layout shell with sidebar + topbar.
+- Stats cards for KPI summaries.
+- Table patterns for logs, runs, and staffing.
+
+## Key Layouts + Components
+
+- `src/layouts/AdminLayout.astro`: Admin shell (sidebar + topbar).
+- `src/components/Sidebar.astro`: Navigation tree.
+- `src/components/Topbar.astro`: Global actions + page title.
+- `src/components/StatCard.astro`: KPI tiles.
+- `src/components/Table.astro`: Structured tabular data.
+
+## Operations + HITL Guidance
+
+- Track PRs, issues, and workflows in admin table views.
+- Pair with gateway + agent template endpoints for real-time status.
+- Plan future staffing dashboards for human-in-the-loop approvals.
+- Reference the [agent integration policy](../../docs/agent-integration.md) for when to use Jules/Agent and required approvals.
+
+# apps/admin
+
+## Overview
+The GoldShore admin cockpit is an Astro SSR dashboard protected by Cloudflare Access, built on the shared UI kit and theme.
+
+Cloudflare metadata:
+- Pages project name: `gs-admin` (production), `preview-admin` (preview)
+- Pages bindings config: `infra/cloudflare/goldshore-admin.wrangler.toml`
+- Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
+
+Documentation:
+- [Integrations hub (docs + admin config)](../../docs/integrations.md)
+- [Agent integration policy](../../docs/agent-integration.md)
+
+## Routes/Endpoints
+Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
+
+Admin sections:
+- `/admin/overview`
+- `/admin/api-logs`
+- `/admin/workers/status`
+- `/admin/workers/bindings`
+- `/admin/workers/routes`
+- `/admin/users/list`
+- `/admin/users/sessions`
+- `/admin/users/permissions`
+- `/admin/system/dns`
+- `/admin/system/pages`
+- `/admin/system/storage`
+- `/admin/system/secrets`
+
+## Local Dev
+```bash
+pnpm install
+pnpm --filter ./apps/admin dev
+pnpm --filter ./apps/admin build
+pnpm --filter ./apps/admin preview
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Deploy
+- Production deploy: `.github/workflows/deploy-admin.yml`
+- Preview deploy: `.github/workflows/preview-admin.yml`
+- Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
-## 🚀 Project Structure
+## Preview Authentication
+- Preview builds reuse the centralized GitHub App callback handler; OAuth completes in the shared callback service, which redirects back to the preview hostname instead of registering per-branch callbacks.
+- Cloudflare Access is enforced by the shared Access application and policy set, with preview hostnames allowlisted alongside production domains.
+- See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
-Inside of your Astro project, you'll see the following folders and files:
+<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
+# GoldShore Admin (Astro)
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+Secure operational console for GoldShore teams.
+
+## Goals
+
+- Keep **navigation, menus, and layout shell** in `AdminLayout`.
+- Keep **dashboard modules** (tables, cards, charts) as reusable components.
+- Ensure templates make it easy to extend operations, staffing, and workflow views.
+
+## Template Page
+
+Use the admin template to scaffold new operational modules:
+
+- `src/pages/templates/index.astro`
+
+The template demonstrates:
+
+- Layout shell with sidebar + topbar.
+- Stats cards for KPI summaries.
+- Table patterns for logs, runs, and staffing.
+
+## Key Layouts + Components
+
+- `src/layouts/AdminLayout.astro`: Admin shell (sidebar + topbar).
+- `src/components/Sidebar.astro`: Navigation tree.
+- `src/components/Topbar.astro`: Global actions + page title.
+- `src/components/StatCard.astro`: KPI tiles.
+- `src/components/Table.astro`: Structured tabular data.
+
+## Operations + HITL Guidance
+
+- Track PRs, issues, and workflows in admin table views.
+- Pair with gateway + agent template endpoints for real-time status.
+- Plan future staffing dashboards for human-in-the-loop approvals.
+- Reference the [agent integration policy](../../docs/agent-integration.md) for when to use Jules/Agent and required approvals.
+
+## Development
+
+```bash
+pnpm --filter @goldshore/admin dev
+```
+# apps/admin
+
+## Overview
+The GoldShore admin cockpit is an Astro SSR dashboard protected by Cloudflare Access. It uses the shared GoldShore UI kit and theme tokens.
+
+Documentation:
+- [Integrations hub (docs + admin config)](../../docs/integrations.md)
+- [Agent integration policy](../../docs/agent-integration.md)
+
+## Routes/Endpoints
+Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
+
+Admin sections:
+- `/admin/overview`
+- `/admin/api-logs`
+- `/admin/workers/status`
+- `/admin/workers/bindings`
+- `/admin/workers/routes`
+- `/admin/users/list`
+- `/admin/users/sessions`
+- `/admin/users/permissions`
+- `/admin/system/dns`
+- `/admin/system/pages`
+- `/admin/system/storage`
+- `/admin/system/secrets`
+
+## Local Dev
+```bash
+pnpm install
+pnpm --filter ./apps/admin dev
+pnpm --filter ./apps/admin build
+pnpm --filter ./apps/admin preview
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Deploy
+Cloudflare Pages deploys via GitHub Actions. Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Preview Authentication
+- Preview builds reuse the centralized GitHub App callback handler; OAuth completes in the shared callback service, which redirects back to the preview hostname instead of registering per-branch callbacks.
+- Cloudflare Access is enforced by the shared Access application and policy set, with preview hostnames allowlisted alongside production domains.
+- See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
