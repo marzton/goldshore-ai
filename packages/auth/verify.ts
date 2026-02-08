@@ -10,6 +10,12 @@ export interface Env {
 // Sentinel: Default to existing hardcoded values if not provided in Env
 const DEFAULT_TEAM_DOMAIN = "goldshore.cloudflareaccess.com";
 
+// Dependencies object to allow mocking in tests
+export const deps = {
+    createRemoteJWKSet,
+    jwtVerify
+};
+
 // Cache JWKS sets by domain to avoid recreation on every request while supporting multiple domains if needed
 const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
 
