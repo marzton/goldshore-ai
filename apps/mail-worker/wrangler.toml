@@ -1,5 +1,10 @@
 name = "gs-mail"
 main = "src/index.ts"
+compatibility_date = "2024-02-08"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENV = "production"
 compatibility_date = "2024-05-29"
 compatibility_flags = ["nodejs_compat"]
 
