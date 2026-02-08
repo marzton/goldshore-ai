@@ -25,10 +25,10 @@ const features = [
 ];
 
 const highlights = [
-  { label: 'Global Latency', value: '< 30ms', tone: 'success' },
-  { label: 'System Status', value: 'Normal', tone: 'success' },
-  { label: 'Active Nodes', value: '24/24', tone: 'info' },
-  { label: 'Threat Level', value: 'None', tone: '' },
+  { label: 'Global Latency', value: '< 30ms', tone: 'gs-badge--positive' },
+  { label: 'Uptime', value: '99.99%', tone: 'gs-badge--positive' },
+  { label: 'Threats Blocked', value: '1.2M+', tone: 'gs-badge--warning' },
+  { label: 'Active Agents', value: '850+', tone: 'gs-badge--info' }
 ];
 ---
 
@@ -52,6 +52,36 @@ const highlights = [
             </span>
             </div>
 
+        <h1 class="fade-in-up" style="animation-delay: 0.4s;">
+          Shaping Waves with <br/>
+          <span class="text-gradient">Applied Intelligence</span>
+        </h1>
+
+        <p class="hero-desc fade-in-up" style="animation-delay: 0.6s;">
+          GoldShore isn't just code. It's a provable experience. We build resilient, cinematic systems where automation meets art.
+        </p>
+
+        <div class="cta-group fade-in-up" style="animation-delay: 0.8s;">
+          <GSButton href="/services" class="glow-button">Start the Experience</GSButton>
+          <GSButton href="/contact" variant="secondary" class="glass-button">Contact Sales</GSButton>
+        </div>
+      </div>
+
+      <!-- Right Column: Visuals -->
+      <div class="hero-visual fade-in-up" style="animation-delay: 1s; display: flex; flex-direction: column; gap: 2rem;">
+
+        <!-- 3D Card -->
+        <div class="glass-card tilt-card">
+          <div class="card-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="card-title">GoldShore Agent</span>
+          </div>
+          <div class="card-body">
+            <div class="data-row">
+              <span class="label">STATUS</span>
+              <span class="value success">ACTIVE</span>
             <h1 class="fade-in-up" style="animation-delay: 0.4s;">
             Shaping Waves with <br/>
             <span class="text-gradient">Applied Intelligence</span>
@@ -99,6 +129,10 @@ const highlights = [
                 </div>
             </div>
             </div>
+            <div class="terminal-output">
+              &gt; Initializing cinematic protocols...<br/>
+              &gt; Optimizing user experience...<br/>
+              &gt; Done.
         </div>
     </section>
 
@@ -129,6 +163,21 @@ const highlights = [
             </div>
             <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
         </div>
+
+        <!-- Performance Card (Restored) -->
+        <div class="gs-card gs-pulse-frame glass-panel reveal" style="padding: 1.5rem;">
+          <h3 class="section-title" style="font-size: 1rem; margin-bottom: 1rem; color: #fff;"><span>⇄</span> Performance at a glance</h3>
+          <div class="gs-grid columns-2" style="gap: 1rem;">
+            {highlights.map((item) => (
+              <div class="gs-kpi">
+                <span style="color: #94a3b8; font-size: 0.8rem;">{item.label}</span>
+                <strong style="display: block; font-size: 1.2rem; color: #fff;">{item.value}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
     </section>
 
     <!-- Features Section -->
@@ -485,6 +534,30 @@ const highlights = [
       },
       { threshold: 0.2 }
     );
+    revealTargets.forEach((el) => revealObserver.observe(el));
+
+    // Bolt: Optimized parallax with requestAnimationFrame throttling
+    const parallaxLayers = Array.from(document.querySelectorAll('[data-parallax]'));
+    const updateParallax = () => {
+      const scrollY = window.scrollY || window.pageYOffset;
+      parallaxLayers.forEach((layer) => {
+        const speed = parseFloat(layer.dataset.parallax || '0');
+        layer.style.transform = `translate3d(0, ${scrollY * speed * -0.12}px, 0)`;
+      });
+    };
+
+    updateParallax();
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateParallax();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
 
     revealItems.forEach((item) => observer.observe(item));
     initParallax();
