@@ -21,7 +21,8 @@
     "lint": "eslint src/**"
   },
   "dependencies": {
-    "hono": "^4.0.0"
+    "hono": "^4.0.0",
+    "postal-mime": "^2.7.3"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240208.0",
