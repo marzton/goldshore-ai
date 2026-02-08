@@ -147,25 +147,6 @@ importers:
         specifier: ^3.0.0
         version: 3.114.17(@cloudflare/workers-types@4.20260207.0)
 
-  apps/goldshore-agent:
-    dependencies:
-      '@goldshore/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
-      hono:
-        specifier: ^4.0.0
-        version: 4.11.8
-    devDependencies:
-      '@cloudflare/workers-types':
-        specifier: ^4.20240208.0
-        version: 4.20260207.0
-      typescript:
-        specifier: ^5.0.0
-        version: 5.9.3
-      wrangler:
-        specifier: ^3.0.0
-        version: 3.114.17(@cloudflare/workers-types@4.20260207.0)
-
   apps/gs-agent:
     dependencies:
       '@goldshore/auth':
@@ -192,9 +173,6 @@ importers:
       hono:
         specifier: ^4.0.0
         version: 4.11.8
-      postal-mime:
-        specifier: ^2.2.0
-        version: 2.7.3
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20240208.0

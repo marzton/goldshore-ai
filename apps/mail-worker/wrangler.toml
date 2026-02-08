@@ -1,7 +1,16 @@
 name = "gs-mail"
 main = "src/index.ts"
-compatibility_date = "2024-02-08"
-compatibility_flags = ["nodejs_compat"]
+compatibility_date = "2024-03-20"
 
-[vars]
-ENV = "production"
+# Mail routing configuration (if applicable)
+# [email_routing]
+# ...
+
+[env.dev]
+name = "gs-mail-dev"
+
+[env.preview]
+name = "gs-mail-preview"
+
+[env.prod]
+name = "gs-mail-prod"
