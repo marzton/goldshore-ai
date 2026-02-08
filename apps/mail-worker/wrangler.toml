@@ -1,6 +1,8 @@
 name = "gs-mail"
 main = "src/index.ts"
-compatibility_date = "2024-03-20"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+tsconfig = "tsconfig.json"
 
 # Mail routing configuration (if applicable)
 # [email_routing]
