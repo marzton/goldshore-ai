@@ -1,6 +1,7 @@
 ---
 import { GSButton } from '@goldshore/ui';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import FlowSection from '../components/FlowSection.astro';
 
 export const prerender = true;
 ---
@@ -9,7 +10,7 @@ export const prerender = true;
   title="Project Intake | GoldShore"
   description="Share your goals and requirements so we can qualify your lead and respond quickly."
 >
-  <section class="gs-hero">
+  <FlowSection variant="hero">
     <div>
       <h1>Project intake</h1>
       <p>
@@ -112,5 +113,5 @@ export const prerender = true;
       </div>
       <GSButton type="submit">Submit intake</GSButton>
     </form>
-  </section>
+  </FlowSection>
 </BaseLayout>

@@ -12,7 +12,7 @@ const navLinks = [
 ];
 
 const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.url.pathname } = Astro.props;
-const logoSrc = '/logo.png';
+const logoSrc = '/logo.svg';
 ---
 <html lang="en">
   <head>
@@ -20,6 +20,7 @@ const logoSrc = '/logo.png';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';" />
     <link rel="icon" href="/favicon.png" type="image/png" />
     <!-- Bolt: Preconnect to external origins to speed up resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -33,7 +34,7 @@ const logoSrc = '/logo.png';
     <div class="gs-page-shell">
       <header class="gs-header" data-menu-open="false">
         <a class="gs-logo" href="/" aria-label="GoldShore home">
-          <img src={logoSrc} alt="GoldShore logo" width="36" height="36" fetchpriority="high" />
+          <img src={logoSrc} alt="GoldShore logo" width="27" height="36" fetchpriority="high" />
         </a>
         <button class="gs-nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
           <span class="material-symbols-rounded" aria-hidden="true">menu</span>
@@ -65,7 +66,7 @@ const logoSrc = '/logo.png';
           <div class="gs-grid columns-2">
             <div>
               <div class="gs-logo" style="gap: var(--gs-space-2);">
-                <img src={logoSrc} alt="GoldShore logo" width="32" height="32" loading="lazy" decoding="async" />
+                <img src={logoSrc} alt="GoldShore logo" width="24" height="32" loading="lazy" decoding="async" />
               </div>
               <p>Applied intelligence, resilient infrastructure, and responsive operations.</p>
             </div>
@@ -181,6 +182,17 @@ const logoSrc = '/logo.png';
         box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.8);
       }
 
+      @keyframes glow-pulse {
+        0%, 100% {
+          filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.3)) brightness(1.2);
+          transform: scale(1);
+        }
+        50% {
+          filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.6)) brightness(1.4);
+          transform: scale(1.05);
+        }
+      }
+
       .gs-logo {
         display: flex;
         align-items: center;
@@ -190,13 +202,15 @@ const logoSrc = '/logo.png';
         font-weight: 600;
         font-size: 1.1rem;
         letter-spacing: -0.01em;
+        padding: 0.5rem;
+        margin-right: 1.5rem;
       }
 
       .gs-logo img {
-        height: 40px;
+        height: 90px; /* 2.5x larger than base ~36px */
         width: auto;
-        /* Ensure logo blends if it has a dark bg */
         mix-blend-mode: normal;
+        animation: glow-pulse 3s infinite ease-in-out;
       }
 
       .gs-nav {

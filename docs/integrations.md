@@ -16,6 +16,10 @@ requires the `X-Data-Classification` header and rejects requests that do not com
 - `confidential`: Customer, trading, or partner data that must be protected.
 - `restricted`: Highly sensitive secrets or regulated data that requires strict controls.
 
+**Required header**
+
+- `X-Data-Classification`: One of the allowed values above.
+
 ## Secrets Access Policy
 
 Integration requests must declare the level of secrets access required for the operation. The
@@ -28,6 +32,10 @@ Integration requests must declare the level of secrets access required for the o
 - `read-write`: Secrets are read and updated/rotated.
 - `broker-credentials`: Broker or exchange credentials are accessed.
 - `market-data`: Credentials or tokens used solely for market data access.
+
+**Required header**
+
+- `X-Secrets-Access-Policy`: One of the allowed values above.
 
 ## Audit Log Trail
 
@@ -44,6 +52,10 @@ entry to the gateway audit store.
 - Timestamp
 - Cloudflare ray ID (when available)
 - Actor email (when available)
+
+**Required header**
+
+- `X-Audit-Trace-Id`: A client-generated unique identifier (UUID preferred).
 
 ## Gateway Enforcement
 

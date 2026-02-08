@@ -1,7 +1,8 @@
 name = "gs-gateway"
 main = "src/index.ts"
-compatibility_date = "2025-01-10"
+compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
+tsconfig = "tsconfig.json"
 
 workers_dev = false
 routes = [
@@ -11,8 +12,6 @@ routes = [
 [vars]
 ENV = "production"
 API_ORIGIN = "https://api.goldshore.ai"
-CLOUDFLARE_ACCESS_AUDIENCE = ""
-CLOUDFLARE_TEAM_DOMAIN = ""
 
 [[kv_namespaces]]
 binding = "gs-kv"

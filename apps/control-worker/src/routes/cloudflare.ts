@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import type { ContentfulStatusCode } from "hono/utils/http-status";
 import type { AccessTokenPayload } from "@goldshore/auth";
 import type { ControlEnv } from "../libs/types";
 
@@ -136,7 +137,7 @@ cloudflareRoutes.get("/dns/records", async (c) => {
       metadata: { status: result.status }
     });
 
-    return c.json(result.data, result.status);
+    return c.json(result.data, result.status as ContentfulStatusCode);
   } catch (error) {
     await logAuditEvent(c.env, {
       action: "cloudflare:dns:list",
@@ -191,7 +192,7 @@ cloudflareRoutes.put("/dns/records/:recordId", async (c) => {
       metadata: { status: result.status, recordId }
     });
 
-    return c.json(result.data, result.status);
+    return c.json(result.data, result.status as ContentfulStatusCode);
   } catch (error) {
     await logAuditEvent(c.env, {
       action: "cloudflare:dns:update",
@@ -218,7 +219,7 @@ cloudflareRoutes.get("/workers/status", async (c) => {
       metadata: { status: result.status }
     });
 
-    return c.json(result.data, result.status);
+    return c.json(result.data, result.status as ContentfulStatusCode);
   } catch (error) {
     await logAuditEvent(c.env, {
       action: "cloudflare:workers:status",
@@ -256,7 +257,7 @@ cloudflareRoutes.get("/access/policies", async (c) => {
       metadata: { status: result.status, appId }
     });
 
-    return c.json(result.data, result.status);
+    return c.json(result.data, result.status as ContentfulStatusCode);
   } catch (error) {
     await logAuditEvent(c.env, {
       action: "cloudflare:access:policies",

@@ -9,8 +9,8 @@
 | `apps/api-worker` | `gs-api` | Worker | Active | Core API logic |
 | `apps/gateway` | `@goldshore/gateway` | Worker (Hono) | Active | API Gateway / Router |
 | `apps/control-worker` | `@goldshore/control` | Worker (Hono) | Active | Control plane logic |
-| `apps/goldshore-agent` | `goldshore-agent` | Worker (Hono) | Development | AI Agent Logic |
-| `apps/gs-agent` | `@goldshore/agent` | Worker | Evaluation | Alternative Agent impl? |
+| `apps/gs-agent` | `@goldshore/agent` | Worker (Hono) | Active | Canonical AI agent service |
+| `apps/goldshore-agent` | `goldshore-agent` | Worker (Hono) | Deprecated | Legacy shim kept in sync with `gs-agent` |
 | `apps/jules-bot` | `jules-bot` | Node.js | Experimental | Bot logic |
 
 ## Legacy / Archive
@@ -28,6 +28,4 @@
 - **Frameworks**: Astro, Hono, Cloudflare Workers
 
 ## Recent Updates
-- Standardized `lint` and `test` scripts across major apps.
-- Added `tsconfig.json` and `.eslintrc.cjs` to `goldshore-agent`.
-- Updated assets (Logo/Favicon) in `apps/web`.
+- Reconciled the agent worker so `apps/gs-agent` is the single active implementation, with `apps/goldshore-agent` retained as a legacy shim.
