@@ -1,6 +1,6 @@
 {
-  "name": "goldshore-agent",
-  "version": "0.0.1",
+  "name": "gs-mail",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
     "dev": "wrangler dev src/index.ts",
@@ -9,7 +9,6 @@
     "lint": "eslint src/**"
   },
   "dependencies": {
-    "@goldshore/auth": "workspace:*",
     "hono": "^4.0.0"
   },
   "devDependencies": {
