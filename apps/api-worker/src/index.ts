@@ -16,6 +16,10 @@ type Env = {
   AI: any;
   OPENAI_API_KEY?: string;
   GEMINI_API_KEY?: string;
+  // Sentinel: Added support for Audience verification to prevent auth bypass
+  CLOUDFLARE_ACCESS_AUDIENCE?: string;
+  // Sentinel: Added support for dynamic team domain
+  CLOUDFLARE_TEAM_DOMAIN?: string;
 };
 
 const app = new Hono<{ Bindings: Env }>();
