@@ -1,7 +1,7 @@
 import type { AuthTokenConfig } from './auth';
 import { createAuthTokenManager } from './auth';
-import { createAuditLogger } from './audit';
-import { createHttpClient } from './http';
+import { type AuditLogger, createAuditLogger } from './audit';
+import { type HttpClient, createHttpClient } from './http';
 
 export type AdminServiceResult<T = unknown> = {
   ok: boolean;
@@ -14,21 +14,29 @@ export type AdminServiceConfig = {
   auditEndpoint?: string;
   actor?: string;
   logger?: Pick<Console, 'info' | 'warn' | 'error'>;
+  httpClient?: HttpClient;
+  auditLogger?: AuditLogger;
 };
 
 export const createAdminService = (config: AdminServiceConfig) => {
   const logger = config.logger ?? console;
   const authTokenManager = config.auth ? createAuthTokenManager(config.auth) : undefined;
-  const httpClient = createHttpClient({
-    baseUrl: config.apiBaseUrl,
-    authTokenManager,
-    logger
-  });
-  const auditLogger = createAuditLogger({
-    endpoint: config.auditEndpoint,
-    httpClient,
-    logger
-  });
+
+  const httpClient =
+    config.httpClient ??
+    createHttpClient({
+      baseUrl: config.apiBaseUrl,
+      authTokenManager,
+      logger
+    });
+
+  const auditLogger =
+    config.auditLogger ??
+    createAuditLogger({
+      endpoint: config.auditEndpoint,
+      httpClient,
+      logger
+    });
 
   const parseResponse = async <T>(response: Response): Promise<AdminServiceResult<T>> => {
     try {

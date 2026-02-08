@@ -61,6 +61,9 @@ importers:
       typescript:
         specifier: ^5.4.2
         version: 5.9.3
+      wrangler:
+        specifier: ^3.114.0
+        version: 3.114.17(@cloudflare/workers-types@4.20260207.0)
       yaml:
         specifier: ^2.8.2
         version: 2.8.2
@@ -83,6 +86,12 @@ importers:
       '@astrojs/cloudflare':
         specifier: latest
         version: 12.6.12(@types/node@25.2.1)(astro@5.17.1(@types/node@25.2.1)(jiti@1.21.7)(rollup@4.57.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
+      '@types/node':
+        specifier: ^25.0.1
+        version: 25.2.1
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -144,7 +153,7 @@ importers:
         specifier: ^5.0.0
         version: 5.9.3
       wrangler:
-        specifier: ^3.0.0
+        specifier: ^3.114.17
         version: 3.114.17(@cloudflare/workers-types@4.20260207.0)
 
   apps/gs-agent:
@@ -163,7 +172,7 @@ importers:
         specifier: ^5.0.0
         version: 5.9.3
       wrangler:
-        specifier: ^3.0.0
+        specifier: ^3.114.17
         version: 3.114.17(@cloudflare/workers-types@4.20260207.0)
 
   apps/jules-bot: {}
@@ -173,6 +182,9 @@ importers:
       hono:
         specifier: ^4.0.0
         version: 4.11.8
+      postal-mime:
+        specifier: ^2.7.3
+        version: 2.7.3
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20240208.0
@@ -181,7 +193,7 @@ importers:
         specifier: ^5.0.0
         version: 5.9.3
       wrangler:
-        specifier: ^3.0.0
+        specifier: ^3.114.17
         version: 3.114.17(@cloudflare/workers-types@4.20260207.0)
 
   apps/web:

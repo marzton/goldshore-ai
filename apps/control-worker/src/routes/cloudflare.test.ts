@@ -11,10 +11,11 @@ type MockKVNamespace = {
 describe('Cloudflare Routes Middleware', () => {
   let mockEnv: any;
   let auditLogs: any[] = [];
-  const originalFetch = global.fetch;
+  let backgroundTasks: Promise<any>[] = [];
 
   beforeEach(() => {
     auditLogs = [];
+    backgroundTasks = [];
     mockEnv = {
       CONTROL_LOGS: {
         put: async (key: string, value: string) => {
@@ -46,7 +47,14 @@ describe('Cloudflare Routes Middleware', () => {
     // Mount the routes under test
     app.route('/', cloudflareRoutes as any);
 
-    return app.request(`http://localhost${path}`, { method }, mockEnv);
+    const executionCtx = {
+      waitUntil: (promise: Promise<any>) => {
+        backgroundTasks.push(promise);
+      },
+      passThroughOnException: () => {}
+    };
+
+    return app.request(`http://localhost${path}`, { method }, mockEnv, executionCtx as any);
   };
 
   it('should deny access if user has no roles', async () => {
@@ -54,6 +62,8 @@ describe('Cloudflare Routes Middleware', () => {
       email: 'user@example.com',
       roles: [],
     });
+
+    await Promise.all(backgroundTasks);
 
     assert.strictEqual(response.status, 403);
     const body = await response.json() as any;
@@ -71,6 +81,8 @@ describe('Cloudflare Routes Middleware', () => {
       email: 'user@example.com',
       roles: ['viewer'],
     });
+
+    await Promise.all(backgroundTasks);
 
     assert.strictEqual(response.status, 403);
 
@@ -90,6 +102,8 @@ describe('Cloudflare Routes Middleware', () => {
       email: 'admin@example.com',
       roles: ['admin'],
     });
+
+    await Promise.all(backgroundTasks);
 
     assert.strictEqual(response.status, 200);
     const body = await response.json() as any;
@@ -112,6 +126,8 @@ describe('Cloudflare Routes Middleware', () => {
       roles: ['ops'],
     });
 
+    await Promise.all(backgroundTasks);
+
     assert.strictEqual(response.status, 200);
   });
 
@@ -124,6 +140,8 @@ describe('Cloudflare Routes Middleware', () => {
       email: 'admin@example.com',
       role: 'admin', // Single string role
     });
+
+    await Promise.all(backgroundTasks);
 
     assert.strictEqual(response.status, 200);
   });
@@ -138,12 +156,16 @@ describe('Cloudflare Routes Middleware', () => {
       groups: ['admin'],
     });
 
+    await Promise.all(backgroundTasks);
+
     assert.strictEqual(response.status, 200);
   });
 
   it('should deny access if user is missing claims entirely (handled gracefully)', async () => {
     // Although our harness injects claims, if we inject empty object or missing critical fields
     const response = await createRequest({});
+
+    await Promise.all(backgroundTasks);
 
     assert.strictEqual(response.status, 403);
   });
@@ -157,6 +179,8 @@ describe('Cloudflare Routes Middleware', () => {
       email: 'admin@example.com',
       roles: ['admin'],
     });
+
+    await Promise.all(backgroundTasks);
 
     // The route catches error and returns 502 or returns the status from CF?
     // In cloudflare.ts:
@@ -181,6 +205,8 @@ describe('Cloudflare Routes Middleware', () => {
       email: 'admin@example.com',
       roles: ['admin'],
     });
+
+    await Promise.all(backgroundTasks);
 
     assert.strictEqual(response.status, 502);
     const body = await response.json() as any;
