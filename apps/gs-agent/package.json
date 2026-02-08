@@ -6,15 +6,15 @@
   "scripts": {
     "dev": "wrangler dev src/index.ts --config ../../infra/cloudflare/gs-agent.wrangler.toml",
     "deploy": "wrangler deploy --minify src/index.ts --config ../../infra/cloudflare/gs-agent.wrangler.toml",
-    "build": "pnpm exec wrangler deploy src/index.ts --dry-run --outdir=dist --config ../../infra/cloudflare/gs-agent.wrangler.toml"
+    "build": "npx wrangler deploy src/index.ts --dry-run --outdir=dist --config ../../infra/cloudflare/gs-agent.wrangler.toml"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
     "hono": "^4.0.0"
   },
   "devDependencies": {
-    "wrangler": "^3.101.0",
+    "@cloudflare/workers-types": "^4.0.0",
     "typescript": "^5.0.0",
-    "@cloudflare/workers-types": "^4.0.0"
+    "wrangler": "^3.114.17"
   }
 }

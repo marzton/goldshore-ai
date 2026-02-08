@@ -1,31 +1,20 @@
 {
-  "name": "@goldshore/mail",
-  "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "build": "wrangler deploy --dry-run --outdir=dist",
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
-    "lint": "eslint .",
-    "test": "echo \"No tests specified\" && exit 0"
-  },
-  "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240529.0",
   "name": "gs-mail",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy --minify src/index.ts",
-    "build": "pnpm exec wrangler deploy --dry-run --outdir=dist",
+    "build": "npx wrangler deploy --dry-run --outdir=dist",
     "lint": "eslint src/**"
   },
   "dependencies": {
-    "hono": "^4.0.0"
+    "hono": "^4.0.0",
+    "postal-mime": "^2.7.3"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240208.0",
     "typescript": "^5.0.0",
-    "wrangler": "^3.101.0"
+    "wrangler": "^3.114.17"
   }
 }
