@@ -13,7 +13,8 @@ app.post('/email', async (c) => {
 
 export default {
   fetch: app.fetch,
-  async email(message: any, env: any, ctx: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+  async email(message: any, _env: any, _ctx: any) {
     // Basic email handler for Cloudflare Email Routing
     console.log(`Received email from: ${message.from}`);
     // "Install, config, manage, etc."
