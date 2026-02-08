@@ -4,6 +4,7 @@ name = "gs-agent" # Base name, will be suffixed per environment
 main = "../../apps/gs-agent/src/index.ts"
 compatibility_date = "2024-03-20"
 tsconfig = "../../apps/gs-agent/tsconfig.json"
+compatibility_flags = ["nodejs_compat"]
 
 # This worker is queue-driven, so we define the consumer here.
 [[queues.consumers]]
