@@ -7,6 +7,7 @@ settings:
 overrides:
   '@astrojs/cloudflare': latest
   '@astrojs/adapter-cloudflare': latest
+  postal-mime: 2.7.3
 
 importers:
 
@@ -183,7 +184,7 @@ importers:
         specifier: ^4.0.0
         version: 4.11.8
       postal-mime:
-        specifier: ^2.7.3
+        specifier: 2.7.3
         version: 2.7.3
     devDependencies:
       '@cloudflare/workers-types':
@@ -207,6 +208,9 @@ importers:
       astro:
         specifier: ^5.15.9
         version: 5.17.1(@types/node@25.2.1)(jiti@1.21.7)(rollup@4.57.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
+      fuse.js:
+        specifier: ^7.1.0
+        version: 7.1.0
     devDependencies:
       '@astrojs/check':
         specifier: ^0.9.6
@@ -2362,6 +2366,10 @@ packages:
 
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
+
+  fuse.js@7.1.0:
+    resolution: {integrity: sha512-trLf4SzuuUxfusZADLINj+dE8clK1frKdmqiJNb1Es75fmI5oY6X2mxLVUciLLjxqw/xr72Dhy+lER6dGd02FQ==}
+    engines: {node: '>=10'}
 
   get-caller-file@2.0.5:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
@@ -5886,6 +5894,8 @@ snapshots:
     optional: true
 
   function-bind@1.1.2: {}
+
+  fuse.js@7.1.0: {}
 
   get-caller-file@2.0.5: {}
 
