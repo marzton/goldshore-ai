@@ -1,10 +1,10 @@
 # wrangler.toml for the background Agent Worker
 
 name = "gs-agent" # Base name, will be suffixed per environment
-main = "../../apps/gs-agent/src/index.ts"
+main = "src/index.ts"
 compatibility_date = "2024-03-20"
 compatibility_flags = ["nodejs_compat"]
-tsconfig = "../../apps/gs-agent/tsconfig.json"
+tsconfig = "tsconfig.json"
 
 # This worker is queue-driven, so we define the consumer here.
 [[queues.consumers]]
