@@ -11,8 +11,6 @@ import crypto from 'node:crypto';
 // GITHUB_REPO
 // WEBHOOK_SECRET
 
-import crypto from 'node:crypto';
-
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_ORG = process.env.GITHUB_ORG;
 const GITHUB_REPO = process.env.GITHUB_REPO;
@@ -34,29 +32,6 @@ if (!GITHUB_REPO) {
 if (!WEBHOOK_SECRET) {
   console.error("Missing required environment variable: WEBHOOK_SECRET");
   process.exit(1);
-}
-
-// Helper: Verify GitHub Webhook Signature (Sentinel Protection)
-function verifySignature(secret, header, payload) {
-  if (!header) return false;
-
-  const parts = header.split('=');
-  if (parts.length !== 2) return false;
-
-  const algorithm = parts[0];
-  const signature = parts[1];
-
-  if (algorithm !== 'sha256') return false;
-
-  const hmac = crypto.createHmac('sha256', secret);
-  const digest = hmac.update(payload).digest('hex');
-
-  const signatureBuffer = Buffer.from(signature, 'hex');
-  const digestBuffer = Buffer.from(digest, 'hex');
-
-  if (signatureBuffer.length !== digestBuffer.length) return false;
-
-  return crypto.timingSafeEqual(signatureBuffer, digestBuffer);
 }
 
 // Helper to post a comment using fetch (no external dependencies)
@@ -131,6 +106,7 @@ async function handleEvent(eventName, payload) {
   }
 }
 
+// Helper: Verify GitHub Webhook Signature (Sentinel Protection)
 function verifySignature(secret, header, payload) {
   if (!header || !header.startsWith('sha256=')) return false;
 
@@ -184,33 +160,15 @@ const server = http.createServer(async (req, res) => {
           res.end('Invalid Signature');
           return;
         }
-      } catch (err) {
-        console.error('Signature verification error:', err);
-        res.writeHead(400, { 'Content-Type': 'text/plain' });
-        res.end('Verification Error');
-      const hmac = crypto.createHmac('sha256', WEBHOOK_SECRET);
-      hmac.update(body);
-      const expectedSignature = `sha256=${hmac.digest('hex')}`;
 
-      const signatureBuffer = Buffer.from(signature);
-      const expectedSignatureBuffer = Buffer.from(expectedSignature);
-
-      if (signatureBuffer.length !== expectedSignatureBuffer.length || !crypto.timingSafeEqual(signatureBuffer, expectedSignatureBuffer)) {
-        res.writeHead(401, { 'Content-Type': 'text/plain' });
-        res.end('Invalid Signature');
-        return;
-      }
-
-      try {
         const payload = JSON.parse(body);
         const eventName = req.headers['x-github-event'];
         await handleEvent(eventName, payload);
         res.writeHead(200);
         res.end('OK');
       } catch (err) {
-        console.error(`Error handling event:`, err);
-        console.error(`Error handling event "${req.headers['x-github-event']}":`, err);
-        res.writeHead(500);
+        console.error('Signature verification or handling error:', err);
+        res.writeHead(400, { 'Content-Type': 'text/plain' });
         res.end('Error');
       }
     });
