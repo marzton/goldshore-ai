@@ -21,20 +21,15 @@ const app = new Hono<{
 // Sentinel: Add security headers to all responses (Defense in Depth)
 app.use('*', secureHeaders());
 
-const allowedOrigins = new Set([
-  "https://admin.goldshore.ai",
-  "https://admin-preview.goldshore.ai",
-  "http://localhost:4321"
-]);
-
 app.use(
   "*",
   cors({
-    origin: (origin) => {
+    origin: (origin, c) => {
       if (!origin) {
         return undefined;
       }
-      return allowedOrigins.has(origin) ? origin : undefined;
+      const allowedOrigins = (c.env.ALLOWED_ORIGINS ?? "https://admin.goldshore.ai,https://admin-preview.goldshore.ai,http://localhost:4321").split(",");
+      return allowedOrigins.map((s) => s.trim()).includes(origin) ? origin : undefined;
     },
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization", "CF-Access-Jwt-Assertion"],
