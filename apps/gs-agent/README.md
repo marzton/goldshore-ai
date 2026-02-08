@@ -1,7 +1,7 @@
 # apps/gs-agent
 
 ## Overview
-The `gs-agent` worker is a queue-driven background agent. It currently returns a simple response for fetch requests and includes a stubbed queue consumer. The deprecated `apps/goldshore-agent` directory has been consolidated into this app; legacy workflows still reference `infra/cloudflare/goldshore-agent.wrangler.toml`.
+The `gs-agent` worker is the canonical GoldShore agent service. It serves a small Hono-based status UI, exposes a health endpoint, and enforces Cloudflare Access auth on protected routes. The deprecated `apps/goldshore-agent` directory now mirrors this implementation; legacy workflows still reference `infra/cloudflare/goldshore-agent.wrangler.toml`.
 
 Cloudflare metadata (from `infra/cloudflare/gs-agent.wrangler.toml`):
 - Worker base name: `gs-agent` (per-environment names: `gs-agent-dev`, `gs-agent-preview`, `gs-agent-prod`)
@@ -13,12 +13,12 @@ Codex bot decision:
 - A placeholder `codex-bot` module now lives in `apps/gs-agent/src/bots/codex-bot.ts` for future queue-driven automation.
 
 ## Routes/Endpoints
-- No production routes are configured in the Wrangler config.
-The `gs-agent` worker is a queue-driven background agent. It currently returns a simple response for fetch requests and includes a stubbed queue consumer. The Wrangler configuration lives in `infra/cloudflare/gs-agent.wrangler.toml` and defines queue consumers for `goldshore-jobs`.
+- `/` → status UI
+- `/health` → JSON health response
 
-## Routes/Endpoints
-- No production routes are configured in `wrangler.toml`.
-- Local dev exposes the worker via `wrangler dev`, returning `Hello from the GoldShore Agent!` from the fetch handler.
+## Configuration
+- The Wrangler configuration lives in `infra/cloudflare/gs-agent.wrangler.toml` and defines queue consumers for `goldshore-jobs`.
+- Local dev exposes the worker via `wrangler dev`.
 
 ## Local Dev
 ```bash

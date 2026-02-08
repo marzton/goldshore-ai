@@ -249,6 +249,16 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
     });
   }
 
+  // Palette: Add keyboard shortcut for search
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      const searchInput = document.getElementById('docs-search-input');
+      if (searchInput) {
+        searchInput.focus();
+      }
+    }
+  });
   // Initialize all instances
   document.querySelectorAll('.search-wrapper').forEach(wrapper => {
     initDocsSearch(wrapper as HTMLElement);
