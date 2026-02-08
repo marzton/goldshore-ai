@@ -13,6 +13,8 @@ export function escapeHtml(unsafe: string): string {
     .replace(/'/g, "&#039;");
 }
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 /**
  * Validates an email address format.
  * @param email The email address to validate.
@@ -20,8 +22,7 @@ export function escapeHtml(unsafe: string): string {
  */
 export function isValidEmail(email: string): boolean {
   // Simple regex for basic validation
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
+  return EMAIL_REGEX.test(email);
 }
 
 /**
