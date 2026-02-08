@@ -67,7 +67,7 @@ export const createAdminService = (config: AdminServiceConfig) => {
       logger.error('[admin] request failed', { action, target, error });
       return { ok: false, payload: { error: 'Request failed' } };
     } finally {
-      void auditLogger
+      auditLogger
         .logAdminAction({
           action,
           actor: config.actor,
