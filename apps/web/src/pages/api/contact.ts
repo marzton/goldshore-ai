@@ -2,7 +2,8 @@ import type { APIRoute } from 'astro';
 import { buildLeadAutoResponder } from '../../emails/leadAutoResponder';
 import { isValidEmail } from '../../utils/security';
 
-const CONTACT_TTL_SECONDS = 60 * 60 * 24 * 90;
+// Default to 90 days if not set in environment
+const DEFAULT_CONTACT_TTL_SECONDS = 60 * 60 * 24 * 90;
 
 type Submission = {
   id: string;
@@ -26,10 +27,11 @@ type Submission = {
 const storeInKv = async (
   kv: KVNamespace,
   submission: Submission,
-  autoResponder: ReturnType<typeof buildLeadAutoResponder>
+  autoResponder: ReturnType<typeof buildLeadAutoResponder>,
+  ttl: number
 ) => {
   await kv.put(`contact:${submission.id}`, JSON.stringify({ submission, autoResponder }), {
-    expirationTtl: CONTACT_TTL_SECONDS,
+    expirationTtl: ttl,
     metadata: {
       formType: submission.formType,
     },
@@ -137,13 +139,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response('Storage unavailable.', { status: 503 });
   }
 
+  const ttl = env?.CONTACT_TTL_SECONDS ? parseInt(env.CONTACT_TTL_SECONDS, 10) : DEFAULT_CONTACT_TTL_SECONDS;
+
   const autoResponder = buildLeadAutoResponder({
     name: submission.name,
     formType: submission.formType,
   });
 
   const storageTasks: Promise<unknown>[] = [];
-  if (env?.KV) storageTasks.push(storeInKv(env.KV, submission, autoResponder));
+  if (env?.KV) storageTasks.push(storeInKv(env.KV, submission, autoResponder, ttl));
   if (env?.DB) storageTasks.push(storeInD1(env.DB, submission, autoResponder));
 
   const storageResults = await Promise.allSettled(storageTasks);
