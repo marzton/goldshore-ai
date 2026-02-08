@@ -20,3 +20,7 @@
 ## 2025-05-13 - [DOM Redundancy & Scroll Performance]
 **Learning:** Found critical DOM duplication (nested Layouts) in `index.astro` doubling page weight. Also identified scroll jank due to synchronous listeners.
 **Action:** Verify Layouts are not nested in Page components. Use `requestAnimationFrame` + `ticking` flag for all scroll listeners.
+
+## 2026-05-24 - [Duplicate Scroll Listeners]
+**Learning:** Found redundant inline scroll listener in `index.astro` duplicating logic already provided by `parallax.ts` (IntersectionObserver + RAF).
+**Action:** Always check if an imported utility function is being ignored before re-implementing logic inline, especially for expensive operations like scroll.
