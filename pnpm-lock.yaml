@@ -7,6 +7,7 @@ settings:
 overrides:
   '@astrojs/cloudflare': latest
   '@astrojs/adapter-cloudflare': latest
+  postal-mime: 2.7.3
 
 importers:
 
@@ -183,7 +184,7 @@ importers:
         specifier: ^4.0.0
         version: 4.11.8
       postal-mime:
-        specifier: ^2.7.3
+        specifier: 2.7.3
         version: 2.7.3
     devDependencies:
       '@cloudflare/workers-types':
