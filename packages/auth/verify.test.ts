@@ -1,124 +1,118 @@
-import { test, describe, before, after, mock } from 'node:test';
+import { test, describe, before, beforeEach, after, mock } from 'node:test';
 import assert from 'node:assert';
-import { verifyAccess, verifyAccessWithClaims, deps, type Env } from './verify.ts';
+import { verifyAccess, verifyAccessWithClaims, verifyAccessWithClaimsInternal, type Env, type Dependencies } from './verify.ts';
 
 describe('verifyAccess', () => {
-    // Helper to mock jwtVerify
-    function mockJwtVerify(impl: any) {
-        // mock.method replaces the method on the object
-        return mock.method(deps, 'jwtVerify', impl);
-    }
-
-    // Helper to mock createRemoteJWKSet
-    function mockCreateRemoteJWKSet(impl: any) {
-        return mock.method(deps, 'createRemoteJWKSet', impl);
-    }
+    let mockDeps: Dependencies;
+    let createRemoteJWKSetMock: any;
+    let jwtVerifyMock: any;
 
     before(() => {
-        // Mock createRemoteJWKSet globally for all tests since it's cached
-        mockCreateRemoteJWKSet(() => ({}));
+        // Initialize mocks with safe defaults
+        createRemoteJWKSetMock = mock.fn(() => ({}));
+        jwtVerifyMock = mock.fn(async () => ({ payload: {} }));
+
+        mockDeps = {
+            createRemoteJWKSet: createRemoteJWKSetMock,
+            jwtVerify: jwtVerifyMock,
+        };
+    });
+
+    beforeEach(() => {
+        // Reset call history
+        createRemoteJWKSetMock.mock.resetCalls();
+        jwtVerifyMock.mock.resetCalls();
+        // Reset implementation to default safe behavior
+        jwtVerifyMock.mock.mockImplementation(async () => ({ payload: {} }));
+        createRemoteJWKSetMock.mock.mockImplementation(() => ({}));
     });
 
     after(() => {
         mock.reset();
     });
 
-    test('returns false when no token header is present', async () => {
+    const testVerify = async (req: Request, env: Env) => {
+        return verifyAccessWithClaimsInternal(req, env, mockDeps);
+    };
+
+    test('returns null when no token header is present', async () => {
         const req = new Request('http://example.com');
         const env: Env = {};
-        const result = await verifyAccess(req, env);
-        assert.strictEqual(result, false);
+        const result = await testVerify(req, env);
+        assert.strictEqual(result, null);
     });
 
-    test('returns false when jwtVerify throws an error (invalid token)', async () => {
+    test('returns null when jwtVerify throws an error (invalid token)', async () => {
         const req = new Request('http://example.com', {
             headers: { 'CF-Access-Jwt-Assertion': 'invalid-token' }
         });
         const env: Env = {};
 
-        const jwtVerifyMock = mockJwtVerify(async () => {
+        jwtVerifyMock.mock.mockImplementation(async () => {
             throw new Error('Invalid token');
         });
 
-        const result = await verifyAccess(req, env);
-        assert.strictEqual(result, false);
+        const result = await testVerify(req, env);
+        assert.strictEqual(result, null);
         assert.strictEqual(jwtVerifyMock.mock.callCount(), 1);
-
-        jwtVerifyMock.mock.restore();
     });
 
-    test('returns true when jwtVerify succeeds (valid token)', async () => {
+    test('returns payload when jwtVerify succeeds (valid token)', async () => {
         const req = new Request('http://example.com', {
             headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
         });
         const env: Env = {};
         const mockPayload = { sub: 'user123', email: 'test@example.com' };
 
-        const jwtVerifyMock = mockJwtVerify(async () => {
+        jwtVerifyMock.mock.mockImplementation(async () => {
             return { payload: mockPayload };
         });
 
-        const result = await verifyAccess(req, env);
-        assert.strictEqual(result, true);
+        const result = await testVerify(req, env);
+        assert.deepStrictEqual(result, mockPayload);
         assert.strictEqual(jwtVerifyMock.mock.callCount(), 1);
-
-        jwtVerifyMock.mock.restore();
     });
 
-    test('verifyAccessWithClaims returns payload on success', async () => {
-        const req = new Request('http://example.com', {
-            headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
-        });
-        const env: Env = {};
-        const mockPayload = { sub: 'user123', email: 'test@example.com' };
-
-        const jwtVerifyMock = mockJwtVerify(async () => {
-            return { payload: mockPayload };
-        });
-
-        const payload = await verifyAccessWithClaims(req, env);
-        assert.deepStrictEqual(payload, mockPayload);
-
-        jwtVerifyMock.mock.restore();
-    });
-
-    test('verifyAccessWithClaims passes audience to jwtVerify when configured', async () => {
+    test('passes audience to jwtVerify when configured', async () => {
         const req = new Request('http://example.com', {
             headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
         });
         const env: Env = { CLOUDFLARE_ACCESS_AUDIENCE: 'my-audience' };
         const mockPayload = { sub: 'user123' };
 
-        const jwtVerifyMock = mockJwtVerify(async () => {
+        jwtVerifyMock.mock.mockImplementation(async () => {
             return { payload: mockPayload };
         });
 
-        await verifyAccessWithClaims(req, env);
+        await testVerify(req, env);
 
         const calls = jwtVerifyMock.mock.calls[0];
-        // Check if the 3rd argument (options) has audience
         assert.strictEqual(calls.arguments[2].audience, 'my-audience');
-
-        jwtVerifyMock.mock.restore();
     });
 
-    test('verifyAccessWithClaims uses correct issuer based on env', async () => {
+    test('uses correct issuer based on env', async () => {
         const req = new Request('http://example.com', {
             headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
         });
         const env: Env = { CLOUDFLARE_TEAM_DOMAIN: 'custom.team.com' };
         const mockPayload = { sub: 'user123' };
 
-        const jwtVerifyMock = mockJwtVerify(async () => {
+        jwtVerifyMock.mock.mockImplementation(async () => {
             return { payload: mockPayload };
         });
 
-        await verifyAccessWithClaims(req, env);
+        await testVerify(req, env);
 
         const calls = jwtVerifyMock.mock.calls[0];
-        // Check if the 3rd argument (options) has issuer
         assert.strictEqual(calls.arguments[2].issuer, 'https://custom.team.com');
+    });
 
-        jwtVerifyMock.mock.restore();
+    test('verifyAccess public wrapper returns boolean', async () => {
+         const req = new Request('http://example.com');
+         const env: Env = {};
+         // We can't mock internals for the public wrapper easily without full module mocking,
+         // but we can ensure it runs safely.
+         const result = await verifyAccess(req, env);
+         assert.strictEqual(result, false);
     });
 });
