@@ -1,0 +1,7 @@
+name = "gs-mail"
+main = "src/index.ts"
+compatibility_date = "2024-05-29"
+compatibility_flags = ["nodejs_compat"]
+
+# Email processing worker
+# Configure routes in Cloudflare Dashboard: Email Routing -> Routes
