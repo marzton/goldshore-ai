@@ -20,7 +20,7 @@ id = "gs_api_kv_prod_001"
 
 [[queues.producers]]
 binding = "JOB_QUEUE"
-queue = "gs-jobs"
+queue = "goldshore-jobs"
 
 [[kv_namespaces]]
 binding = "GATEWAY_KV"
