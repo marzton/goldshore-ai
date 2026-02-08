@@ -6,6 +6,7 @@ const envLabel = import.meta.env.PUBLIC_API?.includes('preview') ? 'Preview' : '
 ---
 <header class="gs-admin-topbar">
   <div class="gs-row">
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle menu">☰</button>
     <h1 class="gs-no-margin">{title}</h1>
     <span class="gs-badge info">{envLabel}</span>
   </div>

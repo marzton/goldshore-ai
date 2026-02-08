@@ -188,7 +188,7 @@ importers:
         specifier: ^4.20240208.0
         version: 4.20260207.0
       postal-mime:
-        specifier: ^2.7.3
+        specifier: 2.7.3
         version: 2.7.3
       typescript:
         specifier: ^5.0.0
