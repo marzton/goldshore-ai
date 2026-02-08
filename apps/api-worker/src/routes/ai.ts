@@ -44,7 +44,7 @@ ai.post("/analysis", async (c) => {
     request: policyResult.sanitized,
     response: {
       provider: providerResponse.provider,
-      output: providerResponse.output,
+      // output is sensitive and should not be logged
     },
     redactions: policyResult.redactions,
     durationMs,

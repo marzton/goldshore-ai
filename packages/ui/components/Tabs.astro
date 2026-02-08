@@ -11,7 +11,6 @@ const { tabs = [] } = Astro.props;
         role="tab"
         aria-selected="false"
         aria-controls={t.id}
-        tabindex="-1"
       >
         {t.label}
       </button>
@@ -59,39 +58,18 @@ const { tabs = [] } = Astro.props;
       };
 
       // Bind events
-      triggers.forEach((t, index) => {
+      triggers.forEach((t) => {
           t.addEventListener('click', (e) => {
               const targetId = (e.currentTarget as HTMLElement).getAttribute('data-target');
               // Click naturally focuses, but we ensure state is correct
               setActive(targetId, false);
           });
-
-          t.addEventListener('keydown', (e) => {
-              let targetIndex: number | null = null;
-
-              if (e.key === 'ArrowRight') {
-                  targetIndex = (index + 1) % triggers.length;
-              } else if (e.key === 'ArrowLeft') {
-                  targetIndex = (index - 1 + triggers.length) % triggers.length;
-              } else if (e.key === 'Home') {
-                  targetIndex = 0;
-              } else if (e.key === 'End') {
-                  targetIndex = triggers.length - 1;
-              }
-
-              if (targetIndex !== null) {
-                  e.preventDefault();
-                  const targetTrigger = triggers[targetIndex];
-                  const targetId = targetTrigger.getAttribute('data-target');
-                  setActive(targetId, true);
-              }
-          });
       });
 
       // Init: Activate first tab if none active
       const firstTrigger = triggers[0];
-      if (firstTrigger && !container.querySelector('.gs-tab-trigger.active')) {
-         setActive(firstTrigger.getAttribute('data-target'), false);
+      if (firstTrigger) {
+         setActive(firstTrigger.getAttribute('data-target'));
       }
     });
   }
@@ -121,11 +99,6 @@ const { tabs = [] } = Astro.props;
   }
   .gs-tab-trigger:hover {
       color: var(--gs-color-text, #fff);
-  }
-  .gs-tab-trigger:focus-visible {
-      outline: 2px solid var(--gs-color-primary, #f59e0b);
-      outline-offset: -2px;
-      border-radius: 2px;
   }
   .gs-tab-trigger.active {
       color: var(--gs-color-primary, #f59e0b);

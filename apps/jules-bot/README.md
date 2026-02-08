@@ -1,3 +1,17 @@
+# Jules Bot
+
+Jules is the internal automation engineer for GoldShore.
+
+## Responsibilities
+*   **Hygiene:** Checks for missing documentation, stale TODOs, and unpinned actions.
+*   **Review:** Analyzes PRs for common issues.
+*   **Palette:** Improving UX micro-interactions.
+
+## Usage
+This bot is designed to run via GitHub Actions or as a standalone service.
+
+### Commands
+*   `/palette improve` - Triggers a UX improvement scan.
 # apps/jules-bot
 
 ## Overview
@@ -28,7 +42,7 @@ Required environment variables:
 - `PORT` (optional, defaults to `3000`)
 
 ## Routes/Endpoints
-These are webhook API endpoints implemented in `src/index.mjs` (not HTML pages).
+These are webhook API endpoints implemented in `src/index.mjs` (not HTML pages). Route handlers are defined in `src/index.mjs`.
 - `POST /` for GitHub webhook payloads
   - Responds `200 OK` on success
   - Responds `413 Payload Too Large` when the body exceeds 1MB

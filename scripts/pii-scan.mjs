@@ -75,7 +75,18 @@ const piiPatterns = [
   }
 ];
 
-const severityOrder = ['low', 'medium', 'high'];
+const alertChannels = [
+  {
+    channel: 'Slack #security-alerts',
+    owner: 'Security Ops',
+    action: 'Create incident ticket and triage within 4 hours.'
+  },
+  {
+    channel: 'Email ops@goldshore.ai',
+    owner: 'Platform Ops',
+    action: 'Notify service owners and confirm remediation owners.'
+  }
+];
 
 const getRepoFiles = () => {
   if (args.has('--staged')) {
@@ -177,6 +188,7 @@ const main = async () => {
   const findings = [...codeFindings, ...webFindings];
   const summary = buildSummary(findings);
   const remediation = collectRemediation(findings);
+  const alertStatus = summary.high > 0 ? 'Immediate' : summary.total > 0 ? 'Monitor' : 'Clear';
   const report = {
     generatedAt: new Date().toISOString(),
     summary: {
@@ -191,7 +203,11 @@ const main = async () => {
       { name: 'Web content', scanType: 'web', scannedFiles: scannedWeb, findings: webFindings.length }
     ],
     findings,
-    remediation
+    remediation,
+    alerts: {
+      status: alertStatus,
+      channels: alertChannels
+    }
   };
 
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
@@ -202,11 +218,17 @@ const main = async () => {
     `# PII Scan Summary`,
     ``,
     `**Status:** ${summary.status}`,
+    `**Alert Status:** ${alertStatus}`,
     ``,
     `- Total findings: ${summary.total}`,
     `- High severity: ${summary.high}`,
     `- Medium severity: ${summary.medium}`,
     `- Low severity: ${summary.low}`,
+    ``,
+    `## Alert Routing`,
+    ...alertChannels.map(
+      (channel) => `- ${channel.channel} (${channel.owner}): ${channel.action}`
+    ),
     ``,
     `## Remediation Guidance`,
     ...remediation.map((item) => `- ${item}`)
@@ -218,6 +240,11 @@ const main = async () => {
   }
   if (mode === 'ci' && summary.high > 0) {
     console.log('::warning::High severity PII detected. Immediate remediation recommended.');
+  }
+
+  if (mode === 'pre-commit' && summary.total > 0) {
+    console.log(`PII scan warning: ${summary.total} potential matches found (${summary.high} high severity).`);
+    console.log('Review findings and follow remediation guidance before commit.');
   }
 
   if (args.has('--print')) {

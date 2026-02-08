@@ -79,6 +79,17 @@ export const createHttpClient = (config: HttpClientConfig) => {
           'content-type': 'application/json',
           ...options.headers
         }
+      }),
+    put: (path: string, body?: unknown, options: HttpRequestOptions = {}) =>
+      request(path, {
+        ...options,
+        method: 'PUT',
+        body: body ? JSON.stringify(body) : undefined,
+        headers: {
+          'content-type': 'application/json',
+          ...options.headers
+        }
       })
   };
 };
+export type HttpClient = ReturnType<typeof createHttpClient>;
