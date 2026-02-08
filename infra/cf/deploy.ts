@@ -96,8 +96,10 @@ async function main() {
   const pages = cfg.projects?.pages ?? [];
   const workers = cfg.projects?.workers ?? [];
 
-  for (const p of pages) await deployPages(p);
-  for (const w of workers) await deployWorker(w);
+  await Promise.all([
+    ...pages.map(p => deployPages(p)),
+    ...workers.map(w => deployWorker(w)),
+  ]);
 }
 
 // Redact sensitive environment values from error messages before logging
