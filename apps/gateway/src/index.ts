@@ -10,9 +10,9 @@ type Env = {
   ENV: string;
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
   CLOUDFLARE_TEAM_DOMAIN?: string;
+  API_ORIGIN?: string;
 };
 
-const API_ORIGIN = 'https://api.goldshore.ai';
 const app = new Hono<{ Bindings: Env }>();
 const INTEGRATION_PATH_PREFIXES = ['/integrations', '/market-streams'];
 const DATA_CLASSIFICATIONS = new Set(['public', 'internal', 'confidential', 'restricted']);
@@ -27,12 +27,23 @@ const SECRETS_ACCESS_POLICIES = new Set([
 const isIntegrationRequest = (path: string) =>
   INTEGRATION_PATH_PREFIXES.some((prefix) => path.startsWith(prefix));
 
+const ALLOWED_ORIGIN_PATTERNS = [
+  /^https:\/\/(www\.)?goldshore\.ai$/,
+  /^https:\/\/([a-z0-9-]+\.)+goldshore\.ai$/,
+  /^https:\/\/([a-z0-9-]+\.)+goldshore-pages\.dev$/,
+  /^http:\/\/localhost(:\d+)?$/
+];
+
+const isAllowedOrigin = (origin: string) => {
+  return ALLOWED_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin));
+};
+
 // Sentinel: Add security headers to all responses (X-Frame-Options, X-XSS-Protection, etc.)
 app.use('*', secureHeaders());
 
 // Sentinel: Add CORS protection
 app.use('*', cors({
-  origin: '*', // Public gateway
+  origin: (origin) => (isAllowedOrigin(origin) ? origin : 'https://goldshore.ai'),
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: [
     'Content-Type',
@@ -52,6 +63,10 @@ app.use('*', async (c, next) => {
     if (c.req.path === '/health' || c.req.path === '/' || c.req.method === 'OPTIONS') {
         await next();
         return;
+    }
+
+    if (!c.env.CLOUDFLARE_ACCESS_AUDIENCE) {
+        console.warn('SECURITY WARNING: CLOUDFLARE_ACCESS_AUDIENCE is not set. Audience verification is disabled.');
     }
 
     const authorized = await checkAuth(c.req.raw, c.env);
@@ -184,9 +199,9 @@ app.all('*', async (c) => {
     }
 
     // Fallback logic for environments without Service Bindings
-    if (API_ORIGIN) {
+    if (c.env.API_ORIGIN) {
         const url = new URL(c.req.url);
-        const targetUrl = new URL(url.pathname + url.search, API_ORIGIN);
+        const targetUrl = new URL(url.pathname + url.search, c.env.API_ORIGIN);
         return fetch(targetUrl.toString(), c.req.raw);
     }
 
