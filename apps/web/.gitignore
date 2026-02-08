@@ -6,3 +6,4 @@ src/content/openapi/
 web_dev*.log
 verify_web.py
 verification*.png
+src/search-index.json

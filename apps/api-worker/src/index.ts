@@ -16,16 +16,31 @@ type Env = {
   AI: any;
   OPENAI_API_KEY?: string;
   GEMINI_API_KEY?: string;
+  // Sentinel: Added support for Audience verification to prevent auth bypass
+  CLOUDFLARE_ACCESS_AUDIENCE?: string;
+  // Sentinel: Added support for dynamic team domain
+  CLOUDFLARE_TEAM_DOMAIN?: string;
 };
 
 const app = new Hono<{ Bindings: Env }>();
+
+const ALLOWED_ORIGIN_PATTERNS = [
+  /^https:\/\/(www\.)?goldshore\.ai$/,
+  /^https:\/\/([a-z0-9-]+\.)+goldshore\.ai$/,
+  /^https:\/\/([a-z0-9-]+\.)+goldshore-pages\.dev$/,
+  /^http:\/\/localhost(:\d+)?$/
+];
+
+const isAllowedOrigin = (origin: string) => {
+  return ALLOWED_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin));
+};
 
 // Sentinel: Security Middleware
 app.use('*', secureHeaders());
 
 // Enforce CORS to allow legitimate browser clients
 app.use('*', cors({
-  origin: '*',
+  origin: (origin) => (isAllowedOrigin(origin) ? origin : 'https://goldshore.ai'),
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
   exposeHeaders: ['Content-Length'],

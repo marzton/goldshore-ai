@@ -25,25 +25,20 @@ const features = [
 ];
 
 const highlights = [
-  { label: 'Global Latency', value: '< 30ms', tone: 'success' },
-  { label: 'System Status', value: 'Normal', tone: 'success' },
-  { label: 'Active Nodes', value: '24/24', tone: 'info' },
-  { label: 'Threat Level', value: 'None', tone: '' },
+  { label: 'Global Latency', value: '< 30ms', tone: 'gs-badge--positive' },
+  { label: 'Uptime', value: '99.99%', tone: 'gs-badge--positive' },
+  { label: 'Threats Blocked', value: '1.2M+', tone: 'gs-badge--warning' },
+  { label: 'Active Agents', value: '850+', tone: 'gs-badge--info' }
 ];
 ---
 
 <MarketingLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
   <div class="cinematic-wrapper">
     <!-- Starfield Background -->
-    <div class="stars-container">
-      <div class="stars"></div>
-    </div>
+    <canvas id="starfield" class="starfield"></canvas>
 
     <!-- Main Hero Section -->
     <section class="cinematic-hero blueprint-section parallax-section">
-        <div class="parallax-layer gs-parallax layer-blueprint" data-parallax="0.05" aria-hidden="true"></div>
-        <div class="parallax-layer gs-parallax layer-sheen" data-parallax="0.12" aria-hidden="true"></div>
-        <div class="parallax-layer gs-parallax layer-shadow" data-parallax="0.18" aria-hidden="true"></div>
         <div class="hero-content">
             <div class="badge-container fade-in-up" style="animation-delay: 0.2s;">
             <span class="vibe-badge">
@@ -52,54 +47,56 @@ const highlights = [
             </span>
             </div>
 
-            <h1 class="fade-in-up" style="animation-delay: 0.4s;">
-            Shaping Waves with <br/>
-            <span class="text-gradient">Applied Intelligence</span>
-            </h1>
+        <h1 class="fade-in-up" style="animation-delay: 0.4s;">
+          Shaping Waves with <br/>
+          <span class="text-gradient">Applied Intelligence</span>
+        </h1>
 
-            <p class="hero-desc fade-in-up" style="animation-delay: 0.6s;">
-            GoldShore isn't just code. It's a provable experience. We build resilient, cinematic systems where automation meets art.
-            </p>
+        <p class="hero-desc fade-in-up" style="animation-delay: 0.6s;">
+          GoldShore isn't just code. It's a provable experience. We build resilient, cinematic systems where automation meets art.
+        </p>
 
-            <div class="cta-group fade-in-up" style="animation-delay: 0.8s;">
-            <GSButton href="/services" class="glow-button">Start the Experience</GSButton>
-            <GSButton href="/contact" variant="secondary" class="glass-button">Contact Sales</GSButton>
-            </div>
+        <div class="cta-group fade-in-up" style="animation-delay: 0.8s;">
+          <GSButton href="/services" class="glow-button">Start the Experience</GSButton>
+          <GSButton href="/contact" variant="secondary" class="glass-button">Contact Sales</GSButton>
         </div>
+      </div>
 
-        <!-- 3D/Parallax Element -->
-        <div class="hero-visual fade-in-up" style="animation-delay: 1s;">
-            <div class="glass-card tilt-card lux-card">
-            <div class="card-header">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                <span class="card-title">GoldShore Agent</span>
+      <!-- Right Column: Visuals -->
+      <div class="hero-visual fade-in-up" style="animation-delay: 1s; display: flex; flex-direction: column; gap: 2rem;">
+
+        <!-- 3D Card -->
+        <div class="glass-card tilt-card">
+          <div class="card-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="card-title">GoldShore Agent</span>
+          </div>
+          <div class="card-body">
+            <div class="data-row">
+              <span class="label">STATUS</span>
+              <span class="value success">ACTIVE</span>
             </div>
-            <div class="card-body">
-                <div class="data-row">
-                <span class="label">STATUS</span>
-                <span class="value success">ACTIVE</span>
-                </div>
-                <div class="data-row">
-                <span class="label">MODE</span>
-                <span class="value info">VIBE_CODING</span>
-                </div>
-                <div class="chart-viz">
-                <div class="bar" style="height: 40%"></div>
-                <div class="bar" style="height: 70%"></div>
-                <div class="bar" style="height: 55%"></div>
-                <div class="bar" style="height: 90%"></div>
-                <div class="bar" style="height: 60%"></div>
-                </div>
-                <div class="terminal-output">
-                &gt; Initializing cinematic protocols...<br/>
-                &gt; Optimizing user experience...<br/>
-                &gt; Done.
-                </div>
+            <div class="data-row">
+              <span class="label">MODE</span>
+              <span class="value info">VIBE_CODING</span>
             </div>
+            <div class="chart-viz">
+              <div class="bar" style="height: 40%"></div>
+              <div class="bar" style="height: 70%"></div>
+              <div class="bar" style="height: 55%"></div>
+              <div class="bar" style="height: 90%"></div>
+              <div class="bar" style="height: 60%"></div>
             </div>
+            <div class="terminal-output">
+              &gt; Initializing cinematic protocols...<br/>
+              &gt; Optimizing user experience...<br/>
+              &gt; Done.
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Performance Section (Secondary Hero) -->
@@ -129,7 +126,7 @@ const highlights = [
             </div>
             <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
         </div>
-    </section>
+      </section>
 
     <!-- Features Section -->
     <section class="features-section blueprint-section parallax-section">
@@ -164,37 +161,25 @@ const highlights = [
     position: relative;
     min-height: 100vh;
     overflow: hidden;
+    /* Background moved to fixed starfield */
   }
 
-  /* Starfield Animation */
-  .stars-container {
-    position: absolute;
+  /* Starfield Canvas */
+  .starfield {
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
+    z-index: 0;
+    pointer-events: none;
     background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
-    overflow: hidden;
   }
 
-  .stars {
-    width: 2px;
-    height: 2px;
-    background: transparent;
-    box-shadow:
-        10vw 10vh #fff, 20vw 80vh #fff, 30vw 30vh #fff, 40vw 50vh #fff,
-        50vw 90vh #fff, 60vw 20vh #fff, 70vw 60vh #fff, 80vw 40vh #fff,
-        90vw 10vh #fff, 15vw 65vh #fff, 25vw 15vh #fff, 35vw 95vh #fff,
-        45vw 45vh #fff, 55vw 85vh #fff, 65vw 35vh #fff, 75vw 55vh #fff,
-        85vw 25vh #fff, 95vw 75vh #fff, 5vw 5vh #fff, 50vw 50vh #fff;
-    animation: animStar 100s linear infinite;
-    opacity: 0.5;
-  }
-
-  @keyframes animStar {
-    from { transform: translateY(0); }
-    to { transform: translateY(-100vh); }
+  /* Ensure content sits above the starfield */
+  .cinematic-hero, .gs-hero, .features-section {
+    position: relative;
+    z-index: 1;
   }
 
   /* Hero Section */
@@ -207,6 +192,21 @@ const highlights = [
     margin: 0 auto;
     min-height: 90vh;
     align-items: center;
+  }
+
+  /* Override blueprint-section to show starfield */
+  .cinematic-hero.blueprint-section {
+    background: transparent;
+    box-shadow: none;
+  }
+  .cinematic-hero.blueprint-section::before,
+  .cinematic-hero.blueprint-section::after {
+    display: none;
+  }
+
+  /* Ensure no internal layers block the stars if they exist */
+  .cinematic-hero .parallax-layer {
+    display: none;
   }
 
   .gs-hero {
@@ -485,9 +485,72 @@ const highlights = [
       },
       { threshold: 0.2 }
     );
+    revealItems.forEach((el) => observer.observe(el));
 
-    revealItems.forEach((item) => observer.observe(item));
+    // Initialize Parallax
     initParallax();
+
+    // Starfield Animation
+    const canvas = document.getElementById('starfield') as HTMLCanvasElement;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        let stars: { x: number; y: number; z: number; size: number; alpha: number; speed: number }[] = [];
+
+        const initStars = () => {
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = width;
+          canvas.height = height;
+          stars = [];
+          const numStars = Math.floor(width * height * 0.00015); // Adjust density
+
+          for (let i = 0; i < numStars; i++) {
+            stars.push({
+              x: Math.random() * width,
+              y: Math.random() * height,
+              z: Math.random() * 2 + 0.5, // Depth factor
+              size: Math.random() > 0.9 ? 1.5 : 1, // Pixel size, occasionally larger
+              alpha: Math.random() * 0.5 + 0.3,
+              speed: Math.random() * 0.2 + 0.05
+            });
+          }
+        };
+
+        const animateStars = () => {
+          ctx.clearRect(0, 0, width, height);
+          const scrollY = window.scrollY;
+
+          ctx.fillStyle = '#FFF';
+          stars.forEach(star => {
+            // Move stars upwards (drifting through space)
+            star.y -= star.speed;
+
+            // Apply parallax effect: Move stars based on scroll position and depth (z)
+            // We calculate an offset to add to the base position
+            // Simulating that "far" stars (low z) move slower with scroll than "near" stars?
+            // Actually in parallax, things closer (higher z?) move faster.
+            // Let's just do a simple vertical wrap.
+
+            let effectiveY = (star.y - scrollY * star.z * 0.15) % height;
+            if (effectiveY < 0) effectiveY += height;
+
+            ctx.globalAlpha = star.alpha;
+            // Draw pixel star
+            ctx.fillRect(star.x, effectiveY, star.size, star.size);
+          });
+
+          requestAnimationFrame(animateStars);
+        };
+
+        initStars();
+        animateStars();
+        window.addEventListener('resize', initStars);
+      }
+    }
+
   } else {
     document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
   }
