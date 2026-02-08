@@ -20,57 +20,56 @@ export const initParallax = (options: ParallaxOptions = {}) => {
     factor = -0.12
   } = options;
 
-  // Bolt: Use Map to store state and track visibility
-  const layers = new Map<HTMLElement, { speed: number; isVisible: boolean }>();
-  const elements = document.querySelectorAll<HTMLElement>(selector);
+  // Bolt: Track visibility state for optimization
+  const layers = Array.from(document.querySelectorAll<HTMLElement>(selector)).map((element) => ({
+    element,
+    speed: parseFloat(element.getAttribute(speedAttribute) || '0'),
+    isVisible: false
+  }));
 
   if (elements.length === 0) {
     return () => undefined;
   }
 
-  // Bolt: Optimization - Use IntersectionObserver to skip updates for off-screen elements
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        const state = layers.get(entry.target as HTMLElement);
-        if (state) {
-          state.isVisible = entry.isIntersecting;
-          // Force an immediate update when becoming visible to avoid jump
-          if (state.isVisible) {
-             const scrollY = window.scrollY || window.pageYOffset;
-             const offset = scrollY * state.speed * factor;
-             (entry.target as HTMLElement).style.setProperty('--gs-parallax-offset', `${offset}px`);
-          }
+  // Bolt: Use IntersectionObserver to skip updates for off-screen elements
+  const observer = new IntersectionObserver((entries) => {
+    let needsUpdate = false;
+    entries.forEach((entry) => {
+      const layer = layers.find(l => l.element === entry.target);
+      if (layer) {
+        if (layer.isVisible !== entry.isIntersecting) {
+          layer.isVisible = entry.isIntersecting;
+          needsUpdate = true;
         }
-      });
-    },
-    { rootMargin: '200px' } // Pre-calculate before entering viewport
-  );
-
-  elements.forEach((element) => {
-    layers.set(element, {
-      speed: parseFloat(element.getAttribute(speedAttribute) || '0'),
-      isVisible: true // Start visible to ensure initial position is calculated
+      }
     });
-    observer.observe(element);
-  });
+
+    // Trigger update if visibility changed (e.g. initial load)
+    if (needsUpdate) {
+      updateParallax();
+    }
+  }, { rootMargin: '200px' });
+
+  layers.forEach(l => observer.observe(l.element));
+
   let ticking = false;
   const updateParallax = () => {
     const scrollY = window.scrollY || window.pageYOffset;
-
-    layers.forEach((state, element) => {
-      if (!state.isVisible) return;
-
-      const offset = scrollY * state.speed * factor;
+    layers.forEach(({ element, speed, isVisible }) => {
+      if (!isVisible) return;
+      const offset = scrollY * speed * factor;
       element.style.setProperty('--gs-parallax-offset', `${offset}px`);
     });
     ticking = false;
   };
 
-  // Initial update
+  // Initial update (might be redundant if observer fires, but safe)
   updateParallax();
 
   const handleScroll = () => {
+    // Bolt: Bail out early if no parallax elements are visible
+    if (!layers.some(l => l.isVisible)) return;
+
     if (!ticking) {
       window.requestAnimationFrame(updateParallax);
       ticking = true;
