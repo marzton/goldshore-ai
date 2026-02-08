@@ -54,6 +54,10 @@ app.use('*', async (c, next) => {
         return;
     }
 
+    if (!c.env.CLOUDFLARE_ACCESS_AUDIENCE) {
+        console.warn('SECURITY WARNING: CLOUDFLARE_ACCESS_AUDIENCE is not set. Audience verification is disabled.');
+    }
+
     const authorized = await checkAuth(c.req.raw, c.env);
     if (!authorized) {
         return c.json({ error: 'Unauthorized' }, 401);
