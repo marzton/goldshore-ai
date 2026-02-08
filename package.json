@@ -40,7 +40,8 @@
   "pnpm": {
     "overrides": {
       "@astrojs/cloudflare": "latest",
-      "@astrojs/adapter-cloudflare": "latest"
+      "@astrojs/adapter-cloudflare": "latest",
+      "postal-mime": "2.7.3"
     }
   }
 }
