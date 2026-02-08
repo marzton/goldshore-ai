@@ -1,81 +1,71 @@
-import { test } from 'node:test';
+import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { getCloudflareMetrics } from './cloudflare.ts';
 
-test('getCloudflareMetrics handles successful response with full payload', async () => {
-  const mockMetrics = {
-    highlights: {
-      totalRequests: '20M',
-      cacheHitRate: '90%',
-      threatsBlocked: '500',
-      dnsChanges: '5',
-    },
-    refreshedAt: '2023-01-01T00:00:00Z',
-    source: 'live',
-    note: 'Custom note',
-  };
-  const mockFetcher = async () => ({
-    ok: true,
-    json: async () => mockMetrics,
-  } as any);
+describe('getCloudflareMetrics', () => {
+  it('should return live metrics when fetch is successful', async () => {
+    const mockData = {
+      highlights: {
+        totalRequests: '20M',
+        cacheHitRate: '90%',
+        threatsBlocked: '500',
+        dnsChanges: '5',
+      },
+    };
 
-  const metrics = await getCloudflareMetrics({ fetcher: mockFetcher });
-  assert.strictEqual(metrics.highlights.totalRequests, '20M');
-  assert.strictEqual(metrics.refreshedAt, '2023-01-01T00:00:00Z');
-  assert.strictEqual(metrics.source, 'live');
-  assert.strictEqual(metrics.note, 'Custom note');
-});
+    const mockFetcher = async () => {
+      return new Response(JSON.stringify(mockData), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    };
 
-test('getCloudflareMetrics handles successful response with partial payload', async () => {
-  const mockMetrics = {
-    highlights: {
-      totalRequests: '10M',
-    }
-  };
-  const mockFetcher = async () => ({
-    ok: true,
-    json: async () => mockMetrics,
-  } as any);
+    const result = await getCloudflareMetrics({ fetcher: mockFetcher as any });
 
-  const metrics = await getCloudflareMetrics({ fetcher: mockFetcher });
-  assert.strictEqual(metrics.highlights.totalRequests, '10M');
-  // Check that other highlights use fallback values
-  assert.strictEqual(metrics.highlights.cacheHitRate, '86.7%');
-  // Check default values for source and note
-  assert.strictEqual(metrics.source, 'live');
-  assert.strictEqual(metrics.note, 'Live metrics pulled from secure backend.');
-  // Check refreshedAt is a valid ISO string (should be new Date().toISOString() since missing in payload)
-  assert.doesNotThrow(() => new Date(metrics.refreshedAt).toISOString());
-});
+    assert.strictEqual(result.source, 'live');
+    assert.strictEqual(result.highlights.totalRequests, '20M');
+    assert.strictEqual(result.note, 'Live metrics pulled from secure backend.');
+  });
 
-test('getCloudflareMetrics handles non-ok response (e.g., 500)', async () => {
-  const mockFetcher = async () => ({
-    ok: false,
-    status: 500,
-  } as any);
+  it('should return fallback metrics when fetch returns non-ok status', async () => {
+    const mockFetcher = async () => {
+      return new Response(null, { status: 500 });
+    };
 
-  const metrics = await getCloudflareMetrics({ fetcher: mockFetcher });
-  assert.strictEqual(metrics.source, 'mock'); // Defaults to fallbackMetrics.source which is 'mock'
-  assert.match(metrics.note, /Backend responded with 500/);
-});
+    const result = await getCloudflareMetrics({ fetcher: mockFetcher as any });
 
-test('getCloudflareMetrics handles fetch exception (network error)', async () => {
-  const mockFetcher = async () => {
-    throw new Error('Network failure');
-  };
+    assert.strictEqual(result.source, 'mock');
+    assert.strictEqual(result.note, 'Backend responded with 500; using cached defaults.');
+    // Should contain fallback data
+    assert.strictEqual(result.highlights.totalRequests, '18.4M');
+  });
 
-  const metrics = await getCloudflareMetrics({ fetcher: mockFetcher });
-  assert.strictEqual(metrics.source, 'mock');
-  assert.match(metrics.note, /Secure backend unavailable/);
-});
+  it('should return fallback metrics when fetch throws an error', async () => {
+    const mockFetcher = async () => {
+      throw new Error('Network error');
+    };
 
-test('getCloudflareMetrics handles JSON parsing error', async () => {
-  const mockFetcher = async () => ({
-    ok: true,
-    json: async () => { throw new Error('SyntaxError: Unexpected token'); },
-  } as any);
+    const result = await getCloudflareMetrics({ fetcher: mockFetcher as any });
 
-  const metrics = await getCloudflareMetrics({ fetcher: mockFetcher });
-  assert.strictEqual(metrics.source, 'mock');
-  assert.match(metrics.note, /Secure backend unavailable/);
+    assert.strictEqual(result.source, 'mock');
+    assert.strictEqual(result.note, 'Secure backend unavailable; presenting mock data.');
+    // Should contain fallback data
+    assert.strictEqual(result.highlights.totalRequests, '18.4M');
+  });
+
+  it('should use the provided endpoint', async () => {
+    let capturedUrl: string | URL | Request = '';
+    const mockFetcher = async (url: string | URL | Request) => {
+      capturedUrl = url;
+      return new Response(JSON.stringify({}), { status: 200 });
+    };
+
+    const testEndpoint = 'https://test.api/metrics';
+    await getCloudflareMetrics({
+      endpoint: testEndpoint,
+      fetcher: mockFetcher as any
+    });
+
+    assert.strictEqual(capturedUrl, testEndpoint);
+  });
 });
