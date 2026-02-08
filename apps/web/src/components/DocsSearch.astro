@@ -22,121 +22,113 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
 </div>
 
 <script lang="ts">
-  function initDocsSearch(wrapper: HTMLElement) {
-      const input = wrapper.querySelector('input[type="search"]') as HTMLInputElement;
-      const list = wrapper.querySelector('.docs-search-results') as HTMLUListElement;
+  function initDocsSearch(wrapper) {
+      const input = wrapper.querySelector('input[type="search"]');
+      const list = wrapper.querySelector('.docs-search-results');
 
       if (!input || !list) return;
 
-      const q = (e.target as HTMLInputElement).value.trim();
-      if (!q) {
-        list.innerHTML = '';
-        input.setAttribute('aria-expanded', 'false');
-        return;
-      }
+      let timer;
+      let controller;
 
-      timer = setTimeout(async () => {
-        // Show loading state
-        list.textContent = '';
-        const loading = document.createElement('li');
-        loading.className = 'message';
-        loading.textContent = 'Searching...';
-        list.appendChild(loading);
-        input.setAttribute('aria-expanded', 'true');
+      input.addEventListener('input', (e) => {
+        const q = e.target.value.trim();
 
-        controller = new AbortController();
-        try {
-          const res = await fetch(`/api/docs-search?q=${encodeURIComponent(q)}`, {
-            signal: controller.signal
-          });
-          const data = await res.json();
-          list.textContent = ''; // Clear loading
+        if (timer) clearTimeout(timer);
+        if (controller) controller.abort();
 
-          if (data.length === 0) {
-            const li = document.createElement('li');
-            li.className = 'message';
-            li.textContent = 'No results found';
-            list.appendChild(li);
-          } else {
-            data.forEach((r: { url?: string; title: string }) => {
-              const li = document.createElement('li');
-              const a = document.createElement('a');
-
-              // Basic protection against javascript: URIs
-              if (r.url && !r.url.trim().toLowerCase().startsWith('javascript:')) {
-                a.href = r.url;
-              } else {
-                a.href = '#';
-              }
-
-              a.textContent = r.title;
-              a.className = 'search-result-link';
-              li.appendChild(a);
-              list.appendChild(li);
-            });
-          }
-        } catch (err: any) {
-          if (err.name === 'AbortError') return;
-          list.textContent = '';
-          const li = document.createElement('li');
-          li.className = 'message error';
-          li.textContent = 'Error searching';
-          list.appendChild(li);
+        if (!q) {
+            list.innerHTML = '';
+            input.setAttribute('aria-expanded', 'false');
+            return;
         }
-      }, 300);
-    });
 
-            if (data.length === 0) {
-              const li = document.createElement('li');
-              li.className = 'message';
-              li.textContent = 'No results found';
-              list.appendChild(li);
-            } else {
-              data.forEach((r: { url?: string; title: string }) => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                // Basic protection
-                if (r.url && !r.url.startsWith('javascript:')) {
-                    a.href = r.url;
-                } else {
-                    a.href = '#';
-                }
-                a.textContent = r.title;
-                a.className = 'search-result-link';
-                li.appendChild(a);
-                list.appendChild(li);
-              });
-            }
-          } catch (err: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
-            if (err.name === 'AbortError') return;
+        timer = setTimeout(async () => {
+            // Show loading state
             list.textContent = '';
-            const li = document.createElement('li');
-            li.className = 'message error';
-            li.textContent = 'Error searching';
-            list.appendChild(li);
-          }
-        }
-      } else if (e.key === 'ArrowUp') {
-        if (items.length > 0) {
-          e.preventDefault();
-          if (index > 0) {
-            (items[index - 1] as HTMLElement).focus();
-          } else {
-            input.focus();
-          }
-        }
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
-        list.innerHTML = '';
-        input.setAttribute('aria-expanded', 'false');
-        input.focus();
-      }
-    });
+            const loading = document.createElement('li');
+            loading.className = 'message';
+            loading.textContent = 'Searching...';
+            list.appendChild(loading);
+            input.setAttribute('aria-expanded', 'true');
+
+            controller = new AbortController();
+            try {
+                const res = await fetch(`/api/docs-search?q=${encodeURIComponent(q)}`, {
+                    signal: controller.signal
+                });
+                const data = await res.json();
+                list.textContent = ''; // Clear loading
+
+                if (data.length === 0) {
+                    const li = document.createElement('li');
+                    li.className = 'message';
+                    li.textContent = 'No results found';
+                    list.appendChild(li);
+                } else {
+                    data.forEach((r) => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+
+                        // Basic protection
+                        if (r.url && !r.url.trim().toLowerCase().startsWith('javascript:')) {
+                            a.href = r.url;
+                        } else {
+                            a.href = '#';
+                        }
+
+                        a.textContent = r.title;
+                        a.className = 'search-result-link';
+                        li.appendChild(a);
+                        list.appendChild(li);
+                    });
+                }
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+                list.textContent = '';
+                const li = document.createElement('li');
+                li.className = 'message error';
+                li.textContent = 'Error searching';
+                list.appendChild(li);
+            }
+        }, 300);
+      });
+
+      // Keyboard navigation
+      input.addEventListener('keydown', (e) => {
+         const items = list.querySelectorAll('a');
+         const index = Array.from(items).indexOf(document.activeElement);
+
+         if (e.key === 'ArrowDown') {
+             if (items.length > 0) {
+                 e.preventDefault();
+                 if (index < items.length - 1) {
+                     items[index + 1].focus();
+                 } else {
+                     items[0].focus();
+                 }
+             }
+         } else if (e.key === 'ArrowUp') {
+             if (items.length > 0) {
+                 e.preventDefault();
+                 if (index > 0) {
+                     items[index - 1].focus();
+                 } else {
+                     input.focus();
+                 }
+             }
+         } else if (e.key === 'Escape') {
+             e.preventDefault();
+             list.innerHTML = '';
+             input.setAttribute('aria-expanded', 'false');
+             input.focus();
+         }
+      });
   }
 
   // Initialize all instances
   document.querySelectorAll('.search-wrapper').forEach(wrapper => {
-    initDocsSearch(wrapper as HTMLElement);
+    initDocsSearch(wrapper);
   });
 
   // Global Keyboard Shortcut (Cmd+K)
@@ -144,7 +136,7 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
       e.preventDefault();
       // Focus the first visible search input
-      const searchInput = document.querySelector('.docs-search-input') as HTMLInputElement;
+      const searchInput = document.querySelector('.docs-search-input');
       if (searchInput) {
         searchInput.focus();
       }
