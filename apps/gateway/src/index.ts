@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
 import { checkAuth } from './auth';
+import { STATUS_PAGE_HTML } from './templates/status';
 
 type Env = {
   API: Fetcher;
@@ -27,23 +28,12 @@ const SECRETS_ACCESS_POLICIES = new Set([
 const isIntegrationRequest = (path: string) =>
   INTEGRATION_PATH_PREFIXES.some((prefix) => path.startsWith(prefix));
 
-const ALLOWED_ORIGIN_PATTERNS = [
-  /^https:\/\/(www\.)?goldshore\.ai$/,
-  /^https:\/\/([a-z0-9-]+\.)+goldshore\.ai$/,
-  /^https:\/\/([a-z0-9-]+\.)+goldshore-pages\.dev$/,
-  /^http:\/\/localhost(:\d+)?$/
-];
-
-const isAllowedOrigin = (origin: string) => {
-  return ALLOWED_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin));
-};
-
 // Sentinel: Add security headers to all responses (X-Frame-Options, X-XSS-Protection, etc.)
 app.use('*', secureHeaders());
 
 // Sentinel: Add CORS protection
 app.use('*', cors({
-  origin: (origin) => (isAllowedOrigin(origin) ? origin : 'https://goldshore.ai'),
+  origin: '*', // Public gateway
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: [
     'Content-Type',
@@ -161,30 +151,7 @@ app.get('/templates', (c) =>
 
 // Root Status Page
 app.get('/', (c) => {
-  return c.html(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <title>GoldShore Gateway</title>
-      <style>
-        body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .container { text-align: center; border: 1px solid #334155; padding: 2rem; border-radius: 8px; background: #1e293b; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        h1 { margin-bottom: 0.5rem; color: #38bdf8; }
-        p { color: #94a3b8; }
-        .status { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 4px; background: #059669; color: #fff; font-size: 0.875rem; font-weight: 600; margin-top: 1rem; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <h1>GoldShore Gateway</h1>
-        <p>Intelligent Routing & Security Layer</p>
-        <div class="status">SYSTEM OPERATIONAL</div>
-        <p><small>Service: gs-gateway</small></p>
-      </div>
-    </body>
-    </html>
-  `);
+  return c.html(STATUS_PAGE_HTML);
 });
 
 // Example specific routes
