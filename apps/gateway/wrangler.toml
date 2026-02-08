@@ -2,6 +2,7 @@ name = "gs-gateway"
 main = "src/index.ts"
 compatibility_date = "2025-01-10"
 compatibility_flags = ["nodejs_compat"]
+tsconfig = "tsconfig.json"
 
 workers_dev = false
 routes = [
