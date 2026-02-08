@@ -183,13 +183,13 @@ importers:
       hono:
         specifier: ^4.0.0
         version: 4.11.8
-      postal-mime:
-        specifier: 2.7.3
-        version: 2.7.3
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20240208.0
         version: 4.20260207.0
+      postal-mime:
+        specifier: ^2.7.3
+        version: 2.7.3
       typescript:
         specifier: ^5.0.0
         version: 5.9.3
