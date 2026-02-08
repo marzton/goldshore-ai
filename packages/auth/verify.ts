@@ -10,12 +10,18 @@ export interface Env {
 // Sentinel: Default to existing hardcoded values if not provided in Env
 const DEFAULT_TEAM_DOMAIN = "goldshore.cloudflareaccess.com";
 
+// Dependencies object to allow mocking in tests
+export const deps = {
+    createRemoteJWKSet,
+    jwtVerify
+};
+
 // Cache JWKS sets by domain to avoid recreation on every request while supporting multiple domains if needed
 const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
 
 function getJwks(domain: string) {
     if (!jwksCache.has(domain)) {
-        jwksCache.set(domain, createRemoteJWKSet(new URL(`https://${domain}/cdn-cgi/access/certs`)));
+        jwksCache.set(domain, deps.createRemoteJWKSet(new URL(`https://${domain}/cdn-cgi/access/certs`)));
     }
     return jwksCache.get(domain)!;
 }
@@ -45,7 +51,7 @@ export async function verifyAccessWithClaims(req: Request, env: Env) {
         options.audience = env.CLOUDFLARE_ACCESS_AUDIENCE;
     }
 
-    const { payload } = await jwtVerify(token, JWKS, options);
+    const { payload } = await deps.jwtVerify(token, JWKS, options);
     return payload as AccessTokenPayload;
   } catch (e) {
     console.error("Token verification failed", e);
