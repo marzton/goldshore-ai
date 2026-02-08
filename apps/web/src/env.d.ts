@@ -17,7 +17,7 @@ interface ImportMeta {
 
 // Global Cloudflare Env types
 interface KVNamespace {
-    put(key: string, value: string | ReadableStream | ArrayBuffer | FormData, options?: any): Promise<void>;
+    put(key: string, value: string | ReadableStream | ArrayBuffer, options?: any): Promise<void>;
     get(key: string, options?: any): Promise<string | null>;
     // Add other methods as needed
 }
