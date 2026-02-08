@@ -18,7 +18,7 @@ describe('createAdminService', () => {
     } as unknown as HttpClient;
 
     mockAuditLogger = {
-      logAdminAction: mock.fn(),
+      logAdminAction: mock.fn(async () => {}),
     } as unknown as AuditLogger;
 
     config = {
