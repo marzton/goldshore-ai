@@ -5,6 +5,9 @@ main = "../../apps/gs-agent/src/index.ts"
 compatibility_date = "2024-03-20"
 tsconfig = "../../apps/gs-agent/tsconfig.json"
 
+[vars]
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
+
 # This worker is queue-driven, so we define the consumer here.
 [[queues.consumers]]
   # The queue binding name should match what's in the environment bindings.

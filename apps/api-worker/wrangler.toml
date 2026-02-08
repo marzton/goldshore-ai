@@ -10,6 +10,7 @@ routes = [
 
 [vars]
 ENV = "production"
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 
 [[kv_namespaces]]
 binding = "KV"

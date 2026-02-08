@@ -12,7 +12,7 @@ routes = [
 ENV = "production"
 API_ORIGIN = "https://api.goldshore.ai"
 CLOUDFLARE_ACCESS_AUDIENCE = ""
-CLOUDFLARE_TEAM_DOMAIN = ""
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 
 [[kv_namespaces]]
 binding = "gs-kv"

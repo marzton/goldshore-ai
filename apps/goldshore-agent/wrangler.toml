@@ -2,5 +2,8 @@ name = "gs-agent"
 main = "src/index.ts"
 compatibility_date = "2024-11-01"
 
+[vars]
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
+
 [ai]
 binding = "AI"

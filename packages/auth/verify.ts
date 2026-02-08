@@ -7,9 +7,6 @@ export interface Env {
     CLOUDFLARE_TEAM_DOMAIN?: string;
 }
 
-// Sentinel: Default to existing hardcoded values if not provided in Env
-const DEFAULT_TEAM_DOMAIN = "goldshore.cloudflareaccess.com";
-
 // Cache JWKS sets by domain to avoid recreation on every request while supporting multiple domains if needed
 const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
 
@@ -31,7 +28,11 @@ export async function verifyAccessWithClaims(req: Request, env: Env) {
   const token = req.headers.get("CF-Access-Jwt-Assertion");
   if (!token) return null;
 
-  const teamDomain = (env && env.CLOUDFLARE_TEAM_DOMAIN) || DEFAULT_TEAM_DOMAIN;
+  const teamDomain = env?.CLOUDFLARE_TEAM_DOMAIN;
+  if (!teamDomain) {
+    console.error("CLOUDFLARE_TEAM_DOMAIN environment variable is not set.");
+    return null;
+  }
   const JWKS = getJwks(teamDomain);
 
   try {

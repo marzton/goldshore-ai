@@ -16,6 +16,7 @@ type Env = {
   AI: any;
   OPENAI_API_KEY?: string;
   GEMINI_API_KEY?: string;
+  CLOUDFLARE_TEAM_DOMAIN?: string;
 };
 
 const app = new Hono<{ Bindings: Env }>();
