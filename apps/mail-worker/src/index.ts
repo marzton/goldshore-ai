@@ -18,7 +18,8 @@ app.post('/webhook', async (c) => {
 
 export default {
   fetch: app.fetch,
-  async email(message: EmailMessage, env: Env, ctx: ExecutionContext): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async email(message: EmailMessage, _env: Env, _ctx: ExecutionContext): Promise<void> {
     // Basic email handler scaffolding
     console.log(`Received email from ${message.from} to ${message.to}`);
 
