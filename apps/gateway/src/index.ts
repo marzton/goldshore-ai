@@ -10,9 +10,9 @@ type Env = {
   ENV: string;
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
   CLOUDFLARE_TEAM_DOMAIN?: string;
+  API_ORIGIN?: string;
 };
 
-const API_ORIGIN = 'https://api.goldshore.ai';
 const app = new Hono<{ Bindings: Env }>();
 const INTEGRATION_PATH_PREFIXES = ['/integrations', '/market-streams'];
 const DATA_CLASSIFICATIONS = new Set(['public', 'internal', 'confidential', 'restricted']);
@@ -184,9 +184,9 @@ app.all('*', async (c) => {
     }
 
     // Fallback logic for environments without Service Bindings
-    if (API_ORIGIN) {
+    if (c.env.API_ORIGIN) {
         const url = new URL(c.req.url);
-        const targetUrl = new URL(url.pathname + url.search, API_ORIGIN);
+        const targetUrl = new URL(url.pathname + url.search, c.env.API_ORIGIN);
         return fetch(targetUrl.toString(), c.req.raw);
     }
 
