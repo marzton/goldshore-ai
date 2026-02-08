@@ -3,14 +3,12 @@ import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
 import { verifyAccess } from '@goldshore/auth';
 
-type Env = {
+interface Env {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	AI: any;
-	// Sentinel: Added support for Audience verification to prevent auth bypass
 	CLOUDFLARE_ACCESS_AUDIENCE?: string;
-	// Sentinel: Added support for dynamic team domain
 	CLOUDFLARE_TEAM_DOMAIN?: string;
-};
+}
 
 const app = new Hono<{ Bindings: Env }>();
 
