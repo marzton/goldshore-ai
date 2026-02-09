@@ -8,6 +8,7 @@ import ai from './routes/ai';
 import user from './routes/user';
 import system from './routes/system';
 import templates from './routes/templates';
+import media from './routes/media';
 import pages from './routes/pages';
 
 type Env = {
@@ -102,6 +103,7 @@ app.route('/users', users);
 app.route('/user', user);
 app.route('/system', system);
 app.route('/templates', templates);
+app.route('/media', media);
 app.route('/pages', pages);
 
 // V1 Routes
