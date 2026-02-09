@@ -4,24 +4,21 @@ import type { AdminPermission } from '@goldshore/auth';
 const links: Array<{ href: string; label: string; requiredPermission?: AdminPermission }> = [
   { href: '/', label: 'Overview' },
   { href: '/dashboard', label: 'Ops Dashboard' },
+  { href: '/admin/overview', label: 'Operational Overview' },
   { href: '/admin/analytics', label: 'Analytics' },
   { href: '/admin/content', label: 'Content Studio' },
   { href: '/admin/monetization', label: 'Monetization' },
-  { href: '/admin/forms', label: 'Forms' },
-  { href: '/admin/media', label: 'Media Library' },
-  { href: '/admin/page-editor', label: 'Page Editor' },
-  { href: '/admin/systems', label: 'Systems' },
-  { href: '/admin/content', label: 'Content', requiredPermission: 'content:read' },
-  { href: '/admin/media', label: 'Media', requiredPermission: 'media:read' },
   { href: '/admin/forms', label: 'Forms', requiredPermission: 'forms:read' },
+  { href: '/admin/media', label: 'Media Library', requiredPermission: 'media:read' },
+  { href: '/admin/page-editor', label: 'Page Editor' },
+  { href: '/admin/pages', label: 'Pages' },
+  { href: '/admin/pages/editor', label: 'Pages Editor' },
+  { href: '/admin/system', label: 'System' },
+  { href: '/admin/workers', label: 'Workers' },
+  { href: '/admin/content', label: 'Content', requiredPermission: 'content:read' },
   { href: '/admin/users', label: 'Users', requiredPermission: 'users:read' },
   { href: '/admin/pii-scans', label: 'PII Scans' },
   { href: '/admin/logs', label: 'Logs', requiredPermission: 'audit:read' },
-  { href: '/admin/users', label: 'Users' },
-  { href: '/admin/pages', label: 'Pages' },
-  { href: '/admin/pii-scans', label: 'PII Scans' },
-  { href: '/admin/logs', label: 'Logs' },
-  { href: '/admin/pages/editor', label: 'Pages Editor' },
   { href: '/admin/settings', label: 'Settings' }
 ];
 
@@ -42,7 +39,7 @@ const isActive = (href: string) => {
   // Exact match
   if (cleanCurrent === cleanHref) return true;
 
-  // Nested match (e.g., /admin/systems/details starts with /admin/systems)
+  // Nested match (e.g., /admin/system/details starts with /admin/system)
   // Ensure we don't partial match distinct roots (e.g. /admin/user vs /admin/users)
   return cleanCurrent.startsWith(cleanHref + '/');
 };
