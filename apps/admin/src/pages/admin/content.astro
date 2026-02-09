@@ -1,0 +1,41 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { Card, Table } from '@goldshore/ui';
+
+const contentItems = [
+  { id: 'post-021', title: 'Q3 Launch Plan', status: 'draft', owner: 'Marin Reyes' },
+  { id: 'post-022', title: 'Customer Success Stories', status: 'review', owner: 'Alex Kim' },
+  { id: 'post-023', title: 'Operations Update', status: 'published', owner: 'Priya Nair' }
+];
+---
+<AdminLayout title="Content | GoldShore Admin" requiredPermission="content:read">
+  <section class="max-w-6xl mx-auto py-16 px-6">
+    <h1 class="text-3xl gs-heading mb-4">Content</h1>
+    <p class="text-[var(--gs-text-secondary)] mb-8">
+      Manage editorial workflows and publish approvals with role-based access for content owners.
+    </p>
+
+    <Card class="gs-table-card">
+      <Table>
+        <thead>
+          <tr>
+            <th>Content ID</th>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Owner</th>
+          </tr>
+        </thead>
+        <tbody>
+          {contentItems.map((item) => (
+            <tr>
+              <td>{item.id}</td>
+              <td>{item.title}</td>
+              <td class="capitalize">{item.status}</td>
+              <td>{item.owner}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </Card>
+  </section>
+</AdminLayout>
