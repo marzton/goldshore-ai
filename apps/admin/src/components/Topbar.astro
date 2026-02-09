@@ -11,6 +11,12 @@ const envLabel = import.meta.env.PUBLIC_API?.includes('preview') ? 'Preview' : '
     <span class="gs-badge info">{envLabel}</span>
   </div>
   <div class="gs-row">
+    <div class="gs-preview-toggle" role="group" aria-label="Responsive preview">
+      <button type="button" class="gs-preview-button" data-preview="auto">Auto</button>
+      <button type="button" class="gs-preview-button" data-preview="desktop">Desktop</button>
+      <button type="button" class="gs-preview-button" data-preview="tablet">Tablet</button>
+      <button type="button" class="gs-preview-button" data-preview="mobile">Mobile</button>
+    </div>
     <GSButton href="/" variant="secondary" class="gs-button--small">View site</GSButton>
   </div>
 </header>
