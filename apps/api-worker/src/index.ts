@@ -8,6 +8,7 @@ import ai from './routes/ai';
 import user from './routes/user';
 import system from './routes/system';
 import templates from './routes/templates';
+import media from './routes/media';
 
 type Env = {
   KV: KVNamespace;
@@ -101,6 +102,7 @@ app.route('/users', users);
 app.route('/user', user);
 app.route('/system', system);
 app.route('/templates', templates);
+app.route('/media', media);
 
 // V1 Routes
 const v1 = new Hono<{ Bindings: Env }>();
