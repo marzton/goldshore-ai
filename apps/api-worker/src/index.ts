@@ -47,6 +47,7 @@ app.use('*', cors({
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
   exposeHeaders: ['Content-Length'],
+  credentials: true,
   maxAge: 600,
 }));
 
