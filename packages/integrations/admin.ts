@@ -101,6 +101,18 @@ export const createAdminService = (config: AdminServiceConfig) => {
   const getWorkersStatus = async () =>
     performAdminAction('workers.status.read', 'workers', () => httpClient.get('/workers/status', { cache: 'no-store' }));
 
+  const listPagesProjects = async () =>
+    performAdminAction('pages.projects.list', 'pages', () => httpClient.get('/pages/projects', { cache: 'no-store' }));
+
+  const listKvNamespaces = async () =>
+    performAdminAction('kv.namespaces.list', 'kv', () => httpClient.get('/kv/namespaces', { cache: 'no-store' }));
+
+  const listR2Buckets = async () =>
+    performAdminAction('r2.buckets.list', 'r2', () => httpClient.get('/r2/buckets', { cache: 'no-store' }));
+
+  const listD1Databases = async () =>
+    performAdminAction('d1.databases.list', 'd1', () => httpClient.get('/d1/databases', { cache: 'no-store' }));
+
   const listAccessPolicies = async (appId: string) =>
     performAdminAction(
       'access.policies.list',
@@ -114,6 +126,10 @@ export const createAdminService = (config: AdminServiceConfig) => {
     listDnsRecords,
     updateDnsRecord,
     getWorkersStatus,
+    listPagesProjects,
+    listKvNamespaces,
+    listR2Buckets,
+    listD1Databases,
     listAccessPolicies
   };
 };

@@ -1,17 +1,35 @@
 ---
-const links = [
+import type { AdminPermission } from '@goldshore/auth';
+
+const links: Array<{ href: string; label: string; requiredPermission?: AdminPermission }> = [
   { href: '/', label: 'Overview' },
   { href: '/dashboard', label: 'Ops Dashboard' },
   { href: '/admin/analytics', label: 'Analytics' },
+  { href: '/admin/monetization', label: 'Monetization' },
+  { href: '/admin/forms', label: 'Forms' },
+  { href: '/admin/media', label: 'Media Library' },
+  { href: '/admin/page-editor', label: 'Page Editor' },
   { href: '/admin/systems', label: 'Systems' },
+  { href: '/admin/content', label: 'Content', requiredPermission: 'content:read' },
+  { href: '/admin/media', label: 'Media', requiredPermission: 'media:read' },
+  { href: '/admin/forms', label: 'Forms', requiredPermission: 'forms:read' },
+  { href: '/admin/users', label: 'Users', requiredPermission: 'users:read' },
+  { href: '/admin/pii-scans', label: 'PII Scans' },
+  { href: '/admin/logs', label: 'Logs', requiredPermission: 'audit:read' },
   { href: '/admin/users', label: 'Users' },
   { href: '/admin/content-revisions', label: 'Content Revisions' },
+  { href: '/admin/pages', label: 'Pages' },
   { href: '/admin/pii-scans', label: 'PII Scans' },
   { href: '/admin/logs', label: 'Logs' },
+  { href: '/admin/pages/editor', label: 'Pages Editor' },
   { href: '/admin/settings', label: 'Settings' }
 ];
 
-const { logo } = Astro.props;
+const { logo, permissions = [] } = Astro.props;
+
+const visibleLinks = links.filter((link) =>
+  link.requiredPermission ? permissions.includes(link.requiredPermission) : true
+);
 
 // Enhanced active state detection for nested routes
 const isActive = (href: string) => {
@@ -38,7 +56,7 @@ const isActive = (href: string) => {
     <button id="sidebar-close" class="sidebar-close" aria-label="Close menu">✕</button>
   </div>
   <nav class="gs-sidebar-links">
-    {links.map((link) => (
+    {visibleLinks.map((link) => (
       <a
         class={`gs-nav-block ${isActive(link.href) ? 'active' : ''}`}
         href={link.href}
