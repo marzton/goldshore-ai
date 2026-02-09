@@ -2,12 +2,25 @@
 import Sidebar from '../components/Sidebar.astro';
 import Topbar from '../components/Topbar.astro';
 import '@goldshore/theme';
+import type { AdminPermission, AdminRole } from '@goldshore/auth';
 
 interface Props {
   title?: string;
+  requiredPermission?: AdminPermission;
+  requiredRole?: AdminRole;
 }
 
-const { title = 'GoldShore Admin' } = Astro.props;
+const { title = 'GoldShore Admin', requiredPermission, requiredRole } = Astro.props;
+const session = Astro.locals.adminSession ?? {
+  roles: [],
+  permissions: [],
+  isAuthenticated: false
+};
+const isRoleAllowed = requiredRole ? session.roles.includes(requiredRole) : true;
+const isPermissionAllowed = requiredPermission
+  ? session.permissions.includes(requiredPermission)
+  : true;
+const isAuthorized = isRoleAllowed && isPermissionAllowed;
 const logoSrc = '/assets/logo.svg';
 ---
 <html lang="en">
@@ -158,11 +171,27 @@ const logoSrc = '/assets/logo.svg';
   <body>
     <a href="#admin-content" class="skip-link">Skip to content</a>
     <div class="gs-admin-grid">
-      <Sidebar logo={logoSrc} />
+      <Sidebar logo={logoSrc} permissions={session.permissions} />
       <div class="gs-admin-main">
-        <Topbar title={title} />
+        <Topbar title={title} session={session} />
         <main id="admin-content" class="gs-admin-content">
-          <slot />
+          {isAuthorized ? (
+            <slot />
+          ) : (
+            <section class="max-w-4xl mx-auto py-24 px-6">
+              <h1 class="text-3xl gs-heading mb-4">Access restricted</h1>
+              <p class="text-[var(--gs-text-secondary)] mb-6">
+                Your account does not have permission to view this section. Contact an administrator
+                if you need expanded access.
+              </p>
+              <div class="gs-panel">
+                <div class="section-title"><span>🔒</span><h3>Access summary</h3></div>
+                <p class="gs-helper">Assigned roles: {session.roles.length ? session.roles.join(', ') : 'None'}</p>
+                <p class="gs-helper">Required role: {requiredRole ?? 'None'}</p>
+                <p class="gs-helper">Required permission: {requiredPermission ?? 'None'}</p>
+              </div>
+            </section>
+          )}
         </main>
       </div>
     </div>

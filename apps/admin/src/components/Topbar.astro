@@ -1,7 +1,11 @@
 ---
 import { GSButton } from '@goldshore/ui';
+import type { AdminSession } from '@goldshore/auth';
 
-const { title } = Astro.props;
+const { title, session } = Astro.props as {
+  title: string;
+  session: AdminSession & { actor?: string; isAuthenticated: boolean };
+};
 const envLabel = import.meta.env.PUBLIC_API?.includes('preview') ? 'Preview' : 'Production';
 ---
 <header class="gs-admin-topbar">
@@ -11,6 +15,13 @@ const envLabel = import.meta.env.PUBLIC_API?.includes('preview') ? 'Preview' : '
     <span class="gs-badge info">{envLabel}</span>
   </div>
   <div class="gs-row">
+    {session.isAuthenticated ? (
+      <span class="gs-helper">
+        {session.actor ?? 'Authenticated'} · {session.roles.length ? session.roles.join(', ') : 'Unassigned'}
+      </span>
+    ) : (
+      <span class="gs-helper">Unauthenticated</span>
+    )}
     <GSButton href="/" variant="secondary" class="gs-button--small">View site</GSButton>
   </div>
 </header>
