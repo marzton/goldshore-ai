@@ -10,6 +10,7 @@ import type { ControlEnv } from "./libs/types";
 import { syncDNS } from "./tasks/syncDNS";
 import { rotateKeys } from "./tasks/rotateKeys";
 import { cloudflareRoutes } from "./routes/cloudflare";
+import { revisionsRoutes } from "./routes/revisions";
 
 const app = new Hono<{
   Bindings: ControlEnv;
@@ -78,6 +79,7 @@ app.post("/access/audit", async (c) => {
 });
 
 app.route("/cloudflare", cloudflareRoutes);
+app.route("/content", revisionsRoutes);
 
 export default {
   fetch: app.fetch,
