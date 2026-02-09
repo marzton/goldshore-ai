@@ -71,6 +71,9 @@ importers:
 
   apps/admin:
     dependencies:
+      '@goldshore/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@goldshore/integrations':
         specifier: workspace:*
         version: link:../../packages/integrations
