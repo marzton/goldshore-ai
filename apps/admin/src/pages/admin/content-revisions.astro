@@ -1,0 +1,347 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { GSButton } from '@goldshore/ui';
+---
+<AdminLayout title="Content Revisions | GoldShore Admin">
+  <section class="max-w-6xl mx-auto py-16 px-6 space-y-10">
+    <header class="space-y-3">
+      <h1 class="text-3xl gs-heading">Content & Media Revisions</h1>
+      <p class="text-[var(--gs-text-secondary)]">
+        Capture snapshots of page content and media metadata, review diffs, and restore trusted versions.
+      </p>
+    </header>
+
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div class="gs-card space-y-4">
+        <div>
+          <h2 class="text-xl font-semibold">Revision Target</h2>
+          <p class="text-sm gs-text-subtle">Choose the page or media asset to manage.</p>
+        </div>
+        <div class="grid gap-3">
+          <label class="text-sm font-semibold" for="revision-entity-type">Entity type</label>
+          <select id="revision-entity-type" class="gs-input">
+            <option value="page">Page</option>
+            <option value="media">Media</option>
+          </select>
+          <label class="text-sm font-semibold" for="revision-entity-id">Entity ID</label>
+          <input id="revision-entity-id" class="gs-input" placeholder="e.g. homepage or asset-1234" />
+          <label class="text-sm font-semibold" for="revision-message">Change summary</label>
+          <input id="revision-message" class="gs-input" placeholder="Describe this snapshot" />
+          <div class="flex flex-wrap gap-3">
+            <GSButton variant="secondary" id="revision-load">Load Revisions</GSButton>
+            <GSButton variant="primary" id="revision-save">Save Snapshot</GSButton>
+          </div>
+        </div>
+        <p id="revision-status" class="text-sm gs-text-subtle">Waiting for input.</p>
+      </div>
+
+      <div class="gs-card space-y-4">
+        <div>
+          <h2 class="text-xl font-semibold">Snapshot Payload</h2>
+          <p class="text-sm gs-text-subtle">Paste page content and media metadata to store.</p>
+        </div>
+        <div class="grid gap-3">
+          <label class="text-sm font-semibold" for="revision-content">Page content</label>
+          <textarea id="revision-content" class="w-full min-h-[160px] gs-input" placeholder="Enter page content or JSON payload"></textarea>
+          <label class="text-sm font-semibold" for="revision-media">Media metadata (JSON)</label>
+          <textarea id="revision-media" class="w-full min-h-[140px] gs-input" placeholder="{ &quot;alt&quot;: &quot;Hero image&quot;, &quot;credits&quot;: &quot;GoldShore&quot; }"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+      <div class="gs-card space-y-4">
+        <div>
+          <h2 class="text-xl font-semibold">Revision History</h2>
+          <p class="text-sm gs-text-subtle">Select a revision to review differences or restore.</p>
+        </div>
+        <div id="revision-list" class="space-y-3 text-sm gs-text-subtle">
+          No revisions loaded yet.
+        </div>
+      </div>
+
+      <div class="gs-card space-y-4">
+        <div>
+          <h2 class="text-xl font-semibold">Diff Summary</h2>
+          <p class="text-sm gs-text-subtle">Compare the selected revision to its predecessor.</p>
+        </div>
+        <div id="revision-diff-summary" class="space-y-3 text-sm gs-text-subtle">
+          Select a revision to view changes.
+        </div>
+        <div class="grid gap-3">
+          <label class="text-sm font-semibold" for="revision-before">Previous revision</label>
+          <textarea id="revision-before" class="w-full min-h-[160px] gs-input" readonly></textarea>
+          <label class="text-sm font-semibold" for="revision-after">Selected revision</label>
+          <textarea id="revision-after" class="w-full min-h-[160px] gs-input" readonly></textarea>
+        </div>
+        <GSButton variant="primary" id="revision-restore" disabled>Restore Selected Revision</GSButton>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const apiBase = import.meta.env.PUBLIC_API;
+    const statusEl = document.getElementById('revision-status');
+    const listEl = document.getElementById('revision-list');
+    const diffEl = document.getElementById('revision-diff-summary');
+    const beforeEl = document.getElementById('revision-before');
+    const afterEl = document.getElementById('revision-after');
+    const restoreButton = document.getElementById('revision-restore');
+
+    let revisions = [];
+    let selectedIndex = null;
+
+    const setStatus = (message) => {
+      if (statusEl) statusEl.textContent = message;
+    };
+
+    const getTarget = () => {
+      const entityType = document.getElementById('revision-entity-type')?.value;
+      const entityId = document.getElementById('revision-entity-id')?.value?.trim();
+      return { entityType, entityId };
+    };
+
+    const buildEndpoint = (entityType, entityId, suffix = '') =>
+      `${apiBase}/content/${entityType}/${entityId}/revisions${suffix}`;
+
+    const parseMetadata = () => {
+      const mediaRaw = document.getElementById('revision-media')?.value?.trim();
+      if (!mediaRaw) return undefined;
+      return JSON.parse(mediaRaw);
+    };
+
+    const renderRevisionList = () => {
+      if (!listEl) return;
+      if (!revisions.length) {
+        listEl.textContent = 'No revisions recorded yet.';
+        return;
+      }
+
+      listEl.innerHTML = revisions
+        .map((revision, index) => {
+          const meta = [revision.hasContent ? 'content' : null, revision.hasMediaMetadata ? 'media' : null]
+            .filter(Boolean)
+            .join(' + ');
+          return `
+            <div class="flex flex-col gap-2 border border-white/10 rounded-lg p-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="text-sm font-semibold">${revision.createdAt}</div>
+                <div class="text-xs gs-text-subtle">${revision.author || 'unknown'}</div>
+              </div>
+              <div class="text-sm">${revision.message || 'No summary provided.'}</div>
+              <div class="text-xs gs-text-subtle">Includes: ${meta || 'empty snapshot'}</div>
+              <div class="flex flex-wrap gap-2">
+                <button class="btn-xs" data-action="view" data-index="${index}">View Diff</button>
+                <button class="btn-xs" data-action="restore" data-index="${index}">Restore</button>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    };
+
+    const summarizeDiff = (previous, current) => {
+      const changes = [];
+      const previousContent = previous?.content ?? '';
+      const currentContent = current?.content ?? '';
+      if (previousContent !== currentContent) {
+        changes.push('Page content changed.');
+      }
+
+      const previousMedia = previous?.mediaMetadata ?? {};
+      const currentMedia = current?.mediaMetadata ?? {};
+      const previousKeys = new Set(Object.keys(previousMedia));
+      const currentKeys = new Set(Object.keys(currentMedia));
+      const allKeys = new Set([...previousKeys, ...currentKeys]);
+      const changedKeys = [];
+      allKeys.forEach((key) => {
+        if (previousMedia[key] !== currentMedia[key]) {
+          changedKeys.push(key);
+        }
+      });
+
+      if (changedKeys.length) {
+        changes.push(`Media metadata updated: ${changedKeys.join(', ')}`);
+      }
+
+      if (!changes.length) {
+        changes.push('No changes detected compared to previous revision.');
+      }
+
+      return changes;
+    };
+
+    const renderDiff = (previous, current) => {
+      if (diffEl) {
+        diffEl.innerHTML = summarizeDiff(previous, current)
+          .map((item) => `<div class="gs-pill">${item}</div>`)
+          .join('');
+      }
+
+      if (beforeEl) {
+        beforeEl.value = JSON.stringify(previous ?? {}, null, 2);
+      }
+
+      if (afterEl) {
+        afterEl.value = JSON.stringify(current ?? {}, null, 2);
+      }
+    };
+
+    const loadRevisions = async () => {
+      const { entityType, entityId } = getTarget();
+      if (!entityType || !entityId) {
+        setStatus('Entity type and ID are required.');
+        return;
+      }
+      if (!apiBase) {
+        setStatus('PUBLIC_API is not configured.');
+        return;
+      }
+
+      setStatus('Loading revisions...');
+      try {
+        const response = await fetch(buildEndpoint(entityType, entityId), { credentials: 'include' });
+        if (!response.ok) {
+          const error = await response.json();
+          setStatus(error.error || 'Failed to load revisions.');
+          return;
+        }
+        const payload = await response.json();
+        revisions = payload.revisions || [];
+        selectedIndex = null;
+        renderRevisionList();
+        renderDiff(null, null);
+        if (restoreButton) restoreButton.disabled = true;
+        setStatus(`Loaded ${revisions.length} revisions.`);
+      } catch (error) {
+        setStatus('Unable to reach the revision service.');
+        console.error(error);
+      }
+    };
+
+    const saveRevision = async () => {
+      const { entityType, entityId } = getTarget();
+      if (!entityType || !entityId) {
+        setStatus('Entity type and ID are required.');
+        return;
+      }
+      if (!apiBase) {
+        setStatus('PUBLIC_API is not configured.');
+        return;
+      }
+
+      const content = document.getElementById('revision-content')?.value;
+      const message = document.getElementById('revision-message')?.value;
+
+      let mediaMetadata;
+      try {
+        mediaMetadata = parseMetadata();
+      } catch (error) {
+        setStatus('Media metadata must be valid JSON.');
+        console.error(error);
+        return;
+      }
+
+      setStatus('Saving revision...');
+      try {
+        const response = await fetch(buildEndpoint(entityType, entityId), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            content,
+            mediaMetadata,
+            message,
+          }),
+        });
+        if (!response.ok) {
+          const error = await response.json();
+          setStatus(error.error || 'Failed to save revision.');
+          return;
+        }
+        setStatus('Revision saved.');
+        await loadRevisions();
+      } catch (error) {
+        setStatus('Unable to save revision.');
+        console.error(error);
+      }
+    };
+
+    const loadRevisionDiff = async (index) => {
+      const { entityType, entityId } = getTarget();
+      if (index === null || index === undefined) return;
+      if (!apiBase || !entityType || !entityId) return;
+
+      const revision = revisions[index];
+      selectedIndex = index;
+      if (restoreButton) restoreButton.disabled = false;
+
+      try {
+        const response = await fetch(buildEndpoint(entityType, entityId, `/${revision.id}`), {
+          credentials: 'include',
+        });
+        if (!response.ok) {
+          setStatus('Failed to load revision detail.');
+          return;
+        }
+        const payload = await response.json();
+        const current = payload.revision;
+        const previous = index + 1 < revisions.length
+          ? (await (await fetch(buildEndpoint(entityType, entityId, `/${revisions[index + 1].id}`), { credentials: 'include' })).json()).revision
+          : null;
+        renderDiff(previous, current);
+        setStatus('Diff ready.');
+      } catch (error) {
+        setStatus('Unable to load revision diff.');
+        console.error(error);
+      }
+    };
+
+    const restoreRevision = async () => {
+      const { entityType, entityId } = getTarget();
+      if (selectedIndex === null || selectedIndex === undefined) {
+        setStatus('Select a revision to restore.');
+        return;
+      }
+      const revision = revisions[selectedIndex];
+      if (!apiBase || !entityType || !entityId) return;
+
+      setStatus('Restoring revision...');
+      try {
+        const response = await fetch(buildEndpoint(entityType, entityId, `/${revision.id}/restore`), {
+          method: 'POST',
+          credentials: 'include',
+        });
+        if (!response.ok) {
+          const error = await response.json();
+          setStatus(error.error || 'Failed to restore revision.');
+          return;
+        }
+        setStatus('Revision restored and captured as new snapshot.');
+        await loadRevisions();
+      } catch (error) {
+        setStatus('Unable to restore revision.');
+        console.error(error);
+      }
+    };
+
+    document.getElementById('revision-load')?.addEventListener('click', loadRevisions);
+    document.getElementById('revision-save')?.addEventListener('click', saveRevision);
+    restoreButton?.addEventListener('click', restoreRevision);
+
+    listEl?.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const action = target.getAttribute('data-action');
+      const index = Number(target.getAttribute('data-index'));
+      if (Number.isNaN(index)) return;
+      if (action === 'view') {
+        loadRevisionDiff(index);
+      }
+      if (action === 'restore') {
+        selectedIndex = index;
+        restoreRevision();
+      }
+    });
+  </script>
+</AdminLayout>
