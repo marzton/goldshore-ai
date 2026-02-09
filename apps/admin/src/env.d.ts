@@ -1,3 +1,4 @@
+/// <reference types="astro/client" />
 import type { AdminSession } from "@goldshore/auth";
 
 declare namespace App {
@@ -7,7 +8,7 @@ declare namespace App {
       isAuthenticated: boolean;
     };
   }
-/// <reference types="astro/client" />
+}
 
 // Type definitions for environment variables
 interface ImportMetaEnv {
