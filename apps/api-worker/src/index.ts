@@ -8,6 +8,7 @@ import ai from './routes/ai';
 import user from './routes/user';
 import system from './routes/system';
 import templates from './routes/templates';
+import admin from './routes/admin';
 
 type Env = {
   KV: KVNamespace;
@@ -44,6 +45,7 @@ app.use('*', cors({
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
   exposeHeaders: ['Content-Length'],
+  credentials: true,
   maxAge: 600,
 }));
 
@@ -101,6 +103,7 @@ app.route('/users', users);
 app.route('/user', user);
 app.route('/system', system);
 app.route('/templates', templates);
+app.route('/admin', admin);
 
 // V1 Routes
 const v1 = new Hono<{ Bindings: Env }>();
