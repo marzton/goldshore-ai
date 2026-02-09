@@ -8,6 +8,7 @@ const DEFAULT_CONTACT_TTL_SECONDS = 60 * 60 * 24 * 90;
 type Submission = {
   id: string;
   formType: string;
+  status: 'new' | 'read' | 'archived';
   name: string;
   email: string;
   company: string;
@@ -34,6 +35,7 @@ const storeInKv = async (
     expirationTtl: ttl,
     metadata: {
       formType: submission.formType,
+      status: submission.status,
     },
   });
 };
@@ -59,13 +61,14 @@ const storeInD1 = async (
         budget,
         goals,
         message,
+        status,
         received_at,
         ip_address,
         user_agent,
         auto_responder_subject,
         auto_responder_text,
         auto_responder_html
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
     .bind(
       submission.id,
@@ -81,6 +84,7 @@ const storeInD1 = async (
       submission.budget || null,
       submission.goals || null,
       submission.message || null,
+      submission.status,
       submission.receivedAt,
       submission.ipAddress || null,
       submission.userAgent || null,
@@ -93,6 +97,20 @@ const storeInD1 = async (
 
 const extractString = (value: FormDataEntryValue | null) =>
   typeof value === 'string' ? value.trim() : '';
+
+const isSpamSubmission = (formData: FormData) => {
+  const honeypot = extractString(formData.get('companyWebsite'));
+  if (honeypot) return true;
+
+  const formStartedAt = extractString(formData.get('formStartedAt'));
+  if (!formStartedAt) return false;
+
+  const startedAtMs = Number(formStartedAt);
+  if (!Number.isFinite(startedAtMs)) return true;
+
+  const elapsedMs = Date.now() - startedAtMs;
+  return elapsedMs < 2500;
+};
 
 const safeRedirect = (redirectTo: string | null, origin: string) => {
   if (!redirectTo) return new URL('/thank-you', origin);
@@ -109,10 +127,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const formData = await request.formData();
   const formType = extractString(formData.get('formType')) || 'contact';
   const redirectTo = extractString(formData.get('redirectTo'));
+  const isSpam = isSpamSubmission(formData);
 
   const submission: Submission = {
     id: crypto.randomUUID(),
     formType,
+    status: 'new',
     name: extractString(formData.get('name')),
     email: extractString(formData.get('email')),
     company: extractString(formData.get('company')),
@@ -128,6 +148,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
     ipAddress: request.headers.get('CF-Connecting-IP') ?? undefined,
     userAgent: request.headers.get('User-Agent') ?? undefined,
   };
+
+  if (isSpam) {
+    const redirectUrl = safeRedirect(redirectTo, new URL(request.url).origin);
+    return Response.redirect(redirectUrl, 303);
+  }
 
   if (submission.email && !isValidEmail(submission.email)) {
     return new Response('Invalid email address.', { status: 400 });
