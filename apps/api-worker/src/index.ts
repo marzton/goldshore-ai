@@ -9,6 +9,8 @@ import user from './routes/user';
 import system from './routes/system';
 import templates from './routes/templates';
 import admin from './routes/admin';
+import media from './routes/media';
+import pages from './routes/pages';
 
 type Env = {
   KV: KVNamespace;
@@ -105,6 +107,8 @@ app.route('/user', user);
 app.route('/system', system);
 app.route('/templates', templates);
 app.route('/admin', admin);
+app.route('/media', media);
+app.route('/pages', pages);
 
 // V1 Routes
 const v1 = new Hono<{ Bindings: Env }>();

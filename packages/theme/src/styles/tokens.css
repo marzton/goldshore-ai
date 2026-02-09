@@ -12,6 +12,18 @@
   --gs-font-size-h5: clamp(1.1rem, 1.04rem + 0.3vw, 1.4rem);
   --gs-font-size-h6: clamp(1rem, 0.98rem + 0.2vw, 1.2rem);
 
+  --gs-breakpoint-sm: 600px;
+  --gs-breakpoint-md: 900px;
+  --gs-breakpoint-lg: 1200px;
+  --gs-breakpoint-xl: 1440px;
+
+  --gs-section-max-width: 1200px;
+  --gs-section-padding-inline: clamp(1.25rem, 3vw, 2.5rem);
+  --gs-section-padding-block: clamp(2.5rem, 6vw, 4.25rem);
+  --gs-section-gap: clamp(1.5rem, 3vw, 2.75rem);
+  --gs-grid-min-2: 280px;
+  --gs-grid-min-3: 240px;
+
   --gs-color-bg: #050914;
   --gs-color-surface: #0c1221;
   --gs-color-surface-strong: #0f172a;
