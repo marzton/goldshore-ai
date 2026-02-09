@@ -2,13 +2,41 @@
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { Card, Table } from '@goldshore/ui';
 
-const logs = [
-  { ts: '2024-05-12 10:40:12', level: 'info', message: 'Admin login from okta session.' },
-  { ts: '2024-05-12 10:35:02', level: 'warn', message: 'Rate limit approaching 90% threshold.' },
-  { ts: '2024-05-12 10:15:22', level: 'error', message: 'Upstream latency breach on gateway-us-east.' },
+type AuditEvent = {
+  timestamp: string;
+  action: string;
+  actor?: string;
+  status: string;
+};
+
+const API_BASE = import.meta.env.PUBLIC_API;
+const accessToken = Astro.request.headers.get('CF-Access-Jwt-Assertion');
+
+let logs: AuditEvent[] = [
+  { timestamp: '2024-05-12T10:40:12Z', action: 'admin.login', actor: 'okta-session', status: 'success' },
+  { timestamp: '2024-05-12T10:35:02Z', action: 'admin.rate-limit', actor: 'gateway', status: 'warning' },
+  { timestamp: '2024-05-12T10:15:22Z', action: 'admin.gateway.latency', actor: 'gw-us-east', status: 'error' }
 ];
+let loadError: string | null = null;
+
+if (API_BASE && accessToken) {
+  try {
+    const response = await fetch(`${API_BASE}/admin/audit`, {
+      headers: {
+        'CF-Access-Jwt-Assertion': accessToken
+      }
+    });
+    if (response.ok) {
+      logs = (await response.json()) as AuditEvent[];
+    } else {
+      loadError = `Failed to load audit logs (${response.status}).`;
+    }
+  } catch (error) {
+    loadError = 'Unable to reach the admin audit endpoint.';
+  }
+}
 ---
-<AdminLayout title="Logs">
+<AdminLayout title="Logs" requiredPermission="audit:read">
   <section class="gs-grid columns-2">
     <Card>
       <div class="section-title"><span>☰</span><h3>Filters</h3></div>
@@ -35,15 +63,16 @@ const logs = [
     </Card>
 
     <Card class="gs-table-card">
+      {loadError ? <p class="text-[var(--gs-danger)] mb-4">{loadError}</p> : null}
       <div class="section-title"><span>◎</span><h3>Recent events</h3></div>
       <Table>
         <thead><tr><th>Timestamp</th><th>Level</th><th>Message</th></tr></thead>
         <tbody>
           {logs.map((log) => (
             <tr>
-              <td>{log.ts}</td>
-              <td><span class={`gs-badge ${log.level === 'error' ? 'danger' : log.level === 'warn' ? 'warning' : 'info'}`}>{log.level}</span></td>
-              <td>{log.message}</td>
+              <td>{new Date(log.timestamp).toLocaleString()}</td>
+              <td><span class={`gs-badge ${log.status === 'error' ? 'danger' : log.status === 'warning' ? 'warning' : 'info'}`}>{log.status}</span></td>
+              <td>{log.action} {log.actor ? `· ${log.actor}` : ''}</td>
             </tr>
           ))}
         </tbody>

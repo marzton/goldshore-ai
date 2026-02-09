@@ -25,6 +25,37 @@ type Submission = {
   userAgent?: string;
 };
 
+type FormField = {
+  name: string;
+  label?: string;
+  type?: string;
+  required?: boolean;
+};
+
+type FormRecipient = {
+  email: string;
+  name?: string;
+  channel?: string;
+};
+
+type FormIntegration = {
+  type: string;
+  enabled?: boolean;
+  settings?: Record<string, unknown>;
+};
+
+type FormConfig = {
+  id: string;
+  slug: string;
+  name: string;
+  status: 'active' | 'disabled' | 'archived';
+  fields: FormField[];
+  recipients: FormRecipient[];
+  integrations: FormIntegration[];
+  createdAt: string;
+  updatedAt: string;
+};
+
 const storeInKv = async (
   kv: KVNamespace,
   submission: Submission,
@@ -110,6 +141,99 @@ const isSpamSubmission = (formData: FormData) => {
 
   const elapsedMs = Date.now() - startedAtMs;
   return elapsedMs < 2500;
+const parseJson = <T>(value: string | null, fallback: T): T => {
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return fallback;
+  }
+};
+
+const normalizeFormConfig = (row: Record<string, string> | null, slug: string): FormConfig => {
+  const now = new Date().toISOString();
+  if (!row) {
+    return {
+      id: `fallback:${slug}`,
+      slug,
+      name: `Form: ${slug}`,
+      status: 'active',
+      fields: [],
+      recipients: [],
+      integrations: [],
+      createdAt: now,
+      updatedAt: now
+    };
+  }
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    status: (row.status as FormConfig['status']) ?? 'active',
+    fields: parseJson<FormField[]>(row.fields ?? null, []),
+    recipients: parseJson<FormRecipient[]>(row.recipients ?? null, []),
+    integrations: parseJson<FormIntegration[]>(row.integrations ?? null, []),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  };
+};
+
+const fetchFormConfig = async (db: D1Database, slug: string): Promise<FormConfig> => {
+  const result = await db
+    .prepare(
+      `SELECT id, slug, name, status, fields, recipients, integrations, created_at, updated_at
+       FROM form_configs
+       WHERE slug = ?
+       LIMIT 1`
+    )
+    .bind(slug)
+    .all();
+
+  const row = result?.results?.[0] as Record<string, string> | undefined;
+  return normalizeFormConfig(row ?? null, slug);
+};
+
+const logSubmissionStatus = async (
+  db: D1Database,
+  submissionId: string,
+  formSlug: string,
+  status: string,
+  message?: string,
+  details?: Record<string, unknown>
+) => {
+  await db
+    .prepare(
+      `INSERT INTO form_submission_logs (
+        id,
+        submission_id,
+        form_slug,
+        status,
+        message,
+        details,
+        created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)`
+    )
+    .bind(
+      crypto.randomUUID(),
+      submissionId,
+      formSlug,
+      status,
+      message ?? null,
+      details ? JSON.stringify(details) : null,
+      new Date().toISOString()
+    )
+    .run();
+};
+
+const validateRequiredFields = (submission: Submission, fields: FormField[]) => {
+  const requiredFields = fields.filter((field) => field.required && field.name);
+  const missing = requiredFields.filter((field) => {
+    const value = (submission as Record<string, string | undefined>)[field.name];
+    return !value;
+  });
+
+  return missing;
 };
 
 const safeRedirect = (redirectTo: string | null, origin: string) => {
@@ -164,6 +288,27 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response('Storage unavailable.', { status: 503 });
   }
 
+  const formConfig = env?.DB ? await fetchFormConfig(env.DB, formType) : normalizeFormConfig(null, formType);
+
+  if (formConfig.status !== 'active') {
+    if (env?.DB) {
+      await logSubmissionStatus(env.DB, submission.id, formType, 'blocked', 'Form is not accepting submissions.', {
+        status: formConfig.status
+      });
+    }
+    return new Response('Form is not accepting submissions.', { status: 403 });
+  }
+
+  const missingFields = validateRequiredFields(submission, formConfig.fields);
+  if (missingFields.length > 0) {
+    if (env?.DB) {
+      await logSubmissionStatus(env.DB, submission.id, formType, 'rejected', 'Missing required fields.', {
+        fields: missingFields.map((field) => field.name)
+      });
+    }
+    return new Response('Missing required fields.', { status: 400 });
+  }
+
   const ttl = env?.CONTACT_TTL_SECONDS ? parseInt(env.CONTACT_TTL_SECONDS, 10) : DEFAULT_CONTACT_TTL_SECONDS;
 
   const autoResponder = buildLeadAutoResponder({
@@ -180,7 +325,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   if (!storedSuccessfully) {
     console.error('Contact submission storage failed.', storageResults);
+    if (env?.DB) {
+      await logSubmissionStatus(env.DB, submission.id, formType, 'storage_failed', 'Storage unavailable.');
+    }
     return new Response('Storage unavailable.', { status: 503 });
+  }
+
+  if (env?.DB) {
+    await logSubmissionStatus(env.DB, submission.id, formType, 'stored', 'Submission stored successfully.', {
+      recipients: formConfig.recipients,
+      integrations: formConfig.integrations
+    });
   }
 
   const redirectUrl = safeRedirect(redirectTo, new URL(request.url).origin);
