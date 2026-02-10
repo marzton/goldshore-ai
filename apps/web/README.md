@@ -97,6 +97,18 @@ Set these environment variables in the `gs-web` Pages project:
 
 Keep the existing bindings for `KV` and `DB` so submissions continue to persist even if email delivery is temporarily unavailable.
 
+## Live deployment (with themes)
+
+The live web deployment (`gs-web`) already includes GoldShore theme styling because the app imports `@goldshore/theme` in both layout and global styles.
+
+From repo root, deploy the current web build to Cloudflare Pages production:
+
+```bash
+pnpm deploy:web:live
+```
+
+This builds `@goldshore/web` and deploys `apps/web/dist` to the `gs-web` Pages project on `main`.
+
 ## Deploy
 
 - Production deploy: `.github/workflows/deploy-web.yml`
@@ -194,6 +206,18 @@ pnpm --filter ./apps/web dev
 pnpm --filter ./apps/web build
 pnpm --filter ./apps/web preview
 ```
+
+## Live deployment (with themes)
+
+The live web deployment (`gs-web`) already includes GoldShore theme styling because the app imports `@goldshore/theme` in both layout and global styles.
+
+From repo root, deploy the current web build to Cloudflare Pages production:
+
+```bash
+pnpm deploy:web:live
+```
+
+This builds `@goldshore/web` and deploys `apps/web/dist` to the `gs-web` Pages project on `main`.
 
 ## Deploy
 
