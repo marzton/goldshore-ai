@@ -150,4 +150,22 @@ describe('verifyAccessWithClaims (public)', () => {
         const args = consoleErrorMock.mock.calls[0].arguments;
         assert.strictEqual(args[0], "Token verification failed");
     });
+
+    test('returns payload when verification succeeds', async () => {
+        const req = new Request('http://example.com', {
+            headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
+        });
+        const env: Env = {};
+        const mockPayload = { sub: 'user123', email: 'test@example.com' };
+
+        // Mock deps.jwtVerify to return success
+        jwtVerifyMock = mock.method(deps, 'jwtVerify', async () => {
+            return { payload: mockPayload };
+        });
+
+        const result = await verifyAccessWithClaims(req, env);
+
+        assert.deepStrictEqual(result, mockPayload);
+        assert.strictEqual(consoleErrorMock.mock.callCount(), 0);
+    });
 });
