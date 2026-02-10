@@ -1,7 +1,29 @@
 import { Hono } from "hono";
+import { createHash } from "node:crypto";
 import { applyAnalysisPolicy, getProvider, type AnalysisRequest } from "@goldshore/ai-providers";
 
-const ai = new Hono();
+type Env = {
+  KV: KVNamespace;
+  OPENAI_API_KEY?: string;
+  GEMINI_API_KEY?: string;
+};
+
+const ai = new Hono<{ Bindings: Env }>();
+
+function sortObject(obj: any): any {
+  if (obj === null || typeof obj !== "object") {
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj.map(sortObject);
+  }
+  return Object.keys(obj)
+    .sort()
+    .reduce((result: any, key) => {
+      result[key] = sortObject(obj[key]);
+      return result;
+    }, {});
+}
 
 ai.get("/", (c) => c.json({ message: "AI endpoint" }));
 
@@ -32,10 +54,44 @@ ai.post("/analysis", async (c) => {
       : c.env.GEMINI_API_KEY;
 
   const startedAt = Date.now();
-  const providerResponse = await provider.analyze(policyResult.sanitized.input, {
-    apiKey,
-    fetch,
-  });
+
+  // Create a cache key based on the sanitized input
+  const inputHash = createHash("sha256")
+    .update(JSON.stringify(sortObject(policyResult.sanitized)))
+    .digest("hex");
+  const cacheKey = `analysis:${inputHash}`;
+
+  // Check cache
+  let providerResponse;
+  let isCached = false;
+
+  try {
+    const cached = await c.env.KV.get(cacheKey, "json");
+    if (cached) {
+      providerResponse = cached;
+      isCached = true;
+    }
+  } catch (err) {
+    console.error("Failed to read from cache:", err);
+  }
+
+  if (!providerResponse) {
+    providerResponse = await provider.analyze(policyResult.sanitized.input, {
+      apiKey,
+      fetch,
+    });
+
+    // Store in cache (fire and forget via waitUntil)
+    try {
+      const cacheValue = JSON.stringify(providerResponse);
+      c.executionCtx.waitUntil(
+        c.env.KV.put(cacheKey, cacheValue, { expirationTtl: 86400 })
+      ); // 24 hours
+    } catch (err) {
+      console.error("Failed to write to cache:", err);
+    }
+  }
+
   const durationMs = Date.now() - startedAt;
 
   const logEntry = {
@@ -48,15 +104,20 @@ ai.post("/analysis", async (c) => {
     },
     redactions: policyResult.redactions,
     durationMs,
+    cache: isCached ? "HIT" : "MISS",
   };
 
   console.log(JSON.stringify(logEntry));
 
-  return c.json({
+  const response = c.json({
     ...providerResponse,
     redactions: policyResult.redactions,
     durationMs,
   });
+
+  response.headers.set("X-Cache", isCached ? "HIT" : "MISS");
+
+  return response;
 });
 
 export default ai;
