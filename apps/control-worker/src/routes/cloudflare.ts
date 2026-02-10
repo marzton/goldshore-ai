@@ -145,6 +145,58 @@ cloudflareRoutes.get("/dns/records", async (c) => {
   }
 });
 
+cloudflareRoutes.put("/dns/records/:recordId", async (c) => {
+  const zoneId = c.env.CLOUDFLARE_ZONE_ID;
+  const { recordId } = c.req.param();
+  const actor = getActor(c.get("accessClaims"), c.req.raw);
+
+  if (!zoneId) {
+    await logAuditEvent(c.env.CONTROL_LOGS, {
+      action: "cloudflare:dns:update",
+      actor,
+      status: "error",
+      metadata: { reason: "missing-zone-id" }
+    });
+    return c.json({ error: "Missing Cloudflare zone id." }, 400);
+  }
+
+  if (!recordId) {
+    await logAuditEvent(c.env.CONTROL_LOGS, {
+      action: "cloudflare:dns:update",
+      actor,
+      status: "error",
+      metadata: { reason: "missing-record-id" }
+    });
+    return c.json({ error: "Missing DNS record id." }, 400);
+  }
+
+  try {
+    const payload = await c.req.json();
+    const result = await fetchCloudflare(
+      c.env,
+      `/zones/${zoneId}/dns_records/${recordId}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(payload)
+      }
+    );
+
+    await logAuditEvent(c.env.CONTROL_LOGS, {
+      action: "cloudflare:dns:update",
+      actor,
+      status: result.ok ? "success" : "error",
+      metadata: { status: result.status, recordId }
+    });
+
+    return c.json(result.data, result.status as ContentfulStatusCode);
+  } catch (error) {
+    await logAuditEvent(c.env.CONTROL_LOGS, {
+      action: "cloudflare:dns:update",
+      actor,
+      status: "error",
+      metadata: { recordId, message: formatErrorMessage(error) }
+    });
+    return c.json({ error: "Cloudflare API request failed." }, 502);
 cloudflareRoutes.put(
   "/dns/records/:recordId",
   zValidator("json", dnsRecordSchema),
