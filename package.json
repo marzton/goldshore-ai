@@ -17,6 +17,8 @@
     "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md"
   },
   "devDependencies": {
+    "@astrojs/mdx": "^4.0.8",
+    "@astrojs/sitemap": "^3.6.0",
     "@astrojs/tailwind": "^6.0.2",
     "@types/node": "^25.0.1",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
