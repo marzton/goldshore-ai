@@ -1,0 +1,57 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title="Developer Hub | GoldShore.ai"
+      description="Developer onboarding and API overview."
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>Developer Hub</h1>
+      <p>
+        Implementation notes, integration surfaces, and API onboarding
+        references.
+      </p>
+      <section id="api-overview" class="card">
+        <h2>API overview (preview)</h2>
+        <p class="small">
+          A provisional API index is available for interface planning. Contact
+          the team for early access and environment credentials.
+        </p>
+        <pre
+          class="code-block"><code>{`GET /v1/systems/{id}/status
+200 OK
+{
+  "systemId": "ops-17",
+  "health": "degraded",
+  "riskScore": 0.62,
+  "updatedAt": "2026-02-10T10:45:00Z"
+}`}</code></pre>
+        <p>
+          <a class="button button-secondary" href="/contact"
+            >Contact the team for API access</a
+          >
+        </p>
+      </section>
+    </main>
+    <Footer />
+    <style>
+      .code-block {
+        background: #0f172a;
+        color: #e2e8f0;
+        border: 1px solid #1e293b;
+        border-radius: 12px;
+        padding: 1rem;
+        overflow-x: auto;
+      }
+    </style>
+  </body>
+</html>

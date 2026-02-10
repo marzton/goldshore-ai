@@ -1,13 +1,16 @@
 import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
-import { verifyAccess } from '@goldshore/auth';
+import { verifyAccessWithClaims, type AccessTokenPayload } from '@goldshore/auth';
 import users from './routes/users';
 import health from './routes/health';
 import ai from './routes/ai';
 import user from './routes/user';
 import system from './routes/system';
 import templates from './routes/templates';
+import admin from './routes/admin';
+import media from './routes/media';
+import pages from './routes/pages';
 
 type Env = {
   KV: KVNamespace;
@@ -22,7 +25,7 @@ type Env = {
   CLOUDFLARE_TEAM_DOMAIN?: string;
 };
 
-const app = new Hono<{ Bindings: Env }>();
+const app = new Hono<{ Bindings: Env; Variables: { accessClaims: AccessTokenPayload | null } }>();
 
 const ALLOWED_ORIGIN_PATTERNS = [
   /^https:\/\/(www\.)?goldshore\.ai$/,
@@ -44,6 +47,7 @@ app.use('*', cors({
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
   exposeHeaders: ['Content-Length'],
+  credentials: true,
   maxAge: 600,
 }));
 
@@ -51,15 +55,17 @@ app.use('*', cors({
 app.use('*', async (c, next) => {
   // Allow health checks, root, and CORS preflight
   if (c.req.path === '/health' || c.req.path.startsWith('/health/') || c.req.path === '/' || c.req.method === 'OPTIONS') {
+    c.set('accessClaims', null);
     await next();
     return;
   }
 
   // Verify Cloudflare Access JWT
-  const authorized = await verifyAccess(c.req.raw, c.env);
-  if (!authorized) {
+  const claims = await verifyAccessWithClaims(c.req.raw, c.env);
+  if (!claims) {
     return c.json({ error: 'Unauthorized' }, 401);
   }
+  c.set('accessClaims', claims);
   await next();
 });
 
@@ -101,6 +107,9 @@ app.route('/users', users);
 app.route('/user', user);
 app.route('/system', system);
 app.route('/templates', templates);
+app.route('/admin', admin);
+app.route('/media', media);
+app.route('/pages', pages);
 
 // V1 Routes
 const v1 = new Hono<{ Bindings: Env }>();
