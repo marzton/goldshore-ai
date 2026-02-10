@@ -363,8 +363,15 @@ pnpm --filter @goldshore/control-worker deploy
 # 📌 Versioning Strategy
 
 - `main` → Production
+- `work` or `work/*` → Preview Deployments
 - `feature/*` → Preview Deployments
 - `release/*` → Staging
+
+### Branch-to-Environment Mapping
+
+- `main` triggers production deploy workflows (`deploy-*`).
+- `work` / `work/*` and `feature/*` trigger preview workflows (`preview-*`).
+- Pull requests also trigger preview workflows when matching path filters.
 
 ---
 

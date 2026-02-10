@@ -7,6 +7,8 @@ on:
       - "packages/schema/**"
   push:
     branches:
+      - "work"
+      - "work/**"
       - "feature/**"
 
 jobs:

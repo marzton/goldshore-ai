@@ -50,6 +50,10 @@ gs-mail	apps/mail-worker (if created later)	Email Worker
 
 This is the authoritative mapping.
 
+Pages Project Name	Directory
+astro-gs-web	apps/web
+astro-gs-admin	apps/admin
+
 ⸻
 
 📍 SECTION 3 — DNS RULES (MANDATORY)
@@ -99,7 +103,7 @@ For gs-web and gs-admin, always create:
 
 gs-web
 
-name: gs-web
+name: astro-gs-web
 root: apps/web
 build_command: pnpm --filter @goldshore/web build
 build_output: apps/web/dist
@@ -110,7 +114,7 @@ domains:
 
 gs-admin
 
-name: gs-admin
+name: astro-gs-admin
 root: apps/admin
 build_command: pnpm --filter @goldshore/admin build
 build_output: apps/admin/dist

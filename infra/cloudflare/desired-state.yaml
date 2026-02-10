@@ -55,7 +55,7 @@ cloudflare:
 
   pages:
     projects:
-      - name: "gs-web"
+      - name: "astro-gs-web"
         repo: "astro-goldshore"
         root_dir: "/" # Run from repo root for monorepo support
         production_branch: "main"
@@ -65,7 +65,7 @@ cloudflare:
           - "goldshore.ai"
           - "www.goldshore.ai"
 
-      - name: "gs-admin"
+      - name: "astro-gs-admin"
         repo: "astro-goldshore"
         root_dir: "/" # Run from repo root for monorepo support
         production_branch: "main"

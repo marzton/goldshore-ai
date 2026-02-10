@@ -9,3 +9,14 @@ environment = "production"
 
 [ai]
 binding = "AI"
+
+
+[env.preview]
+name = "gs-gateway-preview"
+
+[[env.preview.services]]
+binding = "API"
+service = "gs-api-preview"
+
+[env.preview.ai]
+binding = "AI"

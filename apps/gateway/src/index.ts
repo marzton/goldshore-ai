@@ -1,21 +1,22 @@
-import { Hono } from 'hono';
+import { Hono } from "hono";
 
-const app = new Hono();
+type Bindings = {
+  API: Fetcher;
+};
 
-const API_ORIGIN = 'https://api.goldshore.ai';
+const app = new Hono<{ Bindings: Bindings }>();
 
-app.all('/*', async (c) => {
+const BODYLESS_METHODS = new Set(["GET", "HEAD"]);
+
+app.all("/*", async (c) => {
   const url = new URL(c.req.url);
-  const target = API_ORIGIN + url.pathname + url.search;
-
-  const req = new Request(target, {
+  const apiRequest = new Request(url.pathname + url.search, {
     method: c.req.method,
     headers: c.req.raw.headers,
-    body: c.req.method !== "GET" && c.req.method !== "HEAD" ? c.req.raw.body : undefined
+    body: BODYLESS_METHODS.has(c.req.method) ? undefined : c.req.raw.body,
   });
 
-  const res = await fetch(req);
-  return res;
+  return c.env.API.fetch(apiRequest);
 });
 
 export default app;
