@@ -61,7 +61,9 @@ const assertInputTypes = (input: AnalysisInput) => {
         value === null;
 
       if (!allowed) {
-        throw new Error('input.metadata values must be string, number, boolean, or null');
+        throw new Error(
+          'input.metadata values must be string, number, boolean, or null',
+        );
       }
     }
   }

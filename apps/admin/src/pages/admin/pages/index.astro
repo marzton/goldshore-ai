@@ -3,12 +3,17 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
 const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
 ---
+
 <AdminLayout title="Pages | GoldShore Admin">
   <section class="max-w-6xl mx-auto py-12 px-6 space-y-6">
-    <header class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <header
+      class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
+    >
       <div>
         <h1 class="text-3xl gs-heading">Pages</h1>
-        <p class="text-[var(--gs-text-secondary)]">Manage dynamic content pages and publishing status.</p>
+        <p class="text-[var(--gs-text-secondary)]">
+          Manage dynamic content pages and publishing status.
+        </p>
       </div>
       <a class="gs-btn-primary" href="/admin/pages/new">Create New Page</a>
     </header>
@@ -18,7 +23,10 @@ const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
         <span class="icon">📄</span>
         <h2>All Pages</h2>
       </div>
-      <div id="pages-table" class="overflow-x-auto text-sm text-[var(--gs-text-secondary)]">
+      <div
+        id="pages-table"
+        class="overflow-x-auto text-sm text-[var(--gs-text-secondary)]"
+      >
         Loading pages...
       </div>
     </div>
@@ -31,14 +39,15 @@ const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
         status === 'published'
           ? 'text-green-300 bg-green-900/40 border-green-500/40'
           : status === 'disabled'
-          ? 'text-red-300 bg-red-900/40 border-red-500/40'
-          : 'text-yellow-300 bg-yellow-900/40 border-yellow-500/40';
+            ? 'text-red-300 bg-red-900/40 border-red-500/40'
+            : 'text-yellow-300 bg-yellow-900/40 border-yellow-500/40';
       return `<span class="inline-flex items-center px-2 py-1 rounded border ${color}">${status}</span>`;
     };
 
     const renderTable = (pages) => {
       if (!pages.length) {
-        container.innerHTML = '<p class="p-4">No pages yet. Create your first page.</p>';
+        container.innerHTML =
+          '<p class="p-4">No pages yet. Create your first page.</p>';
         return;
       }
 
@@ -72,7 +81,7 @@ const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
                       <button class="gs-btn-xs gs-btn-danger" data-delete-id="${page.id}">Delete</button>
                     </td>
                   </tr>
-                `
+                `,
               )
               .join('')}
           </tbody>
@@ -82,11 +91,14 @@ const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
 
     const loadPages = async () => {
       try {
-        const response = await fetch(`${API_BASE}/pages`, { credentials: 'include' });
+        const response = await fetch(`${API_BASE}/pages`, {
+          credentials: 'include',
+        });
         const data = await response.json();
         renderTable(data.pages || []);
       } catch (error) {
-        container.innerHTML = '<p class="p-4 text-red-300">Failed to load pages.</p>';
+        container.innerHTML =
+          '<p class="p-4 text-red-300">Failed to load pages.</p>';
       }
     };
 
@@ -95,7 +107,7 @@ const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ status })
+        body: JSON.stringify({ status }),
       });
       await loadPages();
     };
@@ -104,7 +116,7 @@ const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
       if (!confirm('Delete this page? This cannot be undone.')) return;
       await fetch(`${API_BASE}/pages/${id}`, {
         method: 'DELETE',
-        credentials: 'include'
+        credentials: 'include',
       });
       await loadPages();
     };

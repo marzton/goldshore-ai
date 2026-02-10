@@ -48,23 +48,23 @@ export const formConfigs: FormConfig[] = [
       { name: 'name', label: 'Full name', type: 'text', required: true },
       { name: 'email', label: 'Work email', type: 'email', required: true },
       { name: 'company', label: 'Company', type: 'text' },
-      { name: 'message', label: 'Message', type: 'textarea' }
+      { name: 'message', label: 'Message', type: 'textarea' },
     ],
     recipients: [
       { name: 'Sales Ops', email: 'sales-ops@goldshore.ai', channel: 'Email' },
-      { name: 'Goldshore CRM', email: 'crm@goldshore.ai', channel: 'Webhook' }
+      { name: 'Goldshore CRM', email: 'crm@goldshore.ai', channel: 'Webhook' },
     ],
     integrations: [
       { name: 'HubSpot Sync', type: 'CRM', status: 'enabled' },
-      { name: 'Slack Alert', type: 'Messaging', status: 'enabled' }
+      { name: 'Slack Alert', type: 'Messaging', status: 'enabled' },
     ],
     lastUpdated: '2024-04-19 09:12 AM',
     submissionStatus: {
       received: 128,
       stored: 128,
       routed: 124,
-      failed: 4
-    }
+      failed: 4,
+    },
   },
   {
     id: 'form_002',
@@ -77,23 +77,23 @@ export const formConfigs: FormConfig[] = [
       { name: 'email', label: 'Work email', type: 'email', required: true },
       { name: 'role', label: 'Role', type: 'text' },
       { name: 'teamSize', label: 'Team size', type: 'select' },
-      { name: 'timeline', label: 'Timeline', type: 'select' }
+      { name: 'timeline', label: 'Timeline', type: 'select' },
     ],
     recipients: [
       { name: 'Growth Ops', email: 'growth@goldshore.ai', channel: 'Email' },
-      { name: 'Pipeline', email: 'pipeline@goldshore.ai', channel: 'Webhook' }
+      { name: 'Pipeline', email: 'pipeline@goldshore.ai', channel: 'Webhook' },
     ],
     integrations: [
       { name: 'Salesforce Push', type: 'CRM', status: 'enabled' },
-      { name: 'Segment', type: 'Data', status: 'enabled' }
+      { name: 'Segment', type: 'Data', status: 'enabled' },
     ],
     lastUpdated: '2024-04-18 02:47 PM',
     submissionStatus: {
       received: 74,
       stored: 74,
       routed: 72,
-      failed: 2
-    }
+      failed: 2,
+    },
   },
   {
     id: 'form_003',
@@ -105,22 +105,26 @@ export const formConfigs: FormConfig[] = [
       { name: 'name', label: 'Full name', type: 'text', required: true },
       { name: 'email', label: 'Work email', type: 'email', required: true },
       { name: 'company', label: 'Company', type: 'text', required: true },
-      { name: 'goals', label: 'Goals', type: 'textarea' }
+      { name: 'goals', label: 'Goals', type: 'textarea' },
     ],
     recipients: [
-      { name: 'Partnerships', email: 'partners@goldshore.ai', channel: 'Email' }
+      {
+        name: 'Partnerships',
+        email: 'partners@goldshore.ai',
+        channel: 'Email',
+      },
     ],
     integrations: [
-      { name: 'Notion Tracker', type: 'Workspace', status: 'disabled' }
+      { name: 'Notion Tracker', type: 'Workspace', status: 'disabled' },
     ],
     lastUpdated: '2024-04-10 11:20 AM',
     submissionStatus: {
       received: 16,
       stored: 16,
       routed: 0,
-      failed: 0
-    }
-  }
+      failed: 0,
+    },
+  },
 ];
 
 export const getFormConfig = (slug: string) =>

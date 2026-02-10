@@ -1,5 +1,5 @@
 /// <reference types="astro/client" />
-import type { AdminSession } from "@goldshore/auth";
+import type { AdminSession } from '@goldshore/auth';
 
 declare namespace App {
   interface Locals {

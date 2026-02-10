@@ -5,7 +5,11 @@ import { cloudflareRoutes } from './cloudflare.ts';
 
 // Mock types
 type MockKVNamespace = {
-  put: (key: string, value: string | ReadableStream | ArrayBuffer, options?: any) => Promise<void>;
+  put: (
+    key: string,
+    value: string | ReadableStream | ArrayBuffer,
+    options?: any,
+  ) => Promise<void>;
 };
 
 describe('Cloudflare Routes Middleware', () => {
@@ -19,22 +23,28 @@ describe('Cloudflare Routes Middleware', () => {
       CONTROL_LOGS: {
         put: async (key: string, value: string) => {
           auditLogs.push(JSON.parse(value));
-        }
+        },
       },
-      CONTROL_ADMIN_ROLES: "admin,ops",
-      CLOUDFLARE_API_TOKEN: "mock-token",
-      CLOUDFLARE_ACCOUNT_ID: "mock-account",
-      CLOUDFLARE_ZONE_ID: "mock-zone"
+      CONTROL_ADMIN_ROLES: 'admin,ops',
+      CLOUDFLARE_API_TOKEN: 'mock-token',
+      CLOUDFLARE_ACCOUNT_ID: 'mock-account',
+      CLOUDFLARE_ZONE_ID: 'mock-zone',
     };
 
     // Reset fetch mock to a default failure state to prevent accidental real requests
     global.fetch = mock.fn(async () => {
-      return new Response(JSON.stringify({ error: "Fetch not mocked" }), { status: 500 });
+      return new Response(JSON.stringify({ error: 'Fetch not mocked' }), {
+        status: 500,
+      });
     });
   });
 
   // Helper to create a request with specific claims
-  const createRequest = async (claims: any, path: string = '/dns/records', method: string = 'GET') => {
+  const createRequest = async (
+    claims: any,
+    path: string = '/dns/records',
+    method: string = 'GET',
+  ) => {
     const app = new Hono<{ Variables: { accessClaims: any } }>();
 
     // Middleware to inject claims
@@ -56,14 +66,14 @@ describe('Cloudflare Routes Middleware', () => {
     });
 
     assert.strictEqual(response.status, 403);
-    const body = await response.json() as any;
-    assert.deepStrictEqual(body, { error: "Forbidden" });
+    const body = (await response.json()) as any;
+    assert.deepStrictEqual(body, { error: 'Forbidden' });
 
     // Check audit log
     assert.strictEqual(auditLogs.length, 1);
-    assert.strictEqual(auditLogs[0].action, "cloudflare:access-denied");
-    assert.strictEqual(auditLogs[0].actor, "user@example.com");
-    assert.strictEqual(auditLogs[0].status, "denied");
+    assert.strictEqual(auditLogs[0].action, 'cloudflare:access-denied');
+    assert.strictEqual(auditLogs[0].actor, 'user@example.com');
+    assert.strictEqual(auditLogs[0].status, 'denied');
   });
 
   it('should deny access if user has insufficient roles', async () => {
@@ -76,8 +86,11 @@ describe('Cloudflare Routes Middleware', () => {
 
     // Check audit log
     assert.strictEqual(auditLogs.length, 1);
-    assert.strictEqual(auditLogs[0].action, "cloudflare:access-denied");
-    assert.deepStrictEqual(auditLogs[0].metadata.requiredRoles, ["admin", "ops"]);
+    assert.strictEqual(auditLogs[0].action, 'cloudflare:access-denied');
+    assert.deepStrictEqual(auditLogs[0].metadata.requiredRoles, [
+      'admin',
+      'ops',
+    ]);
   });
 
   it('should allow access if user has required role "admin"', async () => {
@@ -92,14 +105,14 @@ describe('Cloudflare Routes Middleware', () => {
     });
 
     assert.strictEqual(response.status, 200);
-    const body = await response.json() as any;
+    const body = (await response.json()) as any;
     assert.deepStrictEqual(body, { result: [] });
 
     // Check that audit log was created for success (implied by route logic)
     // The route /dns/records logs success
     assert.strictEqual(auditLogs.length, 1);
-    assert.strictEqual(auditLogs[0].action, "cloudflare:dns:list");
-    assert.strictEqual(auditLogs[0].status, "success");
+    assert.strictEqual(auditLogs[0].action, 'cloudflare:dns:list');
+    assert.strictEqual(auditLogs[0].status, 'success');
   });
 
   it('should allow access if user has required role "ops"', async () => {
@@ -149,7 +162,7 @@ describe('Cloudflare Routes Middleware', () => {
   });
 
   it('should log error if cloudflare API fails', async () => {
-     global.fetch = mock.fn(async () => {
+    global.fetch = mock.fn(async () => {
       return new Response(JSON.stringify({ errors: [] }), { status: 500 });
     });
 
@@ -169,12 +182,12 @@ describe('Cloudflare Routes Middleware', () => {
 
     // Check audit log
     assert.strictEqual(auditLogs.length, 1);
-    assert.strictEqual(auditLogs[0].status, "error");
+    assert.strictEqual(auditLogs[0].status, 'error');
   });
 
   it('should return 502 if fetch throws network error', async () => {
     global.fetch = mock.fn(async () => {
-      throw new Error("Network error");
+      throw new Error('Network error');
     });
 
     const response = await createRequest({
@@ -183,18 +196,21 @@ describe('Cloudflare Routes Middleware', () => {
     });
 
     assert.strictEqual(response.status, 502);
-    const body = await response.json() as any;
-    assert.deepStrictEqual(body, { error: "Cloudflare API request failed." });
+    const body = (await response.json()) as any;
+    assert.deepStrictEqual(body, { error: 'Cloudflare API request failed.' });
 
     // Check audit log
     assert.strictEqual(auditLogs.length, 1);
-    assert.strictEqual(auditLogs[0].status, "error");
-    assert.strictEqual(auditLogs[0].metadata.message, "Network error");
+    assert.strictEqual(auditLogs[0].status, 'error');
+    assert.strictEqual(auditLogs[0].metadata.message, 'Network error');
   });
 
   it('should return 502 if cloudflare returns invalid JSON', async () => {
     global.fetch = mock.fn(async () => {
-      return new Response("<html>Bad Gateway</html>", { status: 502, headers: { "Content-Type": "text/html" } });
+      return new Response('<html>Bad Gateway</html>', {
+        status: 502,
+        headers: { 'Content-Type': 'text/html' },
+      });
     });
 
     const response = await createRequest({
@@ -203,12 +219,12 @@ describe('Cloudflare Routes Middleware', () => {
     });
 
     assert.strictEqual(response.status, 502);
-    const body = await response.json() as any;
-    assert.deepStrictEqual(body, { error: "Cloudflare API request failed." });
+    const body = (await response.json()) as any;
+    assert.deepStrictEqual(body, { error: 'Cloudflare API request failed.' });
 
     // Check audit log
     assert.strictEqual(auditLogs.length, 1);
-    assert.strictEqual(auditLogs[0].status, "error");
+    assert.strictEqual(auditLogs[0].status, 'error');
     // Message should reflect JSON parsing error
     assert.ok(auditLogs[0].metadata.message.length > 0);
   });

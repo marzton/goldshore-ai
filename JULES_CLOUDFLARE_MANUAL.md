@@ -1,16 +1,15 @@
-
 🟦 JULES — CLOUD FLARE INTEGRATION MANUAL
 
 Install, Create, Setup, Manage & Maintain GoldShore Infrastructure
 
 This document defines how Jules MUST interact with the Cloudflare API and Cloudflare Dashboard for all GoldShore services, including:
-	•	gs-web (public website)
-	•	gs-admin (admin dashboard)
-	•	gs-api (API worker)
-	•	gs-gateway (Gateway worker)
-	•	gs-control (internal ops/automation worker)
-	•	gs-mail (incoming mail worker)
-	•	future services (status, trade, settings, etc.)
+• gs-web (public website)
+• gs-admin (admin dashboard)
+• gs-api (API worker)
+• gs-gateway (Gateway worker)
+• gs-control (internal ops/automation worker)
+• gs-mail (incoming mail worker)
+• future services (status, trade, settings, etc.)
 
 Jules MUST follow these rules exactly to maintain consistency, safety, and idempotency.
 
@@ -19,20 +18,20 @@ Jules MUST follow these rules exactly to maintain consistency, safety, and idemp
 📍 SECTION 1 — ROOT PRINCIPLES
 
 ✔ DO:
-	•	Act ONLY on the application explicitly asked about.
-	•	Use Cloudflare API v4 for CRUD operations.
-	•	Verify a resource exists before modifying it.
-	•	Use the correct project names.
-	•	Keep all wrangler configs idempotent.
-	•	Keep all build commands consistent with the monorepo.
-	•	Activate Worker versions ONLY after successful testing.
+• Act ONLY on the application explicitly asked about.
+• Use Cloudflare API v4 for CRUD operations.
+• Verify a resource exists before modifying it.
+• Use the correct project names.
+• Keep all wrangler configs idempotent.
+• Keep all build commands consistent with the monorepo.
+• Activate Worker versions ONLY after successful testing.
 
 ❌ DO NOT:
-	•	Create a new Worker or Pages project unless explicitly instructed.
-	•	Modify any sibling application.
-	•	Guess the directory path — always ask or use the defined map.
-	•	Overwrite DNS unintentionally.
-	•	Remove or purge anything unless explicitly instructed.
+• Create a new Worker or Pages project unless explicitly instructed.
+• Modify any sibling application.
+• Guess the directory path — always ask or use the defined map.
+• Overwrite DNS unintentionally.
+• Remove or purge anything unless explicitly instructed.
 
 ⸻
 
@@ -40,13 +39,13 @@ Jules MUST follow these rules exactly to maintain consistency, safety, and idemp
 
 Jules must ALWAYS map Cloudflare apps to the correct directories:
 
-Cloudflare App	Directory	Type
-gs-web	apps/web	Astro → Pages
-gs-admin	apps/admin	Astro → Pages
-gs-api	apps/api-worker	CF Worker
-gs-gateway	apps/gateway	CF Worker
-gs-control	apps/control-worker	CF Worker
-gs-mail	apps/mail-worker (if created later)	Email Worker
+Cloudflare App Directory Type
+gs-web apps/web Astro → Pages
+gs-admin apps/admin Astro → Pages
+gs-api apps/api-worker CF Worker
+gs-gateway apps/gateway CF Worker
+gs-control apps/control-worker CF Worker
+gs-mail apps/mail-worker (if created later) Email Worker
 
 This is the authoritative mapping.
 
@@ -56,21 +55,21 @@ This is the authoritative mapping.
 
 Jules must use this OFFICIAL domain map:
 
-Purpose	Domain
-Public website	goldshore.ai
-Admin dashboard	admin.goldshore.ai
-API	api.goldshore.ai
-Gateway	gw.goldshore.ai
-Control worker	ops.goldshore.ai
-Mail handler	mail.goldshore.ai
-Catch-all email	*@goldshore.ai
-Status page	status.goldshore.ai
-Settings app	settings.goldshore.ai
-Future subapps	*.goldshore.ai
+Purpose Domain
+Public website goldshore.ai
+Admin dashboard admin.goldshore.ai
+API api.goldshore.ai
+Gateway gw.goldshore.ai
+Control worker ops.goldshore.ai
+Mail handler mail.goldshore.ai
+Catch-all email _@goldshore.ai
+Status page status.goldshore.ai
+Settings app settings.goldshore.ai
+Future subapps \_.goldshore.ai
 
 Rules:
-	•	DNS must NEVER be modified unless explicitly instructed.
-	•	DNS changes must use Cloudflare’s DNS API.
+• DNS must NEVER be modified unless explicitly instructed.
+• DNS changes must use Cloudflare’s DNS API.
 
 ⸻
 
@@ -78,18 +77,18 @@ Rules:
 
 Jules MUST enable Access ONLY on:
 
-App	Access Required	Reason
-gs-web	❌ NO	Public-facing
-gs-admin	✅ YES	Admin dashboard
-gs-api	⚠ OPTIONAL	Only private endpoints
-gs-gateway	⚠ OPTIONAL	Depends on design
-gs-control	✅ YES	Internal ops system
-gs-mail	❌ NO	Cloudflare mail routing cannot authenticate
+App Access Required Reason
+gs-web ❌ NO Public-facing
+gs-admin ✅ YES Admin dashboard
+gs-api ⚠ OPTIONAL Only private endpoints
+gs-gateway ⚠ OPTIONAL Depends on design
+gs-control ✅ YES Internal ops system
+gs-mail ❌ NO Cloudflare mail routing cannot authenticate
 
 Access must include:
-	•	Identity provider (Google / email OTP)
-	•	Policy: allow only GoldShore internal emails
-	•	JWKs URL must be inserted when required
+• Identity provider (Google / email OTP)
+• Policy: allow only GoldShore internal emails
+• JWKs URL must be inserted when required
 
 ⸻
 
@@ -105,8 +104,9 @@ build_command: pnpm --filter @goldshore/web build
 build_output: apps/web/dist
 adapter: @astrojs/cloudflare
 domains:
-  - goldshore.ai
-  - www.goldshore.ai
+
+- goldshore.ai
+- www.goldshore.ai
 
 gs-admin
 
@@ -116,11 +116,12 @@ build_command: pnpm --filter @goldshore/admin build
 build_output: apps/admin/dist
 adapter: @astrojs/cloudflare
 domains:
-  - admin.goldshore.ai
+
+- admin.goldshore.ai
 
 RULES:
-	•	Always use “Direct Upload” unless GitHub is connected.
-	•	Pages previews always deploy from PR branches.
+• Always use “Direct Upload” unless GitHub is connected.
+• Pages previews always deploy from PR branches.
 
 ⸻
 
@@ -134,12 +135,11 @@ PUT /accounts/:account_id/workers/scripts/:script_name
 
 Worker → Directory Map:
 
-Worker	Folder	entrypoint
-gs-api	apps/api-worker	src/index.ts
-gs-gateway	apps/gateway	src/index.ts
-gs-control	apps/control-worker	src/index.ts
-gs-mail	no folder required	via CF editor
-
+Worker Folder entrypoint
+gs-api apps/api-worker src/index.ts
+gs-gateway apps/gateway src/index.ts
+gs-control apps/control-worker src/index.ts
+gs-mail no folder required via CF editor
 
 ⸻
 
@@ -164,7 +164,6 @@ gs-control must bind:
 
 API → gs-api
 GATEWAY → gs-gateway
-
 
 ⸻
 
@@ -238,11 +237,11 @@ gs-mail has NO wrangler file.
 
 Workers must have:
 
-Worker	Route
-gs-api	api.goldshore.ai/*
-gs-gateway	gw.goldshore.ai/*
-gs-control	ops.goldshore.ai/*
-gs-mail	none (email worker)
+Worker Route
+gs-api api.goldshore.ai/_
+gs-gateway gw.goldshore.ai/_
+gs-control ops.goldshore.ai/\*
+gs-mail none (email worker)
 
 Pages routing is handled automatically.
 
@@ -276,22 +275,17 @@ Create Access policies:
 
 jules: cloudflare access protect admin.goldshore.ai
 
-
 ⸻
 
 📍 SECTION 11 — ERROR HANDLING RULES
 
 If Jules encounters:
-	•	invalid domain
-	•	missing binding
-	•	missing account ID
-	•	namespace not found
+• invalid domain
+• missing binding
+• missing account ID
+• namespace not found
 
-It MUST:
-	1.	Report the error
-	2.	Provide the fix
-	3.	Wait for confirmation
-	4.	Retry
+It MUST: 1. Report the error 2. Provide the fix 3. Wait for confirmation 4. Retry
 
 Never guess. Never continue blindly.
 
@@ -300,21 +294,21 @@ Never guess. Never continue blindly.
 📍 SECTION 12 — MAINTENANCE RULES
 
 Jules MUST:
-	•	Reconcile wrangler.toml with Cloudflare state
-	•	Ensure DNS matches routing rules
-	•	Ensure Access policies match protection matrix
-	•	Ensure Pages project uses correct build outputs
-	•	Check Worker version activation after deploy
-	•	Rotate secrets every 90 days (only when told)
+• Reconcile wrangler.toml with Cloudflare state
+• Ensure DNS matches routing rules
+• Ensure Access policies match protection matrix
+• Ensure Pages project uses correct build outputs
+• Check Worker version activation after deploy
+• Rotate secrets every 90 days (only when told)
 
 ⸻
 
 📍 SECTION 13 — AUTH RULES
 
 Jules MUST use:
-	•	CF_API_TOKEN
-	•	CF_ACCOUNT_ID
-	•	CF_ZONE_ID
+• CF_API_TOKEN
+• CF_ACCOUNT_ID
+• CF_ZONE_ID
 
 and must NOT request them again unless they are missing or invalid.
 
@@ -327,9 +321,9 @@ gs-mail must NOT use Cloudflare Access.
 gs-mail must follow:
 
 export default {
-  async email(message, env, ctx) {
-    await message.forward("ops@goldshore.ai")
-  }
+async email(message, env, ctx) {
+await message.forward("ops@goldshore.ai")
+}
 }
 
 Catch-all must point at gs-mail.
@@ -343,10 +337,10 @@ Every future subdomain follows:
 subdomain.goldshore.ai → corresponding directory or worker
 
 Examples:
-	•	trade.goldshore.ai → new Pages site or Worker
-	•	status.goldshore.ai → Status worker or SAAS
-	•	docs.goldshore.ai → Astro site
-	•	api.trade.goldshore.ai → Worker
+• trade.goldshore.ai → new Pages site or Worker
+• status.goldshore.ai → Status worker or SAAS
+• docs.goldshore.ai → Astro site
+• api.trade.goldshore.ai → Worker
 
 ⸻
 

@@ -6,7 +6,7 @@ import { getServerEnv } from '../../../lib/server-env';
 const buildErrorResponse = (status: number, message: string) =>
   new Response(JSON.stringify({ error: message }), {
     status,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 
 export const GET: APIRoute = async ({ request, locals }) => {
@@ -18,14 +18,14 @@ export const GET: APIRoute = async ({ request, locals }) => {
   }
 
   const response = await fetch(`${getGsApiBaseUrl(env)}/system/config`, {
-    headers: buildGsApiHeaders(request)
+    headers: buildGsApiHeaders(request),
   });
 
   const payload = await response.json().catch(() => null);
 
   return new Response(JSON.stringify({ config: payload?.config ?? null }), {
     status: response.status,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 };
 
@@ -45,13 +45,13 @@ export const PUT: APIRoute = async ({ request, locals }) => {
   const response = await fetch(`${getGsApiBaseUrl(env)}/system/config`, {
     method: 'PUT',
     headers: buildGsApiHeaders(request),
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   });
 
   const payload = await response.json().catch(() => null);
 
   return new Response(JSON.stringify({ config: payload?.config ?? null }), {
     status: response.status,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 };

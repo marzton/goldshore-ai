@@ -1,18 +1,21 @@
 ---
 const { title, items = [] } = Astro.props;
 ---
+
 <section class="section faq">
   <div class="faq-header">
     <p class="eyebrow">FAQ</p>
     <h2>{title}</h2>
   </div>
   <div class="faq-items">
-    {items.map((item) => (
-      <div class="faq-item">
-        <h3>{item.question}</h3>
-        <p>{item.answer}</p>
-      </div>
-    ))}
+    {
+      items.map((item) => (
+        <div class="faq-item">
+          <h3>{item.question}</h3>
+          <p>{item.answer}</p>
+        </div>
+      ))
+    }
   </div>
 </section>
 

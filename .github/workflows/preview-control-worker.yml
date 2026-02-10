@@ -13,10 +13,10 @@ on:
       - unlabeled
       - ready_for_review
     paths:
-      - "apps/control-worker/**"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
+      - 'apps/control-worker/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
 
 jobs:
   deploy-preview-control:

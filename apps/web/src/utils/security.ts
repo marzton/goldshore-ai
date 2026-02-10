@@ -4,13 +4,13 @@
  * @returns The escaped string.
  */
 export function escapeHtml(unsafe: string): string {
-  if (!unsafe) return "";
+  if (!unsafe) return '';
   return unsafe
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 /**
@@ -30,6 +30,6 @@ export function isValidEmail(email: string): boolean {
  * @returns The sanitized string.
  */
 export function sanitizeInput(str: string): string {
-  if (typeof str !== "string") return "";
+  if (typeof str !== 'string') return '';
   return escapeHtml(str.trim());
 }

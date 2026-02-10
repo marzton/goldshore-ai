@@ -5,10 +5,10 @@ import { secureHeaders } from 'hono/secure-headers';
 import { verifyAccess } from '@goldshore/auth';
 
 interface Env {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	AI: any;
-	CLOUDFLARE_ACCESS_AUDIENCE?: string;
-	CLOUDFLARE_TEAM_DOMAIN?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  AI: any;
+  CLOUDFLARE_ACCESS_AUDIENCE?: string;
+  CLOUDFLARE_TEAM_DOMAIN?: string;
 }
 
 const app = new Hono<{ Bindings: Env }>();
@@ -18,33 +18,33 @@ app.use('*', secureHeaders());
 
 // Sentinel: Add CORS protection
 app.use(
-	'*',
-	cors({
-		origin: '*', // Adjust if stricter policy is needed
-		allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-		allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
-		exposeHeaders: ['Content-Length'],
-		maxAge: 600,
-	}),
+  '*',
+  cors({
+    origin: '*', // Adjust if stricter policy is needed
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
+    exposeHeaders: ['Content-Length'],
+    maxAge: 600,
+  }),
 );
 
 // Sentinel: CRITICAL - Enforce Authentication on all sensitive endpoints
 app.use('*', async (c, next) => {
-	// Allow root (status check) and health check to remain public
-	if (c.req.path === '/' || c.req.path === '/health') {
-		await next();
-		return;
-	}
+  // Allow root (status check) and health check to remain public
+  if (c.req.path === '/' || c.req.path === '/health') {
+    await next();
+    return;
+  }
 
-	const authorized = await verifyAccess(c.req.raw, c.env);
-	if (!authorized) {
-		return c.json({ error: 'Unauthorized' }, 401);
-	}
-	await next();
+  const authorized = await verifyAccess(c.req.raw, c.env);
+  if (!authorized) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+  await next();
 });
 
 app.get('/', (c) => {
-	return c.html(`
+  return c.html(`
     <!DOCTYPE html>
     <html lang="en">
     <head>

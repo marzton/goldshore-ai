@@ -1,22 +1,27 @@
 # Integration PR: conflict-resolution baseline
 
 ## Summary
+
 - Base: `<base-commit-sha>`
 - Integration branch: `<integration-branch>`
 - Merge window: `<start-date>` → `<end-date>`
 
 ## Merged branches (ordered)
-| Branch | Score | Merge status | Notes |
-| --- | --- | --- | --- |
+
+| Branch     | Score     | Merge status   | Notes     |
+| ---------- | --------- | -------------- | --------- |
 | `<branch>` | `<score>` | clean/conflict | `<notes>` |
 
 ## Conflict resolutions
+
 - `<file>`: `<decision and rationale>`
 
 ## Regenerated artifacts
+
 - `pnpm-lock.yaml`: regenerated after merging `<branch list>`
 
 ## Checks
+
 - `pnpm -w install`
 - `pnpm -w -s build`
 - `pnpm -w -s lint`
@@ -26,7 +31,9 @@
 - Optional: `pnpm e2e`
 
 ## Review requests
+
 - @Jules-Bot [review-request]
 
 ## Notes
+
 - `<additional context, links, or logs>`

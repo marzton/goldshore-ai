@@ -72,6 +72,7 @@ See [ECOSYSTEM.md](./ECOSYSTEM.md) for full details on extensions and integratio
 ![GoldShore architecture diagram showing Cloudflare Pages for web and admin, Cloudflare Workers for API, gateway, agent, and control, and storage services (KV, R2, D1, Queues, AI Gateway).](docs/architecture/diagram.svg)
 
 Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd).
+
 ```
 /
 ├── apps/
@@ -299,13 +300,13 @@ Monorepo-wide:
 
 ## Domains & DNS
 
-| Component      | Domain                     | Hosting            |
-|----------------|----------------------------|--------------------|
-| Web            | https://goldshore.ai       | Pages              |
-| Admin          | https://admin.goldshore.ai | Pages + Access     |
-| API Worker     | https://api.goldshore.ai   | Workers            |
-| Gateway Worker | https://gw.goldshore.ai    | Workers            |
-| Control Worker | https://ops.goldshore.ai   | Workers            |
+| Component      | Domain                     | Hosting        |
+| -------------- | -------------------------- | -------------- |
+| Web            | https://goldshore.ai       | Pages          |
+| Admin          | https://admin.goldshore.ai | Pages + Access |
+| API Worker     | https://api.goldshore.ai   | Workers        |
+| Gateway Worker | https://gw.goldshore.ai    | Workers        |
+| Control Worker | https://ops.goldshore.ai   | Workers        |
 
 ## API + Gateway Routing
 

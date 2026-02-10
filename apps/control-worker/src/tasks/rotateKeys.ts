@@ -1,15 +1,17 @@
-import type { ControlEnv } from "../libs/types";
+import type { ControlEnv } from '../libs/types';
 
 // Configuration for keys that need regular rotation
 const ROTATION_CONFIG = [
-  { name: "system-api-key", prefix: "sk_live_", length: 32 },
-  { name: "internal-service-token", prefix: "tk_int_", length: 24 }
+  { name: 'system-api-key', prefix: 'sk_live_', length: 32 },
+  { name: 'internal-service-token', prefix: 'tk_int_', length: 24 },
 ];
 
 function generateKey(prefix: string, length: number): string {
   const array = new Uint8Array(length);
   crypto.getRandomValues(array);
-  const randomPart = Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  const randomPart = Array.from(array, (byte) =>
+    byte.toString(16).padStart(2, '0'),
+  ).join('');
   return `${prefix}${randomPart}`;
 }
 
@@ -20,11 +22,11 @@ export async function rotateKeys(env: ControlEnv) {
   const auditLog: {
     action: string;
     timestamp: string;
-    results: { name: string; status: "success" | "error"; error?: string }[];
+    results: { name: string; status: 'success' | 'error'; error?: string }[];
   } = {
-    action: "rotate_keys",
+    action: 'rotate_keys',
     timestamp,
-    results: []
+    results: [],
   };
 
   for (const config of ROTATION_CONFIG) {
@@ -37,17 +39,21 @@ export async function rotateKeys(env: ControlEnv) {
       await env.CONTROL_LOGS.put(`secrets:${config.name}:active`, newKey);
 
       // 3. Archive the rotation event
-      await env.CONTROL_LOGS.put(`secrets:${config.name}:history:${timestamp}`, newKey);
+      await env.CONTROL_LOGS.put(
+        `secrets:${config.name}:history:${timestamp}`,
+        newKey,
+      );
 
       console.log(`Successfully rotated key: ${config.name}`);
-      auditLog.results.push({ name: config.name, status: "success" });
+      auditLog.results.push({ name: config.name, status: 'success' });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       console.error(`Failed to rotate key for ${config.name}:`, errorMessage);
       auditLog.results.push({
         name: config.name,
-        status: "error",
-        error: errorMessage
+        status: 'error',
+        error: errorMessage,
       });
     }
   }
@@ -56,5 +62,7 @@ export async function rotateKeys(env: ControlEnv) {
   const auditKey = `audit:rotation:${timestamp}`;
   await env.CONTROL_LOGS.put(auditKey, JSON.stringify(auditLog));
 
-  console.log(`[${timestamp}] Key rotation complete. Audit log stored at: ${auditKey}`);
+  console.log(
+    `[${timestamp}] Key rotation complete. Audit log stored at: ${auditKey}`,
+  );
 }

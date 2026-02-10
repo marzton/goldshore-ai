@@ -25,5 +25,8 @@ export type ProviderConfig = {
 
 export interface AnalysisProvider {
   name: ProviderName;
-  analyze(input: AnalysisInput, config: ProviderConfig): Promise<AnalysisResponse>;
+  analyze(
+    input: AnalysisInput,
+    config: ProviderConfig,
+  ): Promise<AnalysisResponse>;
 }

@@ -13,11 +13,11 @@ on:
       - unlabeled
       - ready_for_review
     paths:
-      - "apps/gs-agent/**"
-      - "infra/cloudflare/gs-agent.wrangler.toml"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
+      - 'apps/gs-agent/**'
+      - 'infra/cloudflare/gs-agent.wrangler.toml'
+      - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
 
 jobs:
   preview-agent:

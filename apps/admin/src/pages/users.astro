@@ -8,11 +8,14 @@ const users = [
   { name: 'Priya Nair', role: 'Analyst', status: 'Invited' },
 ];
 ---
+
 <AdminLayout title="Users">
   <section class="gs-grid columns-2">
     <Card>
       <div class="section-title"><span>➕</span><h3>Invite</h3></div>
-      <p class="gs-helper">Send a secure invite link with scoped permissions.</p>
+      <p class="gs-helper">
+        Send a secure invite link with scoped permissions.
+      </p>
       <form class="gs-form-row">
         <div class="gs-input-group">
           <label for="user-email">Work email</label>
@@ -37,13 +40,21 @@ const users = [
       <Table>
         <thead><tr><th>Name</th><th>Role</th><th>Status</th></tr></thead>
         <tbody>
-          {users.map((user) => (
-            <tr>
-              <td>{user.name}</td>
-              <td>{user.role}</td>
-              <td><span class={`gs-badge ${user.status === 'Active' ? 'success' : 'warning'}`}>{user.status}</span></td>
-            </tr>
-          ))}
+          {
+            users.map((user) => (
+              <tr>
+                <td>{user.name}</td>
+                <td>{user.role}</td>
+                <td>
+                  <span
+                    class={`gs-badge ${user.status === 'Active' ? 'success' : 'warning'}`}
+                  >
+                    {user.status}
+                  </span>
+                </td>
+              </tr>
+            ))
+          }
         </tbody>
       </Table>
     </Card>

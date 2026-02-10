@@ -1,6 +1,14 @@
-import { Hono } from 'hono';
+import { Hono, type Context, type Next } from 'hono';
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
-import { verifyAccessWithClaims, type AccessTokenPayload } from '@goldshore/auth';
+import {
+  verifyAccessWithClaims,
+  type AccessTokenPayload,
+  ADMIN_ROLES,
+  buildAdminSession,
+  hasAdminPermission,
+  type AdminPermission,
+  type AdminRole,
+} from '@goldshore/auth';
 
 type Bindings = {
   KV: KVNamespace;
@@ -18,10 +26,39 @@ type AdminSession = {
   expiresAt: string;
 };
 
+type AdminUserRecord = {
+  id: string;
+  email: string;
+  role: AdminRole;
+  status: 'active' | 'invited' | 'disabled';
+  createdAt: string;
+  updatedAt: string;
+};
+
+type AuditEvent = {
+  action: string;
+  actor?: string;
+  status: 'success' | 'denied' | 'error';
+  metadata?: Record<string, unknown>;
+  timestamp: string;
+};
+
 const ADMIN_SESSION_COOKIE = 'gs_admin_session';
 const DEFAULT_SESSION_TTL_SECONDS = 60 * 60 * 8;
 
-const admin = new Hono<{ Bindings: Bindings }>();
+const admin = new Hono<{
+  Bindings: Bindings;
+  Variables: {
+    accessClaims: AccessTokenPayload | null;
+  };
+}>();
+
+type AdminContext = Context<{
+  Bindings: Bindings;
+  Variables: {
+    accessClaims: AccessTokenPayload | null;
+  };
+}>;
 
 const ensureAdminSchema = async (db: D1Database) => {
   await db.exec(`
@@ -64,17 +101,24 @@ const ensureAdminSchema = async (db: D1Database) => {
 
 const getSessionTtlSeconds = (env: Bindings) => {
   const parsed = Number(env.ADMIN_SESSION_TTL_SECONDS);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_SESSION_TTL_SECONDS;
+  return Number.isFinite(parsed) && parsed > 0
+    ? parsed
+    : DEFAULT_SESSION_TTL_SECONDS;
 };
 
-const setSessionCookie = (c: Parameters<typeof setCookie>[0], session: AdminSession) => {
+const setSessionCookie = (
+  c: Parameters<typeof setCookie>[0],
+  session: AdminSession,
+) => {
   const isSecure = new URL(c.req.url).protocol === 'https:';
   setCookie(c, ADMIN_SESSION_COOKIE, session.id, {
     path: '/',
     httpOnly: true,
     secure: isSecure,
     sameSite: isSecure ? 'None' : 'Lax',
-    maxAge: Math.floor((new Date(session.expiresAt).getTime() - Date.now()) / 1000)
+    maxAge: Math.floor(
+      (new Date(session.expiresAt).getTime() - Date.now()) / 1000,
+    ),
   });
 };
 
@@ -90,6 +134,75 @@ const readSession = async (c: Parameters<typeof getCookie>[0]) => {
   return JSON.parse(sessionRaw) as AdminSession;
 };
 
+const getActor = (claims: AccessTokenPayload | null, request: Request) =>
+  claims?.email ||
+  request.headers.get('CF-Access-Authenticated-User-Email') ||
+  request.headers.get('CF-Access-Authenticated-User-Id') ||
+  'unknown';
+
+const logAdminAction = async (
+  env: Bindings,
+  entry: Omit<AuditEvent, 'timestamp'>,
+) => {
+  const timestamp = new Date().toISOString();
+  const key = `audit:admin:${timestamp}:${crypto.randomUUID()}`;
+  const payload: AuditEvent = { ...entry, timestamp };
+  await env.KV.put(key, JSON.stringify(payload));
+  return payload;
+};
+
+const requirePermission =
+  (permission: AdminPermission) => async (c: AdminContext, next: Next) => {
+    const session = buildAdminSession(c.get('accessClaims'));
+    if (!hasAdminPermission(session.permissions, permission)) {
+      await logAdminAction(c.env, {
+        action: 'admin.access.denied',
+        actor: getActor(c.get('accessClaims'), c.req.raw),
+        status: 'denied',
+        metadata: { permission },
+      });
+      return c.json({ error: 'Forbidden' }, 403);
+    }
+    await next();
+  };
+
+const listUsers = async (env: Bindings) => {
+  const { keys } = await env.KV.list({ prefix: 'admin:user:' });
+  const records = await Promise.all(
+    keys.map(async (key) => env.KV.get<AdminUserRecord>(key.name, 'json')),
+  );
+  return records.filter(Boolean) as AdminUserRecord[];
+};
+
+const saveUser = async (env: Bindings, user: AdminUserRecord) => {
+  await env.KV.put(`admin:user:${user.id}`, JSON.stringify(user));
+  return user;
+};
+
+admin.use('/*', async (c, next) => {
+  if (c.req.path === '/admin/session') {
+    await next();
+    return;
+  }
+
+  // Try to authenticate via Cloudflare Access JWT
+  const claims = await verifyAccessWithClaims(c.req.raw, c.env);
+  if (claims) {
+    c.set('accessClaims', claims);
+  } else {
+    // Fallback: Check for existing session cookie if JWT is missing
+    const session = await readSession(c);
+    if (session?.email) {
+      // Mock claims from session if available (e.g. for local dev or session-persistence)
+      // Note: In a real production setup, we should prefer JWT validation.
+      c.set('accessClaims', { email: session.email } as AccessTokenPayload);
+    }
+  }
+
+  await next();
+});
+
+// Session Management
 admin.post('/session', async (c) => {
   const claims = await verifyAccessWithClaims(c.req.raw, c.env);
   if (!claims) {
@@ -105,15 +218,20 @@ admin.post('/session', async (c) => {
     id: sessionId,
     email: (claims as AccessTokenPayload).email,
     createdAt: now.toISOString(),
-    expiresAt: expiresAt.toISOString()
+    expiresAt: expiresAt.toISOString(),
   };
 
   await c.env.KV.put(`admin_session:${sessionId}`, JSON.stringify(session), {
-    expirationTtl: ttlSeconds
+    expirationTtl: ttlSeconds,
   });
 
   setSessionCookie(c, session);
-  return c.json({ sessionId, expiresAt: session.expiresAt, email: session.email, ttlSeconds });
+  return c.json({
+    sessionId,
+    expiresAt: session.expiresAt,
+    email: session.email,
+    ttlSeconds,
+  });
 });
 
 admin.get('/session', async (c) => {
@@ -133,29 +251,20 @@ admin.delete('/session', async (c) => {
   return c.json({ success: true });
 });
 
-admin.use('/*', async (c, next) => {
-  if (c.req.path === '/admin/session') {
-    await next();
-    return;
-  }
-  const session = await readSession(c);
-  if (!session) {
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
-  await next();
-});
-
-admin.get('/content', async (c) => {
+// Content Routes
+admin.get('/content', requirePermission('content:read'), async (c) => {
   await ensureAdminSchema(c.env.DB);
   const pages = await c.env.DB.prepare(
-    'SELECT * FROM admin_content_pages ORDER BY updated_at DESC LIMIT 100'
+    'SELECT * FROM admin_content_pages ORDER BY updated_at DESC LIMIT 100',
   ).all();
   return c.json({ items: pages.results ?? [] });
 });
 
-admin.get('/content/:id', async (c) => {
+admin.get('/content/:id', requirePermission('content:read'), async (c) => {
   await ensureAdminSchema(c.env.DB);
-  const page = await c.env.DB.prepare('SELECT * FROM admin_content_pages WHERE id = ?')
+  const page = await c.env.DB.prepare(
+    'SELECT * FROM admin_content_pages WHERE id = ?',
+  )
     .bind(c.req.param('id'))
     .first();
   if (!page) {
@@ -164,7 +273,7 @@ admin.get('/content/:id', async (c) => {
   return c.json({ item: page });
 });
 
-admin.post('/content', async (c) => {
+admin.post('/content', requirePermission('content:write'), async (c) => {
   await ensureAdminSchema(c.env.DB);
   const payload = await c.req.json();
   const now = new Date().toISOString();
@@ -172,7 +281,7 @@ admin.post('/content', async (c) => {
   const status = payload.status ?? 'draft';
   await c.env.DB.prepare(
     `INSERT INTO admin_content_pages (id, slug, title, status, body, metadata, created_at, updated_at, author)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   )
     .bind(
       id,
@@ -183,20 +292,20 @@ admin.post('/content', async (c) => {
       JSON.stringify(payload.metadata ?? {}),
       now,
       now,
-      payload.author ?? null
+      payload.author ?? null,
     )
     .run();
   return c.json({ id, status });
 });
 
-admin.put('/content/:id', async (c) => {
+admin.put('/content/:id', requirePermission('content:write'), async (c) => {
   await ensureAdminSchema(c.env.DB);
   const payload = await c.req.json();
   const now = new Date().toISOString();
   const result = await c.env.DB.prepare(
     `UPDATE admin_content_pages
       SET slug = ?, title = ?, status = ?, body = ?, metadata = ?, updated_at = ?, author = ?
-      WHERE id = ?`
+      WHERE id = ?`,
   )
     .bind(
       payload.slug,
@@ -206,7 +315,7 @@ admin.put('/content/:id', async (c) => {
       JSON.stringify(payload.metadata ?? {}),
       now,
       payload.author ?? null,
-      c.req.param('id')
+      c.req.param('id'),
     )
     .run();
 
@@ -216,17 +325,20 @@ admin.put('/content/:id', async (c) => {
   return c.json({ id: c.req.param('id'), updatedAt: now });
 });
 
-admin.get('/media', async (c) => {
+// Media Routes
+admin.get('/media', requirePermission('media:read'), async (c) => {
   await ensureAdminSchema(c.env.DB);
   const assets = await c.env.DB.prepare(
-    'SELECT * FROM admin_media_assets ORDER BY created_at DESC LIMIT 100'
+    'SELECT * FROM admin_media_assets ORDER BY created_at DESC LIMIT 100',
   ).all();
   return c.json({ items: assets.results ?? [] });
 });
 
-admin.get('/media/:id', async (c) => {
+admin.get('/media/:id', requirePermission('media:read'), async (c) => {
   await ensureAdminSchema(c.env.DB);
-  const asset = await c.env.DB.prepare('SELECT * FROM admin_media_assets WHERE id = ?')
+  const asset = await c.env.DB.prepare(
+    'SELECT * FROM admin_media_assets WHERE id = ?',
+  )
     .bind(c.req.param('id'))
     .first();
   if (!asset) {
@@ -235,7 +347,7 @@ admin.get('/media/:id', async (c) => {
   return c.json({ item: asset });
 });
 
-admin.post('/media', async (c) => {
+admin.post('/media', requirePermission('media:write'), async (c) => {
   await ensureAdminSchema(c.env.DB);
   const contentType = c.req.header('content-type') ?? '';
   const now = new Date().toISOString();
@@ -250,7 +362,7 @@ admin.post('/media', async (c) => {
 
     const key = `admin/uploads/${id}-${file.name}`;
     await c.env.ASSETS.put(key, file, {
-      httpMetadata: { contentType: file.type }
+      httpMetadata: { contentType: file.type },
     });
 
     const altText = formData.get('altText')?.toString() ?? null;
@@ -259,7 +371,7 @@ admin.post('/media', async (c) => {
 
     await c.env.DB.prepare(
       `INSERT INTO admin_media_assets (id, file_name, content_type, size, r2_key, alt_text, tags, created_at, uploaded_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
       .bind(
         id,
@@ -270,17 +382,23 @@ admin.post('/media', async (c) => {
         altText,
         tags,
         now,
-        uploadedBy
+        uploadedBy,
       )
       .run();
 
-    return c.json({ id, key, fileName: file.name, contentType: file.type, size: file.size });
+    return c.json({
+      id,
+      key,
+      fileName: file.name,
+      contentType: file.type,
+      size: file.size,
+    });
   }
 
   const payload = await c.req.json();
   await c.env.DB.prepare(
     `INSERT INTO admin_media_assets (id, file_name, content_type, size, r2_key, alt_text, tags, created_at, uploaded_by)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   )
     .bind(
       id,
@@ -291,23 +409,26 @@ admin.post('/media', async (c) => {
       payload.altText ?? null,
       payload.tags ?? null,
       now,
-      payload.uploadedBy ?? null
+      payload.uploadedBy ?? null,
     )
     .run();
   return c.json({ id, metadataOnly: true });
 });
 
-admin.get('/forms', async (c) => {
+// Forms Routes
+admin.get('/forms', requirePermission('forms:read'), async (c) => {
   await ensureAdminSchema(c.env.DB);
   const forms = await c.env.DB.prepare(
-    'SELECT * FROM admin_form_definitions ORDER BY updated_at DESC LIMIT 100'
+    'SELECT * FROM admin_form_definitions ORDER BY updated_at DESC LIMIT 100',
   ).all();
   return c.json({ items: forms.results ?? [] });
 });
 
-admin.get('/forms/:id', async (c) => {
+admin.get('/forms/:id', requirePermission('forms:read'), async (c) => {
   await ensureAdminSchema(c.env.DB);
-  const form = await c.env.DB.prepare('SELECT * FROM admin_form_definitions WHERE id = ?')
+  const form = await c.env.DB.prepare(
+    'SELECT * FROM admin_form_definitions WHERE id = ?',
+  )
     .bind(c.req.param('id'))
     .first();
   if (!form) {
@@ -316,7 +437,7 @@ admin.get('/forms/:id', async (c) => {
   return c.json({ item: form });
 });
 
-admin.post('/forms', async (c) => {
+admin.post('/forms', requirePermission('forms:write'), async (c) => {
   await ensureAdminSchema(c.env.DB);
   const payload = await c.req.json();
   const now = new Date().toISOString();
@@ -324,7 +445,7 @@ admin.post('/forms', async (c) => {
 
   await c.env.DB.prepare(
     `INSERT INTO admin_form_definitions (id, name, slug, description, fields, settings, status, created_at, updated_at, updated_by)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   )
     .bind(
       id,
@@ -336,21 +457,21 @@ admin.post('/forms', async (c) => {
       payload.status ?? 'draft',
       now,
       now,
-      payload.updatedBy ?? null
+      payload.updatedBy ?? null,
     )
     .run();
 
   return c.json({ id });
 });
 
-admin.put('/forms/:id', async (c) => {
+admin.put('/forms/:id', requirePermission('forms:write'), async (c) => {
   await ensureAdminSchema(c.env.DB);
   const payload = await c.req.json();
   const now = new Date().toISOString();
   const result = await c.env.DB.prepare(
     `UPDATE admin_form_definitions
      SET name = ?, slug = ?, description = ?, fields = ?, settings = ?, status = ?, updated_at = ?, updated_by = ?
-     WHERE id = ?`
+     WHERE id = ?`,
   )
     .bind(
       payload.name,
@@ -361,7 +482,7 @@ admin.put('/forms/:id', async (c) => {
       payload.status ?? 'draft',
       now,
       payload.updatedBy ?? null,
-      c.req.param('id')
+      c.req.param('id'),
     )
     .run();
 
@@ -369,126 +490,41 @@ admin.put('/forms/:id', async (c) => {
     return c.json({ error: 'Not found' }, 404);
   }
   return c.json({ id: c.req.param('id'), updatedAt: now });
-import { Hono, type Context, type Next } from "hono";
-import {
-  ADMIN_ROLES,
-  buildAdminSession,
-  hasAdminPermission,
-  type AccessTokenPayload,
-  type AdminPermission,
-  type AdminRole
-} from "@goldshore/auth";
+});
 
-type Env = {
-  KV: KVNamespace;
-};
-
-type AdminUserRecord = {
-  id: string;
-  email: string;
-  role: AdminRole;
-  status: "active" | "invited" | "disabled";
-  createdAt: string;
-  updatedAt: string;
-};
-
-type AuditEvent = {
-  action: string;
-  actor?: string;
-  status: "success" | "denied" | "error";
-  metadata?: Record<string, unknown>;
-  timestamp: string;
-};
-
-const admin = new Hono<{
-  Bindings: Env;
-  Variables: {
-    accessClaims: AccessTokenPayload | null;
-  };
-}>();
-
-type AdminContext = Context<{
-  Bindings: Env;
-  Variables: {
-    accessClaims: AccessTokenPayload | null;
-  };
-}>;
-
-const getActor = (claims: AccessTokenPayload | null, request: Request) =>
-  claims?.email ||
-  request.headers.get("CF-Access-Authenticated-User-Email") ||
-  request.headers.get("CF-Access-Authenticated-User-Id") ||
-  "unknown";
-
-const logAdminAction = async (env: Env, entry: Omit<AuditEvent, "timestamp">) => {
-  const timestamp = new Date().toISOString();
-  const key = `audit:admin:${timestamp}:${crypto.randomUUID()}`;
-  const payload: AuditEvent = { ...entry, timestamp };
-  await env.KV.put(key, JSON.stringify(payload));
-  return payload;
-};
-
-const requirePermission =
-  (permission: AdminPermission) =>
-  async (c: AdminContext, next: Next) => {
-    const session = buildAdminSession(c.get("accessClaims"));
-    if (!hasAdminPermission(session.permissions, permission)) {
-      await logAdminAction(c.env, {
-        action: "admin.access.denied",
-        actor: getActor(c.get("accessClaims"), c.req.raw),
-        status: "denied",
-        metadata: { permission }
-      });
-      return c.json({ error: "Forbidden" }, 403);
-    }
-    await next();
-  };
-
-const listUsers = async (env: Env) => {
-  const { keys } = await env.KV.list({ prefix: "admin:user:" });
-  const records = await Promise.all(
-    keys.map(async (key) => env.KV.get<AdminUserRecord>(key.name, "json"))
-  );
-  return records.filter(Boolean) as AdminUserRecord[];
-};
-
-const saveUser = async (env: Env, user: AdminUserRecord) => {
-  await env.KV.put(`admin:user:${user.id}`, JSON.stringify(user));
-  return user;
-};
-
-admin.get("/users", requirePermission("users:read"), async (c) => {
-  const actor = getActor(c.get("accessClaims"), c.req.raw);
+// User Management Routes
+admin.get('/users', requirePermission('users:read'), async (c) => {
+  const actor = getActor(c.get('accessClaims'), c.req.raw);
   const users = await listUsers(c.env);
   await logAdminAction(c.env, {
-    action: "admin.users.list",
+    action: 'admin.users.list',
     actor,
-    status: "success",
-    metadata: { count: users.length }
+    status: 'success',
+    metadata: { count: users.length },
   });
   return c.json(users);
 });
 
-admin.post("/users", requirePermission("users:manage"), async (c) => {
-  const actor = getActor(c.get("accessClaims"), c.req.raw);
+admin.post('/users', requirePermission('users:manage'), async (c) => {
+  const actor = getActor(c.get('accessClaims'), c.req.raw);
   const payload = await c.req.json<{ email?: string; role?: AdminRole }>();
   if (!payload.email || !payload.role) {
     await logAdminAction(c.env, {
-      action: "admin.users.invite",
+      action: 'admin.users.invite',
       actor,
-      status: "error",
-      metadata: { reason: "missing-fields" }
+      status: 'error',
+      metadata: { reason: 'missing-fields' },
     });
-    return c.json({ error: "Email and role are required." }, 400);
+    return c.json({ error: 'Email and role are required.' }, 400);
   }
   if (!ADMIN_ROLES.includes(payload.role)) {
     await logAdminAction(c.env, {
-      action: "admin.users.invite",
+      action: 'admin.users.invite',
       actor,
-      status: "error",
-      metadata: { reason: "invalid-role" }
+      status: 'error',
+      metadata: { reason: 'invalid-role' },
     });
-    return c.json({ error: "Role must be admin, editor, or viewer." }, 400);
+    return c.json({ error: 'Role must be admin, editor, or viewer.' }, 400);
   }
 
   const now = new Date().toISOString();
@@ -496,65 +532,70 @@ admin.post("/users", requirePermission("users:manage"), async (c) => {
     id: crypto.randomUUID(),
     email: payload.email,
     role: payload.role,
-    status: "invited",
+    status: 'invited',
     createdAt: now,
-    updatedAt: now
+    updatedAt: now,
   };
   await saveUser(c.env, user);
   await logAdminAction(c.env, {
-    action: "admin.users.invite",
+    action: 'admin.users.invite',
     actor,
-    status: "success",
-    metadata: { userId: user.id, role: user.role }
+    status: 'success',
+    metadata: { userId: user.id, role: user.role },
   });
   return c.json(user, 201);
 });
 
-admin.patch("/users/:id", requirePermission("users:manage"), async (c) => {
-  const actor = getActor(c.get("accessClaims"), c.req.raw);
+admin.patch('/users/:id', requirePermission('users:manage'), async (c) => {
+  const actor = getActor(c.get('accessClaims'), c.req.raw);
   const { id } = c.req.param();
-  const existing = await c.env.KV.get<AdminUserRecord>(`admin:user:${id}`, "json");
+  const existing = await c.env.KV.get<AdminUserRecord>(
+    `admin:user:${id}`,
+    'json',
+  );
   if (!existing) {
     await logAdminAction(c.env, {
-      action: "admin.users.update",
+      action: 'admin.users.update',
       actor,
-      status: "error",
-      metadata: { userId: id, reason: "not-found" }
+      status: 'error',
+      metadata: { userId: id, reason: 'not-found' },
     });
-    return c.json({ error: "User not found." }, 404);
+    return c.json({ error: 'User not found.' }, 404);
   }
 
-  const payload = await c.req.json<Partial<Pick<AdminUserRecord, "role" | "status">>>();
+  const payload =
+    await c.req.json<Partial<Pick<AdminUserRecord, 'role' | 'status'>>>();
   if (payload.role && !ADMIN_ROLES.includes(payload.role)) {
     await logAdminAction(c.env, {
-      action: "admin.users.update",
+      action: 'admin.users.update',
       actor,
-      status: "error",
-      metadata: { userId: id, reason: "invalid-role" }
+      status: 'error',
+      metadata: { userId: id, reason: 'invalid-role' },
     });
-    return c.json({ error: "Invalid role." }, 400);
+    return c.json({ error: 'Invalid role.' }, 400);
   }
   const updated: AdminUserRecord = {
     ...existing,
     role: payload.role ?? existing.role,
     status: payload.status ?? existing.status,
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   };
   await saveUser(c.env, updated);
   await logAdminAction(c.env, {
-    action: "admin.users.update",
+    action: 'admin.users.update',
     actor,
-    status: "success",
-    metadata: { userId: id, role: updated.role, status: updated.status }
+    status: 'success',
+    metadata: { userId: id, role: updated.role, status: updated.status },
   });
   return c.json(updated);
 });
 
-admin.get("/audit", requirePermission("audit:read"), async (c) => {
-  const actor = getActor(c.get("accessClaims"), c.req.raw);
-  const { keys } = await c.env.KV.list({ prefix: "audit:admin:" });
+// Audit Routes
+admin.get('/audit', requirePermission('audit:read'), async (c) => {
+  const actor = getActor(c.get('accessClaims'), c.req.raw);
+  const { keys } = await c.env.KV.list({ prefix: 'audit:admin:' });
   const entries = await Promise.all(
-    keys.map(async (key) => c.env.KV.get<AuditEvent>(key.name, "json"))
+    keys.map(async (key) => c.env.KV.get<AuditEvent>(key.name, 'json')),
   );
   const logs = entries
     .filter(Boolean)
@@ -562,10 +603,10 @@ admin.get("/audit", requirePermission("audit:read"), async (c) => {
     .slice(0, 50);
 
   await logAdminAction(c.env, {
-    action: "admin.audit.list",
+    action: 'admin.audit.list',
     actor,
-    status: "success",
-    metadata: { count: logs.length }
+    status: 'success',
+    metadata: { count: logs.length },
   });
 
   return c.json(logs);

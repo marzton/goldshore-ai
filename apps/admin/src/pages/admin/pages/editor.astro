@@ -1,11 +1,15 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
+
 <AdminLayout title="Admin | Pages Editor">
   <div class="max-w-7xl mx-auto p-8 space-y-6">
     <header class="space-y-2">
       <h1 class="text-4xl gs-heading gs-text-accent">Pages Editor</h1>
-      <p class="text-lg gs-text-subtle">Compose marketing pages with draggable section modules and preview responsive layouts.</p>
+      <p class="text-lg gs-text-subtle">
+        Compose marketing pages with draggable section modules and preview
+        responsive layouts.
+      </p>
     </header>
 
     <div class="gs-card p-6 space-y-4">
@@ -22,7 +26,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         <div class="toolbar-group">
           <span class="text-sm gs-text-subtle">Preview</span>
           <div class="toolbar-buttons">
-            <button class="gs-button is-active" data-preview-mode="desktop">Desktop</button>
+            <button class="gs-button is-active" data-preview-mode="desktop"
+              >Desktop</button
+            >
             <button class="gs-button" data-preview-mode="tablet">Tablet</button>
             <button class="gs-button" data-preview-mode="mobile">Mobile</button>
           </div>
@@ -32,21 +38,28 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       <div class="editor-grid">
         <section class="editor-panel">
           <h2 class="text-lg font-semibold">Sections</h2>
-          <p class="text-sm gs-text-subtle">Drag to reorder. Click to edit section content.</p>
-          <div id="sections-list" class="sections-list" aria-live="polite"></div>
+          <p class="text-sm gs-text-subtle">
+            Drag to reorder. Click to edit section content.
+          </p>
+          <div id="sections-list" class="sections-list" aria-live="polite">
+          </div>
         </section>
 
         <section class="editor-panel">
           <h2 class="text-lg font-semibold">Section Settings</h2>
           <div id="section-editor" class="section-editor" aria-live="polite">
-            <p class="text-sm gs-text-subtle">Select a section to edit its content.</p>
+            <p class="text-sm gs-text-subtle">
+              Select a section to edit its content.
+            </p>
           </div>
         </section>
 
         <section class="editor-panel preview-panel">
           <div class="preview-header">
             <h2 class="text-lg font-semibold">Live Preview</h2>
-            <span id="preview-label" class="text-sm gs-text-subtle">Desktop</span>
+            <span id="preview-label" class="text-sm gs-text-subtle"
+              >Desktop</span
+            >
           </div>
           <div id="preview-shell" class="preview-shell is-desktop">
             <div id="preview-canvas" class="preview-canvas"></div>
@@ -55,8 +68,12 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
         <section class="editor-panel">
           <h2 class="text-lg font-semibold">Structured JSON</h2>
-          <p class="text-sm gs-text-subtle">Persisted to local storage for now. Copy to the web renderer when ready.</p>
-          <textarea id="json-output" class="json-output" readonly rows="14"></textarea>
+          <p class="text-sm gs-text-subtle">
+            Persisted to local storage for now. Copy to the web renderer when
+            ready.
+          </p>
+          <textarea id="json-output" class="json-output" readonly rows="14"
+          ></textarea>
         </section>
       </div>
     </div>
@@ -67,7 +84,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     const previewModes = {
       desktop: { label: 'Desktop', className: 'is-desktop' },
       tablet: { label: 'Tablet', className: 'is-tablet' },
-      mobile: { label: 'Mobile', className: 'is-mobile' }
+      mobile: { label: 'Mobile', className: 'is-mobile' },
     };
 
     const sectionTemplates = {
@@ -75,44 +92,66 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         id: `hero-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
         type: 'hero',
         title: 'Launch your next page faster',
-        subtitle: 'Modular sections, editable copy, and responsive layout controls.',
+        subtitle:
+          'Modular sections, editable copy, and responsive layout controls.',
         primaryCta: 'Request a demo',
-        secondaryCta: 'View docs'
+        secondaryCta: 'View docs',
       }),
       grid: () => ({
         id: `grid-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
         type: 'grid',
         title: 'Core capabilities',
         items: [
-          { title: 'Composable sections', body: 'Drag and drop modules into place with live previews.' },
-          { title: 'Structured JSON', body: 'Portable page content stored as JSON blocks.' },
-          { title: 'Astro rendering', body: 'Map every section to an Astro component.' }
-        ]
+          {
+            title: 'Composable sections',
+            body: 'Drag and drop modules into place with live previews.',
+          },
+          {
+            title: 'Structured JSON',
+            body: 'Portable page content stored as JSON blocks.',
+          },
+          {
+            title: 'Astro rendering',
+            body: 'Map every section to an Astro component.',
+          },
+        ],
       }),
       cta: () => ({
         id: `cta-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
         type: 'cta',
         headline: 'Ready to publish?',
         body: 'Export this JSON into the web renderer and go live in minutes.',
-        buttonLabel: 'Publish update'
+        buttonLabel: 'Publish update',
       }),
       faq: () => ({
         id: `faq-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
         type: 'faq',
         title: 'Frequently asked questions',
         items: [
-          { question: 'Where is the content saved?', answer: 'Locally in the browser for now; ready for API integration.' },
-          { question: 'Can I reorder sections?', answer: 'Yes. Drag a module in the list to reposition it.' }
-        ]
-      })
+          {
+            question: 'Where is the content saved?',
+            answer:
+              'Locally in the browser for now; ready for API integration.',
+          },
+          {
+            question: 'Can I reorder sections?',
+            answer: 'Yes. Drag a module in the list to reposition it.',
+          },
+        ],
+      }),
     };
 
-    const defaultSections = [sectionTemplates.hero(), sectionTemplates.grid(), sectionTemplates.cta(), sectionTemplates.faq()];
+    const defaultSections = [
+      sectionTemplates.hero(),
+      sectionTemplates.grid(),
+      sectionTemplates.cta(),
+      sectionTemplates.faq(),
+    ];
 
     const state = {
       sections: [],
       selectedId: null,
-      previewMode: 'desktop'
+      previewMode: 'desktop',
     };
 
     const sectionsListEl = document.getElementById('sections-list');
@@ -146,13 +185,17 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       previewLabelEl.textContent = target.label;
       state.previewMode = mode;
       document.querySelectorAll('[data-preview-mode]').forEach((button) => {
-        button.classList.toggle('is-active', button.dataset.previewMode === mode);
+        button.classList.toggle(
+          'is-active',
+          button.dataset.previewMode === mode,
+        );
       });
     };
 
     const renderSectionsList = () => {
       if (state.sections.length === 0) {
-        sectionsListEl.innerHTML = '<p class="text-sm gs-text-subtle">No sections yet. Add a module to begin.</p>';
+        sectionsListEl.innerHTML =
+          '<p class="text-sm gs-text-subtle">No sections yet. Add a module to begin.</p>';
         return;
       }
       sectionsListEl.innerHTML = state.sections
@@ -200,7 +243,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
                           <h3>${item.title}</h3>
                           <p>${item.body}</p>
                         </div>
-                      `
+                      `,
                       )
                       .join('')}
                   </div>
@@ -228,7 +271,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
                           <h3>${item.question}</h3>
                           <p>${item.answer}</p>
                         </div>
-                      `
+                      `,
                       )
                       .join('')}
                   </div>
@@ -253,9 +296,12 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     };
 
     const renderEditor = () => {
-      const selected = state.sections.find((section) => section.id === state.selectedId);
+      const selected = state.sections.find(
+        (section) => section.id === state.selectedId,
+      );
       if (!selected) {
-        sectionEditorEl.innerHTML = '<p class="text-sm gs-text-subtle">Select a section to edit its content.</p>';
+        sectionEditorEl.innerHTML =
+          '<p class="text-sm gs-text-subtle">Select a section to edit its content.</p>';
         return;
       }
 
@@ -264,22 +310,42 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         fields.push(
           { key: 'title', label: 'Headline', value: selected.title },
           { key: 'subtitle', label: 'Subhead', value: selected.subtitle },
-          { key: 'primaryCta', label: 'Primary CTA', value: selected.primaryCta },
-          { key: 'secondaryCta', label: 'Secondary CTA', value: selected.secondaryCta }
+          {
+            key: 'primaryCta',
+            label: 'Primary CTA',
+            value: selected.primaryCta,
+          },
+          {
+            key: 'secondaryCta',
+            label: 'Secondary CTA',
+            value: selected.secondaryCta,
+          },
         );
       }
       if (selected.type === 'grid') {
-        fields.push({ key: 'title', label: 'Section title', value: selected.title });
+        fields.push({
+          key: 'title',
+          label: 'Section title',
+          value: selected.title,
+        });
       }
       if (selected.type === 'cta') {
         fields.push(
           { key: 'headline', label: 'Headline', value: selected.headline },
           { key: 'body', label: 'Body', value: selected.body },
-          { key: 'buttonLabel', label: 'Button label', value: selected.buttonLabel }
+          {
+            key: 'buttonLabel',
+            label: 'Button label',
+            value: selected.buttonLabel,
+          },
         );
       }
       if (selected.type === 'faq') {
-        fields.push({ key: 'title', label: 'Section title', value: selected.title });
+        fields.push({
+          key: 'title',
+          label: 'Section title',
+          value: selected.title,
+        });
       }
 
       const baseFieldsMarkup = fields
@@ -289,7 +355,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
             <span>${field.label}</span>
             <input type="text" value="${field.value}" data-field="${field.key}" />
           </label>
-        `
+        `,
         )
         .join('');
 
@@ -309,7 +375,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
                   <span>Card ${index + 1} body</span>
                   <input type="text" value="${item.body}" data-collection="items" data-index="${index}" data-key="body" />
                 </label>
-              `
+              `,
               )
               .join('')}
           </div>
@@ -329,7 +395,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
                     <span>Answer ${index + 1}</span>
                     <input type="text" value="${item.answer}" data-collection="items" data-index="${index}" data-key="answer" />
                   </label>
-                `
+                `,
                 )
                 .join('')}
             </div>
@@ -354,7 +420,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
     const handleFieldInput = (event) => {
       const target = event.target;
       if (!(target instanceof HTMLInputElement)) return;
-      const selected = state.sections.find((section) => section.id === state.selectedId);
+      const selected = state.sections.find(
+        (section) => section.id === state.selectedId,
+      );
       if (!selected) return;
       const field = target.dataset.field;
       const collection = target.dataset.collection;
@@ -392,7 +460,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
       const removeId = target.dataset.removeSection;
       if (removeId) {
-        state.sections = state.sections.filter((section) => section.id !== removeId);
+        state.sections = state.sections.filter(
+          (section) => section.id !== removeId,
+        );
         state.selectedId = state.sections[0]?.id ?? null;
         updateAll();
         renderEditor();
@@ -428,8 +498,12 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       const targetId = target.dataset.sectionId;
       if (!targetId || targetId === sectionId) return;
 
-      const fromIndex = state.sections.findIndex((section) => section.id === sectionId);
-      const toIndex = state.sections.findIndex((section) => section.id === targetId);
+      const fromIndex = state.sections.findIndex(
+        (section) => section.id === sectionId,
+      );
+      const toIndex = state.sections.findIndex(
+        (section) => section.id === targetId,
+      );
       if (fromIndex === -1 || toIndex === -1) return;
       const [moved] = state.sections.splice(fromIndex, 1);
       state.sections.splice(toIndex, 0, moved);
@@ -677,7 +751,9 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
       border: 1px solid var(--gs-border-subtle);
       background: var(--gs-surface-muted);
       padding: 0.75rem;
-      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+      font-family:
+        'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        'Liberation Mono', 'Courier New', monospace;
       font-size: 0.75rem;
       color: var(--gs-text);
     }

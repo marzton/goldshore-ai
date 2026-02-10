@@ -1,5 +1,5 @@
 ---
-import AdminLayout from "../layouts/AdminLayout.astro";
+import AdminLayout from '../layouts/AdminLayout.astro';
 import StatCard from '../components/StatCard.astro';
 import { createAdminService } from '@goldshore/integrations';
 
@@ -10,27 +10,35 @@ const AUTH_CLIENT_ID = import.meta.env.PUBLIC_AUTH_CLIENT_ID;
 // 🛡️ Sentinel: Security Hardening
 // Prioritize private environment variable for Client Secret to prevent client-side exposure.
 // Fallback to PUBLIC_ var ensures backward compatibility but logs a security warning.
-const AUTH_CLIENT_SECRET = import.meta.env.AUTH_CLIENT_SECRET || import.meta.env.PUBLIC_AUTH_CLIENT_SECRET;
+const AUTH_CLIENT_SECRET =
+  import.meta.env.AUTH_CLIENT_SECRET ||
+  import.meta.env.PUBLIC_AUTH_CLIENT_SECRET;
 
-if (!import.meta.env.AUTH_CLIENT_SECRET && import.meta.env.PUBLIC_AUTH_CLIENT_SECRET) {
-  console.warn('🚨 SECURITY WARNING: AUTH_CLIENT_SECRET is configured via PUBLIC_ prefix. This exposes the secret to the client bundle. Please rename to AUTH_CLIENT_SECRET in your environment.');
+if (
+  !import.meta.env.AUTH_CLIENT_SECRET &&
+  import.meta.env.PUBLIC_AUTH_CLIENT_SECRET
+) {
+  console.warn(
+    '🚨 SECURITY WARNING: AUTH_CLIENT_SECRET is configured via PUBLIC_ prefix. This exposes the secret to the client bundle. Please rename to AUTH_CLIENT_SECRET in your environment.',
+  );
 }
 
 const AUDIT_ENDPOINT = import.meta.env.PUBLIC_ADMIN_AUDIT_ENDPOINT;
 
-const authConfig = AUTH_TOKEN_URL && AUTH_CLIENT_ID && AUTH_CLIENT_SECRET
-  ? {
-      tokenUrl: AUTH_TOKEN_URL,
-      clientId: AUTH_CLIENT_ID,
-      clientSecret: AUTH_CLIENT_SECRET
-    }
-  : undefined;
+const authConfig =
+  AUTH_TOKEN_URL && AUTH_CLIENT_ID && AUTH_CLIENT_SECRET
+    ? {
+        tokenUrl: AUTH_TOKEN_URL,
+        clientId: AUTH_CLIENT_ID,
+        clientSecret: AUTH_CLIENT_SECRET,
+      }
+    : undefined;
 
 const adminService = createAdminService({
   apiBaseUrl: API_BASE,
   auth: authConfig,
   auditEndpoint: AUDIT_ENDPOINT,
-  actor: 'admin-dashboard'
+  actor: 'admin-dashboard',
 });
 
 const systemInfo = await adminService.getSystemInfo();
@@ -159,7 +167,8 @@ const systemInfo = await adminService.getSystemInfo();
       <a href="/systems" class="gs-link-tile">Systems</a>
       <a href="/trading" class="gs-link-tile">Trading</a>
       <a href="/settings" class="gs-link-tile">Settings</a>
-      <a href="https://status.goldshore.ai" class="gs-link-tile">Status (ext)</a>
+      <a href="https://status.goldshore.ai" class="gs-link-tile">Status (ext)</a
+      >
     </div>
   </section>
 </AdminLayout>
@@ -224,7 +233,7 @@ const systemInfo = await adminService.getSystemInfo();
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--space-4);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     padding-bottom: var(--space-4);
   }
 
@@ -256,8 +265,12 @@ const systemInfo = await adminService.getSystemInfo();
   .chart-placeholder {
     height: 300px;
     position: relative;
-    background: linear-gradient(180deg, rgba(34, 211, 238, 0.02) 0%, transparent 100%);
-    border: 1px dashed rgba(255,255,255,0.1);
+    background: linear-gradient(
+      180deg,
+      rgba(34, 211, 238, 0.02) 0%,
+      transparent 100%
+    );
+    border: 1px dashed rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: flex-end;
     padding: 0 var(--space-4);
@@ -291,13 +304,13 @@ const systemInfo = await adminService.getSystemInfo();
 
   .activity-item {
     padding: var(--space-3);
-    background-color: rgba(255,255,255,0.02);
-    border-left: 2px solid rgba(255,255,255,0.1);
+    background-color: rgba(255, 255, 255, 0.02);
+    border-left: 2px solid rgba(255, 255, 255, 0.1);
     transition: all 0.2s;
   }
 
   .activity-item:hover {
-    background-color: rgba(255,255,255,0.05);
+    background-color: rgba(255, 255, 255, 0.05);
     border-left-color: var(--color-utility-orange);
   }
 
@@ -321,10 +334,20 @@ const systemInfo = await adminService.getSystemInfo();
   }
 
   /* Helper Classes */
-  .text-green { color: var(--color-sports-car-green) !important; text-shadow: 0 0 8px rgba(0, 255, 0, 0.3); }
-  .text-orange { color: var(--color-utility-orange) !important; text-shadow: 0 0 8px rgba(255, 165, 0, 0.3); }
-  .text-yellow { color: var(--color-neon-yellow) !important; }
-  .text-silver { color: var(--color-silver) !important; }
+  .text-green {
+    color: var(--color-sports-car-green) !important;
+    text-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+  }
+  .text-orange {
+    color: var(--color-utility-orange) !important;
+    text-shadow: 0 0 8px rgba(255, 165, 0, 0.3);
+  }
+  .text-yellow {
+    color: var(--color-neon-yellow) !important;
+  }
+  .text-silver {
+    color: var(--color-silver) !important;
+  }
 
   @media (max-width: 1024px) {
     .dashboard-grid {

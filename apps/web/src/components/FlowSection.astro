@@ -1,15 +1,15 @@
 ---
 const { variant = 'section', class: className = '', id } = Astro.props;
-const innerClass =
-  variant === 'hero' ? 'gs-hero' : 'gs-section';
+const innerClass = variant === 'hero' ? 'gs-hero' : 'gs-section';
 const sectionClass = [
   'gs-flow-section',
   `gs-flow-section--${variant}`,
-  className
+  className,
 ]
   .filter(Boolean)
   .join(' ');
 ---
+
 <section id={id} class={sectionClass}>
   <div class="gs-flow-section__bg" aria-hidden="true">
     <span class="gs-flow-section__layer gs-flow-section__layer--a"></span>

@@ -8,10 +8,10 @@ on:
     branches:
       - main
     paths:
-      - "apps/admin/**"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
+      - 'apps/admin/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
 
 jobs:
   deploy-admin:

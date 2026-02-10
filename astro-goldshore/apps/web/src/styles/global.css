@@ -1,4 +1,4 @@
-@import "@theme/tokens.css";
+@import '@theme/tokens.css';
 
 :root {
   font-family: var(--font-body, sans-serif);

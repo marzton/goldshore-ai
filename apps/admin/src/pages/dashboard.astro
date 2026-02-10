@@ -14,15 +14,27 @@ const releases = [
   { version: 'v1.8.2', status: 'Rollback', time: '2 days ago' },
 ];
 ---
+
 <AdminLayout title="Operations Dashboard">
   <section class="gs-grid columns-3">
-    {pipelines.map((pipe) => (
-      <Card>
-        <div class="section-title"><span>▪</span><h3>{pipe.name}</h3></div>
-        <p class="gs-helper">Latency: {pipe.latency}</p>
-        <span class={`gs-badge ${pipe.status === 'Healthy' ? 'success' : 'warning'}`}>{pipe.status}</span>
-      </Card>
-    ))}
+    {
+      pipelines.map((pipe) => (
+        <Card>
+          <div class="section-title">
+            <>
+              <span>▪</span>
+              <h3>{pipe.name}</h3>
+            </>
+          </div>
+          <p class="gs-helper">Latency: {pipe.latency}</p>
+          <span
+            class={`gs-badge ${pipe.status === 'Healthy' ? 'success' : 'warning'}`}
+          >
+            {pipe.status}
+          </span>
+        </Card>
+      ))
+    }
   </section>
 
   <section class="gs-grid columns-2 gs-mt-6">
@@ -31,13 +43,21 @@ const releases = [
       <Table>
         <thead><tr><th>Version</th><th>Status</th><th>Time</th></tr></thead>
         <tbody>
-          {releases.map((release) => (
-            <tr>
-              <td>{release.version}</td>
-              <td><span class={`gs-badge ${release.status === 'Rollback' ? 'danger' : 'success'}`}>{release.status}</span></td>
-              <td>{release.time}</td>
-            </tr>
-          ))}
+          {
+            releases.map((release) => (
+              <tr>
+                <td>{release.version}</td>
+                <td>
+                  <span
+                    class={`gs-badge ${release.status === 'Rollback' ? 'danger' : 'success'}`}
+                  >
+                    {release.status}
+                  </span>
+                </td>
+                <td>{release.time}</td>
+              </tr>
+            ))
+          }
         </tbody>
       </Table>
     </Card>
@@ -51,7 +71,9 @@ const releases = [
       </div>
       <div class="gs-form-actions">
         <GSButton class="gs-button--small">Run check</GSButton>
-        <GSButton variant="secondary" class="gs-button--small">Schedule</GSButton>
+        <GSButton variant="secondary" class="gs-button--small"
+          >Schedule</GSButton
+        >
       </div>
     </Card>
   </section>

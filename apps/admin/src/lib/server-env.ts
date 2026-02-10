@@ -16,6 +16,6 @@ export const getServerEnv = (locals?: RuntimeEnvContainer) => {
   const runtimeEnv = locals?.runtime?.env ?? {};
   return {
     ...import.meta.env,
-    ...runtimeEnv
+    ...runtimeEnv,
   } as AdminServerEnv;
 };

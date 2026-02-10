@@ -3,10 +3,15 @@ interface Props {
   ariaLabel?: string;
 }
 
-const { ariaLabel = "Data table" } = Astro.props;
+const { ariaLabel = 'Data table' } = Astro.props;
 ---
 
-<div class="gs-table-container" role="region" aria-label={ariaLabel} tabindex="0">
+<div
+  class="gs-table-container"
+  role="region"
+  aria-label={ariaLabel}
+  tabindex="0"
+>
   <table class="gs-table">
     <slot />
   </table>

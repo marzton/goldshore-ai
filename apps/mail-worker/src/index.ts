@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { EmailMessage } from "cloudflare:email";
+import { EmailMessage } from 'cloudflare:email';
 
 interface Env {
   ENV: string;
@@ -19,7 +19,11 @@ app.post('/webhook', async (c) => {
 export default {
   fetch: app.fetch,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async email(message: EmailMessage, _env: Env, _ctx: ExecutionContext): Promise<void> {
+  async email(
+    message: EmailMessage,
+    _env: Env,
+    _ctx: ExecutionContext,
+  ): Promise<void> {
     // Basic email handler scaffolding
     console.log(`Received email from ${message.from} to ${message.to}`);
 
@@ -28,5 +32,5 @@ export default {
 
     // Example: Rejecting
     // message.setReject("Not implemented yet");
-  }
+  },
 };

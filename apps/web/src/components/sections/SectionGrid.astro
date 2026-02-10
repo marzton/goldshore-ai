@@ -1,18 +1,21 @@
 ---
 const { title, items = [] } = Astro.props;
 ---
+
 <section class="section grid">
   <div class="grid-header">
     <p class="eyebrow">Grid</p>
     <h2>{title}</h2>
   </div>
   <div class="grid-items">
-    {items.map((item) => (
-      <article class="grid-card">
-        <h3>{item.title}</h3>
-        <p>{item.body}</p>
-      </article>
-    ))}
+    {
+      items.map((item) => (
+        <article class="grid-card">
+          <h3>{item.title}</h3>
+          <p>{item.body}</p>
+        </article>
+      ))
+    }
   </div>
 </section>
 

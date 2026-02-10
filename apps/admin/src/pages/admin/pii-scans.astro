@@ -3,13 +3,15 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 import { Card, Table, GSButton } from '@goldshore/ui';
 import scanResults from '../../data/pii-scan-results.json';
 
-const { summary, sources, findings, remediation, generatedAt, alerts } = scanResults;
+const { summary, sources, findings, remediation, generatedAt, alerts } =
+  scanResults;
 
-const statusClass = summary.status === 'Critical'
-  ? 'danger'
-  : summary.status === 'Warning'
-  ? 'warning'
-  : 'success';
+const statusClass =
+  summary.status === 'Critical'
+    ? 'danger'
+    : summary.status === 'Warning'
+      ? 'warning'
+      : 'success';
 
 const severityClass = (severity) => {
   if (severity === 'high') return 'danger';
@@ -19,9 +21,10 @@ const severityClass = (severity) => {
 
 const formattedDate = new Date(generatedAt).toLocaleString('en-US', {
   dateStyle: 'medium',
-  timeStyle: 'short'
+  timeStyle: 'short',
 });
 ---
+
 <AdminLayout title="PII Scan Results">
   <section class="gs-grid columns-3">
     <Card>
@@ -56,27 +59,31 @@ const formattedDate = new Date(generatedAt).toLocaleString('en-US', {
           </tr>
         </thead>
         <tbody>
-          {sources.map((source) => (
-            <tr>
-              <td>{source.name}</td>
-              <td>{source.scannedFiles}</td>
-              <td>{source.findings}</td>
-            </tr>
-          ))}
+          {
+            sources.map((source) => (
+              <tr>
+                <td>{source.name}</td>
+                <td>{source.scannedFiles}</td>
+                <td>{source.findings}</td>
+              </tr>
+            ))
+          }
         </tbody>
       </Table>
     </Card>
     <Card>
-      <div class="section-title"><span>↺</span><h3>Remediation guidance</h3></div>
+      <div class="section-title">
+        <span>↺</span><h3>Remediation guidance</h3>
+      </div>
       <p class="gs-helper">Recommended actions for analysts and owners.</p>
       <ul class="gs-mt-2">
-        {remediation.map((item) => (
-          <li>{item}</li>
-        ))}
+        {remediation.map((item) => <li>{item}</li>)}
       </ul>
       <div class="gs-form-actions gs-mt-4">
         <GSButton class="gs-button--small">Escalate</GSButton>
-        <GSButton variant="secondary" class="gs-button--small">Export report</GSButton>
+        <GSButton variant="secondary" class="gs-button--small"
+          >Export report</GSButton
+        >
       </div>
     </Card>
   </section>
@@ -97,13 +104,15 @@ const formattedDate = new Date(generatedAt).toLocaleString('en-US', {
           </tr>
         </thead>
         <tbody>
-          {alerts.channels.map((channel) => (
-            <tr>
-              <td>{channel.channel}</td>
-              <td>{channel.owner}</td>
-              <td>{channel.action}</td>
-            </tr>
-          ))}
+          {
+            alerts.channels.map((channel) => (
+              <tr>
+                <td>{channel.channel}</td>
+                <td>{channel.owner}</td>
+                <td>{channel.action}</td>
+              </tr>
+            ))
+          }
         </tbody>
       </Table>
     </Card>
@@ -124,16 +133,22 @@ const formattedDate = new Date(generatedAt).toLocaleString('en-US', {
           </tr>
         </thead>
         <tbody>
-          {findings.map((finding) => (
-            <tr>
-              <td>{finding.id}</td>
-              <td>{finding.type}</td>
-              <td><span class={`gs-badge ${severityClass(finding.severity)}`}>{finding.severity}</span></td>
-              <td>{finding.location}</td>
-              <td>{finding.snippet}</td>
-              <td>{finding.guidance}</td>
-            </tr>
-          ))}
+          {
+            findings.map((finding) => (
+              <tr>
+                <td>{finding.id}</td>
+                <td>{finding.type}</td>
+                <td>
+                  <span class={`gs-badge ${severityClass(finding.severity)}`}>
+                    {finding.severity}
+                  </span>
+                </td>
+                <td>{finding.location}</td>
+                <td>{finding.snippet}</td>
+                <td>{finding.guidance}</td>
+              </tr>
+            ))
+          }
         </tbody>
       </Table>
     </Card>

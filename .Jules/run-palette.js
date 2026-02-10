@@ -58,7 +58,10 @@ function applySkipLinkFix() {
 
   let content = readFile(relPath);
 
-  if (/Skip to main content/i.test(content) || /skip-to-content/i.test(content)) {
+  if (
+    /Skip to main content/i.test(content) ||
+    /skip-to-content/i.test(content)
+  ) {
     return { applied: false, reason: 'Skip link already present' };
   }
 
@@ -101,17 +104,22 @@ function applySkipLinkFix() {
     } else if (!/id=["']main["']/.test(mainAttrs)) {
       // If there's an id but not "main", we won't override it automatically.
       // Still useful to have the skip link.
-      log('Found <main> with other id; leaving as-is, skip link still works if anchor exists.');
+      log(
+        'Found <main> with other id; leaving as-is, skip link still works if anchor exists.',
+      );
     }
   } else {
-    log('No <main> tag found; skip link will still exist but anchor may not resolve cleanly.');
+    log(
+      'No <main> tag found; skip link will still exist but anchor may not resolve cleanly.',
+    );
   }
 
   writeFile(relPath, newContent);
 
   return {
     applied: true,
-    description: 'Added skip-to-main-content link and ensured main landmark id where possible.',
+    description:
+      'Added skip-to-main-content link and ensured main landmark id where possible.',
     files: [relPath],
   };
 }
@@ -121,15 +129,17 @@ async function createPullRequest(branchName, title, body) {
   const token = process.env.GITHUB_TOKEN;
 
   if (!repo || !token) {
-    log('GITHUB_REPOSITORY or GITHUB_TOKEN not available; skipping PR creation.');
+    log(
+      'GITHUB_REPOSITORY or GITHUB_TOKEN not available; skipping PR creation.',
+    );
     return;
   }
 
   const [owner, repoName] = repo.split('/');
 
   const headers = {
-    'Accept': 'application/vnd.github+json',
-    'Authorization': `Bearer ${token}`,
+    Accept: 'application/vnd.github+json',
+    Authorization: `Bearer ${token}`,
     'X-GitHub-Api-Version': '2022-11-28',
     'Content-Type': 'application/json',
   };
@@ -185,7 +195,9 @@ async function main() {
   }
 
   if (fixes.length === 0) {
-    log('No suitable micro-UX enhancements found today. Exiting without changes.');
+    log(
+      'No suitable micro-UX enhancements found today. Exiting without changes.',
+    );
     process.exit(0);
   }
 

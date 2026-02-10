@@ -8,7 +8,10 @@ describe('json utility', () => {
     const response = json(data);
 
     assert.strictEqual(response.status, 200);
-    assert.strictEqual(response.headers.get('Content-Type'), 'application/json');
+    assert.strictEqual(
+      response.headers.get('Content-Type'),
+      'application/json',
+    );
 
     const body = await response.json();
     assert.deepStrictEqual(body, data);

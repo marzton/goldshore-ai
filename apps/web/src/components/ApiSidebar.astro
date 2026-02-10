@@ -2,27 +2,32 @@
 const { openapi } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
+
 <nav class="api-sidebar" aria-label="API Navigation">
   <div class="sidebar-header">
     <h3 class="title">{openapi.info.title}</h3>
     <span class="version">v{openapi.info.version}</span>
   </div>
   <ul class="endpoint-list">
-    {Object.keys(openapi.paths).map(path => {
-      const href = `/developer/api${path}`;
-      const isActive = currentPath === href || (path === '/' && currentPath === '/developer/api');
-      return (
-        <li>
-          <a
-            href={href}
-            class:list={['endpoint-link', { active: isActive }]}
-            aria-current={isActive ? 'page' : undefined}
-          >
-            {path}
-          </a>
-        </li>
-      );
-    })}
+    {
+      Object.keys(openapi.paths).map((path) => {
+        const href = `/developer/api${path}`;
+        const isActive =
+          currentPath === href ||
+          (path === '/' && currentPath === '/developer/api');
+        return (
+          <li>
+            <a
+              href={href}
+              class:list={['endpoint-link', { active: isActive }]}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              {path}
+            </a>
+          </li>
+        );
+      })
+    }
   </ul>
 </nav>
 

@@ -12,7 +12,12 @@
     "build:gateway": "turbo run build --filter=@goldshore/gateway",
     "build:control": "turbo run build --filter=@goldshore/control-worker",
     "lint": "turbo run lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "turbo run test",
+    "dedupe": "pnpm dedupe",
+    "dedupe:check": "bash scripts/check-dedupe.sh",
+    "validate:wrangler": "npx tsx scripts/validate-wrangler.ts",
     "check:pages": "tsx scripts/check-pages-200.ts",
     "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md"
   },

@@ -20,43 +20,43 @@ cloudflare:
   account_id_env: CF_ACCOUNT_ID
   zone_id_env: CF_ZONE_ID
   checks:
-    - type: "pages_build_status"
-      project: "goldshore-web"
-    - type: "pages_build_status"
-      project: "goldshore-admin"
-    - type: "worker_health"
-      script: "goldshore-api"
-      path: "/health"
-    - type: "dns_records"
+    - type: 'pages_build_status'
+      project: 'goldshore-web'
+    - type: 'pages_build_status'
+      project: 'goldshore-admin'
+    - type: 'worker_health'
+      script: 'goldshore-api'
+      path: '/health'
+    - type: 'dns_records'
       required:
-        - name: "goldshore.org"
-          type: "CNAME"
-        - name: "api.goldshore.org"
-          type: "CNAME"
-        - name: "admin.goldshore.org"
-          type: "CNAME"
-        - name: "_dmarc.goldshore.org"
-          type: "TXT"
-          contains: "v=DMARC1; p=reject"
-        - name: "goldshore.org"
-          type: "TXT"
-          contains: "v=spf1"
+        - name: 'goldshore.org'
+          type: 'CNAME'
+        - name: 'api.goldshore.org'
+          type: 'CNAME'
+        - name: 'admin.goldshore.org'
+          type: 'CNAME'
+        - name: '_dmarc.goldshore.org'
+          type: 'TXT'
+          contains: 'v=DMARC1; p=reject'
+        - name: 'goldshore.org'
+          type: 'TXT'
+          contains: 'v=spf1'
 
 ai_agent:
   notify_webhook_env: AGENT_WEBHOOK_URL
-  label_prefix: "agent:"
+  label_prefix: 'agent:'
   triage_labels:
-    - "agent:triage"
-    - "ops"
-    - "infra"
+    - 'agent:triage'
+    - 'ops'
+    - 'infra'
 
 rules:
   open_conflicts:
-    auto_fix_strategy: "rebase-onto-main"
+    auto_fix_strategy: 'rebase-onto-main'
     open_pr_comment: true
   pages_output_dirs:
-    - repo: "goldshore-admin"
-      path: "apps/admin/dist"
+    - repo: 'goldshore-admin'
+      path: 'apps/admin/dist'
   sensitive:
     disallow_plaintext_secrets: true
     required_secrets:

@@ -1,4 +1,3 @@
-
 import { chromium } from 'playwright';
 
 async function verifyDocsSidebar() {
@@ -36,24 +35,35 @@ async function verifyDocsSidebar() {
       console.log('SUCCESS: Found active link with aria-current="page".');
 
       // Check styles (computed)
-      const color = await activeLink.evaluate((el) => window.getComputedStyle(el).color);
-      const borderLeftColor = await activeLink.evaluate((el) => window.getComputedStyle(el).borderLeftColor);
-      const fontWeight = await activeLink.evaluate((el) => window.getComputedStyle(el).fontWeight);
+      const color = await activeLink.evaluate(
+        (el) => window.getComputedStyle(el).color,
+      );
+      const borderLeftColor = await activeLink.evaluate(
+        (el) => window.getComputedStyle(el).borderLeftColor,
+      );
+      const fontWeight = await activeLink.evaluate(
+        (el) => window.getComputedStyle(el).fontWeight,
+      );
 
       console.log(`Color: ${color}`); // Should be rgb(34, 211, 238) -> #22d3ee
       console.log(`Border Left: ${borderLeftColor}`);
       console.log(`Font Weight: ${fontWeight}`); // Should be 500
 
-      if (color === 'rgb(34, 211, 238)' && borderLeftColor === 'rgb(34, 211, 238)' && fontWeight === '500') {
-         console.log('STYLES VERIFIED.');
+      if (
+        color === 'rgb(34, 211, 238)' &&
+        borderLeftColor === 'rgb(34, 211, 238)' &&
+        fontWeight === '500'
+      ) {
+        console.log('STYLES VERIFIED.');
       } else {
-         console.warn('Style verification failed (or computed styles differ). Check screenshot.');
+        console.warn(
+          'Style verification failed (or computed styles differ). Check screenshot.',
+        );
       }
     }
 
     await page.screenshot({ path: '.Jules/verification/sidebar-active.png' });
     console.log('Screenshot saved.');
-
   } catch (e) {
     console.error('Error:', e);
   } finally {

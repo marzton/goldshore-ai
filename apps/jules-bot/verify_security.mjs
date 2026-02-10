@@ -22,11 +22,11 @@ console.log('Starting server...');
 const server = spawn('node', ['src/index.mjs'], {
   cwd: path.resolve('apps/jules-bot'),
   env,
-  stdio: 'inherit'
+  stdio: 'inherit',
 });
 
 // Wait for server to start
-await new Promise(resolve => setTimeout(resolve, 2000));
+await new Promise((resolve) => setTimeout(resolve, 2000));
 
 async function testRequest(name, payload, signatureOverride) {
   console.log(`\nTest: ${name}`);
@@ -52,18 +52,21 @@ async function testRequest(name, payload, signatureOverride) {
   }
 
   return new Promise((resolve, reject) => {
-    const req = http.request({
-      hostname: 'localhost',
-      port: PORT,
-      method: 'POST',
-      headers,
-    }, res => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        resolve({ status: res.statusCode, data });
-      });
-    });
+    const req = http.request(
+      {
+        hostname: 'localhost',
+        port: PORT,
+        method: 'POST',
+        headers,
+      },
+      (res) => {
+        let data = '';
+        res.on('data', (chunk) => (data += chunk));
+        res.on('end', () => {
+          resolve({ status: res.statusCode, data });
+        });
+      },
+    );
 
     req.on('error', reject);
     req.write(body);
@@ -82,7 +85,11 @@ try {
   }
 
   // Test 2: Invalid signature
-  const res2 = await testRequest('Invalid Signature', { msg: 'hello' }, 'sha256=invalid');
+  const res2 = await testRequest(
+    'Invalid Signature',
+    { msg: 'hello' },
+    'sha256=invalid',
+  );
   if (res2.status === 401) {
     console.log('✅ PASS: Invalid signature rejected');
   } else {
@@ -98,7 +105,6 @@ try {
     console.error(`❌ FAIL: No signature got ${res3.status}`);
     process.exitCode = 1;
   }
-
 } catch (err) {
   console.error('Test failed with error:', err);
   process.exitCode = 1;

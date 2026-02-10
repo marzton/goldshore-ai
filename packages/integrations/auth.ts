@@ -30,27 +30,30 @@ export const createAuthTokenManager = (config: AuthTokenConfig) => {
   const refreshSkewMs = config.refreshSkewMs ?? DEFAULT_REFRESH_SKEW_MS;
   let storedToken: StoredToken | null = null;
 
-  const buildTokenRequest = (grantType: string, params: Record<string, string | undefined>) => {
+  const buildTokenRequest = (
+    grantType: string,
+    params: Record<string, string | undefined>,
+  ) => {
     const body = new URLSearchParams({
       grant_type: grantType,
       client_id: config.clientId,
       client_secret: config.clientSecret,
-      ...params
+      ...params,
     });
 
     return fetchFn(config.tokenUrl, {
       method: 'POST',
       headers: {
-        'content-type': 'application/x-www-form-urlencoded'
+        'content-type': 'application/x-www-form-urlencoded',
       },
-      body
+      body,
     });
   };
 
   const requestNewToken = async () => {
     const response = await buildTokenRequest('client_credentials', {
       scope: config.scope,
-      audience: config.audience
+      audience: config.audience,
     });
 
     if (!response.ok) {
@@ -62,10 +65,14 @@ export const createAuthTokenManager = (config: AuthTokenConfig) => {
   };
 
   const requestRefreshToken = async (refreshToken: string) => {
-    const response = await buildTokenRequest('refresh_token', { refresh_token: refreshToken });
+    const response = await buildTokenRequest('refresh_token', {
+      refresh_token: refreshToken,
+    });
 
     if (!response.ok) {
-      logger.warn('[auth] refresh token failed, falling back to new token', { status: response.status });
+      logger.warn('[auth] refresh token failed, falling back to new token', {
+        status: response.status,
+      });
       return null;
     }
 
@@ -77,7 +84,7 @@ export const createAuthTokenManager = (config: AuthTokenConfig) => {
     storedToken = {
       value: token.access_token,
       expiresAt,
-      refreshToken: token.refresh_token
+      refreshToken: token.refresh_token,
     };
   };
 

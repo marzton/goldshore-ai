@@ -18,19 +18,19 @@ const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
 
 // Validate required environment variables
 if (!GITHUB_TOKEN) {
-  console.error("Missing required environment variable: GITHUB_TOKEN");
+  console.error('Missing required environment variable: GITHUB_TOKEN');
   process.exit(1);
 }
 if (!GITHUB_ORG) {
-  console.error("Missing required environment variable: GITHUB_ORG");
+  console.error('Missing required environment variable: GITHUB_ORG');
   process.exit(1);
 }
 if (!GITHUB_REPO) {
-  console.error("Missing required environment variable: GITHUB_REPO");
+  console.error('Missing required environment variable: GITHUB_REPO');
   process.exit(1);
 }
 if (!WEBHOOK_SECRET) {
-  console.error("Missing required environment variable: WEBHOOK_SECRET");
+  console.error('Missing required environment variable: WEBHOOK_SECRET');
   process.exit(1);
 }
 
@@ -41,8 +41,8 @@ async function postComment(prNumber, body) {
   const res = await fetch(url, {
     method: 'POST',
     headers: {
-      'Accept': 'application/vnd.github+json',
-      'Authorization': `Bearer ${GITHUB_TOKEN}`,
+      Accept: 'application/vnd.github+json',
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
       'X-GitHub-Api-Version': '2022-11-28',
       'Content-Type': 'application/json',
     },
@@ -51,7 +51,9 @@ async function postComment(prNumber, body) {
 
   if (!res.ok) {
     const safePrNumber = String(prNumber).replace(/\r|\n/g, '');
-    console.error(`Failed to post comment to PR #${safePrNumber}: ${res.status} ${res.statusText}: ${await res.text()}`);
+    console.error(
+      `Failed to post comment to PR #${safePrNumber}: ${res.status} ${res.statusText}: ${await res.text()}`,
+    );
   }
 }
 
@@ -62,8 +64,8 @@ async function dispatchPaletteAction(type, data) {
   const res = await fetch(url, {
     method: 'POST',
     headers: {
-      'Accept': 'application/vnd.github+json',
-      'Authorization': `Bearer ${GITHUB_TOKEN}`,
+      Accept: 'application/vnd.github+json',
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
       'X-GitHub-Api-Version': '2022-11-28',
       'Content-Type': 'application/json',
     },
@@ -74,7 +76,9 @@ async function dispatchPaletteAction(type, data) {
   });
 
   if (!res.ok) {
-    console.error(`Failed to dispatch Palette Action: ${res.status} ${await res.text()}`);
+    console.error(
+      `Failed to dispatch Palette Action: ${res.status} ${await res.text()}`,
+    );
   }
 }
 
@@ -92,7 +96,10 @@ async function handleEvent(eventName, payload) {
 
     // Command: /palette improve
     if (body.startsWith('/palette')) {
-      await postComment(prNumber, '🎨 Palette: scanning this PR for a micro-UX improvement…');
+      await postComment(
+        prNumber,
+        '🎨 Palette: scanning this PR for a micro-UX improvement…',
+      );
 
       await dispatchPaletteAction('PALETTE_RUN', {
         pr: prNumber,
@@ -100,7 +107,7 @@ async function handleEvent(eventName, payload) {
 
       await postComment(
         prNumber,
-        '🎨 Palette: requested a UX sweep via GitHub Actions. I will open a small UX PR if I find a clean win.'
+        '🎨 Palette: requested a UX sweep via GitHub Actions. I will open a small UX PR if I find a clean win.',
       );
     }
   }
@@ -132,7 +139,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST') {
     let body = '';
     let bodyTooLarge = false;
-    req.on('data', chunk => {
+    req.on('data', (chunk) => {
       if (bodyTooLarge) return;
       body += chunk.toString('utf8');
       if (body.length > MAX_BODY_SIZE) {
@@ -179,10 +186,10 @@ const server = http.createServer(async (req, res) => {
 });
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-   const PORT = process.env.PORT || 3000;
-   server.listen(PORT, () => {
-     console.log(`Bot server listening on port ${PORT}`);
-   });
+  const PORT = process.env.PORT || 3000;
+  server.listen(PORT, () => {
+    console.log(`Bot server listening on port ${PORT}`);
+  });
 }
 
 export { handleEvent, dispatchPaletteAction };

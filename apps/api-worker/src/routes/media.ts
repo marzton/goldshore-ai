@@ -13,7 +13,7 @@ const ALLOWED_MIME_TYPES = new Map([
   ['svg', 'image/svg+xml'],
   ['png', 'image/png'],
   ['jpg', 'image/jpeg'],
-  ['jpeg', 'image/jpeg']
+  ['jpeg', 'image/jpeg'],
 ]);
 
 const sanitizeSvg = (rawSvg: string) => {
@@ -42,7 +42,7 @@ const ensureTable = async (db: D1Database) => {
         type TEXT NOT NULL,
         object_key TEXT NOT NULL,
         created_at TEXT NOT NULL
-      )`
+      )`,
     )
     .run();
 };
@@ -51,17 +51,18 @@ const media = new Hono<{ Bindings: { DB: D1Database; ASSETS: R2Bucket } }>();
 
 media.get('/', async (c) => {
   await ensureTable(c.env.DB);
-  const { results } = await c.env.DB
-    .prepare('SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT 100')
-    .all<MediaRecord>();
+  const { results } = await c.env.DB.prepare(
+    'SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT 100',
+  ).all<MediaRecord>();
   return c.json({ items: results ?? [] });
 });
 
 media.get('/:id', async (c) => {
   await ensureTable(c.env.DB);
   const id = c.req.param('id');
-  const result = await c.env.DB
-    .prepare('SELECT object_key, type FROM media_assets WHERE id = ?')
+  const result = await c.env.DB.prepare(
+    'SELECT object_key, type FROM media_assets WHERE id = ?',
+  )
     .bind(id)
     .first<{ object_key: string; type: string }>();
 
@@ -75,7 +76,12 @@ media.get('/:id', async (c) => {
   }
 
   const headers = new Headers();
-  headers.set('Content-Type', result.type || object.httpMetadata?.contentType || 'application/octet-stream');
+  headers.set(
+    'Content-Type',
+    result.type ||
+      object.httpMetadata?.contentType ||
+      'application/octet-stream',
+  );
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
 
   return new Response(object.body, { headers });
@@ -117,18 +123,17 @@ media.post('/upload', async (c) => {
 
   await c.env.ASSETS.put(objectKey, body, {
     httpMetadata: {
-      contentType
-    }
+      contentType,
+    },
   });
 
   const url = new URL(c.req.url);
   url.pathname = `/media/${id}`;
 
   const createdAt = new Date().toISOString();
-  await c.env.DB
-    .prepare(
-      'INSERT INTO media_assets (id, filename, url, size, type, object_key, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
-    )
+  await c.env.DB.prepare(
+    'INSERT INTO media_assets (id, filename, url, size, type, object_key, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+  )
     .bind(id, filename, url.toString(), size, contentType, objectKey, createdAt)
     .run();
 
@@ -138,7 +143,7 @@ media.post('/upload', async (c) => {
     url: url.toString(),
     size,
     type: contentType,
-    created_at: createdAt
+    created_at: createdAt,
   });
 });
 

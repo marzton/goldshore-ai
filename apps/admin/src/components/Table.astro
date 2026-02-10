@@ -1,6 +1,7 @@
 ---
 const { headers, rows } = Astro.props;
 ---
+
 <table class="gs-table">
   <thead>
     <tr>
@@ -8,10 +9,14 @@ const { headers, rows } = Astro.props;
     </tr>
   </thead>
   <tbody>
-    {rows.map((row: unknown[]) => (
-      <tr>
-        {row.map((cell) => <td>{cell as string}</td>)}
-      </tr>
-    ))}
+    {
+      rows.map((row: unknown[]) => (
+        <tr>
+          {row.map((cell) => (
+            <td>{cell as string}</td>
+          ))}
+        </tr>
+      ))
+    }
   </tbody>
 </table>

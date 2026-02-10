@@ -25,7 +25,13 @@ export const prerender = true;
       <input type="hidden" name="formStartedAt" value="" />
       <div class="gs-honeypot" aria-hidden="true">
         <label for="companyWebsite">Company website</label>
-        <input id="companyWebsite" name="companyWebsite" type="text" autocomplete="off" tabindex="-1" />
+        <input
+          id="companyWebsite"
+          name="companyWebsite"
+          type="text"
+          autocomplete="off"
+          tabindex="-1"
+        />
       </div>
       <div class="gs-input-group">
         <label for="name">Name</label>
@@ -62,18 +68,35 @@ export const prerender = true;
     <div class="gs-grid columns-2">
       <div>
         <h2>Snapshot</h2>
-        <p class="gs-text-lg">Direct, senior-led delivery that keeps programs steady and fast.</p>
-        <GSButton href="#contact-form" variant="secondary">Send your brief</GSButton>
+        <p class="gs-text-lg">
+          Direct, senior-led delivery that keeps programs steady and fast.
+        </p>
+        <GSButton href="#contact-form" variant="secondary"
+          >Send your brief</GSButton
+        >
       </div>
       <div class="gs-card">
         <h3 class="section-title"><span>◆</span>Snapshot</h3>
         <ul>
-          <li><strong>Current Focus:</strong> Automation layers, resilient infrastructure, and AI-assisted operations.</li>
-          <li><strong>What I build:</strong> End-to-end platforms, secure integrations, and operator-facing tooling.</li>
-          <li><strong>How I work:</strong> Clear scope, weekly checkpoints, and transparent delivery metrics.</li>
-          <li><strong>Availability:</strong> Full-time or contract engagements.</li>
+          <li>
+            <strong>Current Focus:</strong> Automation layers, resilient infrastructure,
+            and AI-assisted operations.
+          </li>
+          <li>
+            <strong>What I build:</strong> End-to-end platforms, secure integrations,
+            and operator-facing tooling.
+          </li>
+          <li>
+            <strong>How I work:</strong> Clear scope, weekly checkpoints, and transparent
+            delivery metrics.
+          </li>
+          <li>
+            <strong>Availability:</strong> Full-time or contract engagements.
+          </li>
         </ul>
-        <p class="gs-text-sm">Have a scope in mind? Send the brief and I’ll respond with a plan.</p>
+        <p class="gs-text-sm">
+          Have a scope in mind? Send the brief and I’ll respond with a plan.
+        </p>
       </div>
     </div>
   </FlowSection>
@@ -94,17 +117,21 @@ export const prerender = true;
 
         const originalText = button.innerHTML;
         button.setAttribute('disabled', 'true');
-        button.innerHTML = '<span class="gs-loader" aria-hidden="true"></span> Sending...';
+        button.innerHTML =
+          '<span class="gs-loader" aria-hidden="true"></span> Sending...';
 
         try {
           const formData = new FormData(form);
-          const response = await fetch(form.getAttribute('action') || '/api/contact', {
-            method: 'POST',
-            body: formData,
-          });
+          const response = await fetch(
+            form.getAttribute('action') || '/api/contact',
+            {
+              method: 'POST',
+              body: formData,
+            },
+          );
 
           if (response.ok || response.redirected) {
-             window.location.href = response.url;
+            window.location.href = response.url;
           } else {
             throw new Error('Submission failed');
           }
@@ -115,14 +142,15 @@ export const prerender = true;
 
           let errorMsg = form.querySelector('.gs-form-error');
           if (!errorMsg) {
-             errorMsg = document.createElement('div');
-             errorMsg.className = 'gs-form-error';
-             form.appendChild(errorMsg);
+            errorMsg = document.createElement('div');
+            errorMsg.className = 'gs-form-error';
+            form.appendChild(errorMsg);
           }
           if (errorMsg instanceof HTMLElement) {
-             errorMsg.style.marginTop = '1rem';
-             errorMsg.style.color = '#ef4444';
-             errorMsg.textContent = 'Unable to send message. System may be busy.';
+            errorMsg.style.marginTop = '1rem';
+            errorMsg.style.color = '#ef4444';
+            errorMsg.textContent =
+              'Unable to send message. System may be busy.';
           }
         }
       });

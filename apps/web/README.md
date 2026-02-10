@@ -46,17 +46,21 @@ The template demonstrates:
 # apps/web
 
 ## Overview
+
 The public GoldShore website and user portal built with Astro and shared theme/UI packages. It deploys to Cloudflare Pages.
 
 Cloudflare metadata:
+
 - Pages project name: `gs-web` (production), `preview-web` (preview)
 - Pages bindings config: `infra/cloudflare/goldshore-web.wrangler.toml`
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
 
 ## Routes/Endpoints
+
 Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
 
 Public routes:
+
 - `/`
 - `/about`
 - `/pricing`
@@ -65,12 +69,14 @@ Public routes:
 - `/contact`
 
 Authenticated user portal:
+
 - `/app/dashboard`
 - `/app/profile`
 - `/app/logs`
 - `/app/settings`
 
 ## Local Dev
+
 ```bash
 pnpm install
 pnpm --filter ./apps/web dev
@@ -79,16 +85,19 @@ pnpm --filter ./apps/web preview
 ```
 
 ## Deploy
+
 - Production deploy: `.github/workflows/deploy-web.yml`
 - Preview deploy: `.github/workflows/preview-web.yml`
 - Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 ## Preview Authentication
+
 - Preview builds reuse the centralized GitHub App callback handler; OAuth completes in the shared callback service, which redirects back to the preview hostname instead of registering per-branch callbacks.
 - Cloudflare Access is enforced by the shared Access application and policy set, with preview hostnames allowlisted alongside production domains.
 - See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
+
 # GoldShore Web (Astro)
 
 Public marketing site and content hub for GoldShore.
@@ -137,15 +146,19 @@ The template demonstrates:
 ```bash
 pnpm --filter @goldshore/web dev
 ```
+
 # apps/web
 
 ## Overview
+
 The public GoldShore website and user portal built with Astro, shared theme, and UI components. It deploys to Cloudflare Pages as the primary marketing and customer-facing experience.
 
 ## Routes/Endpoints
+
 Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
 
 Public routes:
+
 - `/`
 - `/about`
 - `/pricing`
@@ -154,12 +167,14 @@ Public routes:
 - `/contact`
 
 Authenticated user portal:
+
 - `/app/dashboard`
 - `/app/profile`
 - `/app/logs`
 - `/app/settings`
 
 ## Local Dev
+
 ```bash
 pnpm install
 pnpm --filter ./apps/web dev
@@ -168,9 +183,11 @@ pnpm --filter ./apps/web preview
 ```
 
 ## Deploy
+
 Cloudflare Pages deploys via GitHub Actions. Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 ## Preview Authentication
+
 - Preview builds reuse the centralized GitHub App callback handler; OAuth completes in the shared callback service, which redirects back to the preview hostname instead of registering per-branch callbacks.
 - Cloudflare Access is enforced by the shared Access application and policy set, with preview hostnames allowlisted alongside production domains.
 - See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).

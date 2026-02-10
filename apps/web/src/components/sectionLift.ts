@@ -6,7 +6,10 @@ export type SectionLiftOptions = {
 };
 
 export const initSectionLift = (options: SectionLiftOptions = {}) => {
-  if (typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') {
+  if (
+    typeof window === 'undefined' ||
+    typeof IntersectionObserver === 'undefined'
+  ) {
     return () => undefined;
   }
 
@@ -14,7 +17,7 @@ export const initSectionLift = (options: SectionLiftOptions = {}) => {
     selector = '.gs-section-lift',
     rootMargin = '0px 0px -15% 0px',
     threshold = 0.25,
-    liftedClass = 'is-lifted'
+    liftedClass = 'is-lifted',
   } = options;
 
   const elements = Array.from(document.querySelectorAll<HTMLElement>(selector));
@@ -28,7 +31,7 @@ export const initSectionLift = (options: SectionLiftOptions = {}) => {
         entry.target.classList.toggle(liftedClass, entry.isIntersecting);
       });
     },
-    { rootMargin, threshold }
+    { rootMargin, threshold },
   );
 
   elements.forEach((element) => observer.observe(element));

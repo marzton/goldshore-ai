@@ -27,7 +27,8 @@ export const GET: APIRoute = async ({ request }) => {
     });
   }
 
-  const results = fuse.search(q)
+  const results = fuse
+    .search(q)
     .map((result) => ({
       title: result.item.title,
       url: `/developer/docs/${result.item.slug}`,

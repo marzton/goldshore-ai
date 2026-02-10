@@ -38,21 +38,26 @@ The template demonstrates:
 # apps/admin
 
 ## Overview
+
 The GoldShore admin cockpit is an Astro SSR dashboard protected by Cloudflare Access, built on the shared UI kit and theme.
 
 Cloudflare metadata:
+
 - Pages project name: `gs-admin` (production), `preview-admin` (preview)
 - Pages bindings config: `infra/cloudflare/goldshore-admin.wrangler.toml`
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
 
 Documentation:
+
 - [Integrations hub (docs + admin config)](../../docs/integrations.md)
 - [Agent integration policy](../../docs/agent-integration.md)
 
 ## Routes/Endpoints
+
 Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
 
 Admin sections:
+
 - `/admin/analytics`
 - `/admin/monetization`
 - `/admin/forms`
@@ -76,6 +81,7 @@ Admin sections:
 - `/admin/system/secrets`
 
 ## Local Dev
+
 ```bash
 pnpm install
 pnpm --filter ./apps/admin dev
@@ -84,11 +90,13 @@ pnpm --filter ./apps/admin preview
 ```
 
 ## Deploy
+
 - Production deploy: `.github/workflows/deploy-admin.yml`
 - Preview deploy: `.github/workflows/preview-admin.yml`
 - Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 ## Preview Authentication
+
 - Preview builds reuse the centralized GitHub App callback handler; OAuth completes in the shared callback service, which redirects back to the preview hostname instead of registering per-branch callbacks.
 - Cloudflare Access is enforced by the shared Access application and policy set, with preview hostnames allowlisted alongside production domains.
 - See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).

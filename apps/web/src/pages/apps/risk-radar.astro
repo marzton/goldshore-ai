@@ -16,7 +16,7 @@ const samples = [
     drift: '145°',
     pressure: '+0.86',
     momentum: 'Up-slope',
-    riskScore: 72
+    riskScore: 72,
   },
   {
     label: 'Titan Harbor',
@@ -28,7 +28,7 @@ const samples = [
     drift: '80°',
     pressure: '+1.34',
     momentum: 'Accel',
-    riskScore: 88
+    riskScore: 88,
   },
   {
     label: 'Mariner Ghost',
@@ -40,12 +40,15 @@ const samples = [
     drift: '205°',
     pressure: '-0.62',
     momentum: 'Slip',
-    riskScore: 65
-  }
+    riskScore: 65,
+  },
 ];
 ---
 
-<MarketingLayout title="Risk Radar | GoldShore" description="Blueprint-grade risk radar visual with live sample metrics.">
+<MarketingLayout
+  title="Risk Radar | GoldShore"
+  description="Blueprint-grade risk radar visual with live sample metrics."
+>
   <div class="blueprint-grid"></div>
 
   <section class="risk-hero">
@@ -76,7 +79,9 @@ const samples = [
       </div>
 
       <div class="cta-group">
-        <GSButton href="/contact" variant="primary" class="glow-button">Request Access</GSButton>
+        <GSButton href="/contact" variant="primary" class="glow-button"
+          >Request Access</GSButton
+        >
         <GSButton href="#demo" variant="secondary">View Demo</GSButton>
       </div>
     </div>
@@ -112,16 +117,20 @@ const samples = [
         <h2>Command Interface</h2>
       </div>
       <div class="header-controls">
-         <div class="control-group">
-            <label for="risk-sample-select">Target System</label>
-            <div class="select-wrapper">
-              <select id="risk-sample-select">
-                {samples.map((sample, index) => (
-                  <option value={index}>{sample.label} [{sample.ticker}]</option>
-                ))}
-              </select>
-            </div>
-         </div>
+        <div class="control-group">
+          <label for="risk-sample-select">Target System</label>
+          <div class="select-wrapper">
+            <select id="risk-sample-select">
+              {
+                samples.map((sample, index) => (
+                  <option value={index}>
+                    {sample.label} [{sample.ticker}]
+                  </option>
+                ))
+              }
+            </select>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -136,14 +145,14 @@ const samples = [
           <div class="compass-ring"></div>
           <div class="vector-arrow" id="vector-arrow"></div>
           <div class="data-overlay">
-             <div class="data-point">
-               <span class="label">Drift</span>
-               <span class="value" data-field="drift">145°</span>
-             </div>
-             <div class="data-point">
-               <span class="label">G-Force</span>
-               <span class="value text-cyan" data-field="gForce">NW 18.2</span>
-             </div>
+            <div class="data-point">
+              <span class="label">Drift</span>
+              <span class="value" data-field="drift">145°</span>
+            </div>
+            <div class="data-point">
+              <span class="label">G-Force</span>
+              <span class="value text-cyan" data-field="gForce">NW 18.2</span>
+            </div>
           </div>
         </div>
       </div>
@@ -159,28 +168,28 @@ const samples = [
             <span class="label">Implied Vol</span>
             <span class="value text-gold" data-field="iv">38.6%</span>
             <div class="bar-chart">
-               <div class="bar" style="width: 60%"></div>
+              <div class="bar" style="width: 60%"></div>
             </div>
           </div>
           <div class="metric-card">
             <span class="label">Open Vol</span>
             <span class="value" data-field="openVol">1.42M</span>
             <div class="bar-chart">
-               <div class="bar" style="width: 45%"></div>
+              <div class="bar" style="width: 45%"></div>
             </div>
           </div>
           <div class="metric-card">
             <span class="label">Pressure</span>
             <span class="value text-cyan" data-field="pressure">+0.86</span>
-             <div class="bar-chart">
-               <div class="bar" style="width: 75%"></div>
+            <div class="bar-chart">
+              <div class="bar" style="width: 75%"></div>
             </div>
           </div>
           <div class="metric-card">
             <span class="label">Momentum</span>
             <span class="value" data-field="momentum">Up-slope</span>
-             <div class="bar-chart">
-               <div class="bar" style="width: 80%"></div>
+            <div class="bar-chart">
+              <div class="bar" style="width: 80%"></div>
             </div>
           </div>
         </div>
@@ -192,14 +201,21 @@ const samples = [
           <span>Risk Index</span>
         </div>
         <div class="score-display">
-           <svg viewBox="0 0 100 100" class="score-chart">
-             <circle cx="50" cy="50" r="45" class="score-bg" />
-             <circle cx="50" cy="50" r="45" class="score-val" id="score-ring" stroke-dasharray="283" stroke-dashoffset="70" />
-           </svg>
-           <div class="score-number">
-             <span class="value" data-field="riskScore">72</span>
-             <span class="label">/100</span>
-           </div>
+          <svg viewBox="0 0 100 100" class="score-chart">
+            <circle cx="50" cy="50" r="45" class="score-bg"></circle>
+            <circle
+              cx="50"
+              cy="50"
+              r="45"
+              class="score-val"
+              id="score-ring"
+              stroke-dasharray="283"
+              stroke-dashoffset="70"></circle>
+          </svg>
+          <div class="score-number">
+            <span class="value" data-field="riskScore">72</span>
+            <span class="label">/100</span>
+          </div>
         </div>
       </div>
     </div>
@@ -244,13 +260,21 @@ const samples = [
     text-transform: uppercase;
     letter-spacing: 0.1em;
     padding: 0.25rem 0.75rem;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 2px;
     font-family: 'JetBrains Mono', monospace;
   }
 
-  .gs-badge--gold { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); background: rgba(251, 191, 36, 0.05); }
-  .gs-badge--cyan { color: #22d3ee; border-color: rgba(34, 211, 238, 0.3); background: rgba(34, 211, 238, 0.05); }
+  .gs-badge--gold {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.3);
+    background: rgba(251, 191, 36, 0.05);
+  }
+  .gs-badge--cyan {
+    color: #22d3ee;
+    border-color: rgba(34, 211, 238, 0.3);
+    background: rgba(34, 211, 238, 0.05);
+  }
 
   h1 {
     font-size: clamp(3rem, 6vw, 5rem);
@@ -271,20 +295,28 @@ const samples = [
     line-height: 1.6;
   }
 
-  .highlight { color: #22d3ee; }
-  .text-cyan { color: #22d3ee; }
-  .text-gold { color: #fbbf24; }
-  .text-green { color: #10b981; }
+  .highlight {
+    color: #22d3ee;
+  }
+  .text-cyan {
+    color: #22d3ee;
+  }
+  .text-gold {
+    color: #fbbf24;
+  }
+  .text-green {
+    color: #10b981;
+  }
 
   /* HUD Stats */
   .hud-stats {
     display: flex;
     gap: 3rem;
     margin-bottom: 3rem;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding: 1.5rem 0;
-    background: rgba(0,0,0,0.3);
+    background: rgba(0, 0, 0, 0.3);
   }
 
   .hud-stat {
@@ -331,16 +363,31 @@ const samples = [
     border-radius: 50%;
     border: 1px solid rgba(34, 211, 238, 0.2);
     box-shadow: 0 0 50px rgba(34, 211, 238, 0.1);
-    background: radial-gradient(circle, rgba(34, 211, 238, 0.05) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      rgba(34, 211, 238, 0.05) 0%,
+      transparent 70%
+    );
   }
 
   .radar-grid {
     position: absolute;
     inset: 0;
     background-image:
-      radial-gradient(transparent 65%, rgba(34, 211, 238, 0.1) 66%, transparent 67%),
-      conic-gradient(from 0deg, transparent 0deg, rgba(34, 211, 238, 0.1) 1deg, transparent 2deg);
-    background-size: 100% 100%, 100% 100%;
+      radial-gradient(
+        transparent 65%,
+        rgba(34, 211, 238, 0.1) 66%,
+        transparent 67%
+      ),
+      conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        rgba(34, 211, 238, 0.1) 1deg,
+        transparent 2deg
+      );
+    background-size:
+      100% 100%,
+      100% 100%;
     background-repeat: no-repeat, repeat;
     border-radius: 50%;
   }
@@ -349,33 +396,60 @@ const samples = [
     position: absolute;
     border: 1px dashed rgba(34, 211, 238, 0.15);
     border-radius: 50%;
-    top: 50%; left: 50%;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
   }
-  .ring-1 { width: 30%; height: 30%; }
-  .ring-2 { width: 60%; height: 60%; }
-  .ring-3 { width: 90%; height: 90%; }
+  .ring-1 {
+    width: 30%;
+    height: 30%;
+  }
+  .ring-2 {
+    width: 60%;
+    height: 60%;
+  }
+  .ring-3 {
+    width: 90%;
+    height: 90%;
+  }
 
   .radar-scan {
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    background: conic-gradient(from 0deg, transparent 70%, rgba(34, 211, 238, 0.3) 100%);
+    background: conic-gradient(
+      from 0deg,
+      transparent 70%,
+      rgba(34, 211, 238, 0.3) 100%
+    );
     animation: scan 4s linear infinite;
   }
 
   .radar-blips .blip {
     position: absolute;
-    width: 6px; height: 6px;
+    width: 6px;
+    height: 6px;
     background: #fbbf24;
     border-radius: 50%;
     box-shadow: 0 0 10px #fbbf24;
     opacity: 0;
     animation: blip 4s infinite;
   }
-  .blip-1 { top: 30%; left: 60%; animation-delay: 1s; }
-  .blip-2 { top: 70%; left: 40%; animation-delay: 2.5s; }
-  .blip-3 { top: 45%; left: 25%; animation-delay: 3.2s; }
+  .blip-1 {
+    top: 30%;
+    left: 60%;
+    animation-delay: 1s;
+  }
+  .blip-2 {
+    top: 70%;
+    left: 40%;
+    animation-delay: 2.5s;
+  }
+  .blip-3 {
+    top: 45%;
+    left: 25%;
+    animation-delay: 3.2s;
+  }
 
   .radar-overlay {
     position: absolute;
@@ -388,20 +462,48 @@ const samples = [
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
   }
-  .b-n { top: 10px; left: 50%; transform: translateX(-50%); }
-  .b-s { bottom: 10px; left: 50%; transform: translateX(-50%); }
-  .b-e { right: 10px; top: 50%; transform: translateY(-50%); }
-  .b-w { left: 10px; top: 50%; transform: translateY(-50%); }
+  .b-n {
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .b-s {
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .b-e {
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .b-w {
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 
   @keyframes scan {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   @keyframes blip {
-    0% { opacity: 0; }
-    20% { opacity: 1; transform: scale(1.5); }
-    100% { opacity: 0; transform: scale(1); }
+    0% {
+      opacity: 0;
+    }
+    20% {
+      opacity: 1;
+      transform: scale(1.5);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1);
+    }
   }
 
   /* Interface Section */
@@ -417,7 +519,7 @@ const samples = [
     align-items: center;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .header-title h2 {
@@ -428,7 +530,7 @@ const samples = [
   }
 
   .select-wrapper select {
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(34, 211, 238, 0.3);
     color: #fff;
     padding: 0.5rem 1rem;
@@ -462,7 +564,8 @@ const samples = [
   }
 
   .status-dot {
-    width: 8px; height: 8px;
+    width: 8px;
+    height: 8px;
     background: #22d3ee;
     border-radius: 50%;
     box-shadow: 0 0 8px #22d3ee;
@@ -478,17 +581,29 @@ const samples = [
   }
 
   .compass-ring {
-    width: 240px; height: 240px;
-    border: 2px solid rgba(255,255,255,0.1);
+    width: 240px;
+    height: 240px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: 50%;
     background:
-      linear-gradient(0deg, transparent 49%, rgba(255,255,255,0.05) 50%, transparent 51%),
-      linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.05) 50%, transparent 51%);
+      linear-gradient(
+        0deg,
+        transparent 49%,
+        rgba(255, 255, 255, 0.05) 50%,
+        transparent 51%
+      ),
+      linear-gradient(
+        90deg,
+        transparent 49%,
+        rgba(255, 255, 255, 0.05) 50%,
+        transparent 51%
+      );
   }
 
   .vector-arrow {
     position: absolute;
-    width: 4px; height: 100px;
+    width: 4px;
+    height: 100px;
     background: linear-gradient(to top, transparent, #fbbf24);
     transform-origin: bottom center;
     bottom: 50%;
@@ -498,7 +613,8 @@ const samples = [
   .vector-arrow::after {
     content: '';
     position: absolute;
-    top: 0; left: -3px;
+    top: 0;
+    left: -3px;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     border-bottom: 10px solid #fbbf24;
@@ -528,7 +644,7 @@ const samples = [
   }
 
   .metric-card {
-    background: rgba(255,255,255,0.03);
+    background: rgba(255, 255, 255, 0.03);
     padding: 1rem;
     border-radius: 4px;
   }
@@ -550,7 +666,7 @@ const samples = [
 
   .bar-chart {
     height: 4px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 2px;
   }
 
@@ -569,13 +685,14 @@ const samples = [
   }
 
   .score-chart {
-    width: 160px; height: 160px;
+    width: 160px;
+    height: 160px;
     transform: rotate(-90deg);
   }
 
   .score-bg {
     fill: none;
-    stroke: rgba(255,255,255,0.05);
+    stroke: rgba(255, 255, 255, 0.05);
     stroke-width: 8;
   }
 
@@ -589,7 +706,8 @@ const samples = [
 
   .score-number {
     position: absolute;
-    top: 50%; left: 50%;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
   }
@@ -607,11 +725,23 @@ const samples = [
   }
 
   @media (max-width: 1024px) {
-    .risk-hero { grid-template-columns: 1fr; text-align: center; padding-top: 8rem; }
-    .hud-stats { justify-content: center; }
-    .cta-group { justify-content: center; }
-    .interface-grid { grid-template-columns: 1fr; }
-    .metrics-grid { grid-template-columns: 1fr 1fr; }
+    .risk-hero {
+      grid-template-columns: 1fr;
+      text-align: center;
+      padding-top: 8rem;
+    }
+    .hud-stats {
+      justify-content: center;
+    }
+    .cta-group {
+      justify-content: center;
+    }
+    .interface-grid {
+      grid-template-columns: 1fr;
+    }
+    .metrics-grid {
+      grid-template-columns: 1fr 1fr;
+    }
   }
 </style>
 
@@ -627,7 +757,7 @@ const samples = [
       drift: '145°',
       pressure: '+0.86',
       momentum: 'Up-slope',
-      riskScore: 72
+      riskScore: 72,
     },
     {
       label: 'Titan Harbor',
@@ -639,7 +769,7 @@ const samples = [
       drift: '80°',
       pressure: '+1.34',
       momentum: 'Accel',
-      riskScore: 88
+      riskScore: 88,
     },
     {
       label: 'Mariner Ghost',
@@ -651,8 +781,8 @@ const samples = [
       drift: '205°',
       pressure: '-0.62',
       momentum: 'Slip',
-      riskScore: 65
-    }
+      riskScore: 65,
+    },
   ];
 
   // DOM Elements
@@ -666,7 +796,7 @@ const samples = [
     if (!data) return;
 
     // Update Text Fields
-    fieldTargets.forEach(el => {
+    fieldTargets.forEach((el) => {
       const field = el.dataset.field;
       if (data[field]) el.textContent = data[field];
     });
@@ -674,7 +804,7 @@ const samples = [
     // Update Vector Arrow
     const degrees = parseInt(data.drift.replace('°', ''));
     if (vectorArrow) {
-       vectorArrow.style.transform = `rotate(${degrees}deg)`;
+      vectorArrow.style.transform = `rotate(${degrees}deg)`;
     }
 
     // Update Score Ring
@@ -684,8 +814,10 @@ const samples = [
       scoreRing.style.strokeDashoffset = offset;
 
       // Color change based on risk
-      if (data.riskScore > 80) scoreRing.style.stroke = '#ef4444'; // Red
-      else if (data.riskScore > 60) scoreRing.style.stroke = '#fbbf24'; // Yellow
+      if (data.riskScore > 80)
+        scoreRing.style.stroke = '#ef4444'; // Red
+      else if (data.riskScore > 60)
+        scoreRing.style.stroke = '#fbbf24'; // Yellow
       else scoreRing.style.stroke = '#10b981'; // Green
     }
   };

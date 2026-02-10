@@ -11,12 +11,13 @@ const {
 
 const Tag = href ? 'a' : 'button';
 
-const variantClass = {
-  primary: '',
-  secondary: 'gs-button--secondary',
-  destructive: 'gs-button--destructive',
-  ghost: 'gs-button--ghost',
-}[variant] ?? '';
+const variantClass =
+  {
+    primary: '',
+    secondary: 'gs-button--secondary',
+    destructive: 'gs-button--destructive',
+    ghost: 'gs-button--ghost',
+  }[variant] ?? '';
 ---
 
 <Tag
@@ -27,9 +28,7 @@ const variantClass = {
   aria-disabled={disabled || loading}
   {...attrs}
 >
-  {loading && (
-    <span class="gs-loader" aria-hidden="true"></span>
-  )}
+  {loading && <span class="gs-loader" aria-hidden="true" />}
   <slot />
 </Tag>
 
@@ -38,12 +37,14 @@ const variantClass = {
     width: 1rem;
     height: 1rem;
     border-radius: 999px;
-    border: 2px solid rgba(255,255,255,0.4);
-    border-top-color: rgba(255,255,255,0.9);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: rgba(255, 255, 255, 0.9);
     animation: spin 0.8s linear infinite;
   }
 
   @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 </style>

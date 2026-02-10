@@ -7,42 +7,46 @@ const teams = {
   home: 'Home Team',
   away: 'Away Team',
   kickoff: 'Feb 9, 2025 • 6:30 PM ET',
-  venue: 'Caesars Superdome, New Orleans'
+  venue: 'Caesars Superdome, New Orleans',
 };
 
 const quarterPrizes = [
   { label: 'Q1', amount: '$250', detail: 'Score at end of 1st quarter' },
   { label: 'Q2', amount: '$500', detail: 'Halftime payout' },
   { label: 'Q3', amount: '$250', detail: 'Score at end of 3rd quarter' },
-  { label: 'Final', amount: '$1,000', detail: 'Final score payout' }
+  { label: 'Final', amount: '$1,000', detail: 'Final score payout' },
 ];
 
 const steps = [
   {
     title: 'Claim a box',
-    body: 'Pick any open square from the 10x10 board. Each square represents a unique combination of the final digits for each team.'
+    body: 'Pick any open square from the 10x10 board. Each square represents a unique combination of the final digits for each team.',
   },
   {
     title: 'Numbers are randomized',
-    body: 'Once the grid fills, numbers 0–9 are shuffled across the top and side. Your box inherits the numbers where the row and column meet.'
+    body: 'Once the grid fills, numbers 0–9 are shuffled across the top and side. Your box inherits the numbers where the row and column meet.',
   },
   {
     title: 'Track scores',
-    body: 'Payouts are based on the last digit of each team’s score at the end of each quarter.'
-  }
+    body: 'Payouts are based on the last digit of each team’s score at the end of each quarter.',
+  },
 ];
 
 const rows = Array.from({ length: 10 }, (_, index) => index);
 const cols = Array.from({ length: 10 }, (_, index) => index);
 ---
-<BaseLayout title="Super Bowl Boxes | GoldShore" description="Interactive Super Bowl boxes board for game-day pools.">
+
+<BaseLayout
+  title="Super Bowl Boxes | GoldShore"
+  description="Interactive Super Bowl boxes board for game-day pools."
+>
   <section class="gs-hero sb-hero">
     <div>
       <p class="gs-badge">Super Bowl Boxes</p>
       <h1>Run a game-day pool with cinematic clarity</h1>
       <p class="gs-lead">
-        Organize your Super Bowl squares with a polished, easy-to-share board. Assign boxes, randomize numbers,
-        and track quarter payouts in one place.
+        Organize your Super Bowl squares with a polished, easy-to-share board.
+        Assign boxes, randomize numbers, and track quarter payouts in one place.
       </p>
       <div class="sb-meta">
         <div>
@@ -75,18 +79,22 @@ const cols = Array.from({ length: 10 }, (_, index) => index);
           <h3>{teams.home}</h3>
         </div>
       </div>
-      <p class="sb-helper">Update team names once the Super Bowl matchup is set.</p>
+      <p class="sb-helper">
+        Update team names once the Super Bowl matchup is set.
+      </p>
     </div>
   </section>
 
   <section class="gs-section" id="rules">
     <div class="gs-grid columns-3">
-      {steps.map((step) => (
-        <article class="gs-card sb-step">
-          <h3>{step.title}</h3>
-          <p>{step.body}</p>
-        </article>
-      ))}
+      {
+        steps.map((step) => (
+          <article class="gs-card sb-step">
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </article>
+        ))
+      }
     </div>
   </section>
 
@@ -94,11 +102,16 @@ const cols = Array.from({ length: 10 }, (_, index) => index);
     <div class="gs-section-header">
       <div>
         <h2>Super Bowl boxes board</h2>
-        <p class="gs-helper">Boxes fill in real time. Randomized numbers will appear across the top and left once entries close.</p>
+        <p class="gs-helper">
+          Boxes fill in real time. Randomized numbers will appear across the top
+          and left once entries close.
+        </p>
       </div>
       <div class="sb-tags">
         <span class="gs-badge gs-badge--info">100 total boxes</span>
-        <span class="gs-badge gs-badge--warning">Numbers randomized at 95% full</span>
+        <span class="gs-badge gs-badge--warning"
+          >Numbers randomized at 95% full</span
+        >
       </div>
     </div>
 
@@ -108,20 +121,30 @@ const cols = Array.from({ length: 10 }, (_, index) => index);
       </div>
       <div class="sb-board__grid">
         <div class="sb-board__corner"></div>
-        {cols.map((col) => (
-          <div class="sb-board__label" aria-hidden="true">{col}</div>
-        ))}
-        {rows.map((row) => (
-          <>
-            <div class="sb-board__label" aria-hidden="true">{row}</div>
-            {cols.map((col) => (
-              <div class="sb-board__cell">
-                <div class="sb-board__cell-id">{row}-{col}</div>
-                <div class="sb-board__cell-name">Open</div>
+        {
+          cols.map((col) => (
+            <div class="sb-board__label" aria-hidden="true">
+              {col}
+            </div>
+          ))
+        }
+        {
+          rows.map((row) => (
+            <>
+              <div class="sb-board__label" aria-hidden="true">
+                {row}
               </div>
-            ))}
-          </>
-        ))}
+              {cols.map((col) => (
+                <div class="sb-board__cell">
+                  <div class="sb-board__cell-id">
+                    {row}-{col}
+                  </div>
+                  <div class="sb-board__cell-name">Open</div>
+                </div>
+              ))}
+            </>
+          ))
+        }
       </div>
       <div class="sb-board__footer">
         <span>{teams.home} last digit</span>
@@ -132,16 +155,21 @@ const cols = Array.from({ length: 10 }, (_, index) => index);
   <section class="gs-section sb-prizes">
     <div>
       <h2>Payout structure</h2>
-      <p class="gs-helper">Customize the amounts below or keep the classic quarter-by-quarter format.</p>
+      <p class="gs-helper">
+        Customize the amounts below or keep the classic quarter-by-quarter
+        format.
+      </p>
     </div>
     <div class="gs-grid columns-4">
-      {quarterPrizes.map((prize) => (
-        <article class="gs-card sb-prize-card">
-          <div class="sb-prize-card__badge">{prize.label}</div>
-          <h3>{prize.amount}</h3>
-          <p>{prize.detail}</p>
-        </article>
-      ))}
+      {
+        quarterPrizes.map((prize) => (
+          <article class="gs-card sb-prize-card">
+            <div class="sb-prize-card__badge">{prize.label}</div>
+            <h3>{prize.amount}</h3>
+            <p>{prize.detail}</p>
+          </article>
+        ))
+      }
     </div>
   </section>
 
@@ -149,11 +177,16 @@ const cols = Array.from({ length: 10 }, (_, index) => index);
     <div class="gs-card sb-callout__card">
       <div>
         <h2>Need help running the pool?</h2>
-        <p>Share this page with your group, collect entries, and keep everyone aligned on payouts and scoring.</p>
+        <p>
+          Share this page with your group, collect entries, and keep everyone
+          aligned on payouts and scoring.
+        </p>
       </div>
       <div class="sb-actions">
         <a class="gs-button" href="/contact">Get support</a>
-        <a class="gs-button gs-button--ghost" href="/apps/risk-radar">Explore other apps</a>
+        <a class="gs-button gs-button--ghost" href="/apps/risk-radar"
+          >Explore other apps</a
+        >
       </div>
     </div>
   </section>
@@ -326,5 +359,4 @@ const cols = Array.from({ length: 10 }, (_, index) => index);
       min-height: 56px;
     }
   }
-
 </style>

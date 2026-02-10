@@ -1,6 +1,6 @@
-import cloudflare from "@astrojs/cloudflare";
-import tailwind from "@astrojs/tailwind";
-import { defineConfig } from "astro/config";
+import cloudflare from '@astrojs/cloudflare';
+import tailwind from '@astrojs/tailwind';
+import { defineConfig } from 'astro/config';
 
 export default defineConfig({
   srcDir: './src',
@@ -10,23 +10,19 @@ export default defineConfig({
   integrations: [
     tailwind({
       applyBaseStyles: false,
-      configFile: "../../tailwind.config.mjs"
-    })
+      configFile: '../../tailwind.config.mjs',
+    }),
   ],
   vite: {
     ssr: {
-      noExternal: [
-        '@goldshore/theme',
-        '@goldshore/ui',
-        '@goldshore/auth'
-      ]
+      noExternal: ['@goldshore/theme', '@goldshore/ui', '@goldshore/auth'],
     },
     resolve: {
       alias: {
         // '@goldshore/ui': '../../packages/ui',
         // '@goldshore/theme': '../../packages/theme',
         // '@goldshore/auth': '../../packages/auth',
-      }
-    }
-  }
+      },
+    },
+  },
 });

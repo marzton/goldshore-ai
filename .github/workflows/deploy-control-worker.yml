@@ -8,10 +8,10 @@ on:
     branches:
       - main
     paths:
-      - "apps/control-worker/**"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
+      - 'apps/control-worker/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
 
 jobs:
   deploy-control:

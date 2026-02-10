@@ -6,21 +6,24 @@ import SectionFAQ from './SectionFAQ.astro';
 
 const { sections = [] } = Astro.props;
 ---
+
 <div class="section-renderer">
-  {sections.map((section) => {
-    switch (section.type) {
-      case 'hero':
-        return <SectionHero {...section} />;
-      case 'grid':
-        return <SectionGrid {...section} />;
-      case 'cta':
-        return <SectionCTA {...section} />;
-      case 'faq':
-        return <SectionFAQ {...section} />;
-      default:
-        return null;
-    }
-  })}
+  {
+    sections.map((section) => {
+      switch (section.type) {
+        case 'hero':
+          return <SectionHero {...section} />;
+        case 'grid':
+          return <SectionGrid {...section} />;
+        case 'cta':
+          return <SectionCTA {...section} />;
+        case 'faq':
+          return <SectionFAQ {...section} />;
+        default:
+          return null;
+      }
+    })
+  }
 </div>
 
 <style>

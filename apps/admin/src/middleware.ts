@@ -1,10 +1,10 @@
-import { defineMiddleware } from "astro:middleware";
+import { defineMiddleware } from 'astro:middleware';
 import {
   ADMIN_ROLES,
   buildAdminSession,
   getAdminPermissions,
-  verifyAccessWithClaims
-} from "@goldshore/auth";
+  verifyAccessWithClaims,
+} from '@goldshore/auth';
 
 type AdminEnv = {
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
@@ -30,9 +30,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
       const response = await fetch(`${API_BASE}/admin/session`, {
         method: 'POST',
         headers: {
-          'CF-Access-Jwt-Assertion': accessHeader
+          'CF-Access-Jwt-Assertion': accessHeader,
         },
-        credentials: 'include'
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -44,7 +44,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
             httpOnly: true,
             secure: isSecure,
             sameSite: isSecure ? 'none' : 'lax',
-            maxAge: payload.ttlSeconds ?? 60 * 60 * 8
+            maxAge: payload.ttlSeconds ?? 60 * 60 * 8,
           });
         }
       }
@@ -66,40 +66,48 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (ADMIN_ROLES.includes(role as (typeof ADMIN_ROLES)[number])) {
       session = {
         roles: [role as (typeof ADMIN_ROLES)[number]],
-        permissions: getAdminPermissions([role as (typeof ADMIN_ROLES)[number]])
+        permissions: getAdminPermissions([
+          role as (typeof ADMIN_ROLES)[number],
+        ]),
       };
     }
   }
   const actor =
     claims?.email ||
-    context.request.headers.get("CF-Access-Authenticated-User-Email") ||
-    context.request.headers.get("CF-Access-Authenticated-User-Id") ||
+    context.request.headers.get('CF-Access-Authenticated-User-Email') ||
+    context.request.headers.get('CF-Access-Authenticated-User-Id') ||
     undefined;
 
   context.locals.adminSession = {
     ...session,
     actor,
-    isAuthenticated: Boolean(claims)
+    isAuthenticated: Boolean(claims),
   };
 
   const response = await next();
 
   // Sentinel: Add security headers to protect against common attacks
   // X-Frame-Options: Protects against Clickjacking - DENY for admin panel
-  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set('X-Frame-Options', 'DENY');
 
   // X-Content-Type-Options: Protects against MIME sniffing
-  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set('X-Content-Type-Options', 'nosniff');
 
   // Referrer-Policy: Controls how much referrer information is sent
-  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   // Strict-Transport-Security: Enforce HTTPS (HSTS)
   // max-age=31536000 (1 year), includeSubDomains, preload
-  response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  response.headers.set(
+    'Strict-Transport-Security',
+    'max-age=31536000; includeSubDomains; preload',
+  );
 
   // Permissions-Policy: Restrict access to sensitive features not needed in admin dashboard
-  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), interest-cohort=()");
+  response.headers.set(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+  );
 
   return response;
 });

@@ -4,25 +4,28 @@ import { GSButton } from '@goldshore/ui';
 
 const API_BASE = import.meta.env.PUBLIC_API;
 ---
+
 <AdminLayout title="Page Editor | GoldShore Admin">
   <section class="max-w-6xl mx-auto py-16 px-6 space-y-10">
     <header class="space-y-3">
       <h1 class="text-3xl gs-heading">Page Editor</h1>
       <p class="text-[var(--gs-text-secondary)]">
-        Draft content blocks and insert approved media assets directly from the library.
+        Draft content blocks and insert approved media assets directly from the
+        library.
       </p>
     </header>
 
     <div class="gs-card space-y-4">
       <div class="flex flex-wrap items-center gap-3">
-        <GSButton id="open-media-picker" variant="secondary">Insert media</GSButton>
+        <GSButton id="open-media-picker" variant="secondary"
+          >Insert media</GSButton
+        >
         <GSButton id="preview-toggle" variant="ghost">Toggle preview</GSButton>
       </div>
       <textarea
         id="page-editor-input"
         class="gs-input min-h-[240px]"
-        placeholder="Write content here... Use Markdown or HTML."
-      ></textarea>
+        placeholder="Write content here... Use Markdown or HTML."></textarea>
     </div>
 
     <section class="gs-card space-y-4" id="preview-section">
@@ -31,11 +34,21 @@ const API_BASE = import.meta.env.PUBLIC_API;
     </section>
   </section>
 
-  <div id="media-modal" class="media-modal" aria-hidden="true" role="dialog" aria-label="Media picker">
+  <div
+    id="media-modal"
+    class="media-modal"
+    aria-hidden="true"
+    role="dialog"
+    aria-label="Media picker"
+  >
     <div class="media-modal__content">
       <div class="media-modal__header">
         <h2 class="text-xl font-semibold">Choose media</h2>
-        <button id="media-modal-close" class="media-modal__close" aria-label="Close media picker">✕</button>
+        <button
+          id="media-modal-close"
+          class="media-modal__close"
+          aria-label="Close media picker">✕</button
+        >
       </div>
       <div id="media-modal-grid" class="media-modal__grid"></div>
     </div>
@@ -108,7 +121,9 @@ const API_BASE = import.meta.env.PUBLIC_API;
       gap: 0.5rem;
       cursor: pointer;
       background: rgba(15, 23, 42, 0.65);
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      transition:
+        transform 0.2s ease,
+        border-color 0.2s ease;
     }
 
     .media-modal__card:hover {
@@ -185,7 +200,9 @@ const API_BASE = import.meta.env.PUBLIC_API;
         <div class="media-modal__meta">${item.filename}</div>
       `;
       card.addEventListener('click', () => {
-        insertAtCursor(`\\n<img src=\"${item.url}\" alt=\"${item.filename}\" />\\n`);
+        insertAtCursor(
+          `\\n<img src=\"${item.url}\" alt=\"${item.filename}\" />\\n`,
+        );
         closeModal();
       });
       return card;
@@ -193,29 +210,36 @@ const API_BASE = import.meta.env.PUBLIC_API;
 
     const loadMedia = async () => {
       if (!modalGrid) return;
-      modalGrid.innerHTML = '<div class="gs-helper">Loading media library...</div>';
+      modalGrid.innerHTML =
+        '<div class="gs-helper">Loading media library...</div>';
       try {
         const response = await fetch(`${apiBase}/media`);
         const data = await response.json();
         const items = data.items ?? [];
         if (!items.length) {
-          modalGrid.innerHTML = '<div class="gs-helper">No media available. Upload assets first.</div>';
+          modalGrid.innerHTML =
+            '<div class="gs-helper">No media available. Upload assets first.</div>';
           return;
         }
         modalGrid.innerHTML = '';
         items.forEach((item) => modalGrid.appendChild(createMediaCard(item)));
       } catch (error) {
         console.error('Failed to load media', error);
-        modalGrid.innerHTML = '<div class="gs-helper">Unable to load media library.</div>';
+        modalGrid.innerHTML =
+          '<div class="gs-helper">Unable to load media library.</div>';
       }
     };
 
-    document.getElementById('open-media-picker')?.addEventListener('click', () => {
-      openModal();
-      loadMedia();
-    });
+    document
+      .getElementById('open-media-picker')
+      ?.addEventListener('click', () => {
+        openModal();
+        loadMedia();
+      });
 
-    document.getElementById('media-modal-close')?.addEventListener('click', closeModal);
+    document
+      .getElementById('media-modal-close')
+      ?.addEventListener('click', closeModal);
     modal?.addEventListener('click', (event) => {
       if (event.target === modal) closeModal();
     });

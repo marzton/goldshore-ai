@@ -1,4 +1,9 @@
-import type { AnalysisProvider, AnalysisInput, AnalysisResponse, ProviderConfig } from './types';
+import type {
+  AnalysisProvider,
+  AnalysisInput,
+  AnalysisResponse,
+  ProviderConfig,
+} from './types';
 
 const buildPrompt = (input: AnalysisInput) => {
   const parts = [] as string[];
@@ -11,7 +16,10 @@ const buildPrompt = (input: AnalysisInput) => {
 
 export const geminiProvider: AnalysisProvider = {
   name: 'gemini',
-  async analyze(input: AnalysisInput, config: ProviderConfig): Promise<AnalysisResponse> {
+  async analyze(
+    input: AnalysisInput,
+    config: ProviderConfig,
+  ): Promise<AnalysisResponse> {
     const apiKey = config.apiKey;
     if (!apiKey) {
       throw new Error('Gemini API key is missing');

@@ -1,6 +1,6 @@
 ---
-title: "Getting Started"
-description: "Get started with GoldShore"
+title: 'Getting Started'
+description: 'Get started with GoldShore'
 order: 2
 ---
 
@@ -31,6 +31,6 @@ Configure the SDK with your API key:
 import { GoldShore } from '@goldshore/sdk';
 
 const client = new GoldShore({
-  apiKey: 'YOUR_API_KEY'
+  apiKey: 'YOUR_API_KEY',
 });
 ```

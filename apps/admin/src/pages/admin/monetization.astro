@@ -8,25 +8,49 @@ import {
   pageMonetizationConfigs,
 } from '../../lib/monetization';
 
-const analyticsPlacementOptions = ['Global head', 'Page head', 'Body end', 'On-demand'];
-const adPlacementOptions = ['Hero Banner', 'Inline Article', 'Footer Banner', 'None'];
-const affiliateSlotOptions = ['Primary CTA card', 'CTA footer', 'Sidebar resources', 'FAQ panel', 'None'];
+const analyticsPlacementOptions = [
+  'Global head',
+  'Page head',
+  'Body end',
+  'On-demand',
+];
+const adPlacementOptions = [
+  'Hero Banner',
+  'Inline Article',
+  'Footer Banner',
+  'None',
+];
+const affiliateSlotOptions = [
+  'Primary CTA card',
+  'CTA footer',
+  'Sidebar resources',
+  'FAQ panel',
+  'None',
+];
 ---
+
 <AdminLayout title="Monetization & Analytics | GoldShore Admin">
   <section class="max-w-6xl mx-auto px-6 py-10 space-y-10">
     <header class="space-y-3">
-      <p class="text-sm uppercase tracking-[0.3em] gs-text-subtle">Revenue Ops</p>
+      <p class="text-sm uppercase tracking-[0.3em] gs-text-subtle">
+        Revenue Ops
+      </p>
       <h1 class="text-3xl gs-heading">Monetization & Analytics Controls</h1>
       <p class="text-lg gs-text-subtle">
-        Configure analytics providers, ad placements, and affiliate link programs. Apply per-page
-        toggles and placement controls for snippets deployed across the web experience.
+        Configure analytics providers, ad placements, and affiliate link
+        programs. Apply per-page toggles and placement controls for snippets
+        deployed across the web experience.
       </p>
     </header>
 
     <section class="grid gap-6 lg:grid-cols-2">
       <Card>
-        <div class="section-title"><span>📈</span><h3>Analytics Providers</h3></div>
-        <p class="gs-helper">Manage GA4, Plausible, and other telemetry providers.</p>
+        <div class="section-title">
+          <span>📈</span><h3>Analytics Providers</h3>
+        </div>
+        <p class="gs-helper">
+          Manage GA4, Plausible, and other telemetry providers.
+        </p>
         <table class="gs-table gs-mt-4">
           <thead>
             <tr>
@@ -37,31 +61,35 @@ const affiliateSlotOptions = ['Primary CTA card', 'CTA footer', 'Sidebar resourc
             </tr>
           </thead>
           <tbody>
-            {analyticsProviders.map((provider) => (
-              <tr>
-                <td>
-                  <div class="font-semibold">{provider.name}</div>
-                  <div class="text-xs gs-text-subtle">{provider.host}</div>
-                </td>
-                <td>
-                  <span class={`status-pill status-pill--${provider.status}`}>
-                    {provider.status}
-                  </span>
-                </td>
-                <td>{provider.measurementId}</td>
-                <td>
-                  <div>{provider.scriptPlacement}</div>
-                  <div class="text-xs gs-text-subtle">{provider.notes}</div>
-                </td>
-              </tr>
-            ))}
+            {
+              analyticsProviders.map((provider) => (
+                <tr>
+                  <td>
+                    <div class="font-semibold">{provider.name}</div>
+                    <div class="text-xs gs-text-subtle">{provider.host}</div>
+                  </td>
+                  <td>
+                    <span class={`status-pill status-pill--${provider.status}`}>
+                      {provider.status}
+                    </span>
+                  </td>
+                  <td>{provider.measurementId}</td>
+                  <td>
+                    <div>{provider.scriptPlacement}</div>
+                    <div class="text-xs gs-text-subtle">{provider.notes}</div>
+                  </td>
+                </tr>
+              ))
+            }
           </tbody>
         </table>
       </Card>
 
       <Card>
         <div class="section-title"><span>🧲</span><h3>Ad Placements</h3></div>
-        <p class="gs-helper">Control inventory, sizes, and refresh rules for ads.</p>
+        <p class="gs-helper">
+          Control inventory, sizes, and refresh rules for ads.
+        </p>
         <table class="gs-table gs-mt-4">
           <thead>
             <tr>
@@ -72,32 +100,42 @@ const affiliateSlotOptions = ['Primary CTA card', 'CTA footer', 'Sidebar resourc
             </tr>
           </thead>
           <tbody>
-            {adPlacements.map((placement) => (
-              <tr>
-                <td>
-                  <div class="font-semibold">{placement.name}</div>
-                  <div class="text-xs gs-text-subtle">{placement.notes}</div>
-                </td>
-                <td>
-                  <span class={`status-pill status-pill--${placement.status}`}>
-                    {placement.status}
-                  </span>
-                </td>
-                <td>
-                  <div>{placement.inventory}</div>
-                  <div class="text-xs gs-text-subtle">{placement.refresh}</div>
-                </td>
-                <td>{placement.sizes}</td>
-              </tr>
-            ))}
+            {
+              adPlacements.map((placement) => (
+                <tr>
+                  <td>
+                    <div class="font-semibold">{placement.name}</div>
+                    <div class="text-xs gs-text-subtle">{placement.notes}</div>
+                  </td>
+                  <td>
+                    <span
+                      class={`status-pill status-pill--${placement.status}`}
+                    >
+                      {placement.status}
+                    </span>
+                  </td>
+                  <td>
+                    <div>{placement.inventory}</div>
+                    <div class="text-xs gs-text-subtle">
+                      {placement.refresh}
+                    </div>
+                  </td>
+                  <td>{placement.sizes}</td>
+                </tr>
+              ))
+            }
           </tbody>
         </table>
       </Card>
     </section>
 
     <Card>
-      <div class="section-title"><span>🤝</span><h3>Affiliate Programs</h3></div>
-      <p class="gs-helper">Manage tracking tags, payout details, and default deep links.</p>
+      <div class="section-title">
+        <span>🤝</span><h3>Affiliate Programs</h3>
+      </div>
+      <p class="gs-helper">
+        Manage tracking tags, payout details, and default deep links.
+      </p>
       <table class="gs-table gs-mt-4">
         <thead>
           <tr>
@@ -110,28 +148,33 @@ const affiliateSlotOptions = ['Primary CTA card', 'CTA footer', 'Sidebar resourc
           </tr>
         </thead>
         <tbody>
-          {affiliateLinks.map((partner) => (
-            <tr>
-              <td class="font-semibold">{partner.partner}</td>
-              <td>
-                <span class={`status-pill status-pill--${partner.status}`}>
-                  {partner.status}
-                </span>
-              </td>
-              <td>{partner.program}</td>
-              <td>{partner.trackingTag}</td>
-              <td class="truncate">{partner.defaultUrl}</td>
-              <td>{partner.payout}</td>
-            </tr>
-          ))}
+          {
+            affiliateLinks.map((partner) => (
+              <tr>
+                <td class="font-semibold">{partner.partner}</td>
+                <td>
+                  <span class={`status-pill status-pill--${partner.status}`}>
+                    {partner.status}
+                  </span>
+                </td>
+                <td>{partner.program}</td>
+                <td>{partner.trackingTag}</td>
+                <td class="truncate">{partner.defaultUrl}</td>
+                <td>{partner.payout}</td>
+              </tr>
+            ))
+          }
         </tbody>
       </table>
     </Card>
 
     <Card>
-      <div class="section-title"><span>🧩</span><h3>Per-Page Snippet Controls</h3></div>
+      <div class="section-title">
+        <span>🧩</span><h3>Per-Page Snippet Controls</h3>
+      </div>
       <p class="gs-helper">
-        Toggle analytics and monetization snippets per page, and select placement targets.
+        Toggle analytics and monetization snippets per page, and select
+        placement targets.
       </p>
       <form class="gs-form-row gs-mt-4">
         <table class="gs-table">
@@ -147,64 +190,79 @@ const affiliateSlotOptions = ['Primary CTA card', 'CTA footer', 'Sidebar resourc
             </tr>
           </thead>
           <tbody>
-            {pageMonetizationConfigs.map((config, index) => (
-              <tr>
-                <td class="font-semibold">{config.page}</td>
-                <td>
-                  <label class="toggle">
-                    <input
-                      type="checkbox"
-                      name={`analytics-enabled-${index}`}
-                      checked={config.analyticsEnabled}
-                    />
-                    <span>Enabled</span>
-                  </label>
-                </td>
-                <td>
-                  <select name={`analytics-placement-${index}`} class="gs-input">
-                    {analyticsPlacementOptions.map((option) => (
-                      <option value={option} selected={option === config.analyticsPlacement}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-                <td>
-                  <label class="toggle">
-                    <input
-                      type="checkbox"
-                      name={`ads-enabled-${index}`}
-                      checked={config.adsEnabled}
-                    />
-                    <span>Enabled</span>
-                  </label>
-                </td>
-                <td>
-                  <select name={`ad-placement-${index}`} class="gs-input">
-                    {adPlacementOptions.map((option) => (
-                      <option value={option} selected={option === config.adPlacement}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-                <td>
-                  <select name={`affiliate-slot-${index}`} class="gs-input">
-                    {affiliateSlotOptions.map((option) => (
-                      <option value={option} selected={option === config.affiliateSlot}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-                <td class="text-xs gs-text-subtle">{config.notes}</td>
-              </tr>
-            ))}
+            {
+              pageMonetizationConfigs.map((config, index) => (
+                <tr>
+                  <td class="font-semibold">{config.page}</td>
+                  <td>
+                    <label class="toggle">
+                      <input
+                        type="checkbox"
+                        name={`analytics-enabled-${index}`}
+                        checked={config.analyticsEnabled}
+                      />
+                      <span>Enabled</span>
+                    </label>
+                  </td>
+                  <td>
+                    <select
+                      name={`analytics-placement-${index}`}
+                      class="gs-input"
+                    >
+                      {analyticsPlacementOptions.map((option) => (
+                        <option
+                          value={option}
+                          selected={option === config.analyticsPlacement}
+                        >
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td>
+                    <label class="toggle">
+                      <input
+                        type="checkbox"
+                        name={`ads-enabled-${index}`}
+                        checked={config.adsEnabled}
+                      />
+                      <span>Enabled</span>
+                    </label>
+                  </td>
+                  <td>
+                    <select name={`ad-placement-${index}`} class="gs-input">
+                      {adPlacementOptions.map((option) => (
+                        <option
+                          value={option}
+                          selected={option === config.adPlacement}
+                        >
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td>
+                    <select name={`affiliate-slot-${index}`} class="gs-input">
+                      {affiliateSlotOptions.map((option) => (
+                        <option
+                          value={option}
+                          selected={option === config.affiliateSlot}
+                        >
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                  <td class="text-xs gs-text-subtle">{config.notes}</td>
+                </tr>
+              ))
+            }
           </tbody>
         </table>
         <div class="gs-form-actions">
           <GSButton type="button" variant="secondary">Preview changes</GSButton>
-          <GSButton type="submit" variant="primary">Save configuration</GSButton>
+          <GSButton type="submit" variant="primary">Save configuration</GSButton
+          >
         </div>
       </form>
     </Card>

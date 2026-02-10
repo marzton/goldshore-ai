@@ -38,16 +38,24 @@ describe('createAdminService', () => {
     const mockPayload = { version: '1.0.0' };
 
     // Mock successful response
-    const mockResponse = new Response(JSON.stringify(mockPayload), { status: 200 });
-    (mockHttpClient.get as any).mock.mockImplementation(async () => mockResponse);
+    const mockResponse = new Response(JSON.stringify(mockPayload), {
+      status: 200,
+    });
+    (mockHttpClient.get as any).mock.mockImplementation(
+      async () => mockResponse,
+    );
 
     const result = await service.getSystemInfo();
 
     assert.deepStrictEqual(result, mockPayload);
     assert.strictEqual((mockHttpClient.get as any).mock.callCount(), 1);
-    assert.strictEqual((mockAuditLogger.logAdminAction as any).mock.callCount(), 1);
+    assert.strictEqual(
+      (mockAuditLogger.logAdminAction as any).mock.callCount(),
+      1,
+    );
 
-    const auditCall = (mockAuditLogger.logAdminAction as any).mock.calls[0].arguments[0];
+    const auditCall = (mockAuditLogger.logAdminAction as any).mock.calls[0]
+      .arguments[0];
     assert.strictEqual(auditCall.action, 'system.info.read');
     assert.strictEqual(auditCall.status, 'success');
   });
@@ -56,15 +64,23 @@ describe('createAdminService', () => {
     const service = createAdminService(config);
 
     // Mock failure response
-    const mockResponse = new Response(JSON.stringify({ error: 'Failed' }), { status: 500 });
-    (mockHttpClient.get as any).mock.mockImplementation(async () => mockResponse);
+    const mockResponse = new Response(JSON.stringify({ error: 'Failed' }), {
+      status: 500,
+    });
+    (mockHttpClient.get as any).mock.mockImplementation(
+      async () => mockResponse,
+    );
 
     const result = await service.getSystemInfo();
 
     assert.strictEqual(result, null);
-    assert.strictEqual((mockAuditLogger.logAdminAction as any).mock.callCount(), 1);
+    assert.strictEqual(
+      (mockAuditLogger.logAdminAction as any).mock.callCount(),
+      1,
+    );
 
-    const auditCall = (mockAuditLogger.logAdminAction as any).mock.calls[0].arguments[0];
+    const auditCall = (mockAuditLogger.logAdminAction as any).mock.calls[0]
+      .arguments[0];
     assert.strictEqual(auditCall.status, 'failure');
   });
 
@@ -74,8 +90,12 @@ describe('createAdminService', () => {
     const content = '127.0.0.1';
 
     // Mock successful response
-    const mockResponse = new Response(JSON.stringify({ success: true }), { status: 200 });
-    (mockHttpClient.put as any).mock.mockImplementation(async () => mockResponse);
+    const mockResponse = new Response(JSON.stringify({ success: true }), {
+      status: 200,
+    });
+    (mockHttpClient.put as any).mock.mockImplementation(
+      async () => mockResponse,
+    );
 
     await service.updateDnsRecord(recordId, content);
 
@@ -83,7 +103,8 @@ describe('createAdminService', () => {
     assert.strictEqual(putCall.arguments[0], `/dns/records/${recordId}`);
     assert.deepStrictEqual(putCall.arguments[1], { content });
 
-    const auditCall = (mockAuditLogger.logAdminAction as any).mock.calls[0].arguments[0];
+    const auditCall = (mockAuditLogger.logAdminAction as any).mock.calls[0]
+      .arguments[0];
     assert.strictEqual(auditCall.action, 'dns.records.update');
     assert.strictEqual(auditCall.target, `dns:${recordId}`);
     assert.deepStrictEqual(auditCall.metadata, { recordId });
@@ -101,7 +122,8 @@ describe('createAdminService', () => {
     assert.strictEqual(result, null);
     assert.strictEqual((config.logger!.error as any).mock.callCount(), 1);
 
-    const auditCall = (mockAuditLogger.logAdminAction as any).mock.calls[0].arguments[0];
+    const auditCall = (mockAuditLogger.logAdminAction as any).mock.calls[0]
+      .arguments[0];
     assert.strictEqual(auditCall.status, 'failure');
   });
 
@@ -110,7 +132,9 @@ describe('createAdminService', () => {
     const appId = 'app-123';
 
     const mockResponse = new Response(JSON.stringify([]), { status: 200 });
-    (mockHttpClient.get as any).mock.mockImplementation(async () => mockResponse);
+    (mockHttpClient.get as any).mock.mockImplementation(
+      async () => mockResponse,
+    );
 
     await service.listAccessPolicies(appId);
 

@@ -1,5 +1,5 @@
-import type { ControlEnv } from "./types";
+import type { ControlEnv } from './types';
 
 export const sync = async (_env: ControlEnv) => {
-  return { status: "dns synced", ok: true };
+  return { status: 'dns synced', ok: true };
 };

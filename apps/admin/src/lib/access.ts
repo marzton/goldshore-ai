@@ -1,10 +1,15 @@
-import { verifyAccessWithClaims, type AccessTokenPayload } from '@goldshore/auth';
+import {
+  verifyAccessWithClaims,
+  type AccessTokenPayload,
+} from '@goldshore/auth';
 import type { AdminServerEnv } from './server-env';
 
 const DEFAULT_ADMIN_ROLES = ['admin', 'ops', 'owner', 'infra'];
 
 const getRequiredRoles = (env: AdminServerEnv) => {
-  const configured = env.ADMIN_GS_API_ROLES?.split(',').map((role) => role.trim()).filter(Boolean);
+  const configured = env.ADMIN_GS_API_ROLES?.split(',')
+    .map((role) => role.trim())
+    .filter(Boolean);
   return configured && configured.length > 0 ? configured : DEFAULT_ADMIN_ROLES;
 };
 
@@ -21,7 +26,10 @@ const extractRoles = (claims: AccessTokenPayload) => {
   return Array.from(roles).map((role) => role.toLowerCase());
 };
 
-const isAuthorizedRole = (claims: AccessTokenPayload, requiredRoles: string[]) => {
+const isAuthorizedRole = (
+  claims: AccessTokenPayload,
+  requiredRoles: string[],
+) => {
   const roles = extractRoles(claims);
   if (roles.length === 0) {
     return false;
@@ -36,7 +44,7 @@ export type AdminAccessResult =
 
 export const requireAdminAccess = async (
   request: Request,
-  env: AdminServerEnv
+  env: AdminServerEnv,
 ): Promise<AdminAccessResult> => {
   const claims = await verifyAccessWithClaims(request, env);
   const requiredRoles = getRequiredRoles(env);

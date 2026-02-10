@@ -8,11 +8,11 @@ on:
     branches:
       - main
     paths:
-      - "apps/gs-agent/**"
-      - "infra/cloudflare/gs-agent.wrangler.toml"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
+      - 'apps/gs-agent/**'
+      - 'infra/cloudflare/gs-agent.wrangler.toml'
+      - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
 
 jobs:
   deploy-agent:

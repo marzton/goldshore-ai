@@ -12,8 +12,8 @@ on:
       - unlabeled
       - ready_for_review
     paths:
-      - "apps/api-worker/**"
-      - "packages/schema/**"
+      - 'apps/api-worker/**'
+      - 'packages/schema/**'
 
 jobs:
   deploy-preview-api:

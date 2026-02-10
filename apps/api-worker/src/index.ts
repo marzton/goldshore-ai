@@ -1,7 +1,10 @@
 import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
-import { verifyAccessWithClaims, type AccessTokenPayload } from '@goldshore/auth';
+import {
+  verifyAccessWithClaims,
+  type AccessTokenPayload,
+} from '@goldshore/auth';
 import users from './routes/users';
 import health from './routes/health';
 import ai from './routes/ai';
@@ -25,13 +28,16 @@ type Env = {
   CLOUDFLARE_TEAM_DOMAIN?: string;
 };
 
-const app = new Hono<{ Bindings: Env; Variables: { accessClaims: AccessTokenPayload | null } }>();
+const app = new Hono<{
+  Bindings: Env;
+  Variables: { accessClaims: AccessTokenPayload | null };
+}>();
 
 const ALLOWED_ORIGIN_PATTERNS = [
   /^https:\/\/(www\.)?goldshore\.ai$/,
   /^https:\/\/([a-z0-9-]+\.)+goldshore\.ai$/,
   /^https:\/\/([a-z0-9-]+\.)+goldshore-pages\.dev$/,
-  /^http:\/\/localhost(:\d+)?$/
+  /^http:\/\/localhost(:\d+)?$/,
 ];
 
 const isAllowedOrigin = (origin: string) => {
@@ -42,19 +48,28 @@ const isAllowedOrigin = (origin: string) => {
 app.use('*', secureHeaders());
 
 // Enforce CORS to allow legitimate browser clients
-app.use('*', cors({
-  origin: (origin) => (isAllowedOrigin(origin) ? origin : 'https://goldshore.ai'),
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
-  exposeHeaders: ['Content-Length'],
-  credentials: true,
-  maxAge: 600,
-}));
+app.use(
+  '*',
+  cors({
+    origin: (origin) =>
+      isAllowedOrigin(origin) ? origin : 'https://goldshore.ai',
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
+    exposeHeaders: ['Content-Length'],
+    credentials: true,
+    maxAge: 600,
+  }),
+);
 
 // Enforce Authentication (Defense in Depth)
 app.use('*', async (c, next) => {
   // Allow health checks, root, and CORS preflight
-  if (c.req.path === '/health' || c.req.path.startsWith('/health/') || c.req.path === '/' || c.req.method === 'OPTIONS') {
+  if (
+    c.req.path === '/health' ||
+    c.req.path.startsWith('/health/') ||
+    c.req.path === '/' ||
+    c.req.method === 'OPTIONS'
+  ) {
     c.set('accessClaims', null);
     await next();
     return;

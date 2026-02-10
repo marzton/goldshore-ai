@@ -12,7 +12,7 @@ const env = {
   GITHUB_ORG: 'dummy',
   GITHUB_REPO: 'dummy',
   WEBHOOK_SECRET: WEBHOOK_SECRET,
-  PORT: PORT
+  PORT: PORT,
 };
 
 // Assuming running from repo root
@@ -30,7 +30,7 @@ serverProcess.stderr.on('data', (data) => {
 });
 
 // Give it time to start
-await new Promise(resolve => setTimeout(resolve, 2000));
+await new Promise((resolve) => setTimeout(resolve, 2000));
 
 async function sendRequest(payload, signature) {
   return new Promise((resolve, reject) => {
@@ -43,8 +43,8 @@ async function sendRequest(payload, signature) {
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(body),
-        'x-github-event': 'issue_comment'
-      }
+        'x-github-event': 'issue_comment',
+      },
     };
 
     if (signature) {
@@ -53,7 +53,7 @@ async function sendRequest(payload, signature) {
 
     const req = http.request(options, (res) => {
       let data = '';
-      res.on('data', chunk => data += chunk);
+      res.on('data', (chunk) => (data += chunk));
       res.on('end', () => resolve({ status: res.statusCode, body: data }));
     });
 
@@ -71,21 +71,23 @@ try {
   console.log(`Status: ${res1.status}, Body: ${res1.body}`);
 
   if (res1.status === 401) {
-      console.log('✅ PASS: Unsigned request rejected.');
+    console.log('✅ PASS: Unsigned request rejected.');
   } else {
-      console.log('❌ FAIL: Unsigned request accepted (VULNERABLE).');
-      exitCode = 1; // Mark as failed for CI if this was a test
+    console.log('❌ FAIL: Unsigned request accepted (VULNERABLE).');
+    exitCode = 1; // Mark as failed for CI if this was a test
   }
 
-  console.log('\n--- TEST 2: Invalid Signature Request (Expect 401 after fix) ---');
+  console.log(
+    '\n--- TEST 2: Invalid Signature Request (Expect 401 after fix) ---',
+  );
   const res2 = await sendRequest({ test: 'unsafe' }, 'sha256=invalid');
   console.log(`Status: ${res2.status}, Body: ${res2.body}`);
 
   if (res2.status === 401) {
-      console.log('✅ PASS: Invalid signature rejected.');
+    console.log('✅ PASS: Invalid signature rejected.');
   } else {
-      console.log('❌ FAIL: Invalid signature accepted (VULNERABLE).');
-      exitCode = 1;
+    console.log('❌ FAIL: Invalid signature accepted (VULNERABLE).');
+    exitCode = 1;
   }
 
   console.log('\n--- TEST 3: Valid Signed Request (Expect 200) ---');
@@ -98,12 +100,11 @@ try {
   console.log(`Status: ${res3.status}, Body: ${res3.body}`);
 
   if (res3.status === 200) {
-      console.log('✅ PASS: Valid signature accepted.');
+    console.log('✅ PASS: Valid signature accepted.');
   } else {
-      console.log(`❌ FAIL: Valid signature rejected (Status: ${res3.status}).`);
-      exitCode = 1;
+    console.log(`❌ FAIL: Valid signature rejected (Status: ${res3.status}).`);
+    exitCode = 1;
   }
-
 } catch (e) {
   console.error(e);
   exitCode = 1;

@@ -35,7 +35,10 @@ describe('getCloudflareMetrics', () => {
     const result = await getCloudflareMetrics({ fetcher: mockFetcher as any });
 
     assert.strictEqual(result.source, 'mock');
-    assert.strictEqual(result.note, 'Backend responded with 500; using cached defaults.');
+    assert.strictEqual(
+      result.note,
+      'Backend responded with 500; using cached defaults.',
+    );
     // Should contain fallback data
     assert.strictEqual(result.highlights.totalRequests, '18.4M');
   });
@@ -48,7 +51,10 @@ describe('getCloudflareMetrics', () => {
     const result = await getCloudflareMetrics({ fetcher: mockFetcher as any });
 
     assert.strictEqual(result.source, 'mock');
-    assert.strictEqual(result.note, 'Secure backend unavailable; presenting mock data.');
+    assert.strictEqual(
+      result.note,
+      'Secure backend unavailable; presenting mock data.',
+    );
     // Should contain fallback data
     assert.strictEqual(result.highlights.totalRequests, '18.4M');
   });
@@ -63,7 +69,7 @@ describe('getCloudflareMetrics', () => {
     const testEndpoint = 'https://test.api/metrics';
     await getCloudflareMetrics({
       endpoint: testEndpoint,
-      fetcher: mockFetcher as any
+      fetcher: mockFetcher as any,
     });
 
     assert.strictEqual(capturedUrl, testEndpoint);

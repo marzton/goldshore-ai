@@ -13,10 +13,10 @@ on:
       - unlabeled
       - ready_for_review
     paths:
-      - "apps/gateway/**"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
+      - 'apps/gateway/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
 
 jobs:
   deploy-preview-gateway:

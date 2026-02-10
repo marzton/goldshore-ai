@@ -1,22 +1,22 @@
-import { defineConfig } from "astro/config";
-import cloudflare from "@astrojs/cloudflare";
+import { defineConfig } from 'astro/config';
+import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
-  output: "server",
+  output: 'server',
   adapter: cloudflare(),
-  srcDir: "src",
-  publicDir: "public",
+  srcDir: 'src',
+  publicDir: 'public',
   server: {
     host: true,
-    port: 4321
+    port: 4321,
   },
   vite: {
     resolve: {
       alias: {
-        "@theme": "../../packages/theme",
-        "@ui": "../../packages/ui",
-        "@schema": "../../packages/schema",
-      }
-    }
-  }
+        '@theme': '../../packages/theme',
+        '@ui': '../../packages/ui',
+        '@schema': '../../packages/schema',
+      },
+    },
+  },
 });

@@ -3,28 +3,60 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
 const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
 ---
+
 <AdminLayout title="Create Page | GoldShore Admin">
   <section class="max-w-4xl mx-auto py-12 px-6 space-y-6">
     <header>
       <h1 class="text-3xl gs-heading">Create New Page</h1>
-      <p class="text-[var(--gs-text-secondary)]">Draft a new dynamic page for the web site.</p>
+      <p class="text-[var(--gs-text-secondary)]">
+        Draft a new dynamic page for the web site.
+      </p>
     </header>
 
     <form id="page-form" class="card space-y-4">
       <div>
-        <label class="block text-sm text-[var(--gs-text-tertiary)] mb-2" for="slug">Slug</label>
-        <input class="gs-input w-full" id="slug" name="slug" placeholder="pricing/enterprise" required />
+        <label
+          class="block text-sm text-[var(--gs-text-tertiary)] mb-2"
+          for="slug">Slug</label
+        >
+        <input
+          class="gs-input w-full"
+          id="slug"
+          name="slug"
+          placeholder="pricing/enterprise"
+          required
+        />
       </div>
       <div>
-        <label class="block text-sm text-[var(--gs-text-tertiary)] mb-2" for="title">Title</label>
-        <input class="gs-input w-full" id="title" name="title" placeholder="Enterprise Pricing" required />
+        <label
+          class="block text-sm text-[var(--gs-text-tertiary)] mb-2"
+          for="title">Title</label
+        >
+        <input
+          class="gs-input w-full"
+          id="title"
+          name="title"
+          placeholder="Enterprise Pricing"
+          required
+        />
       </div>
       <div>
-        <label class="block text-sm text-[var(--gs-text-tertiary)] mb-2" for="body">Body (HTML)</label>
-        <textarea class="gs-input w-full min-h-[220px]" id="body" name="body" placeholder="<p>Page content...</p>" required></textarea>
+        <label
+          class="block text-sm text-[var(--gs-text-tertiary)] mb-2"
+          for="body">Body (HTML)</label
+        >
+        <textarea
+          class="gs-input w-full min-h-[220px]"
+          id="body"
+          name="body"
+          placeholder="<p>Page content...</p>"
+          required></textarea>
       </div>
       <div>
-        <label class="block text-sm text-[var(--gs-text-tertiary)] mb-2" for="status">Status</label>
+        <label
+          class="block text-sm text-[var(--gs-text-tertiary)] mb-2"
+          for="status">Status</label
+        >
         <select class="gs-input w-full" id="status" name="status">
           <option value="draft">Draft</option>
           <option value="published">Published</option>
@@ -51,7 +83,7 @@ const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         });
         if (!response.ok) {
           const payload = await response.json();

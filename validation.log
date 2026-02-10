@@ -1,0 +1,6 @@
+Validating wrangler.toml files...
+✅ apps/api-worker/wrangler.toml is valid.
+✅ apps/control-worker/wrangler.toml is valid.
+✅ apps/gateway/wrangler.toml is valid.
+✅ infra/cloudflare/gs-agent.wrangler.toml is valid.
+✅ apps/mail-worker/wrangler.toml is valid.

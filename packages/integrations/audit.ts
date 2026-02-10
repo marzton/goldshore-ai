@@ -23,7 +23,7 @@ export const createAuditLogger = (config: AuditLoggerConfig) => {
   const logAdminAction = async (entry: AuditLogEntry) => {
     const payload: AuditLogEntry = {
       ...entry,
-      timestamp: entry.timestamp ?? new Date().toISOString()
+      timestamp: entry.timestamp ?? new Date().toISOString(),
     };
 
     logger.info('[audit] admin action', payload);
@@ -31,7 +31,9 @@ export const createAuditLogger = (config: AuditLoggerConfig) => {
     if (config.endpoint && config.httpClient) {
       const response = await config.httpClient.post(config.endpoint, payload);
       if (!response.ok) {
-        logger.warn('[audit] failed to persist audit log', { status: response.status });
+        logger.warn('[audit] failed to persist audit log', {
+          status: response.status,
+        });
       }
     }
   };

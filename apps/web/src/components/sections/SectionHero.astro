@@ -1,6 +1,7 @@
 ---
 const { title, subtitle, primaryCta, secondaryCta } = Astro.props;
 ---
+
 <section class="section hero">
   <div class="hero-content">
     <p class="eyebrow">Hero</p>
@@ -17,7 +18,8 @@ const { title, subtitle, primaryCta, secondaryCta } = Astro.props;
   .hero {
     padding: 4rem 2.5rem;
     border-radius: 2rem;
-    background: radial-gradient(circle at top, rgba(59, 130, 246, 0.2), transparent 60%),
+    background:
+      radial-gradient(circle at top, rgba(59, 130, 246, 0.2), transparent 60%),
       linear-gradient(135deg, #0f172a, #1e293b);
     color: #f8fafc;
   }

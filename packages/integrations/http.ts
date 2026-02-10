@@ -45,10 +45,18 @@ export const createHttpClient = (config: HttpClientConfig) => {
     }
 
     const attemptRequest = async (attempt: number): Promise<Response> => {
-      logger.info('[http] request', { method: options.method ?? 'GET', url, attempt });
+      logger.info('[http] request', {
+        method: options.method ?? 'GET',
+        url,
+        attempt,
+      });
       try {
         const response = await fetchFn(url, { ...options, headers });
-        logger.info('[http] response', { status: response.status, url, attempt });
+        logger.info('[http] response', {
+          status: response.status,
+          url,
+          attempt,
+        });
         if (attempt < retries && shouldRetryResponse(response)) {
           await sleep(retryDelayMs * (attempt + 1));
           return attemptRequest(attempt + 1);
@@ -69,7 +77,8 @@ export const createHttpClient = (config: HttpClientConfig) => {
 
   return {
     request,
-    get: (path: string, options: HttpRequestOptions = {}) => request(path, { ...options, method: 'GET' }),
+    get: (path: string, options: HttpRequestOptions = {}) =>
+      request(path, { ...options, method: 'GET' }),
     post: (path: string, body?: unknown, options: HttpRequestOptions = {}) =>
       request(path, {
         ...options,
@@ -77,8 +86,8 @@ export const createHttpClient = (config: HttpClientConfig) => {
         body: body ? JSON.stringify(body) : undefined,
         headers: {
           'content-type': 'application/json',
-          ...options.headers
-        }
+          ...options.headers,
+        },
       }),
     put: (path: string, body?: unknown, options: HttpRequestOptions = {}) =>
       request(path, {
@@ -87,9 +96,9 @@ export const createHttpClient = (config: HttpClientConfig) => {
         body: body ? JSON.stringify(body) : undefined,
         headers: {
           'content-type': 'application/json',
-          ...options.headers
-        }
-      })
+          ...options.headers,
+        },
+      }),
   };
 };
 export type HttpClient = ReturnType<typeof createHttpClient>;

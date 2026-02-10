@@ -3,6 +3,7 @@
 This document details the configuration for all Cloudflare Workers and Pages projects in the GoldShore monorepo.
 
 ## 1. gs-mail (`apps/mail-worker`)
+
 The email routing and processing worker.
 
 - **Directory:** `apps/mail-worker`
@@ -16,6 +17,7 @@ The email routing and processing worker.
 - **Status:** Scaffolding complete. Needs implementation of specific email logic.
 
 ## 2. gs-agent (`apps/gs-agent`)
+
 The AI agent service.
 
 - **Directory:** `apps/gs-agent`
@@ -30,6 +32,7 @@ The AI agent service.
 - **Purpose:** Handles AI inference tasks, job processing from queues, and agent interactions.
 
 ## 3. gs-gateway (`apps/gateway`)
+
 The API gateway and router.
 
 - **Directory:** `apps/gateway`
@@ -47,6 +50,7 @@ The API gateway and router.
 - **Purpose:** Primary entry point for API traffic, routing requests to `gs-api` or handling them directly (e.g., cached responses).
 
 ## 4. gs-control (`apps/control-worker`)
+
 The operational control plane worker.
 
 - **Directory:** `apps/control-worker`
@@ -63,6 +67,7 @@ The operational control plane worker.
 - **Purpose:** Internal tool for managing Cloudflare resources, viewing logs, and performing administrative actions via Hono API.
 
 ## 5. gs-api (`apps/api-worker`)
+
 The backend API service.
 
 - **Directory:** `apps/api-worker`
@@ -73,4 +78,5 @@ The backend API service.
 - **Purpose:** Core business logic and data access layer.
 
 ## Deprecated
+
 - `apps/goldshore-agent`: Removed. Legacy shim for `gs-agent`.

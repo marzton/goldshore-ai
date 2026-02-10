@@ -10,8 +10,8 @@ describe('Health API', () => {
 
     const res = await app.request('/');
     assert.strictEqual(res.status, 200);
-    const data = await res.json() as { status: string; service: string };
-    assert.deepStrictEqual(data, { status: "ok", service: "gs-api" });
+    const data = (await res.json()) as { status: string; service: string };
+    assert.deepStrictEqual(data, { status: 'ok', service: 'gs-api' });
   });
 
   it('GET /unknown returns 404 Not Found', async () => {

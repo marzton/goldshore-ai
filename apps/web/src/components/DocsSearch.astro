@@ -19,7 +19,13 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
       <kbd>⌘</kbd>K
     </div>
   </div>
-  <ul id={`results-${uniqueId}`} class="docs-search-results" role="list" aria-live="polite"></ul>
+  <ul
+    id={`results-${uniqueId}`}
+    class="docs-search-results"
+    role="list"
+    aria-live="polite"
+  >
+  </ul>
 </div>
 
 <style>
@@ -35,7 +41,7 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
     align-items: center;
   }
 
-  input[type="search"] {
+  input[type='search'] {
     width: 100%;
     padding: 0.75rem 1rem;
     padding-right: 3.5rem;
@@ -47,7 +53,7 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
     transition: all 0.2s ease;
   }
 
-  input[type="search"]:focus {
+  input[type='search']:focus {
     outline: none;
     border-color: var(--gs-color-primary, #0f172a);
     box-shadow: 0 0 0 2px var(--gs-primary-alpha, rgba(15, 23, 42, 0.1));
@@ -65,7 +71,7 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
     margin-top: 4px;
     display: none;
     z-index: 50;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     max-height: 300px;
     overflow-y: auto;
@@ -80,7 +86,7 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
     width: 1px;
     height: 1px;
     overflow: hidden;
-    clip: rect(0,0,0,0);
+    clip: rect(0, 0, 0, 0);
   }
 
   .search-shortcut {
@@ -139,8 +145,12 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
 
 <script lang="ts">
   function initDocsSearch(wrapper: HTMLElement) {
-    const input = wrapper.querySelector('input[type="search"]') as HTMLInputElement;
-    const list = wrapper.querySelector('.docs-search-results') as HTMLUListElement;
+    const input = wrapper.querySelector(
+      'input[type="search"]',
+    ) as HTMLInputElement;
+    const list = wrapper.querySelector(
+      '.docs-search-results',
+    ) as HTMLUListElement;
 
     if (!input || !list) return;
 
@@ -169,9 +179,12 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
 
         controller = new AbortController();
         try {
-          const res = await fetch(`/api/docs-search?q=${encodeURIComponent(q)}`, {
-            signal: controller.signal
-          });
+          const res = await fetch(
+            `/api/docs-search?q=${encodeURIComponent(q)}`,
+            {
+              signal: controller.signal,
+            },
+          );
           const data = await res.json();
           list.textContent = ''; // Clear loading
 
@@ -186,7 +199,10 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
               const a = document.createElement('a');
 
               // Basic protection against javascript: URIs
-              if (r.url && !r.url.trim().toLowerCase().startsWith('javascript:')) {
+              if (
+                r.url &&
+                !r.url.trim().toLowerCase().startsWith('javascript:')
+              ) {
                 a.href = r.url;
               } else {
                 a.href = '#';
@@ -210,7 +226,10 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
     });
 
     document.addEventListener('click', (e) => {
-      if (!input.contains(e.target as Node) && !list.contains(e.target as Node)) {
+      if (
+        !input.contains(e.target as Node) &&
+        !list.contains(e.target as Node)
+      ) {
         list.innerHTML = '';
         input.setAttribute('aria-expanded', 'false');
       }
@@ -250,7 +269,7 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
   }
 
   // Initialize all instances
-  document.querySelectorAll('.search-wrapper').forEach(wrapper => {
+  document.querySelectorAll('.search-wrapper').forEach((wrapper) => {
     initDocsSearch(wrapper as HTMLElement);
   });
 
@@ -259,7 +278,9 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
       e.preventDefault();
       // Focus the first visible search input
-      const searchInput = document.querySelector('.docs-search-input') as HTMLInputElement;
+      const searchInput = document.querySelector(
+        '.docs-search-input',
+      ) as HTMLInputElement;
       if (searchInput) {
         searchInput.focus();
       }

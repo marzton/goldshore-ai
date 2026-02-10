@@ -1,6 +1,7 @@
 ---
 const { headline, body, buttonLabel } = Astro.props;
 ---
+
 <section class="section cta">
   <div>
     <p class="eyebrow">CTA</p>
@@ -14,7 +15,11 @@ const { headline, body, buttonLabel } = Astro.props;
   .cta {
     padding: 3rem 2.5rem;
     border-radius: 1.5rem;
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(15, 23, 42, 0.06));
+    background: linear-gradient(
+      135deg,
+      rgba(37, 99, 235, 0.15),
+      rgba(15, 23, 42, 0.06)
+    );
     display: flex;
     flex-wrap: wrap;
     align-items: center;

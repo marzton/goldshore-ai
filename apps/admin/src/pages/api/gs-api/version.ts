@@ -10,12 +10,12 @@ export const GET: APIRoute = async ({ request, locals }) => {
   if (!access.ok) {
     return new Response(JSON.stringify({ error: access.error }), {
       status: access.status,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 
   const response = await fetch(`${getGsApiBaseUrl(env)}/system/version`, {
-    headers: buildGsApiHeaders(request)
+    headers: buildGsApiHeaders(request),
   });
 
   const payload = await response.json().catch(() => null);
@@ -26,11 +26,11 @@ export const GET: APIRoute = async ({ request, locals }) => {
       version: payload?.version ?? 'unknown',
       service: payload?.service ?? 'gs-api',
       deploySha: payload?.deploySha ?? null,
-      checkedAt: new Date().toISOString()
+      checkedAt: new Date().toISOString(),
     }),
     {
       status: response.status,
-      headers: { 'Content-Type': 'application/json' }
-    }
+      headers: { 'Content-Type': 'application/json' },
+    },
   );
 };

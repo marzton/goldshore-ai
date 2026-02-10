@@ -8,10 +8,10 @@ on:
     branches:
       - main
     paths:
-      - "apps/api-worker/**"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
+      - 'apps/api-worker/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
 
 jobs:
   deploy:

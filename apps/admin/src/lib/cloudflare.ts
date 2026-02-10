@@ -104,7 +104,9 @@ const fallbackMetrics: CloudflareMetrics = {
   note: 'Live metrics unavailable; showing read-only defaults.',
 };
 
-const mergeMetrics = (payload: Partial<CloudflareMetrics>): CloudflareMetrics => ({
+const mergeMetrics = (
+  payload: Partial<CloudflareMetrics>,
+): CloudflareMetrics => ({
   ...fallbackMetrics,
   ...payload,
   highlights: {
@@ -120,7 +122,10 @@ const mergeMetrics = (payload: Partial<CloudflareMetrics>): CloudflareMetrics =>
 export const getCloudflareMetrics = async (
   options: { endpoint?: string; fetcher?: typeof fetch } = {},
 ): Promise<CloudflareMetrics> => {
-  const { endpoint = 'https://ops.goldshore.ai/cloudflare/metrics', fetcher = fetch } = options;
+  const {
+    endpoint = 'https://ops.goldshore.ai/cloudflare/metrics',
+    fetcher = fetch,
+  } = options;
 
   try {
     const response = await fetcher(endpoint, {

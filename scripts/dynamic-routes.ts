@@ -23,15 +23,15 @@ export const dynamicRouteSources: DynamicRouteSource[] = [
     type: 'content',
     basePath: '/developer/docs',
     contentDir: 'apps/web/src/content/docs',
-    extensions: ['.md', '.mdx']
+    extensions: ['.md', '.mdx'],
   },
   {
     name: 'api-docs',
     type: 'openapi',
     basePath: '/developer/api',
     specPath: 'apps/web/src/data/v1.json',
-    includeIndex: true
-  }
+    includeIndex: true,
+  },
 ];
 
 const normalizeSlug = (filePath: string) =>
@@ -46,12 +46,14 @@ const listFiles = async (dir: string): Promise<string[]> => {
         return listFiles(fullPath);
       }
       return [fullPath];
-    })
+    }),
   );
   return files.flat();
 };
 
-const buildContentRoutes = async (source: Extract<DynamicRouteSource, { type: 'content' }>) => {
+const buildContentRoutes = async (
+  source: Extract<DynamicRouteSource, { type: 'content' }>,
+) => {
   const absoluteDir = path.resolve(source.contentDir);
   const files = await listFiles(absoluteDir);
   return files
@@ -63,7 +65,9 @@ const buildContentRoutes = async (source: Extract<DynamicRouteSource, { type: 'c
     });
 };
 
-const buildOpenApiRoutes = async (source: Extract<DynamicRouteSource, { type: 'openapi' }>) => {
+const buildOpenApiRoutes = async (
+  source: Extract<DynamicRouteSource, { type: 'openapi' }>,
+) => {
   const specRaw = await readFile(path.resolve(source.specPath), 'utf-8');
   const spec = JSON.parse(specRaw) as { paths?: Record<string, unknown> };
   const routes = new Set<string>();

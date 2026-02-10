@@ -1,14 +1,15 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { Card, GSButton } from '@goldshore/ui';
-
 ---
 
 <AdminLayout title="Trading">
   <section class="gs-grid columns-2">
     <Card>
       <div class="section-title"><span>⌁</span><h3>Trade Console</h3></div>
-      <p class="gs-helper">Orchestrate live trading signals, risk limits, and account routing.</p>
+      <p class="gs-helper">
+        Orchestrate live trading signals, risk limits, and account routing.
+      </p>
       <form class="gs-form-row" id="trade-form">
         <div class="gs-input-group">
           <label for="ticker">Ticker</label>
@@ -34,8 +35,12 @@ import { Card, GSButton } from '@goldshore/ui';
         </div>
       </form>
       <div class="gs-form-actions">
-        <GSButton type="button" class="gs-button--small">Simulate order</GSButton>
-        <GSButton type="button" variant="secondary" class="gs-button--small">Wire to API</GSButton>
+        <GSButton type="button" class="gs-button--small"
+          >Simulate order</GSButton
+        >
+        <GSButton type="button" variant="secondary" class="gs-button--small"
+          >Wire to API</GSButton
+        >
       </div>
     </Card>
 
