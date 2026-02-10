@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS lead_submissions (
   budget TEXT,
   goals TEXT,
   message TEXT,
+  status TEXT NOT NULL DEFAULT 'new',
   received_at TEXT NOT NULL,
   ip_address TEXT,
   user_agent TEXT,
@@ -25,3 +26,6 @@ CREATE INDEX IF NOT EXISTS lead_submissions_form_type_idx
 
 CREATE INDEX IF NOT EXISTS lead_submissions_received_at_idx
   ON lead_submissions (received_at);
+
+CREATE INDEX IF NOT EXISTS lead_submissions_status_idx
+  ON lead_submissions (status);

@@ -13,6 +13,7 @@
     "build:control": "turbo run build --filter=@goldshore/control-worker",
     "lint": "turbo run lint",
     "test": "turbo run test",
+    "check:pages": "tsx scripts/check-pages-200.ts",
     "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md"
   },
   "devDependencies": {
@@ -40,7 +41,8 @@
   "pnpm": {
     "overrides": {
       "@astrojs/cloudflare": "latest",
-      "@astrojs/adapter-cloudflare": "latest"
+      "@astrojs/adapter-cloudflare": "latest",
+      "postal-mime": "2.7.3"
     }
   }
 }
