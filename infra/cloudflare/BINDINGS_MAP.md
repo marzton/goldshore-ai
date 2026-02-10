@@ -8,6 +8,17 @@
 
 ## Pages Projects
 
+## Authoritative Pages Project Mapping
+
+Use this as the single source of truth for Pages naming across infra, workflows, and runbooks.
+
+| App | Canonical Cloudflare Pages project name | Legacy/old name (do not use) |
+| --- | --- | --- |
+| Web (Public) | `astro-gs-web` | `gs-web` |
+| Admin (Cockpit) | `astro-gs-admin` | `gs-admin` |
+
+---
+
 ### 1. Web (Public)
 
 - Project: `astro-gs-web`
