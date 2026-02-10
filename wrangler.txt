@@ -1,0 +1,31 @@
+Legend: production dependency, optional only, dev only
+
+astro-goldshore /app
+
+devDependencies:
+wrangler 4.63.0
+
+gs-api@0.1.0 /app/apps/api-worker
+
+devDependencies:
+wrangler 4.63.0
+
+@goldshore/control@0.1.0 /app/apps/control-worker
+
+devDependencies:
+wrangler 4.63.0
+
+@goldshore/gateway@0.1.0 /app/apps/gateway
+
+devDependencies:
+wrangler 4.63.0
+
+@goldshore/agent@0.0.1 /app/apps/gs-agent
+
+devDependencies:
+wrangler 4.63.0
+
+gs-mail@0.0.0 /app/apps/mail-worker
+
+devDependencies:
+wrangler 4.63.0

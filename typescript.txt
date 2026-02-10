@@ -1,0 +1,41 @@
+Legend: production dependency, optional only, dev only
+
+astro-goldshore /app
+
+devDependencies:
+typescript 5.9.3
+
+@goldshore/admin@0.1.0 /app/apps/admin
+
+devDependencies:
+typescript 5.9.3
+
+gs-api@0.1.0 /app/apps/api-worker
+
+devDependencies:
+typescript 5.9.3
+
+@goldshore/control@0.1.0 /app/apps/control-worker
+
+devDependencies:
+typescript 5.9.3
+
+@goldshore/gateway@0.1.0 /app/apps/gateway
+
+devDependencies:
+typescript 5.9.3
+
+@goldshore/agent@0.0.1 /app/apps/gs-agent
+
+devDependencies:
+typescript 5.9.3
+
+gs-mail@0.0.0 /app/apps/mail-worker
+
+devDependencies:
+typescript 5.9.3
+
+@goldshore/web@0.1.0 /app/apps/web
+
+devDependencies:
+typescript 5.9.3

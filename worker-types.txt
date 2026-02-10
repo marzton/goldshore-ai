@@ -1,0 +1,26 @@
+Legend: production dependency, optional only, dev only
+
+gs-api@0.1.0 /app/apps/api-worker
+
+devDependencies:
+@cloudflare/workers-types 4.20260207.0
+
+@goldshore/control@0.1.0 /app/apps/control-worker
+
+devDependencies:
+@cloudflare/workers-types 4.20260207.0
+
+@goldshore/gateway@0.1.0 /app/apps/gateway
+
+devDependencies:
+@cloudflare/workers-types 4.20260207.0
+
+@goldshore/agent@0.0.1 /app/apps/gs-agent
+
+devDependencies:
+@cloudflare/workers-types 4.20260207.0
+
+gs-mail@0.0.0 /app/apps/mail-worker
+
+devDependencies:
+@cloudflare/workers-types 4.20260207.0
