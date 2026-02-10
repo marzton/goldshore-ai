@@ -1,7 +1,5 @@
 import type { APIRoute } from 'astro';
 
-export const prerender = false;
-
 const parseJson = <T>(value: string | null, fallback: T): T => {
   if (!value) return fallback;
   try {
@@ -17,16 +15,10 @@ const normalizeRow = (row: Record<string, string>) => ({
   name: row.name,
   status: row.status,
   fields: parseJson(row.fields ?? null, [] as Record<string, unknown>[]),
-  recipients: parseJson(
-    row.recipients ?? null,
-    [] as Record<string, unknown>[],
-  ),
-  integrations: parseJson(
-    row.integrations ?? null,
-    [] as Record<string, unknown>[],
-  ),
+  recipients: parseJson(row.recipients ?? null, [] as Record<string, unknown>[]),
+  integrations: parseJson(row.integrations ?? null, [] as Record<string, unknown>[]),
   createdAt: row.created_at,
-  updatedAt: row.updated_at,
+  updatedAt: row.updated_at
 });
 
 export const GET: APIRoute = async ({ locals, params }) => {
@@ -45,7 +37,7 @@ export const GET: APIRoute = async ({ locals, params }) => {
     `SELECT id, slug, name, status, fields, recipients, integrations, created_at, updated_at
      FROM form_configs
      WHERE slug = ?
-     LIMIT 1`,
+     LIMIT 1`
   )
     .bind(slug)
     .all();
@@ -82,7 +74,7 @@ export const PUT: APIRoute = async ({ request, locals, params }) => {
     `SELECT id, slug, name, status, fields, recipients, integrations, created_at, updated_at
      FROM form_configs
      WHERE slug = ?
-     LIMIT 1`,
+     LIMIT 1`
   )
     .bind(slug)
     .all();
@@ -95,15 +87,9 @@ export const PUT: APIRoute = async ({ request, locals, params }) => {
   const updated = {
     name: payload.name ?? row.name,
     status: payload.status ?? row.status,
-    fields:
-      payload.fields ??
-      parseJson(row.fields ?? null, [] as Record<string, unknown>[]),
-    recipients:
-      payload.recipients ??
-      parseJson(row.recipients ?? null, [] as Record<string, unknown>[]),
-    integrations:
-      payload.integrations ??
-      parseJson(row.integrations ?? null, [] as Record<string, unknown>[]),
+    fields: payload.fields ?? parseJson(row.fields ?? null, [] as Record<string, unknown>[]),
+    recipients: payload.recipients ?? parseJson(row.recipients ?? null, [] as Record<string, unknown>[]),
+    integrations: payload.integrations ?? parseJson(row.integrations ?? null, [] as Record<string, unknown>[])
   };
 
   const now = new Date().toISOString();
@@ -111,7 +97,7 @@ export const PUT: APIRoute = async ({ request, locals, params }) => {
   await env.DB.prepare(
     `UPDATE form_configs
      SET name = ?, status = ?, fields = ?, recipients = ?, integrations = ?, updated_at = ?
-     WHERE slug = ?`,
+     WHERE slug = ?`
   )
     .bind(
       updated.name,
@@ -120,7 +106,7 @@ export const PUT: APIRoute = async ({ request, locals, params }) => {
       JSON.stringify(updated.recipients),
       JSON.stringify(updated.integrations),
       now,
-      slug,
+      slug
     )
     .run();
 
@@ -134,8 +120,8 @@ export const PUT: APIRoute = async ({ request, locals, params }) => {
       recipients: updated.recipients,
       integrations: updated.integrations,
       createdAt: row.created_at,
-      updatedAt: now,
-    },
+      updatedAt: now
+    }
   });
 };
 

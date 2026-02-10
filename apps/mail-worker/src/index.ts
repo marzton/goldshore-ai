@@ -42,24 +42,10 @@ app.post('/webhook', async (c) => {
 
 export default {
   fetch: app.fetch,
-  async email(message: ForwardableEmailMessage, env: Env): Promise<void> {
-    const sender = message.from.trim().toLowerCase();
-    const recipient = message.to.trim().toLowerCase();
-
-    const blockedSenders = splitCsv(env.MAIL_BLOCKED_SENDERS);
-    if (blockedSenders.includes(sender)) {
-      message.setReject('Sender is blocked.');
-      return;
-    }
-
-    const allowedRecipients = splitCsv(env.MAIL_ALLOWED_RECIPIENTS);
-    if (
-      allowedRecipients.length > 0 &&
-      !allowedRecipients.includes(recipient)
-    ) {
-      message.setReject('Recipient address not accepted.');
-      return;
-    }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async email(message: EmailMessage, _env: Env, _ctx: ExecutionContext): Promise<void> {
+    // Basic email handler scaffolding
+    console.log(`Received email from ${message.from} to ${message.to}`);
 
     const forwardTo = env.MAIL_FORWARD_TO?.trim();
     if (!forwardTo || !isEmailLike(forwardTo)) {
