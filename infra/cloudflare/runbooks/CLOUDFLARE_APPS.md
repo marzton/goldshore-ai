@@ -25,7 +25,8 @@ Cloudflare applications (Pages / Workers / KV / R2 / D1 / AI / Queues).
    - Then add bindings into corresponding `wrangler.toml`.
 
 6. For Pages projects:
-   - Verify that project name matches:
+   - Verify that project name matches the canonical mapping in `infra/cloudflare/BINDINGS_MAP.md` ("Authoritative Pages Project Mapping" table).
+   - Canonical names are:
      - `astro-gs-web`
      - `astro-gs-admin`
    - Confirm root directories and branches from desired-state.

@@ -20,6 +20,7 @@ binding = "AI"
 [ai]
 binding = "AI"
 
+
 [env.preview]
 name = "gs-gateway-preview"
 

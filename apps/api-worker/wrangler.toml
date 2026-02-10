@@ -21,6 +21,7 @@ binding = "AI"
 [observability]
 enabled = true
 
+
 [env.preview]
 name = "gs-api-preview"
 
