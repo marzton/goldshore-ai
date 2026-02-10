@@ -1,0 +1,85 @@
+
+> @goldshore/control@0.1.0 test /app/apps/control-worker
+> node --experimental-strip-types --test src/routes/*.test.ts
+
+TAP version 13
+# (node:151253) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///app/apps/control-worker/src/routes/cloudflare.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /app/apps/control-worker/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Cloudflare Routes Middleware
+    # Subtest: should deny access if user has no roles
+    ok 1 - should deny access if user has no roles
+      ---
+      duration_ms: 42.909996
+      type: 'test'
+      ...
+    # Subtest: should deny access if user has insufficient roles
+    ok 2 - should deny access if user has insufficient roles
+      ---
+      duration_ms: 1.810575
+      type: 'test'
+      ...
+    # Subtest: should allow access if user has required role "admin"
+    ok 3 - should allow access if user has required role "admin"
+      ---
+      duration_ms: 3.927933
+      type: 'test'
+      ...
+    # Subtest: should allow access if user has required role "ops"
+    ok 4 - should allow access if user has required role "ops"
+      ---
+      duration_ms: 1.724564
+      type: 'test'
+      ...
+    # Subtest: should handle roles in "role" claim (string)
+    ok 5 - should handle roles in "role" claim (string)
+      ---
+      duration_ms: 2.127354
+      type: 'test'
+      ...
+    # Subtest: should handle roles in "groups" claim (array)
+    ok 6 - should handle roles in "groups" claim (array)
+      ---
+      duration_ms: 2.123727
+      type: 'test'
+      ...
+    # Subtest: should deny access if user is missing claims entirely (handled gracefully)
+    ok 7 - should deny access if user is missing claims entirely (handled gracefully)
+      ---
+      duration_ms: 0.947507
+      type: 'test'
+      ...
+    # Subtest: should log error if cloudflare API fails
+    ok 8 - should log error if cloudflare API fails
+      ---
+      duration_ms: 1.519578
+      type: 'test'
+      ...
+    # Subtest: should return 502 if fetch throws network error
+    ok 9 - should return 502 if fetch throws network error
+      ---
+      duration_ms: 1.989755
+      type: 'test'
+      ...
+    # Subtest: should return 502 if cloudflare returns invalid JSON
+    ok 10 - should return 502 if cloudflare returns invalid JSON
+      ---
+      duration_ms: 2.457429
+      type: 'test'
+      ...
+    1..10
+ok 1 - Cloudflare Routes Middleware
+  ---
+  duration_ms: 63.372355
+  type: 'suite'
+  ...
+1..1
+# tests 10
+# suites 1
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 270.811185

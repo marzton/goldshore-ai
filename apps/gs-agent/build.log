@@ -1,0 +1,10 @@
+
+> @goldshore/agent@0.0.1 build /app/apps/gs-agent
+> npx wrangler deploy src/index.ts --dry-run --outdir=dist --config ../../infra/cloudflare/gs-agent.wrangler.toml --env prod --tsconfig ./tsconfig.json
+
+
+ ⛅️ wrangler 4.63.0 (update available 4.64.0)
+─────────────────────────────────────────────
+Total Upload: 145.52 KiB / gzip: 33.77 KiB
+No bindings found.
+--dry-run: exiting now.

@@ -14,8 +14,8 @@
     "@goldshore/ai-providers": "workspace:^"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240512.0",
+    "@cloudflare/workers-types": "^4.20241106.0",
     "typescript": "^5.4.0",
-    "wrangler": "^3.101.0"
+    "wrangler": "^4.63.0"
   }
 }

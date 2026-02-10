@@ -1,0 +1,10 @@
+
+> gs-mail@0.0.0 build /app/apps/mail-worker
+> npx wrangler deploy --dry-run --outdir=dist --env prod
+
+
+ ⛅️ wrangler 4.63.0 (update available 4.64.0)
+─────────────────────────────────────────────
+Total Upload: 84.69 KiB / gzip: 20.15 KiB
+No bindings found.
+--dry-run: exiting now.

@@ -1,0 +1,19 @@
+
+> @goldshore/gateway@0.1.0 build /app/apps/gateway
+> npx wrangler deploy --dry-run --outdir=dist
+
+
+ ⛅️ wrangler 4.63.0 (update available 4.64.0)
+─────────────────────────────────────────────
+Total Upload: 149.13 KiB / gzip: 35.00 KiB
+Your Worker has access to the following bindings:
+Binding                                          Resource
+env.gs-kv (gs_api_kv_prod_001)                   KV Namespace
+env.GATEWAY_KV (goldshore-gw-kv)                 KV Namespace
+env.JOB_QUEUE (gs-jobs)                          Queue
+env.API (gs-api)                                 Worker
+env.AI                                           AI
+env.ENV ("production")                           Environment Variable
+env.API_ORIGIN ("https://api.goldshore.ai")      Environment Variable
+
+--dry-run: exiting now.

@@ -1,0 +1,6 @@
+Legend: production dependency, optional only, dev only
+
+gs-mail@0.0.0 /app/apps/mail-worker
+
+devDependencies:
+postal-mime 2.7.3
