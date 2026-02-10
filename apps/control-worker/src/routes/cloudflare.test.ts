@@ -34,7 +34,7 @@ describe('Cloudflare Routes Middleware', () => {
   });
 
   // Helper to create a request with specific claims
-  const createRequest = async (claims: any, path: string = '/dns/records', method: string = 'GET') => {
+  const createRequest = async (claims: any, path: string = '/dns/records', method: string = 'GET', body?: any) => {
     const app = new Hono<{ Variables: { accessClaims: any } }>();
 
     // Middleware to inject claims
@@ -46,7 +46,11 @@ describe('Cloudflare Routes Middleware', () => {
     // Mount the routes under test
     app.route('/', cloudflareRoutes as any);
 
-    return app.request(`http://localhost${path}`, { method }, mockEnv);
+    return app.request(`http://localhost${path}`, {
+      method,
+      headers: body ? { 'Content-Type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined
+    }, mockEnv);
   };
 
   it('should deny access if user has no roles', async () => {
@@ -190,5 +194,42 @@ describe('Cloudflare Routes Middleware', () => {
     assert.strictEqual(auditLogs.length, 1);
     assert.strictEqual(auditLogs[0].status, "error");
     assert.strictEqual(auditLogs[0].metadata.message, "Network error");
+  });
+
+  it('should fail DNS update with invalid payload', async () => {
+    const response = await createRequest({
+      email: 'admin@example.com',
+      roles: ['admin'],
+    }, '/dns/records/123', 'PUT', { foo: 'bar' });
+
+    assert.strictEqual(response.status, 400);
+    const body = await response.json() as any;
+    // Hono Zod Validator usually returns details in the body
+    assert.strictEqual(body.success, false);
+  });
+
+  it('should succeed DNS update with valid payload', async () => {
+    global.fetch = mock.fn(async () => {
+      return new Response(JSON.stringify({ success: true, result: {} }), { status: 200 });
+    });
+
+    const payload = {
+      type: 'A',
+      name: 'example.com',
+      content: '1.2.3.4',
+      ttl: 3600
+    };
+
+    const response = await createRequest({
+      email: 'admin@example.com',
+      roles: ['admin'],
+    }, '/dns/records/123', 'PUT', payload);
+
+    assert.strictEqual(response.status, 200);
+
+    // Verify audit log
+    const log = auditLogs.find(l => l.action === 'cloudflare:dns:update');
+    assert.ok(log);
+    assert.strictEqual(log.status, 'success');
   });
 });
