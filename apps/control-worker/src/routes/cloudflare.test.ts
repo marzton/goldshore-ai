@@ -231,5 +231,24 @@ describe('Cloudflare Routes Middleware', () => {
     const log = auditLogs.find(l => l.action === 'cloudflare:dns:update');
     assert.ok(log);
     assert.strictEqual(log.status, 'success');
+  it('should return 502 if cloudflare returns invalid JSON', async () => {
+    global.fetch = mock.fn(async () => {
+      return new Response("<html>Bad Gateway</html>", { status: 502, headers: { "Content-Type": "text/html" } });
+    });
+
+    const response = await createRequest({
+      email: 'admin@example.com',
+      roles: ['admin'],
+    });
+
+    assert.strictEqual(response.status, 502);
+    const body = await response.json() as any;
+    assert.deepStrictEqual(body, { error: "Cloudflare API request failed." });
+
+    // Check audit log
+    assert.strictEqual(auditLogs.length, 1);
+    assert.strictEqual(auditLogs[0].status, "error");
+    // Message should reflect JSON parsing error
+    assert.ok(auditLogs[0].metadata.message.length > 0);
   });
 });

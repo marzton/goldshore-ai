@@ -6,7 +6,7 @@
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy",
     "run-task": "wrangler dev src/index.ts --test-scheduled",
-    "test": "node --experimental-strip-types --test src/routes/*.test.ts"
+    "test": "tsx --test src/routes/*.test.ts"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
