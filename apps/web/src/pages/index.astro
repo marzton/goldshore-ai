@@ -99,6 +99,25 @@ const highlights = [
       </div>
     </section>
 
+    <!-- Partners Section -->
+    <section class="partners-section reveal">
+      <p class="section-label">Secured & Accelerated By Licensed Partners</p>
+      <div class="partners-grid">
+        <div class="partner-card">
+          <span class="material-symbols-rounded partner-icon">verified_user</span>
+          <span class="partner-name">Norton</span>
+        </div>
+        <div class="partner-card">
+          <span class="material-symbols-rounded partner-icon">cloud_queue</span>
+          <span class="partner-name">Cloudflare</span>
+        </div>
+        <div class="partner-card">
+          <span class="material-symbols-rounded partner-icon">security</span>
+          <span class="partner-name">GoldShore Security</span>
+        </div>
+      </div>
+    </section>
+
     <!-- Performance Section (Secondary Hero) -->
     <section class="gs-hero home-hero parallax-section" style="padding-top: 0;">
         <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.08" aria-hidden="true"></div>
@@ -144,6 +163,45 @@ const highlights = [
             </div>
             ))}
         </div>
+    </section>
+
+    <!-- SEO & Business Content -->
+    <section class="content-section reveal">
+      <div class="content-container">
+         <h2>Enterprise Logistics & Digital Finance</h2>
+         <p class="lead-text">
+           GoldShore combines <strong>business management training</strong> with <strong>high-performance logistics</strong> to drive results.
+           We optimize for <strong>SEO</strong>, <strong>ad revenue</strong>, and <strong>affiliate networks</strong>, creating a self-sustaining ecosystem for growth.
+         </p>
+         <div class="seo-grid">
+            <div class="seo-item glass-panel">
+               <h3><span class="material-symbols-rounded">trending_up</span> SEO Dominance</h3>
+               <p>Data-driven content strategies that drive hits and backlinks.</p>
+            </div>
+             <div class="seo-item glass-panel">
+               <h3><span class="material-symbols-rounded">campaign</span> Ad Network</h3>
+               <p>High-yield ad placements and strategic partnerships.</p>
+            </div>
+             <div class="seo-item glass-panel">
+               <h3><span class="material-symbols-rounded">hub</span> Affiliate Systems</h3>
+               <p>Integrated affiliate tracking for scalable marketing.</p>
+            </div>
+         </div>
+      </div>
+    </section>
+
+    <!-- Advertising CTA -->
+    <section class="cta-section reveal">
+       <div class="cta-box glass-panel glow-border">
+          <div class="cta-content">
+            <h2>Advertise Your Business</h2>
+            <p>Leverage the GoldShore network to reach a premium audience of technologists, investors, and decision-makers.</p>
+          </div>
+          <div class="button-row">
+             <GSButton href="/contact" variant="primary">Advertise With Us</GSButton>
+             <GSButton href="/partners" variant="secondary">Partner Program</GSButton>
+          </div>
+       </div>
     </section>
   </div>
 </MarketingLayout>
@@ -464,6 +522,102 @@ const highlights = [
 
   @keyframes fadeInUp {
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Partners Section */
+  .partners-section {
+    text-align: center;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .section-label {
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
+  }
+  .partners-grid {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+  .partner-card {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #cbd5e1;
+    font-weight: 600;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+  .partner-card:hover { opacity: 1; color: #fff; }
+  .partner-icon { font-size: 1.5rem; color: #22d3ee; }
+
+  /* Content Section */
+  .content-section {
+    padding: 6rem 2rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .content-container { max-width: 900px; margin: 0 auto; }
+  .lead-text {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: #cbd5e1;
+    margin-bottom: 4rem;
+  }
+  .seo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    text-align: left;
+  }
+  .seo-item h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: #f1f5f9;
+  }
+  .seo-item span { color: #fbbf24; }
+
+  /* CTA Section */
+  .cta-section {
+    padding: 4rem 2rem 8rem;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .cta-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 4rem;
+    gap: 2rem;
+    background: linear-gradient(180deg, rgba(34, 211, 238, 0.05) 0%, rgba(0,0,0,0) 100%);
+  }
+  .glow-border {
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    box-shadow: 0 0 30px rgba(34, 211, 238, 0.1);
+  }
+  .button-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  @media (min-width: 768px) {
+    .cta-box {
+        flex-direction: row;
+        text-align: left;
+        justify-content: space-between;
+    }
+    .cta-content { max-width: 60%; }
   }
 </style>
 

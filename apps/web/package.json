@@ -11,7 +11,8 @@
     "astro": "astro",
     "check": "astro check",
     "lint": "eslint .",
-    "test": "echo \"No tests specified\" && exit 0"
+    "test": "playwright test",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@goldshore/theme": "workspace:*",
@@ -23,6 +24,7 @@
     "@astrojs/check": "^0.9.6",
     "@astrojs/cloudflare": "^12.6.12",
     "@astrojs/tailwind": "^6.0.2",
+    "@playwright/test": "^1.55.0",
     "typescript": "^5.9.3"
   }
 }
