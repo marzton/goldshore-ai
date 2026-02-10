@@ -186,3 +186,32 @@ textarea {
     margin: clamp(1rem, 4vw, 1.45rem) 0;
   }
 }
+
+.card summary {
+  cursor: pointer;
+}
+
+.card summary:focus-visible {
+  outline: 3px solid rgb(var(--accent-strong));
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgb(var(--border));
+  border-radius: 8px;
+  padding: 0.55rem 0.65rem;
+  font: inherit;
+  color: inherit;
+  background: rgb(var(--surface));
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
