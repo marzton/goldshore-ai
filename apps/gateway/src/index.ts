@@ -1,21 +1,17 @@
 import { Hono } from 'hono';
 
-const app = new Hono();
+type GatewayBindings = {
+  API: Fetcher;
+};
 
-const API_ORIGIN = 'https://api.goldshore.ai';
+const app = new Hono<{ Bindings: GatewayBindings }>();
 
 app.all('/*', async (c) => {
-  const url = new URL(c.req.url);
-  const target = API_ORIGIN + url.pathname + url.search;
+  const incomingUrl = new URL(c.req.url);
+  const upstreamUrl = new URL(incomingUrl.pathname + incomingUrl.search, 'https://api.internal');
 
-  const req = new Request(target, {
-    method: c.req.method,
-    headers: c.req.raw.headers,
-    body: c.req.method !== "GET" && c.req.method !== "HEAD" ? c.req.raw.body : undefined
-  });
-
-  const res = await fetch(req);
-  return res;
+  const upstreamRequest = new Request(upstreamUrl.toString(), c.req.raw);
+  return c.env.API.fetch(upstreamRequest);
 });
 
 export default app;
