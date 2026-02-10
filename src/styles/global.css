@@ -7,6 +7,9 @@
   --gray-dark: 34, 41, 57;
   --surface: 252, 254, 255;
   --border: 206, 219, 234;
+  --cta-radius: 10px;
+  --cta-padding-y: 0.6rem;
+  --cta-padding-x: 1rem;
 }
 
 @font-face {
@@ -86,8 +89,8 @@ section {
 }
 .button {
   display: inline-block;
-  border-radius: 10px;
-  padding: 0.55rem 0.9rem;
+  border-radius: var(--cta-radius);
+  padding: var(--cta-padding-y) var(--cta-padding-x);
   font-weight: 700;
   text-decoration: none;
   border: 1px solid transparent;
@@ -130,5 +133,34 @@ section {
   .button {
     width: 100%;
     text-align: center;
+  }
+}
+
+.card summary {
+  cursor: pointer;
+}
+
+.card summary:focus-visible {
+  outline: 3px solid rgb(var(--accent-strong));
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgb(var(--border));
+  border-radius: 8px;
+  padding: 0.55rem 0.65rem;
+  font: inherit;
+  color: inherit;
+  background: rgb(var(--surface));
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr;
   }
 }
