@@ -291,7 +291,7 @@ cloudflareRoutes.get("/pages/projects", async (c) => {
       `/accounts/${c.env.CLOUDFLARE_ACCOUNT_ID}/pages/projects`
     );
 
-    await logAuditEvent(c.env.CONTROL_LOGS, {
+    await logAuditEvent(c.env, {
       action: "cloudflare:pages:list",
       actor,
       status: result.ok ? "success" : "error",
@@ -300,7 +300,7 @@ cloudflareRoutes.get("/pages/projects", async (c) => {
 
     return c.json(result.data, result.status as ContentfulStatusCode);
   } catch (error) {
-    await logAuditEvent(c.env.CONTROL_LOGS, {
+    await logAuditEvent(c.env, {
       action: "cloudflare:pages:list",
       actor,
       status: "error",
@@ -318,7 +318,7 @@ cloudflareRoutes.get("/kv/namespaces", async (c) => {
       `/accounts/${c.env.CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces`
     );
 
-    await logAuditEvent(c.env.CONTROL_LOGS, {
+    await logAuditEvent(c.env, {
       action: "cloudflare:kv:list",
       actor,
       status: result.ok ? "success" : "error",
@@ -327,7 +327,7 @@ cloudflareRoutes.get("/kv/namespaces", async (c) => {
 
     return c.json(result.data, result.status as ContentfulStatusCode);
   } catch (error) {
-    await logAuditEvent(c.env.CONTROL_LOGS, {
+    await logAuditEvent(c.env, {
       action: "cloudflare:kv:list",
       actor,
       status: "error",
@@ -345,7 +345,7 @@ cloudflareRoutes.get("/r2/buckets", async (c) => {
       `/accounts/${c.env.CLOUDFLARE_ACCOUNT_ID}/r2/buckets`
     );
 
-    await logAuditEvent(c.env.CONTROL_LOGS, {
+    await logAuditEvent(c.env, {
       action: "cloudflare:r2:list",
       actor,
       status: result.ok ? "success" : "error",
@@ -354,7 +354,7 @@ cloudflareRoutes.get("/r2/buckets", async (c) => {
 
     return c.json(result.data, result.status as ContentfulStatusCode);
   } catch (error) {
-    await logAuditEvent(c.env.CONTROL_LOGS, {
+    await logAuditEvent(c.env, {
       action: "cloudflare:r2:list",
       actor,
       status: "error",
@@ -372,7 +372,7 @@ cloudflareRoutes.get("/d1/databases", async (c) => {
       `/accounts/${c.env.CLOUDFLARE_ACCOUNT_ID}/d1/database`
     );
 
-    await logAuditEvent(c.env.CONTROL_LOGS, {
+    await logAuditEvent(c.env, {
       action: "cloudflare:d1:list",
       actor,
       status: result.ok ? "success" : "error",
@@ -381,7 +381,7 @@ cloudflareRoutes.get("/d1/databases", async (c) => {
 
     return c.json(result.data, result.status as ContentfulStatusCode);
   } catch (error) {
-    await logAuditEvent(c.env.CONTROL_LOGS, {
+    await logAuditEvent(c.env, {
       action: "cloudflare:d1:list",
       actor,
       status: "error",
