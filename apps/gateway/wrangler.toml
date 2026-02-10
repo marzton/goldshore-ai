@@ -7,6 +7,16 @@ binding = "API"
 service = "gs-api"
 environment = "production"
 
+[env.preview]
+
+[[env.preview.services]]
+binding = "API"
+service = "gs-api"
+environment = "preview"
+
+[env.preview.ai]
+binding = "AI"
+
 [ai]
 binding = "AI"
 
