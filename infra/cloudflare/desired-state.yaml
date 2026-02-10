@@ -4,20 +4,20 @@ cloudflare:
 
   dns:
     records:
-      # A. Web App (gs-web)
+      # A. Web App (astro-gs-web)
       - name: "goldshore.ai"
         type: CNAME
-        content: "gs-web.pages.dev"
+        content: "astro-gs-web.pages.dev"
         proxied: true
       - name: "www"
         type: CNAME
-        content: "gs-web.pages.dev"
+        content: "astro-gs-web.pages.dev"
         proxied: true
 
-      # B. Admin App (gs-admin)
+      # B. Admin App (astro-gs-admin)
       - name: "admin"
         type: CNAME
-        content: "gs-admin.pages.dev"
+        content: "astro-gs-admin.pages.dev"
         proxied: true
 
       # C. API Gateway Worker

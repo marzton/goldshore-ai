@@ -35,7 +35,10 @@ bucket_name = "gs-control-state-preview"
 [[env.preview.services]]
 binding = "API"
 service = "gs-api-preview"
+environment = "preview"
 
 [[env.preview.services]]
 binding = "GATEWAY"
 service = "gs-gateway-preview"
+environment = "preview"
+

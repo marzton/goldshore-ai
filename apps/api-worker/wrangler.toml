@@ -40,3 +40,6 @@ database_id = "gs_database_preview_id_001"
 
 [env.preview.ai]
 binding = "AI"
+
+[env.preview.observability]
+enabled = true
