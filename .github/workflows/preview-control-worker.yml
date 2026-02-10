@@ -15,6 +15,7 @@ on:
       - "work"
       - "work/**"
       - "feature/**"
+      - "work/**"
 
 jobs:
   deploy-preview-control:
