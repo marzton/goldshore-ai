@@ -1,6 +1,6 @@
-import { test, describe, before, beforeEach, after, mock } from 'node:test';
+import { test, describe, before, beforeEach, after, afterEach, mock } from 'node:test';
 import assert from 'node:assert';
-import { verifyAccess, verifyAccessWithClaims, verifyAccessWithClaimsInternal, type Env, type Dependencies } from './verify.ts';
+import { verifyAccess, verifyAccessWithClaims, verifyAccessWithClaimsInternal, type Env, type Dependencies, deps } from './verify.ts';
 
 describe('verifyAccess', () => {
     let mockDeps: Dependencies;
@@ -114,5 +114,40 @@ describe('verifyAccess', () => {
          // but we can ensure it runs safely.
          const result = await verifyAccess(req, env);
          assert.strictEqual(result, false);
+    });
+});
+
+describe('verifyAccessWithClaims (public)', () => {
+    let consoleErrorMock: any;
+    let jwtVerifyMock: any;
+
+    beforeEach(() => {
+        // Spy on console.error to prevent noise and verify it's called
+        consoleErrorMock = mock.method(console, 'error', () => {});
+    });
+
+    afterEach(() => {
+        // Restore mocks
+        if (consoleErrorMock) consoleErrorMock.mock.restore();
+        if (jwtVerifyMock) jwtVerifyMock.mock.restore();
+    });
+
+    test('catches error and returns null when verification fails', async () => {
+        const req = new Request('http://example.com', {
+            headers: { 'CF-Access-Jwt-Assertion': 'invalid-token' }
+        });
+        const env: Env = {};
+
+        // Mock deps.jwtVerify to throw
+        jwtVerifyMock = mock.method(deps, 'jwtVerify', async () => {
+            throw new Error('Verification failed');
+        });
+
+        const result = await verifyAccessWithClaims(req, env);
+
+        assert.strictEqual(result, null);
+        assert.strictEqual(consoleErrorMock.mock.callCount(), 1);
+        const args = consoleErrorMock.mock.calls[0].arguments;
+        assert.strictEqual(args[0], "Token verification failed");
     });
 });
