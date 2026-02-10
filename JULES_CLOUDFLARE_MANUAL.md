@@ -51,6 +51,10 @@ gs-mail	apps/mail-worker (if created later)	Email Worker
 This is the authoritative mapping.
 Pages project names must match `infra/cloudflare/BINDINGS_MAP.md` ("Authoritative Pages Project Mapping").
 
+Pages Project Name	Directory
+astro-gs-web	apps/web
+astro-gs-admin	apps/admin
+
 ⸻
 
 📍 SECTION 3 — DNS RULES (MANDATORY)
