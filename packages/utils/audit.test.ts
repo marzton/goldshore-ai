@@ -1,6 +1,6 @@
 import { describe, it, mock } from 'node:test';
 import assert from 'node:assert';
-import { logAuditEvent, type KVNamespaceLike } from './audit.ts';
+import { logAuditEvent, type KVNamespaceLike } from './audit';
 
 describe('Audit Logger', () => {
   it('should log audit event to KV with generated timestamp and UUID', async () => {

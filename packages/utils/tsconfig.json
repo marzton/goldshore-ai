@@ -5,9 +5,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "skipLibCheck": true,
-    "allowImportingTsExtensions": true,
-    "noEmit": true
+    "skipLibCheck": true
   },
   "include": ["."],
   "exclude": ["**/*.test.ts"]
