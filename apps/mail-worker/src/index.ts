@@ -1,18 +1,42 @@
 import { Hono } from 'hono';
-import { EmailMessage } from "cloudflare:email";
 
 interface Env {
-  ENV: string;
+  ENV?: string;
+  MAIL_FORWARD_TO?: string;
+  MAIL_ALLOWED_RECIPIENTS?: string;
+  MAIL_BLOCKED_SENDERS?: string;
 }
+
+const VERSION = '2026.02.10-mail-worker-fix';
 
 const app = new Hono<{ Bindings: Env }>();
 
+const splitCsv = (value?: string) =>
+  (value ?? '')
+    .split(',')
+    .map((entry) => entry.trim().toLowerCase())
+    .filter(Boolean);
+
+const isEmailLike = (value: string) => /.+@.+\..+/.test(value);
+
 app.get('/', (c) => c.text('GoldShore Mail Worker'));
 
-app.get('/health', (c) => c.json({ status: 'ok', service: 'gs-mail' }));
+app.get('/health', (c) =>
+  c.json({ status: 'ok', service: 'gs-mail', env: c.env.ENV ?? 'unknown' }),
+);
+
+app.get('/system/info', (c) =>
+  c.json({
+    service: 'gs-mail',
+    runtime: 'cloudflare-worker',
+    env: c.env.ENV ?? 'unknown',
+  }),
+);
+
+app.get('/version', (c) => c.json({ version: VERSION }));
 
 app.post('/webhook', async (c) => {
-  // Placeholder for future webhook processing
+  // Reserved for future provider hooks.
   return c.json({ received: true });
 });
 
@@ -23,10 +47,12 @@ export default {
     // Basic email handler scaffolding
     console.log(`Received email from ${message.from} to ${message.to}`);
 
-    // Example: Forwarding (commented out until configured)
-    // await message.forward("dest@example.com");
+    const forwardTo = env.MAIL_FORWARD_TO?.trim();
+    if (!forwardTo || !isEmailLike(forwardTo)) {
+      message.setReject('Mail forwarding is not configured.');
+      return;
+    }
 
-    // Example: Rejecting
-    // message.setReject("Not implemented yet");
-  }
+    await message.forward(forwardTo);
+  },
 };
