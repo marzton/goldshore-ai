@@ -34,7 +34,7 @@ describe('Cloudflare Routes Middleware', () => {
   });
 
   // Helper to create a request with specific claims
-  const createRequest = async (claims: any, path: string = '/dns/records', method: string = 'GET') => {
+  const createRequest = async (claims: any, path: string = '/dns/records', method: string = 'GET', body?: any) => {
     const app = new Hono<{ Variables: { accessClaims: any } }>();
 
     // Middleware to inject claims
@@ -46,7 +46,11 @@ describe('Cloudflare Routes Middleware', () => {
     // Mount the routes under test
     app.route('/', cloudflareRoutes as any);
 
-    return app.request(`http://localhost${path}`, { method }, mockEnv);
+    return app.request(`http://localhost${path}`, {
+      method,
+      headers: body ? { 'Content-Type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined
+    }, mockEnv);
   };
 
   it('should deny access if user has no roles', async () => {
@@ -190,5 +194,26 @@ describe('Cloudflare Routes Middleware', () => {
     assert.strictEqual(auditLogs.length, 1);
     assert.strictEqual(auditLogs[0].status, "error");
     assert.strictEqual(auditLogs[0].metadata.message, "Network error");
+  });
+
+  it('should return 502 if cloudflare returns invalid JSON', async () => {
+    global.fetch = mock.fn(async () => {
+      return new Response("<html>Bad Gateway</html>", { status: 502, headers: { "Content-Type": "text/html" } });
+    });
+
+    const response = await createRequest({
+      email: 'admin@example.com',
+      roles: ['admin'],
+    });
+
+    assert.strictEqual(response.status, 502);
+    const body = await response.json() as any;
+    assert.deepStrictEqual(body, { error: "Cloudflare API request failed." });
+
+    // Check audit log
+    assert.strictEqual(auditLogs.length, 1);
+    assert.strictEqual(auditLogs[0].status, "error");
+    // Message should reflect JSON parsing error
+    assert.ok(auditLogs[0].metadata.message.length > 0);
   });
 });
