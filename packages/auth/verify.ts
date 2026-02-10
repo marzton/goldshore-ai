@@ -10,12 +10,6 @@ export interface Env {
 // Sentinel: Default to existing hardcoded values if not provided in Env
 const DEFAULT_TEAM_DOMAIN = "goldshore.cloudflareaccess.com";
 
-// Dependencies object to allow mocking in tests
-export const deps = {
-    createRemoteJWKSet,
-    jwtVerify
-};
-
 // Cache JWKS sets by domain to avoid recreation on every request while supporting multiple domains if needed
 const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
 
@@ -43,8 +37,12 @@ export type AccessTokenPayload = JWTPayload & {
   role?: string;
 };
 
-// Internal function with dependencies exposed for testing
-export async function verifyAccessWithClaimsInternal(req: Request, env: Env, deps: Dependencies) {
+export async function verifyAccessWithClaims(
+    req: Request,
+    env: Env,
+    // Dependencies injected for testing
+    deps: Dependencies = defaultDeps
+) {
   const token = req.headers.get("CF-Access-Jwt-Assertion");
   if (!token) return null;
 
@@ -70,9 +68,8 @@ export async function verifyAccessWithClaimsInternal(req: Request, env: Env, dep
   }
 }
 
-export async function verifyAccessWithClaims(req: Request, env: Env) {
-    return verifyAccessWithClaimsInternal(req, env, defaultDeps);
-}
+// Retain alias for backwards compatibility if needed, but verifyAccessWithClaims is now the main one.
+// We can remove verifyAccessWithClaimsInternal entirely as verifyAccessWithClaims now supports injection.
 
 export async function verifyAccess(req: Request, env: Env) {
   const payload = await verifyAccessWithClaims(req, env);
