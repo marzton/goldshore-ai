@@ -24,18 +24,26 @@ const app = new Hono<{ Bindings: Env }>();
 app.use('*', secureHeaders());
 
 // Enforce CORS to allow legitimate browser clients
-app.use('*', cors({
-  origin: '*',
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
-  exposeHeaders: ['Content-Length'],
-  maxAge: 600,
-}));
+app.use(
+  '*',
+  cors({
+    origin: '*',
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
+    exposeHeaders: ['Content-Length'],
+    maxAge: 600,
+  }),
+);
 
 // Enforce Authentication (Defense in Depth)
 app.use('*', async (c, next) => {
   // Allow health checks, root, and CORS preflight
-  if (c.req.path === '/health' || c.req.path.startsWith('/health/') || c.req.path === '/' || c.req.method === 'OPTIONS') {
+  if (
+    c.req.path === '/health' ||
+    c.req.path.startsWith('/health/') ||
+    c.req.path === '/' ||
+    c.req.method === 'OPTIONS'
+  ) {
     await next();
     return;
   }

@@ -8,10 +8,10 @@ on:
     branches:
       - main
     paths:
-      - "apps/gateway/**"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
+      - 'apps/gateway/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
 
 jobs:
   deploy-gateway:
