@@ -31,10 +31,10 @@ pnpm-debug.log*
 **/test-results/
 **/playwright-report/
 **/blob-report/
-**/test-results/**/trace.zip
-**/test-results/**/*.trace
-**/test-results/**/traces/
-**/test-results/**/screenshots/
+**/trace.zip
+**/*.trace
+**/traces/
+**/screenshots/
 **/test-results/**/*.png
 **/test-results/**/*.webm
 
