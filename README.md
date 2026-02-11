@@ -285,6 +285,7 @@ To keep issues, workflows, PRs, branches, and components aligned:
 - Track work in **GitHub Issues/Projects** and the templates in `.github/ISSUE_TEMPLATE/`.
 - Review deployment flow in `infra/github/workflows/`.
 - Use `ops/pr-playbook.md` and `ops/maintenance-playbook.md` for release continuity.
+- Follow `docs/ops/branch-governance.md` and verify remote branch existence (`git ls-remote --heads origin <branch>`) before any automated `git checkout` or rebase step.
 - Document component ownership in the admin dashboard templates and UI kit README.
 
 ## **packages/utils**
