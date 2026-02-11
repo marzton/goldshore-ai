@@ -170,8 +170,8 @@ If Git shows conflicts:
    - Example:
      ```
      Resolved conflicts by syncing with main, regenerating pnpm-lock.yaml, and merging:
-     • apps/admin/…
-     • apps/web/…
+     • apps/gs-admin/…
+     • apps/gs-web/…
      Lint + build passing locally. CI re-run.
      ```
 
@@ -377,8 +377,8 @@ If Git shows conflicts:
    - Example:
      ```
      Resolved conflicts by syncing with main, regenerating pnpm-lock.yaml, and merging:
-     • apps/admin/…
-     • apps/web/…
+     • apps/gs-admin/…
+     • apps/gs-web/…
      Lint + build passing locally. CI re-run.
      ```
 
@@ -414,17 +414,17 @@ Flag PRs that touch:
 
 <<<<<<< main
 - package.json, pnpm-lock.yam- package.json, pnpm-lock.yaml
-- apps/admin/\*
-- apps/web/\*
-- apps/api-worker/_, apps/gateway/_, apps/control-worker/\*
+- apps/gs-admin/\*
+- apps/gs-web/\*
+- apps/gs-api/_, apps/gs-gateway/_, apps/gs-control/\*
 - tsconfig.json, astro.config.mjs, wrangler.toml
 - shared packages/\* (theme, ui, auth, utils, etc.)
 >>>>>>>-main
 
 - `apps- `package.json`, `pnpm-lock.yaml`
-- `apps/admin/*`
-- `apps/web/*`
-- `apps/api-worker/*`, `apps/gateway/*`, `apps/control-worker/*`
+- `apps/gs-admin/*`
+- `apps/gs-web/*`
+- `apps/gs-api/*`, `apps/gs-gateway/*`, `apps/gs-control/*`
 - `tsconfig.json`, `astro.config.mjs`, `wrangler.toml`
 - `shared packages/*` (`theme`, `ui`, `auth`, `utils`, etc.)
 >>>>>>>-b826708
@@ -446,14 +446,14 @@ Recommended priority:
    - infra/cloudflare/\*
    - wrangler.toml changes
 2. Workers
-   - apps/api-worker
-   - apps/gateway
-   - apps/control-worker
+   - apps/gs-api
+   - apps/gs-gateway
+   - apps/gs-control
 3. Web/Admin frameworks
-   - apps/web/astro.config.mjs, apps/admin/astro.config.mjs
+   - apps/gs-web/astro.config.mjs, apps/gs-admin/astro.config.mjs
    - WebLayout, AdminLayout, NavBar, Footer
 4. Pages and content
-   - apps/web/src/pages/\*
+   - apps/gs-web/src/pages/\*
    - apps/gs-admin/src/pages/\*
 5. Docs / README / comment-only PRs
 >>>>>>>-main
@@ -466,15 +466,15 @@ ra / con**Recommended priority:**
     - `infra/cloudflare/*`
     - `wrangler.toml` changes
 2.  **Workers**
-    - `apps/api-worker`
-    - `apps/gateway`
-    - `apps/control-worker`
+    - `apps/gs-api`
+    - `apps/gs-gateway`
+    - `apps/gs-control`
 3.  **Web/Admin frameworks**
-    - `apps/web/astro.config.mjs`, `apps/admin/astro.config.mjs`
+    - `apps/gs-web/astro.config.mjs`, `apps/gs-admin/astro.config.mjs`
     - WebLayout, AdminLayout, NavBar, Footer
 4.  **Pages and content**
-    - `apps/web/src/pages/*`
-    - `apps/admin/src/pages/*`
+    - `apps/gs-web/src/pages/*`
+    - `apps/gs-admin/src/pages/*`
 5.  **Docs / README / comment-only PRs**
 >>>>>>>-b826708
  Jules evolves into a hybrid GitHub App + Actions bot, the idea is:
@@ -514,9 +514,9 @@ Until that’s live, this playbook is the manual version of what Jules will even
 ⸻
 
 <<<<<<< main
-**Scenario B — PR touches apps/web/src/pages/index.as**Scenario B — PR touches apps/web/src/pages/index.astro and apps/gs-admin/src/pages/index.astro**
+**Scenario B — PR touches apps/gs-web/src/pages/index.as**Scenario B — PR touches apps/gs-web/src/pages/index.astro and apps/gs-admin/src/pages/index.astro**
 >>>>>>>-main
- apps/ad**Scenario B — PR touches apps/web/src/pages/index.astro and apps/admin/src/pages/index.astro**
+ apps/ad**Scenario B — PR touches apps/gs-web/src/pages/index.astro and apps/gs-admin/src/pages/index.astro**
 >>>>>>>+b826708
  those .astro files manually
 3. Delete/regenerate lockfile if needed

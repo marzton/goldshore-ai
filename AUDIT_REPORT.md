@@ -44,11 +44,11 @@
 - Configuration files - All paths updated correctly
 
 ### Successful Directory Migrations
-- `apps/web/` → `apps/gs-web/` ✅
-- `apps/admin/` → `apps/gs-admin/` ✅
-- `apps/api-worker/` → `apps/gs-api/` ✅
-- `apps/gateway/` → `apps/gs-gateway/` ✅
-- `apps/control-worker/` → `apps/gs-control/` ✅
+- `apps/gs-web/` → `apps/gs-web/` ✅
+- `apps/gs-admin/` → `apps/gs-admin/` ✅
+- `apps/gs-api/` → `apps/gs-api/` ✅
+- `apps/gs-gateway/` → `apps/gs-gateway/` ✅
+- `apps/gs-control/` → `apps/gs-control/` ✅
 - `.Jules/` → `.jules/` ✅
 
 ---
