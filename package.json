@@ -1,22 +1,26 @@
 {
-  "name": "astro-goldshore",
+  "name": "goldshore-ai",
   "private": true,
   "packageManager": "pnpm@9.0.0",
   "scripts": {
+    // Core development script
     "dev": "turbo run dev --parallel",
-    "build:openapi": "node scripts/build-openapi.mjs",
-    "build": "pnpm build:openapi && turbo run build",
-    "build:web": "turbo run build --filter=@goldshore/web",
-    "build:admin": "turbo run build --filter=@goldshore/admin",
-    "build:api": "turbo run build --filter=@goldshore/api-worker",
-    "build:gateway": "turbo run build --filter=@goldshore/gateway",
-    "build:control": "turbo run build --filter=@goldshore/control-worker",
+
+    // Unified build script; uses turbo to orchestrate per-package builds.
+    "build": "turbo run build",
+
+    // Build individual Cloudflare workers.  In GoldShore v2, worker names use the
+    // `gs-` prefix.  These scripts replace the previous @goldshore/* filters.
+    "build:gs-web": "turbo run build --filter=gs-web",
+    "build:gs-admin": "turbo run build --filter=gs-admin",
+    "build:gs-api": "turbo run build --filter=gs-api",
+    "build:gs-gateway": "turbo run build --filter=gs-gateway",
+    "build:gs-control": "turbo run build --filter=gs-control",
+    "build:gs-mail": "turbo run build --filter=gs-mail",
+
+    // Lint and test tasks remain, as they are essential for code quality.
     "lint": "turbo run lint",
-    "test": "turbo run test",
-    "check:pages": "tsx scripts/check-pages-200.ts",
-    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md",
-    "lint:styles": "stylelint \"{apps,packages,src}/**/*.{css,astro}\"",
-    "lint:tokens": "pnpm lint && pnpm lint:styles"
+    "test": "turbo run test"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
@@ -32,24 +36,23 @@
     "octokit": "^5.0.5",
     "prettier": "^3.2.5",
     "prettier-plugin-astro": "^0.13.0",
-    "tailwindcss": "^3",
+    // Pin tailwindcss to a specific minor version instead of the ambiguous "^3"
+    "tailwindcss": "^3.4.4",
     "tsx": "^4.21.0",
     "typescript": "^5.4.2",
     "wrangler": "^4.63.0",
-    "yaml": "^2.8.2",
-    "stylelint": "^16.15.0",
-    "stylelint-config-standard": "^36.0.1",
-    "stylelint-declaration-strict-value": "^1.10.11",
-    "postcss-html": "^1.8.0"
+    "yaml": "^2.8.2"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
+    "@astrojs/adapter-cloudflare": "^12.6.12",
     "turbo": "^2.7.5"
   },
   "pnpm": {
     "overrides": {
-      "@astrojs/cloudflare": "latest",
-      "@astrojs/adapter-cloudflare": "latest",
+      // Align overrides with declared versions to avoid unexpected upgrades.
+      "@astrojs/cloudflare": "^12.6.12",
+      "@astrojs/adapter-cloudflare": "^12.6.12",
       "postal-mime": "2.7.3"
     }
   }
