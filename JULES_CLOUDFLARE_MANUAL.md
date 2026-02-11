@@ -97,7 +97,7 @@ gs-admin apps/admin Astro → Pages
 gs-api apps/api-worker CF Worker
 gs-gateway apps/gateway CF Worker
 gs-control apps/control-worker CF Worker
-gs-mail apps/mail-worker (if created later) Email Worker
+gs-mail apps/gs-mail (if created later) Email Worker
 >>>>>>>-b826708
 NDATORY)
 

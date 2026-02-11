@@ -12,7 +12,7 @@
     "build:api": "turbo run build --filter=@goldshore/gs-api-worker",
     "build:gateway": "turbo run build --filter=@goldshore/gs-gateway",
     "build:control": "turbo run build --filter=@goldshore/gs-control-worker",
-    "build:mail": "turbo run build --filter=@goldshore/gs-mail-worker",
+    "build:mail": "turbo run build --filter=gs-mail",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "test:integration": "pnpm --filter gs-api test && pnpm --filter @goldshore/control test && pnpm --filter @goldshore/web test:e2e",
