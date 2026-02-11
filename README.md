@@ -293,7 +293,7 @@ AI agent tooling, and market data services without rebuilding existing modules.
 To keep issues, workflows, PRs, branches, and components aligned:
 
 - Track work in **GitHub Issues/Projects** and the templates in `.github/ISSUE_TEMPLATE/`.
-- Review deployment flow in `infra/github/workflows/`.
+- Review deployment flow in `.github/workflows/`.
 - Use `ops/pr-playbook.md` and `ops/maintenance-playbook.md` for release continuity.
 - Follow `docs/ops/branch-governance.md` and verify remote branch existence (`git ls-remote --heads origin <branch>`) before any automated `git checkout` or rebase step.
 - Document component ownership in the admin dashboard templates and UI kit README.
@@ -383,17 +383,17 @@ Queues:     jobsQueue (optional)
 Location:
 
 ```
-infra/github/workflows/
+.github/workflows/
 ```
 
 Workflows included:
 
 ```
-preview-web.yml
-preview-admin.yml
-deploy-api.yml
-deploy-gateway.yml
-deploy-control.yml
+preview-gs-web.yml
+preview-gs-admin.yml
+deploy-gs-api.yml
+deploy-gs-gateway.yml
+deploy-gs-control.yml
 ```
 
 Features:
@@ -661,7 +661,7 @@ pnpm test
 
 Deploy is handled by GitHub Actions:
 
-infra/github/workflows/deploy.yml
+.github/workflows/deploy.yml
 
 CI/CD steps: 1. Install dependencies 2. Build workspaces with Turbo 3. Deploy:
 • web → Cloudflare Pages

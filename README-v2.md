@@ -352,17 +352,17 @@ POST /preview/create
 Location:
 
 ```
-infra/github/workflows/
+.github/workflows/
 ```
 
 Workflows include:
 
 ```
-preview-web.yml
-preview-admin.yml
-deploy-api.yml
-deploy-gateway.yml
-deploy-control.yml
+preview-gs-web.yml
+preview-gs-admin.yml
+deploy-gs-api.yml
+deploy-gs-gateway.yml
+deploy-gs-control.yml
 ```
 
 Features:
