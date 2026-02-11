@@ -4,6 +4,12 @@
 
 Feature toggles and CTA labels are defined in `src/data/site-config.json`.
 
+## How to edit hero copy
+
+Update the hero section in `src/pages/index.astro`.
+
+- Primary statement and supporting sub-text live in the first `<section>` block.
+- CTA button labels are sourced from `site-config.json`.
 - `cta.primary`: primary engagement action label used in hero/footer/contact flows.
 - `cta.secondary`: secondary contact action label used in navigation/footer/developer hub.
 - `cta.tertiary`: tertiary docs/developer action used in the footer.
