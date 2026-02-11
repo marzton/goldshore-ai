@@ -63,7 +63,7 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 │   ├── admin/             # Admin dashboard (Astro)
 │   ├── api-worker/        # Hono API (Workers)
 │   ├── gateway/           # Router + jobs (Workers)
-│   ├── goldshore-agent/   # AI Agent Service (Workers)
+│   ├── gs-agent/          # AI Agent Service (Workers)
 │   ├── control-worker/    # Infra automation
 │   └── jules-bot/         # GitHub Automation Bot
 │
@@ -188,7 +188,7 @@ Responsibilities:
 
 ---
 
-## **5. apps/goldshore-agent – gs-agent**
+## **5. apps/gs-agent – gs-agent**
 
 Autonomous AI Agent Service.
 

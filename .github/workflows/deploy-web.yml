@@ -8,10 +8,10 @@ on:
     branches:
       - main
     paths:
-      - "apps/web/**"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
+      - 'apps/web/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
 
 jobs:
   deploy-web:
