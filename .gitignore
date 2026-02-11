@@ -1,5 +1,5 @@
 # Dependencies
-node_modules
+**/node_modules/
 .pnpm-store
 
 # Production
@@ -26,6 +26,14 @@ yarn-error.log*
 .astro/
 .cache/
 pnpm-debug.log*
+
+# Playwright outputs
+test-results/
+playwright-report/
+**/test-results/
+**/playwright-report/
+**/trace.zip
+**/*.trace
 
 # OS
 .DS_Store
