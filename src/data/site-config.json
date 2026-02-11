@@ -3,6 +3,7 @@
     "primary": "Start the Engagement",
     "secondary": "Contact the Team",
     "tertiary": "Download Docs"
+    "tertiary": "Open Developer Hub"
   },
   "featureFlags": {
     "homepageMicroMetrics": true,

@@ -24,11 +24,6 @@ export interface Dependencies {
     jwtVerify: typeof jwtVerify;
 }
 
-const defaultDeps: Dependencies = {
-    createRemoteJWKSet,
-    jwtVerify
-};
-
 function getJwks(domain: string, deps: Dependencies) {
     if (!jwksCache.has(domain)) {
         jwksCache.set(domain, deps.createRemoteJWKSet(new URL(`https://${domain}/cdn-cgi/access/certs`)));
@@ -71,7 +66,7 @@ export async function verifyAccessWithClaimsInternal(req: Request, env: Env, dep
 }
 
 export async function verifyAccessWithClaims(req: Request, env: Env) {
-    return verifyAccessWithClaimsInternal(req, env, defaultDeps);
+    return verifyAccessWithClaimsInternal(req, env, deps);
 }
 
 export async function verifyAccess(req: Request, env: Env) {
