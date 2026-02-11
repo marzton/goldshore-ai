@@ -1,5 +1,5 @@
 {
-  "name": "@goldshore/control",
+  "name": "@goldshore/control-worker",
   "version": "0.1.0",
   "private": true,
   "scripts": {

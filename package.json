@@ -14,7 +14,10 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "check:pages": "tsx scripts/check-pages-200.ts",
-    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md"
+    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md",
+    "check:naming": "node scripts/lint-naming.mjs",
+    "branch:bootstrap": "bash scripts/branch-bootstrap.sh",
+    "scaffold:worker": "node scripts/scaffold-worker.mjs"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
