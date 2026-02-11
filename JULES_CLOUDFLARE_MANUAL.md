@@ -4,8 +4,8 @@
 Install, Create, Setup, Manage & Maintain GoldShore Infrastructure
 
 This document defines how Jules MUST interact with the Cloudflare API and Cloudflare Dashboard for all GoldShore services, including:
-	•	gs-web (public website)
-	•	gs-admin (admin dashboard)
+	•	astro-gs-web (public website)
+	•	astro-gs-admin (admin dashboard)
 	•	gs-api (API worker)
 	•	gs-gateway (Gateway worker)
 	•	gs-control (internal ops/automation worker)
@@ -41,14 +41,19 @@ Jules MUST follow these rules exactly to maintain consistency, safety, and idemp
 Jules must ALWAYS map Cloudflare apps to the correct directories:
 
 Cloudflare App	Directory	Type
-gs-web	apps/web	Astro → Pages
-gs-admin	apps/admin	Astro → Pages
+astro-gs-web	apps/web	Astro → Pages
+astro-gs-admin	apps/admin	Astro → Pages
 gs-api	apps/api-worker	CF Worker
 gs-gateway	apps/gateway	CF Worker
 gs-control	apps/control-worker	CF Worker
 gs-mail	apps/mail-worker (if created later)	Email Worker
 
 This is the authoritative mapping.
+Pages project names must match `infra/cloudflare/BINDINGS_MAP.md` ("Authoritative Pages Project Mapping").
+
+Pages Project Name	Directory
+astro-gs-web	apps/web
+astro-gs-admin	apps/admin
 
 ⸻
 
@@ -79,8 +84,8 @@ Rules:
 Jules MUST enable Access ONLY on:
 
 App	Access Required	Reason
-gs-web	❌ NO	Public-facing
-gs-admin	✅ YES	Admin dashboard
+astro-gs-web	❌ NO	Public-facing
+astro-gs-admin	✅ YES	Admin dashboard
 gs-api	⚠ OPTIONAL	Only private endpoints
 gs-gateway	⚠ OPTIONAL	Depends on design
 gs-control	✅ YES	Internal ops system
@@ -95,11 +100,11 @@ Access must include:
 
 📍 SECTION 5 — PAGES PROJECT CREATION RULES
 
-For gs-web and gs-admin, always create:
+For astro-gs-web and astro-gs-admin, always create:
 
-gs-web
+astro-gs-web
 
-name: gs-web
+name: astro-gs-web
 root: apps/web
 build_command: pnpm --filter @goldshore/web build
 build_output: apps/web/dist
@@ -108,9 +113,9 @@ domains:
   - goldshore.ai
   - www.goldshore.ai
 
-gs-admin
+astro-gs-admin
 
-name: gs-admin
+name: astro-gs-admin
 root: apps/admin
 build_command: pnpm --filter @goldshore/admin build
 build_output: apps/admin/dist
@@ -266,7 +271,7 @@ jules: cloudflare create worker gs-api
 
 Deploy admin:
 
-jules: cloudflare deploy pages gs-admin
+jules: cloudflare deploy pages astro-gs-admin
 
 Create DNS:
 

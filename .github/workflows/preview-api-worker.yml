@@ -7,7 +7,10 @@ on:
       - "packages/schema/**"
   push:
     branches:
+      - "work"
+      - "work/**"
       - "feature/**"
+      - "work/**"
 
 jobs:
   deploy-preview-api:

@@ -19,3 +19,26 @@ environment = "production"
 binding = "GATEWAY"
 service = "gs-gateway"
 environment = "production"
+
+
+[env.preview]
+name = "gs-control-preview"
+
+[[env.preview.kv_namespaces]]
+binding = "CONTROL_LOGS"
+id = "gs_control_logs_preview_001"
+
+[[env.preview.r2_buckets]]
+binding = "STATE"
+bucket_name = "gs-control-state-preview"
+
+[[env.preview.services]]
+binding = "API"
+service = "gs-api-preview"
+environment = "preview"
+
+[[env.preview.services]]
+binding = "GATEWAY"
+service = "gs-gateway-preview"
+environment = "preview"
+

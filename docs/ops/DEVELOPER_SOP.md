@@ -26,10 +26,11 @@ If a Pull Request (PR) shows merge conflicts, the Agent MUST execute a **Forcefu
 Canonical development branches MUST use the `feature/<short-description>` pattern.
 
 - `feature/**` is the standard for all development work and should be used for PR branches.
-- `work/**` is deprecated and should be renamed to `feature/<short-description>`.
+- `work/**` is treated as a temporary compatibility pattern in preview workflows while legacy branches are being migrated.
 - `main` is the only production deployment branch.
 
 | Branch pattern | Environment | Workflow trigger |
 | :--- | :--- | :--- |
 | `feature/**` | Preview | `.github/workflows/preview-*.yml` (`on.push.branches`) |
+| `work/**` (temporary compatibility) | Preview | `.github/workflows/preview-*.yml` (`on.push.branches`) |
 | `main` | Production | `.github/workflows/deploy-*.yml` (`on.push.branches`) |

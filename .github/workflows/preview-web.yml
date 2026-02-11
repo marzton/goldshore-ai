@@ -12,7 +12,10 @@ on:
       - "pnpm-lock.yaml"
   push:
     branches:
+      - "work"
+      - "work/**"
       - "feature/**"
+      - "work/**"
 
 jobs:
   preview-web:
