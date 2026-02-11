@@ -1,31 +1,26 @@
-# wrangler.toml for the goldshore-admin Astro Pages app (for Pages Functions)
+# Wrangler config for the Goldshore Admin Pages Functions runtime.
 
-name = "goldshore-admin" # Base name for Pages project
-
-# This file is primarily for configuring bindings for Cloudflare Pages Functions.
-# The actual deployment will be handled by the GitHub Action connecting to the Pages project.
+name = "goldshore-admin"
 
 [vars]
-# Shared environment variables can go here.
+SERVICE_DOMAIN = "admin"
 
 [env.dev]
-# Dev bindings for Pages Functions
-# [[d1_databases]]
-# binding = "D1_DATABASE"
-# database_name = "goldshore_cms_dev"
-# database_id = "..."
-#
-# [[r2_buckets]]
-# binding = "R2_BUCKET"
-# bucket_name = "assets-dev"
-#
-# [[queues.producers]]
-# binding = "QUEUES_JOBS"
-# queue = "goldshore-jobs-dev"
-
+name = "goldshore-admin-dev"
+[env.dev.vars]
+APP_ENV = "dev"
 
 [env.preview]
-# Preview bindings for Pages Functions
+name = "goldshore-admin-preview"
+[env.preview.vars]
+APP_ENV = "preview"
+
+[env.staging]
+name = "goldshore-admin-staging"
+[env.staging.vars]
+APP_ENV = "staging"
 
 [env.prod]
-# Production bindings for Pages Functions
+name = "goldshore-admin-prod"
+[env.prod.vars]
+APP_ENV = "prod"

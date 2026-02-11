@@ -1,0 +1,47 @@
+# Wrangler config for the Goldshore control plane worker.
+
+name = "goldshore-control"
+main = "../../apps/gs-control/src/index.ts"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+tsconfig = "../../apps/gs-control/tsconfig.json"
+
+[vars]
+SERVICE_DOMAIN = "control"
+
+[env.dev]
+name = "goldshore-control-dev"
+workers_dev = true
+[env.dev.vars]
+APP_ENV = "dev"
+ALLOWED_ORIGINS = "http://localhost:4321"
+
+[env.preview]
+name = "goldshore-control-preview"
+workers_dev = false
+routes = [
+  { pattern = "ops-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+[env.preview.vars]
+APP_ENV = "preview"
+ALLOWED_ORIGINS = "https://admin-preview.goldshore.ai"
+
+[env.staging]
+name = "goldshore-control-staging"
+workers_dev = false
+routes = [
+  { pattern = "ops-staging.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+[env.staging.vars]
+APP_ENV = "staging"
+ALLOWED_ORIGINS = "https://admin-staging.goldshore.ai"
+
+[env.prod]
+name = "goldshore-control-prod"
+workers_dev = false
+routes = [
+  { pattern = "ops.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+[env.prod.vars]
+APP_ENV = "prod"
+ALLOWED_ORIGINS = "https://admin.goldshore.ai"

@@ -5,36 +5,38 @@ permissions:
 
 on:
   push:
-    branches:
-      - main
+    branches: [staging, main]
     paths:
-      - "apps/api-worker/**"
+      - "apps/gs-api/**"
+      - "infra/cloudflare/goldshore-api.wrangler.toml"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
 
 jobs:
-  deploy:
+  deploy-api:
     runs-on: ubuntu-latest
-    name: Deploy
     steps:
       - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
-
       - uses: pnpm/action-setup@v4
         with:
           run_install: false
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'pnpm'
-
-      - name: Install Dependencies
+          cache: pnpm
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Deploy to Cloudflare
-        working-directory: apps/api-worker
+      - name: Resolve deploy environment
+        id: target
+        run: |
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then
+            echo "env=prod" >> "$GITHUB_OUTPUT"
+          else
+            echo "env=staging" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Deploy API worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: pnpm exec wrangler deploy
+        run: pnpm exec wrangler deploy --env ${{ steps.target.outputs.env }} --config infra/cloudflare/goldshore-api.wrangler.toml

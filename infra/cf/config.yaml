@@ -1,36 +1,57 @@
-account_id_env: CF_ACCOUNT_ID
-zone_id_env: CF_ZONE_ID
+account_id_env: CLOUDFLARE_ACCOUNT_ID
+zone_id_env: CLOUDFLARE_ZONE_ID
+
+naming:
+  worker_name_pattern: "goldshore-<domain>-<env>"
+  runtime_var_required:
+    - APP_ENV
+    - SERVICE_DOMAIN
+  github_secret_required:
+    - CLOUDFLARE_API_TOKEN
+    - CLOUDFLARE_ACCOUNT_ID
 
 projects:
   pages:
     - name: goldshore-web
-      output_dir: apps/web/dist
+      output_dir: apps/gs-web/dist
       max_daily_deploys: 6
       require_checks: ["smoke", "lighthouse"]
-      skip_if_paths_only:
-        - "^docs/.*"
-        - "^scripts/.*"
-        - "^README.md$"
     - name: goldshore-admin
-      output_dir: apps/admin/dist
+      output_dir: apps/gs-admin/dist
       max_daily_deploys: 6
       require_checks: ["smoke", "lighthouse"]
-      skip_if_paths_only:
-        - "^docs/.*"
-        - "^scripts/.*"
-        - "^README.md$"
 
   workers:
-    - script: goldshore-api
-      entry: apps/api-worker/dist/index.js
+    - script: goldshore-api-prod
+      config: infra/cloudflare/goldshore-api.wrangler.toml
+      env: prod
       routes:
-        - pattern: "api.goldshore.org/*"
-          zone: goldshore.org
+        - pattern: "api.goldshore.ai/*"
+          zone: goldshore.ai
       max_daily_deploys: 10
       require_checks: ["smoke"]
-      skip_if_paths_only:
-        - "^docs/.*"
-        - "^README.md$"
+    - script: goldshore-gateway-prod
+      config: infra/cloudflare/goldshore-gateway.wrangler.toml
+      env: prod
+      routes:
+        - pattern: "gw.goldshore.ai/*"
+          zone: goldshore.ai
+      max_daily_deploys: 10
+      require_checks: ["smoke"]
+    - script: goldshore-control-prod
+      config: infra/cloudflare/goldshore-control.wrangler.toml
+      env: prod
+      routes:
+        - pattern: "ops.goldshore.ai/*"
+          zone: goldshore.ai
+      max_daily_deploys: 10
+      require_checks: ["smoke"]
+    - script: goldshore-agent-prod
+      config: infra/cloudflare/gs-agent.wrangler.toml
+      env: prod
+      routes: []
+      max_daily_deploys: 10
+      require_checks: ["smoke"]
 
 guards:
   dedupe_concurrency_key: "cf-deploy"
@@ -40,14 +61,14 @@ guards:
 
 tests:
   smoke:
-    - url: "https://goldshore.org/"
+    - url: "https://goldshore.ai/"
       expect_status: 200
       timeout_ms: 5000
-    - url: "https://api.goldshore.org/health"
+    - url: "https://api.goldshore.ai/health"
       expect_status: 200
       timeout_ms: 4000
   lighthouse:
-    url: "https://goldshore.org/"
+    url: "https://goldshore.ai/"
     budget:
       performance: 0.85
       tti_ms: 4000
