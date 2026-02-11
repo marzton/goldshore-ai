@@ -137,7 +137,7 @@ flowchart TB
 
 ## Applications
 
-### 1) `apps/web` — Public Website (Astro)
+### 1) `apps/gs-web` — Public Website (Astro)
 
 - Marketing site
 - User portal
@@ -165,7 +165,7 @@ Authenticated user portal:
 └── settings
 ```
 
-### 2) `apps/admin` — Admin Dashboard (Astro SSR)
+### 2) `apps/gs-admin` — Admin Dashboard (Astro SSR)
 
 Protected by **Cloudflare Access**.
 
@@ -390,8 +390,8 @@ pnpm dev
 Run individual apps:
 
 ```bash
-pnpm --filter ./apps/web dev
-pnpm --filter ./apps/admin dev
+pnpm --filter ./apps/gs-web dev
+pnpm --filter ./apps/gs-admin dev
 pnpm --filter ./apps/gs-api dev
 pnpm --filter ./apps/gs-gateway dev
 pnpm --filter ./apps/gs-agent dev
@@ -408,8 +408,8 @@ pnpm build
 Playwright tests live in:
 
 ```
-apps/admin/tests
-apps/web/tests
+apps/gs-admin/tests
+apps/gs-web/tests
 ```
 
 Run:

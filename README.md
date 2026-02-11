@@ -102,7 +102,7 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 
 # 🧩 Applications
 
-## **1. apps/web – Public Website (Astro)**
+## **1. apps/gs-web – Public Website (Astro)**
 
 - Marketing site
 - User portal
@@ -132,7 +132,7 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 
 ---
 
-## **2. apps/admin – Admin Dashboard (Astro)**
+## **2. apps/gs-admin – Admin Dashboard (Astro)**
 
 Protected by **Cloudflare Access**.
 
@@ -264,7 +264,7 @@ Template pages are kept alongside each app so navigation, menus, containers, and
 
 | App        | Template Location                            | Notes                           |
 | ---------- | -------------------------------------------- | ------------------------------- |
-| Web        | `apps/web/src/pages/templates/index.astro`   | Marketing + search composition  |
+| Web        | `apps/gs-web/src/pages/templates/index.astro`   | Marketing + search composition  |
 | Admin      | `apps/gs-admin/src/pages/templates/index.astro` | Dashboard shell + table samples |
 | API Worker | `apps/gs-api/src/routes/templates.ts`    | Module checklist for API growth |
 | Gateway    | `apps/gs-gateway/src/index.ts` (`/templates`)   | Routing + AI dispatch template  |
@@ -508,7 +508,7 @@ goldshore-ai/
 
 🔥 Apps Overview
 
-🌐 apps/web — GoldShore Public Website
+🌐 apps/gs-web — GoldShore Public Website
 • Astro SSR
 • Powered by the GoldShore UI Kit
 • Deploys via Cloudflare Pages
@@ -519,7 +519,7 @@ Hero Example
 
 ---
 
-🛠 apps/admin — GoldShore Admin Cockpit
+🛠 apps/gs-admin — GoldShore Admin Cockpit
 
 This is your hyper-modern operational dashboard.
 
@@ -628,11 +628,11 @@ pnpm dev
 
 Run only the admin app:
 
-pnpm --filter ./apps/admin dev
+pnpm --filter ./apps/gs-admin dev
 
 Run the web app:
 
-pnpm --filter ./apps/web dev
+pnpm --filter ./apps/gs-web dev
 
 Run API worker:
 
@@ -648,8 +648,8 @@ pnpm build
 
 Playwright tests live in:
 
-apps/admin/tests
-apps/web/tests
+apps/gs-admin/tests
+apps/gs-web/tests
 
 Run:
 

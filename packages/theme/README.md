@@ -29,7 +29,7 @@ import logo from '@goldshore/theme/assets/logo.svg';
 
 - Use `gs-section`, `gs-grid`, and `gs-card` classes for consistent spacing.
 - Keep navigation + menu styling inside layouts, not individual pages.
-- Templates in `apps/web` and `apps/admin` demonstrate recommended usage.
+- Templates in `apps/gs-web` and `apps/gs-admin` demonstrate recommended usage.
 
 ## Integration Notes
 

@@ -56,7 +56,7 @@ rules:
     open_pr_comment: true
   pages_output_dirs:
     - repo: "goldshore-admin"
-      path: "apps/admin/dist"
+      path: "apps/gs-admin/dist"
   sensitive:
     disallow_plaintext_secrets: true
     required_secrets:
