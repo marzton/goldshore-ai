@@ -69,7 +69,7 @@ const storeInKv = async (
       formType: submission.formType,
       status: submission.status,
     },
-  );
+  });
 };
 
 const storeInD1 = async (
@@ -142,6 +142,8 @@ const isSpamSubmission = (formData: FormData) => {
 
   const elapsedMs = Date.now() - startedAtMs;
   return elapsedMs < 2500;
+};
+
 const parseJson = <T>(value: string | null, fallback: T): T => {
   if (!value) return fallback;
   try {
