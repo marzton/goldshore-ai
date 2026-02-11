@@ -28,12 +28,15 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Playwright outputs
-test-results/
-playwright-report/
 **/test-results/
 **/playwright-report/
+**/blob-report/
 **/trace.zip
 **/*.trace
+**/traces/
+**/screenshots/
+**/test-results/**/*.png
+**/test-results/**/*.webm
 
 # OS
 .DS_Store
