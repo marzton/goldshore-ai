@@ -1,4 +1,4 @@
-name: Deploy Admin (admin.goldshore.ai)
+name: Deploy GS Control Worker (ops.goldshore.ai)
 
 permissions:
   contents: read
@@ -8,14 +8,15 @@ on:
     branches:
       - main
     paths:
-      - "apps/admin/**"
+      - "apps/gs-control/**"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
 
 jobs:
-  deploy-admin:
+  deploy-control:
     runs-on: ubuntu-latest
+    name: Deploy GS Control Worker
 
     steps:
       - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
@@ -32,15 +33,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build admin app
-        working-directory: apps/admin
-        run: pnpm build
-
-      - name: Deploy to Cloudflare Pages (production)
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: gs-admin
-          directory: apps/admin/dist
-          branch: main
+      - name: Deploy Control worker (production)
+        working-directory: apps/gs-control
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm exec wrangler deploy --config wrangler.toml

@@ -388,10 +388,10 @@ infra/github/workflows/
 Workflows included:
 
 ```
-preview-web.yml
-preview-admin.yml
+preview-gs-web.yml
+preview-gs-admin.yml
 deploy-api.yml
-deploy-gateway.yml
+deploy-gs-gateway.yml
 deploy-control.yml
 ```
 
