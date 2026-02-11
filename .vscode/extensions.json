@@ -1,16 +1,12 @@
 {
-<<<<<<< Updated upstream
   "recommendations": [
     "astro-build.astro-vscode",
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
     "bradlc.vscode-tailwindcss",
-    "unifiedjs.vscode-mdx"
-  ]
+    "unifiedjs.vscode-mdx",
+    "openai.chatgpt",
+    "google.geminicodeassist"
+  ],
+  "unwantedRecommendations": []
 }
-=======
-    "recommendations": [
-        "openai.chatgpt"
-    ]
-}
->>>>>>> Stashed changes
