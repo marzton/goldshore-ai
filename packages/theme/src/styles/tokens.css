@@ -42,6 +42,19 @@
   --gs-danger: #ef4444;
   --gs-info: #38bdf8;
 
+  --gs-color-white: #ffffff;
+  --gs-color-black: #000000;
+
+  --gs-effect-primary-rgb: 88, 130, 255;
+  --gs-effect-secondary-rgb: 212, 179, 93;
+  --gs-effect-grid-rgb: 110, 160, 240;
+  --gs-effect-glow-rgb: 190, 224, 255;
+
+  --gs-surface-glass: linear-gradient(135deg, rgba(17, 24, 39, 0.92), rgba(10, 18, 30, 0.88));
+  --gs-border-glass: rgba(148, 163, 184, 0.2);
+  --gs-shadow-glass: 0 24px 60px rgba(2, 8, 23, 0.55), inset 0 0 30px rgba(120, 170, 255, 0.08);
+  --gs-shadow-lux: 0 30px 80px rgba(0, 0, 0, 0.65), inset 0 0 30px rgba(128, 178, 255, 0.12);
+
   --gs-shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.28);
   --gs-shadow-hard: 0 0 0 1px rgba(255, 255, 255, 0.02), 0 16px 50px rgba(5, 9, 20, 0.5);
 
@@ -65,6 +78,26 @@
 
   --gs-transition: 220ms cubic-bezier(.22, .61, .36, 1);
   --gs-letter-wide: 0.02em;
+
+  /* Legacy aliases for existing app styles. */
+  --accent: 16, 145, 152;
+  --accent-strong: 11, 102, 108;
+  --black: 15, 18, 25;
+  --gray: 77, 89, 117;
+  --gray-light: 229, 233, 240;
+  --gray-dark: 34, 41, 57;
+  --surface: 252, 254, 255;
+  --border: 206, 219, 234;
+
+  --cta-radius: var(--gs-radius-sm);
+  --cta-padding-y: calc(var(--gs-space-2) - 1px);
+  --cta-padding-x: var(--gs-space-4);
+
+  --container-max: 1080px;
+  --space-page-inline: clamp(0.9rem, 2.4vw, 2rem);
+  --space-page-block: clamp(1.25rem, 3.2vw, 3rem);
+  --space-section: clamp(1.4rem, 3.5vw, 2.8rem);
+  --space-card: clamp(0.85rem, 2vw, 1.35rem);
 
   color-scheme: dark;
 }
