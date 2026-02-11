@@ -4,7 +4,6 @@
 
 We currently support the following versions with security updates:
 
-
 | Version | Supported          |
 | ------- | ------------------ |
 | 5.1.x   | :white_check_mark: |
@@ -17,6 +16,7 @@ We currently support the following versions with security updates:
 To report a security vulnerability, please email us at <security@goldshore.ai> with the details of the issue.
 
 Please include, if possible:
+
 - A description of the vulnerability and its impact.
 - The steps needed to reproduce the issue.
 - The affected version(s) of the software.

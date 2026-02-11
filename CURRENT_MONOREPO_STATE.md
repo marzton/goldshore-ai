@@ -4,14 +4,15 @@
 
 Note: The actual contents of these directories may be incomplete or conflicting due to recent failed merges.
 
-| Workspace | Status | Goal |
-| :--- | :--- | :--- |
-| `apps/web` | Unverified | Public marketing site |
-| `apps/admin` | Conflicting | Secure operational console |
+| Workspace         | Status      | Goal                                |
+| :---------------- | :---------- | :---------------------------------- |
+| `apps/web`        | Unverified  | Public marketing site               |
+| `apps/admin`      | Conflicting | Secure operational console          |
 | `apps/api-worker` | Conflicting | Cloudflare Worker logic (API/Agent) |
-| `infra/scripts` | Unverified | Deployment/Automation Scripts |
+| `infra/scripts`   | Unverified  | Deployment/Automation Scripts       |
 
 ## Detailed File Tree Analysis (Recursive Listing)
+
 ```tree
  |__web
  | |__astro.config.mjs
@@ -164,6 +165,7 @@ The following files contain core configuration data:
   }
 }
 ```
+
 ```toml
 name = "gs-api"
 main = "src/index.ts"
