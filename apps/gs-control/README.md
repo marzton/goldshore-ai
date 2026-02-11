@@ -1,4 +1,4 @@
-# apps/control-worker
+# apps/gs-control
 
 ## Overview
 The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers. It is managed alongside the gateway worker as part of the Edge Workers deployment group.
@@ -43,8 +43,8 @@ These are worker API endpoints implemented in `src/index.ts` (not HTML pages). R
 ## Local Dev
 ```bash
 pnpm install
-pnpm --filter ./apps/control-worker dev
-pnpm --filter ./apps/control-worker run-task
+pnpm --filter ./apps/gs-control dev
+pnpm --filter ./apps/gs-control run-task
 ```
 
 ## Deploy
@@ -55,5 +55,5 @@ pnpm --filter ./apps/control-worker run-task
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 ```bash
-pnpm --filter ./apps/control-worker deploy
+pnpm --filter ./apps/gs-control deploy
 ```
