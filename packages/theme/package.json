@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "main": "index.css",
-  "files": ["*.css"],
+  "files": [
+    "*.css"
+  ],
   "exports": {
     ".": "./index.css",
     "./tokens": "./tokens.css",
