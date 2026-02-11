@@ -2,12 +2,18 @@
 #
 # To get started with Astro see: https://docs.astro.build/en/getting-started/
 #
-name: Deploy Astro site to Pages
+name: Deploy Web App (gs-web) to Pages
 
 on:
   # Runs on pushes targeting the default branch
   push:
     branches: ['main']
+    paths:
+      - "apps/gs-web/**"
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy-gs-web.yml"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -25,8 +31,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  BUILD_PATH: '.' # default value when not using subfolders
-  # BUILD_PATH: subfolder
+  BUILD_PATH: 'apps/gs-web'
 
 jobs:
   build:

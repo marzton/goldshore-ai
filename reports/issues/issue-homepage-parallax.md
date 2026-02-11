@@ -23,5 +23,5 @@ The homepage hero starfield/parallax experience appears inconsistent across resp
 - Confirm the starfield animation responds to resize/scroll consistently across breakpoints.
 
 ## References
-- `apps/web/src/pages/index.astro` (hero markup + starfield script)
-- `apps/web/src/styles/home.css` (hero/parallax styling)
+- `apps/gs-web/src/pages/index.astro` (hero markup + starfield script)
+- `apps/gs-web/src/styles/home.css` (hero/parallax styling)
