@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
+    "@goldshore/config": "workspace:*",
+    "astro": "^4.12.2"
     "astro": "^5.16.0"
   }
 }

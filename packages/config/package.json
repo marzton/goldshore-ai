@@ -1,5 +1,11 @@
 {
   "name": "@goldshore/config",
   "version": "0.0.1",
-  "private": true
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./astro": "./src/astro.mjs",
+    "./astro-env": "./src/astro-env.d.ts",
+    "./starter": "./src/starter.js"
+  }
 }
