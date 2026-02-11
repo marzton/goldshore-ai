@@ -1,0 +1,28 @@
+name = "gs-api-worker"
+main = "src/index.ts"
+compatibility_date = "2025-01-10"
+compatibility_flags = ["nodejs_compat"]
+
+workers_dev = false
+routes = [
+  { pattern = "api.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+
+[vars]
+ENV = "production"
+
+[[kv_namespaces]]
+binding = "API_KV"
+id = "gs_api_kv_001"
+
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "goldshore-api-assets"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "goldshore-api-db"
+database_id = "gs_prod_db_001"
+
+[ai]
+binding = "AI"

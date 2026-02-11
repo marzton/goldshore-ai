@@ -1,0 +1,77 @@
+---
+import '@goldshore/theme/tokens';
+
+// Goldshore Landing Page
+// Aesthetic: Military x Tech, Sports Car, Utility
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="GoldShore | Shaping Waves">
+  <section class="max-w-4xl mx-auto py-32 px-6 text-center">
+    <h1
+      class="text-6xl font-bold mb-6 tracking-tight gs-heading text-[var(--gs-text-primary)]"
+    >
+      Shaping <span style="color: var(--gs-brand-gold);">Waves</span>
+    </h1>
+    <p
+      class="text-xl text-[var(--gs-text-secondary)] max-w-2xl mx-auto leading-relaxed"
+    >
+      Gold Shore Labs builds AI-powered infrastructure for trading, automation,
+      and applied intelligence.
+    </p>
+
+    <div class="mt-12 flex justify-center gap-4">
+      <a href="/about" class="gs-btn gs-btn--gold"> Learn More </a>
+      <a
+        href="/contact"
+        class="px-6 py-3 rounded text-sm font-semibold border transition-colors contact-link"
+        style="border-color: var(--gs-border); color: var(--gs-text-primary);"
+      >
+        Get in Touch
+      </a>
+    </div>
+  </section>
+
+  <div class="border-t-[var(--gs-border)]"></div>
+
+  <section
+    class="max-w-7xl mx-auto py-24 px-6 grid grid-cols-1 md:grid-cols-3 gap-12"
+  >
+    <div class="space-y-4">
+      <h3 class="text-xl font-semibold" style="color: var(--gs-text-primary);">
+        Algorithmic Precision
+      </h3>
+      <p class="text-[var(--gs-text-secondary)]">
+        High-frequency execution modeled on fluid dynamics. Zero latency
+        expectations.
+      </p>
+    </div>
+    <div class="space-y-4">
+      <h3 class="text-xl font-semibold" style="color: var(--gs-text-primary);">
+        Military Grade
+      </h3>
+      <p class="text-[var(--gs-text-secondary)]">
+        Infrastructure built to withstand extreme volatility. Security first
+        architecture.
+      </p>
+    </div>
+    <div class="space-y-4">
+      <h3 class="text-xl font-semibold" style="color: var(--gs-text-primary);">
+        Global Reach
+      </h3>
+      <p class="text-[var(--gs-text-secondary)]">
+        Connected to major liquidity pools across all timezones. 24/7
+        operations.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+import WebLayout from '../layouts/WebLayout.astro'; ---
+
+<WebLayout title="GoldShore — AI Infrastructure">
+  <section class="hero">
+    <h1>GoldShore</h1>
+    <p>The infrastructure layer for AI businesses.</p>
+    <a href="/developer/docs">API Documentation →</a>
+  </section>
+</WebLayout>

@@ -1,4 +1,5 @@
 # GoldShore Monorepo – Agent Safety & File Integrity Rules
+
 Last updated: 2025-02-14
 
 These instructions apply to Jules AI, GitHub ChatOps, Codex Agents, and any automated PR generator.
@@ -6,9 +7,11 @@ These instructions apply to Jules AI, GitHub ChatOps, Codex Agents, and any auto
 ---
 
 ## 1. DO NOT overwrite existing files without validation
+
 Before modifying a file, the agent MUST:
 
 ### ✔ Step 1 — Check if file already exists
+
 If it exists:
 
 - Inspect its content
@@ -16,12 +19,15 @@ If it exists:
 - Detect if it contains **custom GoldShore logic**, **API keys**, **IDs**, **bindings**, or **Astro layout logic**
 
 ### ✔ Step 2 — If file content is older
+
 The agent may update it **only after appending a comment**:
 
 // [AUTO-UPDATE] Updated by Jules AI on YYYY-MM-DD HH:MM
 
 ### ✔ Step 3 — If file content is newer or customized
+
 The agent MUST:
+
 - Leave the file untouched
 - Produce a PR comment explaining the conflict
 - Offer a patch instead of overwriting
@@ -29,6 +35,7 @@ The agent MUST:
 ---
 
 ## 2. DO NOT include or modify:
+
 - `pnpm-lock.yaml`
 - Any `.lock` or `.tmp` files
 - `dist/` or any build outputs
@@ -41,9 +48,11 @@ If a PR adds these, REJECT and regenerate without them.
 ---
 
 ## 3. MOVE misplaced files instead of duplicating them
+
 Before creating or replacing a file, the agent MUST check:
 
 ### ✔ Rule: Validate folder structure
+
 Use this canonical monorepo map:
 
 apps/
@@ -62,12 +71,15 @@ infra/
 .github/
 
 ### ✔ If a file is found under an incorrect path
+
 The agent MUST:
+
 - Move it to the correct folder
 - Delete the ghost/duplicate folder
 - Add a PR note: “Moved file from <old-path> → <correct-path>”
 
 ### ✔ If a duplicate file exists
+
 - Compare timestamps + content
 - Retain ONLY the **most recently modified** version
 - Delete the older duplicate
@@ -76,6 +88,7 @@ The agent MUST:
 ---
 
 ## 4. Consolidate AGENT instructions
+
 Any `.md` file containing agent or SOP instructions MUST be moved to:
 
 AI/agents/
@@ -83,8 +96,8 @@ AI/agents/
 Canonical structure:
 
 AI/
-agent-rules.md            # THIS FILE (global rules)
-developer_sop.md          # SOP-001, SOP-002
+agent-rules.md # THIS FILE (global rules)
+developer_sop.md # SOP-001, SOP-002
 agents/
 admin-agent.md
 api-agent.md
@@ -98,6 +111,7 @@ If a rule file exists at the root level or in an unexpected folder, MOVE it rath
 ---
 
 ## 5. Duplicate “Astro-goldshore inside Astro-goldshore” Fix
+
 If a nested folder contains a full duplicate monorepo:
 
 astro-goldshore/astro-goldshore/
@@ -113,6 +127,7 @@ The agent MUST:
 ---
 
 ## 6. PR Quality Rules
+
 A valid PR MUST:
 
 - Include fewer than **20 modified files**
@@ -127,6 +142,7 @@ If any of these rules are violated, the agent MUST abort and regenerate the PR.
 ---
 
 ## 7. OpenAPI Files
+
 All OpenAPI definitions MUST be stored under:
 
 apps/api-worker/openapi/
@@ -136,6 +152,7 @@ And must never overwrite manually written documentation without user confirmatio
 ---
 
 ## 8. gs-mail Integration
+
 Agents MUST only modify:
 
 apps/api-worker/src/routes/mail.ts

@@ -1,4 +1,6 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 body {
@@ -11,6 +13,8 @@ a {
   color: inherit;
   text-decoration: none;
 }
-button, input, select {
+button,
+input,
+select {
   font-family: inherit;
 }

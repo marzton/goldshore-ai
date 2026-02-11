@@ -5,7 +5,7 @@ permissions:
 
 on:
   schedule:
-    - cron: "0 3 * * *" # 3 AM UTC
+    - cron: '0 3 * * *' # 3 AM UTC
 
 jobs:
   heal:
