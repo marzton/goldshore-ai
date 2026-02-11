@@ -474,7 +474,7 @@ ra / con**Recommended priority:**
     - WebLayout, AdminLayout, NavBar, Footer
 4.  **Pages and content**
     - `apps/web/src/pages/*`
-    - `apps/admin/src/pages/*`
+    - `apps/gs-admin/src/pages/*`
 5.  **Docs / README / comment-only PRs**
 >>>>>>>-b826708
  Jules evolves into a hybrid GitHub App + Actions bot, the idea is:
@@ -516,7 +516,7 @@ Until that’s live, this playbook is the manual version of what Jules will even
 <<<<<<< main
 **Scenario B — PR touches apps/web/src/pages/index.as**Scenario B — PR touches apps/web/src/pages/index.astro and apps/gs-admin/src/pages/index.astro**
 >>>>>>>-main
- apps/ad**Scenario B — PR touches apps/web/src/pages/index.astro and apps/admin/src/pages/index.astro**
+ apps/ad**Scenario B — PR touches apps/web/src/pages/index.astro and apps/gs-admin/src/pages/index.astro**
 >>>>>>>+b826708
  those .astro files manually
 3. Delete/regenerate lockfile if needed
