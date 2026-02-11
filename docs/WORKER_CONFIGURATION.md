@@ -2,11 +2,11 @@
 
 This document details the configuration for all Cloudflare Workers and Pages projects in the GoldShore monorepo.
 
-## 1. gs-mail (`apps/mail-worker`)
+## 1. gs-mail (`apps/gs-mail`)
 
 The email routing and processing worker.
 
-- **Directory:** `apps/mail-worker`
+- **Directory:** `apps/gs-mail`
 - **Package Name:** `gs-mail`
 - **Wrangler:** `wrangler.toml` (locally defined)
 - **Deployment:** Manual via Wrangler or CI.
@@ -66,13 +66,13 @@ The operational control plane worker.
 - **Main Entry:** `src/index.ts`
 - **Purpose:** Internal tool for managing Cloudflare resources, viewing logs, and performing administrative actions via Hono API.
 
-## 5. gs-api (`apps/api-worker`)
+## 5. gs-api (`apps/gs-api`)
 
 The backend API service.
 
-- **Directory:** `apps/api-worker`
+- **Directory:** `apps/gs-api`
 - **Package Name:** `gs-api`
-- **Wrangler:** `wrangler.toml` (locally defined) or `infra/cloudflare/goldshore-api.wrangler.toml`.
+- **Wrangler:** `apps/gs-api/wrangler.toml` (local default) or `infra/cloudflare/goldshore-api.wrangler.toml` (shared infra config).
 - **Deployment:** CI workflow (`deploy-api-worker.yml`).
 - **Bindings:** likely similar to gateway (KV, D1, etc.).
 - **Purpose:** Core business logic and data access layer.

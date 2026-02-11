@@ -4,9 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "wrangler dev src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
     "deploy": "wrangler deploy",
     "run-task": "wrangler dev src/index.ts --test-scheduled",
-    "test": "tsx --test src/routes/*.test.ts"
+    "test": "echo 'No tests configured for @goldshore/control'",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",

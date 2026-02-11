@@ -104,5 +104,5 @@ apps/gs-web/test-results/public-pages-mobile-naviga-46a59-closes-the-primary-nav
 apps/gs-web/test-results/public-pages-services-page-renders-highlights-and-CTA/trace.zip
 apps/gs-web/test-results/public-pages-super-bowl-boxes-page-renders-board-and-CTAs/trace.zip
 apps/gs-web/tests/e2e/public-pages.spec.ts
-astro-goldshore/apps/admin/src/env.d.ts
+astro-goldshore/apps/gs-admin/src/env.d.ts
 astro-goldshore/apps/web/src/env.d.ts

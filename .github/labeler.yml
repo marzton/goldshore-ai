@@ -10,7 +10,7 @@ admin:
 
 api:
   - changed-files:
-    - any-glob-to-any-file: 'apps/api-worker/**'
+    - any-glob-to-any-file: 'apps/gs-api/**'
 
 gateway:
   - changed-files:
