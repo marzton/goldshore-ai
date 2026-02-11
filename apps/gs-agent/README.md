@@ -1,7 +1,6 @@
 # apps/gs-agent
 
 ## Overview
-
 The `gs-agent` worker is a queue-driven background agent. It currently returns a simple response for fetch requests and includes a stubbed queue consumer. Legacy workflows may still reference `infra/cloudflare/goldshore-agent.wrangler.toml`.
 
 Cloudflare metadata (from `infra/cloudflare/gs-agent.wrangler.toml`):
