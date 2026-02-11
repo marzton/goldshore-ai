@@ -1,0 +1,54 @@
+name: Preview Web (gs-web)
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+      - ready_for_review
+    paths:
+      - "apps/gs-web/**"
+      - "infra/cloudflare/gs-web.wrangler.toml"
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+
+jobs:
+  preview-web:
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'preview') ||
+      (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web
+        run: pnpm build:web
+
+      - name: Deploy web pages (preview)
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: gs-web
+          directory: apps/gs-web/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
