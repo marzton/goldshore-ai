@@ -66,11 +66,11 @@ The operational control plane worker.
 - **Main Entry:** `src/index.ts`
 - **Purpose:** Internal tool for managing Cloudflare resources, viewing logs, and performing administrative actions via Hono API.
 
-## 5. gs-api (`apps/api-worker`)
+## 5. gs-api (`apps/gs-api`)
 
 The backend API service.
 
-- **Directory:** `apps/api-worker`
+- **Directory:** `apps/gs-api`
 - **Package Name:** `gs-api`
 - **Wrangler:** `wrangler.toml` (locally defined) or `infra/cloudflare/goldshore-api.wrangler.toml`.
 - **Deployment:** CI workflow (`deploy-api-worker.yml`).
