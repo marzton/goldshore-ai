@@ -1,0 +1,25 @@
+name: SENTINEL (PR)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  sentinel-pr-check:
+    name: Run SENTINEL guardrails
+    runs-on: ubuntu-latest
+    env:
+      JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+      - name: Setup Node.js
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6b156bde92b7f4e0528cf49d
+        with:
+          node-version: 20
+      - name: Preview SENTINEL prompt
+        run: node ./.Jules/run-sentinel.jsagent

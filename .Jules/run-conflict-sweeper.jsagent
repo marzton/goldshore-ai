@@ -1,0 +1,53 @@
+#!/usr/bin/env node
+/**
+ * CONFLICT-SWEEPER bootstrapper
+ * - surfaces the conflict resolution prompt
+ * - offers a Jules API example if a key is present
+ */
+
+const fs = require('node:fs');
+const path = require('node:path');
+
+const repoRoot = process.cwd();
+const promptPath = path.join(repoRoot, 'AI', 'prompts', 'conflict-sweeper.md');
+
+function readPrompt() {
+  if (!fs.existsSync(promptPath)) {
+    console.error(`Prompt not found at ${promptPath}`);
+    process.exit(1);
+  }
+  return fs.readFileSync(promptPath, 'utf8');
+}
+
+function printHeader(title) {
+  console.log(`\n=== ${title} ===`);
+}
+
+function emitCurlExample() {
+  const apiKey = process.env.JULES_API_KEY || '';
+  if (!apiKey) {
+    console.log('JULES_API_KEY not provided; printing prompt for manual use.');
+    return;
+  }
+
+  const payload = {
+    displayName: 'CONFLICT-SWEEPER',
+    prompt: readPrompt(),
+  };
+
+  console.log('Curl example:');
+  console.log(
+    `curl -X POST https://jules.googleapis.com/v1alpha/sessions \\\n  -H "X-Goog-Api-Key: ${apiKey}" \\\n  -H "Content-Type: application/json" \\\n  -d '${JSON.stringify(payload)}'`
+  );
+}
+
+function main() {
+  printHeader('Conflict Sweeper prompt');
+  console.log(readPrompt());
+  printHeader('Usage');
+  console.log('- Run nightly or on-demand to clear merge conflicts.');
+  console.log('- Pair with lockfile discipline checks to prevent thrash.');
+  emitCurlExample();
+}
+
+main();

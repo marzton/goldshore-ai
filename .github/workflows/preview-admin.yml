@@ -1,11 +1,15 @@
 name: Preview Admin (admin.goldshore.ai)
 
+permissions:
+  contents: read
+
 on:
   pull_request:
     paths:
       - "apps/admin/**"
-      - "packages/ui/**"
-      - "packages/theme/**"
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
   push:
     branches:
       - "feature/**"
