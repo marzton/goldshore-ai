@@ -9,6 +9,7 @@ on:
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
+  workflow_dispatch:
 
 permissions:
   contents: read
