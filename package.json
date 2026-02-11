@@ -9,9 +9,9 @@
     "build": "turbo run build",
     "build:web": "turbo run build --filter=@goldshore/gs-web",
     "build:admin": "turbo run build --filter=@goldshore/gs-admin",
-    "build:api": "turbo run build --filter=@goldshore/gs-api-worker",
+    "build:api": "turbo run build --filter=gs-api",
     "build:gateway": "turbo run build --filter=@goldshore/gs-gateway",
-    "build:control": "turbo run build --filter=@goldshore/gs-control-worker",
+    "build:control": "turbo run build --filter=@goldshore/control",
     "build:mail": "turbo run build --filter=@goldshore/gs-mail-worker",
     "lint": "turbo run lint",
     "test": "turbo run test",
@@ -27,7 +27,7 @@
     "gate:test:visual": "pnpm test:visual",
     "gate:matrix": "pnpm gate:typecheck && pnpm gate:lint && pnpm gate:test:unit && pnpm gate:test:integration && pnpm gate:validate:workers && pnpm gate:test:visual",
     "check:pages": "tsx scripts/check-pages-200.ts",
-    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md",
+    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/gs-admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md",
     "validate:instructions": "python scripts/validate_instruction_refs.py"
   },
   "devDependencies": {
