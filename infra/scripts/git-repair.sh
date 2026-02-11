@@ -12,6 +12,12 @@ OWNER="goldshore"
 REPO="Astro-goldshore"
 BASE_BRANCH="main"
 
+
+origin_branch_exists() {
+    local branch="$1"
+    git ls-remote --exit-code --heads origin "${branch}" > /dev/null 2>&1
+}
+
 ensure_local_branch() {
     local branch="$1"
 
@@ -42,6 +48,10 @@ fi
 # 1. Fetch latest changes for synchronization
 echo "1. Fetching latest state of ${BASE_BRANCH}..."
 git fetch origin "${BASE_BRANCH}"
+if ! origin_branch_exists "${BASE_BRANCH}"; then
+    echo "ERROR: Base branch ${BASE_BRANCH} does not exist on origin."
+    exit 1
+fi
 git checkout "${BASE_BRANCH}"
 
 # 2. Get list of open Pull Requests that require conflict resolution
@@ -62,6 +72,12 @@ for BRANCH in "${CONFLICT_BRANCHES[@]}"; do
     if [ -z "$BRANCH" ]; then continue; fi
 
     echo "  - Processing branch: ${BRANCH}"
+
+    if ! origin_branch_exists "${BRANCH}"; then
+        echo "  - ERROR: Branch ${BRANCH} does not exist on origin. Skipping."
+        git checkout "${BASE_BRANCH}"
+        continue
+    fi
 
     if ! ensure_local_branch "${BRANCH}"; then
         echo "  - ERROR: Branch ${BRANCH} does not exist on origin. Skipping."
