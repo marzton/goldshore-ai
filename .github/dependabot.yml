@@ -1,12 +1,27 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for more information:
-# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
-# https://containers.dev/guide/dependabot
-
 version: 2
+
 updates:
- - package-ecosystem: "devcontainers"
-   directory: "/"
-   schedule:
-     interval: weekly
+  # ─────────────────────────────────────────────
+  # 1. NPM (Monorepo: apps/* + packages/*)
+  # ─────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # ensures Dependabot follows workspace links
+    versioning-strategy: increase
+    # optional: limit number of simultaneous PRs
+    open-pull-requests-limit: 10
+    registries: {}
+    allow:
+      # allow updating everything inside workspaces
+      - dependency-type: "all"
+
+  # ─────────────────────────────────────────────
+  # 2. GitHub Actions
+  # ─────────────────────────────────────────────
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
