@@ -14,7 +14,9 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "check:pages": "tsx scripts/check-pages-200.ts",
-    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md"
+    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md",
+    "lint:styles": "stylelint \"{apps,packages,src}/**/*.{css,astro}\"",
+    "lint:tokens": "pnpm lint && pnpm lint:styles"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
@@ -34,7 +36,11 @@
     "tsx": "^4.21.0",
     "typescript": "^5.4.2",
     "wrangler": "^4.63.0",
-    "yaml": "^2.8.2"
+    "yaml": "^2.8.2",
+    "stylelint": "^16.15.0",
+    "stylelint-config-standard": "^36.0.1",
+    "stylelint-declaration-strict-value": "^1.10.11",
+    "postcss-html": "^1.8.0"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
