@@ -2,6 +2,19 @@ import type { APIRoute } from 'astro';
 
 const allowedStatuses = new Set(['new', 'read', 'archived']);
 
+const hasLeadSubmissionAccess = (locals: App.Locals) => {
+  const session = locals.adminSession;
+  return Boolean(session?.isAuthenticated && session.permissions.includes('forms:read'));
+};
+
+const unauthorizedResponse = () =>
+  new Response(JSON.stringify({ error: 'Unauthorized' }), {
+    status: 403,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+    },
+  });
+
 const escapeCsvValue = (value: unknown) => {
   const normalized = value === null || value === undefined ? '' : String(value);
   return `"${normalized.replace(/"/g, '""')}"`;
@@ -34,6 +47,10 @@ const buildCsv = (rows: Record<string, unknown>[]) => {
 };
 
 export const GET: APIRoute = async ({ request, locals }) => {
+  if (!hasLeadSubmissionAccess(locals)) {
+    return unauthorizedResponse();
+  }
+
   const env = locals.runtime?.env as Env | undefined;
   if (!env?.DB) {
     return new Response('Storage unavailable.', { status: 503 });
@@ -88,6 +105,10 @@ export const GET: APIRoute = async ({ request, locals }) => {
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {
+  if (!hasLeadSubmissionAccess(locals)) {
+    return unauthorizedResponse();
+  }
+
   const env = locals.runtime?.env as Env | undefined;
   if (!env?.DB) {
     return new Response('Storage unavailable.', { status: 503 });
