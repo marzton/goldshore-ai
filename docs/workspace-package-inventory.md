@@ -65,3 +65,12 @@ This inventory is sourced from:
 - Migration impact:
   - No import rewrites required in active apps; references only existed in legacy snapshots/logs.
 
+### 4) Lead submissions admin cockpit ownership
+
+- Ownership decision:
+  - Admin lead submission review surfaces belong to `@goldshore/admin` (`apps/gs-admin`) because they expose PII and require `forms:read` permissions.
+- Routes/files:
+  - UI route: `apps/gs-admin/src/pages/admin/lead-submissions.astro`
+  - API route: `apps/gs-admin/src/pages/api/admin/lead-submissions.ts`
+- Boundary guarantee:
+  - `@goldshore/web` intentionally does not host `lead-submissions` admin routes.

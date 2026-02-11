@@ -1,17 +1,9 @@
 # Legacy Snapshot Archive (2025-11-28)
 
-This directory stores historical `*.legacy-20251128.*` snapshots moved out of active application roots to keep runtime/code paths clean while retaining reference copies for auditing, rollback comparison, or migration notes.
+This location is retained only as a pointer for historical references.
 
-## Source locations
+`*.legacy-20251128.*` snapshots are now consolidated under:
 
-Files were archived from:
+- `archive/legacy-snapshots/2025-11-28/`
 
-- `apps/gs-admin`
-- `apps/gs-api`
-- `apps/gs-gateway`
-- `apps/gs-web`
-
-## Notes
-
-- Original relative paths are preserved under this archive directory.
-- These files are not part of active builds/deployments and should only be used for historical reference.
+Do not place new migration snapshots in this directory.

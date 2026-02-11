@@ -25,6 +25,10 @@ type LeadSubmission = {
 
 const env = Astro.locals.runtime?.env as Env | undefined;
 const db = env?.DB;
+const canReadLeadSubmissions = Boolean(
+  Astro.locals.adminSession?.isAuthenticated &&
+    Astro.locals.adminSession.permissions.includes('forms:read')
+);
 const url = new URL(Astro.request.url);
 const statusFilter = url.searchParams.get('status');
 const allowedStatuses = ['new', 'read', 'archived'] as const;
@@ -36,7 +40,10 @@ const redirectTo = `${url.pathname}${url.search}`;
 let submissions: LeadSubmission[] = [];
 let errorMessage = '';
 
-if (!db) {
+if (!canReadLeadSubmissions) {
+  Astro.response.status = 403;
+  errorMessage = 'Unauthorized. You need forms:read access to review lead submissions.';
+} else if (!db) {
   errorMessage = 'Storage unavailable. Configure the DB binding for this environment.';
 } else {
   const whereClause = filterStatus ? 'WHERE status = ?' : '';

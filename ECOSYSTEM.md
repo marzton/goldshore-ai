@@ -34,12 +34,12 @@ We recommend the following extensions/tools for maximizing productivity in this 
 *   **Jules Extension:** (Internal) Use `apps/jules-bot` to trigger automated repository actions.
 
 ## Repository Structure
-*   `apps/web`: Public marketing site (Astro).
-*   `apps/admin`: Internal operations dashboard (Astro).
-*   `apps/gateway`: Edge gateway for routing, auth, and rate limiting (Worker).
-*   `apps/api-worker`: Core business logic and data access (Worker).
+*   `apps/gs-web`: Public marketing site (Astro).
+*   `apps/gs-admin`: Internal operations dashboard (Astro).
+*   `apps/gs-gateway`: Edge gateway for routing, auth, and rate limiting (Worker).
+*   `apps/gs-api`: Core business logic and data access (Worker).
 *   `apps/goldshore-agent`: AI agent service (Worker).
-*   `apps/control-worker`: Internal ops automation.
+*   `apps/gs-control`: Internal ops automation.
 
 ---
 *Built with ❤️ by GoldShore Engineering.*
