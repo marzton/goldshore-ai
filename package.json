@@ -1,18 +1,20 @@
 {
-  "name": "astro-goldshore",
+  "name": "goldshore-ai",
   "private": true,
   "packageManager": "pnpm@8.15.5",
   "scripts": {
     "dev": "turbo run dev --parallel",
     "build:openapi": "node scripts/build-openapi.mjs",
     "build": "pnpm build:openapi && turbo run build",
-    "build:web": "turbo run build --filter=@goldshore/web",
-    "build:admin": "turbo run build --filter=@goldshore/admin",
-    "build:api": "turbo run build --filter=@goldshore/api-worker",
-    "build:gateway": "turbo run build --filter=@goldshore/gateway",
-    "build:control": "turbo run build --filter=@goldshore/control-worker",
+    "build:web": "turbo run build --filter=gs-web",
+    "build:admin": "turbo run build --filter=gs-admin",
+    "build:api": "turbo run build --filter=gs-api",
+    "build:gateway": "turbo run build --filter=gs-gateway",
+    "build:control": "turbo run build --filter=gs-control",
+    "build:agent": "turbo run build --filter=gs-agent",
     "lint": "turbo run lint",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "validate:wrangler": "npx tsx scripts/validate-wrangler.ts"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",
@@ -23,7 +25,9 @@
     "prettier-plugin-astro": "^0.13.0",
     "tailwindcss": "^3",
     "typescript": "^5.4.2",
-    "yaml": "^2.3.4"
+    "yaml": "^2.3.4",
+    "tsx": "^4.7.1",
+    "wrangler": "^3.101.0"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.11",

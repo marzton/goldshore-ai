@@ -7,7 +7,7 @@
       "@goldshore/utils/*": ["packages/utils/*"],
       "@goldshore/auth/*": ["packages/auth/*"],
       "@goldshore/theme/*": ["packages/theme/*"],
-      "@schema/*": ["packages/schema/*"]
+      "@goldshore/schema/*": ["packages/schema/*"]
     }
   }
 }

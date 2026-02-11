@@ -1,0 +1,22 @@
+{
+  "name": "gs-admin",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@goldshore/theme": "workspace:*",
+    "@goldshore/ui": "workspace:*",
+    "astro": "^5.17.1"
+  },
+  "devDependencies": {
+    "@astrojs/cloudflare": "^12.6.11",
+    "@goldshore/config": "workspace:^",
+    "typescript": "^5.9.3"
+  }
+}

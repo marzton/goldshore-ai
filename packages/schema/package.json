@@ -1,9 +1,9 @@
 {
-  "name": "@astro-gs/schema",
+  "name": "@goldshore/schema",
   "version": "0.0.1",
   "private": true,
-  "main": "./index.js",
-  "types": "./index.d.ts",
+  "main": "./index.ts",
+  "types": "./index.ts",
   "scripts": {
     "dev": "echo 'schema dev'",
     "build": "echo 'schema build'"
