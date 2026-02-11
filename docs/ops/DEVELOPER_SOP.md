@@ -2,6 +2,8 @@
 
 This document dictates the process for debugging Git history conflicts and deployment failures within the `goldshore/goldshore-ai` monorepo.
 
+> Precedence note: This SOP is scoped guidance. If instructions conflict, follow `docs/ops/instruction-governance.md` and `AGENTS.md`.
+
 ## 1. Synchronization and Conflict Resolution (SOP-001)
 
 If a Pull Request (PR) shows merge conflicts, the Agent MUST execute a **Forceful Rebase** to synchronize the source branch with the current state of `main`.
