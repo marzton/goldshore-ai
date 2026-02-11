@@ -1,5 +1,7 @@
 import type { APIRoute } from 'astro';
 
+export const prerender = false;
+
 const parseJson = <T>(value: string | null, fallback: T): T => {
   if (!value) return fallback;
   try {
