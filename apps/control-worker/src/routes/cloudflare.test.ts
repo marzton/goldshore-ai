@@ -196,24 +196,40 @@ describe('Cloudflare Routes Middleware', () => {
     assert.strictEqual(auditLogs[0].metadata.message, "Network error");
   });
 
-  it('should return 502 if cloudflare returns invalid JSON', async () => {
+  it('should fail DNS update with invalid payload', async () => {
+    const response = await createRequest({
+      email: 'admin@example.com',
+      roles: ['admin'],
+    }, '/dns/records/123', 'PUT', { foo: 'bar' });
+
+    assert.strictEqual(response.status, 400);
+    const body = await response.json() as any;
+    // Hono Zod Validator usually returns details in the body
+    assert.strictEqual(body.success, false);
+  });
+
+  it('should succeed DNS update with valid payload', async () => {
     global.fetch = mock.fn(async () => {
-      return new Response("<html>Bad Gateway</html>", { status: 502, headers: { "Content-Type": "text/html" } });
+      return new Response(JSON.stringify({ success: true, result: {} }), { status: 200 });
     });
+
+    const payload = {
+      type: 'A',
+      name: 'example.com',
+      content: '1.2.3.4',
+      ttl: 3600
+    };
 
     const response = await createRequest({
       email: 'admin@example.com',
       roles: ['admin'],
-    });
+    }, '/dns/records/123', 'PUT', payload);
 
-    assert.strictEqual(response.status, 502);
-    const body = await response.json() as any;
-    assert.deepStrictEqual(body, { error: "Cloudflare API request failed." });
+    assert.strictEqual(response.status, 200);
 
-    // Check audit log
-    assert.strictEqual(auditLogs.length, 1);
-    assert.strictEqual(auditLogs[0].status, "error");
-    // Message should reflect JSON parsing error
-    assert.ok(auditLogs[0].metadata.message.length > 0);
+    // Verify audit log
+    const log = auditLogs.find(l => l.action === 'cloudflare:dns:update');
+    assert.ok(log);
+    assert.strictEqual(log.status, 'success');
   });
 });

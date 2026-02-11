@@ -80,6 +80,9 @@ importers:
       '@goldshore/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@goldshore/config':
+        specifier: workspace:^
+        version: link:../../packages/config
       '@goldshore/integrations':
         specifier: workspace:*
         version: link:../../packages/integrations
@@ -226,6 +229,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@goldshore/config':
+        specifier: workspace:^
+        version: link:../../packages/config
       '@goldshore/theme':
         specifier: workspace:*
         version: link:../../packages/theme
@@ -966,6 +972,12 @@ packages:
   '@eslint/js@8.57.1':
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
+  '@hono/zod-validator@0.7.6':
+    resolution: {integrity: sha512-Io1B6d011Gj1KknV4rXYz4le5+5EubcWEU/speUjuw9XMMIaP3n78yXLhjd2A3PXaXaUwEAluOiAyLqhBEJgsw==}
+    peerDependencies:
+      hono: '>=3.9.0'
+      zod: ^3.25.0 || ^4.0.0
 
   '@hono/zod-validator@0.7.6':
     resolution: {integrity: sha512-Io1B6d011Gj1KknV4rXYz4le5+5EubcWEU/speUjuw9XMMIaP3n78yXLhjd2A3PXaXaUwEAluOiAyLqhBEJgsw==}
@@ -3881,6 +3893,9 @@ packages:
   zod@3.22.3:
     resolution: {integrity: sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==}
 
+  zod@3.23.8:
+    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
+
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
@@ -4398,6 +4413,11 @@ snapshots:
     dependencies:
       hono: 4.11.9
       zod: 3.25.76
+
+  '@hono/zod-validator@0.7.6(hono@4.11.8)(zod@3.23.8)':
+    dependencies:
+      hono: 4.11.8
+      zod: 3.23.8
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -7905,6 +7925,8 @@ snapshots:
       zod: 3.25.76
 
   zod@3.22.3: {}
+
+  zod@3.23.8: {}
 
   zod@3.25.76: {}
 
