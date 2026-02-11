@@ -1,4 +1,4 @@
-name: Deploy Admin (admin.goldshore.ai)
+name: Deploy Admin (gs-admin)
 
 permissions:
   contents: read
@@ -8,7 +8,7 @@ on:
     branches:
       - main
     paths:
-      - "apps/admin/**"
+      - "apps/gs-admin/**"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -33,7 +33,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build admin app
-        working-directory: apps/admin
+        working-directory: apps/gs-admin
         run: pnpm build
 
       - name: Deploy to Cloudflare Pages (production)
@@ -42,5 +42,5 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: gs-admin
-          directory: apps/admin/dist
+          directory: apps/gs-admin/dist
           branch: main

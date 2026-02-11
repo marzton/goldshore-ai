@@ -1,4 +1,4 @@
-name: Preview API Worker
+name: Preview API Worker (gs-api)
 permissions:
   contents: read
 

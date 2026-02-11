@@ -1,4 +1,4 @@
-name: Deploy API Worker
+name: Deploy API Worker (gs-api)
 
 permissions:
   contents: read
