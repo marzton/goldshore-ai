@@ -3,7 +3,7 @@
 # Files deleted by them - accept deletion
 git rm -q .Jules/palette.md 2>/dev/null || true
 git rm -q apps/jules-bot/src/index.mjs 2>/dev/null || true
-git rm -q apps/mail-worker/tsconfig.json 2>/dev/null || true
+git rm -q apps/gs-mail/tsconfig.json 2>/dev/null || true
 
 # Both deleted - accept deletion
 git rm -q apps/admin/src/env.d.legacy-20251128.ts 2>/dev/null || true

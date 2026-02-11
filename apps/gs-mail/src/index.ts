@@ -7,7 +7,7 @@ interface Env {
   MAIL_BLOCKED_SENDERS?: string;
 }
 
-const VERSION = '2026.02.10-mail-worker-fix';
+const VERSION = '2026.02.10-gs-mail-fix';
 
 const app = new Hono<{ Bindings: Env }>();
 
