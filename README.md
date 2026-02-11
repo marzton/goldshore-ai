@@ -1,21 +1,21 @@
 # GoldShore Monorepo
 
 The GoldShore Monorepo powers the entire GoldShore ecosystem, including:
-	•	Public Website (Astro + Cloudflare Pages)
-	•	Admin Cockpit Dashboard (Astro SSR + GoldShore UI Kit)
-	•	API Layer (Hono + Cloudflare Workers)
-	•	Gateway Layer (routing, throttling, AI gateway)
-	•	Control Worker (DNS automation, binding sync, deployments)
-	•	Shared Design System (UI components, tokens, themes)
-	•	Infrastructure (Cloudflare + GitHub Actions)
+• Public Website (Astro + Cloudflare Pages)
+• Admin Cockpit Dashboard (Astro SSR + GoldShore UI Kit)
+• API Layer (Hono + Cloudflare Workers)
+• Gateway Layer (routing, throttling, AI gateway)
+• Control Worker (DNS automation, binding sync, deployments)
+• Shared Design System (UI components, tokens, themes)
+• Infrastructure (Cloudflare + GitHub Actions)
 
 The monorepo uses:
-	•	pnpm for workspace management
-	•	Turborepo for task orchestration
-	•	TypeScript everywhere
-	•	Astro for frontend
-	•	Cloudflare Workers for backend
-	•	A unified theme + UI kit across apps
+• pnpm for workspace management
+• Turborepo for task orchestration
+• TypeScript everywhere
+• Astro for frontend
+• Cloudflare Workers for backend
+• A unified theme + UI kit across apps
 
 ---
 
@@ -38,8 +38,6 @@ GoldShore Brand Variants
 </tr>
 </table>
 
-
-
 ---
 
 🧭 Monorepo Structure
@@ -47,36 +45,34 @@ GoldShore Brand Variants
 astro-goldshore/
 │
 ├── apps/
-│   ├── web/             → Public website (Astro + CF Pages)
-│   ├── admin/           → Admin Cockpit (Astro SSR)
-│   ├── api-worker/      → Hono API Worker
-│   ├── gateway/         → Edge gateway router
-│   └── control-worker/  → Infra automation (DNS, bindings)
+│ ├── web/ → Public website (Astro + CF Pages)
+│ ├── admin/ → Admin Cockpit (Astro SSR)
+│ ├── api-worker/ → Hono API Worker
+│ ├── gateway/ → Edge gateway router
+│ └── control-worker/ → Infra automation (DNS, bindings)
 │
 ├── packages/
-│   ├── ui/              → GoldShore UI component library
-│   ├── theme/           → Tokens, CSS vars, theming engine
-│   ├── config/          → Shared TS, ESLint, Prettier configs
-│   └── utils/           → Shared helpers
+│ ├── ui/ → GoldShore UI component library
+│ ├── theme/ → Tokens, CSS vars, theming engine
+│ ├── config/ → Shared TS, ESLint, Prettier configs
+│ └── utils/ → Shared helpers
 │
 └── infra/
-    ├── cloudflare/      → wrangler.toml, DNS maps, bindings
-    └── github/          → Workflows for CI/CD
-
+├── cloudflare/ → wrangler.toml, DNS maps, bindings
+└── github/ → Workflows for CI/CD
 
 ---
 
 🔥 Apps Overview
 
 🌐 apps/web — GoldShore Public Website
-	•	Astro SSR
-	•	Powered by the GoldShore UI Kit
-	•	Deploys via Cloudflare Pages
-	•	Theming powered by packages/theme
-	•	Pulls dynamic content from API + Gateway
+• Astro SSR
+• Powered by the GoldShore UI Kit
+• Deploys via Cloudflare Pages
+• Theming powered by packages/theme
+• Pulls dynamic content from API + Gateway
 
 Hero Example
-
 
 ---
 
@@ -91,23 +87,22 @@ This is your hyper-modern operational dashboard.
 </tr>
 </table>
 
-
 Features
-	•	Realtime visitors
-	•	Task manager
-	•	Ad engine metrics
-	•	Trading analytics
-	•	Widgets API
-	•	Inter-app control center
-	•	API/Gateway integration
+• Realtime visitors
+• Task manager
+• Ad engine metrics
+• Trading analytics
+• Widgets API
+• Inter-app control center
+• API/Gateway integration
 
 ---
 
 🧩 packages/ui — GoldShore UI Component Kit
-	•	100% framework-agnostic components
-	•	Works in Astro, Workers, Hono frontends
-	•	Shared design system
-	•	Includes:
+• 100% framework-agnostic components
+• Works in Astro, Workers, Hono frontends
+• Shared design system
+• Includes:
 
 <Button>
 <Card>
@@ -117,7 +112,6 @@ Features
 <MetricCard>
 <GlowPanel>
 <ThemeToggle>
-
 
 ---
 
@@ -135,45 +129,45 @@ tokens.css
 └── Grid
 
 Supports:
-	•	Light mode
-	•	Dark mode
-	•	Neon mode
-	•	Penrose mode (GoldShore default)
-	•	System override
+• Light mode
+• Dark mode
+• Neon mode
+• Penrose mode (GoldShore default)
+• System override
 
 ---
 
 ⚙️ apps/api-worker — Main API (Hono)
-	•	Edge-native API
-	•	Zod schemas
-	•	Hono router
-	•	Cookie/session utilities
-	•	Cloudflare bindings
-	•	Responds to the admin + web apps
-	•	Preconfigured OpenAPI generation
+• Edge-native API
+• Zod schemas
+• Hono router
+• Cookie/session utilities
+• Cloudflare bindings
+• Responds to the admin + web apps
+• Preconfigured OpenAPI generation
 
 ---
 
 🚏 apps/gateway — Routing & AI Gateway
 
 Handles:
-	•	URL-based routing
-	•	Load balancing
-	•	Service binding switching
-	•	AI Gateway proxy
-	•	Authorization pre-checks
+• URL-based routing
+• Load balancing
+• Service binding switching
+• AI Gateway proxy
+• Authorization pre-checks
 
 ---
 
 🛰 apps/control-worker — Infra Automation
 
 Can automatically:
-	•	Create DNS records
-	•	Attach KV / R2 / D1 bindings
-	•	Create preview domains
-	•	Sync environment variables
-	•	Repair worker routes
-	•	Enforce idempotent deployment rules
+• Create DNS records
+• Attach KV / R2 / D1 bindings
+• Create preview domains
+• Sync environment variables
+• Repair worker routes
+• Enforce idempotent deployment rules
 
 This replaces Terraform (optional).
 
@@ -205,7 +199,6 @@ Build all:
 
 pnpm build
 
-
 ---
 
 🧪 Testing
@@ -219,7 +212,6 @@ Run:
 
 pnpm test
 
-
 ---
 
 🌩 Deployment (Cloudflare)
@@ -228,15 +220,12 @@ Deploy is handled by GitHub Actions:
 
 infra/github/workflows/deploy.yml
 
-CI/CD steps:
-	1.	Install dependencies
-	2.	Build workspaces with Turbo
-	3.	Deploy:
-	•	web → Cloudflare Pages
-	•	admin → Cloudflare Pages
-	•	api-worker → Workers
-	•	gateway → Workers
-	•	control-worker → Workers
+CI/CD steps: 1. Install dependencies 2. Build workspaces with Turbo 3. Deploy:
+• web → Cloudflare Pages
+• admin → Cloudflare Pages
+• api-worker → Workers
+• gateway → Workers
+• control-worker → Workers
 
 Preview branches automatically deploy to:
 
@@ -245,11 +234,9 @@ api-preview.goldshore.ai
 gw-preview.goldshore.ai
 admin-preview.goldshore.ai
 
-
 ---
 
 🏁 Closing Preview
-
 
 ---
 

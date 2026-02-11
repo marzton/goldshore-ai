@@ -29,14 +29,21 @@ const team = [
     <h1>Human operators, minimal overhead.</h1>
   </section>
   <section class="card-grid">
-    {team.map((member) => (
-      <article class="card">
-        <div aria-hidden="true" style="width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);font-weight:700;margin-bottom:0.6rem;">{member.initials}</div>
-        <h2>{member.name}</h2>
-        <p class="muted">{member.role}</p>
-        <p>{member.bio}</p>
-      </article>
-    ))}
+    {
+      team.map((member) => (
+        <article class="card">
+          <div
+            aria-hidden="true"
+            style="width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);font-weight:700;margin-bottom:0.6rem;"
+          >
+            {member.initials}
+          </div>
+          <h2>{member.name}</h2>
+          <p class="muted">{member.role}</p>
+          <p>{member.bio}</p>
+        </article>
+      ))
+    }
   </section>
 
   <section>
