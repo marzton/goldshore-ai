@@ -1,0 +1,109 @@
+name: Nightly Branch Cleanup
+
+on:
+  schedule:
+    - cron: '22 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  JULES_RETENTION_DAYS: '7'
+  INTEGRATION_RETENTION_DAYS: '14'
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cleanup expired automation branches
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch --all --prune
+
+          now_epoch="$(date -u +%s)"
+          summary_md="branch-cleanup-summary.md"
+          summary_json="branch-cleanup-summary.json"
+
+          deleted=0
+          archived=0
+          scanned=0
+
+          printf '# Nightly Branch Cleanup Summary\n\n' > "$summary_md"
+          printf '- Generated at: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$summary_md"
+          printf '- Retention: `jules/*`=%s days, `integration/*`=%s days\n\n' "$JULES_RETENTION_DAYS" "$INTEGRATION_RETENTION_DAYS" >> "$summary_md"
+          printf '| Branch | Age (days) | TTL (days) | Archived Tag | Deleted |\n' >> "$summary_md"
+          printf '| --- | ---: | ---: | --- | --- |\n' >> "$summary_md"
+
+          printf '{"generated_at":"%s","retention":{"jules":%s,"integration":%s},"processed":[' \
+            "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$JULES_RETENTION_DAYS" "$INTEGRATION_RETENTION_DAYS" > "$summary_json"
+
+          first=1
+          while IFS='|' read -r ref short sha epoch; do
+            [[ -z "$short" ]] && continue
+            scanned=$((scanned + 1))
+
+            ttl=''
+            if [[ "$short" == jules/* ]]; then
+              ttl="$JULES_RETENTION_DAYS"
+            elif [[ "$short" == integration/* ]]; then
+              ttl="$INTEGRATION_RETENTION_DAYS"
+            else
+              continue
+            fi
+
+            age_days=$(( (now_epoch - epoch) / 86400 ))
+            archived_tag='-'
+            did_delete='no'
+
+            if (( age_days >= ttl )); then
+              branch_name="$short"
+              if git ls-remote --exit-code --heads origin "$branch_name" > /dev/null 2>&1; then
+                safe_name="${branch_name//\//-}"
+                archived_tag="archive/${safe_name}/$(date -u +%Y%m%dT%H%M%SZ)"
+                git tag "$archived_tag" "$sha"
+                git push origin "$archived_tag"
+                archived=$((archived + 1))
+
+                git push origin --delete "$branch_name"
+                deleted=$((deleted + 1))
+                did_delete='yes'
+              else
+                archived_tag='missing-on-origin'
+              fi
+            fi
+
+            printf '| `%s` | %s | %s | `%s` | %s |\n' "$short" "$age_days" "$ttl" "$archived_tag" "$did_delete" >> "$summary_md"
+
+            [[ $first -eq 0 ]] && printf ',' >> "$summary_json"
+            first=0
+            printf '{"branch":"%s","age_days":%s,"ttl_days":%s,"archived_tag":"%s","deleted":"%s"}' \
+              "$short" "$age_days" "$ttl" "$archived_tag" "$did_delete" >> "$summary_json"
+          done < <(git for-each-ref --format='%(refname)|%(refname:short)|%(objectname)|%(committerdate:unix)' refs/remotes/origin)
+
+          printf '],"stats":{"scanned":%s,"archived":%s,"deleted":%s}}\n' "$scanned" "$archived" "$deleted" >> "$summary_json"
+
+          {
+            echo
+            echo "## Totals"
+            echo
+            echo "- Scanned branches: $scanned"
+            echo "- Archived tags pushed: $archived"
+            echo "- Branches deleted: $deleted"
+          } >> "$summary_md"
+
+      - name: Upload cleanup summary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-branch-cleanup-summary
+          path: |
+            branch-cleanup-summary.md
+            branch-cleanup-summary.json
+          if-no-files-found: error
