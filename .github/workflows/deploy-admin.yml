@@ -1,0 +1,46 @@
+name: Deploy Admin (gs-admin)
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/gs-admin/**"
+      - "infra/cloudflare/gs-admin.wrangler.toml"
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+
+jobs:
+  deploy-admin:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build admin
+        run: pnpm build:admin
+
+      - name: Deploy admin pages (production)
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: gs-admin
+          directory: apps/gs-admin/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
