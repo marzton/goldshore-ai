@@ -59,7 +59,6 @@ Admin sections:
 - `/admin/media`
 - `/admin/page-editor`
 - `/admin/pages`
-- `/admin/pii-scans`
 - `/admin/logs`
 - `/admin/settings`
 - `/admin/overview`

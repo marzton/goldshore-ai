@@ -1,15 +1,9 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { GSButton } from '@goldshore/ui';
-import scanResults from '../../data/pii-scan-results.json';
 
 // Initial UI state
 const initialStatus = { health: 'Unknown', status: 'Unknown', version: 'Unknown', lastSync: 'N/A' };
-const { summary, generatedAt, alerts } = scanResults;
-const formattedScanDate = new Date(generatedAt).toLocaleString('en-US', {
-  dateStyle: 'medium',
-  timeStyle: 'short'
-});
 ---
 <AdminLayout title="Admin | Operational Overview">
     <div class="max-w-7xl mx-auto p-8 space-y-8">
@@ -17,7 +11,7 @@ const formattedScanDate = new Date(generatedAt).toLocaleString('en-US', {
         <p class="text-lg gs-text-subtle">Protected access to monitor Workers, Data, and System Health.</p>
 
         <!-- Status & Bindings -->
-        <div class="grid md:grid-cols-4 gap-6">
+        <div class="grid md:grid-cols-3 gap-6">
             <div class="gs-card space-y-3">
                 <h2 class="text-xl font-semibold">gs-api Health</h2>
                 <p id="api-health" class="text-2xl font-bold gs-text-info">{initialStatus.health}</p>
@@ -37,14 +31,6 @@ const formattedScanDate = new Date(generatedAt).toLocaleString('en-US', {
                 <p id="conflict-count" class="text-2xl font-bold gs-text-danger">7 Open</p>
                 <p class="text-sm gs-text-subtle">Requires immediate SOP-001 execution.</p>
                 <GSButton variant="primary" id="run-sop">Execute Git Repair</GSButton>
-            </div>
-
-            <div class="gs-card space-y-3">
-                <h2 class="text-xl font-semibold">PII Scan Status</h2>
-                <p class="text-2xl font-bold gs-text-warning">{summary.status}</p>
-                <p class="text-sm gs-text-subtle">Last scan: {formattedScanDate}</p>
-                <p class="text-sm gs-text-subtle">Alert routing: {alerts.status}</p>
-                <GSButton href="/admin/pii-scans" variant="secondary">View PII Results</GSButton>
             </div>
         </div>
 

@@ -15,7 +15,6 @@ apps/gs-admin/src/pages/admin/pages/[id].astro
 apps/gs-admin/src/pages/admin/pages/editor.astro
 apps/gs-admin/src/pages/admin/pages/index.astro
 apps/gs-admin/src/pages/admin/pages/new.astro
-apps/gs-admin/src/pages/admin/pii-scans.astro
 apps/gs-admin/src/pages/admin/system/dns.astro
 apps/gs-admin/src/pages/admin/system/pages.astro
 apps/gs-admin/src/pages/admin/system/secrets.astro
