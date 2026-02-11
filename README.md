@@ -34,6 +34,16 @@ The monorepo uses:
 
 ---
 
+## 📚 Where to find X
+
+- **Architecture & current monorepo state:** [`CURRENT_MONOREPO_STATE.md`](./CURRENT_MONOREPO_STATE.md)
+- **Branch operations (mergeability, drift checks, workflows):** [`docs/ops/mergeable-branches.md`](./docs/ops/mergeable-branches.md)
+- **Deprecated packages / dependency debt tracking:** [`DEPRECATED_PACKAGES.md`](./DEPRECATED_PACKAGES.md)
+- **Developer website rollout guide:** [`docs/developer-briefing.md`](./docs/developer-briefing.md)
+- **Copy and tone guide:** [`docs/copy-style-guide.md`](./docs/copy-style-guide.md)
+
+---
+
 ## Website rollout docs
 
 - Developer briefing: `docs/developer-briefing.md`
@@ -255,7 +265,7 @@ Template pages are kept alongside each app so navigation, menus, containers, and
 | App        | Template Location                            | Notes                           |
 | ---------- | -------------------------------------------- | ------------------------------- |
 | Web        | `apps/web/src/pages/templates/index.astro`   | Marketing + search composition  |
-| Admin      | `apps/admin/src/pages/templates/index.astro` | Dashboard shell + table samples |
+| Admin      | `apps/gs-admin/src/pages/templates/index.astro` | Dashboard shell + table samples |
 | API Worker | `apps/api-worker/src/routes/templates.ts`    | Module checklist for API growth |
 | Gateway    | `apps/gateway/src/index.ts` (`/templates`)   | Routing + AI dispatch template  |
 | Agent      | `apps/gs-agent/src/index.ts` (`/templates`)  | HITL orchestration template     |
@@ -285,6 +295,7 @@ To keep issues, workflows, PRs, branches, and components aligned:
 - Track work in **GitHub Issues/Projects** and the templates in `.github/ISSUE_TEMPLATE/`.
 - Review deployment flow in `infra/github/workflows/`.
 - Use `ops/pr-playbook.md` and `ops/maintenance-playbook.md` for release continuity.
+- Follow `docs/ops/branch-governance.md` and verify remote branch existence (`git ls-remote --heads origin <branch>`) before any automated `git checkout` or rebase step.
 - Document component ownership in the admin dashboard templates and UI kit README.
 
 ## **packages/utils**
@@ -474,7 +485,7 @@ GoldShore Brand Variants
 
 🧭 Monorepo Structure
 
-astro-goldshore/
+goldshore-ai/
 │
 ├── apps/
 │ ├── web/ → Public website (Astro + CF Pages)
