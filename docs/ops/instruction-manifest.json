@@ -1,0 +1,85 @@
+{
+  "generatedAt": "2026-02-11",
+  "instructions": [
+    {
+      "path": "AGENTS.md",
+      "type": "root_instruction",
+      "scope": "/",
+      "references": [
+        "docs/ops/instruction-governance.md",
+        "docs/ops/instruction-changelog.md"
+      ]
+    },
+    {
+      "path": "docs/ops/instruction-governance.md",
+      "type": "governance",
+      "scope": "docs/ops",
+      "references": [
+        "AGENTS.md",
+        "docs/ops/DEVELOPER_SOP.md",
+        "ops/pr-playbook.md",
+        "ops/integration-pr-template.md",
+        ".github/PULL_REQUEST_TEMPLATE.md",
+        "docs/ops/instruction-manifest.json",
+        "docs/ops/instruction-changelog.md"
+      ]
+    },
+    {
+      "path": "docs/ops/DEVELOPER_SOP.md",
+      "type": "sop",
+      "scope": "docs/ops",
+      "references": [
+        "docs/ops/instruction-governance.md"
+      ]
+    },
+    {
+      "path": "ops/pr-playbook.md",
+      "type": "sop",
+      "scope": "ops",
+      "references": [
+        "docs/ops/instruction-governance.md",
+        "docs/ops/mergeable-branches.md"
+      ]
+    },
+    {
+      "path": "ops/integration-pr-template.md",
+      "type": "pr_template",
+      "scope": "ops",
+      "references": [
+        "AGENTS.md",
+        "docs/ops/instruction-governance.md"
+      ]
+    },
+    {
+      "path": ".github/PULL_REQUEST_TEMPLATE.md",
+      "type": "pr_template",
+      "scope": ".github",
+      "references": [
+        "AGENTS.md",
+        "docs/ops/instruction-governance.md"
+      ]
+    },
+    {
+      "path": "docs/ops/instruction-changelog.md",
+      "type": "changelog",
+      "scope": "docs/ops",
+      "references": [
+        "docs/ops/instruction-governance.md"
+      ]
+    },
+    {
+      "path": ".jules/",
+      "type": "agent_workspace",
+      "scope": ".jules",
+      "references": [],
+      "optional": true
+    },
+    {
+      "path": ".codex/",
+      "type": "agent_workspace",
+      "scope": ".codex",
+      "references": [],
+      "optional": true
+    }
+  ]
+}

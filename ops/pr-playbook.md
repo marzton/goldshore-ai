@@ -2,6 +2,8 @@
 
 This playbook defines how to handle:
 
+> Precedence note: This playbook is scoped operational guidance. Resolve instruction conflicts using `docs/ops/instruction-governance.md` (with `AGENTS.md` as repository default).
+
 - Merge conflicts that block PRs
 - Giant `pnpm-lock.yaml` conflicts (never solved by hand)
 - PR inventory and prioritization
