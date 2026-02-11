@@ -80,26 +80,13 @@ Jules MUST follow these rules exactly to maintain consistency, safety, and idemp
 
 Jules must ALWAYS map Cloudflare apps to the correct directories:
 
-<<<<<<< main
-Cloudflare App	Directory	Type
-gs-web	apps/gs-web	ACloudflare App	Directory	Type
-gs-web	apps/gs-web	Astro → Pages
-gs-admin	apps/gs-admin	Astro → Pages
-gs-api	apps/gs-api	CF Worker
-gs-gateway	apps/gs-gateway	CF Worker
-gs-control	apps/gs-control	CF Worker
-gs-mail	apps/gs-mail (if created later)	Email Worker
->>>>>>>-main
-ges
-gs-aCloudflare App Directory Type
+Cloudflare App Directory Type
 gs-web apps/gs-web Astro → Pages
 gs-admin apps/gs-admin Astro → Pages
 gs-api apps/gs-api CF Worker
 gs-gateway apps/gs-gateway CF Worker
 gs-control apps/gs-control CF Worker
 gs-mail apps/mail-worker (if created later) Email Worker
->>>>>>>-b826708
-NDATORY)
 
 Jules must use this OFFICIAL domain map:
 
