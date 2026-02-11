@@ -2,7 +2,7 @@
 
 This playbook defines how to handle:
 
-> Precedence note: This playbook is scoped operational guidance. Resolve instruction conflicts using `docs/ops/instruction-governance.md` (with `AGENTS.md` as repository default).
+Precedence note: This playbook is scoped operational guidance. Resolve instruction conflicts using `docs/ops/instruction-governance.md` (with `AGENTS.md` as repository default).
 
 - Merge conflicts that block PRs
 - Giant `pnpm-lock.yaml` conflicts (never solved by hand)
@@ -412,52 +412,18 @@ gh pr view <id> \
 
 Flag PRs that touch:
 
-<<<<<<< main
-- package.json, pnpm-lock.yam- package.json, pnpm-lock.yaml
-- apps/gs-admin/\*
-- apps/gs-web/\*
-- apps/gs-api/_, apps/gs-gateway/_, apps/gs-control/\*
-- tsconfig.json, astro.config.mjs, wrangler.toml
-- shared packages/\* (theme, ui, auth, utils, etc.)
->>>>>>>-main
-
 - `apps- `package.json`, `pnpm-lock.yaml`
 - `apps/gs-admin/*`
 - `apps/gs-web/*`
 - `apps/gs-api/*`, `apps/gs-gateway/*`, `apps/gs-control/*`
 - `tsconfig.json`, `astro.config.mjs`, `wrangler.toml`
 - `shared packages/*` (`theme`, `ui`, `auth`, `utils`, etc.)
->>>>>>>-b826708
-ed/merged before small copy changes.
 
 ⸻
 
 ### 3.3 Decide Merge Order
 
-<<<<<<< main
-Recommended priority:
-
-1. InfraRecommended priority:
-
-1. Infra / config PRs
-   - Root package.json
-   - tsconfig.json
-   - .github/workflows/\*
-   - infra/cloudflare/\*
-   - wrangler.toml changes
-2. Workers
-   - apps/gs-api
-   - apps/gs-gateway
-   - apps/gs-control
-3. Web/Admin frameworks
-   - apps/gs-web/astro.config.mjs, apps/gs-admin/astro.config.mjs
-   - WebLayout, AdminLayout, NavBar, Footer
-4. Pages and content
-   - apps/gs-web/src/pages/\*
-   - apps/gs-admin/src/pages/\*
-5. Docs / README / comment-only PRs
->>>>>>>-main
-ra / con**Recommended priority:**
+**Recommended priority:**
 
 1.  **Infra / config PRs**
     - Root `package.json`
@@ -476,7 +442,7 @@ ra / con**Recommended priority:**
     - `apps/gs-web/src/pages/*`
     - `apps/gs-admin/src/pages/*`
 5.  **Docs / README / comment-only PRs**
->>>>>>>-b826708
+
  Jules evolves into a hybrid GitHub App + Actions bot, the idea is:
 
 - Let Jules handle:
@@ -513,12 +479,8 @@ Until that’s live, this playbook is the manual version of what Jules will even
 
 ⸻
 
-<<<<<<< main
-**Scenario B — PR touches apps/gs-web/src/pages/index.as**Scenario B — PR touches apps/gs-web/src/pages/index.astro and apps/gs-admin/src/pages/index.astro**
->>>>>>>-main
- apps/ad**Scenario B — PR touches apps/gs-web/src/pages/index.astro and apps/gs-admin/src/pages/index.astro**
->>>>>>>+b826708
- those .astro files manually
+**Scenario B — PR touches apps/gs-web/src/pages/index.astro and apps/gs-admin/src/pages/index.astro**
+
 3. Delete/regenerate lockfile if needed
 4. Build: pnpm build
 5. Push, then re-run CI
