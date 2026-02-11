@@ -2,8 +2,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@ui/*": ["packages/ui/*"],
-      "@theme/*": ["packages/theme/*"]
+      "@ui/*": [
+        "packages/ui/*"
+      ],
+      "@theme/*": [
+        "packages/theme/*"
+      ]
     }
   }
 }
