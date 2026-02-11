@@ -38,7 +38,7 @@ We recommend the following extensions/tools for maximizing productivity in this 
 *   `apps/admin`: Internal operations dashboard (Astro).
 *   `apps/gateway`: Edge gateway for routing, auth, and rate limiting (Worker).
 *   `apps/api-worker`: Core business logic and data access (Worker).
-*   `apps/goldshore-agent`: AI agent service (Worker).
+*   `apps/gs-agent`: AI agent service (Worker).
 *   `apps/control-worker`: Internal ops automation.
 
 ---
