@@ -1,4 +1,4 @@
-name: Preview Control Worker (ops-preview.goldshore.ai)
+name: Preview Control Worker (gs-control)
 
 permissions:
   contents: read
@@ -13,7 +13,7 @@ on:
       - unlabeled
       - ready_for_review
     paths:
-      - "apps/control-worker/**"
+      - "apps/gs-control/**"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -41,7 +41,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Deploy Control worker (preview)
-        working-directory: apps/control-worker
+        working-directory: apps/gs-control
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
