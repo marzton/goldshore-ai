@@ -5,7 +5,7 @@
 @astro-gs/schema:build: cache miss, executing 82667cc20458e1c3
 gs-mail:build: cache hit, replaying logs b2378e35dfd6402c
 gs-mail:build:
-gs-mail:build: > gs-mail@0.0.0 build /app/apps/mail-worker
+gs-mail:build: > gs-mail@0.0.0 build /app/apps/gs-mail
 gs-mail:build: > wrangler deploy --dry-run --outdir=dist
 gs-mail:build:
 gs-mail:build:
@@ -24,7 +24,7 @@ gs-mail:build: No bindings found.
 gs-mail:build: --dry-run: exiting now.
 @goldshore/gateway:build: cache hit, replaying logs 5a359d80cd8994a9
 @goldshore/gateway:build:
-@goldshore/gateway:build: > @goldshore/gateway@0.1.0 build /app/apps/gateway
+@goldshore/gateway:build: > @goldshore/gateway@0.1.0 build /app/apps/gs-gateway
 @goldshore/gateway:build: > wrangler deploy --dry-run --outdir=dist
 @goldshore/gateway:build:
 @goldshore/gateway:build:
@@ -69,7 +69,7 @@ gs-mail:build: --dry-run: exiting now.
 @goldshore/agent:build: --dry-run: exiting now.
 gs-api:build: cache miss, executing e5d1d44c26c5a65b
 @goldshore/admin:build:
-@goldshore/admin:build: > @goldshore/admin@0.1.0 build /app/apps/admin
+@goldshore/admin:build: > @goldshore/admin@0.1.0 build /app/apps/gs-admin
 @goldshore/admin:build: > astro build
 @goldshore/admin:build:
 @astro-gs/schema:build:
@@ -78,11 +78,11 @@ gs-api:build: cache miss, executing e5d1d44c26c5a65b
 @astro-gs/schema:build:
 @astro-gs/schema:build: schema build
 @goldshore/web:build:
-@goldshore/web:build: > @goldshore/web@0.1.0 build /app/apps/web
+@goldshore/web:build: > @goldshore/web@0.1.0 build /app/apps/gs-web
 @goldshore/web:build: > astro build
 @goldshore/web:build:
 gs-api:build:
-gs-api:build: > gs-api@0.1.0 build /app/apps/api-worker
+gs-api:build: > gs-api@0.1.0 build /app/apps/gs-api
 gs-api:build: > wrangler deploy --dry-run --outdir=dist
 gs-api:build:
 @goldshore/web:build: ▶ Astro collects anonymous usage data.
@@ -130,7 +130,7 @@ gs-api:build: --dry-run: exiting now.
 @goldshore/admin:build: 04:40:25 [types] Generated 469ms
 @goldshore/admin:build: 04:40:25 [build] output: "server"
 @goldshore/admin:build: 04:40:25 [build] mode: "server"
-@goldshore/admin:build: 04:40:25 [build] directory: /app/apps/admin/dist/
+@goldshore/admin:build: 04:40:25 [build] directory: /app/apps/gs-admin/dist/
 @goldshore/admin:build: 04:40:25 [build] adapter: @astrojs/cloudflare
 @goldshore/admin:build: 04:40:25 [build] Collecting build info...
 @goldshore/admin:build: 04:40:25 [build] ✓ Completed in 606ms.
@@ -140,7 +140,7 @@ gs-api:build: --dry-run: exiting now.
 @goldshore/web:build: 04:40:26 [types] Generated 1.66s
 @goldshore/web:build: 04:40:26 [build] output: "static"
 @goldshore/web:build: 04:40:26 [build] mode: "server"
-@goldshore/web:build: 04:40:26 [build] directory: /app/apps/web/dist/
+@goldshore/web:build: 04:40:26 [build] directory: /app/apps/gs-web/dist/
 @goldshore/web:build: 04:40:26 [build] adapter: @astrojs/cloudflare
 @goldshore/web:build: 04:40:26 [build] Collecting build info...
 @goldshore/web:build: 04:40:26 [build] ✓ Completed in 1.80s.

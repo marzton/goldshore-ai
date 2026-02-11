@@ -1,4 +1,4 @@
-# apps/api-worker
+# apps/gs-api
 
 ## Overview
 The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers.
@@ -36,16 +36,16 @@ These are API endpoints handled by the worker in `src/index.ts` and the route fi
 ## Local Dev
 ```bash
 pnpm install
-pnpm --filter ./apps/api-worker dev
-pnpm --filter ./apps/api-worker build
+pnpm --filter ./apps/gs-api dev
+pnpm --filter ./apps/gs-api build
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-api-worker.yml`
+- Production deploy: `.github/workflows/deploy-gs-api.yml`
 - Preview deploy: `.github/workflows/preview-api-worker.yml`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 ```bash
-pnpm --filter ./apps/api-worker deploy
+pnpm --filter ./apps/gs-api deploy
 ```

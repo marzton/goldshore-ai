@@ -1,27 +1,39 @@
-# GoldShore Monorepo – Agent Safety & File Integrity Rules
-Last updated: 2025-02-14
+# Legacy Agent Rules (Archived)
+ Status: non-authoritative historical document.
 
-These instructions apply to Jules AI, GitHub ChatOps, Codex Agents, and any automated PR generator.
+This file is retained for historical context and migration traceability. Do not treat it as a source of active policy.
 
----
+<<## Canonical instruction policy
 
-## 1. DO NOT overwrite existing files without validation
+Use these documents instead:
+>>>>>>>-main
+=====
+#### 1. DO NOT overwrite existing files without validation
+
 Before modifying a file, the agent MUST:
 
 ### ✔ Step 1 — Check if file already exists
+
 If it exists:
+>>>>>>>-b826708
+GENTS.md` (repository-wide defaults)
+2. `docs/ops/instruction-governance.md` (precedence model and validation rules)
+3. `docs/ops/DEVELOPER_SOP.md` and `ops/pr-playbook.md` (operational SOPs)
+4. PR templates under `ops/` and `.github/`
 
-- Inspect its content
-- Detect if it contains **newer content** than the generated version
-- Detect if it contains **custom GoldShore logic**, **API keys**, **IDs**, **bindings**, or **Astro layout logic**
-
+<<<<<<Conflicts are resolved according to `docs/ops/instruction-governance.md`.
+>>>>>>>+main
+=
 ### ✔ Step 2 — If file content is older
+
 The agent may update it **only after appending a comment**:
 
 // [AUTO-UPDATE] Updated by Jules AI on YYYY-MM-DD HH:MM
 
 ### ✔ Step 3 — If file content is newer or customized
+
 The agent MUST:
+
 - Leave the file untouched
 - Produce a PR comment explaining the conflict
 - Offer a patch instead of overwriting
@@ -29,6 +41,7 @@ The agent MUST:
 ---
 
 ## 2. DO NOT include or modify:
+
 - `pnpm-lock.yaml`
 - Any `.lock` or `.tmp` files
 - `dist/` or any build outputs
@@ -41,9 +54,11 @@ If a PR adds these, REJECT and regenerate without them.
 ---
 
 ## 3. MOVE misplaced files instead of duplicating them
+
 Before creating or replacing a file, the agent MUST check:
 
 ### ✔ Rule: Validate folder structure
+
 Use this canonical monorepo map:
 
 apps/
@@ -62,12 +77,15 @@ infra/
 .github/
 
 ### ✔ If a file is found under an incorrect path
+
 The agent MUST:
+
 - Move it to the correct folder
 - Delete the ghost/duplicate folder
 - Add a PR note: “Moved file from <old-path> → <correct-path>”
 
 ### ✔ If a duplicate file exists
+
 - Compare timestamps + content
 - Retain ONLY the **most recently modified** version
 - Delete the older duplicate
@@ -76,6 +94,7 @@ The agent MUST:
 ---
 
 ## 4. Consolidate AGENT instructions
+
 Any `.md` file containing agent or SOP instructions MUST be moved to:
 
 AI/agents/
@@ -83,21 +102,22 @@ AI/agents/
 Canonical structure:
 
 AI/
-agent-rules.md            # THIS FILE (global rules)
-developer_sop.md          # SOP-001, SOP-002
+agent-rules.md # THIS FILE (global rules)
+developer_sop.md # SOP-001, SOP-002
 agents/
 admin-agent.md
 api-agent.md
 gateway-agent.md
 codex-ops.md
 
-If agent instructions are found anywhere else (e.g. in `docs/` or `apps/web/AI/`), move them here.
+If agent instructions are found anywhere else (e.g. in `docs/` or `apps/gs-web/AI/`), move them here.
 
 If a rule file exists at the root level or in an unexpected folder, MOVE it rather than overwrite or duplicate it.
 
 ---
 
 ## 5. Duplicate “Astro-goldshore inside Astro-goldshore” Fix
+
 If a nested folder contains a full duplicate monorepo:
 
 astro-goldshore/astro-goldshore/
@@ -113,6 +133,7 @@ The agent MUST:
 ---
 
 ## 6. PR Quality Rules
+
 A valid PR MUST:
 
 - Include fewer than **20 modified files**
@@ -127,23 +148,26 @@ If any of these rules are violated, the agent MUST abort and regenerate the PR.
 ---
 
 ## 7. OpenAPI Files
+
 All OpenAPI definitions MUST be stored under:
 
-apps/api-worker/openapi/
+apps/gs-api/openapi/
 
 And must never overwrite manually written documentation without user confirmation.
 
 ---
 
 ## 8. gs-mail Integration
+
 Agents MUST only modify:
 
-apps/api-worker/src/routes/mail.ts
-apps/api-worker/src/index.ts
-apps/api-worker/openapi/goldshore.v1.yaml
+apps/gs-api/src/routes/mail.ts
+apps/gs-api/src/index.ts
+apps/gs-api/openapi/goldshore.v1.yaml
 
 Never touch user email templates or admin UI without explicit request.
 
 ---
 
 # END OF RULESET
+>>>>>>> b826708
