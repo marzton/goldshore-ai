@@ -1,5 +1,12 @@
 # Finding Merge-able Branches (Goldshore)
 
+> [!NOTE]
+> **Document metadata**
+> - **Single source of truth for:** branch mergeability and branch operations workflow
+> - **Last updated:** 2026-02-11
+> - **Updated by:** manual
+> - **Workflow update path:** `N/A` (manual-only updates at this time)
+
 This is the project-standard workflow for identifying branches that can merge cleanly.
 
 ## Fast local check
