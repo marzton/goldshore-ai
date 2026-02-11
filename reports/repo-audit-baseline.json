@@ -1,0 +1,10 @@
+{
+  "generatedAt": "2026-02-11T15:28:30.568Z",
+  "summary": {
+    "duplicateFilenameOverlap": 29,
+    "unreferencedPackages": 6,
+    "unreferencedPages": 13,
+    "unreferencedComponents": 5,
+    "missingRequiredFiles": 8
+  }
+}

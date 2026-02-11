@@ -1,0 +1,43 @@
+name = "gs-api"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Local development settings
+[dev]
+port = 8787
+
+# KV Namespace for caching, metadata, auth tokens, etc.
+[[kv_namespaces]]
+binding = "API_KV"
+id = "GOLD_SHORE_API_KV" # fill from Cloudflare dashboard
+preview_id = "GOLD_SHORE_API_KV_PREVIEW"
+
+# D1 Database for relational data
+[[d1_databases]]
+binding = "DB"
+database_name = "goldshore-db"
+database_id = "GOLD_SHORE_DB_ID" # fill from Cloudflare
+
+# R2 Storage for asset uploads and blob storage
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "goldshore-assets"
+
+# AI Gateway binding (optional)
+[ai]
+binding = "AI"
+
+# Environment variable defaults
+[vars]
+ENVIRONMENT = "production"
+LOG_LEVEL = "info"
+
+# Preview environment
+[env.preview.vars]
+ENVIRONMENT = "preview"
+LOG_LEVEL = "debug"
+
+[routes]
+"api.goldshore.ai/*" = { "zone_name" = "goldshore.ai" }
+"api-preview.goldshore.ai/*" = { "zone_name" = "goldshore.ai", "env" = "preview" }
