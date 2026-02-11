@@ -330,7 +330,7 @@
       "id": "PII-047",
       "type": "Email address",
       "severity": "medium",
-      "location": "apps/mail-worker/wrangler.toml:10",
+      "location": "apps/gs-mail/wrangler.toml:10",
       "snippet": "ops@goldshore.ai",
       "guidance": "Replace with a role-based alias or redact with [redacted]."
     },
@@ -338,7 +338,7 @@
       "id": "PII-048",
       "type": "Email address",
       "severity": "medium",
-      "location": "apps/mail-worker/wrangler.toml:12",
+      "location": "apps/gs-mail/wrangler.toml:12",
       "snippet": "mail@goldshore.ai",
       "guidance": "Replace with a role-based alias or redact with [redacted]."
     },
@@ -346,7 +346,7 @@
       "id": "PII-049",
       "type": "Email address",
       "severity": "medium",
-      "location": "apps/mail-worker/wrangler.toml:12",
+      "location": "apps/gs-mail/wrangler.toml:12",
       "snippet": "support@goldshore.ai",
       "guidance": "Replace with a role-based alias or redact with [redacted]."
     },
@@ -354,7 +354,7 @@
       "id": "PII-050",
       "type": "Email address",
       "severity": "medium",
-      "location": "apps/mail-worker/wrangler.toml:12",
+      "location": "apps/gs-mail/wrangler.toml:12",
       "snippet": "ops@goldshore.ai",
       "guidance": "Replace with a role-based alias or redact with [redacted]."
     },
@@ -362,7 +362,7 @@
       "id": "PII-051",
       "type": "Email address",
       "severity": "medium",
-      "location": "apps/mail-worker/wrangler.toml:26",
+      "location": "apps/gs-mail/wrangler.toml:26",
       "snippet": "ops@goldshore.ai",
       "guidance": "Replace with a role-based alias or redact with [redacted]."
     },
@@ -370,7 +370,7 @@
       "id": "PII-052",
       "type": "Email address",
       "severity": "medium",
-      "location": "apps/mail-worker/wrangler.toml:27",
+      "location": "apps/gs-mail/wrangler.toml:27",
       "snippet": "mail@goldshore.ai",
       "guidance": "Replace with a role-based alias or redact with [redacted]."
     },
@@ -378,7 +378,7 @@
       "id": "PII-053",
       "type": "Email address",
       "severity": "medium",
-      "location": "apps/mail-worker/wrangler.toml:27",
+      "location": "apps/gs-mail/wrangler.toml:27",
       "snippet": "support@goldshore.ai",
       "guidance": "Replace with a role-based alias or redact with [redacted]."
     },
@@ -386,7 +386,7 @@
       "id": "PII-054",
       "type": "Email address",
       "severity": "medium",
-      "location": "apps/mail-worker/wrangler.toml:27",
+      "location": "apps/gs-mail/wrangler.toml:27",
       "snippet": "ops@goldshore.ai",
       "guidance": "Replace with a role-based alias or redact with [redacted]."
     },
