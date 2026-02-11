@@ -12,6 +12,7 @@
     "build:api": "turbo run build --filter=@goldshore/gs-api-worker",
     "build:gateway": "turbo run build --filter=@goldshore/gs-gateway",
     "build:control": "turbo run build --filter=@goldshore/gs-control-worker",
+    "build:mail": "turbo run build --filter=@goldshore/gs-mail-worker",
     "lint": "turbo run lint",
     "test": "turbo run test"
   },
