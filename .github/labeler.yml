@@ -1,0 +1,38 @@
+# Configuration for actions/labeler
+
+web:
+  - changed-files:
+    - any-glob-to-any-file: 'apps/web/**'
+
+admin:
+  - changed-files:
+    - any-glob-to-any-file: 'apps/admin/**'
+
+api:
+  - changed-files:
+    - any-glob-to-any-file: 'apps/api-worker/**'
+
+gateway:
+  - changed-files:
+    - any-glob-to-any-file: 'apps/gateway/**'
+
+control:
+  - changed-files:
+    - any-glob-to-any-file: 'apps/control-worker/**'
+
+shared:
+  - changed-files:
+    - any-glob-to-any-file: 'packages/**'
+
+infra:
+  - changed-files:
+    - any-glob-to-any-file: 'infra/**'
+
+workflows:
+  - changed-files:
+    - any-glob-to-any-file: '.github/workflows/**'
+
+deps:
+  - changed-files:
+    - any-glob-to-any-file: 'package.json'
+    - any-glob-to-any-file: 'pnpm-lock.yaml'

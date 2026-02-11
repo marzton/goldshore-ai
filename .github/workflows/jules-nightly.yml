@@ -1,0 +1,15 @@
+name: Jules Nightly
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Sweepers removed
+        run: echo "No sweeper jobs are configured in this workflow."
