@@ -1,6 +1,6 @@
 # DEVELOPER STANDARD OPERATING PROCEDURE (SOP)
 
-This document dictates the process for debugging Git history conflicts and deployment failures within the `goldshore/Astro-goldshore` monorepo.
+This document dictates the process for debugging Git history conflicts and deployment failures within the `goldshore/goldshore-ai` monorepo.
 
 ## 1. Synchronization and Conflict Resolution (SOP-001)
 
