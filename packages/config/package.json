@@ -1,5 +1,12 @@
 {
   "name": "@goldshore/config",
   "version": "0.0.1",
-  "private": true
+  "private": true,
+  "main": "astro.config.mjs",
+  "types": "astro.config.d.ts",
+  "dependencies": {
+    "astro": "^5.15.9",
+    "@astrojs/cloudflare": "^12.6.12",
+    "@astrojs/tailwind": "^6.0.2"
+  }
 }

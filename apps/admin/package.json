@@ -15,6 +15,7 @@
     "@goldshore/integrations": "workspace:*",
     "@goldshore/theme": "workspace:*",
     "@goldshore/ui": "workspace:*",
+    "@goldshore/config": "workspace:*",
     "astro": "^5.15.9"
   },
   "devDependencies": {

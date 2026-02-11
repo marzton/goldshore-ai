@@ -1,0 +1,2 @@
+grep: ./grep_schema.log: input file is also the output
+./astro-goldshore/tsconfig.json:      "@schema/*": ["packages/schema/*"]

@@ -1,0 +1,80 @@
+
+> astro-goldshore@ build:web /app
+> turbo run build --filter=@goldshore/web
+
+• turbo 2.8.3
+• Packages in scope: @goldshore/web
+• Running build in 1 packages
+• Remote caching disabled
+@goldshore/web:build: cache miss, executing ab72dc6defd91103
+@goldshore/web:build:
+@goldshore/web:build: > @goldshore/web@0.1.0 prebuild /app/apps/web
+@goldshore/web:build: > node scripts/generate-search-index.js
+@goldshore/web:build:
+@goldshore/web:build: Generating search index...
+@goldshore/web:build: Successfully generated search index with 7 documents at /app/apps/web/src/search-index.json
+@goldshore/web:build:
+@goldshore/web:build: > @goldshore/web@0.1.0 build /app/apps/web
+@goldshore/web:build: > astro build
+@goldshore/web:build:
+@goldshore/web:build: 02:30:56 [@astrojs/cloudflare] Enabling sessions with Cloudflare KV with the "SESSION" KV binding.
+@goldshore/web:build: 02:30:56 [@astrojs/cloudflare] If you see the error "Invalid binding `SESSION`" in your build output, you need to add the binding to your wrangler config file.
+@goldshore/web:build: 02:30:56 [WARN] [adapter] Cloudflare does not support sharp at runtime. However, you can configure `imageService: "compile"` to optimize images with sharp on prerendered pages during build time.
+@goldshore/web:build: 02:30:57 [content] Syncing content
+@goldshore/web:build: 02:30:57 [content] Synced content
+@goldshore/web:build: 02:30:57 [types] Generated 557ms
+@goldshore/web:build: 02:30:57 [build] output: "static"
+@goldshore/web:build: 02:30:57 [build] mode: "server"
+@goldshore/web:build: 02:30:57 [build] directory: /app/apps/web/dist/
+@goldshore/web:build: 02:30:57 [build] adapter: @astrojs/cloudflare
+@goldshore/web:build: 02:30:57 [build] Collecting build info...
+@goldshore/web:build: 02:30:57 [build] ✓ Completed in 663ms.
+@goldshore/web:build: 02:30:57 [build] Building server entrypoints...
+@goldshore/web:build: 02:31:00 [vite] ✓ built in 3.14s
+@goldshore/web:build: 02:31:00 [build] ✓ Completed in 3.18s.
+@goldshore/web:build:
+@goldshore/web:build:  building client (vite)
+@goldshore/web:build: 02:31:00 [vite] transforming...
+@goldshore/web:build: 02:31:00 [vite] ✓ 12 modules transformed.
+@goldshore/web:build: 02:31:00 [vite] rendering chunks...
+@goldshore/web:build: 02:31:00 [vite] computing gzip size...
+@goldshore/web:build: 02:31:00 [vite] dist/_astro/page.D1uwR3nK.js  2.24 kB │ gzip: 1.01 kB
+@goldshore/web:build: 02:31:00 [vite] ✓ built in 100ms
+@goldshore/web:build:
+@goldshore/web:build:  prerendering static routes
+@goldshore/web:build: 02:31:00 ▶ src/pages/about.astro
+@goldshore/web:build: 02:31:00   └─ /about/index.html (+21ms)
+@goldshore/web:build: 02:31:00 λ src/pages/api/admin/lead-submissions.ts
+@goldshore/web:build: 02:31:00   └─ /api/admin/lead-submissions (+3ms)
+@goldshore/web:build: 02:31:00 λ src/pages/api/contact.ts
+@goldshore/web:build: 02:31:00   └─ /api/contact (+2ms)
+@goldshore/web:build: 02:31:00 λ src/pages/api/docs-search.ts
+@goldshore/web:build: 02:31:00   └─ /api/docs-search (+2ms)
+@goldshore/web:build: 02:31:00 λ src/pages/api/forms/[slug].ts
+@goldshore/web:build: 02:31:00 [ERROR] [build] Failed to call getStaticPaths for src/pages/api/forms/[slug].ts
+@goldshore/web:build: [GetStaticPathsRequired] `getStaticPaths()` function is required for dynamic routes. Make sure that you `export` a `getStaticPaths` function from your dynamic route.
+@goldshore/web:build:   Hint:
+@goldshore/web:build:     See https://docs.astro.build/en/guides/routing/#dynamic-routes for more information on dynamic routes.
+@goldshore/web:build:
+@goldshore/web:build:     	If you meant for this route to be server-rendered, set `export const prerender = false;` in the page.
+@goldshore/web:build:   Error reference:
+@goldshore/web:build:     https://docs.astro.build/en/reference/errors/get-static-paths-required/
+@goldshore/web:build:   Location:
+@goldshore/web:build:     src/pages/api/forms/[slug].ts:0:0
+@goldshore/web:build:   Stack trace:
+@goldshore/web:build:     at validateDynamicRouteModule (file:///app/node_modules/.pnpm/astro@5.17.1_@types+node@25.2.1_jiti@1.21.7_rollup@4.57.1_tsx@4.21.0_typescript@5.9.3_yaml@2.8.2/node_modules/astro/dist/core/routing/validation.js:19:11)
+@goldshore/web:build:     at getPathsForRoute (file:///app/node_modules/.pnpm/astro@5.17.1_@types+node@25.2.1_jiti@1.21.7_rollup@4.57.1_tsx@4.21.0_typescript@5.9.3_yaml@2.8.2/node_modules/astro/dist/core/build/generate.js:213:31)
+@goldshore/web:build:     at async generatePages (file:///app/node_modules/.pnpm/astro@5.17.1_@types+node@25.2.1_jiti@1.21.7_rollup@4.57.1_tsx@4.21.0_typescript@5.9.3_yaml@2.8.2/node_modules/astro/dist/core/build/generate.js:93:9)
+@goldshore/web:build:     at async AstroBuilder.build (file:///app/node_modules/.pnpm/astro@5.17.1_@types+node@25.2.1_jiti@1.21.7_rollup@4.57.1_tsx@4.21.0_typescript@5.9.3_yaml@2.8.2/node_modules/astro/dist/core/build/index.js:157:5)
+@goldshore/web:build:     at async build (file:///app/node_modules/.pnpm/astro@5.17.1_@types+node@25.2.1_jiti@1.21.7_rollup@4.57.1_tsx@4.21.0_typescript@5.9.3_yaml@2.8.2/node_modules/astro/dist/core/build/index.js:45:3)
+@goldshore/web:build:  ELIFECYCLE  Command failed with exit code 1.
+@goldshore/web:build: ERROR: command finished with error: command (/app/apps/web) /home/jules/.local/share/pnpm/.tools/pnpm/9.0.0/bin/pnpm run build exited (1)
+@goldshore/web#build: command (/app/apps/web) /home/jules/.local/share/pnpm/.tools/pnpm/9.0.0/bin/pnpm run build exited (1)
+
+ Tasks:    0 successful, 1 total
+Cached:    0 cached, 1 total
+  Time:    8.031s
+Failed:    @goldshore/web#build
+
+ ERROR  run failed: command  exited (1)
+ ELIFECYCLE  Command failed with exit code 1.
