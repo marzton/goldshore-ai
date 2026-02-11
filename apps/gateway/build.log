@@ -1,6 +1,6 @@
 
 > @goldshore/gateway@0.1.0 build /app/apps/gateway
-> npx wrangler deploy --dry-run --outdir=dist
+> wrangler deploy --dry-run --outdir=dist
 
 
  ⛅️ wrangler 4.63.0 (update available 4.64.0)
