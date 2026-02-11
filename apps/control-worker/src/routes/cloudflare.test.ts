@@ -34,7 +34,7 @@ describe('Cloudflare Routes Middleware', () => {
   });
 
   // Helper to create a request with specific claims
-  const createRequest = async (claims: any, path: string = '/dns/records', method: string = 'GET') => {
+  const createRequest = async (claims: any, path: string = '/dns/records', method: string = 'GET', body?: any) => {
     const app = new Hono<{ Variables: { accessClaims: any } }>();
 
     // Middleware to inject claims
@@ -46,7 +46,11 @@ describe('Cloudflare Routes Middleware', () => {
     // Mount the routes under test
     app.route('/', cloudflareRoutes as any);
 
-    return app.request(`http://localhost${path}`, { method }, mockEnv);
+    return app.request(`http://localhost${path}`, {
+      method,
+      headers: body ? { 'Content-Type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined
+    }, mockEnv);
   };
 
   it('should deny access if user has no roles', async () => {

@@ -4,6 +4,7 @@ import { isValidEmail } from '../../utils/security';
 
 // Default to 90 days if not set in environment
 const DEFAULT_CONTACT_TTL_SECONDS = 60 * 60 * 24 * 90;
+const DEFAULT_MAILCHANNELS_API_URL = 'https://api.mailchannels.net/tx/v1/send';
 
 type Submission = {
   id: string;
@@ -60,7 +61,7 @@ const storeInKv = async (
   kv: KVNamespace,
   submission: Submission,
   autoResponder: ReturnType<typeof buildLeadAutoResponder>,
-  ttl: number
+  ttl: number,
 ) => {
   await kv.put(`contact:${submission.id}`, JSON.stringify({ submission, autoResponder }), {
     expirationTtl: ttl,
@@ -68,13 +69,13 @@ const storeInKv = async (
       formType: submission.formType,
       status: submission.status,
     },
-  });
+  );
 };
 
 const storeInD1 = async (
   db: D1Database,
   submission: Submission,
-  autoResponder: ReturnType<typeof buildLeadAutoResponder>
+  autoResponder: ReturnType<typeof buildLeadAutoResponder>,
 ) => {
   await db
     .prepare(
@@ -121,7 +122,7 @@ const storeInD1 = async (
       submission.userAgent || null,
       autoResponder.subject,
       autoResponder.text,
-      autoResponder.html
+      autoResponder.html,
     )
     .run();
 };
@@ -243,6 +244,142 @@ const safeRedirect = (redirectTo: string | null, origin: string) => {
   return new URL(trimmed, origin);
 };
 
+const dedupeRecipients = (recipients: MailRecipient[]) => {
+  const unique = new Map<string, MailRecipient>();
+  recipients.forEach((recipient) => {
+    const email = recipient.email.trim().toLowerCase();
+    if (!email) return;
+    if (!isValidEmail(email)) return;
+    if (!unique.has(email)) {
+      unique.set(email, {
+        email,
+        name: recipient.name?.trim() || undefined,
+      });
+    }
+  });
+  return [...unique.values()];
+};
+
+const recipientsFromEnv = (
+  rawRecipients: string | undefined,
+): MailRecipient[] => {
+  if (!rawRecipients) return [];
+
+  return rawRecipients
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .map((email) => ({ email }));
+};
+
+const resolveNotificationRecipients = (
+  formConfig: FormConfig,
+  env: Env,
+): MailRecipient[] => {
+  const fromConfig = formConfig.recipients
+    .map((recipient) => ({
+      email: recipient.email,
+      name: recipient.name,
+    }))
+    .filter((recipient) => recipient.email);
+
+  const fallback = recipientsFromEnv(env.CONTACT_NOTIFICATION_EMAILS);
+  return dedupeRecipients([...fromConfig, ...fallback]);
+};
+
+const buildSubmissionDigest = (submission: Submission) => {
+  const pairs: Array<[string, string]> = [
+    ['Submission ID', submission.id],
+    ['Form type', submission.formType],
+    ['Received', submission.receivedAt],
+    ['Name', submission.name],
+    ['Email', submission.email],
+    ['Company', submission.company],
+    ['Role', submission.role],
+    ['Website', submission.website],
+    ['Team size', submission.teamSize],
+    ['Industry', submission.industry],
+    ['Timeline', submission.timeline],
+    ['Budget', submission.budget],
+    ['Goals', submission.goals],
+    ['Message', submission.message],
+    ['IP', submission.ipAddress ?? ''],
+    ['User agent', submission.userAgent ?? ''],
+  ];
+
+  const filtered = pairs.filter(([, value]) => value);
+
+  const text = filtered
+    .map(([label, value]) => `${label}: ${value}`)
+    .join('\n');
+  const html = filtered
+    .map(
+      ([label, value]) =>
+        `<p><strong>${label}:</strong> ${value.replace(/</g, '&lt;')}</p>`,
+    )
+    .join('');
+
+  return { text, html };
+};
+
+const sendMail = async (
+  env: Env,
+  to: MailRecipient[],
+  subject: string,
+  text: string,
+  html: string,
+  replyTo?: MailRecipient,
+) => {
+  const fromEmail = env.MAILCHANNELS_SENDER_EMAIL?.trim();
+  const fromName = env.MAILCHANNELS_SENDER_NAME?.trim() || 'GoldShore';
+  if (!fromEmail || !isValidEmail(fromEmail) || to.length === 0) {
+    return {
+      attempted: false,
+      reason: 'missing_mail_configuration',
+    };
+  }
+
+  const payload = {
+    personalizations: [
+      {
+        to,
+      },
+    ],
+    from: {
+      email: fromEmail,
+      name: fromName,
+    },
+    ...(replyTo ? { reply_to: replyTo } : {}),
+    subject,
+    content: [
+      {
+        type: 'text/plain',
+        value: text,
+      },
+      {
+        type: 'text/html',
+        value: html,
+      },
+    ],
+  };
+
+  const endpoint = env.MAILCHANNELS_API_URL || DEFAULT_MAILCHANNELS_API_URL;
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  return {
+    attempted: true,
+    ok: response.ok,
+    status: response.status,
+    body: await response.text(),
+  };
+};
+
 export const POST: APIRoute = async ({ request, locals }) => {
   if (!request.headers.get('content-type')?.includes('form')) {
     return new Response('Unsupported payload.', { status: 415 });
@@ -317,11 +454,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
   });
 
   const storageTasks: Promise<unknown>[] = [];
-  if (env?.KV) storageTasks.push(storeInKv(env.KV, submission, autoResponder, ttl));
+  if (env?.KV)
+    storageTasks.push(storeInKv(env.KV, submission, autoResponder, ttl));
   if (env?.DB) storageTasks.push(storeInD1(env.DB, submission, autoResponder));
 
   const storageResults = await Promise.allSettled(storageTasks);
-  const storedSuccessfully = storageResults.some((result) => result.status === 'fulfilled');
+  const storedSuccessfully = storageResults.some(
+    (result) => result.status === 'fulfilled',
+  );
 
   if (!storedSuccessfully) {
     console.error('Contact submission storage failed.', storageResults);
