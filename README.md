@@ -484,7 +484,7 @@ GoldShore Brand Variants
 
 🧭 Monorepo Structure
 
-astro-goldshore/
+goldshore-ai/
 │
 ├── apps/
 │ ├── web/ → Public website (Astro + CF Pages)
