@@ -3,20 +3,22 @@
 This module documents how the infra agent should wire and verify runtime resources across Cloudflare to match the authoritative system map from Systems.pdf.
 
 ## 1. Authoritative System Map
+
 Treat the following as the expected Cloudflare inventory and URLs:
 
-| System          | Type    | Status   | Purpose             | Expected URL                          |
-| --------------- | ------- | -------- | ------------------- | ------------------------------------- |
-| Web             | Pages   | UNKNOWN  | Public site         | https://goldshore.ai                  |
-| Admin           | Pages   | UNKNOWN  | Control panel       | https://admin.goldshore.ai            |
-| API Worker      | Worker  | ONLINE   | Core API            | https://api.goldshore.ai              |
-| Gateway Worker  | Worker  | UNKNOWN  | Routing /api/*      | https://gw.goldshore.ai               |
-| Control Worker  | Worker  | UNKNOWN  | Infra automation    | https://ops.goldshore.ai              |
-| Mail Worker     | Worker  | UNKNOWN  | Email routing       | https://gs-mail.goldshore.workers.dev |
+| System         | Type   | Status  | Purpose          | Expected URL                          |
+| -------------- | ------ | ------- | ---------------- | ------------------------------------- |
+| Web            | Pages  | UNKNOWN | Public site      | https://goldshore.ai                  |
+| Admin          | Pages  | UNKNOWN | Control panel    | https://admin.goldshore.ai            |
+| API Worker     | Worker | ONLINE  | Core API         | https://api.goldshore.ai              |
+| Gateway Worker | Worker | UNKNOWN | Routing /api/\*  | https://gw.goldshore.ai               |
+| Control Worker | Worker | UNKNOWN | Infra automation | https://ops.goldshore.ai              |
+| Mail Worker    | Worker | UNKNOWN | Email routing    | https://gs-mail.goldshore.workers.dev |
 
 Always compare Cloudflare to this table and repair any divergence.
 
 ## 2. Runtime Objective
+
 - Pages
   - Deploy `gs-web` to `https://goldshore.ai`.
   - Deploy `gs-admin` to `https://admin.goldshore.ai`.
@@ -32,6 +34,7 @@ Always compare Cloudflare to this table and repair any divergence.
 - Health checks: every worker returns `{ "status": "ok", "service": "<name>" }` at `/health` and `/system/info`.
 
 ## 3. Cloudflare State Check (first action)
+
 Use the Cloudflare API to enumerate and verify current state.
 
 - Pages projects: `GET /client/v4/accounts/{account_id}/pages/projects` and confirm `gs-web` and `gs-admin` exist.
@@ -44,6 +47,7 @@ Use the Cloudflare API to enumerate and verify current state.
 - If any route is missing, create it.
 
 ## 4. Monorepo Expected Structure
+
 Ensure the repository contains the following layout (create scaffolds if missing):
 
 ```
@@ -73,9 +77,11 @@ packages/
 ```
 
 ## 5. Wrangler Standardization
+
 Enforce these `wrangler.toml` definitions per worker:
 
 **gs-api/wrangler.toml**
+
 ```toml
 name = "gs-api"
 main = "src/index.ts"
@@ -89,6 +95,7 @@ binding = "AI"
 ```
 
 **gs-gateway/wrangler.toml**
+
 ```toml
 name = "gs-gateway"
 main = "src/index.ts"
@@ -104,6 +111,7 @@ environment = "production"
 ```
 
 **gs-control/wrangler.toml**
+
 ```toml
 name = "gs-control"
 main = "src/index.ts"
@@ -114,6 +122,7 @@ routes = [
 ```
 
 **gs-mail/wrangler.toml**
+
 ```toml
 name = "gs-mail"
 main = "src/index.ts"
@@ -130,29 +139,32 @@ bindings = [
 ```
 
 ## 6. Health Routes
+
 Each worker must expose `/health`, `/system/info`, and `/version`, returning JSON such as:
 
 ```ts
-app.get("/health", (c) => c.json({ status: "ok", service: "gs-api" }));
+app.get('/health', (c) => c.json({ status: 'ok', service: 'gs-api' }));
 ```
 
 Add missing routes before deploying.
 
 ## 7. Autowiring Email
+
 - Create goldshore.ai email routes: `no-reply@`, `mail@`, `support@`, `ops@`, and catch-all `*@goldshore.ai` → `gs-mail`.
 - Ensure the mail worker exports an email handler:
 
 ```ts
 export default {
   async email(message, env, ctx) {
-    await env.MAIL.forward(message, "ops@goldshore.ai");
-  }
-}
+    await env.MAIL.forward(message, 'ops@goldshore.ai');
+  },
+};
 ```
 
 - Fix Access JWT validation using the provided audience IDs.
 
 ## 8. Status Dashboard (status.goldshore.ai)
+
 - Create Pages project `gs-status` with domain `status.goldshore.ai`.
 - UI should poll:
   - `GET api.goldshore.ai/health`
@@ -163,7 +175,9 @@ export default {
 - Display ONLINE/DOWN using color-coded badges.
 
 ## 9. Repair Flow for UNKNOWN Services
+
 For any UNKNOWN service:
+
 1. Check Pages/Worker existence.
 2. If missing, create the service.
 3. If exists but has no routes, add routes.
@@ -173,7 +187,8 @@ For any UNKNOWN service:
 7. Update the status dashboard.
 
 ## 10. Prohibited Actions
-- Do not rename `apps/web` or `apps/admin`.
+
+- Do not rename `apps/gs-web` or `apps/gs-admin`.
 - Do not create new repositories.
 - Do not change DNS records without instruction.
 - Do not regenerate lockfiles unless dependencies change.

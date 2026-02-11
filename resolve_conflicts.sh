@@ -3,12 +3,12 @@
 # Files deleted by them - accept deletion
 git rm -q .Jules/palette.md 2>/dev/null || true
 git rm -q apps/jules-bot/src/index.mjs 2>/dev/null || true
-git rm -q apps/mail-worker/tsconfig.json 2>/dev/null || true
+git rm -q apps/gs-mail/tsconfig.json 2>/dev/null || true
 
 # Both deleted - accept deletion
-git rm -q apps/admin/src/env.d.legacy-20251128.ts 2>/dev/null || true
-git rm -q apps/admin/src/pages/systems/index.astro 2>/dev/null || true
-git rm -q apps/web/src/env.d.legacy-20251128.ts 2>/dev/null || true
+git rm -q apps/gs-admin/src/env.d.legacy-20251128.ts 2>/dev/null || true
+git rm -q apps/gs-admin/src/pages/systems/index.astro 2>/dev/null || true
+git rm -q apps/gs-web/src/env.d.legacy-20251128.ts 2>/dev/null || true
 
 # Get list of "added by us" files in renamed directories (gs-admin, gs-api, gs-control, gs-gateway, gs-web)
 git status -s | grep "added by us" | awk '{print $NF}' | while read file; do

@@ -1,18 +1,21 @@
-# Agent Instructions
+# Agent Instructions Index (Legacy Mirror)
 
-This file contains instructions for AI agents working in this repository.
+This file is maintained as a legacy pointer only.
 
-## Tagging for Review
+## Canonical sources
 
-To request a review of an error or issue, please use the following tags in your comments or pull request descriptions:
+- Repository-wide defaults: `AGENTS.md`
+- Instruction precedence and validation: `docs/ops/instruction-governance.md`
+- SOP procedures: `docs/ops/DEVELOPER_SOP.md`, `ops/pr-playbook.md`
 
-*   **@Jules-Bot `[review-request]`**: For a general code review.
-*   **@Jules-Bot `[error-analysis]`**: For help in diagnosing and fixing a specific error.
-*   **@Jules-Bot `[issue-repro]`**: For assistance in reproducing a reported issue.
+If any content here conflicts with the files above, the canonical sources win.
+- **@Jules-Bot `[review-request]`**: For a general code review.
+- **@Jules-Bot `[error-analysis]`**: For help in diagnosing and fixing a specific error.
+- **@Jules-Bot `[issue-repro]`**: For assistance in reproducing a reported issue.
 
 Please provide as much context as possible when using these tags, including:
 
-*   A clear description of the issue or the code to be reviewed.
-*   Steps to reproduce the error or issue.
-*   Any relevant logs or error messages.
-*   The expected outcome.
+- A clear description of the issue or the code to be reviewed.
+- Steps to reproduce the error or issue.
+- Any relevant logs or error messages.
+- The expected outcome.
