@@ -1,0 +1,111 @@
+name: Consolidation Matrix
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled, edited]
+  merge_group:
+
+jobs:
+  detect-consolidation:
+    runs-on: ubuntu-latest
+    outputs:
+      run_matrix: ${{ steps.flags.outputs.run_matrix }}
+      ui_affecting: ${{ steps.flags.outputs.ui_affecting }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine matrix requirements
+        id: flags
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${{ github.event_name }}" == "merge_group" ]]; then
+            run_matrix=true
+          else
+            text="${{ github.event.pull_request.title }}
+${{ github.event.pull_request.body }}
+${{ github.head_ref }}
+${{ join(github.event.pull_request.labels.*.name, ' ') }}"
+
+            if echo "$text" | tr '[:upper:]' '[:lower:]' | grep -q "consolidation"; then
+              run_matrix=true
+            else
+              run_matrix=false
+            fi
+          fi
+
+          if [[ "$run_matrix" == "false" ]]; then
+            echo "run_matrix=false" >> "$GITHUB_OUTPUT"
+            echo "ui_affecting=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            base_ref="origin/${{ github.base_ref }}"
+            git fetch origin "${{ github.base_ref }}" --depth=1
+            changed_files=$(git diff --name-only "$base_ref...HEAD")
+          else
+            changed_files=$(git diff --name-only HEAD~1...HEAD)
+          fi
+
+          if echo "$changed_files" | grep -E '^(apps/(gs-web|gs-admin)/).*(\.astro|\.tsx?|\.jsx?|\.css|\.scss|\.png|\.jpg|\.jpeg|\.svg|\.webp)$' > /dev/null; then
+            ui_affecting=true
+          else
+            ui_affecting=false
+          fi
+
+          echo "run_matrix=true" >> "$GITHUB_OUTPUT"
+          echo "ui_affecting=$ui_affecting" >> "$GITHUB_OUTPUT"
+
+  required-gates:
+    needs: detect-consolidation
+    if: needs.detect-consolidation.outputs.run_matrix == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck gate
+        run: pnpm gate:typecheck
+
+      - name: Lint gate
+        run: pnpm gate:lint
+
+      - name: Unit test gate
+        run: pnpm gate:test:unit
+
+      - name: Integration/API gate
+        run: pnpm gate:test:integration
+
+      - name: Worker config validation gate
+        run: pnpm gate:validate:workers
+
+      - name: UI visual regression gate
+        env:
+          UI_AFFECTING_CHANGE: ${{ needs.detect-consolidation.outputs.ui_affecting }}
+        run: pnpm gate:test:visual
+
+  matrix-not-required:
+    needs: detect-consolidation
+    if: needs.detect-consolidation.outputs.run_matrix != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Consolidation marker not detected; matrix gates skipped."
