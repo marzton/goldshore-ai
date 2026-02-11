@@ -26,8 +26,45 @@
 
 ## Infrastructure
 
-- `infra/scripts`: Automation scripts
-- `infra/cloudflare`: Cloudflare configurations (wrangler.toml files for some apps are here or referenced)
+```json
+{
+  "name": "astro-goldshore",
+  "private": true,
+  "packageManager": "pnpm@8.15.5",
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build:openapi": "node scripts/build-openapi.mjs",
+    "build": "pnpm build:openapi && turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "build:openapi": "node scripts/build-openapi.mjs"
+  },
+  "devDependencies": {
+    "astro": "^5.15.9",
+    "eslint": "^8.57.0",
+    "eslint-plugin-astro": "^1.5.0",
+    "prettier": "^3.2.5",
+    "prettier-plugin-astro": "^0.13.0",
+    "typescript": "^5.4.2",
+    "yaml": "^2.3.4"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.6.11",
+    "turbo": "^2.6.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "@astrojs/cloudflare": "latest",
+      "@astrojs/adapter-cloudflare": "latest"
+    }
+  }
+}
+```
+
+```toml
+name = "gs-api"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
 
 ## Configuration Summary
 
