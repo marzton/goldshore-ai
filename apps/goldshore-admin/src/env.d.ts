@@ -1,3 +1,8 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
-/// <reference types="@goldshore/config/astro-env" />
+
+declare namespace App {
+    interface Locals {
+        user?: import('@goldshore/auth').AccessUser;
+    }
+}

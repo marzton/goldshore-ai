@@ -1,20 +1,22 @@
 // apps/goldshore-admin/src/middleware.ts
 
 import { defineMiddleware } from 'astro:middleware';
-import { getCfAccessConfig, verifyCfAccessJwt } from '@goldshore/auth';
+import { verifyCfAccessJwt } from '@goldshore/auth';
 
 /**
  * Astro middleware to protect all routes in the admin dashboard.
  */
 export const onRequest = defineMiddleware(async (context, next) => {
-  const config = getCfAccessConfig(context.locals.runtime?.env);
+  // Get the Cloudflare Turnstile token from the form data
+  const teamDomain = context.locals.runtime?.env?.CF_TEAM_DOMAIN;
+  const audience = context.locals.runtime?.env?.CF_ACCESS_AUD;
 
-  if (!config) {
+  if (!teamDomain || !audience) {
     console.error('Missing Cloudflare Access environment variables');
     return new Response('Internal Server Error: App is misconfigured', { status: 500 });
   }
 
-  const user = await verifyCfAccessJwt(context.request, config.teamDomain, config.audience);
+  const user = await verifyCfAccessJwt(context.request, teamDomain, audience);
 
   if (!user) {
     // If the user is not authenticated, return a 401 Unauthorized response.
@@ -24,7 +26,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // For the admin dashboard, we can also enforce that the user
   // belongs to the 'admin' group.
   if (!user.groups || !user.groups.includes('admin')) {
-    return new Response('Forbidden: You do not have permission to access this resource', { status: 403 });
+      return new Response('Forbidden: You do not have permission to access this resource', { status: 403 });
   }
 
   // Store the user object in the request context so it can be accessed from pages.

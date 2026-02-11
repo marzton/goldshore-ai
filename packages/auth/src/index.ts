@@ -15,11 +15,6 @@ export interface AccessTokenPayload extends JWTPayload {
 // Re-export the payload type for convenience in other packages
 export type AccessUser = AccessTokenPayload;
 
-export type CfAccessConfig = {
-  teamDomain: string;
-  audience: string;
-};
-
 // --- JWT Verification ---
 
 // Cache for the JWK set to avoid fetching it on every request
@@ -61,38 +56,6 @@ export async function verifyCfAccessJwt(
     console.error('JWT Verification Failed:', err);
     return null;
   }
-}
-
-/**
- * Reads Cloudflare Access configuration from an environment-like object.
- */
-export function getCfAccessConfig(
-  env?: Partial<Record<'CF_TEAM_DOMAIN' | 'CF_ACCESS_AUD', string>>
-): CfAccessConfig | null {
-  const teamDomain = env?.CF_TEAM_DOMAIN;
-  const audience = env?.CF_ACCESS_AUD;
-
-  if (!teamDomain || !audience) {
-    return null;
-  }
-
-  return { teamDomain, audience };
-}
-
-/**
- * Resolves and validates a Cloudflare Access user from request + env.
- */
-export async function resolveCfAccessUser(
-  request: Request,
-  env?: Partial<Record<'CF_TEAM_DOMAIN' | 'CF_ACCESS_AUD', string>>
-): Promise<AccessUser | null> {
-  const config = getCfAccessConfig(env);
-
-  if (!config) {
-    return null;
-  }
-
-  return verifyCfAccessJwt(request, config.teamDomain, config.audience);
 }
 
 // --- Hono Middleware ---
