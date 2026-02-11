@@ -39,7 +39,7 @@ const skipExtensions = new Set([
 
 const webRoots = [
   'apps/web',
-  'apps/admin',
+  'apps/gs-admin',
   'public',
   'docs'
 ];

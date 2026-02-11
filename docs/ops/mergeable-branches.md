@@ -64,6 +64,16 @@ git log --oneline --left-right --cherry origin/main...origin/<branch-name>
 - `<` commits are missing from the branch
 - `>` commits are introduced by the branch
 
+## Branch existence pre-check (required)
+
+Before any scripted or manual `git checkout`, `git rebase`, or `git merge` that targets a remote branch, verify the branch exists on `origin`:
+
+```bash
+git ls-remote --exit-code --heads origin <branch-name>
+```
+
+Proceed only when the command succeeds. This is mandatory for automation safety and branch-governance compliance.
+
 ## Workflow policy
 
 - Keep `main` deployable.
@@ -73,6 +83,7 @@ git log --oneline --left-right --cherry origin/main...origin/<branch-name>
 Example:
 
 ```bash
+git ls-remote --exit-code --heads origin feature-x
 git checkout feature-x
 git rebase origin/main
 ```

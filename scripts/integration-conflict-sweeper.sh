@@ -49,7 +49,20 @@ if [[ -n "$(git status --porcelain)" && "$ALLOW_DIRTY" -ne 1 && "$DRY_RUN" -ne 1
   exit 1
 fi
 
+origin_branch_exists() {
+  local branch="$1"
+  git ls-remote --exit-code --heads origin "${branch}" > /dev/null 2>&1
+}
+
 git fetch --all --prune
+
+if [[ "${BASE_BRANCH}" == origin/* ]]; then
+  base_remote="${BASE_BRANCH#origin/}"
+  if ! origin_branch_exists "${base_remote}"; then
+    echo "Base branch ${BASE_BRANCH} does not exist on origin." >&2
+    exit 1
+  fi
+fi
 
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
@@ -79,6 +92,9 @@ def scan_conflict_markers():
         path, rest = line.split(":", 1)
         results.append({"file": path, "line": rest})
     return results
+
+def origin_branch_exists(branch):
+    return subprocess.call(f"git ls-remote --exit-code --heads origin {branch}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
 
 def load_branches():
     refs = run("git for-each-ref --format='%(refname:short)' refs/remotes/origin").splitlines()
@@ -145,6 +161,8 @@ def score_branch(branch):
 
 results = []
 for branch in load_branches():
+    if not origin_branch_exists(branch):
+        continue
     results.append(score_branch(branch))
 
 # Optional conflict probing
@@ -153,6 +171,10 @@ if not dry_run:
     subprocess.check_call(f"git switch -C {integration} {base}", shell=True)
     for item in results:
         branch = item["branch"]
+        if not origin_branch_exists(branch):
+            item["merge_status"] = "missing_on_origin"
+            item["conflicts"] = []
+            continue
         try:
             subprocess.check_call(f"git merge --no-commit --no-ff origin/{branch}", shell=True)
             conflict_files = subprocess.check_output("git diff --name-only --diff-filter=U", shell=True, text=True).strip().splitlines()
