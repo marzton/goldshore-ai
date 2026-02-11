@@ -8,10 +8,10 @@
     "build": "echo 'No build script yet'"
   },
   "devDependencies": {
-    "astro": "^4.0.0",
+    "astro": "^5.16.0",
     "typescript": "^5.0.0"
   },
   "peerDependencies": {
-    "astro": "^4.0.0"
+    "astro": "^5.16.0"
   }
 }
