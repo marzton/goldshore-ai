@@ -9,9 +9,10 @@ If a Pull Request (PR) shows merge conflicts, the Agent MUST execute a **Forcefu
 | Step | Command/Action | Rationale |
 | :--- | :--- | :--- |
 | 1. Pull Latest `main` | `git fetch origin main` | Ensures the local Agent environment has the latest, clean security/config fixes. |
-| 2. Rebase Source Branch | `git rebase origin/main <source-branch>` | Rewrites the source branch's history on top of the clean `main` branch. |
-| 3. Resolve Conflicts | (Automated by Agent or LLM) | Fixes file-level discrepancies introduced by previous merges/squashes. |
-| 4. Push Updated Branch | `git push origin <source-branch> --force-with-lease` | Overwrites the remote source branch, making the PR clean and mergeable. |
+| 2. Verify Source Branch Exists on Origin | `git ls-remote --exit-code --heads origin <source-branch>` | Prevents checkout/rebase automation from operating on stale or deleted branches. |
+| 3. Rebase Source Branch | `git checkout <source-branch> && git rebase origin/main` | Rewrites the source branch's history on top of the clean `main` branch. |
+| 4. Resolve Conflicts | (Automated by Agent or LLM) | Fixes file-level discrepancies introduced by previous merges/squashes. |
+| 5. Push Updated Branch | `git push origin <source-branch> --force-with-lease` | Overwrites the remote source branch, making the PR clean and mergeable. |
 
 ## 2. Deployment Failure Troubleshooting (SOP-002)
 
