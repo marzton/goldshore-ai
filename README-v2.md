@@ -76,13 +76,13 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 ```
 /
 ├── apps/
-│   ├── web/               # Public website (Astro)
-│   ├── admin/             # Admin dashboard (Astro)
-│   ├── api-worker/        # Hono API (Workers)
-│   ├── gateway/           # Router + jobs (Workers)
+│   ├── gs-web/            # Public website (Astro)
+│   ├── gs-admin/          # Admin dashboard (Astro)
+│   ├── gs-api/            # Hono API (Workers)
+│   ├── gs-gateway/        # Router + jobs (Workers)
 │   ├── gs-agent/          # Autonomous AI service (Workers)
-│   ├── goldshore-agent/   # Deprecated agent shim (legacy workflows)
-│   ├── control-worker/    # Infra automation
+│   ├── gs-agent/          # Deprecated agent shim (legacy workflows)
+│   ├── gs-control/        # Infra automation
 │   ├── jules-bot/         # GitHub automation bot
 │   └── legacy/            # Legacy services
 │
@@ -137,7 +137,7 @@ flowchart TB
 
 ## Applications
 
-### 1) `apps/web` — Public Website (Astro)
+### 1) `apps/gs-web` — Public Website (Astro)
 
 - Marketing site
 - User portal
@@ -165,7 +165,7 @@ Authenticated user portal:
 └── settings
 ```
 
-### 2) `apps/admin` — Admin Dashboard (Astro SSR)
+### 2) `apps/gs-admin` — Admin Dashboard (Astro SSR)
 
 Protected by **Cloudflare Access**.
 
@@ -188,7 +188,7 @@ Protected by **Cloudflare Access**.
     └── secrets
 ```
 
-### 3) `apps/api-worker` — gs-api (Hono API Worker)
+### 3) `apps/gs-api` — gs-api (Hono API Worker)
 
 ```
 Route: https://api.goldshore.ai/*
@@ -390,9 +390,9 @@ pnpm dev
 Run individual apps:
 
 ```bash
-pnpm --filter ./apps/web dev
-pnpm --filter ./apps/admin dev
-pnpm --filter ./apps/api-worker dev
+pnpm --filter ./apps/gs-web dev
+pnpm --filter ./apps/gs-admin dev
+pnpm --filter ./apps/gs-api dev
 pnpm --filter ./apps/gateway dev
 pnpm --filter ./apps/gs-agent dev
 ```
@@ -408,8 +408,8 @@ pnpm build
 Playwright tests live in:
 
 ```
-apps/admin/tests
-apps/web/tests
+apps/gs-admin/tests
+apps/gs-web/tests
 ```
 
 Run:
@@ -425,7 +425,7 @@ Pages deploy automatically via GitHub Actions.
 Workers deploy:
 
 ```bash
-pnpm --filter ./apps/api-worker deploy
+pnpm --filter ./apps/gs-api deploy
 pnpm --filter ./apps/gateway deploy
 pnpm --filter ./apps/control-worker deploy
 pnpm --filter ./apps/gs-agent deploy
