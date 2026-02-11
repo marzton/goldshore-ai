@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
   "module": "dist/index.js",
   "exports": {
     ".": "./dist/index.js"

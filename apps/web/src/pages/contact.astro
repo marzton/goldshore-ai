@@ -1,0 +1,65 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+---
+
+<SiteLayout title="Contact | GoldShore AI" description="Start an engagement with GoldShore.">
+  <section>
+    <p class="kicker">Contact</p>
+    <h1>Start with a concise brief.</h1>
+    <p class="muted">Primary path: start planning. Secondary path: talk to us.</p>
+  </section>
+
+  <section class="card">
+    <form id="intake-form" class="form-grid" aria-describedby="form-guidance">
+      <p id="form-guidance" class="muted">Project brief example: “We need AI gateway routing for 2 regions, target p95 &lt; 250ms, and incident automation by end of quarter.”</p>
+      <label>Name<input required name="name" autocomplete="name" /></label>
+      <label>Email<input required name="email" type="email" autocomplete="email" /></label>
+      <label>Project brief<textarea required name="brief" rows="5" placeholder="Current system context, key risk, timeline target, and expected outcomes."></textarea></label>
+      <details class="card">
+        <summary>Add structured intake (optional)</summary>
+        <label>Timeline
+          <select name="timeline">
+            <option value="">Select timeline</option>
+            <option>0-30 days</option>
+            <option>31-60 days</option>
+            <option>61-90 days</option>
+            <option>90+ days</option>
+          </select>
+        </label>
+        <label>Budget range
+          <select name="budget">
+            <option value="">Select budget range</option>
+            <option>Under $25k</option>
+            <option>$25k-$75k</option>
+            <option>$75k-$150k</option>
+            <option>$150k+</option>
+          </select>
+        </label>
+        <label>Area of focus
+          <select name="focus">
+            <option value="">Select focus area</option>
+            <option>Infrastructure</option>
+            <option>AI systems</option>
+            <option>Observability</option>
+            <option>Automation</option>
+          </select>
+        </label>
+      </details>
+      <div class="cta-row">
+        <button class="btn btn-primary" type="submit">Start engagement planning</button>
+        <a class="btn btn-secondary" href="mailto:ops@goldshore.ai">Talk to us</a>
+      </div>
+    </form>
+    <p id="form-confirmation" class="proof" hidden>Intake received. Our operations lead will review scope and respond with next steps within one business day.</p>
+  </section>
+
+  <script>
+    const form = document.getElementById('intake-form');
+    const confirmation = document.getElementById('form-confirmation');
+    form?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      form.setAttribute('hidden', '');
+      confirmation?.removeAttribute('hidden');
+    });
+  </script>
+</SiteLayout>
