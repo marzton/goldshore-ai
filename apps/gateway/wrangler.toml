@@ -1,0 +1,31 @@
+name = "gs-gateway"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[dev]
+port = 8788
+
+# Service binding → API Worker
+[[services]]
+binding = "API"
+service = "gs-api"
+environment = "production"
+
+# Optional AI Gateway binding
+[ai]
+binding = "AI"
+
+[vars]
+DEFAULT_MODEL = "gpt-4o"
+ENVIRONMENT = "production"
+GATEWAY_NAME = "GoldShore Gateway"
+
+# Preview environment
+[env.preview.vars]
+ENVIRONMENT = "preview"
+DEFAULT_MODEL = "gpt-4o-mini"
+
+[routes]
+"gw.goldshore.ai/*" = { "zone_name" = "goldshore.ai" }
+"gw-preview.goldshore.ai/*" = { "zone_name" = "goldshore.ai", "env" = "preview" }
