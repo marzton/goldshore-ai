@@ -44,6 +44,6 @@ pnpm --filter ./apps/gs-control deploy
 
 ## Source/build artifact policy
 - TypeScript (`.ts`) files in `src/` are the source of truth.
-- Do not commit generated JavaScript files under `src/libs`, `src/routes`, or `src/tasks`.
-- Compiled output must go to `dist/` via `pnpm --filter ./apps/gs-control build`.
+- Do not commit generated JavaScript files under `src/` (especially `src/libs`, `src/routes`, and `src/tasks`).
+- TypeScript compilation output must go only to `dist/` via `pnpm --filter ./apps/gs-control build` (`tsconfig.json` sets `outDir: "dist"`).
 - Legacy snapshots created during migrations should be moved under `archive/legacy-snapshots/<YYYY-MM-DD>/` rather than left in app directories.
