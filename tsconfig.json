@@ -6,7 +6,8 @@
       "@goldshore/config/*": ["packages/config/*"],
       "@goldshore/utils/*": ["packages/utils/*"],
       "@goldshore/auth/*": ["packages/auth/*"],
-      "@goldshore/theme/*": ["packages/theme/*"]
+      "@goldshore/theme/*": ["packages/theme/*"],
+      "@schema/*": ["packages/schema/*"]
     }
   }
 }

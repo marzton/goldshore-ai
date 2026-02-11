@@ -10,12 +10,13 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.16.0",
     "@goldshore/theme": "workspace:*",
-    "@goldshore/ui": "workspace:*"
+    "@goldshore/ui": "workspace:*",
+    "astro": "^5.17.1"
   },
   "devDependencies": {
     "@astrojs/cloudflare": "^12.6.11",
+    "@goldshore/config": "workspace:^",
     "typescript": "^5.9.3"
   }
 }

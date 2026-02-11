@@ -1,5 +1,9 @@
 {
   "name": "@goldshore/config",
   "version": "0.0.1",
-  "private": true
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./astro": "./astro.mjs"
+  }
 }
