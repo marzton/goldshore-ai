@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
+    "@goldshore/config": "workspace:^",
     "@goldshore/integrations": "workspace:*",
     "@goldshore/theme": "workspace:*",
     "@goldshore/ui": "workspace:*",
