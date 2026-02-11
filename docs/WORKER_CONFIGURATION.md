@@ -23,7 +23,7 @@ The AI agent service.
 - **Directory:** `apps/gs-agent`
 - **Package Name:** `@goldshore/agent`
 - **Wrangler:** `infra/cloudflare/gs-agent.wrangler.toml` (external config)
-- **Deployment:** CI workflow (`deploy-agent.yml`).
+- **Deployment:** CI workflow (`deploy-gs-agent.yml`).
 - **Bindings:**
   - `AI`: Cloudflare Workers AI binding.
   - `Queues`: Consumes `goldshore-jobs` queue.
@@ -31,14 +31,14 @@ The AI agent service.
 - **Main Entry:** `src/index.ts`
 - **Purpose:** Handles AI inference tasks, job processing from queues, and agent interactions.
 
-## 3. gs-gateway (`apps/gateway`)
+## 3. gs-gateway (`apps/gs-gateway`)
 
 The API gateway and router.
 
-- **Directory:** `apps/gateway`
+- **Directory:** `apps/gs-gateway`
 - **Package Name:** `@goldshore/gateway`
 - **Wrangler:** `wrangler.toml` (locally defined)
-- **Deployment:** CI workflow (`deploy-gateway.yml`).
+- **Deployment:** CI workflow (`deploy-gs-gateway.yml`).
 - **Bindings:**
   - `KV Namespaces`: `gs-kv` (production), `GATEWAY_KV` (local/dev).
   - `Queues`: Produces to `gs-jobs`.
@@ -49,14 +49,14 @@ The API gateway and router.
 - **Main Entry:** `src/index.ts` (implied).
 - **Purpose:** Primary entry point for API traffic, routing requests to `gs-api` or handling them directly (e.g., cached responses).
 
-## 4. gs-control (`apps/control-worker`)
+## 4. gs-control (`apps/gs-control`)
 
 The operational control plane worker.
 
-- **Directory:** `apps/control-worker`
+- **Directory:** `apps/gs-control`
 - **Package Name:** `@goldshore/control`
 - **Wrangler:** `wrangler.toml` (locally defined)
-- **Deployment:** CI workflow (`deploy-control-worker.yml`).
+- **Deployment:** CI workflow (`deploy-gs-control.yml`).
 - **Bindings:**
   - `KV Namespaces`: `CONTROL_LOGS`.
   - `R2 Buckets`: `STATE`.
@@ -72,8 +72,8 @@ The backend API service.
 
 - **Directory:** `apps/gs-api`
 - **Package Name:** `gs-api`
-- **Wrangler:** `apps/gs-api/wrangler.toml` (local default) or `infra/cloudflare/gs-api-worker.wrangler.toml` (shared infra config).
-- **Deployment:** CI workflow (`deploy-api-worker.yml`).
+- **Wrangler:** `apps/gs-api/wrangler.toml` (local default) or `infra/cloudflare/goldshore-api.wrangler.toml` (shared infra config).
+- **Deployment:** CI workflow (`deploy-gs-api.yml`).
 - **Bindings:** likely similar to gateway (KV, D1, etc.).
 - **Purpose:** Core business logic and data access layer.
 
