@@ -1,5 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminLayout from '../../layouts/AdminLayout.astro';
 
 export const prerender = false;
 
@@ -78,46 +78,42 @@ const buildMailto = (email: string | null, name: string | null) => {
 };
 ---
 
-<BaseLayout title="Lead Submissions | GoldShore" description="Admin review for inbound leads">
-  <section class="gs-section">
-    <div class="gs-grid columns-2">
+<AdminLayout title="Lead Submissions | GoldShore Admin" requiredPermission="forms:read">
+  <section class="max-w-6xl mx-auto py-16 px-6">
+    <div class="grid gap-6 md:grid-cols-[1fr_auto] md:items-start">
       <div>
-        <h1>Lead submissions</h1>
-        <p class="gs-text-lg">Review inbound requests, respond quickly, and archive resolved leads.</p>
+        <h1 class="text-3xl gs-heading mb-3">Lead submissions</h1>
+        <p class="text-[var(--gs-text-secondary)]">
+          Review inbound requests, respond quickly, and archive resolved leads.
+        </p>
       </div>
-      <div class="gs-card">
-        <h2 class="section-title"><span>◆</span>Actions</h2>
-        <ul>
-          <li><a href={exportUrl}>Export CSV</a></li>
-          <li><a href="/contact">Open contact form</a></li>
-        </ul>
-      </div>
+      <a class="gs-btn" href={exportUrl}>Export CSV</a>
     </div>
 
-    <div class="gs-card" style="margin-top: 2rem;">
-      <form method="get" class="gs-grid" style="gap: 1rem; align-items: end;">
-        <div class="gs-input-group">
-          <label for="status-filter">Status filter</label>
+    <div class="gs-panel mt-8">
+      <form method="get" class="grid gap-4 md:grid-cols-[minmax(0,260px)_auto] md:items-end">
+        <label class="grid gap-2" for="status-filter">
+          <span class="gs-helper">Status filter</span>
           <select id="status-filter" name="status">
             <option value="" selected={!filterStatus}>All</option>
             {allowedStatuses.map((status) => (
               <option value={status} selected={filterStatus === status}>{status}</option>
             ))}
           </select>
-        </div>
+        </label>
         <div>
-          <button class="gs-button" type="submit">Apply filter</button>
+          <button class="gs-btn" type="submit">Apply filter</button>
         </div>
       </form>
     </div>
 
     {errorMessage ? (
-      <div class="gs-card" style="margin-top: 2rem;">
-        <p class="gs-text-lg">{errorMessage}</p>
+      <div class="gs-panel mt-8">
+        <p>{errorMessage}</p>
       </div>
     ) : (
-      <div class="gs-card" style="margin-top: 2rem; overflow-x: auto;">
-        <table class="gs-table">
+      <div class="gs-table-card mt-8 overflow-x-auto">
+        <table>
           <thead>
             <tr>
               <th>Received</th>
@@ -148,13 +144,13 @@ const buildMailto = (email: string | null, name: string | null) => {
                   </td>
                   <td>
                     <div>{submission.company || '—'}</div>
-                    <div class="gs-text-sm">{submission.role || submission.team_size || '—'}</div>
+                    <div class="gs-helper">{submission.role || submission.team_size || '—'}</div>
                   </td>
                   <td>{submission.form_type}</td>
                   <td><span class={`gs-badge ${submission.status === 'new' ? 'info' : submission.status === 'read' ? 'success' : ''}`}>{submission.status}</span></td>
                   <td>{(submission.message || submission.goals || '').slice(0, 140) || '—'}</td>
                   <td>
-                    <form method="post" action="/api/admin/lead-submissions" style="display: grid; gap: 0.5rem;">
+                    <form method="post" action="/api/admin/lead-submissions" class="grid gap-2">
                       <input type="hidden" name="id" value={submission.id} />
                       <input type="hidden" name="redirectTo" value={redirectTo} />
                       <select name="status" aria-label="Update status">
@@ -162,7 +158,7 @@ const buildMailto = (email: string | null, name: string | null) => {
                           <option value={status} selected={status === submission.status}>{status}</option>
                         ))}
                       </select>
-                      <button class="gs-button" type="submit">Update</button>
+                      <button class="gs-btn" type="submit">Update</button>
                     </form>
                   </td>
                 </tr>
@@ -173,4 +169,4 @@ const buildMailto = (email: string | null, name: string | null) => {
       </div>
     )}
   </section>
-</BaseLayout>
+</AdminLayout>
