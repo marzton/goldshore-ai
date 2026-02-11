@@ -1,0 +1,56 @@
+#!/usr/bin/env node
+/**
+ * SENTINEL bootstrapper
+ * - surfaces the PR Doctor prompt
+ * - provides a ready-to-use Jules API curl snippet when JULES_API_KEY is present
+ */
+
+const fs = require('node:fs');
+const path = require('node:path');
+
+const repoRoot = process.cwd();
+const promptPath = path.join(repoRoot, 'AI', 'prompts', 'pr-doctor.md');
+
+function readPrompt() {
+  if (!fs.existsSync(promptPath)) {
+    console.error(`Prompt not found at ${promptPath}`);
+    process.exit(1);
+  }
+  return fs.readFileSync(promptPath, 'utf8');
+}
+
+function printHeader(title) {
+  console.log(`\n=== ${title} ===`);
+}
+
+function emitCurlExample() {
+  const apiKey = process.env.JULES_API_KEY || '';
+  const branch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME || '';
+
+  if (!apiKey) {
+    console.log('JULES_API_KEY not provided; printing prompt for manual use.');
+    return;
+  }
+
+  const sessionName = branch ? `SENTINEL-${branch}` : 'SENTINEL-ad-hoc';
+  const payload = {
+    displayName: sessionName,
+    prompt: readPrompt(),
+  };
+
+  console.log('Curl example (replace <repo> path if needed):');
+  console.log(
+    `curl -X POST https://jules.googleapis.com/v1alpha/sessions \\\n  -H "X-Goog-Api-Key: ${apiKey}" \\\n  -H "Content-Type: application/json" \\\n  -d '${JSON.stringify(payload)}'`
+  );
+}
+
+function main() {
+  printHeader('SENTINEL prompt');
+  console.log(readPrompt());
+  printHeader('Usage');
+  console.log('- Run from CI on pull_request or nightly to surface diagnostics.');
+  console.log('- The prompt below is designed for safe, mechanical fixes.');
+  emitCurlExample();
+}
+
+main();

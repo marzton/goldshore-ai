@@ -1,4 +1,7 @@
-import { Hono } from "hono";
+import { Hono } from 'hono'
+import users from './routes/users'
+import health from './routes/health'
+import ai from './routes/ai'
 
 const app = new Hono();
 

@@ -1,0 +1,39 @@
+name: Jules Daily Guardian
+
+on:
+  schedule:
+    - cron: "17 12 * * *" # daily; adjust as desired
+  workflow_dispatch:
+
+jobs:
+  guardian:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "9"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile || pnpm install
+
+      - name: Run Jules Daily Guardian
+        run: node .Jules/run-daily.jsagent
+        env:
+          # If Jules needs API tokens, store them as GitHub secrets
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

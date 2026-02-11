@@ -201,7 +201,20 @@ dist
 ### Astro ###
 .astro/
 
-# Prevent lockfile wars during monorepo stabilization
-pnpm-lock.yaml
-package-lock.json
-yarn.lock
+# Generated OpenAPI files
+apps/web/src/content/openapi/*.json
+apps/web/openapi/*.json
+apps/web/openapi/openapi/*.json
+.turbo/
+
+# Verification screenshot artifacts
+verification/*.png
+
+# Keep generated/binary logo raster assets out of PR diffs
+apps/admin/public/assets/logo.png
+apps/web/public/assets/logo.png
+apps/web/public/logo.png
+
+# Removed tracked binary assets per PR feedback
+public/blog-placeholder-*.jpg
+public/fonts/*.woff
