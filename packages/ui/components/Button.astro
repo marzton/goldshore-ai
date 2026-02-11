@@ -1,0 +1,40 @@
+---
+import GSButton from '../GSButton.astro';
+
+const { kind = 'primary', size = 'md', class: className, ...attrs } = Astro.props;
+const variant = kind;
+<style>
+  .gs-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.4rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 120ms ease;
+  }
+  .primary {
+    background: linear-gradient(90deg, #22c55e, #22d3ee);
+    color: #020617;
+  }
+  .secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    color: #e2e8f0;
+    padding: var(--gs-space-2) var(--gs-space-4);
+    border-radius: var(--gs-radius-md);
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    transition: var(--gs-trans);
+  }
+
+const sizeClass = size === 'sm' ? 'gs-button--small' : size === 'lg' ? 'gs-button--large' : '';
+const mergedClass = [sizeClass, className].filter(Boolean).join(' ');
+---
+
+<GSButton variant={variant} class={mergedClass} {...attrs}>
+  <slot />
+</GSButton>

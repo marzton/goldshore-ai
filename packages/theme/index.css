@@ -1,0 +1,15 @@
+@import './reset.css';
+@import './src/styles/tokens.css';
+@import './src/styles/base.css';
+@import './src/styles/components.css';
+@import './src/styles/layout.css';
+
+html {
+  color-scheme: dark;
+}
+
+[data-theme='light'] {
+  --gs-bg: #ffffff;
+  --gs-fg: #020617;
+  --gs-bg-panel: #f5f6f9;
+}
