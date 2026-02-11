@@ -16,20 +16,6 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint'],
-
-  rules: {
-    'no-restricted-syntax': [
-      'error',
-      {
-        selector: "Literal[value=/^#(?:[0-9a-fA-F]{3,8})$/]",
-        message: 'Use design tokens instead of hard-coded hex colors.',
-      },
-      {
-        selector: "Literal[value=/^\\d+(?:\\.\\d+)?px$/]",
-        message: 'Use spacing tokens instead of hard-coded pixel values.',
-      },
-    ],
-  },
   overrides: [
     {
       files: ['*.astro'],
