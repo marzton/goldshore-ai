@@ -159,7 +159,7 @@ Protected by **Cloudflare Access**.
 
 ---
 
-## **3. apps/api-worker – gs-api**
+## **3. apps/gs-api – gs-api**
 
 Hono-based API Worker.
 
@@ -189,7 +189,7 @@ AI = AI (AI Gateway)
 
 ---
 
-## **4. apps/gateway – gs-gateway**
+## **4. apps/gs-gateway – gs-gateway**
 
 Request router + queue dispatcher.
 
@@ -266,8 +266,8 @@ Template pages are kept alongside each app so navigation, menus, containers, and
 | ---------- | -------------------------------------------- | ------------------------------- |
 | Web        | `apps/web/src/pages/templates/index.astro`   | Marketing + search composition  |
 | Admin      | `apps/gs-admin/src/pages/templates/index.astro` | Dashboard shell + table samples |
-| API Worker | `apps/api-worker/src/routes/templates.ts`    | Module checklist for API growth |
-| Gateway    | `apps/gateway/src/index.ts` (`/templates`)   | Routing + AI dispatch template  |
+| API Worker | `apps/gs-api/src/routes/templates.ts`    | Module checklist for API growth |
+| Gateway    | `apps/gs-gateway/src/index.ts` (`/templates`)   | Routing + AI dispatch template  |
 | Agent      | `apps/gs-agent/src/index.ts` (`/templates`)  | HITL orchestration template     |
 
 ---
@@ -293,7 +293,7 @@ AI agent tooling, and market data services without rebuilding existing modules.
 To keep issues, workflows, PRs, branches, and components aligned:
 
 - Track work in **GitHub Issues/Projects** and the templates in `.github/ISSUE_TEMPLATE/`.
-- Review deployment flow in `infra/github/workflows/`.
+- Review deployment flow in `.github/workflows/`.
 - Use `ops/pr-playbook.md` and `ops/maintenance-playbook.md` for release continuity.
 - Follow `docs/ops/branch-governance.md` and verify remote branch existence (`git ls-remote --heads origin <branch>`) before any automated `git checkout` or rebase step.
 - Document component ownership in the admin dashboard templates and UI kit README.
@@ -383,17 +383,17 @@ Queues:     jobsQueue (optional)
 Location:
 
 ```
-infra/github/workflows/
+.github/workflows/
 ```
 
 Workflows included:
 
 ```
-preview-web.yml
-preview-admin.yml
-deploy-api.yml
-deploy-gateway.yml
-deploy-control.yml
+preview-gs-web.yml
+preview-gs-admin.yml
+deploy-gs-api.yml
+deploy-gs-gateway.yml
+deploy-gs-control.yml
 ```
 
 Features:
@@ -580,7 +580,7 @@ Supports:
 
 ---
 
-⚙️ apps/api-worker — Main API (Hono)
+⚙️ apps/gs-api — Main API (Hono)
 • Edge-native API
 • Zod schemas
 • Hono router
@@ -591,7 +591,7 @@ Supports:
 
 ---
 
-🚏 apps/gateway — Routing & AI Gateway
+🚏 apps/gs-gateway — Routing & AI Gateway
 
 Handles:
 • URL-based routing
@@ -602,7 +602,7 @@ Handles:
 
 ---
 
-🛰 apps/control-worker — Infra Automation
+🛰 apps/gs-control — Infra Automation
 
 Can automatically:
 • Create DNS records
@@ -636,7 +636,7 @@ pnpm --filter ./apps/web dev
 
 Run API worker:
 
-pnpm --filter ./apps/api-worker dev
+pnpm --filter ./apps/gs-api dev
 
 Build all:
 
@@ -661,7 +661,7 @@ pnpm test
 
 Deploy is handled by GitHub Actions:
 
-infra/github/workflows/deploy.yml
+.github/workflows/deploy.yml
 
 CI/CD steps: 1. Install dependencies 2. Build workspaces with Turbo 3. Deploy:
 • web → Cloudflare Pages
