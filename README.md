@@ -265,7 +265,7 @@ Template pages are kept alongside each app so navigation, menus, containers, and
 | App        | Template Location                            | Notes                           |
 | ---------- | -------------------------------------------- | ------------------------------- |
 | Web        | `apps/web/src/pages/templates/index.astro`   | Marketing + search composition  |
-| Admin      | `apps/admin/src/pages/templates/index.astro` | Dashboard shell + table samples |
+| Admin      | `apps/gs-admin/src/pages/templates/index.astro` | Dashboard shell + table samples |
 | API Worker | `apps/api-worker/src/routes/templates.ts`    | Module checklist for API growth |
 | Gateway    | `apps/gateway/src/index.ts` (`/templates`)   | Routing + AI dispatch template  |
 | Agent      | `apps/gs-agent/src/index.ts` (`/templates`)  | HITL orchestration template     |
