@@ -77,14 +77,12 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 ```
 /
 ├── apps/
-│   ├── web/               # Public website (Astro)
-│   ├── admin/             # Admin dashboard (Astro)
-│   ├── api-worker/        # Hono API (Workers)
-│   ├── gateway/           # Router + jobs (Workers)
+│   ├── gs-web/            # Public website (Astro)
+│   ├── gs-admin/          # Admin dashboard (Astro)
+│   ├── gs-api/            # Hono API (Workers)
+│   ├── gs-gateway/        # Router + jobs (Workers)
 │   ├── gs-agent/          # AI Agent Service (Workers)
-│   ├── goldshore-agent/   # Deprecated agent shim (legacy workflows)
-│   ├── control-worker/    # Infra automation
-│   └── jules-bot/         # GitHub Automation Bot
+│   └── gs-control/        # Infra automation
 │
 ├── packages/
 │   ├── ui/                # Shared component library
@@ -132,14 +130,14 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 
 ---
 
-## **2. apps/admin – Admin Dashboard (Astro)**
+## **2. apps/gs-admin – Admin Dashboard (Astro)**
 
 Protected by **Cloudflare Access**.
 
 ### Admin Sections
 
 ```
-/admin
+/gs-admin
 ├── overview
 ├── api-logs
 ├── workers
@@ -159,7 +157,7 @@ Protected by **Cloudflare Access**.
 
 ---
 
-## **3. apps/api-worker – gs-api**
+## **3. apps/gs-api – gs-api**
 
 Hono-based API Worker.
 
@@ -189,7 +187,7 @@ AI = AI (AI Gateway)
 
 ---
 
-## **4. apps/gateway – gs-gateway**
+## **4. apps/gs-gateway – gs-gateway**
 
 Request router + queue dispatcher.
 
@@ -207,7 +205,7 @@ Responsibilities:
 
 ---
 
-## **5. apps/goldshore-agent – gs-agent**
+## **5. apps/gs-agent – gs-agent**
 
 Autonomous AI Agent Service.
 
@@ -219,7 +217,7 @@ Responsibilities:
 
 ---
 
-## **6. gs-control (optional)**
+## **6. apps/gs-control (optional)**
 
 System worker for automation:
 
@@ -677,27 +675,3 @@ gw-preview.goldshore.ai
 admin-preview.goldshore.ai
 
 ---
-
-🏁 Closing Preview
-
----
-
-✅ README is Ready
-
-If you want:
-
-✔ A version with a table of contents
-✔ A version with architecture diagrams
-✔ A version with installation badges + shields.io
-✔ A split README per app
-✔ Auto-generated Markdown with relative paths for GitHub
-
-Just tell me:
-
-“Generate README v2”,
-or
-“Generate per-app READMEs”,
-or
-“Generate architecture diagram”.
-
-I can produce all variants.
