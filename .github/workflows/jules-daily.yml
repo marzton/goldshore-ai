@@ -1,0 +1,38 @@
+name: Jules Daily
+
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  run-daily:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336abf0e0f52c777ae4f975e966d0
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@60edb5dd7ba3c0c2c5e0df3e00d8c3f1e5f1b8ac
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Enable pnpm via Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Jules daily runner
+        env:
+          JULES_BRANCH_SCOPE: all
+        run: node .Jules/run-daily.jsagent

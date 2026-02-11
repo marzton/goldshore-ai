@@ -1,0 +1,66 @@
+@import "../../theme/tokens.css";
+
+.gs-timeline {
+  position: relative;
+  padding-left: 18px;
+}
+
+.gs-timeline::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.gs-timeline-item {
+  position: relative;
+  padding-bottom: var(--gs-space-3);
+}
+
+.gs-timeline-dot {
+  position: absolute;
+  left: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--status-ok);
+  box-shadow: 0 0 8px rgba(164, 255, 171, 0.7);
+}
+
+.gs-timeline-warn .gs-timeline-dot {
+  background: var(--status-warn);
+  box-shadow: 0 0 8px rgba(255, 214, 84, 0.7);
+}
+
+.gs-timeline-error .gs-timeline-dot {
+  background: var(--status-critical);
+  box-shadow: 0 0 8px rgba(255, 74, 74, 0.8);
+}
+
+.gs-timeline-body {
+  margin-left: 16px;
+}
+
+.gs-timeline-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--gs-text-sm);
+}
+
+.gs-timeline-label {
+  color: var(--gs-text-primary);
+}
+
+.gs-timeline-ts {
+  color: var(--gs-text-muted);
+  font-size: var(--gs-text-xs);
+}
+
+.gs-timeline-detail {
+  font-size: var(--gs-text-xs);
+  color: var(--gs-text-secondary);
+  margin-top: 2px;
+}

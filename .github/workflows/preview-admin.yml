@@ -1,0 +1,40 @@
+name: Preview Admin (admin.goldshore.ai)
+
+on:
+  pull_request:
+    paths:
+      - "apps/admin/**"
+      - "packages/ui/**"
+      - "packages/theme/**"
+  push:
+    branches:
+      - "feature/**"
+
+jobs:
+  preview-admin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install deps
+        run: npm install
+
+      - name: Build admin cockpit
+        working-directory: apps/admin
+        env:
+          PUBLIC_API: https://api-preview.goldshore.ai
+          PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages (preview)
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          projectName: astro-gs-admin
+          directory: dist
+          branch: ${{ github.head_ref || github.ref_name }}

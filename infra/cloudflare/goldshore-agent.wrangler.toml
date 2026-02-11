@@ -1,9 +1,9 @@
 # wrangler.toml for the background Agent Worker
 
 name = "goldshore-agent" # Base name, will be suffixed per environment
-main = "../../apps/goldshore-agent/src/index.ts"
+main = "../../apps/agent/src/index.ts"
 compatibility_date = "2024-03-20"
-tsconfig = "../../apps/goldshore-agent/tsconfig.json"
+tsconfig = "../../apps/agent/tsconfig.json"
 
 # This worker is queue-driven, so we define the consumer here.
 [[queues.consumers]]
