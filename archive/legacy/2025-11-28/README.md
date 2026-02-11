@@ -15,3 +15,7 @@ Files were archived from:
 
 - Original relative paths are preserved under this archive directory.
 - These files are not part of active builds/deployments and should only be used for historical reference.
+
+## 2026-02 cleanup note
+
+As part of a follow-up cleanup, any remaining `*.legacy-20251128.*` files were removed from active app roots so only archived copies remain under this directory.
