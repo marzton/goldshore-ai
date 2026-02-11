@@ -2,6 +2,8 @@
 
 This playbook defines how to handle:
 
+> Precedence note: This playbook is scoped operational guidance. Resolve instruction conflicts using `docs/ops/instruction-governance.md` (with `AGENTS.md` as repository default).
+
 - Merge conflicts that block PRs
 - Giant `pnpm-lock.yaml` conflicts (never solved by hand)
 - PR inventory and prioritization
@@ -233,7 +235,7 @@ Recommended priority:
    - WebLayout, AdminLayout, NavBar, Footer
 4. Pages and content
    - apps/web/src/pages/\*
-   - apps/admin/src/pages/\*
+   - apps/gs-admin/src/pages/\*
 5. Docs / README / comment-only PRs
 
 ⸻
@@ -276,7 +278,7 @@ Until that’s live, this playbook is the manual version of what Jules will even
 
 ⸻
 
-**Scenario B — PR touches apps/web/src/pages/index.astro and apps/admin/src/pages/index.astro**
+**Scenario B — PR touches apps/web/src/pages/index.astro and apps/gs-admin/src/pages/index.astro**
 
 1. Sync branch with main (rebase origin/main)
 2. Resolve conflicts in those .astro files manually
