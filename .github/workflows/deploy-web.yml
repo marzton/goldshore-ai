@@ -5,7 +5,7 @@ permissions:
 on:
   push:
     paths:
-      - "apps/goldshore-web/**"
+      - 'apps/goldshore-web/**'
 
 jobs:
   deploy:

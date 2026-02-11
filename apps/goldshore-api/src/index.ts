@@ -1,7 +1,11 @@
 // apps/goldshore-api/src/index.ts
 
 import { Hono } from 'hono';
-import { createAuthMiddleware, requireRole, AuthContext } from '@goldshore/auth';
+import {
+  createAuthMiddleware,
+  requireRole,
+  AuthContext,
+} from '@goldshore/auth';
 
 // Define a type for our Cloudflare Worker bindings
 type Bindings = {
@@ -23,13 +27,11 @@ app.use('*', async (c, next) => {
   return authMiddleware(c, next);
 });
 
-
 // --- Public Routes ---
 
 app.get('/', (c) => {
   return c.text('Hello from the GoldShore API!');
 });
-
 
 // --- Protected Routes ---
 

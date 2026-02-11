@@ -6,24 +6,24 @@
 /* ROOT (Light Mode) ------------------------- */
 :root {
   /* Brand Colors */
-  --gs-blue-alcantara: #0f1a2c;            /* deep premium alcantara navy */
+  --gs-blue-alcantara: #0f1a2c; /* deep premium alcantara navy */
   --gs-blue-alcantara-soft: #1a2842;
   --gs-blue-alcantara-glow: #4da8ff33;
 
-  --gs-titanium-green: #9ecb77;            /* anodized titanium green */
+  --gs-titanium-green: #9ecb77; /* anodized titanium green */
   --gs-titanium-green-bright: #c8ff9b;
 
-  --gs-neon-orange: #ff7a33;               /* Cloudflare-proxy style orange */
+  --gs-neon-orange: #ff7a33; /* Cloudflare-proxy style orange */
   --gs-neon-orange-glow: #ff7a3333;
 
-  --gs-golden-ember: #ffcc55;              /* yellow-gold accent */
+  --gs-golden-ember: #ffcc55; /* yellow-gold accent */
   --gs-golden-ember-soft: #ffe8a6;
 
-  --gs-carbon: #121212;                    /* carbon fiber black */
+  --gs-carbon: #121212; /* carbon fiber black */
   --gs-carbon-light: #1f1f1f;
   --gs-carbon-wireframe: #1b1b1b;
 
-  --gs-blueprint: #0b0f19;                 /* blueprint/CAD black-blue */
+  --gs-blueprint: #0b0f19; /* blueprint/CAD black-blue */
   --gs-blueprint-line: #4a5a79;
 
   /* Text Colors */
@@ -67,9 +67,9 @@
   --gs-space-8: 48px;
 
   /* Typography */
-  --font-body: "Inter", -apple-system, system-ui, sans-serif;
-  --font-display: "SF Pro Display", "Inter", sans-serif;
-  --font-tech: "Orbitron", "Inter", sans-serif;
+  --font-body: 'Inter', -apple-system, system-ui, sans-serif;
+  --font-display: 'SF Pro Display', 'Inter', sans-serif;
+  --font-tech: 'Orbitron', 'Inter', sans-serif;
 
   /* Font Sizes */
   --gs-text-xs: 0.75rem;
@@ -87,7 +87,12 @@
   /* Gradients */
   --gs-gradient-blue: linear-gradient(145deg, #132037 0%, #0f1a2c 100%);
   --gs-gradient-orange: linear-gradient(145deg, #ff7a33 0%, #ff9b4d 100%);
-  --gs-gradient-titanium: linear-gradient(130deg, #c8ff9b 0%, #9ecb77 50%, #6a9150 100%);
+  --gs-gradient-titanium: linear-gradient(
+    130deg,
+    #c8ff9b 0%,
+    #9ecb77 50%,
+    #6a9150 100%
+  );
   --gs-gradient-carbon: radial-gradient(circle at 20% 20%, #1f1f1f, #111);
 
   /* Component Tokens ------------------------ */
@@ -139,7 +144,7 @@
     --card-bg: #121c2e;
     --card-bg-hover: #1a273c;
 
-    --gauge-background: rgba(255,255,255,0.03);
+    --gauge-background: rgba(255, 255, 255, 0.03);
   }
 }
 
