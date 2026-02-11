@@ -2,11 +2,11 @@
 
 This document details the configuration for all Cloudflare Workers and Pages projects in the GoldShore monorepo.
 
-## 1. gs-mail (`apps/mail-worker`)
+## 1. gs-mail (`apps/gs-mail`)
 
 The email routing and processing worker.
 
-- **Directory:** `apps/mail-worker`
+- **Directory:** `apps/gs-mail`
 - **Package Name:** `gs-mail`
 - **Wrangler:** `wrangler.toml` (locally defined)
 - **Deployment:** Manual via Wrangler or CI.

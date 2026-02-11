@@ -22,7 +22,7 @@ This inventory is sourced from:
 | `@goldshore/control` | `apps/gs-control` | none | Cloudflare control-plane orchestration (`/dns/*`, `/workers/*`, `/pages/*`, `/access/*`, `/cloudflare/*`). |
 | `@goldshore/gateway` | `apps/gs-gateway` | none | API gateway, edge auth guard, and forwarding/proxy ownership. |
 | `@goldshore/web` | `apps/gs-web` | none | Public website application, content pages, templates and web UX. |
-| `gs-mail` | `apps/mail-worker` | none | Mail ingestion worker. |
+| `gs-mail` | `apps/gs-mail` | none | Mail ingestion worker. |
 
 ## Shared packages
 
