@@ -1,4 +1,5 @@
 {
+<<<<<<< Updated upstream
   "recommendations": [
     "astro-build.astro-vscode",
     "esbenp.prettier-vscode",
@@ -7,3 +8,9 @@
     "unifiedjs.vscode-mdx"
   ]
 }
+=======
+    "recommendations": [
+        "openai.chatgpt"
+    ]
+}
+>>>>>>> Stashed changes
