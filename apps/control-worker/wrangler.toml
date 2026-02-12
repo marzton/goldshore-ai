@@ -1,0 +1,23 @@
+name = "gs-control"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[dev]
+port = 8789
+
+# These secrets must be added in Cloudflare dashboard:
+# CLOUDFLARE_API_TOKEN
+# CLOUDFLARE_ACCOUNT_ID
+# CLOUDFLARE_ZONE_ID
+
+[vars]
+ENVIRONMENT = "production"
+CONTROL_WORKER = "true"
+
+[env.preview.vars]
+ENVIRONMENT = "preview"
+CONTROL_WORKER = "true"
+
+[routes]
+"ops.goldshore.ai/*" = { "zone_name" = "goldshore.ai" }
