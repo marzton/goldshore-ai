@@ -1,5 +1,6 @@
 ---
 import '@goldshore/theme/tokens.css';
+import '../styles/global.css';
 
 // Goldshore Landing Page
 // Aesthetic: Military x Tech, Sports Car, Utility
@@ -34,12 +35,6 @@ import '@goldshore/theme/tokens.css';
 
 			.mono {
 				font-family: var(--font-family-mono);
-			}
-
-			.container {
-				max-width: var(--container-width-max);
-				margin: 0 auto;
-				padding: 0 var(--space-6);
 			}
 
 			/* HEADER */
@@ -229,15 +224,10 @@ import '@goldshore/theme/tokens.css';
 			}
 
 			.features-grid {
-				display: grid;
 				grid-template-columns: repeat(3, 1fr);
-				gap: 1px;
-				background-color: var(--color-border); /* Creates borders between cells */
-				border: 1px solid var(--color-border);
 			}
 
 			.feature-cell {
-				background-color: var(--color-matte-grey);
 				padding: var(--space-8);
 				transition: background-color 0.2s;
 			}
@@ -290,7 +280,7 @@ import '@goldshore/theme/tokens.css';
 	</head>
 	<body>
 		<header>
-			<div class="container header-content">
+			<div class="gs-container header-content">
 				<div class="logo-container">
 					<img src="/assets/logo.png" alt="Goldshore Labs" class="logo" />
 					<div class="brand-name">Goldshore <span class="brand-tag">Labs</span></div>
@@ -306,7 +296,7 @@ import '@goldshore/theme/tokens.css';
 
 		<main>
 			<section class="hero">
-				<div class="container">
+				<div class="gs-container">
 					<div class="hero-sub">System Status: Operational</div>
 					<h1>
 						Shaping <br />
@@ -322,25 +312,25 @@ import '@goldshore/theme/tokens.css';
 
 			<section class="section-capital">
 				<div class="grid-bg"></div>
-				<div class="container" style="position: relative; z-index: 1;">
+				<div class="gs-container" style="position: relative; z-index: 1;">
 					<h2 class="capital-title">We Steer Capital</h2>
 
-					<div class="features-grid">
-						<div class="feature-cell">
+					<div class="gs-barrier-grid features-grid">
+						<div class="gs-barrier-cell feature-cell">
 							<div class="feature-icon">// 01</div>
 							<div class="feature-title">Algorithmic Precision</div>
 							<div class="feature-desc">
 								High-frequency execution modeled on fluid dynamics. Zero latency expectations.
 							</div>
 						</div>
-						<div class="feature-cell">
+						<div class="gs-barrier-cell feature-cell">
 							<div class="feature-icon">// 02</div>
 							<div class="feature-title">Military Grade</div>
 							<div class="feature-desc">
 								Infrastructure built to withstand extreme volatility. Security first architecture.
 							</div>
 						</div>
-						<div class="feature-cell">
+						<div class="gs-barrier-cell feature-cell">
 							<div class="feature-icon">// 03</div>
 							<div class="feature-title">Global Reach</div>
 							<div class="feature-desc">
@@ -353,7 +343,7 @@ import '@goldshore/theme/tokens.css';
 		</main>
 
 		<footer>
-			<div class="container footer-content">
+			<div class="gs-container footer-content">
 				<div class="logo-container">
 					<img src="/assets/logo.png" alt="Goldshore Labs" class="logo" style="height: 30px; opacity: 0.5;" />
 				</div>
