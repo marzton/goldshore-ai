@@ -38,7 +38,7 @@ const highlights = [
     <canvas id="starfield" class="starfield"></canvas>
 
     <!-- Main Hero Section -->
-    <section class="cinematic-hero blueprint-section parallax-section gs-container">
+    <section class="cinematic-hero blueprint-section parallax-section">
         <div class="hero-content">
             <div class="badge-container fade-in-up" style="animation-delay: 0.2s;">
             <span class="vibe-badge">
@@ -119,7 +119,7 @@ const highlights = [
     </section>
 
     <!-- Performance Section (Secondary Hero) -->
-    <section class="gs-hero home-hero parallax-section gs-container" style="padding-top: 0;">
+    <section class="gs-hero home-hero parallax-section" style="padding-top: 0;">
         <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.08" aria-hidden="true"></div>
         <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.14" aria-hidden="true"></div>
         <div class="parallax-layer gs-parallax layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
@@ -148,11 +148,11 @@ const highlights = [
       </section>
 
     <!-- Features Section -->
-    <section class="features-section blueprint-section parallax-section gs-container">
+    <section class="features-section blueprint-section parallax-section">
         <div class="parallax-layer gs-parallax layer-blueprint" data-parallax="0.04" aria-hidden="true"></div>
         <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.1" aria-hidden="true"></div>
         <div class="parallax-layer gs-parallax layer-sheen" data-parallax="0.16" aria-hidden="true"></div>
-        <div class="features-grid gs-barrier-grid">
+        <div class="features-grid">
             {features.map((feature, i) => (
             <div class="feature-card glass-panel reveal lux-card" style={`transition-delay: ${0.1 + (i * 0.1)}s;`}>
                 <div class="icon-box">
@@ -166,7 +166,7 @@ const highlights = [
     </section>
 
     <!-- SEO & Business Content -->
-    <section class="content-section reveal gs-container">
+    <section class="content-section reveal">
       <div class="content-container">
          <h2>Enterprise Logistics & Digital Finance</h2>
          <p class="lead-text">
@@ -191,7 +191,7 @@ const highlights = [
     </section>
 
     <!-- Advertising CTA -->
-    <section class="cta-section reveal gs-container">
+    <section class="cta-section reveal">
        <div class="cta-box glass-panel glow-border">
           <div class="cta-content">
             <h2>Advertise Your Business</h2>
@@ -245,7 +245,8 @@ const highlights = [
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 4rem;
-    padding-block: 8rem 4rem;
+    padding: 8rem 2rem 4rem;
+    max-width: 1280px;
     margin: 0 auto;
     min-height: 90vh;
     align-items: center;
@@ -271,7 +272,8 @@ const highlights = [
     grid-template-columns: 1fr 1fr;
     gap: var(--gs-space-8);
     align-items: center;
-    padding-block: var(--gs-space-12);
+    padding: var(--gs-space-12) var(--gs-space-6);
+    max-width: 1280px;
     margin: 0 auto;
   }
 
@@ -457,14 +459,15 @@ const highlights = [
   /* Features */
   .features-section {
     position: relative;
-    padding-block: 4rem;
+    padding: 4rem 2rem;
+    max-width: 1280px;
     margin: 0 auto;
   }
 
   .features-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    /* gap handled by barrier grid */
+    gap: 2rem;
   }
 
   .glass-panel {
@@ -554,7 +557,8 @@ const highlights = [
 
   /* Content Section */
   .content-section {
-    padding-block: 6rem;
+    padding: 6rem 2rem;
+    max-width: 1280px;
     margin: 0 auto;
     text-align: center;
   }
@@ -583,7 +587,8 @@ const highlights = [
 
   /* CTA Section */
   .cta-section {
-    padding-block: 4rem 8rem;
+    padding: 4rem 2rem 8rem;
+    max-width: 1280px;
     margin: 0 auto;
   }
   .cta-box {

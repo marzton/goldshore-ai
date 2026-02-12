@@ -100,25 +100,3 @@ body[data-preview='mobile'] { --gs-preview-width: 420px; }
   .gs-admin-grid { grid-template-columns: 1fr; }
   .gs-admin-sidebar { flex-direction: row; align-items: center; justify-content: space-between; }
 }
-
-/* Global Container */
-.gs-container {
-  width: 100%;
-  max-width: 100%;
-  padding-inline: 5vw;
-  margin-inline: auto;
-}
-
-/* Barrier Grid */
-.gs-barrier-grid {
-  display: grid;
-  gap: 1px;
-  background-color: var(--gs-color-border);
-  border: 1px solid var(--gs-color-border);
-  overflow: hidden;
-  border-radius: var(--gs-radius-md);
-}
-
-.gs-barrier-grid > * {
-  background-color: var(--gs-color-surface);
-}
