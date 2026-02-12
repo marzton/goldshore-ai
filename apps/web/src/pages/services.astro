@@ -1,0 +1,94 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+
+const services = [
+  {
+    title: 'Infrastructure Engineering',
+    summary:
+      'Cloudflare-first architecture, routing, and failover design for resilient delivery.',
+    length: '6-10 weeks',
+    deliverable: 'Production deployment topology + rollback runbook',
+    domain: 'infra',
+    case: [
+      'Consolidated 5 fragmented edge routes into one policy layer.',
+      'Established deterministic rollbacks with change windows.',
+      'Stabilized cross-region failover to sub-minute recovery.',
+    ],
+  },
+  {
+    title: 'AI Systems Integration',
+    summary:
+      'Gateway design, prompt policy controls, and model orchestration with guardrails.',
+    length: '4-8 weeks',
+    deliverable: 'Policy-aware inference router with usage telemetry',
+    domain: 'AI',
+    case: [
+      'Introduced request classification to route by sensitivity.',
+      'Added safety constraints and fallback model policy.',
+      'Lowered token waste by tuning context composition.',
+    ],
+  },
+  {
+    title: 'Operational Automation',
+    summary:
+      'Runbook automation and alert-driven workflows to reduce manual intervention.',
+    length: '3-6 weeks',
+    deliverable: 'Incident automation playbook with escalation matrix',
+    domain: 'ops',
+    case: [
+      'Automated DNS repair flows for failed service binds.',
+      'Reduced repetitive triage actions with event triggers.',
+      'Created operator dashboard for live workflow state.',
+    ],
+  },
+];
+---
+
+<SiteLayout
+  title="Services | GoldShore AI"
+  description="GoldShore services for infrastructure, AI systems, and operational automation."
+>
+  <section>
+    <p class="kicker">Services</p>
+    <h1>Depth where execution matters.</h1>
+    <p class="muted">
+      Each service remains card-based and scoped for decisive outcomes.
+    </p>
+  </section>
+
+  <section class="card-grid">
+    {
+      services.map((service) => (
+        <article class="card">
+          <h2>{service.title}</h2>
+          <p>{service.summary}</p>
+          <details class="card">
+            <summary>Engagement details</summary>
+            <p>
+              <strong>Typical length:</strong> {service.length}
+            </p>
+            <p>
+              <strong>Example deliverable:</strong> {service.deliverable}
+            </p>
+            <p>
+              <strong>Tooling domain:</strong> {service.domain}
+            </p>
+          </details>
+          <h3>Case vignette</h3>
+          <ul class="case-list">
+            {service.case.map((bullet) => (
+              <li>{bullet}</li>
+            ))}
+          </ul>
+        </article>
+      ))
+    }
+  </section>
+
+  <section>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="/contact">Start planning</a>
+      <a class="btn btn-secondary" href="/contact">Talk to us</a>
+    </div>
+  </section>
+</SiteLayout>

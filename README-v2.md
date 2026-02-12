@@ -137,7 +137,7 @@ flowchart TB
 
 ## Applications
 
-### 1) `apps/web` — Public Website (Astro)
+### 1) `apps/gs-web` — Public Website (Astro)
 
 - Marketing site
 - User portal
@@ -165,7 +165,7 @@ Authenticated user portal:
 └── settings
 ```
 
-### 2) `apps/admin` — Admin Dashboard (Astro SSR)
+### 2) `apps/gs-admin` — Admin Dashboard (Astro SSR)
 
 Protected by **Cloudflare Access**.
 
@@ -188,7 +188,7 @@ Protected by **Cloudflare Access**.
     └── secrets
 ```
 
-### 3) `apps/api-worker` — gs-api (Hono API Worker)
+### 3) `apps/gs-api` — gs-api (Hono API Worker)
 
 ```
 Route: https://api.goldshore.ai/*
@@ -214,7 +214,7 @@ D1 = gs-db
 AI = AI (AI Gateway)
 ```
 
-### 4) `apps/gateway` — gs-gateway
+### 4) `apps/gs-gateway` — gs-gateway
 
 ```
 Route: https://gw.goldshore.ai/*
@@ -234,7 +234,7 @@ Responsibilities:
 - External AI model integration
 - Workflow orchestration
 
-### 6) `apps/control-worker` — Automation Worker
+### 6) `apps/gs-control` — Automation Worker
 
 ```
 Route: https://ops.goldshore.ai/*
@@ -352,17 +352,17 @@ POST /preview/create
 Location:
 
 ```
-infra/github/workflows/
+.github/workflows/
 ```
 
 Workflows include:
 
 ```
-preview-web.yml
-preview-admin.yml
-deploy-api.yml
-deploy-gateway.yml
-deploy-control.yml
+preview-gs-web.yml
+preview-gs-admin.yml
+deploy-gs-api.yml
+deploy-gs-gateway.yml
+deploy-gs-control.yml
 ```
 
 Features:
@@ -390,10 +390,10 @@ pnpm dev
 Run individual apps:
 
 ```bash
-pnpm --filter ./apps/web dev
-pnpm --filter ./apps/admin dev
-pnpm --filter ./apps/api-worker dev
-pnpm --filter ./apps/gateway dev
+pnpm --filter ./apps/gs-web dev
+pnpm --filter ./apps/gs-admin dev
+pnpm --filter ./apps/gs-api dev
+pnpm --filter ./apps/gs-gateway dev
 pnpm --filter ./apps/gs-agent dev
 ```
 
@@ -408,8 +408,8 @@ pnpm build
 Playwright tests live in:
 
 ```
-apps/admin/tests
-apps/web/tests
+apps/gs-admin/tests
+apps/gs-web/tests
 ```
 
 Run:
@@ -425,9 +425,9 @@ Pages deploy automatically via GitHub Actions.
 Workers deploy:
 
 ```bash
-pnpm --filter ./apps/api-worker deploy
-pnpm --filter ./apps/gateway deploy
-pnpm --filter ./apps/control-worker deploy
+pnpm --filter ./apps/gs-api deploy
+pnpm --filter ./apps/gs-gateway deploy
+pnpm --filter ./apps/gs-control deploy
 pnpm --filter ./apps/gs-agent deploy
 ```
 

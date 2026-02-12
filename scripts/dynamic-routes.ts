@@ -22,14 +22,14 @@ export const dynamicRouteSources: DynamicRouteSource[] = [
     name: 'docs',
     type: 'content',
     basePath: '/developer/docs',
-    contentDir: 'apps/web/src/content/docs',
+    contentDir: 'apps/gs-web/src/content/docs',
     extensions: ['.md', '.mdx']
   },
   {
     name: 'api-docs',
     type: 'openapi',
     basePath: '/developer/api',
-    specPath: 'apps/web/src/data/v1.json',
+    specPath: 'apps/gs-web/src/data/v1.json',
     includeIndex: true
   }
 ];
