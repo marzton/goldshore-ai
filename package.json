@@ -17,7 +17,8 @@
     "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md",
     "check:naming": "node scripts/lint-naming.mjs",
     "branch:bootstrap": "bash scripts/branch-bootstrap.sh",
-    "scaffold:worker": "node scripts/scaffold-worker.mjs"
+    "scaffold:worker": "node scripts/scaffold-worker.mjs",
+    "check:docs-consistency": "node scripts/check-doc-consistency.mjs"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
