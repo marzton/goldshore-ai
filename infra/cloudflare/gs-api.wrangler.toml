@@ -1,12 +1,12 @@
 # wrangler.toml for the Hono API Worker
 
-name = "goldshore-api" # Base name, will be suffixed per environment
-main = "../../apps/goldshore-api/src/index.ts"
+name = "gs-api" # Base name, will be suffixed per environment
+main = "../../apps/gs-api/src/index.ts"
 compatibility_date = "2024-03-20"
-tsconfig = "../../apps/goldshore-api/tsconfig.json"
+tsconfig = "../../apps/gs-api/tsconfig.json"
 
 [env.dev]
-name = "goldshore-api-dev"
+name = "gs-api-dev"
 # Here we will add bindings for dev environment for KV, D1, R2, Queues etc.
 # Example:
 # [[d1_databases]]
@@ -15,11 +15,11 @@ name = "goldshore-api-dev"
 # database_id = "..."
 
 [env.preview]
-name = "goldshore-api-preview"
-# route = { pattern = "api-preview.goldshore.org/*", custom_domain = true }
+name = "gs-api-preview"
+# route = { pattern = "api-preview.goldshore.ai/*", custom_domain = true }
 # Bindings for the preview environment go here.
 
 [env.prod]
-name = "goldshore-api-prod"
-# route = { pattern = "api.goldshore.org/*", custom_domain = true }
+name = "gs-api-prod"
+# route = { pattern = "api.goldshore.ai/*", custom_domain = true }
 # Bindings for the production environment go here.

@@ -1,9 +1,13 @@
 {
   "packages": {
-    "gs-api": "@goldshore/api-worker",
-    "gs-mail": "@goldshore/mail-worker",
-    "@goldshore/control": "@goldshore/control-worker",
-    "@astro-gs/schema": "@goldshore/schema"
+    "gs-api": "@goldshore/gs-api",
+    "gs-mail": "@goldshore/gs-mail",
+    "@goldshore/control": "@goldshore/gs-control",
+    "@astro-gs/schema": "@goldshore/schema",
+    "gs-web": "@goldshore/gs-web",
+    "gs-admin": "@goldshore/gs-admin",
+    "gs-gateway": "@goldshore/gs-gateway",
+    "gs-agent": "@goldshore/gs-agent"
   },
   "workflows": {
     "Deploy API Worker": "deploy-api-worker",

@@ -1,5 +1,5 @@
 {
-  "name": "@goldshore/mail-worker",
+  "name": "@goldshore/gs-mail",
   "version": "0.0.0",
   "private": true,
   "scripts": {
