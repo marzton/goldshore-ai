@@ -287,6 +287,16 @@ To keep issues, workflows, PRs, branches, and components aligned:
 - Use `ops/pr-playbook.md` and `ops/maintenance-playbook.md` for release continuity.
 - Document component ownership in the admin dashboard templates and UI kit README.
 
+### Contributing Naming Rules
+
+- Read `docs/conventions/naming.md` before opening a PR.
+- Prefer `feat/add-new-worker-healthcheck` over mixed-case or space-separated branch names.
+- Prefer package names like `@goldshore/api-worker` and workflow file names like `deploy-api-worker.yml`.
+- Anti-patterns to avoid: `Feature/AddThing`, `gs_api`, `Deploy API Worker.yml`, and job keys like `deploy_api`.
+- Use helper scripts:
+  - `pnpm branch:bootstrap -- <type> <slug>`
+  - `pnpm scaffold:worker -- <worker-name>`
+
 ## **packages/utils**
 
 TypeScript utilities:
