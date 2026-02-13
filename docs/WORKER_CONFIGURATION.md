@@ -79,4 +79,5 @@ The backend API service.
 
 ## Deprecated
 
-- `apps/goldshore-agent`: Removed. Legacy shim for `gs-agent`.
+- `apps/gs-agent`: Canonical agent worker package.
+- `apps/goldshore-agent`: Removed legacy shim retained here for historical reference only.

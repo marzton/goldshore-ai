@@ -15,7 +15,7 @@
     "build:mail": "turbo run build --filter=@goldshore/gs-mail-worker",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "test:integration": "pnpm --filter gs-api test && pnpm --filter @goldshore/control test && pnpm --filter @goldshore/web test:e2e",
+    "test:integration": "pnpm --filter gs-api test && pnpm --filter @goldshore/control test && pnpm --filter @goldshore/gs-web test:e2e",
     "validate:workers": "python3 scripts/validate-worker-configs.py",
     "test:visual": "node scripts/run-visual-gate.mjs",
     "smoke:post-merge": "tsx scripts/post-merge-smoke.ts",
@@ -27,7 +27,7 @@
     "gate:test:visual": "pnpm test:visual",
     "gate:matrix": "pnpm gate:typecheck && pnpm gate:lint && pnpm gate:test:unit && pnpm gate:test:integration && pnpm gate:validate:workers && pnpm gate:test:visual",
     "check:pages": "tsx scripts/check-pages-200.ts",
-    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md",
+    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/gs-admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md",
     "validate:instructions": "python scripts/validate_instruction_refs.py"
   },
   "devDependencies": {
