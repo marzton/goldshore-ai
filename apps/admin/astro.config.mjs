@@ -1,16 +1,13 @@
-import { defineConfig } from 'astro/config';
-import cloudflare from '@astrojs/cloudflare';
-import tailwind from '@astrojs/tailwind';
+import baseConfig from "@goldshore/config/astro";
+import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  srcDir: './src',
+  ...baseConfig,
+  // Admin specific overrides
+  srcDir: './src', // Redundant if in base, but safe to keep
   output: 'server',
-  adapter: cloudflare(),
-  integrations: [tailwind({
-    applyBaseStyles: false,
-    configFile: "../../tailwind.config.mjs"
-  })],
   vite: {
+    ...baseConfig.vite,
     resolve: {
       alias: {
         '@packages': new URL('../../packages', import.meta.url).pathname,

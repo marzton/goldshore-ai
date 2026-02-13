@@ -74,6 +74,9 @@ importers:
       '@goldshore/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@goldshore/config':
+        specifier: workspace:^
+        version: link:../../packages/config
       '@goldshore/integrations':
         specifier: workspace:*
         version: link:../../packages/integrations
@@ -127,9 +130,15 @@ importers:
       '@goldshore/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@hono/zod-validator':
+        specifier: ^0.7.6
+        version: 0.7.6(hono@4.11.8)(zod@3.23.8)
       hono:
         specifier: ^4.0.0
         version: 4.11.8
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4
@@ -202,6 +211,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@goldshore/config':
+        specifier: workspace:^
+        version: link:../../packages/config
       '@goldshore/theme':
         specifier: workspace:*
         version: link:../../packages/theme
@@ -1278,6 +1290,12 @@ packages:
   '@fastify/busboy@2.1.1':
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
+
+  '@hono/zod-validator@0.7.6':
+    resolution: {integrity: sha512-Io1B6d011Gj1KknV4rXYz4le5+5EubcWEU/speUjuw9XMMIaP3n78yXLhjd2A3PXaXaUwEAluOiAyLqhBEJgsw==}
+    peerDependencies:
+      hono: '>=3.9.0'
+      zod: ^3.25.0 || ^4.0.0
 
   '@humanwhocodes/config-array@0.13.0':
     resolution: {integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw==}
@@ -4123,6 +4141,9 @@ packages:
   zod@3.22.3:
     resolution: {integrity: sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==}
 
+  zod@3.23.8:
+    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
+
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
@@ -4791,6 +4812,11 @@ snapshots:
   '@eslint/js@8.57.1': {}
 
   '@fastify/busboy@2.1.1': {}
+
+  '@hono/zod-validator@0.7.6(hono@4.11.8)(zod@3.23.8)':
+    dependencies:
+      hono: 4.11.8
+      zod: 3.23.8
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -8115,6 +8141,8 @@ snapshots:
       zod: 3.25.76
 
   zod@3.22.3: {}
+
+  zod@3.23.8: {}
 
   zod@3.25.76: {}
 
