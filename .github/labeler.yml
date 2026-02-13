@@ -2,23 +2,23 @@
 
 web:
   - changed-files:
-    - any-glob-to-any-file: 'apps/web/**'
+    - any-glob-to-any-file: 'apps/gs-web/**'
 
 admin:
   - changed-files:
-    - any-glob-to-any-file: 'apps/admin/**'
+    - any-glob-to-any-file: 'apps/gs-admin/**'
 
 api:
   - changed-files:
-    - any-glob-to-any-file: 'apps/api-worker/**'
+    - any-glob-to-any-file: 'apps/gs-api/**'
 
 gateway:
   - changed-files:
-    - any-glob-to-any-file: 'apps/gateway/**'
+    - any-glob-to-any-file: 'apps/gs-gateway/**'
 
 control:
   - changed-files:
-    - any-glob-to-any-file: 'apps/control-worker/**'
+    - any-glob-to-any-file: 'apps/gs-control/**'
 
 shared:
   - changed-files:
