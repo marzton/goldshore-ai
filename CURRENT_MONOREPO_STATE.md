@@ -9,12 +9,15 @@
 | `apps/api-worker` | `gs-api` | Worker | Active | Core API logic |
 | `apps/gateway` | `@goldshore/gateway` | Worker (Hono) | Active | API Gateway / Router |
 | `apps/control-worker` | `@goldshore/control` | Worker (Hono) | Active | Control plane logic |
-| `apps/goldshore-agent` | `goldshore-agent` | Worker (Hono) | Development | AI Agent Logic |
-| `apps/gs-agent` | `@goldshore/agent` | Worker | Evaluation | Alternative Agent impl? |
+| `apps/gs-agent` | `@goldshore/agent` | Worker | Evaluation | Agent implementation |
 | `apps/jules-bot` | `jules-bot` | Node.js | Experimental | Bot logic |
 
+## Non-workspace App Directories (No `package.json`)
+- `apps/gs-control`
+- `apps/gs-mail`
+
 ## Legacy / Archive
-- `apps/legacy/goldshore-api`
+- `apps/legacy`
 
 ## Infrastructure
 - `infra/scripts`: Automation scripts
@@ -28,7 +31,6 @@
 - **Styling**: TailwindCSS
 - **Frameworks**: Astro, Hono, Cloudflare Workers
 
-## Recent Updates
-- Standardized `lint` and `test` scripts across major apps.
-- Added `tsconfig.json` and `.eslintrc.cjs` to `goldshore-agent`.
-- Updated assets (Logo/Favicon) in `apps/web`.
+## Notes
+- Removed missing path references such as `apps/goldshore-agent`.
+- Package names are synced to current `apps/*/package.json` values.
