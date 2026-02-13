@@ -42,10 +42,10 @@ Jules must ALWAYS map Cloudflare apps to the correct directories:
 Cloudflare App Directory Type
 gs-web apps/web Astro → Pages
 gs-admin apps/admin Astro → Pages
-gs-api apps/api-worker CF Worker
-gs-gateway apps/gateway CF Worker
-gs-control apps/control-worker CF Worker
-gs-mail apps/mail-worker (if created later) Email Worker
+gs-api apps/gs-api-worker CF Worker
+gs-gateway apps/gs-gateway CF Worker
+gs-control apps/gs-control-worker CF Worker
+gs-mail apps/gs-mail-worker (if created later) Email Worker
 
 This is the authoritative mapping.
 
@@ -136,9 +136,9 @@ PUT /accounts/:account_id/workers/scripts/:script_name
 Worker → Directory Map:
 
 Worker Folder entrypoint
-gs-api apps/api-worker src/index.ts
-gs-gateway apps/gateway src/index.ts
-gs-control apps/control-worker src/index.ts
+gs-api apps/gs-api-worker src/index.ts
+gs-gateway apps/gs-gateway src/index.ts
+gs-control apps/gs-control-worker src/index.ts
 gs-mail no folder required via CF editor
 
 ⸻
@@ -171,7 +171,7 @@ GATEWAY → gs-gateway
 
 Jules MUST generate & maintain:
 
-apps/api-worker/wrangler.toml
+apps/gs-api-worker/wrangler.toml
 
 name = "gs-api"
 main = "src/index.ts"
@@ -193,7 +193,7 @@ database_id = "gs_db_001"
 [ai]
 binding = "AI"
 
-apps/gateway/wrangler.toml
+apps/gs-gateway/wrangler.toml
 
 name = "gs-gateway"
 main = "src/index.ts"
@@ -207,7 +207,7 @@ environment = "production"
 [ai]
 binding = "AI"
 
-apps/control-worker/wrangler.toml
+apps/gs-control-worker/wrangler.toml
 
 name = "gs-control"
 main = "src/index.ts"

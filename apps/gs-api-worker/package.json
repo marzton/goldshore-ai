@@ -1,5 +1,5 @@
 {
-  "name": "@goldshore/gs-api-worker",
+  "name": "@goldshore/gs-api",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -14,4 +14,5 @@
     "wrangler": "^3.101.0",
     "typescript": "^5.4.0",
     "@cloudflare/workers-types": "^4.20241106.0"
+  }
 }

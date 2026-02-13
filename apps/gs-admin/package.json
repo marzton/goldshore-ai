@@ -9,8 +9,9 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "astro": "^5.15.9",
+    "astro": "^5.16.0",
     "@astrojs/cloudflare": "^12.6.11",
+    "@goldshore/config": "workspace:*",
     "@goldshore/ui": "workspace:*",
     "@goldshore/theme": "workspace:*"
   },

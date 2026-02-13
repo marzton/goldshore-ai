@@ -11,7 +11,7 @@
 ### 1. Web (Public)
 
 - Project: `astro-gs-web`
-- Repo: `astro-goldshore`
+- Repo: `goldshore-ai`
 - Root: `apps/web`
 - Custom Domains:
   - `goldshore.ai`
@@ -27,7 +27,7 @@
 ### 2. Admin (Cockpit)
 
 - Project: `astro-gs-admin`
-- Repo: `astro-goldshore`
+- Repo: `goldshore-ai`
 - Root: `apps/admin`
 - Custom Domains:
   - `admin.goldshore.ai`
@@ -49,7 +49,7 @@
 ### 3. API Worker
 
 - Service Name: `astro-gs-api`
-- Code: `apps/api-worker`
+- Code: `apps/gs-api-worker`
 - Routes:
   - `api.goldshore.ai/*`
   - `api-preview.goldshore.ai/*`
@@ -74,7 +74,7 @@
 ### 4. Gateway Worker
 
 - Service Name: `astro-gs-gateway`
-- Code: `apps/gateway`
+- Code: `apps/gs-gateway`
 - Routes:
   - `gw.goldshore.ai/*`
   - `gw-preview.goldshore.ai/*`
@@ -97,7 +97,7 @@
 ### 5. Control Worker
 
 - Service Name: `goldshore-control-worker`
-- Code: `apps/control-worker`
+- Code: `apps/gs-control-worker`
 - Routes:
   - `ops.goldshore.ai/*` (optional, or workers.dev only)
 

@@ -1,9 +1,4 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
-import cloudflare from '@astrojs/cloudflare';
+import { createGoldshoreAstroConfig } from '@goldshore/config/astro';
 
-// https://astro.build/config
-export default defineConfig({
-  output: 'server',
-  adapter: cloudflare(),
-});
+export default createGoldshoreAstroConfig();
