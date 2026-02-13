@@ -94,9 +94,9 @@ For gs-web and gs-admin, always create:
 gs-web
 
 name: gs-web
-root: apps/web
-build_command: pnpm --filter @goldshore/web build
-build_output: apps/web/dist
+root: apps/gs-web
+build_command: pnpm --filter @goldshore/gs-web build
+build_output: apps/gs-web/dist
 adapter: @astrojs/cloudflare
 domains:
 
@@ -106,9 +106,9 @@ domains:
 gs-admin
 
 name: gs-admin
-root: apps/admin
-build_command: pnpm --filter @goldshore/admin build
-build_output: apps/admin/dist
+root: apps/gs-admin
+build_command: pnpm --filter @goldshore/gs-admin build
+build_output: apps/gs-admin/dist
 adapter: @astrojs/cloudflare
 domains:
 
@@ -131,9 +131,9 @@ PUT /accounts/:account_id/workers/scripts/:script_name
 Worker → Directory Map:
 
 Worker Folder entrypoint
-gs-api apps/api-worker src/index.ts
-gs-gateway apps/gateway src/index.ts
-gs-control apps/control-worker src/index.ts
+gs-api apps/gs-api src/index.ts
+gs-gateway apps/gs-gateway src/index.ts
+gs-control apps/gs-control src/index.ts
 gs-mail no folder required via CF editor
 
 ⸻
@@ -166,7 +166,7 @@ GATEWAY → gs-gateway
 
 Jules MUST generate & maintain:
 
-apps/api-worker/wrangler.toml
+apps/gs-api/wrangler.toml
 
 name = "gs-api"
 main = "src/index.ts"
@@ -188,7 +188,7 @@ database_id = "gs_db_001"
 [ai]
 binding = "AI"
 
-apps/gateway/wrangler.toml
+apps/gs-gateway/wrangler.toml
 
 name = "gs-gateway"
 main = "src/index.ts"
@@ -202,7 +202,7 @@ environment = "production"
 [ai]
 binding = "AI"
 
-apps/control-worker/wrangler.toml
+apps/gs-control/wrangler.toml
 
 name = "gs-control"
 main = "src/index.ts"

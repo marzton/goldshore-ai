@@ -81,7 +81,7 @@ git fetch origin main
 
 ### 2.2 Special Case: Lockfile Conflicts (pnpm-lock.yaml)
 
-If pnpm-lock.yaml shows conflict markers (<<<<<<<, =======, >>>>>>>):
+If pnpm-lock.yaml shows conflict markers (`<<<`, `===`, `>>>`):
 
 Do NOT open or edit the lockfile manually.
 
@@ -131,11 +131,9 @@ If Git shows conflicts:
    - Open the file
    - Look for:
      ```
-     <<<<<<< HEAD
+     [current branch changes]
      ...
-     =======
-     ...
-     >>>>>>> branch-name
+     [incoming branch changes]
      ```
    - Decide:
      - Keep current (HEAD, which is main)
