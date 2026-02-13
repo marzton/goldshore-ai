@@ -31,11 +31,11 @@ The AI agent service.
 - **Main Entry:** `src/index.ts`
 - **Purpose:** Handles AI inference tasks, job processing from queues, and agent interactions.
 
-## 3. gs-gateway (`apps/gateway`)
+## 3. gs-gateway (`apps/gs-gateway`)
 
 The API gateway and router.
 
-- **Directory:** `apps/gateway`
+- **Directory:** `apps/gs-gateway`
 - **Package Name:** `@goldshore/gateway`
 - **Wrangler:** `wrangler.toml` (locally defined)
 - **Deployment:** CI workflow (`deploy-gateway.yml`).
@@ -49,11 +49,11 @@ The API gateway and router.
 - **Main Entry:** `src/index.ts` (implied).
 - **Purpose:** Primary entry point for API traffic, routing requests to `gs-api` or handling them directly (e.g., cached responses).
 
-## 4. gs-control (`apps/control-worker`)
+## 4. gs-control (`apps/gs-control`)
 
 The operational control plane worker.
 
-- **Directory:** `apps/control-worker`
+- **Directory:** `apps/gs-control`
 - **Package Name:** `@goldshore/control`
 - **Wrangler:** `wrangler.toml` (locally defined)
 - **Deployment:** CI workflow (`deploy-control-worker.yml`).
@@ -66,11 +66,11 @@ The operational control plane worker.
 - **Main Entry:** `src/index.ts`
 - **Purpose:** Internal tool for managing Cloudflare resources, viewing logs, and performing administrative actions via Hono API.
 
-## 5. gs-api (`apps/api-worker`)
+## 5. gs-api (`apps/gs-api`)
 
 The backend API service.
 
-- **Directory:** `apps/api-worker`
+- **Directory:** `apps/gs-api`
 - **Package Name:** `gs-api`
 - **Wrangler:** `wrangler.toml` (locally defined) or `infra/cloudflare/goldshore-api.wrangler.toml`.
 - **Deployment:** CI workflow (`deploy-api-worker.yml`).

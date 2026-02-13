@@ -29,7 +29,7 @@ async function run() {
     fs.writeFileSync(target1, JSON.stringify(parsed, null, 2));
     console.log(`Wrote ${target1}`);
 
-    // Target 2: apps/web/public/openapi (standard static assets)
+    // Target 2: apps/gs-web/public/openapi (standard static assets)
     const target2 = path.join(ROOT, '../public/openapi', jsonOut);
     fs.mkdirSync(path.dirname(target2), { recursive: true });
     fs.writeFileSync(target2, JSON.stringify(parsed, null, 2));

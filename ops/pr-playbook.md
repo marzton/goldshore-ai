@@ -168,8 +168,8 @@ If Git shows conflicts:
    - Example:
      ```
      Resolved conflicts by syncing with main, regenerating pnpm-lock.yaml, and merging:
-     • apps/admin/…
-     • apps/web/…
+     • apps/gs-admin/…
+     • apps/gs-web/…
      Lint + build passing locally. CI re-run.
      ```
 
@@ -203,9 +203,9 @@ gh pr view <id> \
 
 Flag PRs that touch:
 - package.json, pnpm-lock.yaml
-- apps/admin/*
-- apps/web/*
-- apps/api-worker/*, apps/gateway/*, apps/control-worker/*
+- apps/gs-admin/\*
+- apps/gs-web/\*
+- apps/gs-api/_, apps/gs-gateway/_, apps/gs-control/\*
 - tsconfig.json, astro.config.mjs, wrangler.toml
 - shared packages/* (theme, ui, auth, utils, etc.)
 
@@ -236,17 +236,19 @@ Recommended priority:
    - infra/cloudflare/\*
    - wrangler.toml changes
 2. Workers
-   - apps/api-worker
-   - apps/gateway
-   - apps/control-worker
+   - apps/gs-api
+   - apps/gs-gateway
+   - apps/gs-control
 3. Web/Admin frameworks
-   - apps/web/astro.config.mjs, apps/admin/astro.config.mjs
+   - apps/gs-web/astro.config.mjs, apps/gs-admin/astro.config.mjs
    - WebLayout, AdminLayout, NavBar, Footer
 4. Pages and content
    - apps/web/src/pages/*
    - apps/admin/src/pages/*
    - apps/web/src/pages/\*
    - apps/admin/src/pages/\*
+   - apps/gs-web/src/pages/\*
+   - apps/gs-admin/src/pages/\*
 5. Docs / README / comment-only PRs
 
 ⸻
@@ -290,6 +292,7 @@ Until that’s live, this playbook is the manual version of what Jules will even
 ⸻
 
 **Scenario B — PR touches apps/web/src/pages/index.astro and apps/admin/src/pages/index.astro**
+**Scenario B — PR touches apps/gs-web/src/pages/index.astro and apps/gs-admin/src/pages/index.astro**
 
 1. Sync branch with main (rebase origin/main)
 2. Resolve conflicts in those .astro files manually

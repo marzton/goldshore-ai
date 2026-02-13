@@ -43,7 +43,7 @@ The template demonstrates:
 
 ## Development
 
-# apps/web
+# apps/gs-web
 
 ## Overview
 
@@ -79,9 +79,9 @@ Authenticated user portal:
 
 ```bash
 pnpm install
-pnpm --filter ./apps/web dev
-pnpm --filter ./apps/web build
-pnpm --filter ./apps/web preview
+pnpm --filter ./apps/gs-web dev
+pnpm --filter ./apps/gs-web build
+pnpm --filter ./apps/gs-web preview
 ```
 
 ## Contact form + Cloudflare mail delivery
@@ -107,7 +107,7 @@ From repo root, deploy the current web build to Cloudflare Pages production:
 pnpm deploy:web:live
 ```
 
-This builds `@goldshore/web` and deploys `apps/web/dist` to the `gs-web` Pages project on `main`.
+This builds `@goldshore/web` and deploys `apps/gs-web/dist` to the `gs-web` Pages project on `main`.
 
 ## Deploy
 
@@ -172,7 +172,7 @@ The template demonstrates:
 pnpm --filter @goldshore/web dev
 ```
 
-# apps/web
+# apps/gs-web
 
 ## Overview
 
@@ -202,9 +202,9 @@ Authenticated user portal:
 
 ```bash
 pnpm install
-pnpm --filter ./apps/web dev
-pnpm --filter ./apps/web build
-pnpm --filter ./apps/web preview
+pnpm --filter ./apps/gs-web dev
+pnpm --filter ./apps/gs-web build
+pnpm --filter ./apps/gs-web preview
 ```
 
 ## Live deployment (with themes)
@@ -217,7 +217,7 @@ From repo root, deploy the current web build to Cloudflare Pages production:
 pnpm deploy:web:live
 ```
 
-This builds `@goldshore/web` and deploys `apps/web/dist` to the `gs-web` Pages project on `main`.
+This builds `@goldshore/web` and deploys `apps/gs-web/dist` to the `gs-web` Pages project on `main`.
 
 ## Deploy
 
