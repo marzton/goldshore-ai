@@ -6,7 +6,6 @@
     "dev": "turbo run dev --parallel",
     "build:openapi": "node scripts/build-openapi.mjs",
     "build": "pnpm build:openapi && turbo run build",
-    "build": "turbo run build",
     "build:web": "turbo run build --filter=@goldshore/gs-web",
     "build:admin": "turbo run build --filter=@goldshore/gs-admin",
     "build:api": "turbo run build --filter=@goldshore/gs-api-worker",
