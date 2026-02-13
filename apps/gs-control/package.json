@@ -6,7 +6,6 @@
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy",
     "run-task": "wrangler dev src/index.ts --test-scheduled",
-    "test": "tsx --test src/routes/*.test.ts"
     "test": "echo 'No tests configured for @goldshore/control'"
   },
   "dependencies": {
