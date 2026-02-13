@@ -1,5 +1,5 @@
 {
-  "name": "@goldshore/admin",
+  "name": "@goldshore/gs-admin",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -8,7 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "lint": "eslint .",
-    "test": "echo 'No tests configured for @goldshore/admin'"
+    "test": "echo 'No tests configured for @goldshore/gs-admin'"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",

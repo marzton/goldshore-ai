@@ -9,14 +9,14 @@ compatibility_flags = ["nodejs_compat"]
 [env.dev]
 name = "gs-agent-dev"
 [[env.dev.queues.consumers]]
-queue = "goldshore-jobs"
+queue = "gs-jobs"
 
 [env.preview]
 name = "gs-agent-preview"
 [[env.preview.queues.consumers]]
-queue = "goldshore-jobs"
+queue = "gs-jobs"
 
 [env.prod]
 name = "gs-agent-prod"
 [[env.prod.queues.consumers]]
-queue = "goldshore-jobs"
+queue = "gs-jobs"

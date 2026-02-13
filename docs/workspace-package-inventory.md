@@ -16,13 +16,13 @@ This inventory is sourced from:
 
 | Package | Path | Exports | Domain / route ownership |
 | --- | --- | --- | --- |
-| `@goldshore/admin` | `apps/gs-admin` | none | Admin web UI surfaces for ops, monetization, users, media, system status. |
-| `@goldshore/agent` | `apps/gs-agent` | none | Agent worker endpoints (`/`, `/health`). |
-| `gs-api` | `apps/gs-api` | none | Primary API surface and route modules (`/users`, `/health`, `/ai`, `/user`, `/system`, `/templates`, `/admin`, `/media`, `/pages`). |
-| `@goldshore/control` | `apps/gs-control` | none | Cloudflare control-plane orchestration (`/dns/*`, `/workers/*`, `/pages/*`, `/access/*`, `/cloudflare/*`). |
-| `@goldshore/gateway` | `apps/gs-gateway` | none | API gateway, edge auth guard, and forwarding/proxy ownership. |
-| `@goldshore/web` | `apps/gs-web` | none | Public website application, content pages, templates and web UX. |
-| `gs-mail` | `apps/mail-worker` | none | Mail ingestion worker. |
+| `@goldshore/gs-admin` | `apps/gs-admin` | none | Admin web UI surfaces for ops, monetization, users, media, system status. |
+| `@goldshore/gs-agent` | `apps/gs-agent` | none | Agent worker endpoints (`/`, `/health`). |
+| `@goldshore/gs-api` | `apps/gs-api` | none | Primary API surface and route modules (`/users`, `/health`, `/ai`, `/user`, `/system`, `/templates`, `/admin`, `/media`, `/pages`). |
+| `@goldshore/gs-control` | `apps/gs-control` | none | Cloudflare control-plane orchestration (`/dns/*`, `/workers/*`, `/pages/*`, `/access/*`, `/cloudflare/*`). |
+| `@goldshore/gs-gateway` | `apps/gs-gateway` | none | API gateway, edge auth guard, and forwarding/proxy ownership. |
+| `@goldshore/gs-web` | `apps/gs-web` | none | Public website application, content pages, templates and web UX. |
+| `@goldshore/gs-mail` | `apps/gs-mail` | none | Mail ingestion worker. |
 
 ## Shared packages
 
