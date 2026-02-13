@@ -6,7 +6,7 @@
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy",
     "run-task": "wrangler dev src/index.ts --test-scheduled",
-    "test": "echo 'No tests configured for @goldshore/control'"
+    "test": "tsx --test src/routes/*.test.ts"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",

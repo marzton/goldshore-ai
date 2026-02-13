@@ -34,16 +34,6 @@ The monorepo uses:
 
 ---
 
-## 📚 Where to find X
-
-- **Architecture & current monorepo state:** [`CURRENT_MONOREPO_STATE.md`](./CURRENT_MONOREPO_STATE.md)
-- **Branch operations (mergeability, drift checks, workflows):** [`docs/ops/mergeable-branches.md`](./docs/ops/mergeable-branches.md)
-- **Deprecated packages / dependency debt tracking:** [`DEPRECATED_PACKAGES.md`](./DEPRECATED_PACKAGES.md)
-- **Developer website rollout guide:** [`docs/developer-briefing.md`](./docs/developer-briefing.md)
-- **Copy and tone guide:** [`docs/copy-style-guide.md`](./docs/copy-style-guide.md)
-
----
-
 ## Website rollout docs
 
 - Developer briefing: `docs/developer-briefing.md`

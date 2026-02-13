@@ -11,6 +11,12 @@ const VERSION = '2026.02.10-mail-worker-fix';
 
 const app = new Hono<{ Bindings: Env }>();
 
+const splitCsv = (value?: string) =>
+  (value ?? '')
+    .split(',')
+    .map((entry) => entry.trim().toLowerCase())
+    .filter(Boolean);
+
 const isEmailLike = (value: string) => /.+@.+\..+/.test(value);
 
 app.get('/', (c) => c.text('GoldShore Mail Worker'));
@@ -41,7 +47,7 @@ export default {
     // Basic email handler scaffolding
     console.log(`Received email from ${message.from} to ${message.to}`);
 
-    const forwardTo = _env.MAIL_FORWARD_TO?.trim();
+    const forwardTo = env.MAIL_FORWARD_TO?.trim();
     if (!forwardTo || !isEmailLike(forwardTo)) {
       message.setReject('Mail forwarding is not configured.');
       return;
