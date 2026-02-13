@@ -34,6 +34,16 @@ The monorepo uses:
 
 ---
 
+## 📚 Where to find X
+
+- **Architecture & current monorepo state:** [`CURRENT_MONOREPO_STATE.md`](./CURRENT_MONOREPO_STATE.md)
+- **Branch operations (mergeability, drift checks, workflows):** [`docs/ops/mergeable-branches.md`](./docs/ops/mergeable-branches.md)
+- **Deprecated packages / dependency debt tracking:** [`DEPRECATED_PACKAGES.md`](./DEPRECATED_PACKAGES.md)
+- **Developer website rollout guide:** [`docs/developer-briefing.md`](./docs/developer-briefing.md)
+- **Copy and tone guide:** [`docs/copy-style-guide.md`](./docs/copy-style-guide.md)
+
+---
+
 ## Website rollout docs
 
 - Developer briefing: `docs/developer-briefing.md`
@@ -286,6 +296,16 @@ To keep issues, workflows, PRs, branches, and components aligned:
 - Review deployment flow in `infra/github/workflows/`.
 - Use `ops/pr-playbook.md` and `ops/maintenance-playbook.md` for release continuity.
 - Document component ownership in the admin dashboard templates and UI kit README.
+
+### Contributing Naming Rules
+
+- Read `docs/conventions/naming.md` before opening a PR.
+- Prefer `feat/add-new-worker-healthcheck` over mixed-case or space-separated branch names.
+- Prefer package names like `@goldshore/api-worker` and workflow file names like `deploy-api-worker.yml`.
+- Anti-patterns to avoid: `Feature/AddThing`, `gs_api`, `Deploy API Worker.yml`, and job keys like `deploy_api`.
+- Use helper scripts:
+  - `pnpm branch:bootstrap -- <type> <slug>`
+  - `pnpm scaffold:worker -- <worker-name>`
 
 ## **packages/utils**
 

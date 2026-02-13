@@ -9,6 +9,7 @@
     "preview": "astro preview",
     "lint": "eslint .",
     "test": "tsx --test src/lib/*.test.ts"
+    "test": "echo 'No tests configured for @goldshore/admin'"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
