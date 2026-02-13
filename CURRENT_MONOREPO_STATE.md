@@ -19,6 +19,7 @@
 ## Infrastructure
 - `infra/scripts`: Automation scripts
 - `infra/cloudflare`: Cloudflare configurations (wrangler.toml files for some apps are here or referenced)
+- `infra/cloudflare/goldshore-api.wrangler.toml`: Shared deployment config targeting `apps/api-worker` (`gs-api`) across environments
 
 ## Configuration Summary
 - **Package Manager**: pnpm (v9)
