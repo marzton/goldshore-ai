@@ -77,47 +77,6 @@ const { tabs = [] } = Astro.props;
   // Run on load and after Astro swaps
   initTabs();
   document.addEventListener('astro:page-load', initTabs);
-  <div class="gs-tabs-header">
-    {
-      tabs.map((t) => (
-        <button onclick={`showTab(event, '${t.id}')`}>{t.label}</button>
-      ))
-    }
-  </div>
-
-  {
-    tabs.map((t) => (
-      <div
-        id={t.id}
-        class="gs-tab"
-        style={tabs.indexOf(t) === 0 ? 'display: block;' : 'display: none;'}
-      >
-        <slot name={t.id} />
-      </div>
-    ))
-  }
-</div>
-
-<script is:inline>
-  window.showTab = function (event, id) {
-    const container = event.target.closest('.gs-tabs');
-    if (!container) return;
-
-    // Deactivate all content tabs in this container
-    const contentTabs = container.querySelectorAll('.gs-tab');
-    contentTabs.forEach((el) => {
-      if (el.id === id) {
-        el.style.display = 'block';
-      } else {
-        el.style.display = 'none';
-      }
-    });
-
-    // Optional: Update active state of buttons?
-    // The prompt didn't specify active state styles for buttons, but it's good UX.
-    // The prompt CSS has no active class for buttons.
-    // I will stick to just switching content.
-  };
 </script>
 
 <style>
@@ -144,8 +103,5 @@ const { tabs = [] } = Astro.props;
   .gs-tab-trigger.active {
       color: var(--gs-color-primary, #f59e0b);
       border-bottom-color: var(--gs-color-primary, #f59e0b);
-  .gs-tabs-header button:hover {
-    background: var(--gs-bg-elevated);
-    color: var(--gs-fg);
   }
 </style>

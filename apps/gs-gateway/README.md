@@ -1,4 +1,4 @@
-# apps/gs-gateway
+# apps/gateway
 
 ## Overview
 The `gs-gateway` worker is the routing and queue ingress layer for GoldShore on Cloudflare Workers. It is managed alongside the control worker as part of the Edge Workers deployment group.
@@ -37,17 +37,17 @@ These are worker API endpoints implemented in `src/index.ts` (not HTML pages). R
 ## Local Dev
 ```bash
 pnpm install
-pnpm --filter ./apps/gs-gateway dev
-pnpm --filter ./apps/gs-gateway build
+pnpm --filter ./apps/gateway dev
+pnpm --filter ./apps/gateway build
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-gs-gateway.yml`
-- Preview deploy: `.github/workflows/preview-gs-gateway.yml`
+- Production deploy: `.github/workflows/deploy-gateway.yml`
+- Preview deploy: `.github/workflows/preview-gateway.yml`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 - Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 ```bash
-pnpm --filter ./apps/gs-gateway deploy
+pnpm --filter ./apps/gateway deploy
 ```

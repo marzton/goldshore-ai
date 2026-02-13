@@ -1,4 +1,4 @@
-name: Preview Web (gs-web)
+name: Preview Web (goldshore.ai)
 
 permissions:
   contents: read
@@ -13,8 +13,7 @@ on:
       - unlabeled
       - ready_for_review
     paths:
-      - "apps/gs-web/**"
-      - "infra/cloudflare/gs-web.wrangler.toml"
+      - "apps/web/**"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -27,7 +26,7 @@ jobs:
       (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
 
       - uses: pnpm/action-setup@v4
         with:
@@ -41,14 +40,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build web
-        run: pnpm build:web
+      - name: Build web app (preview)
+        working-directory: apps/web
+        env:
+          PUBLIC_API: https://api-preview.goldshore.ai
+          PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
+        run: pnpm build
 
-      - name: Deploy web pages (preview)
+      - name: Deploy to Cloudflare Pages (preview)
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: gs-web
-          directory: apps/gs-web/dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          projectName: preview-web
+          directory: apps/web/dist
+          branch: ${{ github.head_ref || github.ref_name }}

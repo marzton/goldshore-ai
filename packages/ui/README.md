@@ -37,8 +37,8 @@ import { Button, Card } from '@goldshore/ui';
 
 Use these components inside template pages so navigation, menus, and content modules stay consistent across:
 
-- `apps/gs-web` marketing pages.
-- `apps/gs-admin` operational dashboards.
+- `apps/web` marketing pages.
+- `apps/admin` operational dashboards.
 - Docs and search surfaces that need shared styling.
 
 ## Integration Targets

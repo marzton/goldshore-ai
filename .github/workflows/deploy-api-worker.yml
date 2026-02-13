@@ -1,4 +1,4 @@
-name: Deploy API Worker (gs-api-worker)
+name: Deploy API Worker
 
 permissions:
   contents: read
@@ -8,18 +8,17 @@ on:
     branches:
       - main
     paths:
-      - "apps/gs-api-worker/**"
-      - "infra/cloudflare/gs-api-worker.wrangler.toml"
+      - "apps/api-worker/**"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
 
 jobs:
-  deploy-api-worker:
+  deploy:
     runs-on: ubuntu-latest
-
+    name: Deploy
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
 
       - uses: pnpm/action-setup@v4
         with:
@@ -28,14 +27,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
+          cache: 'pnpm'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Deploy api worker (production)
-        working-directory: apps/gs-api-worker
+      - name: Deploy to Cloudflare
+        working-directory: apps/api-worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: pnpm exec wrangler deploy --env prod --config ../../infra/cloudflare/gs-api-worker.wrangler.toml
+        run: pnpm exec wrangler deploy

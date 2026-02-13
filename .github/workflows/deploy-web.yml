@@ -1,4 +1,4 @@
-name: Deploy Web (gs-web)
+name: Deploy Web (goldshore.ai)
 
 permissions:
   contents: read
@@ -8,8 +8,7 @@ on:
     branches:
       - main
     paths:
-      - "apps/gs-web/**"
-      - "infra/cloudflare/gs-web.wrangler.toml"
+      - "apps/web/**"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -19,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
 
       - uses: pnpm/action-setup@v4
         with:
@@ -33,14 +32,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build web
-        run: pnpm build:web
+      - name: Build web app
+        working-directory: apps/web
+        run: pnpm build
 
-      - name: Deploy web pages (production)
+      - name: Deploy to Cloudflare Pages (production)
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: gs-web
-          directory: apps/gs-web/dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          directory: apps/web/dist
+          branch: main

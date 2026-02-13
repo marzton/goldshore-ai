@@ -1,21 +1,19 @@
-# gs-control worker
+# apps/control-worker
 
 ## Overview
-`gs-control` is the operations worker for Goldshore infrastructure automation (DNS updates, worker/page reconciliation, access audits, and system sync workflows). It is served from `https://ops.goldshore.ai/*`.
+The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers. It is managed alongside the gateway worker as part of the Edge Workers deployment group.
 
-## Cloudflare configuration
-From `wrangler.toml`:
+Cloudflare metadata (from `wrangler.toml`):
 - Worker name: `gs-control`
-- Entry point: `src/index.ts`
 - Route: `ops.goldshore.ai/*`
-- KV binding: `CONTROL_LOGS`
-- R2 binding: `STATE`
+- Compatibility date: `2025-01-10`
+- Bindings: `CONTROL_LOGS` (KV), `STATE` (R2)
 - Service bindings: `API` (`gs-api`), `GATEWAY` (`gs-gateway`)
 - Environment variable: `ENV=production`
 
-## API endpoints
-Implemented in `src/index.ts` and `src/routes/cloudflare.ts`:
-- `GET /`
+## Routes/Endpoints
+These are worker API endpoints implemented in `src/index.ts` and `src/routes/cloudflare.ts` (not HTML pages). The router files are the source of truth.
+- `GET /` (service health)
 - `POST /dns/apply`
 - `POST /workers/reconcile`
 - `POST /pages/deploy`
@@ -28,22 +26,34 @@ Implemented in `src/index.ts` and `src/routes/cloudflare.ts`:
 - `GET /cloudflare/r2/buckets`
 - `GET /cloudflare/d1/databases`
 - `GET /cloudflare/access/policies`
+The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers.
 
-## Development
+Configuration highlights (from `wrangler.toml`):
+- `ENV=production`
+- KV binding: `CONTROL_LOGS`
+- R2 binding: `STATE`
+- Service bindings: `API` (`gs-api`), `GATEWAY` (`gs-gateway`)
+
+## Routes/Endpoints
+These are worker API endpoints implemented in `src/index.ts` (not HTML pages). Route handlers are defined in `src/index.ts`.
+- `POST /system/sync`
+- `POST /dns/update`
+- `POST /preview/create`
+
+## Local Dev
 ```bash
 pnpm install
-pnpm --filter ./apps/gs-control dev
-pnpm --filter ./apps/gs-control typecheck
-pnpm --filter ./apps/gs-control build
+pnpm --filter ./apps/control-worker dev
+pnpm --filter ./apps/control-worker run-task
 ```
 
 ## Deploy
-```bash
-pnpm --filter ./apps/gs-control deploy
-```
+- Production deploy: `.github/workflows/deploy-control-worker.yml`
+- Preview deploy: `.github/workflows/preview-control-worker.yml`
+- Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
+- Store `CLOUDFLARE_API_TOKEN` in Cloudflare secrets (via `wrangler secret put`) rather than committing env values
 
-## Source/build artifact policy
-- TypeScript (`.ts`) files in `src/` are the source of truth.
-- Do not commit generated JavaScript files under `src/` (especially `src/libs`, `src/routes`, and `src/tasks`).
-- TypeScript compilation output must go only to `dist/` via `pnpm --filter ./apps/gs-control build` (`tsconfig.json` sets `outDir: "dist"`).
-- Legacy snapshots created during migrations should be moved under `archive/legacy-snapshots/<YYYY-MM-DD>/` rather than left in app directories.
+<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
+```bash
+pnpm --filter ./apps/control-worker deploy
+```

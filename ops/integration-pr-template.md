@@ -1,10 +1,5 @@
 # Integration PR: conflict-resolution baseline
 
-## Issue context (required)
-- Related issue/ticket: `<link-or-id>`
-- Problem statement: `<what failed or what conflict is being resolved>`
-- Why this change now: `<release/deploy/blocker context>`
-
 ## Summary
 - Base: `<base-commit-sha>`
 - Integration branch: `<integration-branch>`
@@ -30,11 +25,8 @@
 - Optional: `pnpm --filter=@goldshore/web build`
 - Optional: `pnpm e2e`
 
-## Review tags (required when applicable)
-Select one when asking Jules for deeper review:
+## Review requests
 - @Jules-Bot [review-request]
-- @Jules-Bot [error-analysis]
-- @Jules-Bot [issue-repro]
 
 ## Notes
 - `<additional context, links, or logs>`

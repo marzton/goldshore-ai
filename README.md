@@ -34,16 +34,6 @@ The monorepo uses:
 
 ---
 
-## 📚 Where to find X
-
-- **Architecture & current monorepo state:** [`CURRENT_MONOREPO_STATE.md`](./CURRENT_MONOREPO_STATE.md)
-- **Branch operations (mergeability, drift checks, workflows):** [`docs/ops/mergeable-branches.md`](./docs/ops/mergeable-branches.md)
-- **Deprecated packages / dependency debt tracking:** [`DEPRECATED_PACKAGES.md`](./DEPRECATED_PACKAGES.md)
-- **Developer website rollout guide:** [`docs/developer-briefing.md`](./docs/developer-briefing.md)
-- **Copy and tone guide:** [`docs/copy-style-guide.md`](./docs/copy-style-guide.md)
-
----
-
 ## Website rollout docs
 
 - Developer briefing: `docs/developer-briefing.md`
@@ -102,7 +92,7 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 
 # 🧩 Applications
 
-## **1. apps/gs-web – Public Website (Astro)**
+## **1. apps/web – Public Website (Astro)**
 
 - Marketing site
 - User portal
@@ -132,7 +122,7 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 
 ---
 
-## **2. apps/gs-admin – Admin Dashboard (Astro)**
+## **2. apps/admin – Admin Dashboard (Astro)**
 
 Protected by **Cloudflare Access**.
 
@@ -159,7 +149,7 @@ Protected by **Cloudflare Access**.
 
 ---
 
-## **3. apps/gs-api – gs-api**
+## **3. apps/api-worker – gs-api**
 
 Hono-based API Worker.
 
@@ -189,7 +179,7 @@ AI = AI (AI Gateway)
 
 ---
 
-## **4. apps/gs-gateway – gs-gateway**
+## **4. apps/gateway – gs-gateway**
 
 Request router + queue dispatcher.
 
@@ -264,10 +254,10 @@ Template pages are kept alongside each app so navigation, menus, containers, and
 
 | App        | Template Location                            | Notes                           |
 | ---------- | -------------------------------------------- | ------------------------------- |
-| Web        | `apps/gs-web/src/pages/templates/index.astro`   | Marketing + search composition  |
-| Admin      | `apps/gs-admin/src/pages/templates/index.astro` | Dashboard shell + table samples |
-| API Worker | `apps/gs-api/src/routes/templates.ts`    | Module checklist for API growth |
-| Gateway    | `apps/gs-gateway/src/index.ts` (`/templates`)   | Routing + AI dispatch template  |
+| Web        | `apps/web/src/pages/templates/index.astro`   | Marketing + search composition  |
+| Admin      | `apps/admin/src/pages/templates/index.astro` | Dashboard shell + table samples |
+| API Worker | `apps/api-worker/src/routes/templates.ts`    | Module checklist for API growth |
+| Gateway    | `apps/gateway/src/index.ts` (`/templates`)   | Routing + AI dispatch template  |
 | Agent      | `apps/gs-agent/src/index.ts` (`/templates`)  | HITL orchestration template     |
 
 ---
@@ -293,9 +283,8 @@ AI agent tooling, and market data services without rebuilding existing modules.
 To keep issues, workflows, PRs, branches, and components aligned:
 
 - Track work in **GitHub Issues/Projects** and the templates in `.github/ISSUE_TEMPLATE/`.
-- Review deployment flow in `.github/workflows/`.
+- Review deployment flow in `infra/github/workflows/`.
 - Use `ops/pr-playbook.md` and `ops/maintenance-playbook.md` for release continuity.
-- Follow `docs/ops/branch-governance.md` and verify remote branch existence (`git ls-remote --heads origin <branch>`) before any automated `git checkout` or rebase step.
 - Document component ownership in the admin dashboard templates and UI kit README.
 
 ## **packages/utils**
@@ -383,17 +372,17 @@ Queues:     jobsQueue (optional)
 Location:
 
 ```
-.github/workflows/
+infra/github/workflows/
 ```
 
 Workflows included:
 
 ```
-preview-gs-web.yml
-preview-gs-admin.yml
-deploy-gs-api.yml
-deploy-gs-gateway.yml
-deploy-gs-control.yml
+preview-web.yml
+preview-admin.yml
+deploy-api.yml
+deploy-gateway.yml
+deploy-control.yml
 ```
 
 Features:
@@ -485,7 +474,7 @@ GoldShore Brand Variants
 
 🧭 Monorepo Structure
 
-goldshore-ai/
+astro-goldshore/
 │
 ├── apps/
 │ ├── web/ → Public website (Astro + CF Pages)
@@ -508,7 +497,7 @@ goldshore-ai/
 
 🔥 Apps Overview
 
-🌐 apps/gs-web — GoldShore Public Website
+🌐 apps/web — GoldShore Public Website
 • Astro SSR
 • Powered by the GoldShore UI Kit
 • Deploys via Cloudflare Pages
@@ -519,7 +508,7 @@ Hero Example
 
 ---
 
-🛠 apps/gs-admin — GoldShore Admin Cockpit
+🛠 apps/admin — GoldShore Admin Cockpit
 
 This is your hyper-modern operational dashboard.
 
@@ -580,7 +569,7 @@ Supports:
 
 ---
 
-⚙️ apps/gs-api — Main API (Hono)
+⚙️ apps/api-worker — Main API (Hono)
 • Edge-native API
 • Zod schemas
 • Hono router
@@ -591,7 +580,7 @@ Supports:
 
 ---
 
-🚏 apps/gs-gateway — Routing & AI Gateway
+🚏 apps/gateway — Routing & AI Gateway
 
 Handles:
 • URL-based routing
@@ -602,7 +591,7 @@ Handles:
 
 ---
 
-🛰 apps/gs-control — Infra Automation
+🛰 apps/control-worker — Infra Automation
 
 Can automatically:
 • Create DNS records
@@ -628,15 +617,15 @@ pnpm dev
 
 Run only the admin app:
 
-pnpm --filter ./apps/gs-admin dev
+pnpm --filter ./apps/admin dev
 
 Run the web app:
 
-pnpm --filter ./apps/gs-web dev
+pnpm --filter ./apps/web dev
 
 Run API worker:
 
-pnpm --filter ./apps/gs-api dev
+pnpm --filter ./apps/api-worker dev
 
 Build all:
 
@@ -648,8 +637,8 @@ pnpm build
 
 Playwright tests live in:
 
-apps/gs-admin/tests
-apps/gs-web/tests
+apps/admin/tests
+apps/web/tests
 
 Run:
 
@@ -661,7 +650,7 @@ pnpm test
 
 Deploy is handled by GitHub Actions:
 
-.github/workflows/deploy.yml
+infra/github/workflows/deploy.yml
 
 CI/CD steps: 1. Install dependencies 2. Build workspaces with Turbo 3. Deploy:
 • web → Cloudflare Pages

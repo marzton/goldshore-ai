@@ -26,15 +26,15 @@ module.exports = {
       },
     },
     {
-      // Define the configuration for `.mjs` file.
-      files: ['*.mjs'],
-      parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-      },
-      rules: {
-        // You can add specific rules for .mjs files here
-      },
+        // Define the configuration for `.mjs` file.
+        files: ['*.mjs'],
+        parserOptions: {
+          ecmaVersion: 'latest',
+          sourceType: 'module',
+        },
+        rules: {
+          // You can add specific rules for .mjs files here
+        },
     },
   ],
 };

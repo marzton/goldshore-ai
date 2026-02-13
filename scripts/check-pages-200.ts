@@ -4,7 +4,7 @@ import { performance } from 'node:perf_hooks';
 import { loadDynamicRoutes } from './dynamic-routes';
 
 const DEFAULT_BASE_URL = 'http://localhost:4321';
-const DEFAULT_PAGES_DIR = 'apps/gs-web/src/pages';
+const DEFAULT_PAGES_DIR = 'apps/web/src/pages';
 
 const listFiles = async (dir: string): Promise<string[]> => {
   const entries = await readdir(dir, { withFileTypes: true });

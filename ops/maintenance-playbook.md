@@ -82,7 +82,7 @@ Best practice:
 
 ### 2.3 Avoid parallel edits on the same file
 
-If multiple PRs touch the same “hub file” (e.g. `apps/gs-web/src/pages/index.astro`):
+If multiple PRs touch the same “hub file” (e.g. `apps/web/src/pages/index.astro`):
 - Merge one PR first.
 - Rebase the others.
 - Or consolidate into one PR if the work is tightly related.
@@ -157,9 +157,9 @@ Require:
 ### 4.3 Use CODEOWNERS
 
 Add `CODEOWNERS` so key areas require review:
-- `apps/gs-api/**` → infra reviewer
-- `apps/gs-web/**` → web reviewer
-- `apps/gs-admin/**` → admin reviewer
+- `apps/api-worker/**` → infra reviewer
+- `apps/web/**` → web reviewer
+- `apps/admin/**` → admin reviewer
 - `.github/workflows/**` → ops reviewer
 - `packages/theme/**` → design system reviewer
 
@@ -227,7 +227,7 @@ Disallowed auto-fixes:
 
 Keep stable:
 - Build command: `pnpm install && pnpm --filter @goldshore/web build`
-- Output directory: `apps/gs-web/dist`
+- Output directory: `apps/web/dist`
 - Same pattern for admin.
 
 Do not change build output dir without updating CF Pages settings + docs.

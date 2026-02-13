@@ -12,29 +12,6 @@ OWNER="goldshore"
 REPO="Astro-goldshore"
 BASE_BRANCH="main"
 
-
-origin_branch_exists() {
-    local branch="$1"
-    git ls-remote --exit-code --heads origin "${branch}" > /dev/null 2>&1
-}
-
-ensure_local_branch() {
-    local branch="$1"
-
-    # If branch already exists locally, nothing to do.
-    if git show-ref --verify --quiet "refs/heads/${branch}"; then
-        return 0
-    fi
-
-    # Attempt to materialize a local tracking branch from origin.
-    if git ls-remote --exit-code --heads origin "${branch}" > /dev/null 2>&1; then
-        git fetch origin "${branch}:${branch}"
-        return 0
-    fi
-
-    return 1
-}
-
 echo "--- JULES AI: GITHUB CONFLICT REPAIR INITIATED ---"
 echo "Targeting repository: ${OWNER}/${REPO}"
 
@@ -48,10 +25,6 @@ fi
 # 1. Fetch latest changes for synchronization
 echo "1. Fetching latest state of ${BASE_BRANCH}..."
 git fetch origin "${BASE_BRANCH}"
-if ! origin_branch_exists "${BASE_BRANCH}"; then
-    echo "ERROR: Base branch ${BASE_BRANCH} does not exist on origin."
-    exit 1
-fi
 git checkout "${BASE_BRANCH}"
 
 # 2. Get list of open Pull Requests that require conflict resolution
@@ -73,20 +46,8 @@ for BRANCH in "${CONFLICT_BRANCHES[@]}"; do
 
     echo "  - Processing branch: ${BRANCH}"
 
-    if ! origin_branch_exists "${BRANCH}"; then
-        echo "  - ERROR: Branch ${BRANCH} does not exist on origin. Skipping."
-        git checkout "${BASE_BRANCH}"
-        continue
-    fi
-
-    if ! ensure_local_branch "${BRANCH}"; then
-        echo "  - ERROR: Branch ${BRANCH} does not exist on origin. Skipping."
-        git checkout "${BASE_BRANCH}"
-        continue
-    fi
-
     if ! git checkout "${BRANCH}"; then
-        echo "  - ERROR: Cannot checkout local branch ${BRANCH}"
+        echo "  - ERROR: Cannot checkout branch ${BRANCH}"
         git checkout "${BASE_BRANCH}"
         continue
     fi
