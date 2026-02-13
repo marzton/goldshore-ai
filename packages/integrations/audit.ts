@@ -38,4 +38,3 @@ export const createAuditLogger = (config: AuditLoggerConfig) => {
 
   return { logAdminAction };
 };
-export type AuditLogger = ReturnType<typeof createAuditLogger>;

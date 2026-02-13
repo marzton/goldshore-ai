@@ -92,4 +92,3 @@ export const createHttpClient = (config: HttpClientConfig) => {
       })
   };
 };
-export type HttpClient = ReturnType<typeof createHttpClient>;
