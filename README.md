@@ -92,7 +92,7 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 
 # 🧩 Applications
 
-## **1. apps/web – Public Website (Astro)**
+## **1. apps/gs-web – Public Website (Astro)**
 
 - Marketing site
 - User portal
@@ -122,7 +122,7 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 
 ---
 
-## **2. apps/admin – Admin Dashboard (Astro)**
+## **2. apps/gs-admin – Admin Dashboard (Astro)**
 
 Protected by **Cloudflare Access**.
 
@@ -149,7 +149,7 @@ Protected by **Cloudflare Access**.
 
 ---
 
-## **3. apps/api-worker – gs-api**
+## **3. apps/gs-api – gs-api**
 
 Hono-based API Worker.
 
@@ -179,7 +179,7 @@ AI = AI (AI Gateway)
 
 ---
 
-## **4. apps/gateway – gs-gateway**
+## **4. apps/gs-gateway – gs-gateway**
 
 Request router + queue dispatcher.
 
@@ -254,10 +254,10 @@ Template pages are kept alongside each app so navigation, menus, containers, and
 
 | App        | Template Location                            | Notes                           |
 | ---------- | -------------------------------------------- | ------------------------------- |
-| Web        | `apps/web/src/pages/templates/index.astro`   | Marketing + search composition  |
-| Admin      | `apps/admin/src/pages/templates/index.astro` | Dashboard shell + table samples |
-| API Worker | `apps/api-worker/src/routes/templates.ts`    | Module checklist for API growth |
-| Gateway    | `apps/gateway/src/index.ts` (`/templates`)   | Routing + AI dispatch template  |
+| Web        | `apps/gs-web/src/pages/templates/index.astro`   | Marketing + search composition  |
+| Admin      | `apps/gs-admin/src/pages/templates/index.astro` | Dashboard shell + table samples |
+| API Worker | `apps/gs-api/src/routes/templates.ts`    | Module checklist for API growth |
+| Gateway    | `apps/gs-gateway/src/index.ts` (`/templates`)   | Routing + AI dispatch template  |
 | Agent      | `apps/gs-agent/src/index.ts` (`/templates`)  | HITL orchestration template     |
 
 ---
@@ -497,7 +497,7 @@ astro-goldshore/
 
 🔥 Apps Overview
 
-🌐 apps/web — GoldShore Public Website
+🌐 apps/gs-web — GoldShore Public Website
 • Astro SSR
 • Powered by the GoldShore UI Kit
 • Deploys via Cloudflare Pages
@@ -508,7 +508,7 @@ Hero Example
 
 ---
 
-🛠 apps/admin — GoldShore Admin Cockpit
+🛠 apps/gs-admin — GoldShore Admin Cockpit
 
 This is your hyper-modern operational dashboard.
 
@@ -569,7 +569,7 @@ Supports:
 
 ---
 
-⚙️ apps/api-worker — Main API (Hono)
+⚙️ apps/gs-api — Main API (Hono)
 • Edge-native API
 • Zod schemas
 • Hono router
@@ -580,7 +580,7 @@ Supports:
 
 ---
 
-🚏 apps/gateway — Routing & AI Gateway
+🚏 apps/gs-gateway — Routing & AI Gateway
 
 Handles:
 • URL-based routing
@@ -591,7 +591,7 @@ Handles:
 
 ---
 
-🛰 apps/control-worker — Infra Automation
+🛰 apps/gs-control — Infra Automation
 
 Can automatically:
 • Create DNS records
@@ -617,15 +617,15 @@ pnpm dev
 
 Run only the admin app:
 
-pnpm --filter ./apps/admin dev
+pnpm --filter ./apps/gs-admin dev
 
 Run the web app:
 
-pnpm --filter ./apps/web dev
+pnpm --filter ./apps/gs-web dev
 
 Run API worker:
 
-pnpm --filter ./apps/api-worker dev
+pnpm --filter ./apps/gs-api dev
 
 Build all:
 
@@ -637,8 +637,8 @@ pnpm build
 
 Playwright tests live in:
 
-apps/admin/tests
-apps/web/tests
+apps/gs-admin/tests
+apps/gs-web/tests
 
 Run:
 

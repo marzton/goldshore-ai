@@ -13,7 +13,7 @@ on:
       - unlabeled
       - ready_for_review
     paths:
-      - "apps/web/**"
+      - "apps/gs-web/**"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -41,7 +41,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build web app (preview)
-        working-directory: apps/web
+        working-directory: apps/gs-web
         env:
           PUBLIC_API: https://api-preview.goldshore.ai
           PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
@@ -53,5 +53,5 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: preview-web
-          directory: apps/web/dist
+          directory: apps/gs-web/dist
           branch: ${{ github.head_ref || github.ref_name }}
