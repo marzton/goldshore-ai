@@ -35,7 +35,7 @@ The template demonstrates:
 - Plan future staffing dashboards for human-in-the-loop approvals.
 - Reference the [agent integration policy](../../docs/agent-integration.md) for when to use Jules/Agent and required approvals.
 
-# apps/admin
+# apps/gs-admin
 
 ## Overview
 The GoldShore admin cockpit is an Astro SSR dashboard protected by Cloudflare Access, built on the shared UI kit and theme.
@@ -78,9 +78,9 @@ Admin sections:
 ## Local Dev
 ```bash
 pnpm install
-pnpm --filter ./apps/admin dev
-pnpm --filter ./apps/admin build
-pnpm --filter ./apps/admin preview
+pnpm --filter ./apps/gs-admin dev
+pnpm --filter ./apps/gs-admin build
+pnpm --filter ./apps/gs-admin preview
 ```
 
 ## Deploy
