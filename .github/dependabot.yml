@@ -12,7 +12,6 @@ updates:
     versioning-strategy: increase
     # optional: limit number of simultaneous PRs
     open-pull-requests-limit: 10
-    registries: {}
     allow:
       # allow updating everything inside workspaces
       - dependency-type: "all"
