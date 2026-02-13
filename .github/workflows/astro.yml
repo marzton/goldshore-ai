@@ -1,8 +1,8 @@
-# Sample workflow for building and deploying the Goldshore Astro site to GitHub Pages
+# Sample workflow for building and deploying the GoldShore Astro site to GitHub Pages
 #
 # To get started with Astro see: https://docs.astro.build/en/getting-started/
 #
-name: Deploy Goldshore Pages site
+name: Deploy GoldShore Pages site
 
 on:
   # Runs on pushes targeting the default branch
