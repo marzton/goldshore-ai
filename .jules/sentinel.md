@@ -73,3 +73,8 @@
 **Vulnerability:** The contact form API (`apps/gs-web/src/pages/api/contact.ts`) was vulnerable to HTML injection in auto-responder emails. An initial fix attempted to sanitize input at the API layer *and* the email template layer.
 **Learning:** Sanitizing inputs at the ingress (API) level for text fields that are later escaped again at the egress (Email) level leads to "double escaping" (e.g., `O'Neal` becomes `O&#039;Neal` in the database and `O&amp;#039;Neal` in the email).
 **Prevention:** Rely on **Contextual Output Encoding**. Store data raw in the database to preserve integrity, and escape it only when rendering it into a specific format (HTML, JSON, etc.). This avoids data corruption and ensures correct rendering across different contexts.
+
+## 2026-02-13 - SVG XSS Mitigation
+**Vulnerability:** The `apps/gs-api` media upload endpoint used a fragile regex-based sanitizer for SVG files, which could be bypassed to execute XSS (e.g., via unquoted attributes or HTML entities).
+**Learning:** Regex is insufficient for sanitizing complex structured data like HTML/XML. Attackers can often find edge cases in parsing logic to bypass filters.
+**Prevention:** Implemented strict `Content-Security-Policy` headers (`script-src 'none'`, `sandbox`) on the media delivery endpoint. This ensures that even if a malicious SVG is uploaded, the browser will refuse to execute any embedded scripts.
