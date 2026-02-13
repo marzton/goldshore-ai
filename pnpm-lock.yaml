@@ -19,6 +19,7 @@ importers:
       turbo:
         specifier: ^2.7.5
         version: 2.8.5
+        version: 2.8.6
     devDependencies:
       '@astrojs/mdx':
         specifier: ^4.0.8
@@ -76,6 +77,7 @@ importers:
         version: 2.8.2
 
   apps/admin:
+  apps/gs-admin:
     dependencies:
       '@goldshore/auth':
         specifier: workspace:*
@@ -110,6 +112,26 @@ importers:
         version: 5.9.3
 
   apps/api-worker:
+  apps/gs-agent:
+    dependencies:
+      '@goldshore/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      hono:
+        specifier: ^4.0.0
+        version: 4.11.9
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260207.0
+        version: 4.20260210.0
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+      wrangler:
+        specifier: ^4.63.0
+        version: 4.64.0(@cloudflare/workers-types@4.20260210.0)
+
+  apps/gs-api:
     dependencies:
       '@goldshore/ai-providers':
         specifier: workspace:^
@@ -135,6 +157,7 @@ importers:
         version: 4.64.0(@cloudflare/workers-types@4.20260210.0)
 
   apps/control-worker:
+  apps/gs-control:
     dependencies:
       '@goldshore/auth':
         specifier: workspace:*
@@ -166,6 +189,7 @@ importers:
         version: 4.64.0(@cloudflare/workers-types@4.20260210.0)
 
   apps/gateway:
+  apps/gs-gateway:
     dependencies:
       '@goldshore/auth':
         specifier: workspace:*
@@ -228,6 +252,7 @@ importers:
         version: 4.64.0(@cloudflare/workers-types@4.20260210.0)
 
   apps/web:
+  apps/gs-web:
     dependencies:
       '@goldshore/config':
         specifier: workspace:^
@@ -260,6 +285,25 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+
+  apps/mail-worker:
+    dependencies:
+      hono:
+        specifier: ^4.0.0
+        version: 4.11.9
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260207.0
+        version: 4.20260210.0
+      postal-mime:
+        specifier: 2.7.3
+        version: 2.7.3
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+      wrangler:
+        specifier: ^4.63.0
+        version: 4.64.0(@cloudflare/workers-types@4.20260210.0)
 
   packages/ai-providers: {}
 
@@ -3442,6 +3486,38 @@ packages:
 
   turbo@2.8.5:
     resolution: {integrity: sha512-pUhV1czFZNGOwnwCLaO727uSDH4botIrhOb/AAFqzfi3x4eeRZoOcAjoidnXD/dwCAw0HJf3+Sy4c2e8SlQKxQ==}
+  turbo-darwin-64@2.8.6:
+    resolution: {integrity: sha512-6QeZ/aLZizekiI6tKZN0IGP1a1WYZ9c/qDKPa0rSmj2X0O0Iw/ES4rKZV40S5n8SUJdiU01EFLygHJ2oWaYKXg==}
+    cpu: [x64]
+    os: [darwin]
+
+  turbo-darwin-arm64@2.8.6:
+    resolution: {integrity: sha512-RS4Z902vB93cQD3PJS/1IMmS0HefrB5ZXuw4ECOrxhOGz5jJVmYFJ6weDzedjoTDeYHHXGo1NoiCSHg69ngWKA==}
+    cpu: [arm64]
+    os: [darwin]
+
+  turbo-linux-64@2.8.6:
+    resolution: {integrity: sha512-hCWDnDepYbrSJdByuryKFoHAGFkvgBYXr6qdaGsYhX1Wgq8isqXCQBKOo99Y/9tXDwKGEeQ7xnkdFvSL7AQ4iQ==}
+    cpu: [x64]
+    os: [linux]
+
+  turbo-linux-arm64@2.8.6:
+    resolution: {integrity: sha512-oS15aCYEpynG/l69xs/ZnQ0dnz0pHhfHg70Zf5J+j5Cam0/RA0MpcryjneN/9G0PmP8a/6ZxnL5nZahX+wOBPA==}
+    cpu: [arm64]
+    os: [linux]
+
+  turbo-windows-64@2.8.6:
+    resolution: {integrity: sha512-eqBxqJD7H/uk9V0QO10VgwY9J2BUXejsGuzChln72Yl+o8GZwsvhOekndRxccR90J8ZO+LKO24+3VzHFh4Cu/g==}
+    cpu: [x64]
+    os: [win32]
+
+  turbo-windows-arm64@2.8.6:
+    resolution: {integrity: sha512-I3VEQyxIlNZ6XTg4fLKAkuhcwzIs/GD7Vs1yhelH2aUTjf08wprjBWknDqP7mjAHMpsosRrq4DtfSZEQm83Hxg==}
+    cpu: [arm64]
+    os: [win32]
+
+  turbo@2.8.6:
+    resolution: {integrity: sha512-QMj1SQwUYehc+xJ9SxXn56UO43hfKN64/NFetVW1BwzysRqn+q0FSgrmk+IbJ+djfd8j8zXGKGeqsnUcXwQSUQ==}
     hasBin: true
 
   type-check@0.4.0:
@@ -7521,6 +7597,32 @@ snapshots:
       turbo-linux-arm64: 2.8.5
       turbo-windows-64: 2.8.5
       turbo-windows-arm64: 2.8.5
+  turbo-darwin-64@2.8.6:
+    optional: true
+
+  turbo-darwin-arm64@2.8.6:
+    optional: true
+
+  turbo-linux-64@2.8.6:
+    optional: true
+
+  turbo-linux-arm64@2.8.6:
+    optional: true
+
+  turbo-windows-64@2.8.6:
+    optional: true
+
+  turbo-windows-arm64@2.8.6:
+    optional: true
+
+  turbo@2.8.6:
+    optionalDependencies:
+      turbo-darwin-64: 2.8.6
+      turbo-darwin-arm64: 2.8.6
+      turbo-linux-64: 2.8.6
+      turbo-linux-arm64: 2.8.6
+      turbo-windows-64: 2.8.6
+      turbo-windows-arm64: 2.8.6
 
   type-check@0.4.0:
     dependencies:

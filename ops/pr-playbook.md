@@ -25,6 +25,18 @@ This playbook defines how to handle:
 
 ---
 
+## Mergeability audit helper
+
+Before triage, you can quickly scan branch mergeability with:
+
+```bash
+scripts/merge-audit.sh --target origin/main
+```
+
+Detailed usage is documented in `docs/ops/mergeable-branches.md`.
+
+---
+
 ## 1. Quick Triage Flow
 
 When you see a PR with “This branch has conflicts that must be resolved”:
@@ -88,6 +100,7 @@ git push --force-with-lease
 ```
 
 Result:
+
 - All lockfile conflicts are gone
 - Lockfile is clean and consistent with main + current package.json
 - CI can now run properly
@@ -196,6 +209,13 @@ Flag PRs that touch:
 - tsconfig.json, astro.config.mjs, wrangler.toml
 - shared packages/* (theme, ui, auth, utils, etc.)
 
+- package.json, pnpm-lock.yaml
+- apps/admin/\*
+- apps/web/\*
+- apps/api-worker/_, apps/gateway/_, apps/control-worker/\*
+- tsconfig.json, astro.config.mjs, wrangler.toml
+- shared packages/\* (theme, ui, auth, utils, etc.)
+
 Those are high-impact and should be cleaned/merged before small copy changes.
 
 ⸻
@@ -208,6 +228,12 @@ Recommended priority:
    - tsconfig.json
    - .github/workflows/*
    - infra/cloudflare/*
+
+1. Infra / config PRs
+   - Root package.json
+   - tsconfig.json
+   - .github/workflows/\*
+   - infra/cloudflare/\*
    - wrangler.toml changes
 2. Workers
    - apps/api-worker
@@ -219,6 +245,8 @@ Recommended priority:
 4. Pages and content
    - apps/web/src/pages/*
    - apps/admin/src/pages/*
+   - apps/web/src/pages/\*
+   - apps/admin/src/pages/\*
 5. Docs / README / comment-only PRs
 
 ⸻
@@ -226,6 +254,7 @@ Recommended priority:
 ## 4. Using Jules (Automation Layer)
 
 As Jules evolves into a hybrid GitHub App + Actions bot, the idea is:
+
 - Let Jules handle:
   - Lockfile regeneration
   - Resetting branches against main
@@ -237,6 +266,7 @@ As Jules evolves into a hybrid GitHub App + Actions bot, the idea is:
   - Merge order and which PRs to keep/close
 
 Future commands (once wired):
+
 - /jules clean → sync branch to main, regenerate lockfile, push fix
 - /jules status → summarize conflicts, CI, and required manual steps
 - /jules diag → attach logs from failing builds/lint for this PR
@@ -248,6 +278,7 @@ Until that’s live, this playbook is the manual version of what Jules will even
 ## 5. Common Scenarios
 
 **Scenario A — PR blocked only by pnpm-lock.yaml**
+
 1. Checkout PR branch
 2. Delete lockfile
 3. pnpm install
@@ -259,6 +290,7 @@ Until that’s live, this playbook is the manual version of what Jules will even
 ⸻
 
 **Scenario B — PR touches apps/web/src/pages/index.astro and apps/admin/src/pages/index.astro**
+
 1. Sync branch with main (rebase origin/main)
 2. Resolve conflicts in those .astro files manually
 3. Delete/regenerate lockfile if needed
@@ -268,6 +300,7 @@ Until that’s live, this playbook is the manual version of what Jules will even
 ⸻
 
 **Scenario C — PR is clearly obsolete or colliding with newer architecture**
+
 1. Decide if any code is still valuable
 2. If no:
    - Close PR with comment:

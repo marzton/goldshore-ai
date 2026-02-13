@@ -13,5 +13,6 @@
   },
   "scripts": {
     "test": "tsx --test **/*.test.ts"
+    "test": "tsx --test *.test.ts"
   }
 }
