@@ -8,9 +8,9 @@
     "build": "pnpm build:openapi && turbo run build",
     "build:web": "turbo run build --filter=@goldshore/web",
     "build:admin": "turbo run build --filter=@goldshore/admin",
-    "build:api": "turbo run build --filter=@goldshore/api-worker",
+    "build:api": "turbo run build --filter=@goldshore/api",
     "build:gateway": "turbo run build --filter=@goldshore/gateway",
-    "build:control": "turbo run build --filter=@goldshore/control-worker",
+    "build:control": "turbo run build --filter=@goldshore/control",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md"
