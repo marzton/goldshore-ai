@@ -1,5 +1,5 @@
 agent_name: goldshore-infra-agent
-repository: astro-goldshore
+repository: goldshore-ai
 scope: cloudflare_infrastructure
 
 allowed_domains:
@@ -27,6 +27,6 @@ repo_lock:
   forbidden_paths:
     - apps/web/**
     - apps/admin/**
-    - apps/api-worker/**
-    - apps/gateway/**
+    - apps/gs-api-worker/**
+    - apps/gs-gateway/**
     - packages/**

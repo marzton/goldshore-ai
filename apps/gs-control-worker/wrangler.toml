@@ -1,4 +1,4 @@
-name = "gs-control-worker"
+name = "gs-control"
 main = "src/index.ts"
 compatibility_date = "2025-01-10"
 compatibility_flags = ["nodejs_compat"]

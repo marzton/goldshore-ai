@@ -8,7 +8,7 @@ Note: The actual contents of these directories may be incomplete or conflicting 
 | :---------------- | :---------- | :---------------------------------- |
 | `apps/web`        | Unverified  | Public marketing site               |
 | `apps/admin`      | Conflicting | Secure operational console          |
-| `apps/api-worker` | Conflicting | Cloudflare Worker logic (API/Agent) |
+| `apps/gs-api-worker` | Conflicting | Cloudflare Worker logic (API/Agent) |
 | `infra/scripts`   | Unverified  | Deployment/Automation Scripts       |
 
 ## Detailed File Tree Analysis (Recursive Listing)
@@ -133,7 +133,7 @@ The following files contain core configuration data:
 
 ```json
 {
-  "name": "astro-goldshore",
+  "name": "goldshore-ai",
   "private": true,
   "packageManager": "pnpm@8.15.5",
   "scripts": {

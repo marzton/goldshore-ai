@@ -194,7 +194,7 @@ Flag PRs that touch:
 - `package.json`, `pnpm-lock.yaml`
 - `apps/admin/*`
 - `apps/web/*`
-- `apps/api-worker/*`, `apps/gateway/*`, `apps/control-worker/*`
+- `apps/gs-api-worker/*`, `apps/gs-gateway/*`, `apps/gs-control-worker/*`
 - `tsconfig.json`, `astro.config.mjs`, `wrangler.toml`
 - `shared packages/*` (`theme`, `ui`, `auth`, `utils`, etc.)
 
@@ -213,9 +213,9 @@ Those are high-impact and should be cleaned/merged before small copy changes.
     - `infra/cloudflare/*`
     - `wrangler.toml` changes
 2.  **Workers**
-    - `apps/api-worker`
-    - `apps/gateway`
-    - `apps/control-worker`
+    - `apps/gs-api-worker`
+    - `apps/gs-gateway`
+    - `apps/gs-control-worker`
 3.  **Web/Admin frameworks**
     - `apps/web/astro.config.mjs`, `apps/admin/astro.config.mjs`
     - WebLayout, AdminLayout, NavBar, Footer

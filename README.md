@@ -148,7 +148,7 @@ Protected by **Cloudflare Access**.
 
 ---
 
-## **3. apps/api-worker – gs-api**
+## **3. apps/gs-api – gs-api**
 
 Hono-based API Worker.
 
@@ -178,7 +178,7 @@ AI = AI (AI Gateway)
 
 ---
 
-## **4. apps/gateway – gs-gateway**
+## **4. apps/gs-gateway – gs-gateway**
 
 Request router + queue dispatcher.
 
@@ -420,7 +420,7 @@ GoldShore Brand Variants
 
 🧭 Monorepo Structure
 
-astro-goldshore/
+goldshore-ai/
 │
 ├── apps/
 │ ├── web/ → Public website (Astro + CF Pages)
@@ -515,7 +515,7 @@ Supports:
 
 ---
 
-⚙️ apps/api-worker — Main API (Hono)
+⚙️ apps/gs-api — Main API (Hono)
 • Edge-native API
 • Zod schemas
 • Hono router
@@ -526,7 +526,7 @@ Supports:
 
 ---
 
-🚏 apps/gateway — Routing & AI Gateway
+🚏 apps/gs-gateway — Routing & AI Gateway
 
 Handles:
 • URL-based routing
@@ -537,7 +537,7 @@ Handles:
 
 ---
 
-🛰 apps/control-worker — Infra Automation
+🛰 apps/gs-control — Infra Automation
 
 Can automatically:
 • Create DNS records
@@ -571,7 +571,7 @@ pnpm --filter ./apps/web dev
 
 Run API worker:
 
-pnpm --filter ./apps/api-worker dev
+pnpm --filter ./apps/gs-api dev
 
 Build all:
 
