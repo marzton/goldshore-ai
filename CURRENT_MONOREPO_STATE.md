@@ -22,7 +22,7 @@
 
 ## Legacy / Archive
 
-- `apps/legacy/goldshore-api`
+- No legacy workspaces remain in the repository.
 
 ## Infrastructure
 
