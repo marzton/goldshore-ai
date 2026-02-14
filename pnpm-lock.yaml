@@ -206,6 +206,25 @@ importers:
         specifier: ^4.63.0
         version: 4.65.0(@cloudflare/workers-types@4.20260213.0)
 
+  apps/gs-mail:
+    dependencies:
+      hono:
+        specifier: ^4.0.0
+        version: 4.11.9
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20241106.0
+        version: 4.20260213.0
+      postal-mime:
+        specifier: 2.7.3
+        version: 2.7.3
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+      wrangler:
+        specifier: ^4.63.0
+        version: 4.65.0(@cloudflare/workers-types@4.20260213.0)
+
   apps/gs-web:
     dependencies:
       '@goldshore/config':
@@ -239,25 +258,6 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
-
-  apps/mail-worker:
-    dependencies:
-      hono:
-        specifier: ^4.0.0
-        version: 4.11.9
-    devDependencies:
-      '@cloudflare/workers-types':
-        specifier: ^4.20260207.0
-        version: 4.20260213.0
-      postal-mime:
-        specifier: 2.7.3
-        version: 2.7.3
-      typescript:
-        specifier: ^5.0.0
-        version: 5.9.3
-      wrangler:
-        specifier: ^4.63.0
-        version: 4.65.0(@cloudflare/workers-types@4.20260213.0)
 
   packages/ai-providers: {}
 

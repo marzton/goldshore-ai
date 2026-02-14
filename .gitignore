@@ -39,3 +39,7 @@ Thumbs.db
 .idea
 *.swp
 *.swo
+# Test artifacts
+**/test-results/
+**/trace.zip
+**/*.log
