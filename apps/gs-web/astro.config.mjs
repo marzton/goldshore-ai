@@ -6,4 +6,5 @@ export default defineConfig({
   ...baseConfig,
   output: "server",
   adapter: cloudflare(),
+  // Web specific overrides if any
 });
