@@ -22,7 +22,8 @@
 ## Infrastructure
 - `infra/scripts`: Automation scripts
 - `infra/cloudflare`: Cloudflare configurations (wrangler.toml files for some apps are here or referenced)
-- `infra/cloudflare/goldshore-api.wrangler.toml`: Shared deployment config targeting `apps/api-worker` (`gs-api`) across environments
+- `infra/cloudflare/goldshore-api.wrangler.toml`: Shared deployment config targeting `apps/api-worker/src/index.ts` with `apps/api-worker/tsconfig.json` for `gs-api` across environments (`dev`, `preview`, `prod`).
+- Downstream service bindings use `gs-api` directly; gateway binds to the `prod` environment in `apps/gateway/wrangler.toml`.
 
 ## Configuration Summary
 - **Package Manager**: pnpm (v9)
