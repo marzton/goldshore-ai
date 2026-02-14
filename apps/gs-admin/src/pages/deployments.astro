@@ -12,8 +12,8 @@ const deployments = [
   <section class="gs-grid columns-2">
     <Card class="gs-table-card">
       <div class="section-title"><span>⇪</span><h3>History</h3></div>
-      <Table>
-        <thead><tr><th>Release</th><th>Env</th><th>Status</th><th>When</th></tr></thead>
+      <Table ariaLabel="Deployment history">
+        <thead><tr><th scope="col">Release</th><th scope="col">Env</th><th scope="col">Status</th><th scope="col">When</th></tr></thead>
         <tbody>
           {deployments.map((deploy) => (
             <tr>
