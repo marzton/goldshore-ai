@@ -77,6 +77,8 @@ media.get('/:id', async (c) => {
   const headers = new Headers();
   headers.set('Content-Type', result.type || object.httpMetadata?.contentType || 'application/octet-stream');
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+  // Sentinel: Mitigate SVG XSS risks by disabling scripts
+  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; object-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; sandbox");
 
   return new Response(object.body, { headers });
 });
