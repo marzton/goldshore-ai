@@ -26,9 +26,6 @@ yarn-error.log*
 .astro/
 .cache/
 pnpm-debug.log*
-**/test-results/
-**/trace.zip
-**/*.log
 
 # OS
 .DS_Store
