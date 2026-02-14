@@ -1,6 +1,6 @@
-# wrangler.toml for the goldshore-web Astro Pages app (for Pages Functions)
+# wrangler.toml for the goldshore-admin Astro Pages app (for Pages Functions)
 
-name = "goldshore-web" # Base name for Pages project
+name = "gs-admin" # Base name for Pages project
 
 # This file is primarily for configuring bindings for Cloudflare Pages Functions.
 # The actual deployment will be handled by the GitHub Action connecting to the Pages project.
@@ -15,10 +15,14 @@ name = "goldshore-web" # Base name for Pages project
 # database_name = "goldshore_cms_dev"
 # database_id = "..."
 #
-# [[kv_namespaces]]
-# binding = "KV_SITE"
-# id = "..."
-# preview_id = "..."
+# [[r2_buckets]]
+# binding = "R2_BUCKET"
+# bucket_name = "assets-dev"
+#
+# [[queues.producers]]
+# binding = "QUEUES_JOBS"
+# queue = "goldshore-jobs-dev"
+
 
 [env.preview]
 # Preview bindings for Pages Functions

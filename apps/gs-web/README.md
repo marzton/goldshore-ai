@@ -169,7 +169,7 @@ The template demonstrates:
 ## Development
 
 ```bash
-pnpm --filter @goldshore/web dev
+pnpm --filter @goldshore/gs-web dev
 ```
 
 # apps/gs-web
