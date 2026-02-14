@@ -6,15 +6,14 @@
 | :--- | :--- | :--- | :--- | :--- |
 | `apps/web` | `@goldshore/web` | Astro (SSR) | Active | Public marketing site |
 | `apps/admin` | `@goldshore/admin` | Astro (SSR) | Active | Secure operational console |
-| `apps/api-worker` | `gs-api` | Worker | Active | Core API logic |
+| `apps/api-worker` | `@goldshore/api` | Worker | Active | Core API logic |
 | `apps/gateway` | `@goldshore/gateway` | Worker (Hono) | Active | API Gateway / Router |
 | `apps/control-worker` | `@goldshore/control` | Worker (Hono) | Active | Control plane logic |
 | `apps/gs-agent` | `@goldshore/agent` | Worker | Evaluation | Agent implementation |
 | `apps/jules-bot` | `jules-bot` | Node.js | Experimental | Bot logic |
 
 ## Non-workspace App Directories (No `package.json`)
-- `apps/gs-control`
-- `apps/gs-mail`
+- None currently under `apps/`
 
 ## Legacy / Archive
 - `apps/legacy`
@@ -33,5 +32,5 @@
 - **Frameworks**: Astro, Hono, Cloudflare Workers
 
 ## Notes
-- Removed missing path references such as `apps/goldshore-agent`.
+- Removed stale path references for non-existent app directories.
 - Package names are synced to current `apps/*/package.json` values.
