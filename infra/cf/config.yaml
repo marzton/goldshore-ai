@@ -3,7 +3,7 @@ zone_id_env: CF_ZONE_ID
 
 projects:
   pages:
-    - name: goldshore-web
+    - name: gs-web
       output_dir: apps/gs-web/dist
       max_daily_deploys: 6
       require_checks: ["smoke", "lighthouse"]
@@ -11,7 +11,7 @@ projects:
         - "^docs/.*"
         - "^scripts/.*"
         - "^README.md$"
-    - name: goldshore-admin
+    - name: gs-admin
       output_dir: apps/gs-admin/dist
       max_daily_deploys: 6
       require_checks: ["smoke", "lighthouse"]
@@ -21,11 +21,11 @@ projects:
         - "^README.md$"
 
   workers:
-    - script: goldshore-api
+    - script: gs-api
       entry: apps/gs-api/dist/index.js
       routes:
-        - pattern: "api.goldshore.org/*"
-          zone: goldshore.org
+        - pattern: "api.goldshore.ai/*"
+          zone: goldshore.ai
       max_daily_deploys: 10
       require_checks: ["smoke"]
       skip_if_paths_only:
@@ -40,14 +40,14 @@ guards:
 
 tests:
   smoke:
-    - url: "https://goldshore.org/"
+    - url: "https://goldshore.ai/"
       expect_status: 200
       timeout_ms: 5000
-    - url: "https://api.goldshore.org/health"
+    - url: "https://api.goldshore.ai/health"
       expect_status: 200
       timeout_ms: 4000
   lighthouse:
-    url: "https://goldshore.org/"
+    url: "https://goldshore.ai/"
     budget:
       performance: 0.85
       tti_ms: 4000
