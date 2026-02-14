@@ -25,7 +25,7 @@ cloudflare:
     - type: "pages_build_status"
       project: "goldshore-admin"
     - type: "worker_health"
-      script: "goldshore-api"
+      script: "gs-api"
       path: "/health"
     - type: "dns_records"
       required:

@@ -6,19 +6,23 @@
 | :--- | :--- | :--- | :--- | :--- |
 | `apps/web` | `@goldshore/web` | Astro (SSR) | Active | Public marketing site |
 | `apps/admin` | `@goldshore/admin` | Astro (SSR) | Active | Secure operational console |
-| `apps/api-worker` | `gs-api` | Worker | Active | Core API logic |
+| `apps/api-worker` | `@goldshore/api` | Worker | Active | Core API logic |
 | `apps/gateway` | `@goldshore/gateway` | Worker (Hono) | Active | API Gateway / Router |
 | `apps/control-worker` | `@goldshore/control` | Worker (Hono) | Active | Control plane logic |
-| `apps/goldshore-agent` | `goldshore-agent` | Worker (Hono) | Development | AI Agent Logic |
-| `apps/gs-agent` | `@goldshore/agent` | Worker | Evaluation | Alternative Agent impl? |
+| `apps/gs-agent` | `@goldshore/agent` | Worker | Evaluation | Agent implementation |
 | `apps/jules-bot` | `jules-bot` | Node.js | Experimental | Bot logic |
 
+## Non-workspace App Directories (No `package.json`)
+- None currently under `apps/`
+
 ## Legacy / Archive
-- `apps/legacy/goldshore-api`
+- `apps/legacy`
 
 ## Infrastructure
 - `infra/scripts`: Automation scripts
 - `infra/cloudflare`: Cloudflare configurations (wrangler.toml files for some apps are here or referenced)
+- `infra/cloudflare/goldshore-api.wrangler.toml`: Shared deployment config targeting `apps/api-worker/src/index.ts` with `apps/api-worker/tsconfig.json` for `gs-api` across environments (`dev`, `preview`, `prod`).
+- Downstream service bindings use `gs-api` directly; gateway binds to the `prod` environment in `apps/gateway/wrangler.toml`.
 
 ## Configuration Summary
 - **Package Manager**: pnpm (v9)
@@ -27,7 +31,6 @@
 - **Styling**: TailwindCSS
 - **Frameworks**: Astro, Hono, Cloudflare Workers
 
-## Recent Updates
-- Standardized `lint` and `test` scripts across major apps.
-- Added `tsconfig.json` and `.eslintrc.cjs` to `goldshore-agent`.
-- Updated assets (Logo/Favicon) in `apps/web`.
+## Notes
+- Removed stale path references for non-existent app directories.
+- Package names are synced to current `apps/*/package.json` values.

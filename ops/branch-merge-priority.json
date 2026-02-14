@@ -1,9 +1,28 @@
 {
   "base": "origin/main",
-  "integration_branch": "integration/conflict-resolution/20260109T130721Z",
-  "generated_at": "2026-01-09T13:07:22.632796+00:00",
+  "integration_branch": "integration/conflict-resolution/20260214T194818Z",
+  "generated_at": "2026-02-14T19:48:18+00:00",
   "dry_run": true,
   "allow_dirty": true,
+  "audit_status": "blocked",
+  "audit_blockers": [
+    "Remote refs are not restored in this checkout (no `origin` remote configured)."
+  ],
   "conflict_markers": [],
-  "branches": []
+  "branches": [],
+  "branch_fields": [
+    "branch",
+    "status",
+    "mergeability",
+    "blocked_reason",
+    "owner",
+    "reviewers",
+    "last_audited_at"
+  ],
+  "status_definitions": {
+    "conflicting": "Branch has merge conflicts against base/integration and requires conflict resolution.",
+    "mergeable": "Branch can be merged cleanly into the integration branch.",
+    "blocked": "Branch cannot be merged yet due to unmet dependency, policy gate, or environment limitation."
+  },
+  "regeneration_policy": "Regenerate this file on every audit run so branch state, statuses, and metadata remain current."
 }
