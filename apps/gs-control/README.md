@@ -1,4 +1,4 @@
-# apps/control-worker
+# apps/gs-control
 
 ## Overview
 The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers. It is managed alongside the gateway worker as part of the Edge Workers deployment group.
@@ -21,6 +21,10 @@ These are worker API endpoints implemented in `src/index.ts` and `src/routes/clo
 - `GET /cloudflare/dns/records`
 - `PUT /cloudflare/dns/records/:recordId`
 - `GET /cloudflare/workers/status`
+- `GET /cloudflare/pages/projects`
+- `GET /cloudflare/kv/namespaces`
+- `GET /cloudflare/r2/buckets`
+- `GET /cloudflare/d1/databases`
 - `GET /cloudflare/access/policies`
 The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers.
 
@@ -39,16 +43,17 @@ These are worker API endpoints implemented in `src/index.ts` (not HTML pages). R
 ## Local Dev
 ```bash
 pnpm install
-pnpm --filter ./apps/control-worker dev
-pnpm --filter ./apps/control-worker run-task
+pnpm --filter ./apps/gs-control dev
+pnpm --filter ./apps/gs-control run-task
 ```
 
 ## Deploy
 - Production deploy: `.github/workflows/deploy-control-worker.yml`
 - Preview deploy: `.github/workflows/preview-control-worker.yml`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
+- Store `CLOUDFLARE_API_TOKEN` in Cloudflare secrets (via `wrangler secret put`) rather than committing env values
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 ```bash
-pnpm --filter ./apps/control-worker deploy
+pnpm --filter ./apps/gs-control deploy
 ```

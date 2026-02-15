@@ -26,3 +26,10 @@
   },
   "regeneration_policy": "Regenerate this file on every audit run so branch state, statuses, and metadata remain current."
 }
+  "integration_branch": "integration/conflict-resolution/20260109T130721Z",
+  "generated_at": "2026-01-09T13:07:22.632796+00:00",
+  "dry_run": true,
+  "allow_dirty": true,
+  "conflict_markers": [],
+  "branches": []
+}

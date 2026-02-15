@@ -4,5 +4,7 @@ pnpm-lock.yaml merge=ours
 # Keep branch-local top-level docs during conflict resolution.
 # These files are frequently edited in long-lived feature branches, and preserving
 # the branch version avoids accidentally dropping branch-specific context.
+# High-churn files auto-resolve to the branch version (`merge=ours`) to keep rebases deterministic.
+pnpm-lock.yaml merge=ours
 README.md merge=ours
 CURRENT_MONOREPO_STATE.md merge=ours

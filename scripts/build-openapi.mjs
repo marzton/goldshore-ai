@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const ROOT = path.resolve(__dirname, '../apps/web/openapi');
+const ROOT = path.resolve(__dirname, '../apps/gs-web/openapi');
 
 async function run() {
   if (!fs.existsSync(ROOT)) {
@@ -28,7 +28,7 @@ async function run() {
     fs.writeFileSync(target1, JSON.stringify(parsed, null, 2));
     console.log(`Wrote ${target1}`);
 
-    // Target 2: apps/web/public/openapi (standard static assets)
+    // Target 2: apps/gs-web/public/openapi (standard static assets)
     const target2 = path.join(ROOT, '../public/openapi', jsonOut);
     fs.mkdirSync(path.dirname(target2), { recursive: true });
     fs.writeFileSync(target2, JSON.stringify(parsed, null, 2));

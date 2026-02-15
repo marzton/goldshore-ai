@@ -33,6 +33,7 @@ jobs:
           run_install: false
 
       - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
@@ -41,6 +42,20 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build web app (preview)
+<<<<<<< Updated upstream:.github/workflows/preview-gs-web.yml
+=======
+        working-directory: apps/web
+      - name: Validate workspace contract
+        run: pnpm validate:workspace
+
+      - name: Validate canonical worker structure
+        run: pnpm validate:structure
+
+      - name: Validate canonical worker names
+        run: pnpm validate:names
+
+      - name: Build web app (preview)
+>>>>>>> Stashed changes:.github/workflows/preview-web.yml
         working-directory: apps/gs-web
         env:
           PUBLIC_API: https://api-preview.goldshore.ai

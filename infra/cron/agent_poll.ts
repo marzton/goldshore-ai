@@ -5,6 +5,9 @@ import path from "node:path";
 import YAML from "yaml";
 import { gh, findOpenConflicts, openOpsIssue, commentOnPR, createFixBranchAndPR } from "./helpers/github";
 import { getPagesProjectBuildStatus, getDNSRecords, getWorkerBindings } from "./helpers/cloudflare";
+import { createLogger } from "./helpers/logger";
+
+const logger = createLogger("agent");
 
 type Cfg = ReturnType<typeof loadConfig>;
 function loadConfig() {
@@ -39,7 +42,7 @@ async function ensurePagesOutputDirRule() {
       }, null, 2)
     }];
     const pr = await createFixBranchAndPR(owner, repo, "main", "chore/agent-fix-pages-output", title, body, changes);
-    log("Opened PR", pr.html_url);
+    logger.info("Opened PR", pr.html_url);
   }
 }
 
@@ -91,7 +94,7 @@ async function main() {
   await checkCloudflare();
   await ensurePagesOutputDirRule();
   await scanGitConflicts();
-  log("Agent poll completed.");
+  logger.info("Agent poll completed.");
 }
 
-main().catch(e => { err(e.stack || e); process.exit(1); });
+main().catch(e => { logger.error(e.stack || e); process.exit(1); });

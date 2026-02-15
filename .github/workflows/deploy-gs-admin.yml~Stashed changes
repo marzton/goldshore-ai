@@ -1,17 +1,12 @@
-name: Preview gs-admin
+name: Deploy Admin (admin.goldshore.ai)
 
 permissions:
   contents: read
 
 on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - labeled
-      - unlabeled
-      - ready_for_review
+  push:
+    branches:
+      - main
     paths:
       - "apps/gs-admin/**"
       - "packages/**"
@@ -19,11 +14,8 @@ on:
       - "pnpm-lock.yaml"
 
 jobs:
-  preview-admin:
+  deploy-admin:
     runs-on: ubuntu-latest
-    if: |
-      contains(github.event.pull_request.labels.*.name, 'preview') ||
-      (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
 
     steps:
       - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
@@ -32,7 +24,6 @@ jobs:
         with:
           run_install: false
 
-      - uses: actions/setup-node@v6
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -50,18 +41,15 @@ jobs:
       - name: Validate canonical worker names
         run: pnpm validate:names
 
-      - name: Build admin cockpit (preview)
+      - name: Build admin app
         working-directory: apps/gs-admin
-        env:
-          PUBLIC_API: https://api-preview.goldshore.ai
-          PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
         run: pnpm build
 
-      - name: Deploy to Cloudflare Pages (preview)
+      - name: Deploy to Cloudflare Pages (production)
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: preview-admin
+          projectName: gs-admin
           directory: apps/gs-admin/dist
-          branch: ${{ github.head_ref || github.ref_name }}
+          branch: main

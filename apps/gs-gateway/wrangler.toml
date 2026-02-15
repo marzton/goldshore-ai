@@ -33,3 +33,4 @@ environment = "prod"
 
 [ai]
 binding = "AI"
+compatibility_date = "2024-01-01"

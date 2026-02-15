@@ -78,4 +78,12 @@
     "Swap with a masked number (e.g., +1-555-0100) or redact.",
     "Remove SSNs from code or move to encrypted secrets storage."
   ]
+  "generatedAt": null,
+  "summary": {
+    "totalFindings": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "findings": []
 }

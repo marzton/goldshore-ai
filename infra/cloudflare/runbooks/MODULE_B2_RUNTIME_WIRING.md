@@ -173,7 +173,7 @@ For any UNKNOWN service:
 7. Update the status dashboard.
 
 ## 10. Prohibited Actions
-- Do not rename `apps/web` or `apps/admin`.
+- Do not rename `apps/gs-web` or `apps/gs-admin`.
 - Do not create new repositories.
 - Do not change DNS records without instruction.
 - Do not regenerate lockfiles unless dependencies change.

@@ -26,3 +26,4 @@ database_id = "gs_db_001"
 
 [ai]
 binding = "AI"
+compatibility_date = "2024-01-01"

@@ -1,38 +1,41 @@
 import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
-import { checkAuth } from './auth';
+import { verifyAccess } from '@goldshore/auth';
+import { STATUS_PAGE_HTML } from './templates/status';
+import { type Env } from './types';
+import { integrationControls } from './middleware/integration';
 
-type Env = {
-  API: Fetcher;
-  GATEWAY_KV: KVNamespace;
-  AI: any;
-  ENV: string;
-  CLOUDFLARE_ACCESS_AUDIENCE?: string;
-  CLOUDFLARE_TEAM_DOMAIN?: string;
-};
-
-const API_ORIGIN = 'https://api.goldshore.ai';
 const app = new Hono<{ Bindings: Env }>();
-const INTEGRATION_PATH_PREFIXES = ['/integrations', '/market-streams'];
-const DATA_CLASSIFICATIONS = new Set(['public', 'internal', 'confidential', 'restricted']);
-const SECRETS_ACCESS_POLICIES = new Set([
-  'none',
-  'read-only',
-  'read-write',
-  'broker-credentials',
-  'market-data'
-]);
-
-const isIntegrationRequest = (path: string) =>
-  INTEGRATION_PATH_PREFIXES.some((prefix) => path.startsWith(prefix));
 
 // Sentinel: Add security headers to all responses (X-Frame-Options, X-XSS-Protection, etc.)
 app.use('*', secureHeaders());
 
+const ALLOWED_ORIGINS = [
+  'https://goldshore.ai',
+  'https://www.goldshore.ai',
+  'https://admin.goldshore.ai',
+  'https://gw.goldshore.ai',
+  'https://api.goldshore.ai'
+];
+
 // Sentinel: Add CORS protection
 app.use('*', cors({
-  origin: '*', // Public gateway
+  origin: (origin, c) => {
+    // Development overrides
+    if (c.env.ENV !== 'production') {
+      if (origin && (origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1'))) {
+        return origin;
+      }
+    }
+
+    // Strict origin check for production (and dev non-localhost)
+    if (ALLOWED_ORIGINS.includes(origin)) {
+      return origin;
+    }
+
+    return null; // Block unknown origins
+  },
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: [
     'Content-Type',
@@ -54,7 +57,11 @@ app.use('*', async (c, next) => {
         return;
     }
 
-    const authorized = await checkAuth(c.req.raw, c.env);
+    if (!c.env.CLOUDFLARE_ACCESS_AUDIENCE) {
+        console.warn('SECURITY WARNING: CLOUDFLARE_ACCESS_AUDIENCE is not set. Audience verification is disabled.');
+    }
+
+    const authorized = await verifyAccess(c.req.raw, c.env);
     if (!authorized) {
         return c.json({ error: 'Unauthorized' }, 401);
     }
@@ -62,60 +69,7 @@ app.use('*', async (c, next) => {
 });
 
 // Integration controls: data classification, secrets access, and audit trail enforcement
-app.use('*', async (c, next) => {
-  if (!isIntegrationRequest(c.req.path) || c.req.method === 'OPTIONS') {
-    await next();
-    return;
-  }
-
-  const classification = c.req.header('X-Data-Classification')?.toLowerCase();
-  if (!classification || !DATA_CLASSIFICATIONS.has(classification)) {
-    return c.json(
-      {
-        error: 'Invalid data classification.',
-        allowed: Array.from(DATA_CLASSIFICATIONS)
-      },
-      400
-    );
-  }
-
-  const secretsPolicy = c.req.header('X-Secrets-Access-Policy')?.toLowerCase();
-  if (!secretsPolicy || !SECRETS_ACCESS_POLICIES.has(secretsPolicy)) {
-    return c.json(
-      {
-        error: 'Invalid secrets access policy.',
-        allowed: Array.from(SECRETS_ACCESS_POLICIES)
-      },
-      400
-    );
-  }
-
-  const auditTraceId = c.req.header('X-Audit-Trace-Id')?.trim();
-  if (!auditTraceId) {
-    return c.json({ error: 'Missing audit trace id.' }, 400);
-  }
-
-  const auditEntry = {
-    traceId: auditTraceId,
-    classification,
-    secretsPolicy,
-    method: c.req.method,
-    path: c.req.path,
-    timestamp: new Date().toISOString(),
-    cfRay: c.req.header('CF-Ray') ?? null,
-    actor: c.req.header('CF-Access-User-Email') ?? 'unknown'
-  };
-
-  if (c.env.GATEWAY_KV) {
-    await c.env.GATEWAY_KV.put(`audit:${auditTraceId}`, JSON.stringify(auditEntry), {
-      expirationTtl: 60 * 60 * 24 * 30
-    });
-  } else {
-    console.warn('GATEWAY_KV is not configured for audit logging.', auditEntry);
-  }
-
-  await next();
-});
+app.use('*', integrationControls);
 
 app.get('/health', (c) => c.json({ status: 'ok', service: 'gs-gateway' }));
 app.get('/templates', (c) =>
@@ -170,6 +124,7 @@ app.get('/', (c) => {
     </body>
     </html>
   `);
+  return c.html(STATUS_PAGE_HTML);
 });
 
 // Example specific routes
@@ -184,9 +139,9 @@ app.all('*', async (c) => {
     }
 
     // Fallback logic for environments without Service Bindings
-    if (API_ORIGIN) {
+    if (c.env.API_ORIGIN) {
         const url = new URL(c.req.url);
-        const targetUrl = new URL(url.pathname + url.search, API_ORIGIN);
+        const targetUrl = new URL(url.pathname + url.search, c.env.API_ORIGIN);
         return fetch(targetUrl.toString(), c.req.raw);
     }
 

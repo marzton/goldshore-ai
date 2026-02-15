@@ -25,17 +25,20 @@ jobs:
 
       - name: Setup Node
         uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
       - name: Run PII scan
         run: node scripts/pii-scan.mjs --mode ci --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md
+        run: node scripts/pii-scan.mjs --mode ci --output apps/gs-admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md
 
       - name: Publish summary
         run: cat reports/pii-scan-summary.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload report
         uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: pii-scan-report
           path: reports/

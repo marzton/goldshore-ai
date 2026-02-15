@@ -46,6 +46,9 @@ verification/*.png
 *.legacy-*.ts
 *.legacy-*.toml
 *.legacy-*.json
+**/test-results/
+**/trace.zip
+**/*.log
 
 # OS
 .DS_Store
@@ -80,3 +83,7 @@ tmp/
 **/*.legacy-*.toml
 **/*.legacy-*.ts
 reports/*.txt
+# Test artifacts
+**/test-results/
+**/trace.zip
+**/*.log

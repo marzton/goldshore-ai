@@ -7,6 +7,7 @@ body {
     font-family: sans-serif;
     margin: 0;
     padding: var(--page-padding);
+    padding: 20px;
 }
 
 header {
@@ -17,6 +18,8 @@ header {
     border-bottom: 1px solid #333;
     padding-bottom: 10px;
     margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
 }
 
 a {
@@ -27,6 +30,8 @@ a {
 .radar-scan {
     width: min(var(--radar-size), calc(100vw - (var(--page-padding) * 2)));
     aspect-ratio: 1;
+    width: 200px;
+    height: 200px;
     border: 2px solid #4ade80;
     border-radius: 50%;
     position: relative;
