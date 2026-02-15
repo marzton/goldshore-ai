@@ -129,4 +129,6 @@ export const PUT: APIRoute = async ({ request, locals, params }) => {
 
 export const PATCH = PUT;
 
+export const prerender = false;
+
 export const getStaticPaths = async () => [];
