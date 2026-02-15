@@ -3,7 +3,7 @@
 ## Overview
 The `gs-agent` worker is a queue-driven background agent. It currently returns a simple response for fetch requests and includes a stubbed queue consumer. The deprecated `apps/goldshore-agent` directory has been consolidated into this app; legacy workflows still reference `infra/cloudflare/goldshore-agent.wrangler.toml`.
 
-Cloudflare metadata (from `infra/cloudflare/gs-agent.wrangler.toml`):
+Cloudflare metadata (from `apps/gs-agent/wrangler.toml`):
 - Worker base name: `gs-agent` (per-environment names: `gs-agent-dev`, `gs-agent-preview`, `gs-agent-prod`)
 - Queue consumer: `goldshore-jobs`
 - Compatibility date: `2024-03-20`
@@ -14,7 +14,7 @@ Codex bot decision:
 
 ## Routes/Endpoints
 - No production routes are configured in the Wrangler config.
-The `gs-agent` worker is a queue-driven background agent. It currently returns a simple response for fetch requests and includes a stubbed queue consumer. The Wrangler configuration lives in `infra/cloudflare/gs-agent.wrangler.toml` and defines queue consumers for `goldshore-jobs`.
+The `gs-agent` worker is a queue-driven background agent. It currently returns a simple response for fetch requests and includes a stubbed queue consumer. The Wrangler configuration lives in `apps/gs-agent/wrangler.toml` and defines queue consumers for `goldshore-jobs`.
 
 ## Routes/Endpoints
 - No production routes are configured in `wrangler.toml`.

@@ -4,9 +4,9 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "dev": "wrangler dev src/index.ts --config ../../infra/cloudflare/gs-agent.wrangler.toml",
-    "deploy": "wrangler deploy --minify src/index.ts --config ../../infra/cloudflare/gs-agent.wrangler.toml",
-    "build": "wrangler deploy src/index.ts --dry-run --outdir=dist --config ../../infra/cloudflare/gs-agent.wrangler.toml"
+    "dev": "wrangler dev src/index.ts --config wrangler.toml",
+    "deploy": "wrangler deploy --minify src/index.ts --config wrangler.toml",
+    "build": "wrangler deploy src/index.ts --dry-run --outdir=dist --config wrangler.toml"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260214.0",
