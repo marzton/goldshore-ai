@@ -119,7 +119,7 @@ importers:
         version: 4.11.9
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20260207.0
+        specifier: ^4.20241106.0
         version: 4.20260213.0
       typescript:
         specifier: ^5.0.0
@@ -136,6 +136,9 @@ importers:
       '@goldshore/auth':
         specifier: workspace:^
         version: link:../../packages/auth
+      '@goldshore/utils':
+        specifier: workspace:^
+        version: link:../../packages/utils
       hono:
         specifier: ^4.0.0
         version: 4.11.9
@@ -194,7 +197,7 @@ importers:
         version: 4.11.9
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20260207.0
+        specifier: ^4.20241106.0
         version: 4.20260213.0
       '@types/node':
         specifier: ^25.2.1
