@@ -16,5 +16,11 @@
     "@types/node": "^25.2.1",
     "typescript": "^5.4.0",
     "wrangler": "^4.63.0"
+    "hono": "^4.11.9"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260214.0",
+    "typescript": "^5.0.0",
+    "wrangler": "^4.65.0"
   }
 }

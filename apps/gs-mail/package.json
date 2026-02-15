@@ -1,6 +1,6 @@
 {
   "name": "@goldshore/gs-mail",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "wrangler dev src/index.ts",
@@ -12,9 +12,9 @@
     "hono": "^4.0.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241106.0",
+    "@cloudflare/workers-types": "^4.20260214.0",
     "postal-mime": "^2.7.3",
     "typescript": "^5.4.0",
-    "wrangler": "^4.63.0"
+    "wrangler": "^4.65.0"
   }
 }
