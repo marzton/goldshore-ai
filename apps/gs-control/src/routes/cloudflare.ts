@@ -164,13 +164,24 @@ cloudflareRoutes.put(
     }
 
     if (!recordId) {
-      await logAuditEvent(c.env, {
+      await logAuditEvent(c.env.CONTROL_LOGS, {
         action: "cloudflare:dns:update",
         actor,
         status: "error",
         metadata: { reason: "missing-record-id" }
       });
       return c.json({ error: "Missing DNS record id." }, 400);
+    }
+
+    // Validate recordId to prevent path traversal
+    if (!/^[a-zA-Z0-9]+$/.test(recordId)) {
+      await logAuditEvent(c.env.CONTROL_LOGS, {
+        action: "cloudflare:dns:update",
+        actor,
+        status: "error",
+        metadata: { reason: "invalid-record-id", recordId }
+      });
+      return c.json({ error: "Invalid DNS record id." }, 400);
     }
 
     try {
@@ -184,7 +195,7 @@ cloudflareRoutes.put(
         }
       );
 
-      await logAuditEvent(c.env, {
+      await logAuditEvent(c.env.CONTROL_LOGS, {
         action: "cloudflare:dns:update",
         actor,
         status: result.ok ? "success" : "error",
@@ -193,7 +204,7 @@ cloudflareRoutes.put(
 
       return c.json(result.data, result.status as ContentfulStatusCode);
     } catch (error) {
-      await logAuditEvent(c.env, {
+      await logAuditEvent(c.env.CONTROL_LOGS, {
         action: "cloudflare:dns:update",
         actor,
         status: "error",
