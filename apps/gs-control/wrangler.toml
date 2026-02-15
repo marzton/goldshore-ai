@@ -1,5 +1,6 @@
 name = "gs-control"
 main = "src/index.ts"
+compatibility_date = "2024-01-01"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
 
@@ -10,7 +11,6 @@ routes = [
 
 [vars]
 ENV = "production"
-ALLOWED_ORIGINS = "https://admin.goldshore.ai,https://admin-preview.goldshore.ai,http://localhost:4321"
 
 [[kv_namespaces]]
 binding = "CONTROL_LOGS"

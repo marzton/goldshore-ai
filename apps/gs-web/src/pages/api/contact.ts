@@ -5,6 +5,7 @@ import { isValidEmail } from '../../utils/security';
 // Default to 90 days if not set in environment
 const DEFAULT_CONTACT_TTL_SECONDS = 60 * 60 * 24 * 90;
 const DEFAULT_MAILCHANNELS_API_URL = 'https://api.mailchannels.net/tx/v1/send';
+const CONTACT_TTL_SECONDS = 60 * 60 * 24 * 90;
 
 type Submission = {
   id: string;
@@ -68,6 +69,15 @@ const storeInKv = async (
     metadata: {
       formType: submission.formType,
       status: submission.status,
+const storeInKv = async (
+  kv: KVNamespace,
+  submission: Submission,
+  autoResponder: ReturnType<typeof buildLeadAutoResponder>
+) => {
+  await kv.put(`contact:${submission.id}`, JSON.stringify({ submission, autoResponder }), {
+    expirationTtl: CONTACT_TTL_SECONDS,
+    metadata: {
+      formType: submission.formType,
     },
   });
 };
