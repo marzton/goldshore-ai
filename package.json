@@ -13,16 +13,18 @@
     "build:control": "turbo run build --filter=@goldshore/control",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md"
+    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md",
+    "workspaces:list": "pnpm -r list --depth -1",
+    "verify:workspace-filters": "turbo run build --filter=@goldshore/api --dry && turbo run build --filter=@goldshore/control --dry"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",
     "@types/node": "^25.0.1",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
-    "@typescript-eslint/parser": "^8.54.0",
+    "@typescript-eslint/parser": "^8.55.0",
     "astro": "^5.15.9",
     "eslint": "^8.57.0",
-    "eslint-plugin-astro": "^1.5.0",
+    "eslint-plugin-astro": "^1.6.0",
     "form-data": "^4.0.5",
     "octokit": "^5.0.5",
     "prettier": "^3.2.5",
@@ -34,7 +36,7 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
-    "turbo": "^2.7.5"
+    "turbo": "^2.8.9"
   },
   "pnpm": {
     "overrides": {
