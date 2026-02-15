@@ -19,6 +19,8 @@ importers:
         version: 12.6.12(@types/node@25.2.3)(astro@5.17.2(@types/node@25.2.3)(jiti@1.21.7)(rollup@4.57.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
       turbo:
         specifier: ^2.7.5
+        version: 2.8.5
+        version: 2.8.6
         version: 2.8.7
     devDependencies:
       '@astrojs/mdx':
@@ -121,12 +123,15 @@ importers:
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20241106.0
+        specifier: ^4.20260207.0
+        version: 4.20260210.0
         version: 4.20260213.0
       typescript:
         specifier: ^5.4.0
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
+        version: 4.64.0(@cloudflare/workers-types@4.20260210.0)
         version: 4.65.0(@cloudflare/workers-types@4.20260213.0)
 
   apps/gs-api:
@@ -202,6 +207,7 @@ importers:
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20241106.0
+        specifier: ^4.20260207.0
         version: 4.20260213.0
       '@types/node':
         specifier: ^25.2.1
@@ -211,12 +217,14 @@ importers:
         version: 4.21.0
       typescript:
         specifier: ^5.4.0
+        specifier: ^5.0.0
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
         version: 4.65.0(@cloudflare/workers-types@4.20260213.0)
 
   apps/gs-mail:
+  apps/mail-worker:
     dependencies:
       hono:
         specifier: ^4.0.0
@@ -268,6 +276,27 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+
+  apps/mail-worker:
+    dependencies:
+      hono:
+        specifier: ^4.0.0
+        version: 4.11.9
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260207.0
+        version: 4.20260210.0
+        version: 4.20260213.0
+      postal-mime:
+        specifier: 2.7.3
+        version: 2.7.3
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+      wrangler:
+        specifier: ^4.63.0
+        version: 4.64.0(@cloudflare/workers-types@4.20260210.0)
+        version: 4.65.0(@cloudflare/workers-types@4.20260213.0)
 
   packages/ai-providers: {}
 
@@ -3096,6 +3125,25 @@ packages:
     cpu: [arm64]
     os: [win32]
 
+  turbo@2.8.5:
+    resolution: {integrity: sha512-pUhV1czFZNGOwnwCLaO727uSDH4botIrhOb/AAFqzfi3x4eeRZoOcAjoidnXD/dwCAw0HJf3+Sy4c2e8SlQKxQ==}
+  turbo-darwin-64@2.8.6:
+    resolution: {integrity: sha512-6QeZ/aLZizekiI6tKZN0IGP1a1WYZ9c/qDKPa0rSmj2X0O0Iw/ES4rKZV40S5n8SUJdiU01EFLygHJ2oWaYKXg==}
+    cpu: [x64]
+    os: [darwin]
+
+  turbo-darwin-arm64@2.8.6:
+    resolution: {integrity: sha512-RS4Z902vB93cQD3PJS/1IMmS0HefrB5ZXuw4ECOrxhOGz5jJVmYFJ6weDzedjoTDeYHHXGo1NoiCSHg69ngWKA==}
+    cpu: [arm64]
+    os: [win32]
+
+  turbo-windows-arm64@2.8.6:
+    resolution: {integrity: sha512-I3VEQyxIlNZ6XTg4fLKAkuhcwzIs/GD7Vs1yhelH2aUTjf08wprjBWknDqP7mjAHMpsosRrq4DtfSZEQm83Hxg==}
+    cpu: [arm64]
+    os: [win32]
+
+  turbo@2.8.6:
+    resolution: {integrity: sha512-QMj1SQwUYehc+xJ9SxXn56UO43hfKN64/NFetVW1BwzysRqn+q0FSgrmk+IbJ+djfd8j8zXGKGeqsnUcXwQSUQ==}
   turbo@2.8.7:
     resolution: {integrity: sha512-RBLh5caMAu1kFdTK1jgH2gH/z+jFsvX5rGbhgJ9nlIAWXSvxlzwId05uDlBA1+pBd3wO/UaKYzaQZQBXDd7kcA==}
     hasBin: true
@@ -6871,6 +6919,38 @@ snapshots:
 
   turbo@2.8.7:
     optionalDependencies:
+      turbo-darwin-64: 2.8.5
+      turbo-darwin-arm64: 2.8.5
+      turbo-linux-64: 2.8.5
+      turbo-linux-arm64: 2.8.5
+      turbo-windows-64: 2.8.5
+      turbo-windows-arm64: 2.8.5
+  turbo-darwin-64@2.8.6:
+    optional: true
+
+  turbo-darwin-arm64@2.8.7:
+    optional: true
+
+  turbo-linux-64@2.8.7:
+    optional: true
+
+  turbo-linux-arm64@2.8.7:
+    optional: true
+
+  turbo-windows-64@2.8.7:
+    optional: true
+
+  turbo-windows-arm64@2.8.7:
+    optional: true
+
+  turbo@2.8.7:
+    optionalDependencies:
+      turbo-darwin-64: 2.8.6
+      turbo-darwin-arm64: 2.8.6
+      turbo-linux-64: 2.8.6
+      turbo-linux-arm64: 2.8.6
+      turbo-windows-64: 2.8.6
+      turbo-windows-arm64: 2.8.6
       turbo-darwin-64: 2.8.7
       turbo-darwin-arm64: 2.8.7
       turbo-linux-64: 2.8.7
