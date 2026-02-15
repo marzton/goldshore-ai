@@ -1,10 +1,32 @@
-import baseConfig from "@goldshore/config/astro";
 import cloudflare from "@astrojs/cloudflare";
+import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  ...baseConfig,
-  output: "server",
+  srcDir: './src',
+  outDir: './dist',
+  prefetch: true,
   adapter: cloudflare(),
-  // Web specific overrides if any
+  integrations: [
+    tailwind({
+      applyBaseStyles: false,
+      configFile: "../../tailwind.config.mjs"
+    })
+  ],
+  vite: {
+    ssr: {
+      noExternal: [
+        '@goldshore/theme',
+        '@goldshore/ui',
+        '@goldshore/auth'
+      ]
+    },
+    resolve: {
+      alias: {
+        // '@goldshore/ui': '../../packages/ui',
+        // '@goldshore/theme': '../../packages/theme',
+        // '@goldshore/auth': '../../packages/auth',
+      }
+    }
+  }
 });
