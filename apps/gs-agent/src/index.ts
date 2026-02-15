@@ -77,5 +77,6 @@ export default {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	async queue(batch: any, env: Env): Promise<void> {
 		console.log(`Received batch of ${batch.messages.length} messages`);
+		// Process messages here
 	},
 };
