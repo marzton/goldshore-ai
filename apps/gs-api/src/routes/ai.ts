@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { createHash } from "node:crypto";
 import { applyAnalysisPolicy, getProvider, type AnalysisRequest } from "@goldshore/ai-providers";
+import safeStableStringify from "safe-stable-stringify";
 
 type Env = {
   KV: KVNamespace;
@@ -9,21 +10,6 @@ type Env = {
 };
 
 const ai = new Hono<{ Bindings: Env }>();
-
-function sortObject(obj: any): any {
-  if (obj === null || typeof obj !== "object") {
-    return obj;
-  }
-  if (Array.isArray(obj)) {
-    return obj.map(sortObject);
-  }
-  return Object.keys(obj)
-    .sort()
-    .reduce((result: any, key) => {
-      result[key] = sortObject(obj[key]);
-      return result;
-    }, {});
-}
 
 ai.get("/", (c) => c.json({ message: "AI endpoint" }));
 
@@ -57,7 +43,7 @@ ai.post("/analysis", async (c) => {
 
   // Create a cache key based on the sanitized input
   const inputHash = createHash("sha256")
-    .update(JSON.stringify(sortObject(policyResult.sanitized)))
+    .update(safeStableStringify(policyResult.sanitized))
     .digest("hex");
   const cacheKey = `analysis:${inputHash}`;
 
