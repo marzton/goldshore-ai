@@ -1,5 +1,5 @@
 {
-  "name": "@goldshore/api",
+  "name": "@goldshore/gs-gateway",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,13 +8,12 @@
     "build": "wrangler deploy --dry-run --outdir=dist"
   },
   "dependencies": {
-    "@goldshore/ai-providers": "workspace:^",
-    "@goldshore/auth": "workspace:^",
+    "@goldshore/auth": "workspace:*",
     "hono": "^4.11.9"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260214.0",
-    "typescript": "^5.4.0",
+    "typescript": "^5.0.0",
     "wrangler": "^4.65.0"
   }
 }

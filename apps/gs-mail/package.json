@@ -1,5 +1,5 @@
 {
-  "name": "@goldshore/gateway",
+  "name": "@goldshore/gs-mail",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,13 +7,9 @@
     "deploy": "wrangler deploy",
     "build": "wrangler deploy --dry-run --outdir=dist"
   },
-  "dependencies": {
-    "@goldshore/auth": "workspace:*",
-    "hono": "^4.11.9"
-  },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260214.0",
-    "typescript": "^5.0.0",
+    "typescript": "^5.4.0",
     "wrangler": "^4.65.0"
   }
 }

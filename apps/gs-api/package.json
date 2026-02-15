@@ -1,18 +1,19 @@
 {
-  "name": "@goldshore/control",
+  "name": "@goldshore/gs-api",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy",
-    "run-task": "wrangler dev src/index.ts --test-scheduled"
+    "build": "wrangler deploy --dry-run --outdir=dist"
   },
   "dependencies": {
-    "@goldshore/auth": "workspace:*",
+    "@goldshore/ai-providers": "workspace:^",
+    "@goldshore/auth": "workspace:^",
     "hono": "^4.11.9"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4",
+    "@cloudflare/workers-types": "^4.20260214.0",
     "typescript": "^5.4.0",
     "wrangler": "^4.65.0"
   }
