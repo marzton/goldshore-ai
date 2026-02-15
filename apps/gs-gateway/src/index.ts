@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
-import { checkAuth } from './auth';
 import { verifyAccess } from '@goldshore/auth';
 import { STATUS_PAGE_HTML } from './templates/status';
 import { type Env } from './types';
@@ -40,7 +39,6 @@ app.use('*', async (c, next) => {
         console.warn('SECURITY WARNING: CLOUDFLARE_ACCESS_AUDIENCE is not set. Audience verification is disabled.');
     }
 
-    const authorized = await checkAuth(c.req.raw, c.env);
     const authorized = await verifyAccess(c.req.raw, c.env);
     if (!authorized) {
         return c.json({ error: 'Unauthorized' }, 401);
