@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD:apps/gs-mail/package.json
   "name": "@goldshore/gs-mail",
-=======
-  "name": "@goldshore/mail-worker",
->>>>>>> 34bcb44... Update paths for web, admin, and API workflows:apps/mail-worker/package.json
   "version": "0.0.0",
   "private": true,
   "scripts": {

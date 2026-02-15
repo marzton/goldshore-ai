@@ -11,12 +11,6 @@ const VERSION = '2026.02.10-mail-worker-fix';
 
 const app = new Hono<{ Bindings: Env }>();
 
-const splitCsv = (value?: string) =>
-  (value ?? '')
-    .split(',')
-    .map((entry) => entry.trim().toLowerCase())
-    .filter(Boolean);
-
 const isEmailLike = (value: string) => /.+@.+\..+/.test(value);
 
 app.get('/', (c) => c.text('GoldShore Mail Worker'));
