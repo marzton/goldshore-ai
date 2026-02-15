@@ -21,6 +21,16 @@ ENV = "development"
 [env.dev.ai]
 binding = "AI"
 
+
+[env.prod]
+name = "gs-agent"
+[[env.prod.queues.consumers]]
+queue = "gs-jobs"
+[env.prod.vars]
+ENV = "production"
+[env.prod.ai]
+binding = "AI"
+
 [env.preview]
 name = "gs-agent-preview"
 [[env.preview.queues.consumers]]

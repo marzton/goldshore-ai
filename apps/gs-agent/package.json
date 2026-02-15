@@ -5,8 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "wrangler dev --env dev --config wrangler.toml",
-    "deploy": "wrangler deploy --config wrangler.toml",
-    "build": "wrangler deploy --dry-run --outdir=dist --config wrangler.toml"
+    "deploy": "wrangler deploy --env prod --config wrangler.toml",
+    "build": "wrangler deploy --dry-run --outdir=dist --env prod --config wrangler.toml"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
