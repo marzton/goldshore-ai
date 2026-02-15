@@ -312,6 +312,28 @@ const formattedScanDate = new Date(generatedAt).toLocaleString('en-US', {
             };
 
             document.getElementById('check-api-health')?.addEventListener('click', (e) => {
+        // NOTE: All behavior below is currently SIMULATED UI behavior.
+        // Jules: backend endpoints are NOT required to exist yet.
+        document.addEventListener('DOMContentLoaded', () => {
+            const apiStatusEl = document.getElementById('api-status');
+            const lastSyncEl = document.getElementById('last-sync');
+            const checkApiBtn = document.getElementById('check-api');
+
+            const checkApiHealth = async () => {
+                apiStatusEl.textContent = 'Checking...';
+                apiStatusEl.style.color = 'var(--gs-accent)';
+
+                // Simulated delay; later this can be replaced by a real fetch to gs-api /health.
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                const isHealthy = Math.random() > 0.1;
+
+                apiStatusEl.textContent = isHealthy ? 'HEALTHY' : 'DEGRADED';
+                apiStatusEl.style.color = isHealthy ? 'var(--gs-success)' : 'var(--gs-danger)';
+                lastSyncEl.textContent = new Date().toLocaleTimeString();
+            };
+
+            checkApiBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 checkApiHealth();
             });
