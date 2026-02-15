@@ -1,4 +1,4 @@
-name: Preview Web (goldshore.ai)
+name: Preview gs-web
 
 permissions:
   contents: read
