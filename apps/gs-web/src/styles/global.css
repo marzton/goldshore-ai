@@ -1,5 +1,5 @@
 @import "@goldshore/theme";
-@import "./gs-effects.css";
+@import "@goldshore/config/styles/gs-effects.css";
 
 :root {
   font-family: var(--gs-font-body);

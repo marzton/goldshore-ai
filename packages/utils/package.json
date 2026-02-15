@@ -1,17 +1,27 @@
 {
   "name": "@goldshore/utils",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "index.ts",
-  "types": "index.ts",
   "exports": {
     ".": {
+      "types": "./index.ts",
       "import": "./index.ts",
       "require": "./index.ts",
-      "types": "./index.ts",
       "default": "./index.ts"
+    },
+    "./audit": {
+      "types": "./src/audit.ts",
+      "import": "./src/audit.ts",
+      "require": "./src/audit.ts",
+      "default": "./src/audit.ts"
     }
   },
   "scripts": {
-    "test": "tsx --test **/*.test.ts"
+    "test": "node --test src/**/*.test.ts"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241106.0",
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.0"
   }
 }
