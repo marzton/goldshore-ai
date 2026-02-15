@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { createHash } from "node:crypto";
 import { applyAnalysisPolicy, getProvider, type AnalysisRequest } from "@goldshore/ai-providers";
+import { logAuditEvent } from "@goldshore/utils";
 
 type Env = {
   KV: KVNamespace;
@@ -94,20 +95,22 @@ ai.post("/analysis", async (c) => {
 
   const durationMs = Date.now() - startedAt;
 
-  const logEntry = {
-    event: "ai.analysis",
-    timestamp: new Date().toISOString(),
-    request: policyResult.sanitized,
-    response: {
-      provider: providerResponse.provider,
-      // output is sensitive and should not be logged
-    },
-    redactions: policyResult.redactions,
-    durationMs,
-    cache: isCached ? "HIT" : "MISS",
-  };
-
-  console.log(JSON.stringify(logEntry));
+  c.executionCtx.waitUntil(
+    logAuditEvent(c.env.KV, {
+      action: "ai.analysis",
+      status: "success",
+      metadata: {
+        request: policyResult.sanitized,
+        response: {
+          provider: providerResponse.provider,
+          // output is sensitive and should not be logged
+        },
+        redactions: policyResult.redactions,
+        durationMs,
+        cache: isCached ? "HIT" : "MISS",
+      },
+    })
+  );
 
   const response = c.json({
     ...providerResponse,
