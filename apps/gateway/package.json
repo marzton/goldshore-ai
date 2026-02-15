@@ -1,5 +1,5 @@
 {
-  "name": "@goldshore/gateway",
+  "name": "@goldshore/gs-gateway",
   "version": "0.1.0",
   "private": true,
   "scripts": {
