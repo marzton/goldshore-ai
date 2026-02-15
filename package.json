@@ -13,7 +13,9 @@
     "check:docs-consistency": "node scripts/check-doc-consistency.mjs",
     "check:naming": "node scripts/lint-naming.mjs",
     "validate:structure": "tsx scripts/validate-worker-structure.ts",
-    "validate": "pnpm check:naming && pnpm validate:structure",
+    "validate:names": "tsx scripts/validate-worker-names.ts",
+    "validate:workspace": "tsx scripts/validate-workspace-contract.ts",
+    "validate": "pnpm check:naming && pnpm validate:workspace && pnpm validate:structure && pnpm validate:names",
     "branch:bootstrap": "bash scripts/branch-bootstrap.sh",
     "scaffold:worker": "node scripts/scaffold-worker.mjs"
   },
