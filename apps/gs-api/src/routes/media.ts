@@ -31,9 +31,26 @@ const sanitizeSvg = (rawSvg: string) => {
   return sanitized;
 };
 
+const ensureTable = async (db: D1Database) => {
+  await db
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS media_assets (
+        id TEXT PRIMARY KEY,
+        filename TEXT NOT NULL,
+        url TEXT NOT NULL,
+        size INTEGER NOT NULL,
+        type TEXT NOT NULL,
+        object_key TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )`
+    )
+    .run();
+};
+
 const media = new Hono<{ Bindings: { DB: D1Database; ASSETS: R2Bucket } }>();
 
 media.get('/', async (c) => {
+  await ensureTable(c.env.DB);
   const { results } = await c.env.DB
     .prepare('SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT 100')
     .all<MediaRecord>();
@@ -41,6 +58,7 @@ media.get('/', async (c) => {
 });
 
 media.get('/:id', async (c) => {
+  await ensureTable(c.env.DB);
   const id = c.req.param('id');
   const result = await c.env.DB
     .prepare('SELECT object_key, type FROM media_assets WHERE id = ?')
@@ -66,6 +84,7 @@ media.get('/:id', async (c) => {
 });
 
 media.post('/upload', async (c) => {
+  await ensureTable(c.env.DB);
   const formData = await c.req.formData();
   const file = formData.get('file');
 
