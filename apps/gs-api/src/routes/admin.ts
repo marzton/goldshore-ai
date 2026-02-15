@@ -1,16 +1,10 @@
-import { Hono, type Context, type Next } from "hono";
+import { Hono } from "hono";
 import {
   ADMIN_ROLES,
-  buildAdminSession,
-  hasAdminPermission,
-  type AccessTokenPayload,
-  type AdminPermission,
   type AdminRole
 } from "@goldshore/auth";
-
-type Env = {
-  KV: KVNamespace;
-};
+import { getActor, logAdminAction, requirePermission } from "../auth";
+import { Env, Variables, AuditEvent } from "../types";
 
 type AdminUserRecord = {
   id: string;
@@ -21,57 +15,10 @@ type AdminUserRecord = {
   updatedAt: string;
 };
 
-type AuditEvent = {
-  action: string;
-  actor?: string;
-  status: "success" | "denied" | "error";
-  metadata?: Record<string, unknown>;
-  timestamp: string;
-};
-
 const admin = new Hono<{
   Bindings: Env;
-  Variables: {
-    accessClaims: AccessTokenPayload | null;
-  };
+  Variables: Variables;
 }>();
-
-type AdminContext = Context<{
-  Bindings: Env;
-  Variables: {
-    accessClaims: AccessTokenPayload | null;
-  };
-}>;
-
-const getActor = (claims: AccessTokenPayload | null, request: Request) =>
-  claims?.email ||
-  request.headers.get("CF-Access-Authenticated-User-Email") ||
-  request.headers.get("CF-Access-Authenticated-User-Id") ||
-  "unknown";
-
-const logAdminAction = async (env: Env, entry: Omit<AuditEvent, "timestamp">) => {
-  const timestamp = new Date().toISOString();
-  const key = `audit:admin:${timestamp}:${crypto.randomUUID()}`;
-  const payload: AuditEvent = { ...entry, timestamp };
-  await env.KV.put(key, JSON.stringify(payload));
-  return payload;
-};
-
-const requirePermission =
-  (permission: AdminPermission) =>
-  async (c: AdminContext, next: Next) => {
-    const session = buildAdminSession(c.get("accessClaims"));
-    if (!hasAdminPermission(session.permissions, permission)) {
-      await logAdminAction(c.env, {
-        action: "admin.access.denied",
-        actor: getActor(c.get("accessClaims"), c.req.raw),
-        status: "denied",
-        metadata: { permission }
-      });
-      return c.json({ error: "Forbidden" }, 403);
-    }
-    await next();
-  };
 
 const listUsers = async (env: Env) => {
   const { keys } = await env.KV.list({ prefix: "admin:user:" });
