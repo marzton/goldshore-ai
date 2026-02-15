@@ -5,7 +5,6 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const ROOT = path.resolve(__dirname, '../apps/web/openapi');
 const ROOT = path.resolve(__dirname, '../apps/gs-web/openapi');
 
 async function run() {
