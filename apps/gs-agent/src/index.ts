@@ -72,4 +72,11 @@ app.get('/', (c) => {
 
 app.get('/health', (c) => c.json({ status: 'ok', service: 'gs-agent' }));
 
-export default app;
+export default {
+	fetch: app.fetch,
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	queue: async (batch: MessageBatch<any>, env: Env): Promise<void> => {
+		// Queue processing logic
+		console.log('Queue batch received', batch.messages.length);
+	},
+};

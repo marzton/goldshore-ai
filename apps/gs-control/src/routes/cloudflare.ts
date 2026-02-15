@@ -173,6 +173,17 @@ cloudflareRoutes.put(
       return c.json({ error: "Missing DNS record id." }, 400);
     }
 
+    // Validate recordId to prevent path traversal
+    if (!/^[a-zA-Z0-9]+$/.test(recordId)) {
+      await logAuditEvent(c.env.CONTROL_LOGS, {
+        action: "cloudflare:dns:update",
+        actor,
+        status: "error",
+        metadata: { reason: "invalid-record-id", recordId }
+      });
+      return c.json({ error: "Invalid DNS record id." }, 400);
+    }
+
     try {
       const payload = c.req.valid("json");
       const result = await fetchCloudflare(
