@@ -4,8 +4,7 @@
   "packageManager": "pnpm@9.0.0",
   "scripts": {
     "dev": "turbo run dev --parallel",
-    "build:openapi": "node scripts/build-openapi.mjs",
-    "build": "pnpm build:openapi && turbo run build",
+    "build": "node scripts/build-openapi.mjs && turbo run build",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "check:pages": "tsx scripts/check-pages-200.ts",
@@ -13,9 +12,7 @@
     "check:docs-consistency": "node scripts/check-doc-consistency.mjs",
     "check:naming": "node scripts/lint-naming.mjs",
     "validate:structure": "tsx scripts/validate-worker-structure.ts",
-    "validate": "pnpm check:naming && pnpm validate:structure",
-    "branch:bootstrap": "bash scripts/branch-bootstrap.sh",
-    "scaffold:worker": "node scripts/scaffold-worker.mjs"
+    "validate": "pnpm check:naming && pnpm validate:structure"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
