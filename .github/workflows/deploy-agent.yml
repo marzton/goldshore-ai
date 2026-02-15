@@ -3,20 +3,21 @@ name: Deploy Agent Worker (gs-agent)
 permissions:
   contents: read
 
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - "apps/gs-agent/**"
-      - "infra/cloudflare/gs-agent.wrangler.toml"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
+# on:
+#   push:
+#     branches:
+#       - main
+#     paths:
+#       - "apps/gs-agent/**"
+#       - "infra/cloudflare/gs-agent.wrangler.toml"
+#       - "packages/**"
+#       - "package.json"
+#       - "pnpm-lock.yaml"
 
 jobs:
   deploy-agent:
     runs-on: ubuntu-latest
+    if: false # Explicitly disable job
 
     steps:
       - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e

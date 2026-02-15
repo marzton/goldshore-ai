@@ -1,24 +1,22 @@
-name: Deploy API Gateway (gw.goldshore.ai)
+name: Deploy gs-mail
 
 permissions:
   contents: read
 
-# on:
-#   push:
-#     branches:
-#       - main
-#     paths:
-#       - "apps/gateway/**"
-#       - "packages/**"
-#       - "package.json"
-#       - "pnpm-lock.yaml"
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/gs-mail/**"
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
 
 jobs:
-  deploy-gateway:
+  deploy:
     runs-on: ubuntu-latest
-    name: Deploy API Gateway
-    if: false # Explicitly disable job
-
+    name: Deploy
     steps:
       - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
 
@@ -29,14 +27,14 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-          cache: pnpm
+          cache: 'pnpm'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Deploy API Gateway (production)
-        working-directory: apps/gateway
+      - name: Deploy to Cloudflare
+        working-directory: apps/gs-mail
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: pnpm exec wrangler deploy --config wrangler.toml
+        run: pnpm exec wrangler deploy
