@@ -10,11 +10,11 @@
   "dependencies": {
     "@goldshore/ai-providers": "workspace:^",
     "@goldshore/auth": "workspace:^",
-    "hono": "^4.0.0"
+    "hono": "^4.11.9"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240512.0",
+    "@cloudflare/workers-types": "^4.20260214.0",
     "typescript": "^5.4.0",
-    "wrangler": "^4.63.0"
+    "wrangler": "^4.65.0"
   }
 }
