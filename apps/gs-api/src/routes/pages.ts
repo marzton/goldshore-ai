@@ -1,4 +1,6 @@
 import { Hono } from 'hono';
+import { requirePermission } from '../auth';
+import { Env, Variables } from '../types';
 
 type PageRow = {
   id: number;
@@ -22,9 +24,9 @@ const normalizePage = (row: PageRow) => ({
   updatedAt: row.updated_at
 });
 
-const pages = new Hono();
+const pages = new Hono<{ Bindings: Env; Variables: Variables }>();
 
-pages.get('/', async (c) => {
+pages.get('/', requirePermission('content:read'), async (c) => {
   const status = c.req.query('status');
   const query = status
     ? c.env.DB.prepare('SELECT * FROM pages WHERE status = ? ORDER BY updated_at DESC').bind(status)
@@ -35,7 +37,7 @@ pages.get('/', async (c) => {
   });
 });
 
-pages.get('/slug/:slug', async (c) => {
+pages.get('/slug/:slug', requirePermission('content:read'), async (c) => {
   const slug = c.req.param('slug');
   const page = await c.env.DB.prepare('SELECT * FROM pages WHERE slug = ? LIMIT 1')
     .bind(slug)
@@ -48,7 +50,7 @@ pages.get('/slug/:slug', async (c) => {
   return c.json(normalizePage(page));
 });
 
-pages.get('/:id', async (c) => {
+pages.get('/:id', requirePermission('content:read'), async (c) => {
   const id = Number(c.req.param('id'));
   if (Number.isNaN(id)) {
     return c.json({ error: 'Invalid page id' }, 400);
@@ -65,7 +67,7 @@ pages.get('/:id', async (c) => {
   return c.json(normalizePage(page));
 });
 
-pages.post('/', async (c) => {
+pages.post('/', requirePermission('content:write'), async (c) => {
   const payload = await c.req.json().catch(() => null) as
     | { slug?: string; title?: string; body?: string; status?: string }
     | null;
@@ -89,7 +91,7 @@ pages.post('/', async (c) => {
   return c.json(page ? normalizePage(page) : { error: 'Page not found after insert' }, page ? 201 : 500);
 });
 
-pages.put('/:id', async (c) => {
+pages.put('/:id', requirePermission('content:write'), async (c) => {
   const id = Number(c.req.param('id'));
   if (Number.isNaN(id)) {
     return c.json({ error: 'Invalid page id' }, 400);
@@ -122,7 +124,7 @@ pages.put('/:id', async (c) => {
   return c.json(page ? normalizePage(page) : { error: 'Page not found' }, page ? 200 : 404);
 });
 
-pages.patch('/:id/status', async (c) => {
+pages.patch('/:id/status', requirePermission('content:publish'), async (c) => {
   const id = Number(c.req.param('id'));
   if (Number.isNaN(id)) {
     return c.json({ error: 'Invalid page id' }, 400);
@@ -151,7 +153,7 @@ pages.patch('/:id/status', async (c) => {
   return c.json(page ? normalizePage(page) : { error: 'Page not found' }, page ? 200 : 404);
 });
 
-pages.delete('/:id', async (c) => {
+pages.delete('/:id', requirePermission('content:write'), async (c) => {
   const id = Number(c.req.param('id'));
   if (Number.isNaN(id)) {
     return c.json({ error: 'Invalid page id' }, 400);
