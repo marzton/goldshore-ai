@@ -9,6 +9,7 @@ overrides:
   '@astrojs/adapter-cloudflare': latest
   postal-mime: 2.7.3
   wrangler: ^4.63.0
+  wrangler: ^4.65.0
 
 importers:
 
@@ -27,6 +28,9 @@ importers:
       '@astrojs/sitemap':
         specifier: ^3.6.0
         version: 3.7.0
+        specifier: ^2.8.9
+        version: 2.8.9
+    devDependencies:
       '@astrojs/tailwind':
         specifier: ^6.0.2
         version: 6.0.2(astro@5.17.2(@types/node@25.2.3)(jiti@1.21.7)(rollup@4.57.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))
@@ -38,6 +42,13 @@ importers:
         version: 8.55.0(@typescript-eslint/parser@8.55.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)
       '@typescript-eslint/parser':
         specifier: ^8.54.0
+        specifier: ^25.2.3
+        version: 25.2.3
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^8.54.0
+        version: 8.54.0(@typescript-eslint/parser@8.55.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)
+      '@typescript-eslint/parser':
+        specifier: ^8.55.0
         version: 8.55.0(eslint@8.57.1)(typescript@5.9.3)
       astro:
         specifier: ^5.15.9
@@ -47,6 +58,7 @@ importers:
         version: 8.57.1
       eslint-plugin-astro:
         specifier: ^1.5.0
+        specifier: ^1.6.0
         version: 1.6.0(eslint@8.57.1)
       form-data:
         specifier: ^4.0.5
@@ -62,6 +74,10 @@ importers:
         version: 0.13.0
       tailwindcss:
         specifier: ^3
+        specifier: ^0.14.1
+        version: 0.14.1
+      tailwindcss:
+        specifier: ^3.4.19
         version: 3.4.19(tsx@4.21.0)(yaml@2.8.2)
       tsx:
         specifier: ^4.21.0
@@ -95,6 +111,7 @@ importers:
         version: link:../../packages/ui
       astro:
         specifier: ^5.15.9
+        specifier: ^5.17.2
         version: 5.17.2(@types/node@25.2.3)(jiti@1.21.7)(rollup@4.57.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
     devDependencies:
       '@astrojs/cloudflare':
@@ -127,6 +144,15 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260214.0
+        version: 4.20260214.0
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+      wrangler:
+        specifier: ^4.65.0
         version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
 
   apps/gs-api:
@@ -153,11 +179,19 @@ importers:
       tsx:
         specifier: ^4.7.1
         version: 4.21.0
+      hono:
+        specifier: ^4.11.9
+        version: 4.11.9
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260214.0
+        version: 4.20260214.0
       typescript:
         specifier: ^5.4.0
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
+        specifier: ^4.65.0
         version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
 
   apps/gs-control:
@@ -184,11 +218,19 @@ importers:
       tsx:
         specifier: ^4.7.1
         version: 4.21.0
+      hono:
+        specifier: ^4.11.9
+        version: 4.11.9
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4
+        version: 4.20260214.0
       typescript:
         specifier: ^5.4.0
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
+        specifier: ^4.65.0
         version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
 
   apps/gs-gateway:
@@ -225,11 +267,30 @@ importers:
       postal-mime:
         specifier: 2.7.3
         version: 2.7.3
+        specifier: ^4.11.9
+        version: 4.11.9
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260214.0
+        version: 4.20260214.0
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+      wrangler:
+        specifier: ^4.65.0
+        version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
+
+  apps/gs-mail:
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260214.0
+        version: 4.20260214.0
       typescript:
         specifier: ^5.4.0
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
+        specifier: ^4.65.0
         version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
 
   apps/gs-web:
@@ -253,6 +314,15 @@ importers:
       '@astrojs/check':
         specifier: ^0.9.6
         version: 0.9.6(prettier-plugin-astro@0.13.0)(prettier@3.8.1)(typescript@5.9.3)
+        specifier: ^5.17.2
+        version: 5.17.2(@types/node@25.2.3)(jiti@1.21.7)(rollup@4.57.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
+      tailwindcss:
+        specifier: ^3.4.19
+        version: 3.4.19(tsx@4.21.0)(yaml@2.8.2)
+    devDependencies:
+      '@astrojs/check':
+        specifier: ^0.9.6
+        version: 0.9.6(prettier-plugin-astro@0.14.1)(prettier@3.8.1)(typescript@5.9.3)
       '@astrojs/cloudflare':
         specifier: latest
         version: 12.6.12(@types/node@25.2.3)(astro@5.17.2(@types/node@25.2.3)(jiti@1.21.7)(rollup@4.57.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
@@ -266,6 +336,8 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  apps/jules-bot: {}
+
   packages/ai-providers: {}
 
   packages/auth:
@@ -274,6 +346,14 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
 
+  packages/config:
+    dependencies:
+      '@goldshore/theme':
+        specifier: workspace:*
+        version: link:../theme
+      '@goldshore/ui':
+        specifier: workspace:*
+        version: link:../ui
   packages/config: {}
 
   packages/integrations: {}
@@ -286,6 +366,7 @@ importers:
     devDependencies:
       astro:
         specifier: ^5.15.9
+        specifier: ^5.17.2
         version: 5.17.2(@types/node@25.2.3)(jiti@1.21.7)(rollup@4.57.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
 
   packages/utils: {}
@@ -1319,11 +1400,21 @@ packages:
       eslint: ^8.57.0 || ^9.0.0
       typescript: '>=4.8.4 <6.0.0'
 
+  '@typescript-eslint/project-service@8.54.0':
+    resolution: {integrity: sha512-YPf+rvJ1s7MyiWM4uTRhE4DvBXrEV+d8oC3P9Y2eT7S+HBS0clybdMIPnhiATi9vZOYDc7OQ1L/i6ga6NFYK/g==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      typescript: '>=4.8.4 <6.0.0'
+
   '@typescript-eslint/project-service@8.55.0':
     resolution: {integrity: sha512-zRcVVPFUYWa3kNnjaZGXSu3xkKV1zXy8M4nO/pElzQhFweb7PPtluDLQtKArEOGmjXoRjnUZ29NjOiF0eCDkcQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       typescript: '>=4.8.4 <6.0.0'
+
+  '@typescript-eslint/scope-manager@8.54.0':
+    resolution: {integrity: sha512-27rYVQku26j/PbHYcVfRPonmOlVI6gihHtXFbTdB5sb6qA0wdAQAbyXFVarQ5t4HRojIz64IV90YtsjQSSGlQg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@typescript-eslint/scope-manager@8.55.0':
     resolution: {integrity: sha512-fVu5Omrd3jeqeQLiB9f1YsuK/iHFOwb04bCtY4BSCLgjNbOD33ZdV6KyEqplHr+IlpgT0QTZ/iJ+wT7hvTx49Q==}
@@ -1342,9 +1433,19 @@ packages:
       eslint: ^8.57.0 || ^9.0.0
       typescript: '>=4.8.4 <6.0.0'
 
+  '@typescript-eslint/types@8.54.0':
+    resolution: {integrity: sha512-PDUI9R1BVjqu7AUDsRBbKMtwmjWcn4J3le+5LpcFgWULN3LvHC5rkc9gCVxbrsrGmO1jfPybN5s6h4Jy+OnkAA==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
   '@typescript-eslint/types@8.55.0':
     resolution: {integrity: sha512-ujT0Je8GI5BJWi+/mMoR0wxwVEQaxM+pi30xuMiJETlX80OPovb2p9E8ss87gnSVtYXtJoU9U1Cowcr6w2FE0w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/typescript-estree@8.54.0':
+    resolution: {integrity: sha512-BUwcskRaPvTk6fzVWgDPdUndLjB87KYDrN5EYGetnktoeAvPtO4ONHlAZDnj5VFnUANg0Sjm7j4usBlnoVMHwA==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      typescript: '>=4.8.4 <6.0.0'
 
   '@typescript-eslint/typescript-estree@8.55.0':
     resolution: {integrity: sha512-EwrH67bSWdx/3aRQhCoxDaHM+CrZjotc2UCCpEDVqfCE+7OjKAGWNY2HsCSTEVvWH2clYQK8pdeLp42EVs+xQw==}
@@ -1358,6 +1459,10 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
       typescript: '>=4.8.4 <6.0.0'
+
+  '@typescript-eslint/visitor-keys@8.54.0':
+    resolution: {integrity: sha512-VFlhGSl4opC0bprJiItPQ1RfUhGDIBokcPwaFH4yiBCaNPeld/9VeXbiPO1cLyorQi1G1vL+ecBk1x8o1axORA==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@typescript-eslint/visitor-keys@8.55.0':
     resolution: {integrity: sha512-AxNRwEie8Nn4eFS1FzDMJWIISMGoXMb037sgCBJ3UR6o0fQTzr2tqN9WT+DkWJPhIdQCfV7T6D387566VtnCJA==}
@@ -2153,6 +2258,9 @@ packages:
 
   is-alphanumerical@2.0.1:
     resolution: {integrity: sha512-hmbYhX/9MUMF5uh7tOXyK/n0ZvWpad5caBA17GsC6vyuCqaWliRG5K1qS9inmUhEMaOBIW7/whAnSwveW/LtZw==}
+
+  iron-webcrypto@1.2.1:
+    resolution: {integrity: sha512-feOM6FaSr6rEABp/eDfVseKyTMDt+KGpeB35SkVn9Tyn0CqvVsY3EwI0v5i8nMHyJnzCIQf7nsy3p41TPkJZhg==}
 
   is-binary-path@2.1.0:
     resolution: {integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==}
@@ -3569,8 +3677,6 @@ snapshots:
       - utf-8-validate
       - yaml
 
-  '@astrojs/compiler@1.8.2': {}
-
   '@astrojs/compiler@2.13.1': {}
 
   '@astrojs/internal-helpers@0.7.5': {}
@@ -3597,7 +3703,7 @@ snapshots:
       vscode-uri: 3.1.0
     optionalDependencies:
       prettier: 3.8.1
-      prettier-plugin-astro: 0.13.0
+      prettier-plugin-astro: 0.14.1
     transitivePeerDependencies:
       - typescript
 
@@ -4468,6 +4574,15 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@typescript-eslint/project-service@8.54.0(typescript@5.9.3)':
+    dependencies:
+      '@typescript-eslint/tsconfig-utils': 8.55.0(typescript@5.9.3)
+      '@typescript-eslint/types': 8.55.0
+      debug: 4.4.3
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - supports-color
+
   '@typescript-eslint/project-service@8.55.0(typescript@5.9.3)':
     dependencies:
       '@typescript-eslint/tsconfig-utils': 8.55.0(typescript@5.9.3)
@@ -4498,7 +4613,24 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@typescript-eslint/types@8.54.0': {}
+
   '@typescript-eslint/types@8.55.0': {}
+
+  '@typescript-eslint/typescript-estree@8.54.0(typescript@5.9.3)':
+    dependencies:
+      '@typescript-eslint/project-service': 8.54.0(typescript@5.9.3)
+      '@typescript-eslint/tsconfig-utils': 8.54.0(typescript@5.9.3)
+      '@typescript-eslint/types': 8.54.0
+      '@typescript-eslint/visitor-keys': 8.54.0
+      debug: 4.4.3
+      minimatch: 9.0.5
+      semver: 7.7.4
+      tinyglobby: 0.2.15
+      ts-api-utils: 2.4.0(typescript@5.9.3)
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - supports-color
 
   '@typescript-eslint/typescript-estree@8.55.0(typescript@5.9.3)':
     dependencies:
@@ -6385,6 +6517,9 @@ snapshots:
   prettier-plugin-astro@0.13.0:
     dependencies:
       '@astrojs/compiler': 1.8.2
+  prettier-plugin-astro@0.14.1:
+    dependencies:
+      '@astrojs/compiler': 2.13.1
       prettier: 3.8.1
       sass-formatter: 0.7.9
 
@@ -6699,6 +6834,8 @@ snapshots:
   space-separated-tokens@2.0.2: {}
 
   stream-replace-string@2.0.0: {}
+
+  space-separated-tokens@2.0.2: {}
 
   string-width@4.2.3:
     dependencies:
