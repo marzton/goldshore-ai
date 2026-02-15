@@ -1,22 +1,9 @@
 {
   "base": "origin/main",
-  "integration_branch": "integration/conflict-resolution/20260213T042233Z",
-  "generated_at": "2026-02-13T04:22:33+00:00",
+  "integration_branch": "integration/conflict-resolution/20260109T130721Z",
+  "generated_at": "2026-01-09T13:07:22.632796+00:00",
   "dry_run": true,
   "allow_dirty": true,
-  "audit_status": "blocked",
-  "audit_blockers": [
-    "Remote refs are not restored in this checkout (no `origin` remote configured)."
-  ],
   "conflict_markers": [],
-  "branches": [],
-  "branch_fields": [
-    "branch",
-    "status",
-    "mergeability",
-    "blocked_reason",
-    "owner",
-    "reviewers",
-    "last_audited_at"
-  ]
+  "branches": []
 }

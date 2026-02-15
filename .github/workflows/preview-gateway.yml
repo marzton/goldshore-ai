@@ -13,7 +13,7 @@ on:
       - unlabeled
       - ready_for_review
     paths:
-      - "apps/gateway/**"
+      - "apps/gs-gateway/**"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -32,7 +32,8 @@ jobs:
         with:
           run_install: false
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
@@ -40,8 +41,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Validate workspace contract
+        run: pnpm validate:workspace
+
+      - name: Validate canonical worker structure
+        run: pnpm validate:structure
+
+      - name: Validate canonical worker names
+        run: pnpm validate:names
+
       - name: Deploy Gateway worker (preview)
-        working-directory: apps/gateway
+        working-directory: apps/gs-gateway
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
