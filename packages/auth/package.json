@@ -2,10 +2,33 @@
   "name": "@goldshore/auth",
   "version": "0.0.1",
   "main": "index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "import": "./index.ts",
+      "require": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./verify": {
+      "types": "./verify.ts",
+      "import": "./verify.ts",
+      "require": "./verify.ts",
+      "default": "./verify.ts"
+    },
+    "./rbac": {
+      "types": "./rbac.ts",
+      "import": "./rbac.ts",
+      "require": "./rbac.ts",
+      "default": "./rbac.ts"
+    }
+  },
   "dependencies": {
     "jose": "^6.1.3"
   },
   "scripts": {
     "test": "tsx --test **/*.test.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
   }
 }
