@@ -4,9 +4,9 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "dev": "wrangler dev src/index.ts --env dev",
-    "deploy": "wrangler deploy src/index.ts --minify",
-    "build": "wrangler deploy src/index.ts --dry-run --outdir=dist"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify",
+    "build": "wrangler deploy --dry-run --outdir=dist"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
