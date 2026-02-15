@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
 import { verifyAccessWithClaims, type AccessTokenPayload } from '@goldshore/auth';
+import { verifyAccess } from '@goldshore/auth';
 import users from './routes/users';
 import health from './routes/health';
 import ai from './routes/ai';
@@ -37,6 +38,9 @@ const ALLOWED_ORIGIN_PATTERNS = [
 const isAllowedOrigin = (origin: string) => {
   return ALLOWED_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin));
 };
+};
+
+const app = new Hono<{ Bindings: Env }>();
 
 // Sentinel: Security Middleware
 app.use('*', secureHeaders());
@@ -48,6 +52,10 @@ app.use('*', cors({
   allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
   exposeHeaders: ['Content-Length'],
   credentials: true,
+  origin: '*',
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
+  exposeHeaders: ['Content-Length'],
   maxAge: 600,
 }));
 
@@ -66,6 +74,10 @@ app.use('*', async (c, next) => {
     return c.json({ error: 'Unauthorized' }, 401);
   }
   c.set('accessClaims', claims);
+  const authorized = await verifyAccess(c.req.raw, c.env);
+  if (!authorized) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
   await next();
 });
 
