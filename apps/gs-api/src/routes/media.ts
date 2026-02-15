@@ -16,6 +16,9 @@ const ALLOWED_MIME_TYPES = new Map([
   ['jpeg', 'image/jpeg']
 ]);
 
+// 5MB limit to prevent DoS via large file uploads
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
 const sanitizeSvg = (rawSvg: string) => {
   let sanitized = rawSvg
     .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
@@ -79,6 +82,10 @@ media.post('/upload', async (c) => {
 
   if (!contentType) {
     return c.json({ error: 'Unsupported file type' }, 400);
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    return c.json({ error: 'File too large' }, 413);
   }
 
   let body: ArrayBuffer | Uint8Array;
