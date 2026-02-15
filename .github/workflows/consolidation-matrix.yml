@@ -83,6 +83,9 @@ ${{ join(github.event.pull_request.labels.*.name, ' ') }}"
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Validate Worker Structure
+        run: pnpm validate:structure
+
       - name: Typecheck gate
         run: pnpm gate:typecheck
 
