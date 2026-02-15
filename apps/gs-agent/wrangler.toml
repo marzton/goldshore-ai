@@ -1,8 +1,6 @@
-# wrangler.toml for the background Agent Worker
-
-name = "gs-agent" # Base name, used for production environment
+name = "gs-agent"
 main = "src/index.ts"
-compatibility_date = "2024-11-01"
+compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
@@ -21,6 +19,16 @@ queue = "gs-jobs"
 [env.dev.vars]
 ENV = "development"
 [env.dev.ai]
+binding = "AI"
+
+
+[env.prod]
+name = "gs-agent"
+[[env.prod.queues.consumers]]
+queue = "gs-jobs"
+[env.prod.vars]
+ENV = "production"
+[env.prod.ai]
 binding = "AI"
 
 [env.preview]
