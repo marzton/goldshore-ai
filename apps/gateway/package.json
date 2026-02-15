@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy",
+    "deploy:preview": "wrangler deploy --env preview --config wrangler.toml",
     "build": "wrangler deploy --dry-run --outdir=dist"
   },
   "dependencies": {
