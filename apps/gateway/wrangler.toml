@@ -29,7 +29,7 @@ id = "goldshore-gw-kv"
 [[services]]
 binding = "API"
 service = "gs-api"
-environment = "production"
+environment = "prod"
 
 [ai]
 binding = "AI"

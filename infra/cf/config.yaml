@@ -21,7 +21,7 @@ projects:
         - "^README.md$"
 
   workers:
-    - script: goldshore-api
+    - script: gs-api
       entry: apps/api-worker/dist/index.js
       routes:
         - pattern: "api.goldshore.org/*"
