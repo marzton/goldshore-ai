@@ -16,6 +16,9 @@ function loadConfig() {
 }
 const cfg: any = loadConfig();
 
+function log(...a: any[]) { console.log("[agent]", ...a); }
+function err(...a: any[]) { console.error("[agent:ERROR]", ...a); }
+
 async function ensurePagesOutputDirRule() {
   const rule = cfg.rules?.pages_output_dirs?.[0];
   if (!rule) return;
@@ -40,6 +43,7 @@ async function ensurePagesOutputDirRule() {
     }];
     const pr = await createFixBranchAndPR(owner, repo, "main", "chore/agent-fix-pages-output", title, body, changes);
     logger.info("Opened PR", pr.html_url);
+    log("Opened PR", pr.html_url);
   }
 }
 
@@ -95,3 +99,7 @@ async function main() {
 }
 
 main().catch(e => { logger.error(e.stack || e); process.exit(1); });
+  log("Agent poll completed.");
+}
+
+main().catch(e => { err(e.stack || e); process.exit(1); });
