@@ -47,7 +47,6 @@ export default {
     // Basic email handler scaffolding
     console.log(`Received email from ${message.from} to ${message.to}`);
 
-    const forwardTo = env.MAIL_FORWARD_TO?.trim();
     const forwardTo = _env.MAIL_FORWARD_TO?.trim();
     if (!forwardTo || !isEmailLike(forwardTo)) {
       message.setReject('Mail forwarding is not configured.');
