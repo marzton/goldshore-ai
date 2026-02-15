@@ -59,3 +59,4 @@ jobs:
         run: pnpm exec wrangler deploy --env preview --config wrangler.toml
 
 # // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43
+        run: pnpm exec wrangler deploy --env preview --config ../../infra/cloudflare/gs-agent.wrangler.toml
