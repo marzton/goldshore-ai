@@ -36,6 +36,9 @@ export default defineConfig({
           replacement: path.resolve(__dirname, "../../packages/theme/src/styles")
         }
       ]
+      alias: {
+        '@goldshore/theme': path.resolve(__dirname, '../../packages/theme/src'),
+      }
     }
   }
 });
