@@ -139,6 +139,9 @@ importers:
       hono:
         specifier: ^4.0.0
         version: 4.11.9
+      safe-stable-stringify:
+        specifier: ^2.5.0
+        version: 2.5.0
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20241106.0
@@ -3212,6 +3215,10 @@ packages:
 
   s.color@0.0.15:
     resolution: {integrity: sha512-AUNrbEUHeKY8XsYr/DYpl+qk5+aM+DChopnWOPEzn8YKzOhv4l2zH6LzZms3tOZP3wwdOyc0RmTciyi46HLIuA==}
+
+  safe-stable-stringify@2.5.0:
+    resolution: {integrity: sha512-b3rppTKm9T+PsVCBEOUR46GWI7fdOs00VKZ1+9c1EWDaDMvjQc6tUwuFyIprgGgTcWoVHSKrU8H31ZHA2e0RHA==}
+    engines: {node: '>=10'}
 
   sass-formatter@0.7.9:
     resolution: {integrity: sha512-CWZ8XiSim+fJVG0cFLStwDvft1VI7uvXdCNJYXhDvowiv+DsbD1nXLiQ4zrE5UBvj5DWZJ93cwN0NX5PMsr1Pw==}
@@ -7226,6 +7233,8 @@ snapshots:
       queue-microtask: 1.2.3
 
   s.color@0.0.15: {}
+
+  safe-stable-stringify@2.5.0: {}
 
   sass-formatter@0.7.9:
     dependencies:
