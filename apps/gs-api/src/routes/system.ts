@@ -78,6 +78,14 @@ system.put("/config", async (c) => {
   const config = parseConfig(payload);
   await c.env.KV.put(CONFIG_KEY, JSON.stringify(config));
   return c.json(withContractHeaders({ config }, c.env.API_VERSION));
+
+const system = new Hono();
+
+system.get("/info", (c) => {
+  return c.json({
+    service: "gs-api",
+    timestamp: Date.now(),
+  });
 });
 
 export default system;

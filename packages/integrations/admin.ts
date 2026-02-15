@@ -2,6 +2,8 @@ import type { AuthTokenConfig } from './auth';
 import { createAuthTokenManager } from './auth';
 import { type AuditLogger, createAuditLogger } from './audit';
 import { type HttpClient, createHttpClient } from './http';
+import { createAuditLogger } from './audit';
+import { createHttpClient } from './http';
 
 export type AdminServiceResult<T = unknown> = {
   ok: boolean;
@@ -37,6 +39,16 @@ export const createAdminService = (config: AdminServiceConfig) => {
       httpClient,
       logger
     });
+  const httpClient = createHttpClient({
+    baseUrl: config.apiBaseUrl,
+    authTokenManager,
+    logger
+  });
+  const auditLogger = createAuditLogger({
+    endpoint: config.auditEndpoint,
+    httpClient,
+    logger
+  });
 
   const parseResponse = async <T>(response: Response): Promise<AdminServiceResult<T>> => {
     try {
