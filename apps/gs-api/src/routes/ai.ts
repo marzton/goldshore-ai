@@ -11,6 +11,9 @@ type Env = {
 };
 
 const ai = new Hono<{ Bindings: Env }>();
+import { applyAnalysisPolicy, getProvider, type AnalysisRequest } from "@goldshore/ai-providers";
+
+const ai = new Hono();
 
 ai.get("/", (c) => c.json({ message: "AI endpoint" }));
 
@@ -99,6 +102,27 @@ ai.post("/analysis", async (c) => {
   );
 
   const response = c.json({
+  const providerResponse = await provider.analyze(policyResult.sanitized.input, {
+    apiKey,
+    fetch,
+  });
+  const durationMs = Date.now() - startedAt;
+
+  const logEntry = {
+    event: "ai.analysis",
+    timestamp: new Date().toISOString(),
+    request: policyResult.sanitized,
+    response: {
+      provider: providerResponse.provider,
+      output: providerResponse.output,
+    },
+    redactions: policyResult.redactions,
+    durationMs,
+  };
+
+  console.log(JSON.stringify(logEntry));
+
+  return c.json({
     ...providerResponse,
     redactions: policyResult.redactions,
     durationMs,
