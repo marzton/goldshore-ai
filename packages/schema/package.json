@@ -1,5 +1,5 @@
 {
-  "name": "@astro-gs/schema",
+  "name": "@goldshore/schema",
   "version": "0.0.1",
   "private": true,
   "main": "./index.js",

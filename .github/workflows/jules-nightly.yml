@@ -1,4 +1,4 @@
-name: Jules Nightly Consolidated
+name: Jules Nightly
 
 on:
   schedule:
@@ -37,3 +37,10 @@ jobs:
       contents: read
       pull-requests: write
     uses: ./.github/workflows/conflict-sweeper-nightly.yml
+  noop:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Sweepers removed
+        run: echo "No sweeper jobs are configured in this workflow."
