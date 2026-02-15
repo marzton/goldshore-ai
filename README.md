@@ -25,6 +25,7 @@ Unified platform for the **GoldShore** ecosystem, built with **Astro**, **Cloudf
 - [Testing](#testing)
 - [Deployment](#deployment)
 - [Versioning Strategy](#versioning-strategy)
+- [Contributor Note: Merge Strategy for Top-Level Docs](#contributor-note-merge-strategy-for-top-level-docs)
 - [License](#license)
 
 ## Vibe Coding & Human-in-the-Loop
@@ -418,6 +419,15 @@ pnpm --filter ./apps/gs-agent deploy
 - `main` → Production
 - `feature/*` → Preview Deployments
 - `release/*` → Staging
+
+## Contributor Note: Merge Strategy for Top-Level Docs
+
+To reduce noisy merge/rebase conflicts on frequently edited coordination docs, `.gitattributes` uses `merge=ours` for:
+
+- `README.md`: the active branch's README should win so branch-scoped documentation work is not overwritten by unrelated upstream edits.
+- `CURRENT_MONOREPO_STATE.md`: the active branch's status snapshot should win for the same reason, preserving branch-local planning/state notes.
+
+If you need to intentionally adopt upstream changes to either file, resolve that manually after the merge by reviewing both versions.
 
 ## License
 

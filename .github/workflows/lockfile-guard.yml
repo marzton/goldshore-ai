@@ -1,0 +1,57 @@
+name: Lockfile Guard
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - labeled
+      - unlabeled
+      - ready_for_review
+
+jobs:
+  lockfile-guard:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce lockfile change policy
+        env:
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+
+          git fetch --no-tags --prune --depth=1 origin main
+
+          if ! git diff --name-only origin/main...HEAD | grep -qx 'pnpm-lock.yaml'; then
+            echo "pnpm-lock.yaml unchanged."
+            exit 0
+          fi
+
+          echo "Detected change to pnpm-lock.yaml. Evaluating explicit exception policy..."
+
+          if [[ "${HEAD_REF}" =~ ^allow-lockfile/ ]]; then
+            echo "Allowed: branch '${HEAD_REF}' matches allow-lockfile/* exception policy."
+            exit 0
+          fi
+
+          if [[ ",${PR_LABELS}," == *",lockfile-exception,"* ]]; then
+            echo "Allowed: PR has explicit 'lockfile-exception' label."
+            exit 0
+          fi
+
+          echo "::error::pnpm-lock.yaml changed without explicit approval."
+          echo "Use one of these explicit exception mechanisms:"
+          echo "  1) Rename branch to allow-lockfile/<reason>"
+          echo "  2) Add the lockfile-exception PR label"
+          exit 1

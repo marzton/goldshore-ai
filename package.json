@@ -1,22 +1,26 @@
 {
-  "name": "astro-goldshore",
+  "name": "goldshore-ai",
   "private": true,
   "packageManager": "pnpm@9.0.0",
   "scripts": {
     "dev": "turbo run dev --parallel",
     "build:openapi": "node scripts/build-openapi.mjs",
     "build": "pnpm build:openapi && turbo run build",
-    "build:web": "turbo run build --filter=@goldshore/web",
-    "build:admin": "turbo run build --filter=@goldshore/admin",
+    "build:web": "turbo run build --filter=@goldshore/gs-web",
+    "build:admin": "turbo run build --filter=@goldshore/gs-admin",
     "build:api": "turbo run build --filter=@goldshore/gs-api",
     "build:gateway": "turbo run build --filter=@goldshore/gs-gateway",
     "build:control": "turbo run build --filter=@goldshore/gs-control",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md",
+    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/gs-admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md",
     "workspaces:list": "pnpm -r list --depth -1",
     "verify:workspace-contract": "tsx scripts/validate-workspace-contract.ts",
     "verify:workspace-filters": "pnpm verify:workspace-contract && turbo run build --filter=@goldshore/gs-api --dry && turbo run build --filter=@goldshore/gs-control --dry"
+    "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry && turbo run build --filter=@goldshore/gs-control --dry",
+    "validate:structure": "tsx scripts/validate-worker-structure.ts",
+    "validate:workers": "tsx scripts/validate-worker-names.ts",
+    "validate:workspace": "tsx scripts/validate-workspace-contract.ts"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",
