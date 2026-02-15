@@ -1,22 +1,23 @@
-name: Deploy Gateway Worker (gw.goldshore.ai)
+name: Deploy API Gateway (gw.goldshore.ai)
 
 permissions:
   contents: read
 
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - "apps/gateway/**"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
+# on:
+#   push:
+#     branches:
+#       - main
+#     paths:
+#       - "apps/gateway/**"
+#       - "packages/**"
+#       - "package.json"
+#       - "pnpm-lock.yaml"
 
 jobs:
   deploy-gateway:
     runs-on: ubuntu-latest
-    name: Deploy Gateway Worker
+    name: Deploy API Gateway
+    if: false # Explicitly disable job
 
     steps:
       - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
@@ -33,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Deploy Gateway worker (production)
+      - name: Deploy API Gateway (production)
         working-directory: apps/gateway
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

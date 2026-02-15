@@ -59,14 +59,14 @@ export default {
 	},
 
 	// An example queue consumer.
-	// async queue(
-	// 	batch: MessageBatch<Error>,
-	// 	env: Env,
-	// 	ctx: ExecutionContext,
-	// ): Promise<void> {
-	// 	// For each message in the batch, log it to the console.
-	// 	for (const message of batch.messages) {
-	// 		console.log(`message ${message.id} processed`);
-	// 	}
-	// },
+	async queue(
+		batch: MessageBatch<any>,
+		env: Env,
+		ctx: ExecutionContext,
+	): Promise<void> {
+		// For each message in the batch, log it to the console.
+		for (const message of batch.messages) {
+			console.log(`message ${message.id} processed`);
+		}
+	},
 };
