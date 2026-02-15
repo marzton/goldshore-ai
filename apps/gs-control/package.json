@@ -20,5 +20,15 @@
     "typescript": "^5.4.0",
     "tsx": "^4.7.1",
     "wrangler": "^4.63.0"
+    "run-task": "wrangler dev src/index.ts --test-scheduled"
+  },
+  "dependencies": {
+    "@goldshore/auth": "workspace:*",
+    "hono": "^4.11.9"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4",
+    "typescript": "^5.4.0",
+    "wrangler": "^4.65.0"
   }
 }
