@@ -1,0 +1,38 @@
+
+> @goldshore/web@0.1.0 dev /app/apps/gs-web
+> astro dev "--" "--host" "127.0.0.1"
+
+20:04:34 [@astrojs/cloudflare] Enabling sessions with Cloudflare KV with the "SESSION" KV binding.
+20:04:34 [@astrojs/cloudflare] If you see the error "Invalid binding `SESSION`" in your build output, you need to add the binding to your wrangler config file.
+20:04:34 [WARN] [adapter] Cloudflare does not support sharp at runtime. However, you can configure `imageService: "compile"` to optimize images with sharp on prerendered pages during build time.
+20:04:35 [types] Generated 1ms
+20:04:35 [content] Syncing content
+20:04:35 [content] Synced content
+
+ astro  v5.17.2 ready in 2421 ms
+
+┃ Local    http://localhost:4321/
+┃ Network  use --host to expose
+
+20:04:35 watching for file changes...
+20:05:59 [200] HEAD / 350ms
+20:06:24 [200] HEAD /developer/docs 37ms
+20:07:56 [200] /developer/docs 14ms
+20:07:56 [200] / 12ms
+20:08:00 [200] /services 12ms
+20:08:03 [200] /services 8ms
+20:08:04 [200] /contact 12ms
+20:08:06 [200] /thank-you 12ms
+20:08:06 [200] /thank-you 10ms
+20:08:07 [404] /super-bowl-boxes 22ms
+20:08:20 [200] / 9ms
+20:09:21 [watch] /app/packages/config/src/components/parallax.ts
+20:09:51 [200] / 12ms
+20:09:51 [200] /developer/docs 21ms
+20:09:54 [200] /services 11ms
+20:09:55 [200] /services 7ms
+20:09:56 [200] /contact 16ms
+20:09:58 [200] /thank-you 8ms
+20:09:58 [200] /thank-you 6ms
+20:09:59 [200] / 7ms
+20:12:13 [watch] /src/components/DocsSearch.astro?astro&type=style&index=0&lang.css

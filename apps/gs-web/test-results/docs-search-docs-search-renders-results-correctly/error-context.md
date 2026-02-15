@@ -1,0 +1,130 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - link "GoldShore home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img "GoldShore logo" [ref=e6]
+      - navigation "Primary" [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "About" [ref=e9] [cursor=pointer]:
+          - /url: /about
+        - link "Services" [ref=e10] [cursor=pointer]:
+          - /url: /services
+        - link "Team" [ref=e11] [cursor=pointer]:
+          - /url: /team
+        - link "Super Bowl Boxes" [ref=e12] [cursor=pointer]:
+          - /url: /super-bowl-boxes
+        - link "Contact" [ref=e13] [cursor=pointer]:
+          - /url: /contact
+        - link "Risk Radar" [ref=e14] [cursor=pointer]:
+          - /url: /apps/risk-radar
+        - link "Developer" [ref=e15] [cursor=pointer]:
+          - /url: /developer
+          - generic [ref=e16]: terminal
+          - text: Developer
+    - main [ref=e17]:
+      - generic [ref=e18]:
+        - complementary "Documentation navigation" [ref=e19]:
+          - generic [ref=e20]:
+            - generic [ref=e21]: Search
+            - generic [ref=e22]:
+              - searchbox "Search" [active] [ref=e23]: test
+              - generic:
+                - generic: ⌘
+                - text: K
+          - heading "◎ Documentation" [level=3] [ref=e24]:
+            - generic [ref=e25]: ◎
+            - text: Documentation
+          - list [ref=e26]:
+            - listitem [ref=e27]:
+              - link "Introduction" [ref=e28] [cursor=pointer]:
+                - /url: /developer/docs/intro
+            - listitem [ref=e29]:
+              - link "Getting Started" [ref=e30] [cursor=pointer]:
+                - /url: /developer/docs/getting-started
+        - generic [ref=e31]:
+          - generic [ref=e32]:
+            - generic [ref=e33]: Search
+            - generic [ref=e34]:
+              - searchbox "Search" [ref=e35]
+              - generic:
+                - generic: ⌘
+                - text: K
+          - complementary "Documentation navigation" [ref=e36]:
+            - generic [ref=e38]:
+              - generic [ref=e39]: Search
+              - generic [ref=e40]:
+                - searchbox "Search" [ref=e41]
+                - generic:
+                  - generic: ⌘
+                  - text: K
+            - heading "◎ Documentation" [level=3] [ref=e42]:
+              - generic [ref=e43]: ◎
+              - text: Documentation
+            - list [ref=e44]:
+              - listitem [ref=e45]:
+                - link "Introduction" [ref=e46] [cursor=pointer]:
+                  - /url: /developer/docs/intro
+              - listitem [ref=e47]:
+                - link "Getting Started" [ref=e48] [cursor=pointer]:
+                  - /url: /developer/docs/getting-started
+        - article [ref=e49]:
+          - heading "GoldShore Documentation" [level=1] [ref=e50]
+          - heading "Overview" [level=1] [ref=e51]
+          - paragraph [ref=e52]: Everything begins with the API.
+          - heading "API Base" [level=2] [ref=e53]
+          - generic [ref=e54]:
+            - button "Copy code" [ref=e55] [cursor=pointer]:
+              - generic [ref=e56]: content_copy
+            - generic [ref=e57]: GET https://api.goldshore.dev/system/info
+          - heading "Gateway" [level=2] [ref=e58]
+          - generic [ref=e59]:
+            - button "Copy code" [ref=e60] [cursor=pointer]:
+              - generic [ref=e61]: content_copy
+            - generic [ref=e62]: https://gateway.goldshore.dev/api/* → gs-api
+          - heading "Auth" [level=2] [ref=e63]
+          - paragraph [ref=e64]: "Uses Cloudflare Access JWT (aud: goldshore-admin)."
+    - contentinfo [ref=e65]:
+      - generic [ref=e67]:
+        - generic [ref=e68]:
+          - img "GoldShore logo" [ref=e70]
+          - paragraph [ref=e71]: Applied intelligence, resilient infrastructure, and responsive operations.
+        - generic [ref=e72]:
+          - generic [ref=e73]:
+            - strong [ref=e74]: Company
+            - link "About" [ref=e76] [cursor=pointer]:
+              - /url: /about
+            - link "Team" [ref=e77] [cursor=pointer]:
+              - /url: /team
+            - link "Services" [ref=e78] [cursor=pointer]:
+              - /url: /services
+          - generic [ref=e79]:
+            - strong [ref=e80]: Support
+            - link "Contact" [ref=e82] [cursor=pointer]:
+              - /url: /contact
+            - link "Privacy" [ref=e83] [cursor=pointer]:
+              - /url: /legal/privacy
+            - link "Terms" [ref=e84] [cursor=pointer]:
+              - /url: /legal/terms
+  - generic [ref=e87]:
+    - button "Menu" [ref=e88]:
+      - img [ref=e90]
+      - generic: Menu
+    - button "Inspect" [ref=e94]:
+      - img [ref=e96]
+      - generic: Inspect
+    - button "Audit" [ref=e98]:
+      - generic [ref=e99]:
+        - img [ref=e100]
+        - img [ref=e103]
+      - generic: Audit
+    - button "Settings" [ref=e106]:
+      - img [ref=e108]
+      - generic: Settings
+```

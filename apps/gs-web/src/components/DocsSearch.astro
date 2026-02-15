@@ -9,6 +9,7 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
     <input
       type="search"
       id={`docs-search-input-${uniqueId}`}
+      data-testid="docs-search-input"
       class="docs-search-input"
       placeholder="Search docs..."
       aria-controls={`results-${uniqueId}`}
@@ -198,8 +199,8 @@ const uniqueId = Math.random().toString(36).substr(2, 9);
               list.appendChild(li);
             });
           }
-        } catch (err: any) {
-          if (err.name === 'AbortError') return;
+        } catch (err) {
+          if (err instanceof Error && err.name === 'AbortError') return;
           list.textContent = '';
           const li = document.createElement('li');
           li.className = 'message error';

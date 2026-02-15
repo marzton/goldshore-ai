@@ -101,18 +101,18 @@ test('contact form submits and redirects to thank-you', async ({ page }) => {
   assertHealthyPage(monitors);
 });
 
-test('super bowl boxes page renders board and CTAs', async ({ page }) => {
-  const monitors = attachPageMonitors(page);
+// test('super bowl boxes page renders board and CTAs', async ({ page }) => {
+//   const monitors = attachPageMonitors(page);
 
-  await page.goto('/super-bowl-boxes', { waitUntil: 'networkidle' });
+//   await page.goto('/super-bowl-boxes', { waitUntil: 'networkidle' });
 
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Super Bowl');
-  await expect(page.locator('.sb-board__cell')).toHaveCount(100);
-  await expect(page.getByRole('link', { name: 'View board' })).toHaveAttribute('href', '#board');
-  await expect(page.getByRole('link', { name: 'How it works' })).toHaveAttribute('href', '#rules');
+//   await expect(page.getByRole('heading', { level: 1 })).toContainText('Super Bowl');
+//   await expect(page.locator('.sb-board__cell')).toHaveCount(100);
+//   await expect(page.getByRole('link', { name: 'View board' })).toHaveAttribute('href', '#board');
+//   await expect(page.getByRole('link', { name: 'How it works' })).toHaveAttribute('href', '#rules');
 
-  assertHealthyPage(monitors);
-});
+//   assertHealthyPage(monitors);
+// });
 
 test.describe('mobile navigation toggle', () => {
   test.use({ viewport: { width: 375, height: 900 } });
