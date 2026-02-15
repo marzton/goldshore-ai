@@ -8,6 +8,10 @@
     "gs-admin": "@goldshore/gs-admin",
     "gs-gateway": "@goldshore/gs-gateway",
     "gs-agent": "@goldshore/gs-agent"
+    "gs-api": "@goldshore/api-worker",
+    "gs-mail": "@goldshore/mail-worker",
+    "@goldshore/control": "@goldshore/control-worker",
+    "@astro-gs/schema": "@goldshore/schema"
   },
   "workflows": {
     "Deploy API Worker": "deploy-api-worker",
