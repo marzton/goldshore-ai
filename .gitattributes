@@ -1,4 +1,4 @@
-# Prefer branch lockfile to avoid manual conflict resolution; regenerate as needed.
+# High-churn files auto-resolve to the branch version (`merge=ours`) to keep rebases deterministic.
 pnpm-lock.yaml merge=ours
 
 # Keep branch-local top-level docs during conflict resolution.
