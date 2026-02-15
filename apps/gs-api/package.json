@@ -1,5 +1,5 @@
 {
-  "name": "@goldshore/api-worker",
+  "name": "@goldshore/gs-api",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,11 +7,14 @@
     "deploy": "wrangler deploy",
     "build": "wrangler deploy --dry-run --outdir=dist",
     "test": "tsx --test src/routes/*.test.ts"
+    "build": "wrangler deploy --dry-run --outdir=dist"
   },
   "dependencies": {
+    "@goldshore/ai-providers": "workspace:^",
     "@goldshore/auth": "workspace:^",
     "hono": "^4.0.0",
-    "@goldshore/ai-providers": "workspace:^"
+    "safe-stable-stringify": "^2.5.0",
+    "@goldshore/utils": "workspace:^"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241106.0",

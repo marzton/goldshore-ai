@@ -16,6 +16,9 @@ const ALLOWED_MIME_TYPES = new Map([
   ['jpeg', 'image/jpeg']
 ]);
 
+// 5MB limit to prevent DoS via large file uploads
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
 const sanitizeSvg = (rawSvg: string) => {
   let sanitized = rawSvg
     .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
@@ -31,26 +34,9 @@ const sanitizeSvg = (rawSvg: string) => {
   return sanitized;
 };
 
-const ensureTable = async (db: D1Database) => {
-  await db
-    .prepare(
-      `CREATE TABLE IF NOT EXISTS media_assets (
-        id TEXT PRIMARY KEY,
-        filename TEXT NOT NULL,
-        url TEXT NOT NULL,
-        size INTEGER NOT NULL,
-        type TEXT NOT NULL,
-        object_key TEXT NOT NULL,
-        created_at TEXT NOT NULL
-      )`
-    )
-    .run();
-};
-
 const media = new Hono<{ Bindings: { DB: D1Database; ASSETS: R2Bucket } }>();
 
 media.get('/', async (c) => {
-  await ensureTable(c.env.DB);
   const { results } = await c.env.DB
     .prepare('SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT 100')
     .all<MediaRecord>();
@@ -58,7 +44,6 @@ media.get('/', async (c) => {
 });
 
 media.get('/:id', async (c) => {
-  await ensureTable(c.env.DB);
   const id = c.req.param('id');
   const result = await c.env.DB
     .prepare('SELECT object_key, type FROM media_assets WHERE id = ?')
@@ -77,12 +62,13 @@ media.get('/:id', async (c) => {
   const headers = new Headers();
   headers.set('Content-Type', result.type || object.httpMetadata?.contentType || 'application/octet-stream');
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+  // Sentinel: Mitigate SVG XSS risks by disabling scripts
+  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; object-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; sandbox");
 
   return new Response(object.body, { headers });
 });
 
 media.post('/upload', async (c) => {
-  await ensureTable(c.env.DB);
   const formData = await c.req.formData();
   const file = formData.get('file');
 
@@ -96,6 +82,10 @@ media.post('/upload', async (c) => {
 
   if (!contentType) {
     return c.json({ error: 'Unsupported file type' }, 400);
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    return c.json({ error: 'File too large' }, 413);
   }
 
   let body: ArrayBuffer | Uint8Array;

@@ -34,8 +34,8 @@ const users = [
 
     <Card class="gs-table-card">
       <div class="section-title"><span>◎</span><h3>Directory</h3></div>
-      <Table>
-        <thead><tr><th>Name</th><th>Role</th><th>Status</th></tr></thead>
+      <Table ariaLabel="User directory">
+        <thead><tr><th scope="col">Name</th><th scope="col">Role</th><th scope="col">Status</th></tr></thead>
         <tbody>
           {users.map((user) => (
             <tr>
