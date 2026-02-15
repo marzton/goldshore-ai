@@ -114,6 +114,9 @@ name: gs-admin
 root: apps/gs-admin
 build_command: pnpm --filter @goldshore/admin build
 build_output: apps/gs-admin/dist
+root: apps/admin
+build_command: pnpm --filter @goldshore/admin build
+build_output: apps/admin/dist
 adapter: @astrojs/cloudflare
 domains:
   - admin.goldshore.ai
