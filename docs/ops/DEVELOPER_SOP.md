@@ -37,3 +37,6 @@ To avoid repeated manual conflict resolution noise, this repo uses `.gitattribut
 3. For `pnpm-lock.yaml`, regenerate the lockfile (`pnpm install`) when dependency changes require it.
 
 This policy keeps branch synchronization deterministic while still allowing explicit, intentional updates to these files.
+| **Error 1101** (Worker Crash) | Missing dependency or unhandled runtime exception (e.g., trying to read KV before initialization). | Must verify asynchronous KV config loading in `apps/api-worker/src/index.(ts|js)`. |
+| **Error 522** (Connection Timeout) | Incorrect DNS CNAME or Pages Build Output path. | Execute `infra/scripts/enforce-dns.sh` to correct CNAMEs and ensure Pages settings are manually fixed to target `apps/web/dist` or `apps/admin/dist`. |
+| **Build Error** (e.g., `wrangler.toml` invalid) | Incorrect placement of `wrangler.toml` in the Pages project. | Ensure `wrangler.toml` only lives at the Worker root (`apps/api-worker/`) and Pages settings are manually configured. |
