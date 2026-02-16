@@ -20,12 +20,35 @@ build
 *.local
 
 # Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .astro/
 .cache/
 pnpm-debug.log*
+**/test-results/
+**/trace.zip
+**/*.log
+
+# Caches & temp outputs
+*.tmp
+*.temp
+*.cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Generated local reports/artifacts
+reports/*.txt
+verification/*.png
+.jules/verification/*.png
+.Jules/verification/*.png
+*.legacy-*.astro
+*.legacy-*.mjs
+*.legacy-*.ts
+*.legacy-*.toml
+*.legacy-*.json
 
 # OS
 .DS_Store
@@ -39,7 +62,28 @@ Thumbs.db
 .idea
 *.swp
 *.swo
+# Test artifacts
+**/test-results/
+**/trace.zip
+**/*.log
 
 # Verification
 *.png
 *.diff
+
+# Repo hygiene: generated logs, caches, and snapshots
+*.log
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage/
+htmlcov/
+.tmp/
+tmp/
+**/*.legacy-*.astro
+**/*.legacy-*.mjs
+**/*.legacy-*.json
+**/*.legacy-*.toml
+**/*.legacy-*.ts
+reports/*.txt

@@ -1,5 +1,9 @@
 {
   "name": "@goldshore/integrations",
   "version": "0.0.1",
+  "main": "index.ts",
+  "scripts": {
+    "test": "tsx --test **/*.test.ts"
+  }
   "main": "index.ts"
 }
