@@ -1,7 +1,10 @@
 ---
 import Sidebar from '../components/Sidebar.astro';
 import Topbar from '../components/Topbar.astro';
-import '@goldshore/theme';
+import '@goldshore/theme/styles/tokens.css';
+import '@goldshore/theme/styles/base.css';
+import '@goldshore/theme/styles/components.css';
+import '@goldshore/theme/styles/layout.css';
 import type { AdminPermission, AdminRole } from '@goldshore/auth';
 
 interface Props {
@@ -11,6 +14,8 @@ interface Props {
 }
 
 const { title = 'GoldShore Admin', requiredPermission, requiredRole } = Astro.props;
+const logoSrc = '/assets/logo.svg';
+
 const session = Astro.locals.adminSession ?? {
   roles: [],
   permissions: [],
@@ -21,13 +26,6 @@ const isPermissionAllowed = requiredPermission
   ? session.permissions.includes(requiredPermission)
   : true;
 const isAuthorized = isRoleAllowed && isPermissionAllowed;
-
-interface Props {
-  title?: string;
-}
-
-const { title = 'GoldShore Admin' } = Astro.props;
-const logoSrc = '/assets/logo.svg';
 ---
 <html lang="en">
   <head>
@@ -36,7 +34,7 @@ const logoSrc = '/assets/logo.svg';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script>
-      import { initTheme } from '@goldshore/theme/src/theme-manager';
+      import { initTheme } from '@goldshore/theme/theme-manager';
       initTheme();
     </script>
     <script>
@@ -225,11 +223,6 @@ const logoSrc = '/assets/logo.svg';
               </div>
             </section>
           )}
-      <Sidebar logo={logoSrc} />
-      <div class="gs-admin-main">
-        <Topbar title={title} />
-        <main id="admin-content" class="gs-admin-content">
-          <slot />
         </main>
       </div>
     </div>

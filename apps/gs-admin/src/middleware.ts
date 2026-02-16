@@ -51,13 +51,9 @@ const authMiddleware = defineMiddleware(async (context, next) => {
       }
     }
 
-    const hasSession = Boolean(context.cookies.get('gs_admin_session'));
-    const hasAccessHeader = Boolean(accessHeader);
-
-    if (!hasSession && !hasAccessHeader) {
-      return new Response('Unauthorized', { status: 401 });
-    }
+    // Basic session check logic could go here if needed, but we rely on verifyAccessWithClaims below
   }
+
   const env = (context.locals.runtime?.env ?? {}) as AdminEnv;
   const claims = await verifyAccessWithClaims(context.request, env);
   let session = buildAdminSession(claims);
@@ -83,12 +79,10 @@ const authMiddleware = defineMiddleware(async (context, next) => {
     isAuthenticated: Boolean(claims)
   };
 
-  const response = await next();
+  return next();
+});
 
-  // Additional Admin specific headers
-import { defineMiddleware } from "astro:middleware";
-
-export const onRequest = defineMiddleware(async (context, next) => {
+const securityMiddleware = defineMiddleware(async (context, next) => {
   const response = await next();
 
   // Sentinel: Add security headers to protect against common attacks
@@ -111,4 +105,4 @@ export const onRequest = defineMiddleware(async (context, next) => {
   return response;
 });
 
-export const onRequest = sequence(baseMiddleware, authMiddleware);
+export const onRequest = sequence(baseMiddleware, authMiddleware, securityMiddleware);
