@@ -31,22 +31,8 @@ export const GET: APIRoute = async ({ request }) => {
     .map((result) => ({
       title: result.item.title,
       url: `/developer/docs/${result.item.slug}`,
-import { getCollection } from 'astro:content';
-
-export const GET: APIRoute = async ({ request }) => {
-  const url = new URL(request.url);
-  const q = url.searchParams.get('q')?.toLowerCase() || '';
-
-  if (!q) return new Response(JSON.stringify([]));
-
-  const docs = await getCollection('docs');
-  const results = docs
-    .filter((doc) => doc.data.title.toLowerCase().includes(q))
-    .map((doc) => ({
-      title: doc.data.title,
-      url: `/developer/docs/${doc.slug}`,
     }))
-    .slice(0, 5);
+    .slice(0, 5); // Limit results to 5 to match the other implementation logic if desired, good practice.
 
   return new Response(JSON.stringify(results), {
     headers: { 'Content-Type': 'application/json' },

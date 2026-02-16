@@ -2,6 +2,7 @@
   "name": "@goldshore/gs-mail",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy",
@@ -9,12 +10,12 @@
     "lint": "eslint src/**"
   },
   "dependencies": {
-    "hono": "^4.0.0"
+    "hono": "^4.0.0",
+    "postal-mime": "^2.7.3"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260214.0",
-    "postal-mime": "^2.7.3",
+    "@cloudflare/workers-types": "^4.20241106.0",
     "typescript": "^5.4.0",
-    "wrangler": "^4.65.0"
+    "wrangler": "^4.63.0"
   }
 }
