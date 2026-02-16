@@ -1,4 +1,4 @@
-name: Preview Web (goldshore.ai)
+name: Preview GS Gateway Worker (gw-preview.goldshore.ai)
 
 permissions:
   contents: read
@@ -13,13 +13,13 @@ on:
       - unlabeled
       - ready_for_review
     paths:
-      - "apps/web/**"
+      - "apps/gs-gateway/**"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
 
 jobs:
-  preview-web:
+  deploy-preview-gateway:
     runs-on: ubuntu-latest
     if: |
       contains(github.event.pull_request.labels.*.name, 'preview') ||
@@ -40,18 +40,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build web app (preview)
-        working-directory: apps/web
+      - name: Deploy Gateway worker (preview)
+        working-directory: apps/gs-gateway
         env:
-          PUBLIC_API: https://api-preview.goldshore.ai
-          PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
-        run: pnpm build
-
-      - name: Deploy to Cloudflare Pages (preview)
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: preview-web
-          directory: apps/web/dist
-          branch: ${{ github.head_ref || github.ref_name }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm exec wrangler deploy --env preview --config wrangler.toml

@@ -38,7 +38,7 @@ The API gateway and router.
 - **Directory:** `apps/gateway`
 - **Package Name:** `@goldshore/gateway`
 - **Wrangler:** `wrangler.toml` (locally defined)
-- **Deployment:** CI workflow (`deploy-gateway.yml`).
+- **Deployment:** CI workflow (`deploy-gs-gateway.yml`).
 - **Bindings:**
   - `KV Namespaces`: `gs-kv` (production), `GATEWAY_KV` (local/dev).
   - `Queues`: Produces to `gs-jobs`.
@@ -56,7 +56,7 @@ The operational control plane worker.
 - **Directory:** `apps/control-worker`
 - **Package Name:** `@goldshore/control`
 - **Wrangler:** `wrangler.toml` (locally defined)
-- **Deployment:** CI workflow (`deploy-control-worker.yml`).
+- **Deployment:** CI workflow (`deploy-gs-control.yml`).
 - **Bindings:**
   - `KV Namespaces`: `CONTROL_LOGS`.
   - `R2 Buckets`: `STATE`.
@@ -73,7 +73,7 @@ The backend API service.
 - **Directory:** `apps/api-worker`
 - **Package Name:** `gs-api`
 - **Wrangler:** `wrangler.toml` (locally defined) or `infra/cloudflare/goldshore-api.wrangler.toml`.
-- **Deployment:** CI workflow (`deploy-api-worker.yml`).
+- **Deployment:** CI workflow (`deploy-gs-api.yml`).
 - **Bindings:** likely similar to gateway (KV, D1, etc.).
 - **Purpose:** Core business logic and data access layer.
 

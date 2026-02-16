@@ -1,4 +1,4 @@
-name: Preview Admin (admin.goldshore.ai)
+name: Preview GS Web (goldshore.ai)
 
 permissions:
   contents: read
@@ -13,13 +13,13 @@ on:
       - unlabeled
       - ready_for_review
     paths:
-      - "apps/admin/**"
+      - "apps/gs-web/**"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
 
 jobs:
-  preview-admin:
+  preview-web:
     runs-on: ubuntu-latest
     if: |
       contains(github.event.pull_request.labels.*.name, 'preview') ||
@@ -40,8 +40,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build admin cockpit (preview)
-        working-directory: apps/admin
+      - name: Build web app (preview)
+        working-directory: apps/gs-web
         env:
           PUBLIC_API: https://api-preview.goldshore.ai
           PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
@@ -52,6 +52,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: preview-admin
-          directory: apps/admin/dist
+          projectName: preview-web
+          directory: apps/gs-web/dist
           branch: ${{ github.head_ref || github.ref_name }}

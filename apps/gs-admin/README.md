@@ -84,8 +84,8 @@ pnpm --filter ./apps/admin preview
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-admin.yml`
-- Preview deploy: `.github/workflows/preview-admin.yml`
+- Production deploy: `.github/workflows/deploy-gs-admin.yml`
+- Preview deploy: `.github/workflows/preview-gs-admin.yml`
 - Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 ## Preview Authentication

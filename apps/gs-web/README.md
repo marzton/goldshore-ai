@@ -107,12 +107,12 @@ From repo root, deploy the current web build to Cloudflare Pages production:
 pnpm deploy:web:live
 ```
 
-This builds `@goldshore/web` and deploys `apps/web/dist` to the `gs-web` Pages project on `main`.
+This builds `@goldshore/web` and deploys `apps/gs-web/dist` to the `gs-web` Pages project on `main`.
 
 ## Deploy
 
-- Production deploy: `.github/workflows/deploy-web.yml`
-- Preview deploy: `.github/workflows/preview-web.yml`
+- Production deploy: `.github/workflows/deploy-gs-web.yml`
+- Preview deploy: `.github/workflows/preview-gs-web.yml`
 - Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 ## Preview Authentication
@@ -217,7 +217,7 @@ From repo root, deploy the current web build to Cloudflare Pages production:
 pnpm deploy:web:live
 ```
 
-This builds `@goldshore/web` and deploys `apps/web/dist` to the `gs-web` Pages project on `main`.
+This builds `@goldshore/web` and deploys `apps/gs-web/dist` to the `gs-web` Pages project on `main`.
 
 ## Deploy
 
