@@ -1,19 +1,18 @@
 # Branch Audit Report
 
-- Generated at (UTC): 2026-02-16T02:46:39Z
-- Source commit (local HEAD): `9f2d7c5f9cf9d73b962974e6d44abeb85d4b78e0`
-- Base ref: `origin/main`
+- Generated at (UTC): 2026-02-16T01:39:55Z
+- Source commit (local HEAD): `ae9172eeb76796c888b59dadddbe547bae155aa1`
 
 ## Status
 
-- ⚠️ Audit blocked: unable to fetch `origin/*` refs.
+- ⚠️ Audit blocked: unable to fetch `origin/*` refs (authentication or connectivity issue).
 
 ## Open Conflicts
 
-- Source of truth unavailable until remote refs are accessible.
+- Source of truth unavailable until remote branch refs are accessible.
 
 ## Next Step
 
-- Configure Git credentials for the upstream repository.
-- Run `git fetch --all --prune`.
-- Rerun `bash scripts/integration-conflict-sweeper.sh --dry-run --allow-dirty`.
+- Configure credentials for the upstream repository, then rerun:
+  - `git fetch --all --prune`
+  - `bash scripts/consolidate-main-coverage.sh`
