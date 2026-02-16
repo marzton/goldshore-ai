@@ -2,6 +2,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@goldshore/ui": [
+        "packages/ui/index.ts"
+      ],
       "@goldshore/ui/*": [
         "packages/ui/*"
       ],
@@ -13,6 +16,9 @@
       ],
       "@goldshore/auth/*": [
         "packages/auth/*"
+      ],
+      "@goldshore/theme": [
+        "packages/theme/index.css"
       ],
       "@goldshore/theme/*": [
         "packages/theme/*"
