@@ -1,4 +1,4 @@
-@import "@goldshore/theme";
+@import "@goldshore/theme/index.css";
 @import "./gs-effects.css";
 
 :root {
