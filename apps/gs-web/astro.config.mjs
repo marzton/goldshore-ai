@@ -1,5 +1,5 @@
-import baseConfig from "@goldshore/config/astro";
 import cloudflare from "@astrojs/cloudflare";
+import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -7,8 +7,9 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  ...baseConfig,
-  output: "server",
+  srcDir: './src',
+  outDir: './dist',
+  prefetch: true,
   adapter: cloudflare(),
   vite: {
     ...baseConfig.vite,
@@ -18,6 +19,25 @@ export default defineConfig({
         ...baseConfig.vite?.resolve?.alias,
         '@goldshore/theme': path.resolve(__dirname, '../../packages/theme'),
         '@goldshore/ui': path.resolve(__dirname, '../../packages/ui'),
+  integrations: [
+    tailwind({
+      applyBaseStyles: false,
+      configFile: "../../tailwind.config.mjs"
+    })
+  ],
+  vite: {
+    ssr: {
+      noExternal: [
+        '@goldshore/theme',
+        '@goldshore/ui',
+        '@goldshore/auth'
+      ]
+    },
+    resolve: {
+      alias: {
+        // '@goldshore/ui': '../../packages/ui',
+        // '@goldshore/theme': '../../packages/theme',
+        // '@goldshore/auth': '../../packages/auth',
       }
     }
   }

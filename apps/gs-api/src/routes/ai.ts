@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import { createHash } from "node:crypto";
 import { applyAnalysisPolicy, getProvider, type AnalysisRequest } from "@goldshore/ai-providers";
+import safeStableStringify from "safe-stable-stringify";
+import { logAuditEvent } from "@goldshore/utils";
 
 type Env = {
   KV: KVNamespace;
@@ -9,21 +11,9 @@ type Env = {
 };
 
 const ai = new Hono<{ Bindings: Env }>();
+import { applyAnalysisPolicy, getProvider, type AnalysisRequest } from "@goldshore/ai-providers";
 
-function sortObject(obj: any): any {
-  if (obj === null || typeof obj !== "object") {
-    return obj;
-  }
-  if (Array.isArray(obj)) {
-    return obj.map(sortObject);
-  }
-  return Object.keys(obj)
-    .sort()
-    .reduce((result: any, key) => {
-      result[key] = sortObject(obj[key]);
-      return result;
-    }, {});
-}
+const ai = new Hono();
 
 ai.get("/", (c) => c.json({ message: "AI endpoint" }));
 
@@ -57,7 +47,7 @@ ai.post("/analysis", async (c) => {
 
   // Create a cache key based on the sanitized input
   const inputHash = createHash("sha256")
-    .update(JSON.stringify(sortObject(policyResult.sanitized)))
+    .update(safeStableStringify(policyResult.sanitized))
     .digest("hex");
   const cacheKey = `analysis:${inputHash}`;
 
@@ -94,22 +84,45 @@ ai.post("/analysis", async (c) => {
 
   const durationMs = Date.now() - startedAt;
 
+  c.executionCtx.waitUntil(
+    logAuditEvent(c.env.KV, {
+      action: "ai.analysis",
+      status: "success",
+      metadata: {
+        request: policyResult.sanitized,
+        response: {
+          provider: providerResponse.provider,
+          // output is sensitive and should not be logged
+        },
+        redactions: policyResult.redactions,
+        durationMs,
+        cache: isCached ? "HIT" : "MISS",
+      },
+    })
+  );
+
+  const response = c.json({
+  const providerResponse = await provider.analyze(policyResult.sanitized.input, {
+    apiKey,
+    fetch,
+  });
+  const durationMs = Date.now() - startedAt;
+
   const logEntry = {
     event: "ai.analysis",
     timestamp: new Date().toISOString(),
     request: policyResult.sanitized,
     response: {
       provider: providerResponse.provider,
-      // output is sensitive and should not be logged
+      output: providerResponse.output,
     },
     redactions: policyResult.redactions,
     durationMs,
-    cache: isCached ? "HIT" : "MISS",
   };
 
   console.log(JSON.stringify(logEntry));
 
-  const response = c.json({
+  return c.json({
     ...providerResponse,
     redactions: policyResult.redactions,
     durationMs,

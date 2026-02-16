@@ -1,13 +1,37 @@
 import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
-import { checkAuth } from './auth';
 import { verifyAccess } from '@goldshore/auth';
 import { STATUS_PAGE_HTML } from './templates/status';
 import { type Env } from './types';
 import { integrationControls } from './middleware/integration';
 
 const app = new Hono<{ Bindings: Env }>();
+import { checkAuth } from './auth';
+
+type Env = {
+  API: Fetcher;
+  GATEWAY_KV: KVNamespace;
+  AI: any;
+  ENV: string;
+  CLOUDFLARE_ACCESS_AUDIENCE?: string;
+  CLOUDFLARE_TEAM_DOMAIN?: string;
+};
+
+const API_ORIGIN = 'https://api.goldshore.ai';
+const app = new Hono<{ Bindings: Env }>();
+const INTEGRATION_PATH_PREFIXES = ['/integrations', '/market-streams'];
+const DATA_CLASSIFICATIONS = new Set(['public', 'internal', 'confidential', 'restricted']);
+const SECRETS_ACCESS_POLICIES = new Set([
+  'none',
+  'read-only',
+  'read-write',
+  'broker-credentials',
+  'market-data'
+]);
+
+const isIntegrationRequest = (path: string) =>
+  INTEGRATION_PATH_PREFIXES.some((prefix) => path.startsWith(prefix));
 
 // Sentinel: Add security headers to all responses (X-Frame-Options, X-XSS-Protection, etc.)
 app.use('*', secureHeaders());
@@ -71,6 +95,60 @@ app.use('*', async (c, next) => {
 
 // Integration controls: data classification, secrets access, and audit trail enforcement
 app.use('*', integrationControls);
+app.use('*', async (c, next) => {
+  if (!isIntegrationRequest(c.req.path) || c.req.method === 'OPTIONS') {
+    await next();
+    return;
+  }
+
+  const classification = c.req.header('X-Data-Classification')?.toLowerCase();
+  if (!classification || !DATA_CLASSIFICATIONS.has(classification)) {
+    return c.json(
+      {
+        error: 'Invalid data classification.',
+        allowed: Array.from(DATA_CLASSIFICATIONS)
+      },
+      400
+    );
+  }
+
+  const secretsPolicy = c.req.header('X-Secrets-Access-Policy')?.toLowerCase();
+  if (!secretsPolicy || !SECRETS_ACCESS_POLICIES.has(secretsPolicy)) {
+    return c.json(
+      {
+        error: 'Invalid secrets access policy.',
+        allowed: Array.from(SECRETS_ACCESS_POLICIES)
+      },
+      400
+    );
+  }
+
+  const auditTraceId = c.req.header('X-Audit-Trace-Id')?.trim();
+  if (!auditTraceId) {
+    return c.json({ error: 'Missing audit trace id.' }, 400);
+  }
+
+  const auditEntry = {
+    traceId: auditTraceId,
+    classification,
+    secretsPolicy,
+    method: c.req.method,
+    path: c.req.path,
+    timestamp: new Date().toISOString(),
+    cfRay: c.req.header('CF-Ray') ?? null,
+    actor: c.req.header('CF-Access-User-Email') ?? 'unknown'
+  };
+
+  if (c.env.GATEWAY_KV) {
+    await c.env.GATEWAY_KV.put(`audit:${auditTraceId}`, JSON.stringify(auditEntry), {
+      expirationTtl: 60 * 60 * 24 * 30
+    });
+  } else {
+    console.warn('GATEWAY_KV is not configured for audit logging.', auditEntry);
+  }
+
+  await next();
+});
 
 app.get('/health', (c) => c.json({ status: 'ok', service: 'gs-gateway' }));
 app.get('/templates', (c) =>
@@ -102,6 +180,30 @@ app.get('/templates', (c) =>
 // Root Status Page
 app.get('/', (c) => {
   return c.html(STATUS_PAGE_HTML);
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>GoldShore Gateway</title>
+      <style>
+        body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .container { text-align: center; border: 1px solid #334155; padding: 2rem; border-radius: 8px; background: #1e293b; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        h1 { margin-bottom: 0.5rem; color: #38bdf8; }
+        p { color: #94a3b8; }
+        .status { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 4px; background: #059669; color: #fff; font-size: 0.875rem; font-weight: 600; margin-top: 1rem; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>GoldShore Gateway</h1>
+        <p>Intelligent Routing & Security Layer</p>
+        <div class="status">SYSTEM OPERATIONAL</div>
+        <p><small>Service: gs-gateway</small></p>
+      </div>
+    </body>
+    </html>
+  `);
 });
 
 // Example specific routes
@@ -119,6 +221,9 @@ app.all('*', async (c) => {
     if (c.env.API_ORIGIN) {
         const url = new URL(c.req.url);
         const targetUrl = new URL(url.pathname + url.search, c.env.API_ORIGIN);
+    if (API_ORIGIN) {
+        const url = new URL(c.req.url);
+        const targetUrl = new URL(url.pathname + url.search, API_ORIGIN);
         return fetch(targetUrl.toString(), c.req.raw);
     }
 

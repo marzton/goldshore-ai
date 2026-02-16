@@ -30,6 +30,20 @@ app.use(
       }
       const allowedOrigins = (c.env.ALLOWED_ORIGINS ?? "https://admin.goldshore.ai,https://admin-preview.goldshore.ai,http://localhost:4321").split(",");
       return allowedOrigins.map((s) => s.trim()).includes(origin) ? origin : undefined;
+const allowedOrigins = new Set([
+  "https://admin.goldshore.ai",
+  "https://admin-preview.goldshore.ai",
+  "http://localhost:4321"
+]);
+
+app.use(
+  "*",
+  cors({
+    origin: (origin) => {
+      if (!origin) {
+        return undefined;
+      }
+      return allowedOrigins.has(origin) ? origin : undefined;
     },
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization", "CF-Access-Jwt-Assertion"],
