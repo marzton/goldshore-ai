@@ -11,6 +11,14 @@ export default defineConfig({
   outDir: './dist',
   prefetch: true,
   adapter: cloudflare(),
+  vite: {
+    ...baseConfig.vite,
+    resolve: {
+      ...baseConfig.vite?.resolve,
+      alias: {
+        ...baseConfig.vite?.resolve?.alias,
+        '@goldshore/theme': path.resolve(__dirname, '../../packages/theme'),
+        '@goldshore/ui': path.resolve(__dirname, '../../packages/ui'),
   integrations: [
     tailwind({
       applyBaseStyles: false,
