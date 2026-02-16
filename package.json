@@ -40,9 +40,12 @@
     "build": "pnpm build:openapi && turbo run build",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "validate": "tsx scripts/validate-worker-structure.ts",
     "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/gs-admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md",
-    "workspaces:list": "pnpm -r list --depth -1"
+    "workspaces:list": "pnpm -r list --depth -1",
+    "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry && turbo run build --filter=@goldshore/gs-control --dry",
+    "validate:structure": "tsx scripts/validate-worker-structure.ts",
+    "validate:workers": "tsx scripts/validate-worker-names.ts",
+    "validate:workspace": "tsx scripts/validate-workspace-contract.ts"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",
