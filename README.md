@@ -94,6 +94,7 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 - [Testing](#testing)
 - [Deployment](#deployment)
 - [Versioning Strategy](#versioning-strategy)
+- [Contributor Note: Merge Strategy for Top-Level Docs](#contributor-note-merge-strategy-for-top-level-docs)
 - [License](#license)
 
 ## Vibe Coding & Human-in-the-Loop
@@ -656,6 +657,15 @@ pnpm --filter ./apps/gs-agent deploy
 - `feature/*` → Preview Deployments
 - `release/*` → Staging
 
+## Contributor Note: Merge Strategy for Top-Level Docs
+
+To reduce noisy merge/rebase conflicts on frequently edited coordination docs, `.gitattributes` uses `merge=ours` for:
+
+- `README.md`: the active branch's README should win so branch-scoped documentation work is not overwritten by unrelated upstream edits.
+- `CURRENT_MONOREPO_STATE.md`: the active branch's status snapshot should win for the same reason, preserving branch-local planning/state notes.
+
+If you need to intentionally adopt upstream changes to either file, resolve that manually after the merge by reviewing both versions.
+
 ---
 
 # 🔐 License
@@ -685,14 +695,14 @@ GoldShore Brand Variants
 
 🧭 Monorepo Structure
 
-astro-goldshore/
+goldshore-ai/
 │
 ├── apps/
-│ ├── web/ → Public website (Astro + CF Pages)
-│ ├── admin/ → Admin Cockpit (Astro SSR)
-│ ├── api-worker/ → Hono API Worker
-│ ├── gateway/ → Edge gateway router
-│ └── control-worker/ → Infra automation (DNS, bindings)
+│ ├── gs-web/ → Public website (Astro + CF Pages)
+│ ├── gs-admin/ → Admin Cockpit (Astro SSR)
+│ ├── gs-api/ → Hono API Worker
+│ ├── gs-gateway/ → Edge gateway router
+│ └── gs-control/ → Infra automation (DNS, bindings)
 │
 ├── packages/
 │ ├── ui/ → GoldShore UI component library
