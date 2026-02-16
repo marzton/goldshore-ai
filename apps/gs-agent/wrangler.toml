@@ -1,44 +1,3 @@
-name = "gs-agent"
-main = "src/index.ts"
-compatibility_date = "2024-01-01"
-compatibility_flags = ["nodejs_compat"]
-
-[vars]
-ENV = "production"
-
-[ai]
-binding = "AI"
-
-[[queues.consumers]]
-queue = "gs-jobs"
-
-[env.dev]
-name = "gs-agent-dev"
-[[env.dev.queues.consumers]]
-queue = "gs-jobs"
-[env.dev.vars]
-ENV = "development"
-[env.dev.ai]
-binding = "AI"
-
-
-[env.prod]
-name = "gs-agent"
-[[env.prod.queues.consumers]]
-queue = "gs-jobs"
-[env.prod.vars]
-ENV = "production"
-[env.prod.ai]
-binding = "AI"
-
-[env.preview]
-name = "gs-agent-preview"
-[[env.preview.queues.consumers]]
-queue = "gs-jobs"
-[env.preview.vars]
-ENV = "preview"
-[env.preview.ai]
-binding = "AI"
 # wrangler.toml for the background Agent Worker
 
 name = "gs-agent" # Base name, will be suffixed per environment
@@ -46,23 +5,14 @@ main = "src/index.ts"
 compatibility_date = "2024-03-20"
 tsconfig = "tsconfig.json"
 
-# This worker is queue-driven, so we define the consumer here.
-[[queues.consumers]]
-  # The queue binding name should match what's in the environment bindings.
-  # Example: QUEUES_JOBS
-  queue = "goldshore-jobs"
-
 [env.dev]
 name = "gs-agent-dev"
-# Dev bindings for the agent
-# [[queues.producers]]
-# binding = "QUEUES_JOBS"
-# queue = "goldshore-jobs-dev"
 
 [env.preview]
 name = "gs-agent-preview"
-# Preview bindings for the agent
 
 [env.prod]
-name = "gs-agent-prod"
-# Production bindings for the agent
+name = "gs-agent"
+
+[[queues.consumers]]
+  queue = "goldshore-jobs"

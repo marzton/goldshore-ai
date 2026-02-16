@@ -2,12 +2,12 @@
   "name": "@goldshore/gs-api",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy",
     "build": "wrangler deploy --dry-run --outdir=dist",
     "test": "tsx --test src/routes/*.test.ts"
-    "build": "wrangler deploy --dry-run --outdir=dist"
   },
   "dependencies": {
     "@goldshore/ai-providers": "workspace:^",
