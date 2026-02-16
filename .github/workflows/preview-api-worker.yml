@@ -12,7 +12,7 @@ on:
       - unlabeled
       - ready_for_review
     paths:
-      - "apps/api-worker/**"
+      - "apps/gs-api/**"
       - "packages/schema/**"
 
 jobs:
@@ -29,6 +29,7 @@ jobs:
           run_install: false
 
       - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
@@ -36,9 +37,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Validate workspace contract
+        run: pnpm validate:workspace
+
+      - name: Validate canonical worker structure
+        run: pnpm validate:structure
+
+      - name: Validate canonical worker names
+        run: pnpm validate:names
+
       - name: Deploy API worker (preview)
-        working-directory: apps/api-worker
+        working-directory: apps/gs-api
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx wrangler deploy --env preview
+        run: pnpm exec wrangler deploy --env preview

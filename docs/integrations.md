@@ -63,7 +63,7 @@ The gateway rejects integration requests if any control is missing or invalid. E
 applications provide the required headers before requesting access to integration endpoints.
 # Integrations Hub
 
-This hub documents external integrations used by GoldShore services and the admin cockpit. The canonical configuration list for the admin UI lives in `apps/admin/src/lib/integrations.ts`.
+This hub documents external integrations used by GoldShore services and the admin cockpit. The canonical configuration list for the admin UI lives in `apps/gs-admin/src/lib/integrations.ts`.
 
 ## Integration Catalog
 
