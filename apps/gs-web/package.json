@@ -26,6 +26,6 @@
     "@astrojs/cloudflare": "^12.6.12",
     "@astrojs/tailwind": "^6.0.2",
     "@playwright/test": "^1.55.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.4.2"
   }
 }

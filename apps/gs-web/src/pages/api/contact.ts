@@ -69,15 +69,6 @@ const storeInKv = async (
     metadata: {
       formType: submission.formType,
       status: submission.status,
-const storeInKv = async (
-  kv: KVNamespace,
-  submission: Submission,
-  autoResponder: ReturnType<typeof buildLeadAutoResponder>
-) => {
-  await kv.put(`contact:${submission.id}`, JSON.stringify({ submission, autoResponder }), {
-    expirationTtl: CONTACT_TTL_SECONDS,
-    metadata: {
-      formType: submission.formType,
     },
   });
 };

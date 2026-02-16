@@ -2,10 +2,12 @@
   "name": "@goldshore/gs-gateway",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy",
-    "build": "wrangler deploy --dry-run --outdir=dist"
+    "build": "npx wrangler deploy --dry-run --outdir=dist",
+    "test": "tsx src/repro_cors.test.ts"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
@@ -14,13 +16,8 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241106.0",
     "@types/node": "^25.2.1",
+    "tsx": "^4.21.0",
     "typescript": "^5.4.0",
     "wrangler": "^4.63.0"
-    "hono": "^4.11.9"
-  },
-  "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260214.0",
-    "typescript": "^5.0.0",
-    "wrangler": "^4.65.0"
   }
 }
