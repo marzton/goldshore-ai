@@ -77,13 +77,13 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 ```
 /
 ├── apps/
-│   ├── web/               # Public website (Astro)
-│   ├── admin/             # Admin dashboard (Astro)
-│   ├── api-worker/        # Hono API (Workers)
-│   ├── gateway/           # Router + jobs (Workers)
+│   ├── gs-web/            # Public website (Astro)
+│   ├── gs-admin/          # Admin dashboard (Astro)
+│   ├── gs-api/            # Hono API (Workers)
+│   ├── gs-gateway/        # Router + jobs (Workers)
 │   ├── gs-agent/          # AI Agent Service (Workers)
-│   ├── goldshore-agent/   # Deprecated agent shim (legacy workflows)
-│   ├── control-worker/    # Infra automation
+│   ├── gs-agent/          # Deprecated agent shim (legacy workflows)
+│   ├── gs-control/        # Infra automation
 │   └── jules-bot/         # GitHub Automation Bot
 │
 ├── packages/
@@ -102,7 +102,7 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 
 # 🧩 Applications
 
-## **1. apps/web – Public Website (Astro)**
+## **1. apps/gs-web – Public Website (Astro)**
 
 - Marketing site
 - User portal
@@ -132,7 +132,7 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 
 ---
 
-## **2. apps/admin – Admin Dashboard (Astro)**
+## **2. apps/gs-admin – Admin Dashboard (Astro)**
 
 Protected by **Cloudflare Access**.
 
@@ -159,7 +159,7 @@ Protected by **Cloudflare Access**.
 
 ---
 
-## **3. apps/api-worker – gs-api**
+## **3. apps/gs-api – gs-api**
 
 Hono-based API Worker.
 
@@ -207,7 +207,7 @@ Responsibilities:
 
 ---
 
-## **5. apps/goldshore-agent – gs-agent**
+## **5. apps/gs-agent – gs-agent**
 
 Autonomous AI Agent Service.
 
@@ -264,9 +264,9 @@ Template pages are kept alongside each app so navigation, menus, containers, and
 
 | App        | Template Location                            | Notes                           |
 | ---------- | -------------------------------------------- | ------------------------------- |
-| Web        | `apps/web/src/pages/templates/index.astro`   | Marketing + search composition  |
+| Web        | `apps/gs-web/src/pages/templates/index.astro`   | Marketing + search composition  |
 | Admin      | `apps/gs-admin/src/pages/templates/index.astro` | Dashboard shell + table samples |
-| API Worker | `apps/api-worker/src/routes/templates.ts`    | Module checklist for API growth |
+| API Worker | `apps/gs-api/src/routes/templates.ts`    | Module checklist for API growth |
 | Gateway    | `apps/gateway/src/index.ts` (`/templates`)   | Routing + AI dispatch template  |
 | Agent      | `apps/gs-agent/src/index.ts` (`/templates`)  | HITL orchestration template     |
 
@@ -423,9 +423,9 @@ pnpm dev
 Run individual app:
 
 ```bash
-pnpm --filter @goldshore/web dev
-pnpm --filter @goldshore/admin dev
-pnpm --filter @goldshore/api-worker dev
+pnpm --filter @goldshore/gs-web dev
+pnpm --filter @goldshore/gs-admin dev
+pnpm --filter @goldshore/gs-api-worker dev
 ```
 
 Build all:
@@ -443,7 +443,7 @@ Pages deploy automatically via GitHub Actions.
 Workers deploy:
 
 ```bash
-pnpm --filter @goldshore/api-worker deploy
+pnpm --filter @goldshore/gs-api-worker deploy
 pnpm --filter @goldshore/gateway deploy
 pnpm --filter @goldshore/control-worker deploy
 ```
@@ -508,7 +508,7 @@ goldshore-ai/
 
 🔥 Apps Overview
 
-🌐 apps/web — GoldShore Public Website
+🌐 apps/gs-web — GoldShore Public Website
 • Astro SSR
 • Powered by the GoldShore UI Kit
 • Deploys via Cloudflare Pages
@@ -519,7 +519,7 @@ Hero Example
 
 ---
 
-🛠 apps/admin — GoldShore Admin Cockpit
+🛠 apps/gs-admin — GoldShore Admin Cockpit
 
 This is your hyper-modern operational dashboard.
 
@@ -580,7 +580,7 @@ Supports:
 
 ---
 
-⚙️ apps/api-worker — Main API (Hono)
+⚙️ apps/gs-api — Main API (Hono)
 • Edge-native API
 • Zod schemas
 • Hono router
@@ -628,15 +628,15 @@ pnpm dev
 
 Run only the admin app:
 
-pnpm --filter ./apps/admin dev
+pnpm --filter ./apps/gs-admin dev
 
 Run the web app:
 
-pnpm --filter ./apps/web dev
+pnpm --filter ./apps/gs-web dev
 
 Run API worker:
 
-pnpm --filter ./apps/api-worker dev
+pnpm --filter ./apps/gs-api dev
 
 Build all:
 
@@ -648,8 +648,8 @@ pnpm build
 
 Playwright tests live in:
 
-apps/admin/tests
-apps/web/tests
+apps/gs-admin/tests
+apps/gs-web/tests
 
 Run:
 
@@ -666,7 +666,7 @@ infra/github/workflows/deploy.yml
 CI/CD steps: 1. Install dependencies 2. Build workspaces with Turbo 3. Deploy:
 • web → Cloudflare Pages
 • admin → Cloudflare Pages
-• api-worker → Workers
+• gs-api → Workers
 • gateway → Workers
 • control-worker → Workers
 
