@@ -13,7 +13,7 @@ on:
       - unlabeled
       - ready_for_review
     paths:
-      - "apps/gateway/**"
+      - "apps/gs-gateway/**"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -41,7 +41,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Deploy Gateway worker (preview)
-        working-directory: apps/gateway
+        working-directory: apps/gs-gateway
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

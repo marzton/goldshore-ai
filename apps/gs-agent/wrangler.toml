@@ -1,0 +1,16 @@
+name = "gs-agent"
+main = "src/index.ts"
+compatibility_date = "2024-03-20"
+tsconfig = "tsconfig.json"
+
+[[queues.consumers]]
+queue = "goldshore-jobs"
+
+[env.dev]
+name = "gs-agent-dev"
+
+[env.preview]
+name = "gs-agent-preview"
+
+[env.prod]
+name = "gs-agent-prod"
