@@ -27,6 +27,6 @@ repo_lock:
   forbidden_paths:
     - apps/web/**
     - apps/admin/**
-    - apps/api-worker/**
+    - apps/gs-api/**
     - apps/gateway/**
     - packages/**
