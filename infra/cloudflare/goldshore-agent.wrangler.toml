@@ -1,0 +1,21 @@
+# Legacy compatibility wrapper for gs-agent Worker Builds.
+#
+# Some external CI/Cloudflare Worker Build integrations still reference
+# infra/cloudflare/goldshore-agent.wrangler.toml. Keep this file in sync
+# with infra/cloudflare/gs-agent.wrangler.toml until those references are updated.
+
+name = "gs-agent" # Base name, will be suffixed per environment
+main = "../../apps/gs-agent/src/index.ts"
+compatibility_date = "2024-03-20"
+
+[[queues.consumers]]
+queue = "goldshore-jobs"
+
+[env.dev]
+name = "gs-agent-dev"
+
+[env.preview]
+name = "gs-agent-preview"
+
+[env.prod]
+name = "gs-agent-prod"
