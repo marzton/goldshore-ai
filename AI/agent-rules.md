@@ -97,7 +97,7 @@ If a rule file exists at the root level or in an unexpected folder, MOVE it rath
 
 ---
 
-## 5. Duplicate “goldshore-ai inside goldshore-ai” Fix
+## 5. Duplicate “Astro-goldshore inside Astro-goldshore” Fix
 If a nested folder contains a full duplicate monorepo:
 
 astro-goldshore/astro-goldshore/

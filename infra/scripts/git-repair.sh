@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # GIT HISTORY REPAIR SCRIPT (SOP-001)
-# Targets: goldshore/goldshore-ai
+# Targets: goldshore/Astro-goldshore
 #
 # This script identifies all open PRs with conflicts and forces a clean rebase onto 'main'.
 # NOTE: This relies on GitHub CLI (`gh`) being installed in the execution environment (Jules/Actions).
@@ -9,7 +9,7 @@
 set -euo pipefail
 
 OWNER="goldshore"
-REPO="goldshore-ai"
+REPO="Astro-goldshore"
 BASE_BRANCH="main"
 
 ensure_local_branch() {

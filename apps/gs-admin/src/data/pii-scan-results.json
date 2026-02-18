@@ -57,7 +57,7 @@
       "id": "PII-003",
       "type": "US SSN",
       "severity": "high",
-      "location": "apps/gs-api/src/fixtures/sample.json:7",
+      "location": "apps/api-worker/src/fixtures/sample.json:7",
       "snippet": "123-45-6789",
       "guidance": "Remove SSNs from code or move to encrypted secrets storage."
     },

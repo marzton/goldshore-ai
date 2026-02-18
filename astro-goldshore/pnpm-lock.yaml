@@ -21,7 +21,7 @@ importers:
         specifier: ^4.0.0
         version: 4.16.19(rollup@4.53.3)(typescript@5.9.3)
 
-  apps/gs-api:
+  apps/api-worker:
     dependencies:
       hono:
         specifier: ^4.0.0
@@ -34,7 +34,7 @@ importers:
         specifier: ^3.48.0
         version: 3.114.15(@cloudflare/workers-types@4.20251121.0)
 
-  apps/gs-gateway:
+  apps/gateway:
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20240405.0
