@@ -192,7 +192,7 @@ Flag PRs that touch:
 - package.json, pnpm-lock.yaml
 - apps/admin/*
 - apps/web/*
-- apps/api-worker/*, apps/gateway/*, apps/control-worker/*
+- apps/gs-api/*, apps/gs-gateway/*, apps/gs-control/*
 - tsconfig.json, astro.config.mjs, wrangler.toml
 - shared packages/* (theme, ui, auth, utils, etc.)
 
@@ -210,9 +210,9 @@ Recommended priority:
    - infra/cloudflare/*
    - wrangler.toml changes
 2. Workers
-   - apps/api-worker
-   - apps/gateway
-   - apps/control-worker
+   - apps/gs-api
+   - apps/gs-gateway
+   - apps/gs-control
 3. Web/Admin frameworks
    - apps/web/astro.config.mjs, apps/admin/astro.config.mjs
    - WebLayout, AdminLayout, NavBar, Footer

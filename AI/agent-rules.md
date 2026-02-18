@@ -49,9 +49,9 @@ Use this canonical monorepo map:
 apps/
 admin/
 web/
-api-worker/
+gs-api/
 gateway/
-control-worker/
+gs-control/
 packages/
 ui/
 theme/
@@ -129,7 +129,7 @@ If any of these rules are violated, the agent MUST abort and regenerate the PR.
 ## 7. OpenAPI Files
 All OpenAPI definitions MUST be stored under:
 
-apps/api-worker/openapi/
+apps/gs-api/openapi/
 
 And must never overwrite manually written documentation without user confirmation.
 
@@ -138,9 +138,9 @@ And must never overwrite manually written documentation without user confirmatio
 ## 8. gs-mail Integration
 Agents MUST only modify:
 
-apps/api-worker/src/routes/mail.ts
-apps/api-worker/src/index.ts
-apps/api-worker/openapi/goldshore.v1.yaml
+apps/gs-api/src/routes/mail.ts
+apps/gs-api/src/index.ts
+apps/gs-api/openapi/goldshore.v1.yaml
 
 Never touch user email templates or admin UI without explicit request.
 

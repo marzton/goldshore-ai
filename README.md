@@ -77,10 +77,10 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 ├── apps/
 │   ├── web/               # Public website (Astro)
 │   ├── admin/             # Admin dashboard (Astro)
-│   ├── api-worker/        # Hono API (Workers)
-│   ├── gateway/           # Router + jobs (Workers)
+│   ├── gs-api/        # Hono API (Workers)
+│   ├── gs-gateway/        # Router + jobs (Workers)
 │   ├── gs-agent/          # Autonomous AI service (Workers)
-│   ├── control-worker/    # Infra automation
+│   ├── gs-control/    # Infra automation
 │   ├── jules-bot/         # GitHub automation bot
 │   └── legacy/            # Legacy services
 │
@@ -186,7 +186,7 @@ Protected by **Cloudflare Access**.
     └── secrets
 ```
 
-### 3) `apps/api-worker` — gs-api (Hono API Worker)
+### 3) `apps/gs-api` — gs-api (Hono API Worker)
 
 ```
 Route: https://api.goldshore.ai/*
@@ -212,7 +212,7 @@ D1 = gs-db
 AI = AI (AI Gateway)
 ```
 
-### 4) `apps/gateway` — gs-gateway
+### 4) `apps/gs-gateway` — gs-gateway
 
 ```
 Route: https://gw.goldshore.ai/*
@@ -232,7 +232,7 @@ Responsibilities:
 - External AI model integration
 - Workflow orchestration
 
-### 6) `apps/control-worker` — Automation Worker
+### 6) `apps/gs-control` — Automation Worker
 
 ```
 Route: https://ops.goldshore.ai/*
@@ -334,7 +334,7 @@ POST /preview/create
 Location:
 
 ```
-infra/github/workflows/
+.github/workflows/
 ```
 
 Workflows include:
@@ -374,8 +374,8 @@ Run individual apps:
 ```bash
 pnpm --filter ./apps/web dev
 pnpm --filter ./apps/admin dev
-pnpm --filter ./apps/api-worker dev
-pnpm --filter ./apps/gateway dev
+pnpm --filter ./apps/gs-api dev
+pnpm --filter ./apps/gs-gateway dev
 pnpm --filter ./apps/gs-agent dev
 ```
 
@@ -407,9 +407,9 @@ Pages deploy automatically via GitHub Actions.
 Workers deploy:
 
 ```bash
-pnpm --filter ./apps/api-worker deploy
-pnpm --filter ./apps/gateway deploy
-pnpm --filter ./apps/control-worker deploy
+pnpm --filter ./apps/gs-api deploy
+pnpm --filter ./apps/gs-gateway deploy
+pnpm --filter ./apps/gs-control deploy
 pnpm --filter ./apps/gs-agent deploy
 ```
 
