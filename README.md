@@ -343,7 +343,7 @@ System worker for automation:
 - External AI model integration
 - Workflow orchestration
 
-### 6) `apps/control-worker` — Automation Worker
+### 6) `apps/gs-control` — Automation Worker
 
 ```
 Route: https://ops.goldshore.ai/*
@@ -600,8 +600,8 @@ Run individual apps:
 ```bash
 pnpm --filter ./apps/web dev
 pnpm --filter ./apps/admin dev
-pnpm --filter ./apps/api-worker dev
-pnpm --filter ./apps/gateway dev
+pnpm --filter ./apps/gs-api dev
+pnpm --filter ./apps/gs-gateway dev
 pnpm --filter ./apps/gs-agent dev
 ```
 
@@ -644,9 +644,9 @@ pnpm --filter @goldshore/control-worker deploy
 ---
 
 # 📌 Versioning Strategy
-pnpm --filter ./apps/api-worker deploy
-pnpm --filter ./apps/gateway deploy
-pnpm --filter ./apps/control-worker deploy
+pnpm --filter ./apps/gs-api deploy
+pnpm --filter ./apps/gs-gateway deploy
+pnpm --filter ./apps/gs-control deploy
 pnpm --filter ./apps/gs-agent deploy
 ```
 

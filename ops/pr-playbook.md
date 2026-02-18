@@ -212,7 +212,7 @@ Flag PRs that touch:
 - package.json, pnpm-lock.yaml
 - apps/admin/\*
 - apps/web/\*
-- apps/api-worker/_, apps/gateway/_, apps/control-worker/\*
+- apps/gs-api/_, apps/gs-gateway/_, apps/gs-control/\*
 - tsconfig.json, astro.config.mjs, wrangler.toml
 - shared packages/\* (theme, ui, auth, utils, etc.)
 
