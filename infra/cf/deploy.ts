@@ -78,8 +78,19 @@ async function deployWorker(w: any) {
     throw new Error(`[worker:${w.script}] No bindings found; aborting deploy`);
   }
 
+  let entry = w.entry;
+  if (typeof entry === "string" && entry.includes("apps/api-worker/")) {
+    const canonicalEntry = entry.replace("apps/api-worker/", "apps/gs-api/");
+    console.warn(`[worker:${w.script}] Rewriting stale worker entry from ${entry} to ${canonicalEntry}.`);
+    entry = canonicalEntry;
+  }
+
+  if (!entry || !fs.existsSync(entry)) {
+    throw new Error(`[worker:${w.script}] Worker entry not found at \"${entry}\". Check infra/cf/config.yaml worker entry paths.`);
+  }
+
   const fd = new FormData();
-  fd.append("main", fs.createReadStream(w.entry), { filename: "index.js", contentType: "application/javascript" });
+  fd.append("main", fs.createReadStream(entry), { filename: "index.js", contentType: "application/javascript" });
 
   console.log(`[worker:${w.script}] Deploying…`);
   await cf.workers.deploy(w.script, fd);
