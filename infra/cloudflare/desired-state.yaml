@@ -77,7 +77,7 @@ cloudflare:
   workers:
     services:
       - name: "gs-api"
-        script_path: "apps/api-worker/dist/index.js"
+        script_path: "apps/gs-api/dist/index.js"
         routes:
           - pattern: "api.goldshore.ai/*"
         bindings:

@@ -49,7 +49,7 @@
 ### 3. API Worker
 
 - Service Name: `astro-gs-api`
-- Code: `apps/api-worker`
+- Code: `apps/gs-api`
 - Routes:
   - `api.goldshore.ai/*`
   - `api-preview.goldshore.ai/*`

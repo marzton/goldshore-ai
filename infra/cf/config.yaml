@@ -22,7 +22,7 @@ projects:
 
   workers:
     - script: gs-api
-      entry: apps/api-worker/dist/index.js
+      entry: apps/gs-api/dist/index.js
       routes:
         - pattern: "api.goldshore.org/*"
           zone: goldshore.org
