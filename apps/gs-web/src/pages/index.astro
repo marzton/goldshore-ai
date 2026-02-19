@@ -1,5 +1,7 @@
 ---
-import WebLayout from '../layouts/WebLayout.astro';
+import '@goldshore/theme/tokens';
+import { GSButton } from '@goldshore/ui';
+import MarketingLayout from '../layouts/MarketingLayout.astro';
 import ParallaxHero from '../components/hero/ParallaxHero.astro';
 import '../styles/home.css';
 
@@ -31,8 +33,20 @@ const highlights = [
 ];
 ---
 
-<WebLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
-  <ParallaxHero title="Shaping Waves with Applied Intelligence" />
+<MarketingLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
+  <div class="cinematic-wrapper">
+    <!-- Starfield Background -->
+    <div class="stars-container">
+      <div class="stars"></div>
+    </div>
+
+    <ParallaxHero client:load />
+
+    <!-- Performance Section (Secondary Hero) -->
+    <section class="gs-hero home-hero parallax-section" style="padding-top: 0;">
+        <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.08" aria-hidden="true"></div>
+        <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.14" aria-hidden="true"></div>
+        <div class="parallax-layer gs-parallax layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
 
   <section class="gs-hero home-hero parallax-section" style="padding-top: 0;">
     <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.08" aria-hidden="true"></div>
