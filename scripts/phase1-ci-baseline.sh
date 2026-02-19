@@ -65,6 +65,7 @@ jobs:
 
     steps:
       - name: Checkout triggering ref
+      - name: Checkout triggering revision
         run: |
           git init .
           git remote add origin ${{ github.server_url }}/${{ github.repository }}
