@@ -1,4 +1,4 @@
-name: Preview Agent Worker (gs-agent)
+name: Preview GS Agent Worker (gs-agent)
 
 permissions:
   contents: read
@@ -50,7 +50,7 @@ jobs:
       - name: Validate canonical worker names
         run: pnpm validate:names
 
-      - name: Deploy agent worker (preview)
+      - name: Deploy GS agent worker (preview)
         working-directory: apps/gs-agent
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

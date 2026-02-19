@@ -1,4 +1,4 @@
-name: Deploy Gateway Worker (gw.goldshore.ai)
+name: Deploy GS Gateway Worker (gw.goldshore.ai)
 
 permissions:
   contents: read
