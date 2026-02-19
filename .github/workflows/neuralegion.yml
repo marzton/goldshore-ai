@@ -161,7 +161,6 @@ on:
 
 jobs:
   neuralegion-scan:
-  neuralegion_scan:
     runs-on: ubuntu-18.04
     name: A job to run a Nexploit scan
     steps:
