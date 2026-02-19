@@ -52,8 +52,13 @@ const { title = 'Shaping Waves with Applied Intelligence' } = Astro.props;
     import { mountStarfield } from './StarfieldCanvas';
     import { mountShootingStars } from './ShootingStarsCanvas';
 
-    const root = document.currentScript?.closest('.gs-cinematic-hero');
-    if (root) {
+    const heroes = document.querySelectorAll('.gs-cinematic-hero');
+
+    for (const root of heroes) {
+      if (!(root instanceof HTMLElement) || root.dataset.heroInitialized === 'true') continue;
+
+      root.dataset.heroInitialized = 'true';
+
       const stars = root.querySelector('[data-stars]');
       const shooting = root.querySelector('[data-shooting]');
       if (stars instanceof HTMLCanvasElement) mountStarfield(stars);
