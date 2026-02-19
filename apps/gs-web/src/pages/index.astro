@@ -2,6 +2,7 @@
 import '@goldshore/theme/tokens';
 import { GSButton } from '@goldshore/ui';
 import MarketingLayout from '../layouts/MarketingLayout.astro';
+import ParallaxHero from '../components/hero/ParallaxHero.astro';
 import '../styles/home.css';
 
 export const prerender = true;
@@ -39,68 +40,7 @@ const highlights = [
       <div class="stars"></div>
     </div>
 
-    <!-- Main Hero Section -->
-    <section class="cinematic-hero blueprint-section parallax-section">
-        <div class="parallax-layer gs-parallax layer-blueprint" data-parallax="0.05" aria-hidden="true"></div>
-        <div class="parallax-layer gs-parallax layer-sheen" data-parallax="0.12" aria-hidden="true"></div>
-        <div class="parallax-layer gs-parallax layer-shadow" data-parallax="0.18" aria-hidden="true"></div>
-        <div class="hero-content">
-            <div class="badge-container fade-in-up" style="animation-delay: 0.2s;">
-            <span class="vibe-badge">
-                <span class="pulse-dot"></span>
-                System Operational
-            </span>
-            </div>
-
-            <h1 class="fade-in-up" style="animation-delay: 0.4s;">
-            Shaping Waves with <br/>
-            <span class="text-gradient">Applied Intelligence</span>
-            </h1>
-
-            <p class="hero-desc fade-in-up" style="animation-delay: 0.6s;">
-            GoldShore isn't just code. It's a provable experience. We build resilient, cinematic systems where automation meets art.
-            </p>
-
-            <div class="cta-group fade-in-up" style="animation-delay: 0.8s;">
-            <GSButton href="/services" class="glow-button">Start the Experience</GSButton>
-            <GSButton href="/contact" variant="secondary" class="glass-button">Contact Sales</GSButton>
-            </div>
-        </div>
-
-        <!-- 3D/Parallax Element -->
-        <div class="hero-visual fade-in-up" style="animation-delay: 1s;">
-            <div class="glass-card tilt-card lux-card">
-            <div class="card-header">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                <span class="card-title">GoldShore Agent</span>
-            </div>
-            <div class="card-body">
-                <div class="data-row">
-                <span class="label">STATUS</span>
-                <span class="value success">ACTIVE</span>
-                </div>
-                <div class="data-row">
-                <span class="label">MODE</span>
-                <span class="value info">VIBE_CODING</span>
-                </div>
-                <div class="chart-viz">
-                <div class="bar" style="height: 40%"></div>
-                <div class="bar" style="height: 70%"></div>
-                <div class="bar" style="height: 55%"></div>
-                <div class="bar" style="height: 90%"></div>
-                <div class="bar" style="height: 60%"></div>
-                </div>
-                <div class="terminal-output">
-                &gt; Initializing cinematic protocols...<br/>
-                &gt; Optimizing user experience...<br/>
-                &gt; Done.
-                </div>
-            </div>
-            </div>
-        </div>
-    </section>
+    <ParallaxHero client:load />
 
     <!-- Performance Section (Secondary Hero) -->
     <section class="gs-hero home-hero parallax-section" style="padding-top: 0;">
