@@ -1,107 +1,89 @@
-import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
-import path from "node:path";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { join, resolve, basename } from "node:path";
 
-const APPS_DIR = path.resolve(process.cwd(), "apps");
-const WRANGLER_NAME_PATTERN = /^\s*name\s*=\s*["']([^"']+)["']/m;
-
-function getWorkerDirectories(): string[] {
-  return readdirSync(APPS_DIR)
-    .map((entry) => path.join(APPS_DIR, entry))
-    .filter((fullPath) => statSync(fullPath).isDirectory())
-    .filter((fullPath) => existsSync(path.join(fullPath, "wrangler.toml")))
-    .filter((fullPath) => !fullPath.includes(`${path.sep}legacy${path.sep}`));
-}
-
-function expectedFoldersFromWorkerName(workerName: string): string[] {
-  const slug = workerName.replace(/^gs-/, "");
-  return [slug, `${slug}-worker`];
-}
-
-export function validateWorkerNames(): string[] {
-  const failures: string[] = [];
-  const names = new Map<string, string>();
-
-  for (const workerDir of getWorkerDirectories()) {
-    const folderName = path.basename(workerDir);
-    const wranglerPath = path.join(workerDir, "wrangler.toml");
-    const wranglerRaw = readFileSync(wranglerPath, "utf8");
-    const nameMatch = wranglerRaw.match(WRANGLER_NAME_PATTERN);
-
-    if (!nameMatch) {
-      failures.push(`${folderName}: missing top-level name in wrangler.toml`);
-      continue;
-    }
-
-    const workerName = nameMatch[1];
-    const expectedFolders = expectedFoldersFromWorkerName(workerName);
-
-    if (!expectedFolders.includes(folderName)) {
-      failures.push(
-        `${folderName}: wrangler name \"${workerName}\" requires folder to be one of [${expectedFolders.join(", ")}]`,
-      );
-    }
-
-    if (names.has(workerName)) {
-      failures.push(`${folderName}: duplicate wrangler name \"${workerName}\" also used by ${names.get(workerName)}`);
-    } else {
-      names.set(workerName, folderName);
-    }
-  }
-
-  return failures;
-}
-
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const failures = validateWorkerNames();
-
-  if (failures.length > 0) {
-    console.error("Worker naming validation failed:\n");
-    for (const failure of failures) {
-      console.error(`- ${failure}`);
-    }
-    process.exit(1);
-  }
-
-  console.log("Worker naming validation passed.");
-}
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
-
-const CANONICAL_WORKERS = ["gs-agent", "gs-api", "gs-control", "gs-gateway", "gs-mail"];
-const APPS_DIR = "apps";
+const ROOT = process.cwd();
+const APPS_DIR = resolve(ROOT, "apps");
+const CANONICAL_WORKERS = new Set(["gs-agent", "gs-api", "gs-control", "gs-gateway", "gs-mail"]);
 
 let failed = false;
 
-for (const worker of CANONICAL_WORKERS) {
-  const wranglerPath = join(APPS_DIR, worker, "wrangler.toml");
-
-  if (!existsSync(wranglerPath)) {
-    failed = true;
-    console.error(`Missing wrangler.toml for ${worker}: ${wranglerPath}`);
-    continue;
-  }
-
-  const content = readFileSync(wranglerPath, "utf8");
-  const match = content.match(/^\s*name\s*=\s*["']([^"']+)["']/m);
-
-  if (!match) {
-    failed = true;
-    console.error(`Could not parse worker name from ${wranglerPath}`);
-    continue;
-  }
-
-  const configuredName = match[1]?.trim();
-  if (configuredName !== worker) {
-    failed = true;
-    console.error(`Worker name mismatch in ${wranglerPath}: expected '${worker}', got '${configuredName}'`);
-    continue;
-  }
-
-  console.log(`✅ ${worker} name matches wrangler.toml`);
-}
-
-if (failed) {
+if (!existsSync(APPS_DIR)) {
+  console.error("❌ apps directory not found");
   process.exit(1);
 }
 
-console.log("All canonical worker name checks passed.");
+// 1. Check Canonical Workers Naming
+console.log("Validating canonical worker names...");
+for (const worker of CANONICAL_WORKERS) {
+  const workerDir = join(APPS_DIR, worker);
+  const wranglerPath = join(workerDir, "wrangler.toml");
+
+  if (!existsSync(workerDir)) {
+      // Structure check handles missing dirs
+      continue;
+  }
+
+  if (!existsSync(wranglerPath)) {
+    console.error(`❌ Missing wrangler.toml for ${worker}`);
+    failed = true;
+    continue;
+  }
+
+  try {
+    const content = readFileSync(wranglerPath, "utf8");
+    const match = content.match(/^\s*name\s*=\s*["']([^"']+)["']/m);
+
+    if (!match) {
+        console.error(`❌ ${worker}: Could not parse 'name' from wrangler.toml`);
+        failed = true;
+        continue;
+    }
+
+    const configuredName = match[1]?.trim();
+    if (configuredName !== worker) {
+        console.error(`❌ ${worker}: name mismatch. Folder: "${worker}", wrangler name: "${configuredName}"`);
+        failed = true;
+    } else {
+        console.log(`✅ ${worker} name matches`);
+    }
+  } catch (e) {
+      console.error(`❌ ${worker}: Error reading wrangler.toml`);
+      failed = true;
+  }
+}
+
+// 2. Scan for other workers to ensure consistency
+const allApps = readdirSync(APPS_DIR, { withFileTypes: true });
+for (const entry of allApps) {
+    if (!entry.isDirectory()) continue;
+    const dirName = entry.name;
+    const wranglerPath = join(APPS_DIR, dirName, "wrangler.toml");
+
+    if (existsSync(wranglerPath)) {
+        // We already checked canonicals.
+        if (CANONICAL_WORKERS.has(dirName)) continue;
+
+        try {
+            const content = readFileSync(wranglerPath, "utf8");
+            const match = content.match(/^\s*name\s*=\s*["']([^"']+)["']/m);
+            if (match) {
+                const configuredName = match[1]?.trim();
+                if (configuredName !== dirName) {
+                     console.error(`❌ Non-canonical worker ${dirName}: name mismatch. Folder: "${dirName}", wrangler name: "${configuredName}"`);
+                     failed = true;
+                }
+            }
+        } catch (e) {}
+    }
+}
+
+if (failed) {
+  console.error("Worker naming validation failed.");
+  process.exit(1);
+} else {
+  console.log("Worker naming validation passed.");
+}
+
+export function validateWorkerNames() {
+    return failed ? ["Validation failed"] : [];
+}

@@ -1,129 +1,82 @@
-import { existsSync, readdirSync, statSync } from "node:fs";
-import path from "node:path";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { join, resolve, basename, sep } from "node:path";
 
-const APPS_DIR = path.resolve(process.cwd(), "apps");
+const ROOT = process.cwd();
+const APPS_DIR = resolve(ROOT, "apps");
+// Workers that MUST exist and have the standard structure
+const CANONICAL_WORKERS = new Set(["gs-agent", "gs-api", "gs-control", "gs-gateway", "gs-mail"]);
+// Files required in a canonical worker
 const REQUIRED_FILES = ["wrangler.toml", "package.json", "tsconfig.json", "src/index.ts"];
-
-function findWorkerDirectories(): string[] {
-  return readdirSync(APPS_DIR)
-    .map((entry) => path.join(APPS_DIR, entry))
-    .filter((fullPath) => statSync(fullPath).isDirectory())
-    .filter((fullPath) => existsSync(path.join(fullPath, "wrangler.toml")))
-    .filter((fullPath) => !fullPath.includes(`${path.sep}legacy${path.sep}`));
-}
-
-export function validateWorkerStructure(): string[] {
-  const failures: string[] = [];
-
-  for (const workerDir of findWorkerDirectories()) {
-    const missingFiles = REQUIRED_FILES.filter((file) => !existsSync(path.join(workerDir, file)));
-
-    if (missingFiles.length > 0) {
-      const folderName = path.basename(workerDir);
-      failures.push(`${folderName}: missing required file(s): ${missingFiles.join(", ")}`);
-    }
-  }
-
-  return failures;
-}
-
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const failures = validateWorkerStructure();
-
-  if (failures.length > 0) {
-    console.error("Worker structure validation failed:\n");
-    for (const failure of failures) {
-      console.error(`- ${failure}`);
-    }
-    process.exit(1);
-  }
-
-  console.log("Worker structure validation passed.");
-}
-import { existsSync, readdirSync } from "node:fs";
-import { join } from "node:path";
-
-const CANONICAL_WORKERS = ["gs-agent", "gs-api", "gs-control", "gs-gateway", "gs-mail"];
-const APPS_DIR = "apps";
 
 let failed = false;
 
 if (!existsSync(APPS_DIR)) {
-  console.error("apps directory not found");
+  console.error("❌ apps directory not found");
   process.exit(1);
 }
 
+// 1. Check Canonical Workers Structure
+console.log("Validating canonical worker structure...");
 for (const worker of CANONICAL_WORKERS) {
   const workerDir = join(APPS_DIR, worker);
-  const wranglerPath = join(workerDir, "wrangler.toml");
 
   if (!existsSync(workerDir)) {
+    console.error(`❌ Missing canonical worker directory: apps/${worker}`);
     failed = true;
-    console.error(`Missing canonical worker directory: ${workerDir}`);
     continue;
   }
 
-  if (!existsSync(wranglerPath)) {
-    failed = true;
-    console.error(`Missing wrangler.toml: ${wranglerPath}`);
-    continue;
+  // Check required files
+  for (const file of REQUIRED_FILES) {
+    if (!existsSync(join(workerDir, file))) {
+        console.error(`❌ ${worker}: missing required file: ${file}`);
+        failed = true;
+    }
   }
 
-  console.log(`✅ ${workerDir} contains wrangler.toml`);
+  // Check wrangler name match (basic check)
+  const wranglerPath = join(workerDir, "wrangler.toml");
+  if (existsSync(wranglerPath)) {
+      try {
+        const content = readFileSync(wranglerPath, "utf-8");
+        const match = content.match(/name\s*=\s*["'](.+?)["']/);
+        const wgName = match ? match[1] : null;
+        if (wgName !== worker) {
+            console.error(`❌ ${worker}: wrangler.toml name mismatch. Found "${wgName}", expected "${worker}"`);
+            failed = true;
+        }
+      } catch (e) {
+          console.error(`❌ ${worker}: Error reading wrangler.toml`);
+          failed = true;
+      }
+  }
 }
 
-const appsDirs = readdirSync(APPS_DIR, { withFileTypes: true })
-  .filter((entry) => entry.isDirectory() && entry.name.startsWith("gs-"))
-  .map((entry) => entry.name)
-  .sort();
+// 2. Check for Unexpected Workers
+console.log("Checking for unexpected workers...");
+const appsEntries = readdirSync(APPS_DIR, { withFileTypes: true });
+for (const entry of appsEntries) {
+    if (!entry.isDirectory()) continue;
+    const dirName = entry.name;
+    const fullPath = join(APPS_DIR, dirName);
 
-const unexpectedWorkers = appsDirs.filter(
-  (dir) => existsSync(join(APPS_DIR, dir, "wrangler.toml")) && !CANONICAL_WORKERS.includes(dir),
-);
-
-if (unexpectedWorkers.length > 0) {
-  failed = true;
-  console.error(
-    `Unexpected worker directories with wrangler.toml: ${unexpectedWorkers.map((dir) => `apps/${dir}`).join(", ")}`,
-  );
+    // If it has a wrangler.toml, it's a worker.
+    if (existsSync(join(fullPath, "wrangler.toml"))) {
+        if (!CANONICAL_WORKERS.has(dirName)) {
+            console.error(`❌ Unexpected worker detected: apps/${dirName}`);
+            failed = true;
+        }
+    }
 }
 
 if (failed) {
+  console.error("Worker structure validation failed.");
   process.exit(1);
+} else {
+  console.log("Worker structure validation passed.");
 }
 
-console.log("All canonical worker structure checks passed.");
-import { readdirSync, existsSync, readFileSync } from "fs";
-import { join } from "path";
-
-const WORKERS = new Set(["gs-api","gs-control","gs-gateway","gs-agent","gs-mail"]);
-let failed = false;
-
-const appsDir = "apps";
-
-if (!existsSync(appsDir)) {
-  console.error("apps directory missing");
-  process.exit(1);
+// Export for compatibility if needed
+export function validateWorkerStructure() {
+    return failed ? ["Validation failed"] : [];
 }
-
-for (const app of readdirSync(appsDir)) {
-  if (!WORKERS.has(app)) continue;
-
-  const path = join(appsDir, app, "wrangler.toml");
-  if (!existsSync(path)) {
-    failed = true;
-    console.error(`Missing wrangler.toml in ${app}`);
-  } else {
-    const content = readFileSync(path, "utf-8");
-    const match = content.match(/name\s*=\s*["'](.+?)["']/);
-    const wgName = match ? match[1] : null;
-
-    if (wgName !== app) {
-      failed = true;
-      console.error(`Worker name mismatch: ${app} vs ${wgName}`);
-    }
-  }
-}
-
-if (failed) process.exit(1);
-else console.log("Worker structure validation passed.");
