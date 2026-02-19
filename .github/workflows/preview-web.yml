@@ -52,8 +52,6 @@ jobs:
 
       - name: Build web app (preview)
         working-directory: apps/gs-web
-      - name: Build web app (preview)
-        working-directory: apps/web
         env:
           PUBLIC_API: https://api-preview.goldshore.ai
           PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
