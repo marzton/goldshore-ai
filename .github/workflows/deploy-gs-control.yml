@@ -1,4 +1,4 @@
-name: Deploy Control Worker (ops.goldshore.ai)
+name: Deploy GS Control Worker (ops.goldshore.ai)
 
 permissions:
   contents: read
