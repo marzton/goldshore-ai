@@ -1,59 +1,39 @@
 ---
-const { title = 'Shaping Waves with Applied Intelligence' } = Astro.props;
+import Logo from '../brand/Logo.astro';
 ---
 
-<section class="gs-cinematic-hero" aria-label="Hero">
-  <div class="gs-hero-bg" aria-hidden="true">
-    <canvas class="gs-stars" data-stars></canvas>
-    <canvas class="gs-shooting" data-shooting></canvas>
-    <div class="gs-hero-grid"></div>
-    <div class="gs-vignette"></div>
+<section class="hero" aria-label="Gold Shore hero">
+  <div class="hero-bg" aria-hidden="true">
+    <canvas id="gs-starfield" class="hero-canvas"></canvas>
+    <canvas id="gs-shootingstars" class="hero-canvas"></canvas>
+    <div class="hero-vignette"></div>
   </div>
 
-  <div class="gs-hero-inner">
-    <div class="gs-hero-left">
-      <div class="gs-pill"><span class="dot"></span> SYSTEM OPERATIONAL</div>
-      <h1>{title}</h1>
-      <p class="sub">
-        GoldShore isn’t just code. It’s a provable experience. We build resilient, cinematic systems where automation meets art.
-      </p>
-
-      <div class="actions">
-        <a class="btn primary" href="/services">Start the Experience</a>
-        <a class="btn ghost" href="/contact">Contact Sales</a>
-      </div>
+  <div class="hero-content">
+    <div class="hero-mark">
+      <Logo />
     </div>
 
-    <div class="gs-hero-right">
-      <div class="gs-panel">
-        <div class="gs-panel-top">
-          <div class="gs-lights"><span></span><span></span><span></span></div>
-          <div class="gs-panel-title">GoldShore Agent</div>
-        </div>
-        <div class="gs-panel-body">
-          <div class="gs-kv">
-            <div><span>STATUS</span><b class="ok">ACTIVE</b></div>
-            <div><span>MODE</span><b class="mode">VIBE_CODING</b></div>
-          </div>
-          <div class="gs-bars" aria-hidden="true">
-            <i></i><i></i><i></i><i></i><i></i>
-          </div>
-          <div class="gs-terminal" aria-hidden="true">
-            <div>&gt; Initializing cinematic protocols…</div>
-            <div>&gt; Optimizing user experience…</div>
-            <div>&gt; Done.</div>
-          </div>
-        </div>
-      </div>
+    <h1 class="hero-title">Gold Shore</h1>
+    <p class="hero-subtitle">Designed not to manage capital, but to steer it.</p>
+
+    <div class="hero-actions">
+      <a class="btn primary" href="/intake">Start</a>
+      <a class="btn ghost" href="/developer">Developer</a>
     </div>
   </div>
+</section>
 
-  <script>
-    import { mountStarfield } from './StarfieldCanvas';
-    import { mountShootingStars } from './ShootingStarsCanvas';
+<script>
+  import { mountHero } from './mountHero';
 
-    const root = document.currentScript?.closest('.gs-cinematic-hero');
-    if (root) {
+    const heroes = document.querySelectorAll('.gs-cinematic-hero');
+
+    for (const root of heroes) {
+      if (!(root instanceof HTMLElement) || root.dataset.heroInitialized === 'true') continue;
+
+      root.dataset.heroInitialized = 'true';
+
       const stars = root.querySelector('[data-stars]');
       const shooting = root.querySelector('[data-shooting]');
       if (stars instanceof HTMLCanvasElement) mountStarfield(stars);
