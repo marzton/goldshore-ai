@@ -64,6 +64,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout triggering ref
       - name: Checkout triggering revision
         run: |
           git init .
