@@ -1,5 +1,7 @@
 ---
 const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
+import logo from "../../assets/logo.svg";
+const logoSrc = logo.src;
 ---
 
 <section class="gs-hero" aria-label="Hero">
@@ -13,6 +15,9 @@ const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
   <div class="gs-hero-inner">
     <div class="gs-hero-left">
       <div class="gs-pill"><span class="dot"></span> SYSTEM OPERATIONAL</div>
+      <div class="hero-logo-wrapper" style="margin-bottom: 1rem;">
+         <img src={logoSrc} alt="" width="60" height="60" style="opacity: 0.9;" />
+      </div>
       <h1>{title}</h1>
       <p class="sub">
         GoldShore isn’t just code. It’s a provable experience. We build resilient, cinematic systems where automation meets art.
