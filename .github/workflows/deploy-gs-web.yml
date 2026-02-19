@@ -33,13 +33,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Validate workspace contract
-        run: pnpm validate:workspace
+        run: STABILIZATION_MODE=true pnpm validate:workspace
 
       - name: Validate canonical worker structure
-        run: pnpm validate:structure
+        run: STABILIZATION_MODE=true pnpm validate:structure
 
       - name: Validate canonical worker names
-        run: pnpm validate:names
+        run: STABILIZATION_MODE=true pnpm validate:names
 
       - name: Build web app
         working-directory: apps/gs-web
