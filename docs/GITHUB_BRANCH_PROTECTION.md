@@ -23,7 +23,6 @@ Select:
 	•	build
 	•	lint
 	•	test
-	•	naming-lint (active naming gate; equivalent policy role of planned naming-guard)
 
 Deploy checks optional depending on environment.
 

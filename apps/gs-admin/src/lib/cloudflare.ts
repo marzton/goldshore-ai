@@ -18,9 +18,6 @@ export type CloudflareMetrics = {
     cacheHitRate: string;
     threatsBlocked: string;
     dnsChanges: string;
-  };
-};
-
 export function getCloudflareContext(locals: any) {
   return locals.runtime?.env || process.env;
 }

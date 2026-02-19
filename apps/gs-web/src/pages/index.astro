@@ -1,4 +1,13 @@
 ---
+import '@goldshore/theme/styles/tokens.css';
+import Scaffold from "@goldshore/config/scaffold";
+export const prerender = true;
+---
+<Scaffold />
+import HomePage from '@goldshore/config/scaffold';
+---
+
+<HomePage />
 import '@goldshore/theme/tokens';
 import { GSButton } from '@goldshore/ui';
 import MarketingLayout from '../layouts/MarketingLayout.astro';
