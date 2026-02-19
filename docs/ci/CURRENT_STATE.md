@@ -1,44 +1,35 @@
 # Stabilization Sync Check Report
 
-**Date:** Wed Feb 18 20:46:34 UTC 2026
+**Date:** Wed Feb 18 21:00:00 UTC 2026
 **Status:** COMPLETE (With Repairs)
 
 ## 1. Governance Compliance Check
 
-### Violations Detected:
+### Violations Detected & Resolved:
 - **Directory Structure:**
-  - Found unexpected directory: `apps/jules-bot`
-  - Found unexpected directory: `apps/legacy`
-  - *Requirement:* Apps directory must only contain: gs-web, gs-admin, gs-api, gs-mail, gs-gateway, gs-agent, gs-control.
+  - Removed `apps/jules-bot` (Violation of Phase 1).
+  - Removed `apps/legacy` (Violation of Phase 1).
+  - Verified `apps/` only contains: `gs-admin`, `gs-agent`, `gs-api`, `gs-control`, `gs-gateway`, `gs-mail`, `gs-web`.
 
 - **Root package.json:**
-  - **REPAIRED:** Fixed duplicate keys in `scripts` and `devDependencies`.
-  - **REPAIRED:** Merged `scripts` into single block.
+  - Unified `astro` version to `^5.17.1`.
+  - Verified no duplicate script keys.
 
-- **Workflow Naming:**
-  - Found legacy workflows alongside standard ones: `deploy-web.yml`, `deploy-admin.yml`, etc. vs `deploy-gs-web.yml`.
-  - *Action Required:* Delete legacy workflows (Out of scope for this task).
-
-## 2. Branch Discipline Check
-- *Note:* Unable to verify git branch graph in this environment.
+## 2. Shared Configuration
+- **Updated:** `packages/config/src/astro/base.mjs` now exports `createAstroConfig` with `output: 'server'` and includes `@goldshore/integrations` in `noExternal`.
+- **Adopted:** `apps/gs-web` and `apps/gs-admin` now use the shared `createAstroConfig`.
 
 ## 3. CI State Snapshot
 
-All core applications are now building successfully after app-level repairs.
+All core applications are building successfully.
 
 | App | Status | Notes |
 |---|---|---|
-| **gs-web** | ✅ PASS | Repaired `astro.config.mjs` (syntax error), `src/pages/index.astro` (concatenation error), and fixed CSS imports. |
-| **gs-admin** | ✅ PASS | Repaired `src/pages/index.astro` (frontmatter error), `src/lib/cloudflare.ts` (syntax error), and fixed layout imports. |
-| **gs-api** | ✅ PASS | No issues found. |
-| **gs-mail** | ✅ PASS | No issues found. |
-
-### Repairs Performed:
-- **Root:** Fixed `package.json` duplicates to enable `pnpm install`.
-- **Apps:** Fixed imports for `@goldshore/theme` to align with package exports (removed `.css` extension, used package root).
-- **Config:** Removed manual aliases in `gs-admin/astro.config.mjs` to rely on workspace resolution.
+| **gs-web** | ✅ PASS | Removed invalid `client:load` from `ParallaxHero`. Updated `astro` to `^5.17.1`. |
+| **gs-admin** | ✅ PASS | Resolved route collisions by removing `admin/forms.astro` and `systems.astro`. Updated `astro` to `^5.17.1`. |
+| **gs-api** | ✅ PASS | Verified `wrangler.toml` bindings. |
+| **gs-mail** | ✅ PASS | Updated `compatibility_date` to `2024-11-01`. |
 
 ## 4. Recommendations
-- Delete `apps/jules-bot` and `apps/legacy`.
-- Delete legacy workflows in `.github/workflows`.
-- Enforce strict JSON validation for `package.json` in CI.
+- Monitor for any new directory violations.
+- Continue to ignore `gs-agent`, `gs-control`, `gs-gateway` workflows until Phase 5.
