@@ -15,7 +15,8 @@ const navLinks = [
 ];
 
 const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.url.pathname } = Astro.props;
-const logoSrc = '/logo.svg';
+import logo from "../assets/logo.svg";
+const logoSrc = logo.src;
 ---
 <html lang="en">
   <head>
