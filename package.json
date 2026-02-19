@@ -15,6 +15,7 @@
     "validate:structure": "tsx scripts/validate-worker-structure.ts",
     "validate:names": "tsx scripts/validate-worker-names.ts",
     "validate:workspace": "tsx scripts/validate-workspace-contract.ts",
+    "validate:safe": "node scripts/run-validate-safe.mjs",
     "validate": "pnpm check:naming && pnpm validate:workspace && pnpm validate:structure && pnpm validate:names",
     "branch:bootstrap": "bash scripts/branch-bootstrap.sh",
     "scaffold:worker": "node scripts/scaffold-worker.mjs",
