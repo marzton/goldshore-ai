@@ -1,4 +1,4 @@
-name: Preview Agent Worker (gs-agent)
+name: Preview GS Agent Worker (gs-agent)
 
 permissions:
   contents: read
@@ -34,7 +34,6 @@ jobs:
           run_install: false
 
       - uses: actions/setup-node@v6
-      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
@@ -51,12 +50,9 @@ jobs:
       - name: Validate canonical worker names
         run: pnpm validate:names
 
-      - name: Deploy agent worker (preview)
+      - name: Deploy GS agent worker (preview)
         working-directory: apps/gs-agent
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: pnpm exec wrangler deploy --env preview --config wrangler.toml
-        run: pnpm exec wrangler deploy --env preview --config ../../infra/cloudflare/gs-agent.wrangler.toml
-
-# // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43

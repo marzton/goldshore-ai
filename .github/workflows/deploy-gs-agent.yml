@@ -1,4 +1,4 @@
-name: Deploy Agent Worker (gs-agent)
+name: Deploy GS Agent Worker (gs-agent)
 
 permissions:
   contents: read
