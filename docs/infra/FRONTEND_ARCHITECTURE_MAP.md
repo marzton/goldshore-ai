@@ -1,85 +1,38 @@
-# Frontend Architecture Map
-
-This map reflects the current implementation and build outputs for `apps/gs-web`.
+# FRONTEND_ARCHITECTURE_MAP
 
 ## CSS load order
-
-### Source-level import sequence
-1. `src/pages/index.astro`
-   - Imports `@goldshore/theme/tokens`
-   - Imports local `../styles/home.css`
-2. `src/layouts/WebLayout.astro`
-   - Imports `@goldshore/theme`
-   - Imports `@goldshore/theme/styles/tokens`
-   - Imports `@goldshore/theme/styles/base`
-   - Imports `@goldshore/theme/styles/components`
-   - Imports `@goldshore/theme/styles/layout`
-   - Imports local `../styles/global.css`
-3. `packages/theme/index.css`
-   - `@import './reset.css'`
-   - `@import './src/styles/tokens.css'`
-   - `@import './src/styles/base.css'`
-   - `@import './src/styles/components.css'`
-   - `@import './src/styles/layout.css'`
-
-### Rendered build output
-In `dist/index.html`, stylesheet links are emitted for hashed CSS bundles under `/_astro/`.
-Current build shows:
-- `/_astro/_path_.C5Y_aPFQ.css`
-- `/_astro/index.DaxsQ9bd.css`
-- `/_astro/_path_.PUeE2N-W.css`
+1. `apps/gs-web/src/layouts/WebLayout.astro`
+   - `import '@goldshore/theme/styles/global.css';`
+   - `import '../styles/global.css';`
+2. `apps/gs-web/src/styles/global.css`
+   - imports local `./gs-effects.css`
+   - defines app-level root/body typography smoothing
+3. Route-level styles (example): `apps/gs-web/src/pages/index.astro` imports `../styles/home.css`
 
 ## Layout chain
-
-Current homepage layout chain:
-
-`src/pages/index.astro` -> `src/layouts/MarketingLayout.astro` -> `src/layouts/WebLayout.astro`
-
-- `index.astro` renders `<MarketingLayout ...>`.
-- `MarketingLayout.astro` is a pass-through wrapper that renders `<WebLayout ...><slot /></WebLayout>`.
-- `WebLayout.astro` owns `<html>`, `<head>`, primary nav, page shell, and footer.
+- `apps/gs-web/src/pages/index.astro`
+  -> `apps/gs-web/src/layouts/MarketingLayout.astro`
+  -> `apps/gs-web/src/layouts/WebLayout.astro`
 
 ## Asset import pattern
-
-### Pattern in source
-- Static assets are imported as modules in Astro components/layouts (example: `import logo from '../assets/logo.svg'` in `WebLayout.astro`).
-- Components then use `logo.src` to output the resolved URL.
-
-### Pattern in build output
-- Astro emits hashed asset filenames in `dist/_astro/` for cache-busted references in HTML.
-- Non-hashed copies may also appear under `dist/assets/`.
-- Example from current build:
-  - `dist/_astro/logo.BiM2Pwt_.svg`
-  - `dist/assets/logo.svg`
+- Logos and compiled static assets should use Astro/Vite imports:
+  - `import logo from '../assets/logo.svg';`
+  - `<img src={logo.src} ... />`
+- Build emits hashed assets to `dist/_astro/` and rewrites references in HTML.
 
 ## Hero mount lifecycle
-
-### Intended lifecycle module
-`src/components/hero/mountHero.ts` exports `mountHero()` which:
-1. Locates `#gs-starfield` and `#gs-shootingstars` canvases.
-2. Fits canvases to DPR-aware dimensions.
-3. Starts RAF render loops via `drawStars`.
-4. Subscribes to `window.resize` and returns an unmount function that cancels RAF loops and removes listeners.
-
-### Current component wiring
-`src/components/hero/ParallaxHero.astro`:
-- Renders the hero section and both canvas nodes.
-- Imports `mountHero` in inline script.
-- Currently does not call `mountHero()`.
-- Uses alternate logic scanning `.gs-cinematic-hero` and references `mountStarfield` / `mountShootingStars` symbols that are not defined in this file.
-
-Result: lifecycle module exists but is not the active mount path in current rendered behavior.
+- Component: `apps/gs-web/src/components/hero/ParallaxHero.astro`
+  - Marks root with `data-hero-root`
+  - Uses scoped canvases (`data-stars`, `data-shooting`)
+  - Runs one client script block to initialize each hero root once
+- Runtime mount module: `apps/gs-web/src/components/hero/mountHero.ts`
+  - Accepts a root node
+  - Mounts starfield and shooting-stars canvases from scoped selectors
+  - Returns teardown callback
 
 ## Bundle output structure
-
-Current build output structure includes:
-- `dist/index.html`
-- `dist/_astro/*.css`
-- `dist/_astro/*.js`
-
-Observed files from latest local build include:
-- `dist/index.html`
-- `dist/_astro/index.DaxsQ9bd.css`
-- `dist/_astro/_path_.C5Y_aPFQ.css`
-- `dist/_astro/_path_.PUeE2N-W.css`
-- `dist/_astro/page.D1uwR3nK.js`
+After `pnpm --filter @goldshore/gs-web build`:
+- `apps/gs-web/dist/index.html`
+- `apps/gs-web/dist/_astro/*.css`
+- `apps/gs-web/dist/_astro/*.js`
+- `index.html` contains hashed `/_astro/...` stylesheet and module script references.
