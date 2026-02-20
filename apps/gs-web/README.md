@@ -104,10 +104,17 @@ The live web deployment (`gs-web`) already includes GoldShore theme styling beca
 From repo root, deploy the current web build to Cloudflare Pages production:
 
 ```bash
-pnpm deploy:web:live
+pnpm --filter @goldshore/gs-web build
 ```
 
-This builds `@goldshore/web` and deploys `apps/gs-web/dist` to the `gs-web` Pages project on `main`.
+This builds `@goldshore/gs-web` and produces `apps/gs-web/dist` for deployment to the `gs-web` Pages project on `main`.
+
+Cloudflare Pages settings for monorepo correctness:
+- **Root directory:** `apps/gs-web`
+- **Build command:** `pnpm build`
+- **Output directory:** `dist`
+
+If root is left at repository root, Pages looks for `/dist` and fails with `Output directory "dist" not found`.
 
 ## Deploy
 
@@ -214,10 +221,17 @@ The live web deployment (`gs-web`) already includes GoldShore theme styling beca
 From repo root, deploy the current web build to Cloudflare Pages production:
 
 ```bash
-pnpm deploy:web:live
+pnpm --filter @goldshore/gs-web build
 ```
 
-This builds `@goldshore/web` and deploys `apps/gs-web/dist` to the `gs-web` Pages project on `main`.
+This builds `@goldshore/gs-web` and produces `apps/gs-web/dist` for deployment to the `gs-web` Pages project on `main`.
+
+Cloudflare Pages settings for monorepo correctness:
+- **Root directory:** `apps/gs-web`
+- **Build command:** `pnpm build`
+- **Output directory:** `dist`
+
+If root is left at repository root, Pages looks for `/dist` and fails with `Output directory "dist" not found`.
 
 ## Deploy
 

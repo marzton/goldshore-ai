@@ -1,12 +1,17 @@
-name: Deploy GS Web (goldshore.ai)
+name: Preview GS Web (goldshore.ai)
 
 permissions:
   contents: read
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+      - ready_for_review
     paths:
       - "apps/gs-web/**"
       - "packages/**"
@@ -14,8 +19,11 @@ on:
       - "pnpm-lock.yaml"
 
 jobs:
-  deploy-web:
+  preview-web:
     runs-on: ubuntu-latest
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'preview') ||
+      (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
 
     steps:
       - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
@@ -41,15 +49,18 @@ jobs:
       - name: Validate canonical worker names
         run: pnpm validate:names
 
-      - name: Build web app
+      - name: Build GS web app (preview)
         working-directory: apps/gs-web
+        env:
+          PUBLIC_API: https://api-preview.goldshore.ai
+          PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
         run: pnpm build
 
-      - name: Deploy to Cloudflare Pages (production)
+      - name: Deploy to Cloudflare Pages (preview)
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: gs-web
+          projectName: preview-web
           directory: apps/gs-web/dist
-          branch: main
+          branch: ${{ github.head_ref || github.ref_name }}

@@ -1,9 +1,8 @@
 ---
-import '@goldshore/theme/styles/tokens';
-import '@goldshore/theme/styles/base';
-import '@goldshore/theme/styles/components';
-import '@goldshore/theme/styles/layout';
+import '@goldshore/theme/styles/global.css';
+import '../styles/global.css';
 import { GSButton } from '@goldshore/ui';
+import logo from '../assets/logo.svg';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -15,7 +14,7 @@ const navLinks = [
 ];
 
 const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.url.pathname } = Astro.props;
-const logoSrc = '/logo.svg';
+const logoSrc = logo.src;
 ---
 <html lang="en">
   <head>
@@ -24,12 +23,13 @@ const logoSrc = '/logo.svg';
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';" />
-    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <!-- Bolt: Preconnect to external origins to speed up resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://unpkg.com" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
     <link rel="stylesheet" href="https://unpkg.com/aria-icons@1.0.0/aria-icons.css" />
   </head>
   <body>
