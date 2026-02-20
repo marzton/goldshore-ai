@@ -28,12 +28,10 @@ export default defineConfig({
       ]
     },
     resolve: {
-      alias: {
-        '@packages': new URL('../../packages', import.meta.url).pathname,
-        '@apps': new URL('../../apps', import.meta.url).pathname,
-        '@goldshore/theme': path.resolve(__dirname, '../../packages/theme'),
-        '@goldshore/ui': path.resolve(__dirname, '../../packages/ui'),
-      }
+      // alias: {
+      //   '@goldshore/theme': path.resolve(__dirname, '../../packages/theme/src'),
+      //   '@goldshore/ui': path.resolve(__dirname, '../../packages/ui/src'),
+      // }
     }
   }
 });

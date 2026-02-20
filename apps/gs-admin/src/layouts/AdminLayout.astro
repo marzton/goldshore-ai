@@ -1,10 +1,7 @@
 ---
 import Sidebar from '../components/Sidebar.astro';
 import Topbar from '../components/Topbar.astro';
-import '@goldshore/theme/styles/tokens.css';
-import '@goldshore/theme/styles/base.css';
-import '@goldshore/theme/styles/components.css';
-import '@goldshore/theme/styles/layout.css';
+import '@goldshore/theme/styles/global.css';
 import type { AdminPermission, AdminRole } from '@goldshore/auth';
 
 interface Props {
@@ -34,7 +31,7 @@ const isAuthorized = isRoleAllowed && isPermissionAllowed;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script>
-      import { initTheme } from '@goldshore/theme/src/theme-manager';
+      import { initTheme } from '@goldshore/theme/manager';
       initTheme();
     </script>
     <script>
