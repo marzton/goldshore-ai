@@ -1,4 +1,4 @@
-name: Preview Agent Worker (gs-agent)
+name: Preview GS Agent Worker (gs-agent)
 
 permissions:
   contents: read
@@ -41,15 +41,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run validator suite (stabilization-safe)
-        # TODO(stabilization): remove wrapper bypass support after validator duplicate-symbol fixes are merged.
-        run: pnpm validate:safe
+      - name: Validate workspace contract
+        run: pnpm validate:workspace
 
-      - name: Deploy agent worker (preview)
+      - name: Validate canonical worker structure
+        run: pnpm validate:structure
+
+      - name: Validate canonical worker names
+        run: pnpm validate:names
+
+      - name: Deploy GS agent worker (preview)
         working-directory: apps/gs-agent
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: pnpm exec wrangler deploy --env preview --config wrangler.toml
+        run: pnpm exec wrangler deploy --env preview --config ../../infra/cloudflare/gs-agent.wrangler.toml
 
 # // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43

@@ -1,4 +1,4 @@
-name: Preview Web (goldshore.ai)
+name: Preview GS Admin (admin.goldshore.ai)
 
 permissions:
   contents: read
@@ -13,13 +13,13 @@ on:
       - unlabeled
       - ready_for_review
     paths:
-      - "apps/gs-web/**"
+      - "apps/gs-admin/**"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
 
 jobs:
-  preview-web:
+  preview-admin:
     runs-on: ubuntu-latest
     if: |
       contains(github.event.pull_request.labels.*.name, 'preview') ||
@@ -40,12 +40,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run validator suite (stabilization-safe)
-        # TODO(stabilization): remove wrapper bypass support after validator duplicate-symbol fixes are merged.
-        run: pnpm validate:safe
+      - name: Validate workspace contract
+        run: pnpm validate:workspace
 
-      - name: Build web app (preview)
-        working-directory: apps/gs-web
+      - name: Validate canonical worker structure
+        run: pnpm validate:structure
+
+      - name: Validate canonical worker names
+        run: pnpm validate:names
+
+      - name: Build GS admin cockpit (preview)
+        working-directory: apps/gs-admin
         env:
           PUBLIC_API: https://api-preview.goldshore.ai
           PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
@@ -56,6 +61,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: preview-web
-          directory: apps/gs-web/dist
+          projectName: preview-admin
+          directory: apps/gs-admin/dist
           branch: ${{ github.head_ref || github.ref_name }}
