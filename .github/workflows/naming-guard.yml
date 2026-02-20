@@ -2,6 +2,8 @@ name: Naming Guard
 
 on:
   pull_request:
+    paths-ignore:
+      - 'docs/**'
   push:
     branches:
       - main

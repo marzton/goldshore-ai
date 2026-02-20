@@ -2,6 +2,8 @@ name: Lockfile Guard
 
 on:
   pull_request:
+    paths-ignore:
+      - 'docs/**'
 
 jobs:
   prevent-lockfile-changes:
