@@ -1,4 +1,4 @@
-name: Deploy Web (goldshore.ai)
+name: Deploy GS Web (goldshore.ai)
 
 permissions:
   contents: read

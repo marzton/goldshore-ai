@@ -1,4 +1,4 @@
-name: Deploy Admin (admin.goldshore.ai)
+name: Deploy GS Admin (admin.goldshore.ai)
 
 permissions:
   contents: read
