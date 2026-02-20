@@ -27,17 +27,5 @@ import Logo from '../brand/Logo.astro';
 <script>
   import { mountHero } from './mountHero';
 
-    const heroes = document.querySelectorAll('.gs-cinematic-hero');
-
-    for (const root of heroes) {
-      if (!(root instanceof HTMLElement) || root.dataset.heroInitialized === 'true') continue;
-
-      root.dataset.heroInitialized = 'true';
-
-      const stars = root.querySelector('[data-stars]');
-      const shooting = root.querySelector('[data-shooting]');
-      if (stars instanceof HTMLCanvasElement) mountStarfield(stars);
-      if (shooting instanceof HTMLCanvasElement) mountShootingStars(shooting);
-    }
-  </script>
-</section>
+  mountHero();
+</script>
