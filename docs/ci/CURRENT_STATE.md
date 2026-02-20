@@ -1,35 +1,35 @@
 # Stabilization Sync Check Report
 
-**Date:** Wed Feb 18 21:00:00 UTC 2026
-**Status:** COMPLETE (With Repairs)
+**Date:** Thu, 19 Feb 2026 21:15:18 GMT
 
 ## 1. Governance Compliance Check
 
-### Violations Detected & Resolved:
-- **Directory Structure:**
-  - Removed `apps/jules-bot` (Violation of Phase 1).
-  - Removed `apps/legacy` (Violation of Phase 1).
-  - Verified `apps/` only contains: `gs-admin`, `gs-agent`, `gs-api`, `gs-control`, `gs-gateway`, `gs-mail`, `gs-web`.
+### ❌ App Structure Violation:
+- Forbidden directories detected in apps/: jules-bot, legacy
 
-- **Root package.json:**
-  - Unified `astro` version to `^5.17.1`.
-  - Verified no duplicate script keys.
+✅ Root build scripts compliant.
 
-## 2. Shared Configuration
-- **Updated:** `packages/config/src/astro/base.mjs` now exports `createAstroConfig` with `output: 'server'` and includes `@goldshore/integrations` in `noExternal`.
-- **Adopted:** `apps/gs-web` and `apps/gs-admin` now use the shared `createAstroConfig`.
+✅ Workflow files compliant.
+
+## 2. Branch Discipline Check
+
+**Current Branch:** jules-5307612540526694099-1f74168d
+
+**Divergence:** Behind: 0, Ahead: 0
 
 ## 3. CI State Snapshot
 
-All core applications are building successfully.
-
 | App | Status | Notes |
 |---|---|---|
-| **gs-web** | ✅ PASS | Removed invalid `client:load` from `ParallaxHero`. Updated `astro` to `^5.17.1`. |
-| **gs-admin** | ✅ PASS | Resolved route collisions by removing `admin/forms.astro` and `systems.astro`. Updated `astro` to `^5.17.1`. |
-| **gs-api** | ✅ PASS | Verified `wrangler.toml` bindings. |
-| **gs-mail** | ✅ PASS | Updated `compatibility_date` to `2024-11-01`. |
+| **gs-web** | ✅ PASS | |
+| **gs-admin** | ✅ PASS | |
+| **gs-api** | ✅ PASS | |
+| **gs-mail** | ✅ PASS | |
 
 ## 4. Recommendations
-- Monitor for any new directory violations.
-- Continue to ignore `gs-agent`, `gs-control`, `gs-gateway` workflows until Phase 5.
+
+### ❌ Actions Required
+
+- Forbidden directories detected in apps/: jules-bot, legacy
+
+**Do not self-fix. Escalate governance violations.**
