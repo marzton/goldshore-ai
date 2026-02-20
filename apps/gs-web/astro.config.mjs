@@ -1,3 +1,1 @@
-import { createAstroConfig } from '@goldshore/config/astro';
-
-export default createAstroConfig();
+export { default } from '@goldshore/config/astro';

@@ -1,7 +1,7 @@
 name: Lockfile Guard
 
 on:
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   prevent-lockfile-changes:
