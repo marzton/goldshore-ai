@@ -64,8 +64,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout main
-        run: git clone ${{ github.server_url }}/${{ github.repository }} .
+      - name: Checkout triggering revision
+        run: |
+          git init .
+          git remote add origin ${{ github.server_url }}/${{ github.repository }}
+          git fetch --no-tags --depth=1 origin ${{ github.sha }}
+          git checkout --detach FETCH_HEAD
 
       - name: Setup Node
         run: |
