@@ -1,4 +1,4 @@
-name: Deploy Mail Worker (gs-mail)
+name: Deploy GS Mail Worker (gs-mail)
 
 permissions:
   contents: read
