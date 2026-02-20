@@ -10,7 +10,6 @@ on:
       - "packages/**"
       - "infra/**"
       - "public/**"
-      - "docs/**"
       - "scripts/pii-scan.mjs"
       - ".github/workflows/pii-scan.yml"
 
