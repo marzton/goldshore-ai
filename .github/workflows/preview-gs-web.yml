@@ -58,6 +58,9 @@ jobs:
           PUBLIC_COMMIT_HASH: ${{ github.sha }}
         run: pnpm build
 
+      - name: Verify web dist integrity
+        run: pnpm verify:web-dist
+
       - name: Deploy to Cloudflare Pages (preview)
         uses: cloudflare/pages-action@v1
         with:
