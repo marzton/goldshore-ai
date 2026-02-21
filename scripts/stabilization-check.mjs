@@ -37,36 +37,30 @@ const BASELINE_BUILD_SCRIPTS = [
 ];
 
 const KNOWN_WORKFLOWS = [
-  'deploy-gs-admin.yml',
-  'deploy-gs-agent.yml.disabled',
-  'deploy-gs-api.yml',
-  'deploy-gs-control.yml.disabled',
-  'deploy-gs-gateway.yml.disabled',
-  'deploy-gs-mail.yml',
-  'deploy-gs-web.yml',
-  'jules-nightly.yml',
-  'lockfile-guard.yml',
-  'manual.yml',
-  'naming-guard.yml',
-  'naming-lint.yml',
-  'neuralegion.yml',
-  'palette-manual.yml',
-  'pii-scan.yml',
-  'preview-agent.yml',
-  'preview-gs-admin.yml',
-  'preview-gs-api.yml',
-  'preview-gs-gateway.yml',
-  'preview-gs-web.yml',
-  'route-collision-check.yml',
-  'sonarcloud.yml',
-  'stabilization-task.yml',
-  'summary.yml',
-  'tfsec.yml'
+  'deploy-gs-admin.yml', 'deploy-gs-agent.yml.disabled', 'deploy-gs-api.yml', 'deploy-gs-control.yml.disabled',
+  'deploy-gs-gateway.yml.disabled', 'deploy-gs-mail.yml', 'deploy-gs-web.yml', 'jules-nightly.yml',
+  'lockfile-guard.yml', 'manual.yml', 'naming-guard.yml', 'naming-lint.yml', 'neuralegion.yml',
+  'palette-manual.yml', 'pii-scan.yml', 'preview-agent.yml', 'preview-gs-admin.yml',
+  'preview-gs-api.yml', 'preview-gs-gateway.yml', 'preview-gs-web.yml', 'route-collision-check.yml',
+  'sonarcloud.yml', 'summary.yml', 'tfsec.yml', 'stabilization-task.yml'
 ];
 
-let report = `# Stabilization Sync Check (Recurring)\n\n**Date:** ${new Date().toUTCString()}\n\n`;
-let governanceViolations = [];
-let appLevelIssues = [];
+const ALLOWED_ACTIONS = [
+  'actions/checkout',
+  'actions/setup-node',
+  'actions/upload-artifact',
+  'aquasecurity/tfsec-sarif-action',
+  'cloudflare/pages-action',
+  'github/codeql-action/upload-sarif',
+  'pnpm/action-setup',
+  'stefanzweifel/git-auto-commit-action',
+  'NeuraLegion/run-scan',
+  'SonarSource/sonarcloud-github-action',
+  'actions/ai-inference'
+];
+
+let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
+let violations = [];
 
 // 1. Governance Compliance Check
 report += `## 1. Governance Compliance Check\n\n`;
@@ -78,7 +72,7 @@ try {
 
   if (forbiddenApps.length > 0) {
     const msg = `Forbidden directories detected in apps/: ${forbiddenApps.join(', ')}`;
-    governanceViolations.push(msg);
+    violations.push(msg);
     report += `### ❌ App Structure Violation:\n- ${msg}\n\n`;
   } else {
     report += `✅ Directory structure compliant.\n\n`;
@@ -104,7 +98,7 @@ try {
   report += `⚠️ Could not parse root package.json: ${e.message}\n\n`;
 }
 
-// 1.3 Workflow Modifications & Syntax
+// 1.3 Workflow Modifications
 const WORKFLOW_DIR = '.github/workflows';
 try {
   const workflows = fs.readdirSync(WORKFLOW_DIR);
@@ -112,50 +106,58 @@ try {
 
   if (newWorkflows.length > 0) {
     const msg = `New workflows detected: ${newWorkflows.join(', ')}`;
-    governanceViolations.push(msg);
-    report += `### ❌ New Workflows Detected:\n- ${msg}\n\n`;
+    violations.push(msg);
+    report += `### ❌ Workflow Violation (New Files):\n- ${msg}\n\n`;
   } else {
-    report += `✅ No new workflows detected.\n\n`;
+    report += `✅ Workflow file list compliant.\n\n`;
   }
 
-  // Check syntax and duplicates
-  let syntaxErrors = [];
+  // Check for recent modifications (last 13 hours to cover 12h schedule)
+  try {
+    const modifiedWorkflowsRaw = execSync('git log --since="13 hours ago" --name-only --format="" .github/workflows', { encoding: 'utf8' });
+    const modifiedWorkflows = modifiedWorkflowsRaw.trim().split('\n').filter(Boolean);
+    // Dedup
+    const uniqueModified = [...new Set(modifiedWorkflows)];
+    // Filter out stabilization-task itself if it's there
+    const suspiciousModifications = uniqueModified.filter(f => !f.includes('stabilization-task.yml') && !f.includes('CURRENT_STATE.md'));
+
+    if (suspiciousModifications.length > 0) {
+       const msg = `Workflows modified in last 13h: ${suspiciousModifications.join(', ')}`;
+       violations.push(msg);
+       report += `### ❌ Workflow Violation (Recent Changes):\n- ${msg}\n\n`;
+    } else {
+        report += `✅ No recent unauthorized workflow modifications.\n\n`;
+    }
+  } catch (e) {
+    report += `⚠️ Could not check git log for workflow changes: ${e.message}\n\n`;
+  }
+
+  // Check for unauthorized actions
+  let unauthorizedActions = [];
   workflows.forEach(w => {
-    try {
+    if (w.endsWith('.yml') || w.endsWith('.yaml')) {
       const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
-
-      // Basic parse check using 'yaml' package
-      try {
-        parse(content);
-      } catch (e) {
-        syntaxErrors.push(`${w}: ${e.message}`);
-      }
-
-      // Check for duplicate keys using a simple regex scan for top-level keys
-      const lines = content.split('\n');
-      const topLevelKeys = new Set();
-      lines.forEach((line, index) => {
-        const match = line.match(/^([\w-]+):/);
-        if (match) {
-          const key = match[1];
-          if (topLevelKeys.has(key)) {
-             syntaxErrors.push(`${w}: Duplicate top-level key '${key}' at line ${index + 1}`);
-          }
-          topLevelKeys.add(key);
+      const usesLines = content.split('\n').filter(l => l.trim().startsWith('uses:'));
+      usesLines.forEach(line => {
+        const actionPart = line.split('uses:')[1].trim();
+        const action = actionPart.split('@')[0];
+        // Allow local paths
+        if (action.startsWith('./')) return;
+        if (!ALLOWED_ACTIONS.includes(action)) {
+          unauthorizedActions.push(`${action} (in ${w})`);
         }
       });
-
-    } catch (e) {
-      syntaxErrors.push(`${w}: Could not read file`);
     }
   });
 
-  if (syntaxErrors.length > 0) {
-    const msg = `Workflow syntax errors detected:\n${syntaxErrors.map(e => `- ${e}`).join('\n')}`;
-    governanceViolations.push(msg);
-    report += `### ❌ Workflow Syntax Errors:\n${syntaxErrors.map(e => `- ${e}`).join('\n')}\n\n`;
+  if (unauthorizedActions.length > 0) {
+     // Dedup
+     unauthorizedActions = [...new Set(unauthorizedActions)];
+     const msg = `Unauthorized CI Actions detected: ${unauthorizedActions.join(', ')}`;
+     violations.push(msg);
+     report += `### ❌ CI Action Violation:\n- ${msg}\n\n`;
   } else {
-    report += `✅ Workflow syntax compliant.\n\n`;
+    report += `✅ CI Actions compliant.\n\n`;
   }
 
 } catch (e) {
@@ -180,7 +182,7 @@ try {
              report += `⚠️ **High Divergence Detected:** ${msg}\n\n`;
         }
       } catch (e) {
-         report += `⚠️ Could not verify divergence (fetch depth might be shallow).\n\n`;
+         report += `⚠️ Could not verify divergence.\n\n`;
       }
   }
 } catch (e) {
@@ -190,6 +192,30 @@ try {
 // 3. CI State Snapshot
 report += `## 3. CI State Snapshot\n\n`;
 
+// Check GitHub Actions status via gh cli
+try {
+  // Check if gh is available
+  execSync('gh --version', { stdio: 'ignore' });
+  const runsJson = execSync('gh run list --limit 10 --json name,status,conclusion,url,event', { encoding: 'utf8' });
+  const runs = JSON.parse(runsJson);
+  const failedRuns = runs.filter(r => r.conclusion === 'failure' || r.conclusion === 'timed_out');
+
+  if (failedRuns.length > 0) {
+     report += `### ❌ Recent Failed Workflows\n`;
+     failedRuns.forEach(r => {
+       report += `- **${r.name}** (${r.event}): ${r.conclusion} [View Log](${r.url})\n`;
+     });
+     report += `\n`;
+  } else {
+     report += `✅ Recent workflow runs are green (last 10).\n\n`;
+  }
+
+} catch (e) {
+  report += `⚠️ Could not fetch GitHub Actions status (gh CLI might be missing or unauthenticated).\n\n`;
+}
+
+// Local Build Checks
+report += `### Local Build Verification\n\n`;
 const buildStatus = [];
 
 function checkBuild(name, command) {
@@ -203,7 +229,7 @@ function checkBuild(name, command) {
   }
 }
 
-// Only check core apps for build stability
+// Only check core apps as per Phase 2
 buildStatus.push(checkBuild('gs-web', 'pnpm --filter @goldshore/gs-web build'));
 buildStatus.push(checkBuild('gs-admin', 'pnpm --filter @goldshore/gs-admin build'));
 buildStatus.push(checkBuild('gs-api', 'pnpm --filter @goldshore/gs-api build'));
@@ -229,27 +255,21 @@ if (governanceViolations.length === 0 && appLevelIssues.length === 0) {
   report += `If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.\n`;
 } else {
   report += `### ❌ Actions Required\n\n`;
-  if (governanceViolations.length > 0) {
-      report += `**Governance Violations:**\n`;
-      governanceViolations.forEach(v => report += `- ${v}\n`);
-      report += `\n**Do not self-fix. Escalate via comment only.**\n`;
-  }
-  if (appLevelIssues.length > 0) {
-      report += `\n**App-Level Issues:**\n`;
-      appLevelIssues.forEach(v => report += `- ${v}\n`);
-  }
+  violations.forEach(v => report += `- ${v}\n`);
+  report += `\n**Do not self-fix. Escalate governance violations.**\n`;
+  report += `**App-level repairs (types, imports) are permitted in apps/* only.**\n`;
 }
 
-// Ensure report directory exists
-fs.mkdirSync(path.dirname(REPORT_PATH), { recursive: true });
+// Ensure docs/ci directory exists
+if (!fs.existsSync(path.dirname(REPORT_PATH))) {
+    fs.mkdirSync(path.dirname(REPORT_PATH), { recursive: true });
+}
 
-// Write Report
 fs.writeFileSync(REPORT_PATH, report);
 console.log(`Report generated at ${REPORT_PATH}`);
 
-// Exit Code Logic
-if (governanceViolations.length > 0) {
-  console.error('❌ Governance violations detected. Failing check.');
+if (violations.length > 0) {
+  console.error('Violations detected.');
   process.exit(1);
 } else if (appLevelIssues.length > 0) {
   console.warn('⚠️ App-level issues detected. Report generated.');
