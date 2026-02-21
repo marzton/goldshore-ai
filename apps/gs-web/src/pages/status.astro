@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import StatusDiagnostics from '../components/StatusDiagnostics.astro';
 import logo from '../assets/logo.svg';
 
 const buildTimestamp =
@@ -49,6 +50,7 @@ const shortCommitHash = commitHash === 'unknown' ? commitHash : commitHash.slice
     </div>
   </section>
 
+  <StatusDiagnostics />
   <section class="gs-section">
     <div class="gs-card">
       <h2>Frontend Deployment Diagnostics</h2>

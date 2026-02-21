@@ -44,8 +44,8 @@ jobs:
       - name: Build web app
         working-directory: apps/gs-web
         env:
-          PUBLIC_BUILD_TIMESTAMP: ${{ github.event.head_commit.timestamp }}
-          PUBLIC_COMMIT_SHA: ${{ github.sha }}
+          PUBLIC_BUILD_TIMESTAMP: ${{ github.run_started_at }}
+          PUBLIC_COMMIT_HASH: ${{ github.sha }}
         run: pnpm build
 
       - name: Verify web dist integrity
