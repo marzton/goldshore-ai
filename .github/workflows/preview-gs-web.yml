@@ -54,6 +54,8 @@ jobs:
         env:
           PUBLIC_API: https://api-preview.goldshore.ai
           PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
+          PUBLIC_BUILD_TIMESTAMP: ${{ github.run_started_at }}
+          PUBLIC_COMMIT_HASH: ${{ github.sha }}
         run: pnpm build
 
       - name: Deploy to Cloudflare Pages (preview)

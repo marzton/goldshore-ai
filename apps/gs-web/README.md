@@ -54,6 +54,10 @@ Cloudflare metadata:
 - Pages project name: `gs-web` (production), `preview-web` (preview)
 - Pages bindings config: `infra/cloudflare/goldshore-web.wrangler.toml`
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
+- Public diagnostics metadata injected during GitHub Actions builds:
+  - `PUBLIC_BUILD_TIMESTAMP` = `${{ github.run_started_at }}` (ISO timestamp for the workflow run)
+  - `PUBLIC_COMMIT_HASH` = `${{ github.sha }}` (full commit SHA used for the build)
+- `/status` renders this metadata plus runtime counts for stylesheet links and scripts, and the layout logo asset path from `meta[name="gs-logo-src"]`.
 
 ## Routes/Endpoints
 
