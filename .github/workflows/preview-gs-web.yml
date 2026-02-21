@@ -54,7 +54,12 @@ jobs:
         env:
           PUBLIC_API: https://api-preview.goldshore.ai
           PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
+          PUBLIC_BUILD_TIMESTAMP: ${{ github.event.pull_request.updated_at }}
+          PUBLIC_COMMIT_SHA: ${{ github.sha }}
         run: pnpm build
+
+      - name: Verify web dist integrity
+        run: pnpm verify:web-dist
 
       - name: Deploy to Cloudflare Pages (preview)
         uses: cloudflare/pages-action@v1

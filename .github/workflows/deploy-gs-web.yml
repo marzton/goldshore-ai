@@ -43,7 +43,13 @@ jobs:
 
       - name: Build web app
         working-directory: apps/gs-web
+        env:
+          PUBLIC_BUILD_TIMESTAMP: ${{ github.event.head_commit.timestamp }}
+          PUBLIC_COMMIT_SHA: ${{ github.sha }}
         run: pnpm build
+
+      - name: Verify web dist integrity
+        run: pnpm verify:web-dist
 
       - name: Deploy to Cloudflare Pages (production)
         uses: cloudflare/pages-action@v1
