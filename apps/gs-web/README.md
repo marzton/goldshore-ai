@@ -55,6 +55,16 @@ Cloudflare metadata:
 - Pages bindings config: `infra/cloudflare/goldshore-web.wrangler.toml`
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
 
+## CSP compatibility
+
+Approved outbound `connect-src` origins for browser runtime network calls in `src`:
+
+- `'self'` for same-origin endpoints (for example `/api/contact` and `/api/docs-search`).
+- `https://api.goldshore.ai` for production API calls (for example docs "Try it" console requests via `PUBLIC_API`).
+- `https://api-preview.goldshore.ai` for preview API calls in preview deployments.
+
+Keep `connect-src` scoped to these explicit hosts unless a new client-side integration is added and reviewed.
+
 ## Routes/Endpoints
 
 Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
