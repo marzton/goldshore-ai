@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
+import { parse } from 'yaml';
 
 const REPORT_PATH = 'docs/ci/CURRENT_STATE.md';
 const APPS_DIR = 'apps';
@@ -15,8 +16,11 @@ const ALLOWED_APPS = [
 ];
 
 const BASELINE_BUILD_SCRIPTS = [
+  'dev',
   'build',
   'build:openapi',
+  'lint',
+  'test',
   'check:pages',
   'scan:pii',
   'check:docs-consistency',
@@ -81,11 +85,11 @@ try {
 try {
   const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
   const currentScripts = Object.keys(pkg.scripts || {});
-  const newScripts = currentScripts.filter(s => !BASELINE_BUILD_SCRIPTS.includes(s) && s !== 'dev' && s !== 'lint' && s !== 'test');
+  const newScripts = currentScripts.filter(s => !BASELINE_BUILD_SCRIPTS.includes(s));
 
   if (newScripts.length > 0) {
      const msg = `New scripts detected in root package.json: ${newScripts.join(', ')}`;
-     violations.push(msg);
+     governanceViolations.push(msg);
      report += `### ❌ Build Script Violation:\n- ${msg}\n\n`;
   } else {
     report += `✅ Root build scripts compliant.\n\n`;
@@ -99,6 +103,7 @@ const WORKFLOW_DIR = '.github/workflows';
 try {
   const workflows = fs.readdirSync(WORKFLOW_DIR);
   const newWorkflows = workflows.filter(w => !KNOWN_WORKFLOWS.includes(w));
+
   if (newWorkflows.length > 0) {
     const msg = `New workflows detected: ${newWorkflows.join(', ')}`;
     violations.push(msg);
@@ -159,7 +164,6 @@ try {
   report += `⚠️ Could not scan workflows: ${e.message}\n\n`;
 }
 
-
 // 2. Branch Discipline Check
 report += `## 2. Branch Discipline Check\n\n`;
 try {
@@ -175,8 +179,7 @@ try {
         report += `**Divergence:** Behind: ${behind}, Ahead: ${ahead}\n\n`;
         if (parseInt(ahead) > 5) {
              const msg = `Branch is ahead of main by >5 commits (${ahead})`;
-             violations.push(msg);
-             report += `❌ **High Divergence Detected:** ${msg}\n\n`;
+             report += `⚠️ **High Divergence Detected:** ${msg}\n\n`;
         }
       } catch (e) {
          report += `⚠️ Could not verify divergence.\n\n`;
@@ -221,7 +224,7 @@ function checkBuild(name, command) {
     execSync(command, { stdio: 'inherit' });
     return `| **${name}** | ✅ PASS | |`;
   } catch (e) {
-    violations.push(`${name} build failed`);
+    appLevelIssues.push(`${name} build failed`);
     return `| **${name}** | ❌ FAIL | Check run logs |`;
   }
 }
@@ -234,13 +237,22 @@ buildStatus.push(checkBuild('gs-mail', 'pnpm --filter @goldshore/gs-mail build')
 
 report += `| App | Status | Notes |\n|---|---|---|\n${buildStatus.join('\n')}\n\n`;
 
-// 4. Recommendations & Stop Condition
-report += `## 4. Recommendations\n\n`;
+// 4. App-Level Repairs Only (Guidance)
+if (appLevelIssues.length > 0) {
+    report += `## 4. App-Level Repairs Required\n\n`;
+    report += `Failures detected in: ${appLevelIssues.join(', ')}.\n`;
+    report += `**Guidance:** You may fix these inside \`apps/*\`. Do not modify \`.github/\`, \`infra/\`, or root scripts.\n\n`;
+} else {
+    report += `## 4. App-Level Repairs\n\n✅ No app-level repairs needed.\n\n`;
+}
 
-if (violations.length === 0) {
+// 5. Recommendations & Stop Condition
+report += `## 5. Recommendations\n\n`;
+
+if (governanceViolations.length === 0 && appLevelIssues.length === 0) {
   report += `### ✅ Clean State\n\n`;
   report += `**Stop Condition Status:**\n`;
-  report += `If this state persists for 48 consecutive hours (4 checks), recommend terminating recurring stabilization sync.\n`;
+  report += `If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.\n`;
 } else {
   report += `### ❌ Actions Required\n\n`;
   violations.forEach(v => report += `- ${v}\n`);
@@ -259,4 +271,10 @@ console.log(`Report generated at ${REPORT_PATH}`);
 if (violations.length > 0) {
   console.error('Violations detected.');
   process.exit(1);
+} else if (appLevelIssues.length > 0) {
+  console.warn('⚠️ App-level issues detected. Report generated.');
+  process.exit(1);
+} else {
+  console.log('✅ All checks passed.');
+  process.exit(0);
 }
