@@ -21,8 +21,7 @@
     "scaffold:worker": "node scripts/scaffold-worker.mjs",
     "workspaces:list": "pnpm -r list --depth -1",
     "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry && turbo run build --filter=@goldshore/gs-control --dry",
-    "verify:web-dist": "node scripts/verify-web-dist.mjs",
-    "memory:check": "node scripts/validate-canonical-structure.mjs"
+    "verify:web-dist": "node scripts/verify-web-dist.mjs"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
