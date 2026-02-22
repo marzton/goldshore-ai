@@ -13,6 +13,14 @@ export const prerender = true;
       <div class="hero-actions">
         <a href="/contact">Start</a>
         <a href="/developer">Developer</a>
+<WebLayout title="Gold Shore | Shaping Waves" description="Engineered for decisive control.">
+  <section class="gs-section hero">
+    <div class="gs-container">
+      <h1>Gold Shore</h1>
+      <p class="hero-tagline">Engineered for Decisive Control.</p>
+
+      <div class="hero-actions">
+        <a href="/contact" class="gs-button gs-button--primary">Start</a>
       </div>
     </div>
   </section>
@@ -68,5 +76,29 @@ export const prerender = true;
 
   .hero-actions a:hover {
     border-color: #38bdf8;
+
+<style>
+  .hero {
+    background: radial-gradient(circle at 50% 40%, #101827 0%, #05060a 70%);
+    text-align: center;
+    min-height: calc(100svh - 80px);
+    display: flex;
+    align-items: center;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    letter-spacing: 0.03em;
+  }
+
+  .hero-tagline {
+    color: var(--gs-text-muted);
+    margin: 1rem 0 0;
+    font-size: 1.1rem;
+  }
+
+  .hero-actions {
+    margin-top: 2rem;
   }
 </style>
