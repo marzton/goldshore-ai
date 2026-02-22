@@ -4,6 +4,8 @@ import { execSync } from 'node:child_process';
 
 const REPORT_PATH = 'docs/ci/CURRENT_STATE.md';
 const APPS_DIR = 'apps';
+const WORKFLOW_DIR = '.github/workflows';
+const AUTHORITATIVE_CI_SOURCE = 'GitHub Actions status checks on the pull request';
 const ALLOWED_APPS = [
   'gs-web',
   'gs-admin',
@@ -58,11 +60,6 @@ const ALLOWED_ACTIONS = [
   'actions/ai-inference'
 ];
 
-let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
-let violations = [];
-let governanceViolations = [];
-let appLevelIssues = [];
-
 const violations = [];
 const appLevelIssues = [];
 
@@ -94,6 +91,23 @@ function getPrCiStatus(branch) {
 
   const rollupRaw = tryRun(`gh pr view ${prNumber} --json number,url,statusCheckRollup`);
   if (!rollupRaw) return { summary: `⚠️ Unable to fetch status checks for PR #${prNumber}; authoritative CI source: ${AUTHORITATIVE_CI_SOURCE}` };
+
+  const pr = JSON.parse(rollupRaw);
+  const checks = (pr.statusCheckRollup || []).map((item) => {
+    if (item.__typename === 'CheckRun') {
+      return {
+        name: item.name,
+        status: item.status,
+        conclusion: item.conclusion
+      };
+    }
+
+    return {
+      name: item.context,
+      status: item.state === 'PENDING' ? 'IN_PROGRESS' : 'COMPLETED',
+      conclusion: item.state === 'SUCCESS' ? 'SUCCESS' : item.state
+    };
+  });
 
   // Check for unauthorized actions
   let unauthorizedActions = [];
