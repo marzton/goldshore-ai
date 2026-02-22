@@ -1,9 +1,4 @@
-@import "./gs-effects.css";
+@import './gs-effects.css';
+@import './layout.css';
 
-:root {
-  font-family: var(--gs-font-body);
-}
-
-body {
-  margin: 0;
-}
+/* Local overrides for @goldshore/gs-web */
