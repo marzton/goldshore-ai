@@ -19,23 +19,58 @@ export const prerender = true;
       </div>
     </div>
   </section>
+
+  <section class="gs-section gs-home-panels" aria-label="Core intelligence capabilities">
+    <div class="gs-container gs-panel-grid">
+      <article class="gs-panel gs-tilt">
+        <h3 class="gs-section-title">Risk Radar</h3>
+        <p>Macro-pattern intelligence infrastructure tuned for scenario clarity.</p>
+      </article>
+      <article class="gs-panel gs-tilt">
+        <h3 class="gs-section-title">Resilience Mesh</h3>
+        <p>Operational safeguards that harden critical paths without introducing drag.</p>
+      </article>
+      <article class="gs-panel gs-tilt">
+        <h3 class="gs-section-title">Signal Governance</h3>
+        <p>Decision cadence controls that preserve institutional discipline under pressure.</p>
+      </article>
+    </div>
+  </section>
 </WebLayout>
 
 <script>
   const orbitalField = document.querySelector('[data-orbital-field]');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (orbitalField) {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (orbitalField && !prefersReducedMotion) {
+    const updateParallax = () => {
+      const y = window.scrollY;
+      orbitalField.style.transform = `translate3d(0, ${Math.min(y * 0.15, 120)}px, 0)`;
+    };
 
-    if (!prefersReducedMotion) {
-      const updateParallax = () => {
-        const y = window.scrollY;
-        orbitalField.style.transform = `translate3d(0, ${Math.min(y * 0.15, 120)}px, 0)`;
-      };
+    updateParallax();
+    window.addEventListener('scroll', updateParallax, { passive: true });
+  }
 
-      updateParallax();
-      window.addEventListener('scroll', updateParallax, { passive: true });
-    }
+  const panels = document.querySelectorAll('.gs-tilt');
+
+  if (!prefersReducedMotion && panels.length > 0) {
+    panels.forEach((panel) => {
+      panel.addEventListener('mousemove', (e) => {
+        const rect = panel.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const rotateX = ((y / rect.height) - 0.5) * -6;
+        const rotateY = ((x / rect.width) - 0.5) * 6;
+
+        panel.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(8px)`;
+      });
+
+      panel.addEventListener('mouseleave', () => {
+        panel.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      });
+    });
   }
 </script>
 
@@ -116,6 +151,27 @@ export const prerender = true;
 
   .hero-actions {
     margin-top: 2rem;
+  }
+
+  .gs-home-panels {
+    padding-top: 4rem;
+  }
+
+  .gs-home-panels::before {
+    display: none;
+  }
+
+  .gs-panel-grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .gs-section-title {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    letter-spacing: 0.01em;
   }
 
   @keyframes gsPulse {
