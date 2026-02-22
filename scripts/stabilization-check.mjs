@@ -1,280 +1,150 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
-import { parse } from 'yaml';
 
 const REPORT_PATH = 'docs/ci/CURRENT_STATE.md';
 const APPS_DIR = 'apps';
-const ALLOWED_APPS = [
-  'gs-web',
-  'gs-admin',
-  'gs-api',
-  'gs-mail',
-  'gs-gateway',
-  'gs-agent',
-  'gs-control'
-];
-
-const BASELINE_BUILD_SCRIPTS = [
-  'dev',
-  'build',
-  'build:openapi',
-  'lint',
-  'test',
-  'check:pages',
-  'scan:pii',
-  'check:docs-consistency',
-  'check:naming',
-  'validate:structure',
-  'validate:names',
-  'validate:workers',
-  'validate:workspace',
-  'validate',
-  'branch:bootstrap',
-  'scaffold:worker',
-  'workspaces:list',
-  'verify:workspace-filters'
-];
-
-const KNOWN_WORKFLOWS = [
-  'deploy-gs-admin.yml', 'deploy-gs-agent.yml.disabled', 'deploy-gs-api.yml', 'deploy-gs-control.yml.disabled',
-  'deploy-gs-gateway.yml.disabled', 'deploy-gs-mail.yml', 'deploy-gs-web.yml', 'jules-nightly.yml',
-  'lockfile-guard.yml', 'manual.yml', 'naming-guard.yml', 'naming-lint.yml', 'neuralegion.yml',
-  'palette-manual.yml', 'pii-scan.yml', 'preview-agent.yml', 'preview-gs-admin.yml',
-  'preview-gs-api.yml', 'preview-gs-gateway.yml', 'preview-gs-web.yml', 'route-collision-check.yml',
-  'sonarcloud.yml', 'summary.yml', 'tfsec.yml', 'stabilization-task.yml'
-];
-
-const ALLOWED_ACTIONS = [
-  'actions/checkout',
-  'actions/setup-node',
-  'actions/upload-artifact',
-  'aquasecurity/tfsec-sarif-action',
-  'cloudflare/pages-action',
-  'github/codeql-action/upload-sarif',
-  'pnpm/action-setup',
-  'stefanzweifel/git-auto-commit-action',
-  'NeuraLegion/run-scan',
-  'SonarSource/sonarcloud-github-action',
-  'actions/ai-inference'
-];
-
-let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
-let violations = [];
-
-// 1. Governance Compliance Check
-report += `## 1. Governance Compliance Check\n\n`;
-
-// 1.1 App Directory Structure
-try {
-  const apps = fs.readdirSync(APPS_DIR).filter(f => fs.statSync(path.join(APPS_DIR, f)).isDirectory());
-  const forbiddenApps = apps.filter(app => !ALLOWED_APPS.includes(app));
-
-  if (forbiddenApps.length > 0) {
-    const msg = `Forbidden directories detected in apps/: ${forbiddenApps.join(', ')}`;
-    violations.push(msg);
-    report += `### ❌ App Structure Violation:\n- ${msg}\n\n`;
-  } else {
-    report += `✅ Directory structure compliant.\n\n`;
-  }
-} catch (e) {
-  report += `⚠️ Could not scan apps directory: ${e.message}\n\n`;
-}
-
-// 1.2 Root package.json Build Keys
-try {
-  const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-  const currentScripts = Object.keys(pkg.scripts || {});
-  const newScripts = currentScripts.filter(s => !BASELINE_BUILD_SCRIPTS.includes(s));
-
-  if (newScripts.length > 0) {
-     const msg = `New scripts detected in root package.json: ${newScripts.join(', ')}`;
-     governanceViolations.push(msg);
-     report += `### ❌ Build Script Violation:\n- ${msg}\n\n`;
-  } else {
-    report += `✅ Root build scripts compliant.\n\n`;
-  }
-} catch (e) {
-  report += `⚠️ Could not parse root package.json: ${e.message}\n\n`;
-}
-
-// 1.3 Workflow Modifications
 const WORKFLOW_DIR = '.github/workflows';
-try {
-  const workflows = fs.readdirSync(WORKFLOW_DIR);
-  const newWorkflows = workflows.filter(w => !KNOWN_WORKFLOWS.includes(w));
+const AUTHORITATIVE_CI_SOURCE = 'https://github.com/goldshore-ai/goldshore-ai/actions';
 
-  if (newWorkflows.length > 0) {
-    const msg = `New workflows detected: ${newWorkflows.join(', ')}`;
-    violations.push(msg);
-    report += `### ❌ Workflow Violation (New Files):\n- ${msg}\n\n`;
-  } else {
-    report += `✅ Workflow file list compliant.\n\n`;
-  }
+const ALLOWED_APPS = ['gs-web', 'gs-admin', 'gs-api', 'gs-mail', 'gs-gateway', 'gs-agent', 'gs-control'];
+const BASELINE_BUILD_SCRIPTS = ['dev', 'build', 'build:openapi', 'lint', 'test', 'check:pages', 'scan:pii', 'check:docs-consistency', 'check:naming', 'validate:structure', 'validate:names', 'validate:workers', 'validate:workspace', 'validate', 'branch:bootstrap', 'scaffold:worker', 'workspaces:list', 'verify:workspace-filters'];
+const KNOWN_WORKFLOWS = ['deploy-gs-admin.yml', 'deploy-gs-agent.yml.disabled', 'deploy-gs-api.yml', 'deploy-gs-control.yml.disabled', 'deploy-gs-gateway.yml.disabled', 'deploy-gs-mail.yml', 'deploy-gs-web.yml', 'jules-nightly.yml', 'lockfile-guard.yml', 'manual.yml', 'naming-guard.yml', 'naming-lint.yml', 'neuralegion.yml', 'palette-manual.yml', 'pii-scan.yml', 'preview-agent.yml', 'preview-gs-admin.yml', 'preview-gs-api.yml', 'preview-gs-gateway.yml', 'preview-gs-web.yml', 'route-collision-check.yml', 'sonarcloud.yml', 'summary.yml', 'tfsec.yml', 'stabilization-task.yml'];
+const ALLOWED_ACTIONS = ['actions/checkout', 'actions/setup-node', 'actions/upload-artifact', 'aquasecurity/tfsec-sarif-action', 'cloudflare/pages-action', 'github/codeql-action/upload-sarif', 'pnpm/action-setup', 'stefanzweifel/git-auto-commit-action', 'NeuraLegion/run-scan', 'SonarSource/sonarcloud-github-action', 'actions/ai-inference'];
 
-  // Check for recent modifications (last 13 hours to cover 12h schedule)
-  try {
-    const modifiedWorkflowsRaw = execSync('git log --since="13 hours ago" --name-only --format="" .github/workflows', { encoding: 'utf8' });
-    const modifiedWorkflows = modifiedWorkflowsRaw.trim().split('\n').filter(Boolean);
-    // Dedup
-    const uniqueModified = [...new Set(modifiedWorkflows)];
-    // Filter out stabilization-task itself if it's there
-    const suspiciousModifications = uniqueModified.filter(f => !f.includes('stabilization-task.yml') && !f.includes('CURRENT_STATE.md'));
+const violations = [];
+const appLevelIssues = [];
 
-    if (suspiciousModifications.length > 0) {
-       const msg = `Workflows modified in last 13h: ${suspiciousModifications.join(', ')}`;
-       violations.push(msg);
-       report += `### ❌ Workflow Violation (Recent Changes):\n- ${msg}\n\n`;
-    } else {
-        report += `✅ No recent unauthorized workflow modifications.\n\n`;
-    }
-  } catch (e) {
-    report += `⚠️ Could not check git log for workflow changes: ${e.message}\n\n`;
-  }
+const run = (cmd) => execSync(cmd, { encoding: 'utf8' }).trim();
+const tryRun = (cmd) => { try { return run(cmd); } catch { return null; } };
+const gitRefExists = (ref) => { try { execSync(`git rev-parse --verify ${ref}`, { stdio: 'ignore' }); return true; } catch { return false; } };
 
-  // Check for unauthorized actions
-  let unauthorizedActions = [];
-  workflows.forEach(w => {
-    if (w.endsWith('.yml') || w.endsWith('.yaml')) {
-      const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
-      const usesLines = content.split('\n').filter(l => l.trim().startsWith('uses:'));
-      usesLines.forEach(line => {
-        const actionPart = line.split('uses:')[1].trim();
-        const action = actionPart.split('@')[0];
-        // Allow local paths
-        if (action.startsWith('./')) return;
-        if (!ALLOWED_ACTIONS.includes(action)) {
-          unauthorizedActions.push(`${action} (in ${w})`);
-        }
-      });
-    }
-  });
-
-  if (unauthorizedActions.length > 0) {
-     // Dedup
-     unauthorizedActions = [...new Set(unauthorizedActions)];
-     const msg = `Unauthorized CI Actions detected: ${unauthorizedActions.join(', ')}`;
-     violations.push(msg);
-     report += `### ❌ CI Action Violation:\n- ${msg}\n\n`;
-  } else {
-    report += `✅ CI Actions compliant.\n\n`;
-  }
-
-} catch (e) {
-  report += `⚠️ Could not scan workflows: ${e.message}\n\n`;
+function resolveBaseRef() {
+  if (gitRefExists('origin/main')) return 'origin/main';
+  if (gitRefExists('main')) return 'main';
+  return null;
 }
 
-// 2. Branch Discipline Check
-report += `## 2. Branch Discipline Check\n\n`;
-try {
-  const branch = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();
-  report += `**Current Branch:** ${branch}\n\n`;
-
-  if (branch === 'main') {
-      report += `✅ Running on main.\n\n`;
-  } else {
-      try {
-        const counts = execSync('git rev-list --left-right --count origin/main...HEAD', { encoding: 'utf8' }).trim();
-        const [behind, ahead] = counts.split('\t');
-        report += `**Divergence:** Behind: ${behind}, Ahead: ${ahead}\n\n`;
-        if (parseInt(ahead) > 5) {
-             const msg = `Branch is ahead of main by >5 commits (${ahead})`;
-             report += `⚠️ **High Divergence Detected:** ${msg}\n\n`;
-        }
-      } catch (e) {
-         report += `⚠️ Could not verify divergence.\n\n`;
-      }
+function getBranchInfo() {
+  const branch = run('git rev-parse --abbrev-ref HEAD');
+  const baseRef = resolveBaseRef();
+  if (!baseRef) {
+    return { branch, baseRef: 'main (unavailable locally)', behind: 0, ahead: 0, divergenceNote: '⚠️ Could not resolve a local main tracking ref; divergence defaults to 0/0 in this checkout.' };
   }
-} catch (e) {
-  report += `⚠️ Git checks failed: ${e.message}\n\n`;
+  const [behindRaw, aheadRaw] = run(`git rev-list --left-right --count ${baseRef}...HEAD`).split(/\s+/);
+  return { branch, baseRef, behind: Number.parseInt(behindRaw, 10), ahead: Number.parseInt(aheadRaw, 10) };
 }
 
-// 3. CI State Snapshot
-report += `## 3. CI State Snapshot\n\n`;
+function getPrCiStatus(branch) {
+  if (!tryRun('gh --version')) return { summary: '⚠️ gh CLI unavailable; unable to resolve PR CI status in this environment.' };
+  const prNumberFromRef = process.env.GITHUB_REF?.startsWith('refs/pull/') ? process.env.GITHUB_REF.split('/')[2] : null;
+  const prNumber = prNumberFromRef ?? tryRun(`gh pr list --head "${branch}" --state open --limit 1 --json number --jq '.[0].number'`);
+  if (!prNumber) return { summary: `⚠️ No open PR detected for branch \`${branch}\`; authoritative CI source: ${AUTHORITATIVE_CI_SOURCE}` };
 
-// Check GitHub Actions status via gh cli
-try {
-  // Check if gh is available
-  execSync('gh --version', { stdio: 'ignore' });
-  const runsJson = execSync('gh run list --limit 10 --json name,status,conclusion,url,event', { encoding: 'utf8' });
-  const runs = JSON.parse(runsJson);
-  const failedRuns = runs.filter(r => r.conclusion === 'failure' || r.conclusion === 'timed_out');
+  const rollupRaw = tryRun(`gh pr view ${prNumber} --json number,url,statusCheckRollup`);
+  if (!rollupRaw) return { summary: `⚠️ Unable to fetch status checks for PR #${prNumber}; authoritative CI source: ${AUTHORITATIVE_CI_SOURCE}` };
 
-  if (failedRuns.length > 0) {
-     report += `### ❌ Recent Failed Workflows\n`;
-     failedRuns.forEach(r => {
-       report += `- **${r.name}** (${r.event}): ${r.conclusion} [View Log](${r.url})\n`;
-     });
-     report += `\n`;
-  } else {
-     report += `✅ Recent workflow runs are green (last 10).\n\n`;
-  }
+  const pr = JSON.parse(rollupRaw);
+  const checks = (pr.statusCheckRollup || []).map((c) => ({ name: c.name ?? c.context ?? 'unknown-check', status: c.status ?? 'UNKNOWN', conclusion: c.conclusion ?? 'PENDING' }));
+  if (!checks.length) return { summary: `⚠️ PR #${pr.number} has no reported checks yet. [PR Link](${pr.url})` };
 
-} catch (e) {
-  report += `⚠️ Could not fetch GitHub Actions status (gh CLI might be missing or unauthenticated).\n\n`;
+  const failed = checks.filter((c) => ['FAILURE', 'TIMED_OUT', 'CANCELLED', 'ACTION_REQUIRED'].includes(c.conclusion));
+  const pending = checks.filter((c) => c.status !== 'COMPLETED');
+  const state = failed.length ? '❌ FAIL' : pending.length ? '🟡 PENDING' : '✅ PASS';
+  return { summary: `${state} PR #${pr.number} checks (${checks.length} total). [PR Link](${pr.url})`, checks };
 }
-
-// Local Build Checks
-report += `### Local Build Verification\n\n`;
-const buildStatus = [];
 
 function checkBuild(name, command) {
-  console.log(`Checking ${name} build...`);
-  try {
-    execSync(command, { stdio: 'inherit' });
-    return `| **${name}** | ✅ PASS | |`;
-  } catch (e) {
-    appLevelIssues.push(`${name} build failed`);
-    return `| **${name}** | ❌ FAIL | Check run logs |`;
-  }
+  try { execSync(command, { stdio: 'ignore' }); return `| **${name}** | ✅ PASS | |`; }
+  catch { appLevelIssues.push(`${name} build failed`); return `| **${name}** | ❌ FAIL | Check run logs |`; }
 }
 
-// Only check core apps as per Phase 2
-buildStatus.push(checkBuild('gs-web', 'pnpm --filter @goldshore/gs-web build'));
-buildStatus.push(checkBuild('gs-admin', 'pnpm --filter @goldshore/gs-admin build'));
-buildStatus.push(checkBuild('gs-api', 'pnpm --filter @goldshore/gs-api build'));
-buildStatus.push(checkBuild('gs-mail', 'pnpm --filter @goldshore/gs-mail build'));
+const historical = ['1', 'true', 'yes'].includes((process.env.STABILIZATION_REPORT_HISTORICAL || '').toLowerCase());
+const { branch, baseRef, behind, ahead, divergenceNote } = getBranchInfo();
 
-report += `| App | Status | Notes |\n|---|---|---|\n${buildStatus.join('\n')}\n\n`;
+let report = '# Stabilization Sync Check Report\n\n';
+if (historical) {
+  report += '> [!WARNING]\n';
+  report += '> **Historical Snapshot (Non-Authoritative).** This report is intentionally historical and must not be used as source of truth for CI decisions.\n';
+  report += `> Authoritative CI source: ${AUTHORITATIVE_CI_SOURCE}\n\n`;
+}
+report += `**Date:** ${new Date().toUTCString()}\n\n`;
 
-// 4. App-Level Repairs Only (Guidance)
-if (appLevelIssues.length > 0) {
-    report += `## 4. App-Level Repairs Required\n\n`;
-    report += `Failures detected in: ${appLevelIssues.join(', ')}.\n`;
-    report += `**Guidance:** You may fix these inside \`apps/*\`. Do not modify \`.github/\`, \`infra/\`, or root scripts.\n\n`;
+report += '## 1. Governance Compliance Check\n\n';
+try {
+  const apps = fs.readdirSync(APPS_DIR).filter((f) => fs.statSync(path.join(APPS_DIR, f)).isDirectory());
+  const forbiddenApps = apps.filter((app) => !ALLOWED_APPS.includes(app));
+  if (forbiddenApps.length) { const msg = `Forbidden directories detected in apps/: ${forbiddenApps.join(', ')}`; violations.push(msg); report += `### ❌ App Structure Violation\n- ${msg}\n\n`; }
+  else report += '✅ Directory structure compliant.\n\n';
+} catch (e) { report += `⚠️ Could not scan apps directory: ${e.message}\n\n`; }
+
+try {
+  const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+  const newScripts = Object.keys(pkg.scripts || {}).filter((s) => !BASELINE_BUILD_SCRIPTS.includes(s));
+  if (newScripts.length) { const msg = `New scripts detected in root package.json: ${newScripts.join(', ')}`; violations.push(msg); report += `### ❌ Build Script Violation\n- ${msg}\n\n`; }
+  else report += '✅ Root build scripts compliant.\n\n';
+} catch (e) { report += `⚠️ Could not parse root package.json: ${e.message}\n\n`; }
+
+try {
+  const workflows = fs.readdirSync(WORKFLOW_DIR);
+  const newWorkflows = workflows.filter((w) => !KNOWN_WORKFLOWS.includes(w));
+  if (newWorkflows.length) { const msg = `New workflows detected: ${newWorkflows.join(', ')}`; violations.push(msg); report += `### ❌ Workflow Violation (New Files)\n- ${msg}\n\n`; }
+  else report += '✅ Workflow file list compliant.\n\n';
+
+  const unauthorizedActions = [...new Set(workflows
+    .filter((w) => w.endsWith('.yml') || w.endsWith('.yaml'))
+    .flatMap((w) => fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8').split('\n').filter((l) => l.trim().startsWith('uses:')).map((line) => ({ w, action: line.split('uses:')[1].trim().split('@')[0] })))
+    .filter(({ action }) => !action.startsWith('./') && !ALLOWED_ACTIONS.includes(action))
+    .map(({ w, action }) => `${action} (in ${w})`))];
+
+  if (unauthorizedActions.length) { const msg = `Unauthorized CI Actions detected: ${unauthorizedActions.join(', ')}`; violations.push(msg); report += `### ❌ CI Action Violation\n- ${msg}\n\n`; }
+  else report += '✅ CI Actions compliant.\n\n';
+} catch (e) { report += `⚠️ Could not scan workflows: ${e.message}\n\n`; }
+
+report += '## 2. Branch Discipline Check\n\n';
+report += `**Current Branch:** ${branch}\n\n`;
+report += `**Divergence vs ${baseRef}:** Behind: ${behind}, Ahead: ${ahead}\n\n`;
+if (divergenceNote) report += `${divergenceNote}\n\n`;
+if (ahead > 5) report += `⚠️ **High Divergence Detected:** Branch is ahead of main by >5 commits (${ahead}).\n\n`;
+
+report += '## 3. CI State Snapshot (PR Context)\n\n';
+const ci = getPrCiStatus(branch);
+report += `${ci.summary}\n\n`;
+if (ci.checks?.length) {
+  report += '| Check | Status | Conclusion |\n|---|---|---|\n';
+  ci.checks.forEach((c) => { report += `| ${c.name} | ${c.status} | ${c.conclusion} |\n`; });
+  report += '\n';
+}
+
+report += '### Local Build Verification\n\n';
+report += `| App | Status | Notes |\n|---|---|---|\n${[
+  checkBuild('gs-web', 'pnpm --filter @goldshore/gs-web build'),
+  checkBuild('gs-admin', 'pnpm --filter @goldshore/gs-admin build'),
+  checkBuild('gs-api', 'pnpm --filter @goldshore/gs-api build'),
+  checkBuild('gs-mail', 'pnpm --filter @goldshore/gs-mail build')
+].join('\n')}\n\n`;
+
+if (appLevelIssues.length) {
+  report += '## 4. App-Level Repairs Required\n\n';
+  report += `Failures detected in: ${appLevelIssues.join(', ')}.\n`;
+  report += '**Guidance:** You may fix these inside `apps/*`. Do not modify `.github/`, `infra/`, or root scripts.\n\n';
 } else {
-    report += `## 4. App-Level Repairs\n\n✅ No app-level repairs needed.\n\n`;
+  report += '## 4. App-Level Repairs\n\n✅ No app-level repairs needed.\n\n';
 }
 
-// 5. Recommendations & Stop Condition
-report += `## 5. Recommendations\n\n`;
-
-if (governanceViolations.length === 0 && appLevelIssues.length === 0) {
-  report += `### ✅ Clean State\n\n`;
-  report += `**Stop Condition Status:**\n`;
-  report += `If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.\n`;
+report += '## 5. Recommendations\n\n';
+if (!violations.length && !appLevelIssues.length) {
+  report += '### ✅ Clean State\n\n';
+  report += '**Stop Condition Status:**\n';
+  report += 'If this state persists for 48 consecutive hours (4 checks), recommend terminating recurring stabilization sync.\n';
 } else {
-  report += `### ❌ Actions Required\n\n`;
-  violations.forEach(v => report += `- ${v}\n`);
-  report += `\n**Do not self-fix. Escalate governance violations.**\n`;
-  report += `**App-level repairs (types, imports) are permitted in apps/* only.**\n`;
+  report += '### ❌ Actions Required\n\n';
+  violations.forEach((v) => { report += `- ${v}\n`; });
+  report += '\n**Do not self-fix. Escalate governance violations.**\n';
+  report += '**App-level repairs (types, imports) are permitted in apps/* only.**\n';
 }
 
-// Ensure docs/ci directory exists
-if (!fs.existsSync(path.dirname(REPORT_PATH))) {
-    fs.mkdirSync(path.dirname(REPORT_PATH), { recursive: true });
-}
-
+if (!fs.existsSync(path.dirname(REPORT_PATH))) fs.mkdirSync(path.dirname(REPORT_PATH), { recursive: true });
 fs.writeFileSync(REPORT_PATH, report);
 console.log(`Report generated at ${REPORT_PATH}`);
-
-if (violations.length > 0) {
-  console.error('Violations detected.');
-  process.exit(1);
-} else if (appLevelIssues.length > 0) {
-  console.warn('⚠️ App-level issues detected. Report generated.');
-  process.exit(1);
-} else {
-  console.log('✅ All checks passed.');
-  process.exit(0);
-}
+process.exit(violations.length || appLevelIssues.length ? 1 : 0);
