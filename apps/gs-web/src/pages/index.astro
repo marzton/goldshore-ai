@@ -5,9 +5,13 @@ export const prerender = true;
 ---
 
 <WebLayout title="Gold Shore | Shaping Waves" description="Engineered for decisive control.">
-  <section class="gs-section hero">
-    <div class="gs-container">
-      <h1>Gold Shore</h1>
+  <section class="gs-hero" aria-labelledby="gs-hero-title">
+    <div class="gs-orbital-field" data-orbital-field aria-hidden="true">
+      <div class="gs-orbital-dust"></div>
+    </div>
+
+    <div class="gs-container gs-hero-content">
+      <h1 id="gs-hero-title">Gold Shore</h1>
       <p class="hero-tagline">Engineered for Decisive Control.</p>
 
       <div class="hero-actions">
@@ -17,13 +21,85 @@ export const prerender = true;
   </section>
 </WebLayout>
 
+<script>
+  const orbitalField = document.querySelector('[data-orbital-field]');
+
+  if (orbitalField) {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!prefersReducedMotion) {
+      const updateParallax = () => {
+        const y = window.scrollY;
+        orbitalField.style.transform = `translate3d(0, ${Math.min(y * 0.15, 120)}px, 0)`;
+      };
+
+      updateParallax();
+      window.addEventListener('scroll', updateParallax, { passive: true });
+    }
+  }
+</script>
+
 <style>
-  .hero {
-    background: radial-gradient(circle at 50% 40%, #101827 0%, #05060a 70%);
-    text-align: center;
+  .gs-hero {
+    position: relative;
     min-height: calc(100svh - 80px);
     display: flex;
     align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    isolation: isolate;
+    background: #000;
+    text-align: center;
+  }
+
+  .gs-hero-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .gs-orbital-field {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    overflow: hidden;
+    z-index: 0;
+    will-change: transform;
+  }
+
+  .gs-orbital-field::before,
+  .gs-orbital-field::after {
+    content: '';
+    position: absolute;
+    width: clamp(760px, 72vw, 1200px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    filter: blur(180px);
+    opacity: 0.35;
+    animation: gsPulse 18s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  .gs-orbital-field::before {
+    top: -400px;
+    left: -300px;
+    background: radial-gradient(circle, rgba(70, 110, 255, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
+  }
+
+  .gs-orbital-field::after {
+    bottom: -500px;
+    right: -400px;
+    background: radial-gradient(circle, rgba(255, 140, 40, 0.5) 0%, rgba(0, 0, 0, 0) 65%);
+    animation-delay: 6s;
+  }
+
+  .gs-orbital-dust {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+    background-size: 120px 120px;
+    opacity: 0.05;
+    animation: gsDrift 90s linear infinite;
+    will-change: transform;
   }
 
   h1 {
@@ -33,12 +109,49 @@ export const prerender = true;
   }
 
   .hero-tagline {
-    color: var(--gs-text-muted);
+    color: var(--gs-color-subtle);
     margin: 1rem 0 0;
     font-size: 1.1rem;
   }
 
   .hero-actions {
     margin-top: 2rem;
+  }
+
+  @keyframes gsPulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.28;
+    }
+
+    50% {
+      transform: scale(1.08);
+      opacity: 0.4;
+    }
+
+    100% {
+      transform: scale(1.02);
+      opacity: 0.32;
+    }
+  }
+
+  @keyframes gsDrift {
+    from {
+      transform: translateY(0);
+    }
+
+    to {
+      transform: translateY(-200px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gs-orbital-field,
+    .gs-orbital-field::before,
+    .gs-orbital-field::after,
+    .gs-orbital-dust {
+      animation: none;
+      transform: none;
+    }
   }
 </style>
