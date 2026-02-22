@@ -5,23 +5,22 @@ export const prerender = true;
 ---
 
 <WebLayout title="Contact | Gold Shore" description="Contact Gold Shore.">
-  <section class="gs-section">
+  <section class="gs-section gs-blueprint-bg">
     <div class="gs-container">
       <h1>Contact</h1>
 
-      <form class="contact-form">
-        <label for="name">Name</label>
-        <input id="name" type="text" />
+    <form class="contact-form">
+      <label for="name">Name</label>
+      <input id="name" type="text" />
 
-        <label for="email">Email</label>
-        <input id="email" type="email" />
+      <label for="email">Email</label>
+      <input id="email" type="email" />
 
-        <label for="brief">Project Brief</label>
-        <textarea id="brief" rows="5"></textarea>
+      <label for="brief">Project Brief</label>
+      <textarea id="brief" rows="5"></textarea>
 
-        <button type="submit" class="gs-button gs-button--primary">Send</button>
-      </form>
-    </div>
+      <button type="submit">Send</button>
+    </form>
   </section>
 </WebLayout>
 
@@ -34,16 +33,18 @@ export const prerender = true;
 
   input,
   textarea {
-    border: 1px solid var(--gs-border-subtle);
-    border-radius: var(--gs-radius-md);
-    background: var(--gs-bg-secondary);
-    color: var(--gs-text-primary);
+    border: 1px solid #1f2937;
+    background: #020617;
+    color: #e5e7eb;
     padding: 0.75rem;
   }
 
   button {
-    border: 0;
-    cursor: pointer;
     justify-self: start;
+    border: 1px solid #334155;
+    background: transparent;
+    color: #e5e7eb;
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
   }
 </style>
