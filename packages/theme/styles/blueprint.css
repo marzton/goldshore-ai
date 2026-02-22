@@ -1,3 +1,25 @@
+.gs-blueprint-bg {
+  position: relative;
+  isolation: isolate;
+}
+
+.gs-blueprint-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(59, 130, 246, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(234, 179, 8, 0.1) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.22;
+}
+
+@media (max-width: 768px) {
+  .gs-blueprint-bg::before {
+    opacity: 0.14;
+  }
 .gs-flow-section {
   position: relative;
   overflow: hidden;
