@@ -61,6 +61,8 @@ const ALLOWED_ACTIONS = [
 
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
 let violations = [];
+let governanceViolations = [];
+let appLevelIssues = [];
 
 // 1. Governance Compliance Check
 report += `## 1. Governance Compliance Check\n\n`;
@@ -137,12 +139,20 @@ try {
   workflows.forEach(w => {
     if (w.endsWith('.yml') || w.endsWith('.yaml')) {
       const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
-      const usesLines = content.split('\n').filter(l => l.trim().startsWith('uses:'));
+      const usesLines = content
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.startsWith('uses:') || line.startsWith('- uses:'));
+
       usesLines.forEach(line => {
-        const actionPart = line.split('uses:')[1].trim();
-        const action = actionPart.split('@')[0];
-        // Allow local paths
-        if (action.startsWith('./')) return;
+        const match = line.match(/^-?\s*uses:\s*([\"']?)([^\"'\s#]+)\1/);
+        if (!match) {
+          return;
+        }
+
+        const action = match[2].split('@')[0];
+        // Allow local paths and docker image references
+        if (action.startsWith('./') || action.startsWith('docker://')) return;
         if (!ALLOWED_ACTIONS.includes(action)) {
           unauthorizedActions.push(`${action} (in ${w})`);
         }
@@ -249,7 +259,7 @@ if (appLevelIssues.length > 0) {
 // 5. Recommendations & Stop Condition
 report += `## 5. Recommendations\n\n`;
 
-if (governanceViolations.length === 0 && appLevelIssues.length === 0) {
+if (violations.length === 0 && appLevelIssues.length === 0) {
   report += `### ✅ Clean State\n\n`;
   report += `**Stop Condition Status:**\n`;
   report += `If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.\n`;
