@@ -76,25 +76,7 @@ const highlights = [
         ))}
       </div>
       <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
-    </div>
-  </section>
-
-  <section class="features-section blueprint-section parallax-section">
-    <div class="parallax-layer gs-parallax layer-blueprint" data-parallax="0.04" aria-hidden="true"></div>
-    <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.1" aria-hidden="true"></div>
-    <div class="parallax-layer gs-parallax layer-sheen" data-parallax="0.16" aria-hidden="true"></div>
-    <div class="features-grid">
-      {features.map((feature, i) => (
-        <div class="feature-card glass-panel reveal lux-card" style={`transition-delay: ${0.1 + (i * 0.1)}s;`}>
-          <div class="icon-box">
-            <span class="material-symbols-rounded">{feature.icon}</span>
-          </div>
-          <h3>{feature.title}</h3>
-          <p>{feature.body}</p>
-        </div>
-      ))}
-    </div>
-  </section>
+    </section>
 
   <script>
     import { initParallax } from '../components/parallax';
@@ -123,4 +105,5 @@ const highlights = [
     });
   </script>
 
-</WebLayout>
+  </div>
+</MarketingLayout>
