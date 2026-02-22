@@ -1,99 +1,70 @@
 ---
-import { GSButton } from '@goldshore/ui';
-import MarketingLayout from '../layouts/MarketingLayout.astro';
-import ParallaxHero from '../components/hero/ParallaxHero.astro';
-import '../styles/home.css';
-
-export const prerender = true;
-
-const features = [
-  {
-    title: 'Vibe Coding',
-    body: 'Aesthetic-driven development where code flows like fluid dynamics. Provable experience.',
-    icon: 'palette'
-  },
-  {
-    title: 'Cinematic Ops',
-    body: 'Infrastructure monitoring that feels like a sci-fi HUD. Real-time, responsive, and beautiful.',
-    icon: 'monitor_heart'
-  },
-  {
-    title: 'Applied Intelligence',
-    body: "AI agents that don't just work—they perform. Seamless integration into your workflow.",
-    icon: 'psychology'
-  }
-];
-
-const highlights = [
-  { label: 'Global Latency', value: '< 30ms', tone: 'success' },
-  { label: 'System Status', value: 'Normal', tone: 'success' },
-  { label: 'Active Nodes', value: '24/24', tone: 'info' },
-  { label: 'Threat Level', value: 'None', tone: '' }
-];
+import WebLayout from '../layouts/WebLayout.astro';
 ---
 
-<MarketingLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
-  <div class="cinematic-wrapper">
-    <div class="stars-container">
-      <div class="stars"></div>
-    </div>
+<WebLayout title="Gold Shore | Shaping Waves" description="Designed not to manage capital, but to steer it.">
+  <section class="gs-hero gs-blueprint-bg" data-gs-hero>
+    <div class="gs-stars-deep" aria-hidden="true"></div>
+    <div class="gs-stars" aria-hidden="true"></div>
+    <div class="gs-grid-overlay" aria-hidden="true"></div>
+    <div class="gs-vignette" aria-hidden="true"></div>
 
-    <ParallaxHero />
+    <div class="gs-hero-parallax" data-gs-parallax="1.2" aria-hidden="true"></div>
 
-    <section class="gs-hero home-hero parallax-section" style="padding-top: 0;">
-    <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.08" aria-hidden="true"></div>
-    <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.14" aria-hidden="true"></div>
-    <div class="parallax-layer gs-parallax layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
+    <div class="gs-container gs-hero-content">
+      <div class="gs-kicker gs-signal" data-gs-reveal>System Status: Operational</div>
+      <h1 class="gs-hero-title gs-display" data-gs-reveal>Shaping Waves with Applied Intelligence</h1>
+      <p data-gs-reveal>
+        Institutional-grade automation, resilient infrastructure, and responsive operations.
+      </p>
 
-      <div class="gs-card gs-pulse-frame hero-card reveal">
-        <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
-        <div class="gs-grid columns-2">
-          {highlights.map((item) => (
-            <div class="gs-kpi">
-              <span>{item.label}</span>
-              <strong>{item.value}</strong>
-              <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
-            </div>
-          ))}
+      <div class="gs-hero-actions" data-gs-reveal>
+        <a class="gs-button gs-button-solid" href="/services">View Services</a>
+        <a class="gs-button gs-button-outline" href="/developer">Developer</a>
+        <button class="gs-button gs-button-outline" data-gs-modal-open="subscribe">Subscribe</button>
+      </div>
+
+      <div class="gs-signal-divider" aria-hidden="true"></div>
+
+      <div style="margin-top: 2rem; display:grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+        <div class="gs-panel gs-hoverlift" data-gs-reveal>
+          <div class="gs-label">Availability</div>
+          <div style="font-size:2.2rem; font-weight:700; margin-top:0.4rem;">99.995%</div>
+          <div class="gs-micro gs-muted">Measured across surfaces</div>
         </div>
-        <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
+        <div class="gs-panel gs-hoverlift" data-gs-reveal>
+          <div class="gs-label">Deploys / Week</div>
+          <div style="font-size:2.2rem; font-weight:700; margin-top:0.4rem;">48</div>
+          <div class="gs-micro gs-muted">Change with control</div>
+        </div>
+        <div class="gs-panel gs-hoverlift" data-gs-reveal>
+          <div class="gs-label">Signals / Day</div>
+          <div style="font-size:2.2rem; font-weight:700; margin-top:0.4rem;">2.1B</div>
+          <div class="gs-micro gs-muted">Routed & verified</div>
+        </div>
       </div>
-    </section>
-
-    <section class="features-section blueprint-section parallax-section">
-      <div class="parallax-layer gs-parallax layer-blueprint" data-parallax="0.04" aria-hidden="true"></div>
-      <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.1" aria-hidden="true"></div>
-      <div class="parallax-layer gs-parallax layer-sheen" data-parallax="0.16" aria-hidden="true"></div>
-      <div class="features-grid">
-        {features.map((feature, i) => (
-          <div class="feature-card glass-panel reveal lux-card" style={`transition-delay: ${0.1 + i * 0.1}s;`}>
-            <div class="icon-box">
-              <span class="material-symbols-rounded">{feature.icon}</span>
-            </div>
-            <h3>{feature.title}</h3>
-            <p>{feature.body}</p>
-          </div>
-        ))}
-      </div>
-      <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
     </div>
   </section>
 
-  <section class="features-section blueprint-section parallax-section">
-    <div class="parallax-layer gs-parallax layer-blueprint" data-parallax="0.04" aria-hidden="true"></div>
-    <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.1" aria-hidden="true"></div>
-    <div class="parallax-layer gs-parallax layer-sheen" data-parallax="0.16" aria-hidden="true"></div>
-    <div class="features-grid">
-      {features.map((feature, i) => (
-        <div class="feature-card glass-panel reveal lux-card" style={`transition-delay: ${0.1 + (i * 0.1)}s;`}>
-          <div class="icon-box">
-            <span class="material-symbols-rounded">{feature.icon}</span>
-          </div>
-          <h3>{feature.title}</h3>
-          <p>{feature.body}</p>
-        </div>
-      ))}
+  <div class="gs-angle-divider"></div>
+
+  <section class="gs-section">
+    <div class="gs-container">
+      <h2 class="gs-display" data-gs-reveal>Mandate</h2>
+      <p data-gs-reveal>
+        We build operator-grade systems that stay calm under pressure — and keep decision-makers in control.
+      </p>
     </div>
   </section>
-  </div>
-</MarketingLayout>
+</WebLayout>
+
+<style>
+  .gs-hero-parallax {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background: radial-gradient(circle at 20% 30%, rgba(90, 140, 255, 0.08), transparent 55%);
+    mix-blend-mode: screen;
+  }
+</style>
