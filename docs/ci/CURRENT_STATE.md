@@ -1,44 +1,51 @@
 # Stabilization Sync Check Report
 
-**Date:** Wed Feb 18 20:46:34 UTC 2026
-**Status:** COMPLETE (With Repairs)
+**Date:** Sun, 22 Feb 2026 06:47:59 GMT
 
 ## 1. Governance Compliance Check
 
-### Violations Detected:
-- **Directory Structure:**
-  - Found unexpected directory: `apps/jules-bot`
-  - Found unexpected directory: `apps/legacy`
-  - *Requirement:* Apps directory must only contain: gs-web, gs-admin, gs-api, gs-mail, gs-gateway, gs-agent, gs-control.
+✅ Directory structure compliant.
 
-- **Root package.json:**
-  - **REPAIRED:** Fixed duplicate keys in `scripts` and `devDependencies`.
-  - **REPAIRED:** Merged `scripts` into single block.
+### ❌ Build Script Violation
+- New scripts detected in root package.json: verify:web-dist, memory:check
 
-- **Workflow Naming:**
-  - Found legacy workflows alongside standard ones: `deploy-web.yml`, `deploy-admin.yml`, etc. vs `deploy-gs-web.yml`.
-  - *Action Required:* Delete legacy workflows (Out of scope for this task).
+### ❌ Workflow Violation (New Files)
+- New workflows detected: canonical-structure-check.yml
+
+✅ CI Actions compliant.
 
 ## 2. Branch Discipline Check
-- *Note:* Unable to verify git branch graph in this environment.
 
-## 3. CI State Snapshot
+**Current Branch:** work
 
-All core applications are now building successfully after app-level repairs.
+**Divergence vs main (unavailable locally):** Behind: 0, Ahead: 0
+
+⚠️ Could not resolve a local main tracking ref; divergence defaults to 0/0 in this checkout.
+
+## 3. CI State Snapshot (PR Context)
+
+⚠️ gh CLI unavailable; unable to resolve PR CI status in this environment.
+
+### Local Build Verification
 
 | App | Status | Notes |
 |---|---|---|
-| **gs-web** | ✅ PASS | Repaired `astro.config.mjs` (syntax error), `src/pages/index.astro` (concatenation error), and fixed CSS imports. |
-| **gs-admin** | ✅ PASS | Repaired `src/pages/index.astro` (frontmatter error), `src/lib/cloudflare.ts` (syntax error), and fixed layout imports. |
-| **gs-api** | ✅ PASS | No issues found. |
-| **gs-mail** | ✅ PASS | No issues found. |
+| **gs-web** | ❌ FAIL | Check run logs |
+| **gs-admin** | ✅ PASS | |
+| **gs-api** | ✅ PASS | |
+| **gs-mail** | ✅ PASS | |
 
-### Repairs Performed:
-- **Root:** Fixed `package.json` duplicates to enable `pnpm install`.
-- **Apps:** Fixed imports for `@goldshore/theme` to align with package exports (removed `.css` extension, used package root).
-- **Config:** Removed manual aliases in `gs-admin/astro.config.mjs` to rely on workspace resolution.
+## 4. App-Level Repairs Required
 
-## 4. Recommendations
-- Delete `apps/jules-bot` and `apps/legacy`.
-- Delete legacy workflows in `.github/workflows`.
-- Enforce strict JSON validation for `package.json` in CI.
+Failures detected in: gs-web build failed.
+**Guidance:** You may fix these inside `apps/*`. Do not modify `.github/`, `infra/`, or root scripts.
+
+## 5. Recommendations
+
+### ❌ Actions Required
+
+- New scripts detected in root package.json: verify:web-dist, memory:check
+- New workflows detected: canonical-structure-check.yml
+
+**Do not self-fix. Escalate governance violations.**
+**App-level repairs (types, imports) are permitted in apps/* only.**
