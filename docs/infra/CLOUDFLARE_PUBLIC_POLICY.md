@@ -1,29 +1,28 @@
-# CLOUDFLARE_PUBLIC_POLICY
+# Cloudflare Public Policy
 
-**Status:** ACTIVE
-**Scope:** goldshore.ai (Pages / WAF)
-**Version:** 1.0
+**Version:** 1.1
+**Status:** Active
 
-## 1. Public Hosts
-These domains MUST be publicly accessible without authentication or Cloudflare Managed Challenges (WAF) for legitimate traffic.
+## Goal
+Ensure `goldshore.ai` and `www.goldshore.ai` are publicly accessible without aggressive WAF challenges blocking legitimate users.
 
-- `goldshore.ai` (Root)
-- `www.goldshore.ai` (WWW Redirect)
+## Domain Policies
 
-**Requirement:** HTTP 200 OK for `GET /`.
+### Public (No WAF Challenge)
+These domains must return `200 OK` directly.
+- `goldshore.ai`
+- `www.goldshore.ai`
 
-## 2. Protected Hosts
-These domains MAY require authentication (Cloudflare Access) or stronger WAF rules.
+### Protected (Access / WAF)
+These domains are restricted to authorized personnel or specific IP ranges.
+- `admin.goldshore.ai` (Cloudflare Access)
+- `preview.goldshore.ai` (Cloudflare Access / Vercel Preview)
+- `ops.goldshore.ai` (Internal Tools)
 
-- `admin.goldshore.ai` (gs-admin) - Requires Access Login.
-- `preview.goldshore.ai` (Staging) - Requires Access Login.
-- `ops.goldshore.ai` (Internal) - Requires Access Login/VPN.
+## Verification
+Codex must **not** modify WAF rules autonomously.
+If a mismatch is detected (e.g., `goldshore.ai` returning 403), report it immediately.
 
-## 3. WAF Policy
-- **Codex Authority:** READ-ONLY. Codex must NOT modify WAF rules.
-- **Reporting:** Any deviation (e.g., `goldshore.ai` returning 403 or challenge) must be documented as a "Configuration Mismatch".
-
-## 4. Current Configuration Check (Template)
-- [ ] `goldshore.ai` -> Public (200 OK)
-- [ ] `www.goldshore.ai` -> Public (200 OK/301)
-- [ ] `admin.goldshore.ai` -> Protected (302 Redirect to Login or 403)
+## Configuration Mismatches
+*Log any observed discrepancies here.*
+- None currently reported.
