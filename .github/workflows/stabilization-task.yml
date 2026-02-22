@@ -33,6 +33,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Verify report metadata freshness
+        if: always()
+        run: node scripts/verify-current-state-metadata.mjs
+
       - name: Commit Report
         if: always()
         uses: stefanzweifel/git-auto-commit-action@v5
