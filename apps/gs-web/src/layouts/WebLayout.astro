@@ -1,5 +1,6 @@
 ---
 import '@goldshore/theme/styles/global.css';
+import '../styles/global.css';
 import '../styles/gs-effects.css';
 import '../styles/layout.css';
 import { GSButton } from '@goldshore/ui';
@@ -25,7 +26,9 @@ const { title = 'Gold Shore', description = '' } = Astro.props;
   </head>
   <body>
     <SiteNav />
-    <slot />
+    <div class="gs-site-main">
+      <slot />
+    </div>
     <footer class="gs-footer">
       <div class="gs-container gs-muted">Gold Shore — Designed not to manage capital, but to steer it.</div>
     </footer>
