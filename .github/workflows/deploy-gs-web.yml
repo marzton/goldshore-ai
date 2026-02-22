@@ -1,4 +1,4 @@
-name: Deploy Web (goldshore.ai)
+name: Deploy GS Web (goldshore.ai)
 
 permissions:
   contents: read
@@ -32,13 +32,32 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run validator suite (stabilization-safe)
-        # TODO(stabilization): remove wrapper bypass support after validator duplicate-symbol fixes are merged.
-        run: pnpm validate:safe
+      - name: Validate workspace contract
+        run: pnpm validate:workspace
+
+      - name: Validate canonical worker structure
+        run: pnpm validate:structure
+
+      - name: Validate canonical worker names
+        run: pnpm validate:names
 
       - name: Build web app
         working-directory: apps/gs-web
+        env:
+          PUBLIC_BUILD_TIMESTAMP: ${{ github.run_started_at }}
+          PUBLIC_COMMIT_HASH: ${{ github.sha }}
         run: pnpm build
+
+      - name: Validate build artifacts
+        working-directory: apps/gs-web
+        run: |
+          set -euo pipefail
+
+          test -d dist/_astro
+          find dist/_astro -maxdepth 1 -type f -name '*.css' -print -quit | grep -q .
+          find dist/_astro -maxdepth 1 -type f -name '*.js' -print -quit | grep -q .
+          grep -q '<link' dist/index.html
+          grep -q '/_astro/' dist/index.html
 
       - name: Deploy to Cloudflare Pages (production)
         uses: cloudflare/pages-action@v1
