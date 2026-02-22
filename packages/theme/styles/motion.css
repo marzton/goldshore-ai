@@ -48,3 +48,36 @@
 @keyframes gs-scan {
   to { transform: translate3d(30%, 0, 0); }
 }
+
+.gs-parallax {
+  transform: translate3d(0, var(--gs-parallax-offset), 0);
+  will-change: transform;
+}
+
+.gs-parallax--xs { --gs-parallax-offset: -8px; }
+.gs-parallax--sm { --gs-parallax-offset: -16px; }
+.gs-parallax--md { --gs-parallax-offset: -28px; }
+.gs-parallax--lg { --gs-parallax-offset: -44px; }
+
+.gs-shadow-layered { box-shadow: var(--gs-shadow-layered-soft); }
+.gs-shadow-layered--soft { box-shadow: var(--gs-shadow-layered-soft); }
+.gs-shadow-layered--medium { box-shadow: var(--gs-shadow-layered-medium); }
+.gs-shadow-layered--strong { box-shadow: var(--gs-shadow-layered-strong); }
+
+.gs-section-lift {
+  transform: translateY(0px);
+  transition: transform 500ms ease, box-shadow 500ms ease;
+}
+
+.gs-section-lift.is-lifted {
+  transform: translateY(var(--gs-section-lift-distance));
+  box-shadow: var(--gs-section-lift-shadow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gs-parallax,
+  .gs-section-lift {
+    transition: none;
+    transform: none;
+  }
+}
