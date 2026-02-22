@@ -1,4 +1,5 @@
 ---
+import { GSButton } from '@goldshore/ui';
 import MarketingLayout from '../layouts/MarketingLayout.astro';
 import ParallaxHero from '../components/hero/ParallaxHero.astro';
 import '../styles/home.css';
@@ -94,5 +95,32 @@ const highlights = [
       ))}
     </div>
   </section>
-  </div>
-</MarketingLayout>
+
+  <script>
+    import { initParallax } from '../components/parallax';
+
+    const cleanupParallax = initParallax({ selector: '.parallax-section [data-parallax]' });
+
+    const revealElements = Array.from(document.querySelectorAll('.reveal'));
+    let revealObserver: IntersectionObserver | undefined;
+
+    if (revealElements.length > 0) {
+      revealObserver = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealObserver?.unobserve(entry.target);
+          }
+        }
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
+
+      revealElements.forEach((element) => revealObserver?.observe(element));
+    }
+
+    window.addEventListener('beforeunload', () => {
+      cleanupParallax();
+      revealObserver?.disconnect();
+    });
+  </script>
+
+</WebLayout>
