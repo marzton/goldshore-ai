@@ -1,4 +1,5 @@
 ---
+import { GSButton } from '@goldshore/ui';
 import MarketingLayout from '../layouts/MarketingLayout.astro';
 import ParallaxHero from '../components/hero/ParallaxHero.astro';
 import '../styles/home.css';
@@ -40,17 +41,9 @@ const highlights = [
     <ParallaxHero />
 
     <section class="gs-hero home-hero parallax-section" style="padding-top: 0;">
-      <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.08" aria-hidden="true"></div>
-      <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.14" aria-hidden="true"></div>
-      <div class="parallax-layer gs-parallax layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
-
-      <div class="hero-content reveal">
-        <p class="gs-badge" style="margin-bottom: var(--gs-space-3);">Modern ops for fluid markets</p>
-        <h2>Built for Resiliency</h2>
-        <p>
-          GoldShore builds resilient, automation-first systems for trading, control, and applied intelligence. Each surface ships with observability, safety, and responsive design baked in.
-        </p>
-      </div>
+    <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.08" aria-hidden="true"></div>
+    <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.14" aria-hidden="true"></div>
+    <div class="parallax-layer gs-parallax layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
 
       <div class="gs-card gs-pulse-frame hero-card reveal">
         <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
@@ -102,32 +95,5 @@ const highlights = [
       ))}
     </div>
   </section>
-
-  <script>
-    import { initParallax } from '../components/parallax';
-
-    const cleanupParallax = initParallax({ selector: '.parallax-section [data-parallax]' });
-
-    const revealElements = Array.from(document.querySelectorAll('.reveal'));
-    let revealObserver: IntersectionObserver | undefined;
-
-    if (revealElements.length > 0) {
-      revealObserver = new IntersectionObserver((entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            revealObserver?.unobserve(entry.target);
-          }
-        }
-      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
-
-      revealElements.forEach((element) => revealObserver?.observe(element));
-    }
-
-    window.addEventListener('beforeunload', () => {
-      cleanupParallax();
-      revealObserver?.disconnect();
-    });
-  </script>
-
-</WebLayout>
+  </div>
+</MarketingLayout>
