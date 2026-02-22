@@ -40,7 +40,7 @@ const KNOWN_WORKFLOWS = [
   'deploy-gs-admin.yml', 'deploy-gs-agent.yml.disabled', 'deploy-gs-api.yml', 'deploy-gs-control.yml.disabled',
   'deploy-gs-gateway.yml.disabled', 'deploy-gs-mail.yml', 'deploy-gs-web.yml', 'jules-nightly.yml',
   'lockfile-guard.yml', 'manual.yml', 'naming-guard.yml', 'naming-lint.yml', 'neuralegion.yml',
-  'palette-manual.yml', 'pii-scan.yml', 'preview-agent.yml', 'preview-gs-admin.yml',
+  'palette-manual.yml', 'pii-scan.yml', 'preview-gs-agent.yml', 'preview-gs-admin.yml',
   'preview-gs-api.yml', 'preview-gs-gateway.yml', 'preview-gs-web.yml', 'route-collision-check.yml',
   'sonarcloud.yml', 'summary.yml', 'tfsec.yml', 'stabilization-task.yml'
 ];
