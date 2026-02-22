@@ -4,6 +4,8 @@ import { execSync } from 'node:child_process';
 
 const REPORT_PATH = 'docs/ci/CURRENT_STATE.md';
 const APPS_DIR = 'apps';
+const WORKFLOW_DIR = '.github/workflows';
+const AUTHORITATIVE_CI_SOURCE = 'GitHub Actions status checks on the pull request';
 const ALLOWED_APPS = [
   'gs-web',
   'gs-admin',
@@ -58,11 +60,6 @@ const ALLOWED_ACTIONS = [
   'actions/ai-inference'
 ];
 
-const ALLOWED_APPS = ['gs-web', 'gs-admin', 'gs-api', 'gs-mail', 'gs-gateway', 'gs-agent', 'gs-control'];
-const BASELINE_BUILD_SCRIPTS = ['dev', 'build', 'build:openapi', 'lint', 'test', 'check:pages', 'scan:pii', 'check:docs-consistency', 'check:naming', 'validate:structure', 'validate:names', 'validate:workers', 'validate:workspace', 'validate', 'branch:bootstrap', 'scaffold:worker', 'workspaces:list', 'verify:workspace-filters'];
-const KNOWN_WORKFLOWS = ['deploy-gs-admin.yml', 'deploy-gs-agent.yml.disabled', 'deploy-gs-api.yml', 'deploy-gs-control.yml.disabled', 'deploy-gs-gateway.yml.disabled', 'deploy-gs-mail.yml', 'deploy-gs-web.yml', 'jules-nightly.yml', 'lockfile-guard.yml', 'manual.yml', 'naming-guard.yml', 'naming-lint.yml', 'neuralegion.yml', 'palette-manual.yml', 'pii-scan.yml', 'preview-agent.yml', 'preview-gs-admin.yml', 'preview-gs-api.yml', 'preview-gs-gateway.yml', 'preview-gs-web.yml', 'route-collision-check.yml', 'sonarcloud.yml', 'summary.yml', 'tfsec.yml', 'stabilization-task.yml'];
-const ALLOWED_ACTIONS = ['actions/checkout', 'actions/setup-node', 'actions/upload-artifact', 'aquasecurity/tfsec-sarif-action', 'cloudflare/pages-action', 'github/codeql-action/upload-sarif', 'pnpm/action-setup', 'stefanzweifel/git-auto-commit-action', 'NeuraLegion/run-scan', 'SonarSource/sonarcloud-github-action', 'actions/ai-inference'];
-
 const violations = [];
 const appLevelIssues = [];
 
@@ -96,8 +93,47 @@ function getPrCiStatus(branch) {
   if (!rollupRaw) return { summary: `⚠️ Unable to fetch status checks for PR #${prNumber}; authoritative CI source: ${AUTHORITATIVE_CI_SOURCE}` };
 
   const pr = JSON.parse(rollupRaw);
-  const checks = (pr.statusCheckRollup || []).map((c) => ({ name: c.name ?? c.context ?? 'unknown-check', status: c.status ?? 'UNKNOWN', conclusion: c.conclusion ?? 'PENDING' }));
-  if (!checks.length) return { summary: `⚠️ PR #${pr.number} has no reported checks yet. [PR Link](${pr.url})` };
+  const checks = (pr.statusCheckRollup || []).map((item) => {
+    if (item.__typename === 'CheckRun') {
+      return {
+        name: item.name,
+        status: item.status,
+        conclusion: item.conclusion
+      };
+    }
+
+    return {
+      name: item.context,
+      status: item.state === 'PENDING' ? 'IN_PROGRESS' : 'COMPLETED',
+      conclusion: item.state === 'SUCCESS' ? 'SUCCESS' : item.state
+    };
+  });
+
+  // Check for unauthorized actions
+  let unauthorizedActions = [];
+  workflows.forEach(w => {
+    if (w.endsWith('.yml') || w.endsWith('.yaml')) {
+      const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
+      const usesLines = content
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.startsWith('uses:') || line.startsWith('- uses:'));
+
+      usesLines.forEach(line => {
+        const match = line.match(/^-?\s*uses:\s*([\"']?)([^\"'\s#]+)\1/);
+        if (!match) {
+          return;
+        }
+
+        const action = match[2].split('@')[0];
+        // Allow local paths and docker image references
+        if (action.startsWith('./') || action.startsWith('docker://')) return;
+        if (!ALLOWED_ACTIONS.includes(action)) {
+          unauthorizedActions.push(`${action} (in ${w})`);
+        }
+      });
+    }
+  });
 
   const failed = checks.filter((c) => ['FAILURE', 'TIMED_OUT', 'CANCELLED', 'ACTION_REQUIRED'].includes(c.conclusion));
   const pending = checks.filter((c) => c.status !== 'COMPLETED');
@@ -183,11 +219,13 @@ if (appLevelIssues.length) {
   report += '## 4. App-Level Repairs\n\n✅ No app-level repairs needed.\n\n';
 }
 
-report += '## 5. Recommendations\n\n';
-if (!violations.length && !appLevelIssues.length) {
-  report += '### ✅ Clean State\n\n';
-  report += '**Stop Condition Status:**\n';
-  report += 'If this state persists for 48 consecutive hours (4 checks), recommend terminating recurring stabilization sync.\n';
+// 5. Recommendations & Stop Condition
+report += `## 5. Recommendations\n\n`;
+
+if (violations.length === 0 && appLevelIssues.length === 0) {
+  report += `### ✅ Clean State\n\n`;
+  report += `**Stop Condition Status:**\n`;
+  report += `If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.\n`;
 } else {
   report += '### ❌ Actions Required\n\n';
   violations.forEach((v) => { report += `- ${v}\n`; });
