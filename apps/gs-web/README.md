@@ -54,30 +54,6 @@ Cloudflare metadata:
 - Pages project name: `gs-web` (production), `preview-web` (preview)
 - Pages bindings config: `infra/cloudflare/goldshore-web.wrangler.toml`
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
-- Public diagnostics metadata injected during GitHub Actions builds:
-  - `PUBLIC_BUILD_TIMESTAMP` = `${{ github.run_started_at }}` (ISO timestamp for the workflow run)
-  - `PUBLIC_COMMIT_HASH` = `${{ github.sha }}` (full commit SHA used for the build)
-- `/status` renders this metadata plus runtime counts for stylesheet links and scripts, and the layout logo asset path from `meta[name="gs-logo-src"]`.
-
-## CSP compatibility
-
-Approved outbound `connect-src` origins for browser runtime network calls in `src`:
-
-- `'self'` for same-origin endpoints (for example `/api/contact` and `/api/docs-search`).
-- `https://api.goldshore.ai` for production API calls (for example docs "Try it" console requests via `PUBLIC_API`).
-- `https://api-preview.goldshore.ai` for preview API calls in preview deployments.
-
-Keep `connect-src` scoped to these explicit hosts unless a new client-side integration is added and reviewed.
-
-## CSP compatibility
-
-Approved outbound `connect-src` origins for browser runtime network calls in `src`:
-
-- `'self'` for same-origin endpoints (for example `/api/contact` and `/api/docs-search`).
-- `https://api.goldshore.ai` for production API calls (for example docs "Try it" console requests via `PUBLIC_API`).
-- `https://api-preview.goldshore.ai` for preview API calls in preview deployments.
-
-Keep `connect-src` scoped to these explicit hosts unless a new client-side integration is added and reviewed.
 
 ## Routes/Endpoints
 
