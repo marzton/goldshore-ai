@@ -1,6 +1,4 @@
 ---
-import '@goldshore/theme/tokens';
-import { GSButton } from '@goldshore/ui';
 import MarketingLayout from '../layouts/MarketingLayout.astro';
 import ParallaxHero from '../components/hero/ParallaxHero.astro';
 import '../styles/home.css';
@@ -22,48 +20,57 @@ const features = [
     title: 'Applied Intelligence',
     body: "AI agents that don't just work—they perform. Seamless integration into your workflow.",
     icon: 'psychology'
-  },
+  }
 ];
 
 const highlights = [
   { label: 'Global Latency', value: '< 30ms', tone: 'success' },
   { label: 'System Status', value: 'Normal', tone: 'success' },
   { label: 'Active Nodes', value: '24/24', tone: 'info' },
-  { label: 'Threat Level', value: 'None', tone: '' },
+  { label: 'Threat Level', value: 'None', tone: '' }
 ];
 ---
 
 <MarketingLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
   <div class="cinematic-wrapper">
-    <!-- Starfield Background -->
     <div class="stars-container">
       <div class="stars"></div>
     </div>
 
     <ParallaxHero />
 
-    <!-- Performance Section (Secondary Hero) -->
     <section class="gs-hero home-hero parallax-section" style="padding-top: 0;">
     <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.08" aria-hidden="true"></div>
     <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.14" aria-hidden="true"></div>
     <div class="parallax-layer gs-parallax layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
 
-    <div class="hero-content reveal">
-      <p class="gs-badge" style="margin-bottom: var(--gs-space-3);">Modern ops for fluid markets</p>
-      <h2>Built for Resiliency</h2>
-      <p>
-        GoldShore builds resilient, automation-first systems for trading, control, and applied intelligence. Each surface ships with observability, safety, and responsive design baked in.
-      </p>
-    </div>
+      <div class="gs-card gs-pulse-frame hero-card reveal">
+        <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
+        <div class="gs-grid columns-2">
+          {highlights.map((item) => (
+            <div class="gs-kpi">
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
+            </div>
+          ))}
+        </div>
+        <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
+      </div>
+    </section>
 
-    <div class="gs-card gs-pulse-frame hero-card reveal">
-      <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
-      <div class="gs-grid columns-2">
-        {highlights.map((item) => (
-          <div class="gs-kpi">
-            <span>{item.label}</span>
-            <strong>{item.value}</strong>
-            <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
+    <section class="features-section blueprint-section parallax-section">
+      <div class="parallax-layer gs-parallax layer-blueprint" data-parallax="0.04" aria-hidden="true"></div>
+      <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.1" aria-hidden="true"></div>
+      <div class="parallax-layer gs-parallax layer-sheen" data-parallax="0.16" aria-hidden="true"></div>
+      <div class="features-grid">
+        {features.map((feature, i) => (
+          <div class="feature-card glass-panel reveal lux-card" style={`transition-delay: ${0.1 + i * 0.1}s;`}>
+            <div class="icon-box">
+              <span class="material-symbols-rounded">{feature.icon}</span>
+            </div>
+            <h3>{feature.title}</h3>
+            <p>{feature.body}</p>
           </div>
         ))}
       </div>
