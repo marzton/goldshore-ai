@@ -1,4 +1,5 @@
 ---
+import { SharedHeader } from '@goldshore/ui';
 import '../styles/global.css';
 
 const { title = 'Gold Shore', description = '' } = Astro.props;
@@ -15,11 +16,7 @@ const { title = 'Gold Shore', description = '' } = Astro.props;
   </head>
 
   <body>
-    <header class="gs-header">
-      <a href="/" class="gs-logo">
-        <img src="/logo.svg" alt="Gold Shore" />
-      </a>
-
+    <SharedHeader class="gs-header" logoAlt="Gold Shore">
       <nav class="gs-nav">
         <a href="/">Home</a>
         <a href="/about">About</a>
@@ -29,7 +26,7 @@ const { title = 'Gold Shore', description = '' } = Astro.props;
         <a href="/apps/risk-radar">Risk Radar</a>
         <a href="/developer">Developer</a>
       </nav>
-    </header>
+    </SharedHeader>
 
     <main>
       <slot />
