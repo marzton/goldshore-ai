@@ -1,11 +1,24 @@
 ---
-import '@goldshore/theme/styles/tokens';
-import '@goldshore/theme/styles/base';
-import '@goldshore/theme/styles/components';
-import '@goldshore/theme/styles/layout';
-import '../styles/global.css';
+/*
+CANONICAL ASSET POLICY (Option A)
+
+Assets must be located in:
+- apps/gs-web/public
+- apps/gs-web/src/assets
+
+Do NOT reference:
+- /public at root
+- astro-goldshore assets
+- legacy paths
+
+All logos must be imported via Astro or placed in public/.
+*/
+
+import '@goldshore/theme';
+import '/src/styles/global.css';
 import { GSButton } from '@goldshore/ui';
 import logo from '../assets/logo.svg';
+import './web-layout.css';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -25,7 +38,7 @@ const logoSrc = logo.src;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.goldshore.ai https://api-preview.goldshore.ai; object-src 'none'; base-uri 'self';" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <!-- Bolt: Preconnect to external origins to speed up resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
