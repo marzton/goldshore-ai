@@ -9,6 +9,10 @@ routes = [
 
 [vars]
 API_ENV = "production"
+CONTACT_TO_EMAIL = "hello@goldshore.ai"
+CONTACT_FROM_EMAIL = "no-reply@goldshore.ai"
+CONTACT_FROM_NAME = "Gold Shore Labs"
+CONTACT_SUBJECT_PREFIX = "[Gold Shore Labs]"
 
 # [[kv_namespaces]]
 # binding = "KV"

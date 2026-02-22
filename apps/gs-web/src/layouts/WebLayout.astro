@@ -1,4 +1,5 @@
 ---
+import '@goldshore/theme/styles/global.css';
 import '../styles/global.css';
 import { GSButton } from '@goldshore/ui';
 import logo from '../assets/logo.svg';
@@ -21,13 +22,14 @@ const logoSrc = logo.src;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';" />
+    <slot name="head" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.goldshore.ai https://api-preview.goldshore.ai; object-src 'none'; base-uri 'self';" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <!-- Bolt: Preconnect to external origins to speed up resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://unpkg.com" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
     <link rel="stylesheet" href="https://unpkg.com/aria-icons@1.0.0/aria-icons.css" />
   </head>
   <body>
@@ -43,11 +45,7 @@ const logoSrc = logo.src;
         </button>
         <nav class="gs-nav" id="primary-navigation" aria-label="Primary">
           {navLinks.map((link) => (
-            <a
-              href={link.href}
-              aria-current={currentPath === link.href ? 'page' : undefined}
-              data-astro-prefetch
-            >
+            <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined} data-astro-prefetch>
               {link.label}
             </a>
           ))}
@@ -93,7 +91,6 @@ const logoSrc = logo.src;
       const header = document.querySelector('.gs-header');
       const toggle = document.querySelector('.gs-nav-toggle');
 
-      // Scroll handling with requestAnimationFrame
       let ticking = false;
       let wasScrolled = false;
 
@@ -111,17 +108,17 @@ const logoSrc = logo.src;
         ticking = false;
       };
 
-      window.addEventListener('scroll', () => {
-        if (!ticking) {
-          window.requestAnimationFrame(updateHeader);
-          ticking = true;
-        }
-      }, { passive: true });
+      window.addEventListener(
+        'scroll',
+        () => {
+          if (!ticking) {
+            window.requestAnimationFrame(updateHeader);
+            ticking = true;
+          }
+        },
+        { passive: true }
+      );
 
-      // Initial check
-      updateHeader();
-
-      // Mobile Menu Handling
       const closeMenu = () => {
         if (header && toggle) {
           header.setAttribute('data-menu-open', 'false');
@@ -154,6 +151,7 @@ const logoSrc = logo.src;
         }
       });
     </script>
+
     <style is:global>
       :root {
         --gs-header-height: 100px;
@@ -162,125 +160,6 @@ const logoSrc = logo.src;
         padding-top: calc(var(--gs-header-height) + 2rem);
         min-height: 100vh;
         --gs-header-height: 72px;
-      }
-      /* Cinematic Header Overrides */
-      .gs-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        height: var(--gs-header-height);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 2rem;
-        background: rgba(3, 3, 5, 0.7); /* Deep dark tint */
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      }
-
-      .gs-header.is-scrolled {
-        background: rgba(0, 0, 0, 0.95);
-        border-bottom-color: rgba(34, 211, 238, 0.15); /* Cyan hint */
-        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.8);
-      }
-
-      @keyframes glow-pulse {
-        0%, 100% {
-          filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.3)) brightness(1.2);
-          transform: scale(1);
-        }
-        50% {
-          filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.6)) brightness(1.4);
-          transform: scale(1.05);
-        }
-      }
-
-      .gs-logo {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        text-decoration: none;
-        color: #fff;
-        font-weight: 600;
-        font-size: 1.1rem;
-        letter-spacing: -0.01em;
-        padding: 0.5rem;
-        margin-right: 1.5rem;
-      }
-
-      .gs-logo img {
-        height: 90px; /* 2.5x larger than base ~36px */
-        width: auto;
-        mix-blend-mode: normal;
-        animation: glow-pulse 3s infinite ease-in-out;
-      }
-
-      .gs-logo img {
-        height: 40px;
-        width: auto;
-        /* Ensure logo blends if it has a dark bg */
-        mix-blend-mode: normal;
-      }
-
-      .gs-nav {
-        display: flex;
-        gap: 2rem;
-        align-items: center;
-      }
-
-      .gs-nav a {
-        color: rgba(255, 255, 255, 0.7);
-        text-decoration: none;
-        font-size: 0.95rem;
-        transition: color 0.2s ease;
-        position: relative;
-      }
-
-      .gs-nav a:hover,
-      .gs-nav a[aria-current="page"] {
-        color: #fff;
-      }
-
-      .gs-nav a[aria-current="page"]::after {
-        content: '';
-        position: absolute;
-        bottom: -4px;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: #22d3ee; /* Cyan accent */
-        box-shadow: 0 0 8px #22d3ee;
-      }
-
-      /* Mobile toggle */
-      .gs-nav-toggle {
-        display: none; /* Hidden by default on desktop */
-        background: none;
-        border: none;
-        color: #fff;
-        cursor: pointer;
-      }
-
-      @media (max-width: 768px) {
-        .gs-header { padding: 0 1rem; }
-        .gs-nav { display: none; } /* Simplified mobile handling for now */
-        .gs-nav-toggle { display: block; }
-
-        .gs-header[data-menu-open="true"] .gs-nav {
-          display: flex;
-          flex-direction: column;
-          position: absolute;
-          top: 100%;
-          left: 0;
-          right: 0;
-          background: #000;
-          padding: 2rem;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
       }
     </style>
   </body>

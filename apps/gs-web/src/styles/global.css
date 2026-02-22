@@ -1,12 +1,4 @@
-@import "@goldshore/theme/styles/tokens";
-@import "@goldshore/theme/styles/base";
-@import "@goldshore/theme/styles/components";
-@import "@goldshore/theme/styles/layout";
-@import "@goldshore/theme";
-@import "./gs-effects.css";
+@import './gs-effects.css';
+@import './layout.css';
 
-:root {
-  font-family: var(--gs-font-body);
-}
-
-body { margin: 0; }
+/* Local overrides for @goldshore/gs-web */
