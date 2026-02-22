@@ -117,16 +117,6 @@ section {
   background: rgb(var(--surface));
 }
 
-.card summary {
-  cursor: pointer;
-}
-
-.card summary:focus-visible {
-  outline: 3px solid rgb(var(--accent-strong));
-  outline-offset: 4px;
-  border-radius: 6px;
-}
-
 .button {
   display: inline-flex;
   align-items: center;
