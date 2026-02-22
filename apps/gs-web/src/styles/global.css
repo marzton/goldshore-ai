@@ -88,24 +88,6 @@ main {
   border-top: 1px solid var(--gs-border-subtle);
 }
 
-/* Stylized edge division */
-.gs-section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 10%;
-  width: 80%;
-  height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    var(--gs-accent-blue),
-    var(--gs-accent-gold),
-    transparent
-  );
-  opacity: 0.25;
-}
-
 /* -----------------------------
    Cards
 ------------------------------ */
