@@ -191,3 +191,98 @@ h2 {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Flex */
+.gs-flex {
+  display: flex;
+}
+
+.gs-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gs-flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gs-flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Stack Utility (Vertical Rhythm Control) */
+.gs-stack > * + * {
+  margin-top: 1.5rem;
+}
+
+.gs-stack-lg > * + * {
+  margin-top: 2.5rem;
+}
+
+.gs-stack-sm > * + * {
+  margin-top: 1rem;
+}
+
+/* Cluster (Button / Nav Alignment) */
+.gs-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Split Layout (Responsive Two-Column) */
+.gs-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .gs-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Centered Section Utility */
+.gs-center {
+  text-align: center;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Responsive Visibility Utilities */
+.gs-hide-mobile {
+  display: block;
+}
+
+.gs-show-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .gs-hide-mobile {
+    display: none;
+  }
+
+  .gs-show-mobile {
+    display: block;
+  }
+}
+
+/* Spacing Utilities */
+.gs-mt-2 { margin-top: 2rem; }
+.gs-mt-4 { margin-top: 4rem; }
+.gs-mb-2 { margin-bottom: 2rem; }
+.gs-mb-4 { margin-bottom: 4rem; }
+
+.gs-pt-4 { padding-top: 4rem; }
+.gs-pb-4 { padding-bottom: 4rem; }
+
