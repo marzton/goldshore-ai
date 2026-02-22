@@ -1,38 +1,39 @@
-# FRONTEND_ARCHITECTURE_MAP
+# Frontend Architecture Map
 
-## CSS load order
-1. `apps/gs-web/src/layouts/WebLayout.astro`
-   - `import '@goldshore/theme/styles/global.css';`
-   - `import '../styles/global.css';`
-2. `apps/gs-web/src/styles/global.css`
-   - imports local `./gs-effects.css`
-   - defines app-level root/body typography smoothing
-3. Route-level styles (example): `apps/gs-web/src/pages/index.astro` imports `../styles/home.css`
+## Overview
+This document maps the critical rendering path for `goldshore.ai` (`apps/gs-web`).
 
-## Layout chain
-- `apps/gs-web/src/pages/index.astro`
-  -> `apps/gs-web/src/layouts/MarketingLayout.astro`
-  -> `apps/gs-web/src/layouts/WebLayout.astro`
+## CSS Load Order
+1.  **Theme Global**: `@goldshore/theme/styles/global.css` (Imported in `WebLayout.astro`)
+    - Resets
+    - Typography (Inter, JetBrains Mono)
+    - Variables/Tokens
+    - Base Component Styles
+2.  **Local Overrides**: `apps/gs-web/src/styles/global.css` (Imported in `WebLayout.astro`)
+    - Application-specific tweaks
+3.  **Layout-Specific**: `apps/gs-web/src/layouts/web-layout.css` (Imported in `WebLayout.astro`)
+    - Header/Footer specific styles
+4.  **Page-Specific**: e.g., `apps/gs-web/src/styles/home.css` (Imported in `index.astro`)
+    - Homepage specific animations/styles
 
-## Asset import pattern
-- Logos and compiled static assets should use Astro/Vite imports:
-  - `import logo from '../assets/logo.svg';`
-  - `<img src={logo.src} ... />`
-- Build emits hashed assets to `dist/_astro/` and rewrites references in HTML.
+## Layout Wrapping Chain
+1.  **Page**: `src/pages/index.astro`
+    - Uses: `MarketingLayout`
+2.  **Wrapper**: `src/layouts/MarketingLayout.astro`
+    - Uses: `WebLayout`
+    - Passes: `title`, `description`
+3.  **Root**: `src/layouts/WebLayout.astro`
+    - Defines: `<html>`, `<head>`, `<body>`
+    - Mounts: Header, Main Content (`<slot />`), Footer
+    - Scripts: Inline scroll handling, mobile menu
 
-## Hero mount lifecycle
-- Component: `apps/gs-web/src/components/hero/ParallaxHero.astro`
-  - Marks root with `data-hero-root`
-  - Uses scoped canvases (`data-stars`, `data-shooting`)
-  - Runs one client script block to initialize each hero root once
-- Runtime mount module: `apps/gs-web/src/components/hero/mountHero.ts`
-  - Accepts a root node
-  - Mounts starfield and shooting-stars canvases from scoped selectors
-  - Returns teardown callback
+## Asset Bundling
+- **Build Tool**: Astro (via Vite)
+- **Output**: `dist/_astro/`
+- **Hashing**: Enabled (e.g., `style.XyZ123.css`)
+- **Images**: Optimized by Astro Image integration
 
-## Bundle output structure
-After `pnpm --filter @goldshore/gs-web build`:
-- `apps/gs-web/dist/index.html`
-- `apps/gs-web/dist/_astro/*.css`
-- `apps/gs-web/dist/_astro/*.js`
-- `index.html` contains hashed `/_astro/...` stylesheet and module script references.
+## Hero Component
+- **Component**: `ParallaxHero.astro`
+- **Mount**: Server-side rendering (SSR) in `index.astro`
+- **Scripts**: Client-side animation scripts (if any) are bundled or inline.
