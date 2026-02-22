@@ -39,7 +39,7 @@ jobs:
 
       - name: Commit Report
         if: always()
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore: update stabilization report"
           file_pattern: "docs/ci/CURRENT_STATE.md"
