@@ -134,13 +134,32 @@ try {
 
   // Check for unauthorized actions
   let unauthorizedActions = [];
+  const collectUsesValues = (node, accumulator = []) => {
+    if (Array.isArray(node)) {
+      node.forEach(item => collectUsesValues(item, accumulator));
+      return accumulator;
+    }
+
+    if (node && typeof node === 'object') {
+      Object.entries(node).forEach(([key, value]) => {
+        if (key === 'uses' && typeof value === 'string') {
+          accumulator.push(value);
+        }
+        collectUsesValues(value, accumulator);
+      });
+    }
+
+    return accumulator;
+  };
+
   workflows.forEach(w => {
     if (w.endsWith('.yml') || w.endsWith('.yaml')) {
       const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
-      const usesLines = content.split('\n').filter(l => l.trim().startsWith('uses:'));
-      usesLines.forEach(line => {
-        const actionPart = line.split('uses:')[1].trim();
-        const action = actionPart.split('@')[0];
+      const parsedWorkflow = parse(content);
+      const usesValues = collectUsesValues(parsedWorkflow);
+
+      usesValues.forEach(actionPart => {
+        const action = actionPart.split('@')[0].trim();
         // Allow local paths
         if (action.startsWith('./')) return;
         if (!ALLOWED_ACTIONS.includes(action)) {
