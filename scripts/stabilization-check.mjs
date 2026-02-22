@@ -4,8 +4,59 @@ import { execSync } from 'node:child_process';
 
 const REPORT_PATH = 'docs/ci/CURRENT_STATE.md';
 const APPS_DIR = 'apps';
-const WORKFLOW_DIR = '.github/workflows';
-const AUTHORITATIVE_CI_SOURCE = 'https://github.com/goldshore-ai/goldshore-ai/actions';
+const ALLOWED_APPS = [
+  'gs-web',
+  'gs-admin',
+  'gs-api',
+  'gs-mail',
+  'gs-gateway',
+  'gs-agent',
+  'gs-control'
+];
+
+const BASELINE_BUILD_SCRIPTS = [
+  'dev',
+  'build',
+  'build:openapi',
+  'lint',
+  'test',
+  'check:pages',
+  'scan:pii',
+  'check:docs-consistency',
+  'check:naming',
+  'validate:structure',
+  'validate:names',
+  'validate:workers',
+  'validate:workspace',
+  'validate',
+  'branch:bootstrap',
+  'scaffold:worker',
+  'workspaces:list',
+  'verify:workspace-filters'
+];
+
+const KNOWN_WORKFLOWS = [
+  'deploy-gs-admin.yml', 'deploy-gs-agent.yml.disabled', 'deploy-gs-api.yml', 'deploy-gs-control.yml.disabled',
+  'deploy-gs-gateway.yml.disabled', 'deploy-gs-mail.yml', 'deploy-gs-web.yml', 'jules-nightly.yml',
+  'lockfile-guard.yml', 'manual.yml', 'naming-guard.yml', 'naming-lint.yml', 'neuralegion.yml',
+  'palette-manual.yml', 'pii-scan.yml', 'preview-gs-agent.yml', 'preview-gs-admin.yml',
+  'preview-gs-api.yml', 'preview-gs-gateway.yml', 'preview-gs-web.yml', 'route-collision-check.yml',
+  'sonarcloud.yml', 'summary.yml', 'tfsec.yml', 'stabilization-task.yml'
+];
+
+const ALLOWED_ACTIONS = [
+  'actions/checkout',
+  'actions/setup-node',
+  'actions/upload-artifact',
+  'aquasecurity/tfsec-sarif-action',
+  'cloudflare/pages-action',
+  'github/codeql-action/upload-sarif',
+  'pnpm/action-setup',
+  'stefanzweifel/git-auto-commit-action',
+  'NeuraLegion/run-scan',
+  'SonarSource/sonarcloud-github-action',
+  'actions/ai-inference'
+];
 
 const ALLOWED_APPS = ['gs-web', 'gs-admin', 'gs-api', 'gs-mail', 'gs-gateway', 'gs-agent', 'gs-control'];
 const BASELINE_BUILD_SCRIPTS = ['dev', 'build', 'build:openapi', 'lint', 'test', 'check:pages', 'scan:pii', 'check:docs-consistency', 'check:naming', 'validate:structure', 'validate:names', 'validate:workers', 'validate:workspace', 'validate', 'branch:bootstrap', 'scaffold:worker', 'workspaces:list', 'verify:workspace-filters'];
