@@ -20,5 +20,8 @@
     "./styles/global.css": "./src/styles/global.css",
     "./manager": "./src/theme-manager.ts",
     "./assets/logo.svg": "./assets/logo.svg"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --test src/*.test.ts"
   }
 }
