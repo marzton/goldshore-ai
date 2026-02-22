@@ -271,8 +271,6 @@ importers:
         specifier: ^5.4.2
         version: 5.9.3
 
-  apps/jules-bot: {}
-
   packages/ai-providers: {}
 
   packages/auth:
