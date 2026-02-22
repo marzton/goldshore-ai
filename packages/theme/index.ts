@@ -6,15 +6,107 @@ export function initGoldShoreUI() {
   initReveal();
 }
 
+const FOCUSABLE_SELECTOR = [
+  "a[href]",
+  "button:not([disabled])",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  "[tabindex]:not([tabindex='-1'])"
+].join(",");
+
+const backgroundStates = new WeakMap<HTMLElement, { ariaHidden: string | null; inert: boolean }>();
+
+function getFocusableElements(container: HTMLElement): HTMLElement[] {
+  return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter((el) => {
+    if (el.hasAttribute("disabled")) return false;
+    if (el.getAttribute("aria-hidden") === "true") return false;
+    return el.offsetParent !== null;
+  });
+}
+
+function focusFirstInteractive(container: HTMLElement) {
+  const [first] = getFocusableElements(container);
+  if (first) {
+    first.focus();
+    return;
+  }
+
+  if (!container.hasAttribute("tabindex")) container.setAttribute("tabindex", "-1");
+  container.focus();
+}
+
+function trapTabKey(event: KeyboardEvent, container: HTMLElement) {
+  if (event.key !== "Tab") return;
+
+  const focusable = getFocusableElements(container);
+  if (!focusable.length) {
+    event.preventDefault();
+    container.focus();
+    return;
+  }
+
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  const active = document.activeElement as HTMLElement | null;
+
+  if (event.shiftKey && active === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && active === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+function setBackgroundHidden(activeLayer: HTMLElement, open: boolean) {
+  const bodyChildren = Array.from(document.body.children).filter(
+    (child): child is HTMLElement => child instanceof HTMLElement && child !== activeLayer
+  );
+
+  bodyChildren.forEach((el) => {
+    if (open) {
+      backgroundStates.set(el, {
+        ariaHidden: el.getAttribute("aria-hidden"),
+        inert: el.hasAttribute("inert")
+      });
+      el.setAttribute("aria-hidden", "true");
+      el.setAttribute("inert", "");
+      return;
+    }
+
+    const prev = backgroundStates.get(el);
+    if (!prev) return;
+
+    if (prev.ariaHidden === null) el.removeAttribute("aria-hidden");
+    else el.setAttribute("aria-hidden", prev.ariaHidden);
+
+    if (!prev.inert) el.removeAttribute("inert");
+    backgroundStates.delete(el);
+  });
+}
+
 function initNav() {
   const toggle = document.querySelector<HTMLButtonElement>("[data-gs-nav-toggle]");
   const panel = document.querySelector<HTMLElement>("[data-gs-mobile-panel]");
   if (!toggle || !panel) return;
 
+  let previouslyFocused: HTMLElement | null = null;
+
   const setOpen = (open: boolean) => {
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
     panel.classList.toggle("is-open", open);
     document.documentElement.classList.toggle("gs-lock", open);
+
+    if (open) {
+      previouslyFocused = document.activeElement as HTMLElement | null;
+      setBackgroundHidden(panel, true);
+      focusFirstInteractive(panel);
+      return;
+    }
+
+    setBackgroundHidden(panel, false);
+    previouslyFocused?.focus();
   };
 
   toggle.addEventListener("click", () => {
@@ -29,6 +121,7 @@ function initNav() {
 
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") setOpen(false);
+    if (toggle.getAttribute("aria-expanded") === "true") trapTabKey(e, panel);
   });
 }
 
@@ -39,16 +132,26 @@ function initModal() {
   const backdrop = root.querySelector<HTMLElement>("[data-gs-modal-backdrop]");
   const closeBtn = root.querySelector<HTMLButtonElement>("[data-gs-modal-close]");
   const body = root.querySelector<HTMLElement>("[data-gs-modal-body]");
+  const panel = root.querySelector<HTMLElement>("[data-gs-modal-panel]");
+  let previouslyFocused: HTMLElement | null = null;
 
   const openModal = (html: string) => {
     if (body) body.innerHTML = html;
+    const heading = body?.querySelector<HTMLElement>(".gs-modal-title");
+    if (heading) heading.id = "gs-modal-title";
+
     root.classList.add("is-open");
     document.documentElement.classList.add("gs-lock");
+    previouslyFocused = document.activeElement as HTMLElement | null;
+    setBackgroundHidden(root, true);
+    if (panel) focusFirstInteractive(panel);
   };
 
   const closeModal = () => {
     root.classList.remove("is-open");
     document.documentElement.classList.remove("gs-lock");
+    setBackgroundHidden(root, false);
+    previouslyFocused?.focus();
   };
 
   document.addEventListener("click", (e) => {
@@ -62,7 +165,10 @@ function initModal() {
 
   backdrop?.addEventListener("click", closeModal);
   closeBtn?.addEventListener("click", closeModal);
-  window.addEventListener("keydown", (e) => (e.key === "Escape" ? closeModal() : null));
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
+    if (root.classList.contains("is-open") && panel) trapTabKey(e, panel);
+  });
 }
 
 function getModalTemplate(variant: string): string {
@@ -70,7 +176,7 @@ function getModalTemplate(variant: string): string {
     return `
       <div class="gs-modal-head">
         <div class="gs-kicker gs-signal">Secure Access</div>
-        <h2 class="gs-modal-title gs-display">Admin Login</h2>
+        <h2 id="gs-modal-title" class="gs-modal-title gs-display">Admin Login</h2>
         <p class="gs-muted">Restricted console entry. Continue to the secure admin surface.</p>
       </div>
       <div class="gs-form">
@@ -83,7 +189,7 @@ function getModalTemplate(variant: string): string {
   return `
     <div class="gs-modal-head">
       <div class="gs-kicker">Signal Brief</div>
-      <h2 class="gs-modal-title gs-display">Subscribe</h2>
+      <h2 id="gs-modal-title" class="gs-modal-title gs-display">Subscribe</h2>
       <p class="gs-muted">Periodic updates on releases, systems, and operational tooling.</p>
     </div>
     <form class="gs-form" action="/api/subscribe" method="POST">
