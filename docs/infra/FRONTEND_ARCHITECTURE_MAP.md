@@ -1,12 +1,13 @@
 # FRONTEND_ARCHITECTURE_MAP
 
 ## CSS load order
-1. Canonical global entrypoint: `packages/theme/src/styles/global.css`
-   - imported exactly once by `apps/gs-web/src/layouts/WebLayout.astro` via `import '@goldshore/theme/styles/global.css';`
-2. Layout-scoped overrides: `apps/gs-web/src/layouts/web-layout.css`
-   - imported by `WebLayout.astro` for app-specific typography/rendering on `.gs-page-shell` only
-3. Route/module styles (example): `apps/gs-web/src/pages/index.astro` imports `../styles/home.css`
-   - `home.css` composes local visual effects via `@import './gs-effects.css'`
+1. `apps/gs-web/src/layouts/WebLayout.astro`
+   - `import '@goldshore/theme/styles/global.css';`
+   - `import '../styles/global.css';`
+2. `apps/gs-web/src/styles/global.css`
+   - imports local `./gs-effects.css`
+   - defines app-level root/body typography smoothing
+3. Route-level styles (example): `apps/gs-web/src/pages/index.astro` imports `../styles/home.css`
 
 ## Layout chain
 - `apps/gs-web/src/pages/index.astro`
