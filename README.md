@@ -94,6 +94,7 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 - [Testing](#testing)
 - [Deployment](#deployment)
 - [Versioning Strategy](#versioning-strategy)
+- [Contributor Note: Merge Strategy for Top-Level Docs](#contributor-note-merge-strategy-for-top-level-docs)
 - [License](#license)
 
 ## Vibe Coding & Human-in-the-Loop
