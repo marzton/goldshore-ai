@@ -14,10 +14,11 @@ Do NOT reference:
 All logos must be imported via Astro or placed in public/.
 */
 
-import '../styles/global.css';
+import '@goldshore/theme/styles/global.css';
+import '../styles/gs-effects.css';
+import '../styles/layout.css';
 import { GSButton } from '@goldshore/ui';
 import logo from '../assets/logo.svg';
-import './web-layout.css';
 
 const navLinks = [
   { href: '/', label: 'Home' },
