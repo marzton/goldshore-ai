@@ -22,11 +22,16 @@ jobs:
         with:
           node-version: 20
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install Dependencies
         run: pnpm install
 
       - name: Run Stabilization Check
         run: node scripts/stabilization-check.mjs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit Report
         if: always()
