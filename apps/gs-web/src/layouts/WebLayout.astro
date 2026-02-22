@@ -1,8 +1,11 @@
 ---
 // Keep styles sourced from the published theme package so Vite can resolve it in all environments.
 import '@goldshore/theme';
+import { initGoldShoreUI } from '@goldshore/theme/runtime';
 import SiteNav from '../components/SiteNav.astro';
 import GlobalModal from '../components/GlobalModal.astro';
+
+void initGoldShoreUI;
 
 const { title = 'Gold Shore', description = '' } = Astro.props;
 ---
@@ -24,7 +27,7 @@ const { title = 'Gold Shore', description = '' } = Astro.props;
 
     <GlobalModal />
 
-    <script>
+    <script is:inline>
       import { initGoldShoreUI } from '@goldshore/theme/runtime';
       initGoldShoreUI();
     </script>

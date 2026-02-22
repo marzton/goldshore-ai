@@ -1,72 +1,28 @@
 ---
 import WebLayout from '../../layouts/WebLayout.astro';
-
-export const prerender = true;
 ---
 
 <WebLayout title="Risk Radar | Gold Shore" description="Forthcoming operational threat visualization system.">
-  <section class="gs-section gs-blueprint-bg risk-radar">
+  <section class="gs-section gs-blueprint-bg">
     <div class="gs-container">
-      <h2>Risk Radar</h2>
-      <div class="gs-card">
+      <div class="gs-kicker gs-signal" data-gs-reveal>Forthcoming Surface</div>
+      <h1 class="gs-display" data-gs-reveal>Risk Radar</h1>
+      <p data-gs-reveal>
+        A visualization layer for systemic exposure, volatility pressure, and signal drift.
+      </p>
+
+      <div class="gs-panel gs-hoverlift" style="margin-top:2rem;" data-gs-reveal>
+        <div class="gs-label">Preview Module</div>
+        <h2 class="gs-display" style="margin-top:0.75rem;">Orbital Exposure Map</h2>
         <p>
-          A forthcoming operational visualization system designed to map systemic exposure and signal volatility in
-          real time.
+          A panel-based operational view designed to ship with calibrated motion, status tags, and control-room
+          density.
         </p>
+        <div style="display:flex; gap:0.9rem; flex-wrap:wrap; margin-top:1.2rem;">
+          <button class="gs-button gs-button-solid" data-gs-modal-open="subscribe">Request Access</button>
+          <a class="gs-button gs-button-outline" href="/developer">Developer Hub</a>
+        </div>
       </div>
     </div>
   </section>
 </WebLayout>
-
-<style>
-  .risk-radar {
-    padding: 4rem 2rem 6rem;
-    min-height: calc(100svh - 72px);
-  }
-
-  .risk-radar h1,
-  .risk-radar p {
-    max-width: 1100px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .radar-preview {
-    height: 400px;
-    margin: 2rem 0 0;
-  .radar-preview {
-    height: 400px;
-    background: radial-gradient(circle, #0ea5e9 0%, #020617 70%);
-    border-radius: 0;
-    position: relative;
-    overflow: hidden;
-    margin-top: 2rem;
-  }
-
-  .pulse {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 180px;
-    height: 180px;
-    border: 1px solid rgba(186, 230, 253, 0.5);
-    border-radius: 999px;
-    transform: translate(-50%, -50%);
-    animation: pulse 2.2s ease-out infinite;
-  }
-
-  @keyframes pulse {
-    from {
-      opacity: 0.9;
-      transform: translate(-50%, -50%) scale(0.5);
-    }
-    to {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(2.3);
-    }
-  .risk-radar .gs-card {
-    margin-top: 1.5rem;
-    border-radius: 0;
-    background: radial-gradient(circle, #0ea5e9 0%, #020617 70%);
-  }
-</style>
