@@ -2,7 +2,7 @@
 
 **Status:** ACTIVE
 **Scope:** goldshore.ai (Pages / WAF)
-**Version:** 1.0
+**Version:** 1.1
 
 ## 1. Public Hosts
 These domains MUST be publicly accessible without authentication or Cloudflare Managed Challenges (WAF) for legitimate traffic.
@@ -11,6 +11,7 @@ These domains MUST be publicly accessible without authentication or Cloudflare M
 - `www.goldshore.ai` (WWW Redirect)
 
 **Requirement:** HTTP 200 OK for `GET /`.
+**Constraint:** No WAF Managed Challenges presented to standard user agents.
 
 ## 2. Protected Hosts
 These domains MAY require authentication (Cloudflare Access) or stronger WAF rules.
@@ -22,6 +23,7 @@ These domains MAY require authentication (Cloudflare Access) or stronger WAF rul
 ## 3. WAF Policy
 - **Codex Authority:** READ-ONLY. Codex must NOT modify WAF rules.
 - **Reporting:** Any deviation (e.g., `goldshore.ai` returning 403 or challenge) must be documented as a "Configuration Mismatch".
+- **Action:** Only Jules or human operators may authorize WAF rule changes.
 
 ## 4. Current Configuration Check (Template)
 - [ ] `goldshore.ai` -> Public (200 OK)
