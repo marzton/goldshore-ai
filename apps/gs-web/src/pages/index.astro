@@ -1,71 +1,56 @@
 ---
 import WebLayout from '../layouts/WebLayout.astro';
-
-export const prerender = true;
 ---
 
-<WebLayout title="Gold Shore | Shaping Waves" description="Engineered for decisive control.">
-  <section class="gs-section gs-blueprint-bg hero">
-    <div class="gs-container">
-      <h1>Gold Shore</h1>
-      <p class="hero-tagline">Designed not to manage capital, but to steer it.</p>
+<WebLayout title="Gold Shore | Shaping Waves" description="Designed not to manage capital, but to steer it.">
+  <section class="gs-hero gs-blueprint-bg gs-hero-bg" data-gs-hero>
+    <div class="gs-grid-overlay" aria-hidden="true"></div>
+    <div class="gs-vignette" aria-hidden="true"></div>
 
-      <div class="hero-actions">
-        <a href="/contact" class="gs-button gs-button--primary">Start</a>
+
+    <div class="gs-container gs-hero-content">
+      <div class="gs-kicker gs-signal" data-gs-reveal>System Status: Operational</div>
+      <h1 class="gs-hero-title gs-display" data-gs-reveal>Shaping Waves with Applied Intelligence</h1>
+      <p data-gs-reveal>
+        Institutional-grade automation, resilient infrastructure, and responsive operations.
+      </p>
+
+      <div class="gs-hero-actions" data-gs-reveal>
+        <a class="gs-button gs-button-solid" href="/services">View Services</a>
+        <a class="gs-button gs-button-outline" href="/developer">Developer</a>
+        <button class="gs-button gs-button-outline" data-gs-modal-open="subscribe">Subscribe</button>
+      </div>
+
+      <div class="gs-signal-divider" aria-hidden="true"></div>
+
+      <div style="margin-top: 2rem; display:grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+        <div class="gs-panel gs-hoverlift gs-tilt" data-gs-reveal>
+          <div class="gs-label">Availability</div>
+          <div style="font-size:2.2rem; font-weight:700; margin-top:0.4rem;">99.995%</div>
+          <div class="gs-micro gs-muted">Measured across surfaces</div>
+        </div>
+        <div class="gs-panel gs-hoverlift gs-tilt" data-gs-reveal>
+          <div class="gs-label">Deploys / Week</div>
+          <div style="font-size:2.2rem; font-weight:700; margin-top:0.4rem;">48</div>
+          <div class="gs-micro gs-muted">Change with control</div>
+        </div>
+        <div class="gs-panel gs-hoverlift gs-tilt" data-gs-reveal>
+          <div class="gs-label">Signals / Day</div>
+          <div style="font-size:2.2rem; font-weight:700; margin-top:0.4rem;">2.1B</div>
+          <div class="gs-micro gs-muted">Routed & verified</div>
+        </div>
       </div>
     </div>
   </section>
+
+  <div class="gs-angle-divider"></div>
+
+  <section class="gs-section">
+    <div class="gs-container">
+      <h2 class="gs-display" data-gs-reveal>Mandate</h2>
+      <p data-gs-reveal>
+        We build operator-grade systems that stay calm under pressure — and keep decision-makers in control.
+      </p>
+    </div>
+  </section>
 </WebLayout>
-
-<style>
-  .hero {
-    position: relative;
-    height: calc(100svh - 72px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
-    overflow: hidden;
-  }
-
-  #starfield {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0.35;
-  }
-
-  .hero-content {
-    position: relative;
-    z-index: 1;
-    max-width: 720px;
-    padding: 1.5rem;
-  }
-
-  h1 {
-    margin: 0;
-    font-size: clamp(2.5rem, 8vw, 5rem);
-    letter-spacing: 0.03em;
-  }
-
-  .hero p {
-    color: #cbd5e1;
-    margin: 1rem 0 2rem;
-    font-size: 1.1rem;
-  }
-
-  .hero-actions a {
-    display: inline-block;
-    margin: 0 0.5rem;
-    padding: 0.75rem 1.25rem;
-    border: 1px solid #334155;
-    color: #f8fafc;
-    text-decoration: none;
-  }
-
-  .hero-actions a:hover {
-    border-color: #38bdf8;
-  }
-</style>
