@@ -1,5 +1,21 @@
 ---
-import '../styles/global.css';
+/*
+CANONICAL ASSET POLICY (Option A)
+
+Assets must be located in:
+- apps/gs-web/public
+- apps/gs-web/src/assets
+
+Do NOT reference:
+- /public at root
+- astro-goldshore assets
+- legacy paths
+
+All logos must be imported via Astro or placed in public/.
+*/
+
+import '@goldshore/theme';
+import '/src/styles/global.css';
 import { GSButton } from '@goldshore/ui';
 import logo from '../assets/logo.svg';
 import './web-layout.css';
