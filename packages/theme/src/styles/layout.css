@@ -7,8 +7,14 @@ body {
   font-family: Inter, system-ui, -apple-system, sans-serif;
 }
 
-main {
+body {
   padding-top: 80px;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-top: 72px;
+  }
 }
 
 .gs-container {
@@ -140,4 +146,48 @@ p {
 .gs-admin-content {
   padding: 1.5rem;
   flex: 1 1 auto;
+}
+
+
+/* Responsive Typography */
+h1 {
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+}
+
+h2 {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+/* Responsive Containers */
+@media (max-width: 1024px) {
+  .gs-container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .gs-container {
+    padding: 0 1.25rem;
+  }
+}
+
+/* Responsive Grid Utility */
+.gs-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.gs-grid.columns-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.gs-grid.columns-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 900px) {
+  .gs-grid.columns-2,
+  .gs-grid.columns-3 {
+    grid-template-columns: 1fr;
+  }
 }
