@@ -1,9 +1,0 @@
-@import "./gs-effects.css";
-
-:root {
-  font-family: var(--gs-font-body);
-}
-
-body {
-  margin: 0;
-}
