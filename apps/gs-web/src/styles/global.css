@@ -1,4 +1,9 @@
-@import '@goldshore/theme/styles/global.css';
-@import './gs-effects.css';
-/* Local overrides for @goldshore/gs-web */
-/* This file is imported by WebLayout.astro after the theme global.css */
+@import "./gs-effects.css";
+
+:root {
+  font-family: var(--gs-font-body);
+}
+
+body {
+  margin: 0;
+}

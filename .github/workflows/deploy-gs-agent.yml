@@ -9,13 +9,13 @@ on:
       - main
     paths:
       - "apps/gs-agent/**"
-      - ".github/workflows/deploy-gs-agent.yml.disabled"
+      - ".github/workflows/deploy-gs-agent.yml"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
 
 jobs:
-  deploy-agent:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

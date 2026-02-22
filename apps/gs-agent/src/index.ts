@@ -100,13 +100,8 @@ app.get('/templates', (c) => {
 
 export default {
 	fetch: app.fetch,
-	async queue(batch: MessageBatch<unknown>, env: Env): Promise<void> {
-		console.info(
-			JSON.stringify({
-				event: 'queue_batch_received',
-				count: batch.messages.length,
-				timestamp: new Date().toISOString(),
-			}),
-		);
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	async queue(batch: any, env: Env): Promise<void> {
+		console.log(`Received batch of ${batch.messages.length} messages`);
 	},
 };

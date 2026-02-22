@@ -1,22 +1,6 @@
 ---
-/*
-CANONICAL ASSET POLICY (Option A)
-
-Assets must be located in:
-- apps/gs-web/public
-- apps/gs-web/src/assets
-
-Do NOT reference:
-- /public at root
-- astro-goldshore assets
-- legacy paths
-
-All logos must be imported via Astro or placed in public/.
-*/
-
-import '@goldshore/theme/styles/global.css';
-import '../styles/gs-effects.css';
-import '../styles/layout.css';
+import '@goldshore/theme';
+import '/src/styles/global.css';
 import { GSButton } from '@goldshore/ui';
 import logo from '../assets/logo.svg';
 
@@ -38,15 +22,13 @@ const logoSrc = logo.src;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <slot name="head" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.goldshore.ai https://api-preview.goldshore.ai; object-src 'none'; base-uri 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <!-- Bolt: Preconnect to external origins to speed up resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://unpkg.com" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
     <link rel="stylesheet" href="https://unpkg.com/aria-icons@1.0.0/aria-icons.css" />
   </head>
   <body>
@@ -232,11 +214,17 @@ const logoSrc = logo.src;
       }
 
       .gs-logo img {
+        height: 90px; /* 2.5x larger than base ~36px */
+        width: auto;
+        mix-blend-mode: normal;
+        animation: glow-pulse 3s infinite ease-in-out;
+      }
+
+      .gs-logo img {
         height: 40px;
         width: auto;
         /* Ensure logo blends if it has a dark bg */
         mix-blend-mode: normal;
-        animation: glow-pulse 3s infinite ease-in-out;
       }
 
       .gs-nav {
@@ -297,4 +285,4 @@ const logoSrc = logo.src;
       }
     </style>
   </body>
-</html> 
+</html>
