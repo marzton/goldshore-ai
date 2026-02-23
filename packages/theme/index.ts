@@ -1,3 +1,5 @@
+import { prefersReducedMotion, onReducedMotionChange } from './src/motion';
+
 export function initGoldShoreUI() {
   initNav();
   initModal();
