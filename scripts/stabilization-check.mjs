@@ -196,30 +196,90 @@ try {
     violations.push(msg);
   }
 
-  // Check for unauthorized actions
-  const unauthorizedActions = [...new Set(workflows
-    .filter((w) => w.endsWith('.yml') || w.endsWith('.yaml'))
-    .flatMap((w) => {
-      try {
-        const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
-        return content.split('\n')
-          .map(line => line.trim())
-          .filter(line => line.startsWith('uses:') || line.startsWith('- uses:'))
-          .map(line => {
-             const match = line.match(/^-?\s*uses:\s*([\"']?)([^\"'\s#]+)\1/);
-             return match ? { w, action: match[2].split('@')[0] } : null;
-          })
-          .filter(Boolean);
-      } catch { return []; }
-    })
-    .filter(({ action }) => !action.startsWith('./') && !action.startsWith('docker://') && !ALLOWED_ACTIONS.includes(action))
-    .map(({ w, action }) => `${action} (in ${w})`))];
+  // Check for unauthorized actions and unpinned SHAs and duplicate keys
+  const unauthorizedActions = [];
+  const unpinnedActions = [];
+  const duplicateKeys = [];
 
-  if (unauthorizedActions.length) {
-    const msg = `Unauthorized CI Actions detected: ${unauthorizedActions.join(', ')}`;
+  workflows.filter((w) => w.endsWith('.yml') || w.endsWith('.yaml')).forEach((w) => {
+    try {
+      const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
+      const lines = content.split('\n');
+
+      // Duplicate Key Heuristic
+      let lastIndent = -1;
+      let lastKey = '';
+
+      lines.forEach((line, idx) => {
+        if (!line.trim() || line.trim().startsWith('#')) return;
+
+        // Check for key pattern "  key:" (no dash)
+        const match = line.match(/^(\s*)([a-zA-Z0-9_-]+):/);
+        if (match) {
+          const indent = match[1].length;
+          const key = match[2];
+
+          if (indent === lastIndent && key === lastKey) {
+             duplicateKeys.push(`Duplicate key '${key}' in ${w} around line ${idx + 1}`);
+          }
+          lastIndent = indent;
+          lastKey = key;
+        } else if (line.trim().startsWith('-')) {
+          // List item resets simple heuristic
+          lastIndent = -1;
+          lastKey = '';
+        } else {
+          // Other content resets
+          lastIndent = -1;
+          lastKey = '';
+        }
+
+        // Check for actions
+        const usesMatch = line.match(/uses:\s*([\"']?)([^\"'\s#]+)\1/);
+        if (usesMatch) {
+          let actionRef = usesMatch[2];
+          if (actionRef.startsWith('./') || actionRef.startsWith('docker://')) return;
+
+          const [actionName, version] = actionRef.split('@');
+
+          if (!ALLOWED_ACTIONS.includes(actionName)) {
+            unauthorizedActions.push(`${actionName} (in ${w})`);
+          }
+
+          // Check for unpinned SHA (must be 40 hex chars)
+          const isSha = version && /^[0-9a-f]{40}$/.test(version);
+          if (!isSha) {
+             unpinnedActions.push(`${actionName} is unpinned (uses @${version}) in ${w}`);
+          }
+        }
+      });
+
+    } catch (e) {
+      governanceViolations.push(`Error scanning workflow ${w}: ${e.message}`);
+    }
+  });
+
+  const uniqueUnauthorized = [...new Set(unauthorizedActions)];
+  if (uniqueUnauthorized.length) {
+    const msg = `Unauthorized CI Actions detected: ${uniqueUnauthorized.join(', ')}`;
     governanceViolations.push(msg);
     violations.push(msg);
   }
+
+  const uniqueUnpinned = [...new Set(unpinnedActions)];
+  if (uniqueUnpinned.length) {
+    const msg = `Unpinned CI Actions detected (must use SHA): ${uniqueUnpinned.join(', ')}`;
+    governanceViolations.push(msg);
+    violations.push(msg);
+  }
+
+  const uniqueDuplicates = [...new Set(duplicateKeys)];
+  if (uniqueDuplicates.length) {
+    const msg = `YAML syntax errors (duplicate keys) detected: ${uniqueDuplicates.join(', ')}`;
+    governanceViolations.push(msg);
+    violations.push(msg);
+  }
+
 } catch (e) {
   governanceViolations.push(`Could not scan workflows: ${e.message}`);
 }
