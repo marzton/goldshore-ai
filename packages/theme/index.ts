@@ -1,3 +1,5 @@
+import { prefersReducedMotion, onReducedMotionChange } from './src/motion';
+
 export function initGoldShoreUI() {
   initNav();
   initModal();
@@ -97,6 +99,25 @@ function getModalTemplate(variant: string): string {
 
 function initParallax() {
   const root = document.documentElement;
+  const hero = document.querySelector<HTMLElement>('[data-gs-hero]');
+  const layers =
+    hero?.querySelectorAll<HTMLElement>('[data-gs-parallax]') ?? [];
+  let scrollBound = false;
+  let pointerBound = false;
+
+  let heroRect: { left: number; top: number; width: number; height: number } | null = null;
+
+  const updateRect = () => {
+    if (!hero) return;
+    const r = hero.getBoundingClientRect();
+    heroRect = {
+      left: r.left + window.scrollX,
+      top: r.top + window.scrollY,
+      width: r.width,
+      height: r.height,
+    };
+  };
+
   const onScroll = () => {
     const y = window.scrollY || 0;
     root.style.setProperty("--gs-parallax", `${y * -0.15}px`);
@@ -115,6 +136,11 @@ function initParallax() {
     const r = hero.getBoundingClientRect();
     const px = (e.clientX - r.left) / r.width - 0.5;
     const py = (e.clientY - r.top) / r.height - 0.5;
+    if (!heroRect) updateRect();
+    if (!heroRect) return;
+
+    const px = (e.pageX - heroRect.left) / heroRect.width - 0.5;
+    const py = (e.pageY - heroRect.top) / heroRect.height - 0.5;
 
     layers.forEach((layer) => {
       const depth = Number(layer.getAttribute("data-gs-parallax")) || 1;
@@ -126,6 +152,55 @@ function initParallax() {
 
   const rm = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
   if (!rm) hero.addEventListener("pointermove", onMove);
+  const resetParallax = () => {
+    root.style.setProperty('--gs-parallax', '0px');
+    layers.forEach((layer) => {
+      layer.style.transform = 'translate3d(0px, 0px, 0px)';
+    });
+  };
+
+  const disableParallax = () => {
+    if (scrollBound) {
+      window.removeEventListener('scroll', onScroll);
+      scrollBound = false;
+    }
+
+    window.removeEventListener('resize', updateRect);
+
+    if (pointerBound && hero) {
+      hero.removeEventListener('pointermove', onMove);
+      pointerBound = false;
+    }
+
+    resetParallax();
+  };
+
+  const enableParallax = () => {
+    if (!scrollBound) {
+      window.addEventListener('scroll', onScroll, { passive: true });
+      scrollBound = true;
+    }
+
+    onScroll();
+    window.addEventListener('resize', updateRect, { passive: true });
+
+    if (!pointerBound && hero && layers.length) {
+      hero.addEventListener('pointermove', onMove);
+      pointerBound = true;
+    }
+  };
+
+  const syncParallaxMotion = (reduceMotion: boolean) => {
+    if (reduceMotion) {
+      disableParallax();
+      return;
+    }
+
+    enableParallax();
+  };
+
+  syncParallaxMotion(prefersReducedMotion());
+  onReducedMotionChange(syncParallaxMotion);
 }
 
 function initTilt() {
@@ -154,6 +229,87 @@ function initTilt() {
     el.addEventListener("pointermove", onMove);
     el.addEventListener("pointerleave", reset);
   });
+  const listeners = new Map<
+    HTMLElement,
+    {
+      onMove: (e: PointerEvent) => void;
+      reset: () => void;
+      updateRect: () => void;
+    }
+  >();
+
+  const resetTilt = () => {
+    cards.forEach((el) => {
+      el.style.setProperty('--tiltX', '0deg');
+      el.style.setProperty('--tiltY', '0deg');
+    });
+  };
+
+  const disableTilt = () => {
+    cards.forEach((el) => {
+      const bound = listeners.get(el);
+      if (!bound) return;
+
+      el.removeEventListener('pointermove', bound.onMove);
+      el.removeEventListener('pointerleave', bound.reset);
+      window.removeEventListener('resize', bound.updateRect);
+      listeners.delete(el);
+    });
+
+    resetTilt();
+  };
+
+  const enableTilt = () => {
+    cards.forEach((el) => {
+      if (listeners.has(el)) return;
+
+      const max = 7;
+      let rect: { left: number; top: number; width: number; height: number } | null = null;
+      const updateRect = () => {
+        const r = el.getBoundingClientRect();
+        rect = {
+          left: r.left + window.scrollX,
+          top: r.top + window.scrollY,
+          width: r.width,
+          height: r.height,
+        };
+      };
+
+      const onMove = (e: PointerEvent) => {
+        if (!rect) updateRect();
+        if (!rect) return;
+
+        const px = (e.pageX - rect.left) / rect.width;
+        const py = (e.pageY - rect.top) / rect.height;
+        const tiltY = (px - 0.5) * (max * 2);
+        const tiltX = (0.5 - py) * (max * 2);
+        el.style.setProperty('--tiltX', `${tiltX.toFixed(2)}deg`);
+        el.style.setProperty('--tiltY', `${tiltY.toFixed(2)}deg`);
+      };
+      const reset = () => {
+        el.style.setProperty('--tiltX', '0deg');
+        el.style.setProperty('--tiltY', '0deg');
+      };
+
+      window.addEventListener('resize', updateRect, { passive: true });
+
+      listeners.set(el, { onMove, reset, updateRect });
+      el.addEventListener('pointermove', onMove);
+      el.addEventListener('pointerleave', reset);
+    });
+  };
+
+  const syncTiltMotion = (reduceMotion: boolean) => {
+    if (reduceMotion) {
+      disableTilt();
+      return;
+    }
+
+    enableTilt();
+  };
+
+  syncTiltMotion(prefersReducedMotion());
+  onReducedMotionChange(syncTiltMotion);
 }
 
 function initReveal() {
