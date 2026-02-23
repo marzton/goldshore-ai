@@ -1,11 +1,7 @@
 import { Hono } from "hono";
+import { getActor, logAdminAction, requirePermission } from "../auth";
+import { Env, Variables } from "../types";
 import { withContractHeaders } from "./contract";
-
-type SystemEnv = {
-  KV: KVNamespace;
-  API_VERSION?: string;
-  DEPLOY_SHA?: string;
-};
 
 type SystemConfig = {
   maintenanceMode: boolean;
@@ -41,7 +37,7 @@ const readConfig = async (kv: KVNamespace) => {
   return parseConfig(stored);
 };
 
-const system = new Hono<{ Bindings: SystemEnv }>();
+const system = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 system.get("/info", (c) => {
   return c.json(withContractHeaders({
@@ -68,15 +64,24 @@ system.get("/version", async (c) => {
   }, c.env.API_VERSION));
 });
 
-system.get("/config", async (c) => {
+system.get("/config", requirePermission("system:read"), async (c) => {
   const config = await readConfig(c.env.KV);
   return c.json(withContractHeaders({ config }, c.env.API_VERSION));
 });
 
-system.put("/config", async (c) => {
+system.put("/config", requirePermission("system:manage"), async (c) => {
+  const actor = getActor(c.get("accessClaims"), c.req.raw);
   const payload = await c.req.json<Partial<SystemConfig>>().catch(() => null);
   const config = parseConfig(payload);
   await c.env.KV.put(CONFIG_KEY, JSON.stringify(config));
+
+  await logAdminAction(c.env, {
+    action: "system.config.update",
+    actor,
+    status: "success",
+    metadata: { config }
+  });
+
   return c.json(withContractHeaders({ config }, c.env.API_VERSION));
 });
 
