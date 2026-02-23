@@ -1,3 +1,5 @@
+import { prefersReducedMotion, onReducedMotionChange } from './src/motion';
+
 export function initGoldShoreUI() {
   initNav();
   initModal();
@@ -212,6 +214,19 @@ function initParallax() {
   let scrollBound = false;
   let pointerBound = false;
 
+  let heroRect: { left: number; top: number; width: number; height: number } | null = null;
+
+  const updateRect = () => {
+    if (!hero) return;
+    const r = hero.getBoundingClientRect();
+    heroRect = {
+      left: r.left + window.scrollX,
+      top: r.top + window.scrollY,
+      width: r.width,
+      height: r.height,
+    };
+  };
+
   const onScroll = () => {
     const y = window.scrollY || 0;
     root.style.setProperty('--gs-parallax', `${y * -0.15}px`);
@@ -220,9 +235,11 @@ function initParallax() {
   const onMove = (e: PointerEvent) => {
     if (!hero || !layers.length) return;
 
-    const r = hero.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width - 0.5;
-    const py = (e.clientY - r.top) / r.height - 0.5;
+    if (!heroRect) updateRect();
+    if (!heroRect) return;
+
+    const px = (e.pageX - heroRect.left) / heroRect.width - 0.5;
+    const py = (e.pageY - heroRect.top) / heroRect.height - 0.5;
 
     layers.forEach((layer) => {
       const depth = Number(layer.getAttribute('data-gs-parallax')) || 1;
@@ -245,6 +262,8 @@ function initParallax() {
       scrollBound = false;
     }
 
+    window.removeEventListener('resize', updateRect);
+
     if (pointerBound && hero) {
       hero.removeEventListener('pointermove', onMove);
       pointerBound = false;
@@ -260,6 +279,7 @@ function initParallax() {
     }
 
     onScroll();
+    window.addEventListener('resize', updateRect, { passive: true });
 
     if (!pointerBound && hero && layers.length) {
       hero.addEventListener('pointermove', onMove);
@@ -292,6 +312,7 @@ function initTilt() {
     {
       onMove: (e: PointerEvent) => void;
       reset: () => void;
+      updateRect: () => void;
     }
   >();
 
@@ -309,6 +330,7 @@ function initTilt() {
 
       el.removeEventListener('pointermove', bound.onMove);
       el.removeEventListener('pointerleave', bound.reset);
+      window.removeEventListener('resize', bound.updateRect);
       listeners.delete(el);
     });
 
@@ -320,10 +342,23 @@ function initTilt() {
       if (listeners.has(el)) return;
 
       const max = 7;
-      const onMove = (e: PointerEvent) => {
+      let rect: { left: number; top: number; width: number; height: number } | null = null;
+      const updateRect = () => {
         const r = el.getBoundingClientRect();
-        const px = (e.clientX - r.left) / r.width;
-        const py = (e.clientY - r.top) / r.height;
+        rect = {
+          left: r.left + window.scrollX,
+          top: r.top + window.scrollY,
+          width: r.width,
+          height: r.height,
+        };
+      };
+
+      const onMove = (e: PointerEvent) => {
+        if (!rect) updateRect();
+        if (!rect) return;
+
+        const px = (e.pageX - rect.left) / rect.width;
+        const py = (e.pageY - rect.top) / rect.height;
         const tiltY = (px - 0.5) * (max * 2);
         const tiltX = (0.5 - py) * (max * 2);
         el.style.setProperty('--tiltX', `${tiltX.toFixed(2)}deg`);
@@ -334,7 +369,9 @@ function initTilt() {
         el.style.setProperty('--tiltY', '0deg');
       };
 
-      listeners.set(el, { onMove, reset });
+      window.addEventListener('resize', updateRect, { passive: true });
+
+      listeners.set(el, { onMove, reset, updateRect });
       el.addEventListener('pointermove', onMove);
       el.addEventListener('pointerleave', reset);
     });
