@@ -1,15 +1,13 @@
 ---
-import '@goldshore/theme/styles/global.css';
+import '@goldshore/theme';
 import '../styles/gs-effects.css';
 import '../styles/layout.css';
 import { GSButton } from '@goldshore/ui';
-import logo from '../assets/logo.svg';
-// Keep styles sourced from the published theme package so Vite can resolve it in all environments.
-import '@goldshore/theme';
+const logo = '/assets/brand/logo.svg';
 import SiteNav from '../components/SiteNav.astro';
 import GlobalModal from '../components/GlobalModal.astro';
+import initGoldshoreUiScriptUrl from '../scripts/init-goldshore-ui.ts?url';
 
-void initGoldShoreUI;
 
 const { title = 'Gold Shore', description = '' } = Astro.props;
 ---
@@ -31,9 +29,6 @@ const { title = 'Gold Shore', description = '' } = Astro.props;
 
     <GlobalModal />
 
-    <script is:inline>
-      import { initGoldShoreUI } from '@goldshore/theme/runtime';
-      initGoldShoreUI();
-    </script>
+    <script type="module" src={initGoldshoreUiScriptUrl}></script>
   </body>
 </html>
