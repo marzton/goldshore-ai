@@ -25,18 +25,6 @@ import logo from '@goldshore/theme/assets/logo.svg';
 - `src/theme-manager.ts`: helper to load, apply, and persist theme preferences.
 - `assets/`: Penrose logo assets for headers and sidebars.
 
-
-## Canonical Brand Assets
-
-For `apps/gs-web`, canonical runtime brand assets live in:
-
-- `apps/gs-web/public/assets/logo.svg`
-- `apps/gs-web/public/assets/penrose.svg`
-
-Use root-relative references (for example, `/assets/logo.svg` and `/assets/penrose.svg`) from Astro components and layouts.
-
-Any historical duplicates should be kept only under `apps/gs-web/public/assets/legacy/` (or removed once unreferenced) to avoid re-introducing split sources of truth.
-
 ## Responsive Guidance
 
 - Use `gs-section`, `gs-grid`, and `gs-card` classes for consistent spacing.
