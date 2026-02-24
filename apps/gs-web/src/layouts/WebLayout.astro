@@ -6,6 +6,7 @@ import { GSButton } from '@goldshore/ui';
 const logo = '/assets/brand/logo.svg';
 import SiteNav from '../components/SiteNav.astro';
 import GlobalModal from '../components/GlobalModal.astro';
+import initGoldshoreUiScriptUrl from '../scripts/init-goldshore-ui.ts?url';
 
 
 const { title = 'Gold Shore', description = '' } = Astro.props;
@@ -28,9 +29,6 @@ const { title = 'Gold Shore', description = '' } = Astro.props;
 
     <GlobalModal />
 
-    <script>
-      import { initGoldShoreUI } from '@goldshore/theme/runtime';
-      initGoldShoreUI();
-    </script>
+    <script type="module" src={initGoldshoreUiScriptUrl}></script>
   </body>
 </html>
