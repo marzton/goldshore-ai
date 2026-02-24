@@ -1,12 +1,9 @@
 ---
-import '@goldshore/theme';
+import "@goldshore/theme";
 import '../styles/gs-effects.css';
 import '../styles/layout.css';
-import { GSButton } from '@goldshore/ui';
-const logo = '/assets/brand/logo.svg';
 import SiteNav from '../components/SiteNav.astro';
 import GlobalModal from '../components/GlobalModal.astro';
-import initGoldshoreUiScriptUrl from '../scripts/init-goldshore-ui.ts?url';
 
 
 const { title = 'Gold Shore', description = '' } = Astro.props;
@@ -29,6 +26,9 @@ const { title = 'Gold Shore', description = '' } = Astro.props;
 
     <GlobalModal />
 
-    <script type="module" src={initGoldshoreUiScriptUrl}></script>
+    <script is:inline>
+      import { initGoldShoreUI } from "@goldshore/theme/runtime";
+      initGoldShoreUI();
+    </script>
   </body>
 </html>
