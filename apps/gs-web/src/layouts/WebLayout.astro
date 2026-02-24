@@ -7,6 +7,7 @@ import '@goldshore/theme';
 import SiteNav from '../components/SiteNav.astro';
 import GlobalModal from '../components/GlobalModal.astro';
 
+
 const { title = 'Gold Shore', description = '' } = Astro.props;
 ---
 
@@ -27,7 +28,7 @@ const { title = 'Gold Shore', description = '' } = Astro.props;
 
     <GlobalModal />
 
-    <script is:inline>
+    <script>
       import { initGoldShoreUI } from '@goldshore/theme/runtime';
       initGoldShoreUI();
     </script>
