@@ -1,6 +1,4 @@
 ---
-import { GSButton } from '@goldshore/ui';
-// Keep styles sourced from the published theme package so Vite can resolve it in all environments.
 import '@goldshore/theme';
 import SiteNav from '../components/SiteNav.astro';
 import GlobalModal from '../components/GlobalModal.astro';
@@ -8,6 +6,7 @@ import GlobalModal from '../components/GlobalModal.astro';
 const { title = 'Gold Shore', description = '' } = Astro.props;
 ---
 
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -16,13 +15,30 @@ const { title = 'Gold Shore', description = '' } = Astro.props;
     <meta name="description" content={description} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
+
   <body>
-    <SiteNav />
-    <div class="gs-site-main">
+    <header class="gs-header">
+      <a href="/" class="gs-logo">
+        <img src="/logo.svg" alt="Gold Shore" />
+      </a>
+
+      <nav class="gs-nav">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/services">Services</a>
+        <a href="/team">Team</a>
+        <a href="/contact">Contact</a>
+        <a href="/apps/risk-radar">Risk Radar</a>
+        <a href="/developer">Developer</a>
+      </nav>
+    </header>
+
+    <main>
       <slot />
-    </div>
+    </main>
+
     <footer class="gs-footer">
-      <div class="gs-container gs-muted">Gold Shore — Designed not to manage capital, but to steer it.</div>
+      <p>Applied intelligence. Resilient infrastructure. Responsive operations.</p>
     </footer>
 
     <GlobalModal />
@@ -33,3 +49,207 @@ const { title = 'Gold Shore', description = '' } = Astro.props;
     </script>
   </body>
 </html>
+
+<style is:global>
+  body {
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 8px 8px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.15;
+  }
+
+  .gs-header,
+  main,
+  .gs-footer {
+    position: relative;
+    z-index: 1;
+  }
+
+  main {
+    padding-top: 80px;
+  }
+
+  .gs-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .gs-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 80px;
+  }
+
+  .gs-logo {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gs-logo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      110deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.2) 50%,
+      transparent 70%
+    );
+    transform: translateX(-150%) skewX(-20deg);
+    animation: gsLogoScan 18s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .gs-logo img {
+    height: 32px;
+  }
+
+  .gs-nav a {
+    margin-left: 2rem;
+  }
+
+  .gs-section + .gs-section {
+    border-top: 1px solid var(--gs-color-border);
+  }
+
+  .gs-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--gs-accent),
+      color-mix(in srgb, var(--gs-accent) 50%, var(--gs-warning)),
+      transparent
+    );
+    opacity: 0.25;
+  }
+
+  .gs-button {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .gs-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 80%;
+    height: 100%;
+    background: linear-gradient(
+      110deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      transparent 100%
+    );
+    transform: skewX(-20deg);
+    animation: gsShimmer 12s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .gs-panel {
+    position: relative;
+    overflow: hidden;
+    perspective: 1200px;
+  }
+
+  .gs-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      rgba(90, 140, 255, 0.6) 50%,
+      transparent 100%
+    );
+    background-size: 200% 200%;
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: gsEdgeScan 8s linear infinite;
+    pointer-events: none;
+    opacity: 0.25;
+  }
+
+  .gs-tilt {
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition:
+      transform 500ms cubic-bezier(.16, .84, .44, 1),
+      box-shadow 500ms cubic-bezier(.16, .84, .44, 1);
+  }
+
+  @keyframes gsEdgeScan {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    100% {
+      background-position: 200% 50%;
+    }
+  }
+
+  @keyframes gsShimmer {
+    0% {
+      left: -120%;
+    }
+
+    50% {
+      left: 120%;
+    }
+
+    100% {
+      left: 120%;
+    }
+  }
+
+  @keyframes gsLogoScan {
+    0% {
+      transform: translateX(-150%) skewX(-20deg);
+    }
+
+    20% {
+      transform: translateX(150%) skewX(-20deg);
+    }
+
+    100% {
+      transform: translateX(150%) skewX(-20deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gs-tilt,
+    .gs-panel::after,
+    .gs-button::before,
+    .gs-logo::after {
+      animation: none !important;
+      transform: none !important;
+    }
+  }
+</style>
