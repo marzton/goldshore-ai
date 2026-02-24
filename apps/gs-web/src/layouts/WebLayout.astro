@@ -1,11 +1,7 @@
 ---
 import '@goldshore/theme';
-import { initGoldShoreUI } from '@goldshore/theme/runtime';
 import SiteNav from '../components/SiteNav.astro';
 import GlobalModal from '../components/GlobalModal.astro';
-
-void initGoldShoreUI;
-void GSButton;
 
 const { title = 'Gold Shore', description = '' } = Astro.props;
 ---
@@ -47,7 +43,7 @@ const { title = 'Gold Shore', description = '' } = Astro.props;
 
     <GlobalModal />
 
-    <script>
+    <script type="module">
       import { initGoldShoreUI } from '@goldshore/theme/runtime';
       initGoldShoreUI();
     </script>
