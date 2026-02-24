@@ -6,7 +6,9 @@
   "exports": {
     ".": "./index.css",
     "./runtime": "./index.ts",
-    "./manager": "./src/manager.ts",
+    "./manager": {
+      "default": "./src/manager.ts"
+    },
     "./styles/*": "./styles/*",
     "./assets/*": "./assets/*",
     "./styles/global.css": "./src/styles/global.css"
