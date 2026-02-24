@@ -9,8 +9,6 @@ export type Env = {
   GEMINI_API_KEY?: string;
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
   CLOUDFLARE_TEAM_DOMAIN?: string;
-  API_VERSION?: string;
-  DEPLOY_SHA?: string;
 };
 
 export type Variables = {
