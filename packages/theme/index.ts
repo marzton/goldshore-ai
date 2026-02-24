@@ -126,16 +126,7 @@ function initParallax() {
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
-  const hero = document.querySelector<HTMLElement>("[data-gs-hero]");
-  if (!hero) return;
-
-  const layers = hero.querySelectorAll<HTMLElement>("[data-gs-parallax]");
-  if (!layers.length) return;
-
   const onMove = (e: PointerEvent) => {
-    const r = hero.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width - 0.5;
-    const py = (e.clientY - r.top) / r.height - 0.5;
     if (!heroRect) updateRect();
     if (!heroRect) return;
 
@@ -210,25 +201,6 @@ function initTilt() {
   const isFine = window.matchMedia?.("(pointer:fine)")?.matches;
   if (!isFine) return;
 
-  cards.forEach((el) => {
-    const max = 7;
-    const onMove = (e: PointerEvent) => {
-      const r = el.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width;
-      const py = (e.clientY - r.top) / r.height;
-      const tiltY = (px - 0.5) * (max * 2);
-      const tiltX = (0.5 - py) * (max * 2);
-      el.style.setProperty("--tiltX", `${tiltX.toFixed(2)}deg`);
-      el.style.setProperty("--tiltY", `${tiltY.toFixed(2)}deg`);
-    };
-    const reset = () => {
-      el.style.setProperty("--tiltX", "0deg");
-      el.style.setProperty("--tiltY", "0deg");
-    };
-
-    el.addEventListener("pointermove", onMove);
-    el.addEventListener("pointerleave", reset);
-  });
   const listeners = new Map<
     HTMLElement,
     {
@@ -264,36 +236,45 @@ function initTilt() {
       if (listeners.has(el)) return;
 
       const max = 7;
-      let rect: { left: number; top: number; width: number; height: number } | null = null;
-      const updateRect = () => {
+      let rafId: number | null = null;
+      let pendingEvent: PointerEvent | null = null;
+
+      const process = () => {
+        if (!pendingEvent) {
+          rafId = null;
+          return;
+        }
+
         const r = el.getBoundingClientRect();
-        rect = {
-          left: r.left + window.scrollX,
-          top: r.top + window.scrollY,
-          width: r.width,
-          height: r.height,
-        };
-      };
-
-      const onMove = (e: PointerEvent) => {
-        if (!rect) updateRect();
-        if (!rect) return;
-
-        const px = (e.pageX - rect.left) / rect.width;
-        const py = (e.pageY - rect.top) / rect.height;
+        const e = pendingEvent;
+        const px = (e.clientX - r.left) / r.width;
+        const py = (e.clientY - r.top) / r.height;
         const tiltY = (px - 0.5) * (max * 2);
         const tiltX = (0.5 - py) * (max * 2);
         el.style.setProperty('--tiltX', `${tiltX.toFixed(2)}deg`);
         el.style.setProperty('--tiltY', `${tiltY.toFixed(2)}deg`);
+
+        rafId = null;
       };
+
+      const onMove = (e: PointerEvent) => {
+        pendingEvent = e;
+        if (rafId === null) {
+          rafId = requestAnimationFrame(process);
+        }
+      };
+
       const reset = () => {
+        if (rafId !== null) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+        pendingEvent = null;
         el.style.setProperty('--tiltX', '0deg');
         el.style.setProperty('--tiltY', '0deg');
       };
 
-      window.addEventListener('resize', updateRect, { passive: true });
-
-      listeners.set(el, { onMove, reset, updateRect });
+      listeners.set(el, { onMove, reset, updateRect: () => {} });
       el.addEventListener('pointermove', onMove);
       el.addEventListener('pointerleave', reset);
     });
