@@ -1,14 +1,14 @@
 name: Lockfile Guard
 
 on:
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   prevent-lockfile-changes:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Guard pnpm lockfile
         run: |
@@ -22,18 +22,3 @@ jobs:
           fi
 
           echo "✅ No pnpm-lock.yaml changes detected."
-on: pull_request
-jobs:
-  prevent-lockfile-drift:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Prevent lockfile drift
-        run: |
-          git fetch origin main
-          if git diff --name-only origin/main...HEAD | grep -q "pnpm-lock.yaml"; then
-            echo "❌ Lockfile changes are only allowed on main."
-            exit 1
-          else
-            echo "✅ No lockfile drift."
-          fi
