@@ -2,7 +2,6 @@ export function initGoldShoreUI() {
   initNav();
   initModal();
   initParallax();
-  initTilt();
   initReveal();
 }
 
@@ -71,12 +70,16 @@ function getModalTemplate(variant: string): string {
       <div class="gs-modal-head">
         <div class="gs-kicker gs-signal">Secure Access</div>
         <h2 class="gs-modal-title gs-display">Admin Login</h2>
-        <p class="gs-muted">Restricted console entry. Continue to the secure admin surface.</p>
+        <p class="gs-muted">Restricted. Authentication required.</p>
       </div>
-      <div class="gs-form">
-        <a class="gs-button gs-button-solid" href="https://admin.goldshore.ai/login">Continue to Admin</a>
-      </div>
-      <div class="gs-micro gs-muted">Authentication is handled on the admin domain.</div>
+      <form class="gs-form" action="https://admin.goldshore.ai/login" method="POST">
+        <label class="gs-label">Email</label>
+        <input class="gs-input" name="email" type="email" autocomplete="email" required />
+        <label class="gs-label">Password</label>
+        <input class="gs-input" name="password" type="password" autocomplete="current-password" required />
+        <button class="gs-button gs-button-solid" type="submit">Login</button>
+      </form>
+      <div class="gs-micro gs-muted">If you are not authorized, this will fail silently.</div>
     `;
   }
 
@@ -96,15 +99,6 @@ function getModalTemplate(variant: string): string {
 }
 
 function initParallax() {
-  const root = document.documentElement;
-  const onScroll = () => {
-    const y = window.scrollY || 0;
-    root.style.setProperty("--gs-parallax", `${y * -0.15}px`);
-  };
-
-  onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
-
   const hero = document.querySelector<HTMLElement>("[data-gs-hero]");
   if (!hero) return;
 
@@ -126,34 +120,6 @@ function initParallax() {
 
   const rm = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
   if (!rm) hero.addEventListener("pointermove", onMove);
-}
-
-function initTilt() {
-  const cards = document.querySelectorAll<HTMLElement>(".gs-tilt");
-  if (!cards.length) return;
-
-  const isFine = window.matchMedia?.("(pointer:fine)")?.matches;
-  if (!isFine) return;
-
-  cards.forEach((el) => {
-    const max = 7;
-    const onMove = (e: PointerEvent) => {
-      const r = el.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width;
-      const py = (e.clientY - r.top) / r.height;
-      const tiltY = (px - 0.5) * (max * 2);
-      const tiltX = (0.5 - py) * (max * 2);
-      el.style.setProperty("--tiltX", `${tiltX.toFixed(2)}deg`);
-      el.style.setProperty("--tiltY", `${tiltY.toFixed(2)}deg`);
-    };
-    const reset = () => {
-      el.style.setProperty("--tiltX", "0deg");
-      el.style.setProperty("--tiltY", "0deg");
-    };
-
-    el.addEventListener("pointermove", onMove);
-    el.addEventListener("pointerleave", reset);
-  });
 }
 
 function initReveal() {

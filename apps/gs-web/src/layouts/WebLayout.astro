@@ -1,13 +1,11 @@
 ---
 import '@goldshore/theme/styles/global.css';
-import '../styles/global.css';
 import '../styles/gs-effects.css';
 import '../styles/layout.css';
 import { GSButton } from '@goldshore/ui';
 import logo from '../assets/logo.svg';
 // Keep styles sourced from the published theme package so Vite can resolve it in all environments.
 import '@goldshore/theme';
-import { initGoldShoreUI } from '@goldshore/theme/runtime';
 import SiteNav from '../components/SiteNav.astro';
 import GlobalModal from '../components/GlobalModal.astro';
 
@@ -26,9 +24,7 @@ const { title = 'Gold Shore', description = '' } = Astro.props;
   </head>
   <body>
     <SiteNav />
-    <div class="gs-site-main">
-      <slot />
-    </div>
+    <slot />
     <footer class="gs-footer">
       <div class="gs-container gs-muted">Gold Shore — Designed not to manage capital, but to steer it.</div>
     </footer>

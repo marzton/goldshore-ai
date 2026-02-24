@@ -25,26 +25,3 @@
   transform: translateY(-2px);
   border-color: rgba(90, 140, 255, 0.25);
 }
-
-.gs-button {
-  position: relative;
-  overflow: hidden;
-}
-
-.gs-button::after {
-  content: "";
-  position: absolute;
-  inset: -40% -20%;
-  background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,.08) 35%, rgba(255,160,90,.10) 50%, transparent 65%);
-  transform: translate3d(-30%, 0, 0);
-  opacity: 0;
-}
-
-.gs-button:hover::after {
-  opacity: 1;
-  animation: gs-scan 1.25s var(--gs-ease) forwards;
-}
-
-@keyframes gs-scan {
-  to { transform: translate3d(30%, 0, 0); }
-}
