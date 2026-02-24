@@ -6,7 +6,6 @@ const REPORT_PATH = 'docs/ci/CURRENT_STATE.md';
 const APPS_DIR = 'apps';
 const WORKFLOW_DIR = '.github/workflows';
 const AUTHORITATIVE_CI_SOURCE = 'GitHub Actions status checks on the pull request';
-
 const ALLOWED_APPS = [
   'gs-web',
   'gs-admin',
@@ -35,38 +34,16 @@ const BASELINE_BUILD_SCRIPTS = [
   'branch:bootstrap',
   'scaffold:worker',
   'workspaces:list',
-  'verify:workspace-filters',
-  'verify:web-dist',
-  'memory:check'
+  'verify:workspace-filters'
 ];
 
 const KNOWN_WORKFLOWS = [
-  'canonical-structure-check.yml',
-  'deploy-gs-admin.yml',
-  'deploy-gs-agent.yml.disabled',
-  'deploy-gs-api.yml',
-  'deploy-gs-control.yml.disabled',
-  'deploy-gs-gateway.yml.disabled',
-  'deploy-gs-mail.yml',
-  'deploy-gs-web.yml',
-  'jules-nightly.yml',
-  'lockfile-guard.yml',
-  'manual.yml',
-  'naming-guard.yml',
-  'naming-lint.yml',
-  'neuralegion.yml',
-  'palette-manual.yml',
-  'pii-scan.yml',
-  'preview-gs-admin.yml',
-  'preview-gs-agent.yml',
-  'preview-gs-api.yml',
-  'preview-gs-gateway.yml',
-  'preview-gs-web.yml',
-  'route-collision-check.yml',
-  'sonarcloud.yml',
-  'stabilization-task.yml',
-  'summary.yml',
-  'tfsec.yml'
+  'deploy-gs-admin.yml', 'deploy-gs-agent.yml.disabled', 'deploy-gs-api.yml', 'deploy-gs-control.yml.disabled',
+  'deploy-gs-gateway.yml.disabled', 'deploy-gs-mail.yml', 'deploy-gs-web.yml', 'jules-nightly.yml',
+  'lockfile-guard.yml', 'manual.yml', 'naming-guard.yml', 'naming-lint.yml', 'neuralegion.yml',
+  'palette-manual.yml', 'pii-scan.yml', 'preview-gs-agent.yml', 'preview-gs-admin.yml',
+  'preview-gs-api.yml', 'preview-gs-gateway.yml', 'preview-gs-web.yml', 'route-collision-check.yml',
+  'sonarcloud.yml', 'summary.yml', 'tfsec.yml', 'stabilization-task.yml'
 ];
 
 const ALLOWED_ACTIONS = [
@@ -86,7 +63,7 @@ const ALLOWED_ACTIONS = [
 const violations = [];
 const appLevelIssues = [];
 
-const run = (cmd) => execSync(cmd, { encoding: 'utf8', stdio: 'pipe' }).trim();
+const run = (cmd) => execSync(cmd, { encoding: 'utf8' }).trim();
 const tryRun = (cmd) => { try { return run(cmd); } catch { return null; } };
 const gitRefExists = (ref) => { try { execSync(`git rev-parse --verify ${ref}`, { stdio: 'ignore' }); return true; } catch { return false; } };
 
@@ -97,20 +74,19 @@ function resolveBaseRef() {
 }
 
 function getBranchInfo() {
-  const branch = tryRun('git rev-parse --abbrev-ref HEAD') || 'unknown';
+  const branch = run('git rev-parse --abbrev-ref HEAD');
   const baseRef = resolveBaseRef();
   if (!baseRef) {
     return { branch, baseRef: 'main (unavailable locally)', behind: 0, ahead: 0, divergenceNote: '⚠️ Could not resolve a local main tracking ref; divergence defaults to 0/0 in this checkout.' };
   }
-  const [behindRaw, aheadRaw] = (tryRun(`git rev-list --left-right --count ${baseRef}...HEAD`) || '0 0').split(/\s+/);
+  const [behindRaw, aheadRaw] = run(`git rev-list --left-right --count ${baseRef}...HEAD`).split(/\s+/);
   return { branch, baseRef, behind: Number.parseInt(behindRaw, 10), ahead: Number.parseInt(aheadRaw, 10) };
 }
 
 function getPrCiStatus(branch) {
   if (!tryRun('gh --version')) return { summary: '⚠️ gh CLI unavailable; unable to resolve PR CI status in this environment.' };
-
-  // Try to find PR associated with current branch
-  const prNumber = tryRun(`gh pr list --head "${branch}" --state open --limit 1 --json number --jq '.[0].number'`);
+  const prNumberFromRef = process.env.GITHUB_REF?.startsWith('refs/pull/') ? process.env.GITHUB_REF.split('/')[2] : null;
+  const prNumber = prNumberFromRef ?? tryRun(`gh pr list --head "${branch}" --state open --limit 1 --json number --jq '.[0].number'`);
   if (!prNumber) return { summary: `⚠️ No open PR detected for branch \`${branch}\`; authoritative CI source: ${AUTHORITATIVE_CI_SOURCE}` };
 
   const rollupRaw = tryRun(`gh pr view ${prNumber} --json number,url,statusCheckRollup`);
@@ -125,11 +101,38 @@ function getPrCiStatus(branch) {
         conclusion: item.conclusion
       };
     }
+
     return {
       name: item.context,
       status: item.state === 'PENDING' ? 'IN_PROGRESS' : 'COMPLETED',
       conclusion: item.state === 'SUCCESS' ? 'SUCCESS' : item.state
     };
+  });
+
+  // Check for unauthorized actions
+  let unauthorizedActions = [];
+  workflows.forEach(w => {
+    if (w.endsWith('.yml') || w.endsWith('.yaml')) {
+      const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
+      const usesLines = content
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.startsWith('uses:') || line.startsWith('- uses:'));
+
+      usesLines.forEach(line => {
+        const match = line.match(/^-?\s*uses:\s*([\"']?)([^\"'\s#]+)\1/);
+        if (!match) {
+          return;
+        }
+
+        const action = match[2].split('@')[0];
+        // Allow local paths and docker image references
+        if (action.startsWith('./') || action.startsWith('docker://')) return;
+        if (!ALLOWED_ACTIONS.includes(action)) {
+          unauthorizedActions.push(`${action} (in ${w})`);
+        }
+      });
+    }
   });
 
   const failed = checks.filter((c) => ['FAILURE', 'TIMED_OUT', 'CANCELLED', 'ACTION_REQUIRED'].includes(c.conclusion));
@@ -139,13 +142,8 @@ function getPrCiStatus(branch) {
 }
 
 function checkBuild(name, command) {
-  try {
-    execSync(command, { stdio: 'ignore' });
-    return `| **${name}** | ✅ PASS | |`;
-  } catch {
-    appLevelIssues.push(`${name} build failed`);
-    return `| **${name}** | ❌ FAIL | Check run logs |`;
-  }
+  try { execSync(command, { stdio: 'ignore' }); return `| **${name}** | ✅ PASS | |`; }
+  catch { appLevelIssues.push(`${name} build failed`); return `| **${name}** | ❌ FAIL | Check run logs |`; }
 }
 
 const historical = ['1', 'true', 'yes'].includes((process.env.STABILIZATION_REPORT_HISTORICAL || '').toLowerCase());
@@ -159,42 +157,26 @@ if (historical) {
 }
 report += `**Date:** ${new Date().toUTCString()}\n\n`;
 
-// 1. Governance Compliance Check
 report += '## 1. Governance Compliance Check\n\n';
-let governanceViolations = [];
-
 try {
   const apps = fs.readdirSync(APPS_DIR).filter((f) => fs.statSync(path.join(APPS_DIR, f)).isDirectory());
   const forbiddenApps = apps.filter((app) => !ALLOWED_APPS.includes(app));
-  if (forbiddenApps.length) {
-    const msg = `Forbidden directories detected in apps/: ${forbiddenApps.join(', ')}`;
-    governanceViolations.push(msg);
-    violations.push(msg);
-  }
-} catch (e) {
-  governanceViolations.push(`Could not scan apps directory: ${e.message}`);
-}
+  if (forbiddenApps.length) { const msg = `Forbidden directories detected in apps/: ${forbiddenApps.join(', ')}`; violations.push(msg); report += `### ❌ App Structure Violation\n- ${msg}\n\n`; }
+  else report += '✅ Directory structure compliant.\n\n';
+} catch (e) { report += `⚠️ Could not scan apps directory: ${e.message}\n\n`; }
 
 try {
   const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
   const newScripts = Object.keys(pkg.scripts || {}).filter((s) => !BASELINE_BUILD_SCRIPTS.includes(s));
-  if (newScripts.length) {
-    const msg = `New scripts detected in root package.json: ${newScripts.join(', ')}`;
-    governanceViolations.push(msg);
-    violations.push(msg);
-  }
-} catch (e) {
-  governanceViolations.push(`Could not parse root package.json: ${e.message}`);
-}
+  if (newScripts.length) { const msg = `New scripts detected in root package.json: ${newScripts.join(', ')}`; violations.push(msg); report += `### ❌ Build Script Violation\n- ${msg}\n\n`; }
+  else report += '✅ Root build scripts compliant.\n\n';
+} catch (e) { report += `⚠️ Could not parse root package.json: ${e.message}\n\n`; }
 
 try {
   const workflows = fs.readdirSync(WORKFLOW_DIR);
   const newWorkflows = workflows.filter((w) => !KNOWN_WORKFLOWS.includes(w));
-  if (newWorkflows.length) {
-    const msg = `New workflows detected: ${newWorkflows.join(', ')}`;
-    governanceViolations.push(msg);
-    violations.push(msg);
-  }
+  if (newWorkflows.length) { const msg = `New workflows detected: ${newWorkflows.join(', ')}`; violations.push(msg); report += `### ❌ Workflow Violation (New Files)\n- ${msg}\n\n`; }
+  else report += '✅ Workflow file list compliant.\n\n';
 
   // Check for unauthorized actions and unpinned SHAs and duplicate keys
   const unauthorizedActions = [];
@@ -292,21 +274,13 @@ if (governanceViolations.length) {
   report += '✅ No governance violations detected.\n\n';
 }
 
-// 2. Branch Discipline Check
 report += '## 2. Branch Discipline Check\n\n';
-report += `**Current Branch:** ${branch}\n`;
+report += `**Current Branch:** ${branch}\n\n`;
 report += `**Divergence vs ${baseRef}:** Behind: ${behind}, Ahead: ${ahead}\n\n`;
-
 if (divergenceNote) report += `${divergenceNote}\n\n`;
-if (ahead > 5) {
-  report += `⚠️ **High Divergence Detected:** Branch is ahead of main by >5 commits (${ahead}).\n`;
-  report += `Report branch name: ${branch}. Report behind/ahead counts: ${behind}/${ahead}. Do not create new PR.\n\n`;
-} else {
-  report += '✅ Branch divergence acceptable.\n\n';
-}
+if (ahead > 5) report += `⚠️ **High Divergence Detected:** Branch is ahead of main by >5 commits (${ahead}).\n\n`;
 
-// 3. CI State Snapshot
-report += '## 3. CI State Snapshot\n\n';
+report += '## 3. CI State Snapshot (PR Context)\n\n';
 const ci = getPrCiStatus(branch);
 report += `${ci.summary}\n\n`;
 if (ci.checks?.length) {
@@ -323,26 +297,27 @@ report += `| App | Status | Notes |\n|---|---|---|\n${[
   checkBuild('gs-mail', 'pnpm --filter @goldshore/gs-mail build')
 ].join('\n')}\n\n`;
 
-// 4. App-Level Repairs Only
-report += '## 4. App-Level Repairs Only\n\n';
 if (appLevelIssues.length) {
+  report += '## 4. App-Level Repairs Required\n\n';
   report += `Failures detected in: ${appLevelIssues.join(', ')}.\n`;
   report += '**Guidance:** You may fix these inside `apps/*`. Do not modify `.github/`, `infra/`, or root scripts.\n\n';
 } else {
-  report += '✅ No app-level repairs needed.\n\n';
+  report += '## 4. App-Level Repairs\n\n✅ No app-level repairs needed.\n\n';
 }
 
-// 5. No Expansion Rule
-report += '## 5. No Expansion Rule\n\n';
+// 5. Recommendations & Stop Condition
+report += `## 5. Recommendations\n\n`;
+
 if (violations.length === 0 && appLevelIssues.length === 0) {
-  report += '✅ Stabilization check clean. No expansion actions taken.\n\n';
+  report += `### ✅ Clean State\n\n`;
+  report += `**Stop Condition Status:**\n`;
+  report += `If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.\n`;
 } else {
-  report += '⚠️ Violations or issues detected. Focus on stabilization only. Do not add features or optimize pipelines.\n\n';
+  report += '### ❌ Actions Required\n\n';
+  violations.forEach((v) => { report += `- ${v}\n`; });
+  report += '\n**Do not self-fix. Escalate governance violations.**\n';
+  report += '**App-level repairs (types, imports) are permitted in apps/* only.**\n';
 }
-
-// Stop Condition
-report += '## Stop Condition\n\n';
-report += 'If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.\n';
 
 if (!fs.existsSync(path.dirname(REPORT_PATH))) fs.mkdirSync(path.dirname(REPORT_PATH), { recursive: true });
 fs.writeFileSync(REPORT_PATH, report);
