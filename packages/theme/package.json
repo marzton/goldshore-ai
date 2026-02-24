@@ -6,7 +6,6 @@
   "exports": {
     ".": "./index.css",
     "./runtime": "./index.ts",
-    "./manager": "./src/theme-manager.ts",
     "./styles/*": "./styles/*",
     "./assets/*": "./assets/*",
     "./styles/global.css": "./src/styles/global.css"
