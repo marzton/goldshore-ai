@@ -5,7 +5,6 @@ import { isValidEmail } from '../../utils/security';
 // Default to 90 days if not set in environment
 const DEFAULT_CONTACT_TTL_SECONDS = 60 * 60 * 24 * 90;
 const DEFAULT_MAILCHANNELS_API_URL = 'https://api.mailchannels.net/tx/v1/send';
-const CONTACT_TTL_SECONDS = 60 * 60 * 24 * 90;
 
 type Submission = {
   id: string;

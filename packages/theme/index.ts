@@ -1,10 +1,7 @@
-import { prefersReducedMotion, onReducedMotionChange } from './src/motion';
-
 export function initGoldShoreUI() {
   initNav();
   initModal();
   initParallax();
-  initTilt();
   initReveal();
 }
 
@@ -73,12 +70,16 @@ function getModalTemplate(variant: string): string {
       <div class="gs-modal-head">
         <div class="gs-kicker gs-signal">Secure Access</div>
         <h2 class="gs-modal-title gs-display">Admin Login</h2>
-        <p class="gs-muted">Restricted console entry. Continue to the secure admin surface.</p>
+        <p class="gs-muted">Restricted. Authentication required.</p>
       </div>
-      <div class="gs-form">
-        <a class="gs-button gs-button-solid" href="https://admin.goldshore.ai/login">Continue to Admin</a>
-      </div>
-      <div class="gs-micro gs-muted">Authentication is handled on the admin domain.</div>
+      <form class="gs-form" action="https://admin.goldshore.ai/login" method="POST">
+        <label class="gs-label">Email</label>
+        <input class="gs-input" name="email" type="email" autocomplete="email" required />
+        <label class="gs-label">Password</label>
+        <input class="gs-input" name="password" type="password" autocomplete="current-password" required />
+        <button class="gs-button gs-button-solid" type="submit">Login</button>
+      </form>
+      <div class="gs-micro gs-muted">If you are not authorized, this will fail silently.</div>
     `;
   }
 
