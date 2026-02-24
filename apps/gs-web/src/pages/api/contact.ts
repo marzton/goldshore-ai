@@ -1,11 +1,11 @@
 import type { APIRoute } from 'astro';
+import { parseJson } from '@goldshore/utils';
 import { buildLeadAutoResponder } from '../../emails/leadAutoResponder';
 import { isValidEmail } from '../../utils/security';
 
 // Default to 90 days if not set in environment
 const DEFAULT_CONTACT_TTL_SECONDS = 60 * 60 * 24 * 90;
 const DEFAULT_MAILCHANNELS_API_URL = 'https://api.mailchannels.net/tx/v1/send';
-const CONTACT_TTL_SECONDS = 60 * 60 * 24 * 90;
 
 type Submission = {
   id: string;
@@ -143,15 +143,6 @@ const isSpamSubmission = (formData: FormData) => {
 
   const elapsedMs = Date.now() - startedAtMs;
   return elapsedMs < 2500;
-};
-
-const parseJson = <T>(value: string | null, fallback: T): T => {
-  if (!value) return fallback;
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    return fallback;
-  }
 };
 
 const normalizeFormConfig = (row: Record<string, string> | null, slug: string): FormConfig => {
