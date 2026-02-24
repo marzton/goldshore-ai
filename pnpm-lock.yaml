@@ -73,7 +73,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.65.0(@cloudflare/workers-types@4.20260228.0)
+        version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
       yaml:
         specifier: ^2.8.2
         version: 2.8.2
@@ -122,14 +122,14 @@ importers:
         version: 4.11.9
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20260228.0
-        version: 4.20260228.0
+        specifier: ^4.20260207.0
+        version: 4.20260214.0
       typescript:
         specifier: ^5.4.2
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.65.0(@cloudflare/workers-types@4.20260228.0)
+        version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
 
   apps/gs-api:
     dependencies:
@@ -142,16 +142,22 @@ importers:
       '@goldshore/utils':
         specifier: workspace:^
         version: link:../../packages/utils
+      '@types/sanitize-html':
+        specifier: ^2.16.0
+        version: 2.16.0
       hono:
         specifier: ^4.0.0
         version: 4.11.9
       safe-stable-stringify:
         specifier: ^2.5.0
         version: 2.5.0
+      sanitize-html:
+        specifier: ^2.17.1
+        version: 2.17.1
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20260228.0
-        version: 4.20260228.0
+        specifier: ^4.20241106.0
+        version: 4.20260214.0
       tsx:
         specifier: ^4.7.1
         version: 4.21.0
@@ -160,7 +166,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.65.0(@cloudflare/workers-types@4.20260228.0)
+        version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
 
   apps/gs-control:
     dependencies:
@@ -172,17 +178,17 @@ importers:
         version: link:../../packages/utils
       '@hono/zod-validator':
         specifier: ^0.7.6
-        version: 0.7.6(hono@4.11.9)(zod@4.3.6)
+        version: 0.7.6(hono@4.11.9)(zod@3.25.76)
       hono:
         specifier: ^4.0.0
         version: 4.11.9
       zod:
-        specifier: ^4.3.6
-        version: 4.3.6
+        specifier: ^3.23.8
+        version: 3.25.76
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20260228.0
-        version: 4.20260228.0
+        specifier: ^4.20241106.0
+        version: 4.20260214.0
       tsx:
         specifier: ^4.7.1
         version: 4.21.0
@@ -191,7 +197,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.65.0(@cloudflare/workers-types@4.20260228.0)
+        version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
 
   apps/gs-gateway:
     dependencies:
@@ -203,8 +209,8 @@ importers:
         version: 4.11.9
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20260228.0
-        version: 4.20260228.0
+        specifier: ^4.20241106.0
+        version: 4.20260214.0
       '@types/node':
         specifier: ^25.2.1
         version: 25.2.3
@@ -216,7 +222,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.65.0(@cloudflare/workers-types@4.20260228.0)
+        version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
 
   apps/gs-mail:
     dependencies:
@@ -228,14 +234,14 @@ importers:
         version: 2.7.3
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20260228.0
-        version: 4.20260228.0
+        specifier: ^4.20241106.0
+        version: 4.20260214.0
       typescript:
         specifier: ^5.4.2
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.65.0(@cloudflare/workers-types@4.20260228.0)
+        version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
 
   apps/gs-web:
     dependencies:
@@ -435,9 +441,6 @@ packages:
 
   '@cloudflare/workers-types@4.20260214.0':
     resolution: {integrity: sha512-qb8rgbAdJR4BAPXolXhFL/wuGtecHLh1veOyZ1mK6QqWuCdI3vK1biKC0i3lzmzdLR/DZvsN3mNtpUE8zpWGEg==}
-
-  '@cloudflare/workers-types@4.20260228.0':
-    resolution: {integrity: sha512-9LfRg93ncQq6Oc4MFpqGSs+PmPhqWvg8TspXwbiYNR201IhXB4WqHR/aTSudPI0ujsf/NLc8E9fF3C+aA2g8KQ==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -1151,6 +1154,9 @@ packages:
   '@types/node@25.2.3':
     resolution: {integrity: sha512-m0jEgYlYz+mDJZ2+F4v8D1AyQb+QzsNqRuI7xg1VQX/KlKS0qT9r1Mo16yo5F/MtifXFgaofIFsdFMox2SxIbQ==}
 
+  '@types/sanitize-html@2.16.0':
+    resolution: {integrity: sha512-l6rX1MUXje5ztPT0cAFtUayXF06DqPhRyfVXareEN5gGCFaP/iwsxIyKODr9XDhfxPpN6vXUFNfo5kZMXCxBtw==}
+
   '@types/sax@1.2.7':
     resolution: {integrity: sha512-rO73L89PJxeYM3s3pPPjiPgVVcymqU490g0YO5n5By0k2Erzj6tay/4lr1CHAAU4JyOWd1rpQ8bCf6cZfHU96A==}
 
@@ -1545,6 +1551,10 @@ packages:
 
   deep-is@0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
+
+  deepmerge@4.3.1:
+    resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
+    engines: {node: '>=0.10.0'}
 
   defu@6.1.4:
     resolution: {integrity: sha512-mEQCMmwJu317oSz8CwdIOdwf3xMif1ttiM8LTufzc3g6kR+9Pe236twL8j3IYT1F7GfRgGcW6MWxzZjLIkuHIg==}
@@ -1964,6 +1974,9 @@ packages:
   html-void-elements@3.0.0:
     resolution: {integrity: sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==}
 
+  htmlparser2@8.0.2:
+    resolution: {integrity: sha512-GYdjWKDkbRLkZ5geuHs5NY1puJ+PXwP7+fHPRz06Eirsb9ugf6d8kkXav6ADhcODhFFPMIXyxkxSuMf3D6NCFA==}
+
   http-cache-semantics@4.2.0:
     resolution: {integrity: sha512-dTxcvPXqPvXBQpq5dUr6mEMJX4oIEFv6bwom3FDwKRDsuIjjJGANqhBuoAn9c1RQJIdAKav33ED65E2ys+87QQ==}
 
@@ -2052,6 +2065,10 @@ packages:
   is-plain-obj@4.1.0:
     resolution: {integrity: sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg==}
     engines: {node: '>=12'}
+
+  is-plain-object@5.0.0:
+    resolution: {integrity: sha512-VRSzKkbMm5jMDoKLbltAkFQ5Qr7VDiTFGXxYFXXowVj387GeGNOCsOH6Msy00SGZ3Fp84b1Naa1psqgcCIEP5Q==}
+    engines: {node: '>=0.10.0'}
 
   is-wsl@3.1.1:
     resolution: {integrity: sha512-e6rvdUCiQCAuumZslxRJWR/Doq4VpPR82kqclvcS0efgt430SlGIk05vdCN58+VrzgtIcfNODjozVielycD4Sw==}
@@ -2443,6 +2460,9 @@ packages:
   parse-latin@7.0.0:
     resolution: {integrity: sha512-mhHgobPPua5kZ98EF4HWiH167JWBfl4pvAIXXdbaVohtK7a6YBOy56kvhCqduqyo/f3yrHFWmqmiMg/BkBkYYQ==}
 
+  parse-srcset@1.0.2:
+    resolution: {integrity: sha512-/2qh0lav6CmI15FzA3i/2Bzk2zCgQhGMkvhOhKNcBVQ1ldgpbfiNTVslmooUmWJcADi1f1kIeynbDRVzNlfR6Q==}
+
   parse5@7.3.0:
     resolution: {integrity: sha512-IInvU7fabl34qmi9gY8XOVxhYyMyuH2xUNpb2q8/Y+7552KlejkRvqvD19nMoUW/uQGGbqNpA6Tufu5FL5BZgw==}
 
@@ -2735,6 +2755,9 @@ packages:
   safe-stable-stringify@2.5.0:
     resolution: {integrity: sha512-b3rppTKm9T+PsVCBEOUR46GWI7fdOs00VKZ1+9c1EWDaDMvjQc6tUwuFyIprgGgTcWoVHSKrU8H31ZHA2e0RHA==}
     engines: {node: '>=10'}
+
+  sanitize-html@2.17.1:
+    resolution: {integrity: sha512-ehFCW+q1a4CSOWRAdX97BX/6/PDEkCqw7/0JXZAGQV57FQB3YOkTa/rrzHPeJ+Aghy4vZAFfWMYyfxIiB7F/gw==}
 
   sass-formatter@0.7.9:
     resolution: {integrity: sha512-CWZ8XiSim+fJVG0cFLStwDvft1VI7uvXdCNJYXhDvowiv+DsbD1nXLiQ4zrE5UBvj5DWZJ93cwN0NX5PMsr1Pw==}
@@ -3378,9 +3401,6 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
-  zod@4.3.6:
-    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
-
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
@@ -3578,8 +3598,6 @@ snapshots:
 
   '@cloudflare/workers-types@4.20260214.0': {}
 
-  '@cloudflare/workers-types@4.20260228.0': {}
-
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -3713,10 +3731,10 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@hono/zod-validator@0.7.6(hono@4.11.9)(zod@4.3.6)':
+  '@hono/zod-validator@0.7.6(hono@4.11.9)(zod@3.25.76)':
     dependencies:
       hono: 4.11.9
-      zod: 4.3.6
+      zod: 3.25.76
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
@@ -4207,6 +4225,10 @@ snapshots:
   '@types/node@25.2.3':
     dependencies:
       undici-types: 7.16.0
+
+  '@types/sanitize-html@2.16.0':
+    dependencies:
+      htmlparser2: 8.0.2
 
   '@types/sax@1.2.7':
     dependencies:
@@ -4734,6 +4756,8 @@ snapshots:
       character-entities: 2.0.2
 
   deep-is@0.1.4: {}
+
+  deepmerge@4.3.1: {}
 
   defu@6.1.4: {}
 
@@ -5305,6 +5329,13 @@ snapshots:
 
   html-void-elements@3.0.0: {}
 
+  htmlparser2@8.0.2:
+    dependencies:
+      domelementtype: 2.3.0
+      domhandler: 5.0.3
+      domutils: 3.2.2
+      entities: 4.5.0
+
   http-cache-semantics@4.2.0: {}
 
   ignore@5.3.2: {}
@@ -5369,6 +5400,8 @@ snapshots:
   is-path-inside@3.0.3: {}
 
   is-plain-obj@4.1.0: {}
+
+  is-plain-object@5.0.0: {}
 
   is-wsl@3.1.1:
     dependencies:
@@ -6036,6 +6069,8 @@ snapshots:
       unist-util-visit-children: 3.0.0
       vfile: 6.0.3
 
+  parse-srcset@1.0.2: {}
+
   parse5@7.3.0:
     dependencies:
       entities: 6.0.1
@@ -6371,6 +6406,15 @@ snapshots:
   s.color@0.0.15: {}
 
   safe-stable-stringify@2.5.0: {}
+
+  sanitize-html@2.17.1:
+    dependencies:
+      deepmerge: 4.3.1
+      escape-string-regexp: 4.0.0
+      htmlparser2: 8.0.2
+      is-plain-object: 5.0.0
+      parse-srcset: 1.0.2
+      postcss: 8.5.6
 
   sass-formatter@0.7.9:
     dependencies:
@@ -6911,23 +6955,6 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  wrangler@4.65.0(@cloudflare/workers-types@4.20260228.0):
-    dependencies:
-      '@cloudflare/kv-asset-handler': 0.4.2
-      '@cloudflare/unenv-preset': 2.12.1(unenv@2.0.0-rc.24)(workerd@1.20260212.0)
-      blake3-wasm: 2.1.5
-      esbuild: 0.25.12
-      miniflare: 4.20260212.0
-      path-to-regexp: 6.3.0
-      unenv: 2.0.0-rc.24
-      workerd: 1.20260212.0
-    optionalDependencies:
-      '@cloudflare/workers-types': 4.20260228.0
-      fsevents: 2.3.3
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   wrap-ansi@7.0.0:
     dependencies:
       ansi-styles: 4.3.0
@@ -7012,7 +7039,5 @@ snapshots:
       zod: 3.25.76
 
   zod@3.25.76: {}
-
-  zod@4.3.6: {}
 
   zwitch@2.0.4: {}

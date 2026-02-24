@@ -178,15 +178,101 @@ try {
   if (newWorkflows.length) { const msg = `New workflows detected: ${newWorkflows.join(', ')}`; violations.push(msg); report += `### ❌ Workflow Violation (New Files)\n- ${msg}\n\n`; }
   else report += '✅ Workflow file list compliant.\n\n';
 
-  const unauthorizedActions = [...new Set(workflows
-    .filter((w) => w.endsWith('.yml') || w.endsWith('.yaml'))
-    .flatMap((w) => fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8').split('\n').filter((l) => l.trim().startsWith('uses:')).map((line) => ({ w, action: line.split('uses:')[1].trim().split('@')[0] })))
-    .filter(({ action }) => !action.startsWith('./') && !ALLOWED_ACTIONS.includes(action))
-    .map(({ w, action }) => `${action} (in ${w})`))];
+  // Check for unauthorized actions and unpinned SHAs and duplicate keys
+  const unauthorizedActions = [];
+  const unpinnedActions = [];
+  const duplicateKeys = [];
 
-  if (unauthorizedActions.length) { const msg = `Unauthorized CI Actions detected: ${unauthorizedActions.join(', ')}`; violations.push(msg); report += `### ❌ CI Action Violation\n- ${msg}\n\n`; }
-  else report += '✅ CI Actions compliant.\n\n';
-} catch (e) { report += `⚠️ Could not scan workflows: ${e.message}\n\n`; }
+  workflows.filter((w) => w.endsWith('.yml') || w.endsWith('.yaml')).forEach((w) => {
+    try {
+      const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
+      const lines = content.split('\n');
+
+      // Duplicate Key Heuristic
+      let lastIndent = -1;
+      let lastKey = '';
+
+      lines.forEach((line, idx) => {
+        if (!line.trim() || line.trim().startsWith('#')) return;
+
+        // Check for key pattern "  key:" (no dash)
+        const match = line.match(/^(\s*)([a-zA-Z0-9_-]+):/);
+        if (match) {
+          const indent = match[1].length;
+          const key = match[2];
+
+          if (indent === lastIndent && key === lastKey) {
+             duplicateKeys.push(`Duplicate key '${key}' in ${w} around line ${idx + 1}`);
+          }
+          lastIndent = indent;
+          lastKey = key;
+        } else if (line.trim().startsWith('-')) {
+          // List item resets simple heuristic
+          lastIndent = -1;
+          lastKey = '';
+        } else {
+          // Other content resets
+          lastIndent = -1;
+          lastKey = '';
+        }
+
+        // Check for actions
+        const usesMatch = line.match(/uses:\s*([\"']?)([^\"'\s#]+)\1/);
+        if (usesMatch) {
+          let actionRef = usesMatch[2];
+          if (actionRef.startsWith('./') || actionRef.startsWith('docker://')) return;
+
+          const [actionName, version] = actionRef.split('@');
+
+          if (!ALLOWED_ACTIONS.includes(actionName)) {
+            unauthorizedActions.push(`${actionName} (in ${w})`);
+          }
+
+          // Check for unpinned SHA (must be 40 hex chars)
+          const isSha = version && /^[0-9a-f]{40}$/.test(version);
+          if (!isSha) {
+             unpinnedActions.push(`${actionName} is unpinned (uses @${version}) in ${w}`);
+          }
+        }
+      });
+
+    } catch (e) {
+      governanceViolations.push(`Error scanning workflow ${w}: ${e.message}`);
+    }
+  });
+
+  const uniqueUnauthorized = [...new Set(unauthorizedActions)];
+  if (uniqueUnauthorized.length) {
+    const msg = `Unauthorized CI Actions detected: ${uniqueUnauthorized.join(', ')}`;
+    governanceViolations.push(msg);
+    violations.push(msg);
+  }
+
+  const uniqueUnpinned = [...new Set(unpinnedActions)];
+  if (uniqueUnpinned.length) {
+    const msg = `Unpinned CI Actions detected (must use SHA): ${uniqueUnpinned.join(', ')}`;
+    governanceViolations.push(msg);
+    violations.push(msg);
+  }
+
+  const uniqueDuplicates = [...new Set(duplicateKeys)];
+  if (uniqueDuplicates.length) {
+    const msg = `YAML syntax errors (duplicate keys) detected: ${uniqueDuplicates.join(', ')}`;
+    governanceViolations.push(msg);
+    violations.push(msg);
+  }
+
+} catch (e) {
+  governanceViolations.push(`Could not scan workflows: ${e.message}`);
+}
+
+if (governanceViolations.length) {
+  report += '### ❌ Violations Detected\n';
+  governanceViolations.forEach(v => report += `- ${v}\n`);
+  report += '\nDocumented in docs/ci/CURRENT_STATE.md. Do not self-fix. Escalate via comment only.\n\n';
+} else {
+  report += '✅ No governance violations detected.\n\n';
+}
 
 report += '## 2. Branch Discipline Check\n\n';
 report += `**Current Branch:** ${branch}\n\n`;
