@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { parseJson } from '@goldshore/utils';
 import { buildLeadAutoResponder } from '../../emails/leadAutoResponder';
 import { isValidEmail } from '../../utils/security';
 
@@ -143,15 +144,6 @@ const isSpamSubmission = (formData: FormData) => {
 
   const elapsedMs = Date.now() - startedAtMs;
   return elapsedMs < 2500;
-};
-
-const parseJson = <T>(value: string | null, fallback: T): T => {
-  if (!value) return fallback;
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    return fallback;
-  }
 };
 
 const normalizeFormConfig = (row: Record<string, string> | null, slug: string): FormConfig => {
