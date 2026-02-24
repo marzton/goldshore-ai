@@ -29,11 +29,8 @@ const isAuthorized = isRoleAllowed && isPermissionAllowed;
     <meta charset="utf-8" />
     <title>{title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <script>
-      import { initTheme } from '@goldshore/theme/manager';
-      initTheme();
-    </script>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const sidebar = document.getElementById('admin-sidebar');

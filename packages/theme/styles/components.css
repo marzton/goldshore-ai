@@ -216,3 +216,16 @@
   border-color: rgba(90, 140, 255, 0.55);
   box-shadow: 0 0 0 4px rgba(90, 140, 255, 0.12);
 }
+
+
+.gs-tilt-enabled .gs-hoverlift {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 220ms var(--gs-ease), border-color var(--gs-mid) var(--gs-ease);
+}
+
+@media (pointer: fine) {
+  .gs-tilt-enabled .gs-panel {
+    perspective: 1200px;
+  }
+}

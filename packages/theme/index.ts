@@ -3,6 +3,7 @@ export function initGoldShoreUI() {
   initModal();
   initParallax();
   initReveal();
+  initTilt();
 }
 
 function initNav() {
@@ -142,4 +143,31 @@ function initReveal() {
   );
 
   els.forEach((el) => io.observe(el));
+}
+
+
+function initTilt() {
+  const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  const pointerFine = window.matchMedia?.('(pointer: fine)')?.matches;
+  if (reducedMotion || !pointerFine) return;
+
+  document.documentElement.classList.add('gs-tilt-enabled');
+  const panels = document.querySelectorAll<HTMLElement>('.gs-hoverlift');
+
+  panels.forEach((panel) => {
+    panel.addEventListener('pointermove', (e) => {
+      const rect = panel.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+      const rotateX = -y * 8;
+      const rotateY = x * 10;
+
+      panel.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(0)`;
+    });
+
+    panel.addEventListener('pointerleave', () => {
+      panel.style.transform = '';
+    });
+  });
 }
