@@ -1,19 +1,28 @@
 # Stabilization Sync Check Report
 
-**Date:** Sun, 22 Feb 2026 20:54:48 GMT
+**Date:** Sun, 22 Feb 2026 06:47:59 GMT
 
 ## 1. Governance Compliance Check
 
-✅ No governance violations detected.
+✅ Directory structure compliant.
+
+### ❌ Build Script Violation
+- New scripts detected in root package.json: verify:web-dist, memory:check
+
+### ❌ Workflow Violation (New Files)
+- New workflows detected: canonical-structure-check.yml
+
+✅ CI Actions compliant.
 
 ## 2. Branch Discipline Check
 
-**Current Branch:** jules-3861745990896073767-f8a688b1
-**Divergence vs origin/main:** Behind: 0, Ahead: 0
+**Current Branch:** work
 
-✅ Branch divergence acceptable.
+**Divergence vs main (unavailable locally):** Behind: 0, Ahead: 0
 
-## 3. CI State Snapshot
+⚠️ Could not resolve a local main tracking ref; divergence defaults to 0/0 in this checkout.
+
+## 3. CI State Snapshot (PR Context)
 
 ⚠️ gh CLI unavailable; unable to resolve PR CI status in this environment.
 
@@ -21,19 +30,22 @@
 
 | App | Status | Notes |
 |---|---|---|
-| **gs-web** | ✅ PASS | |
+| **gs-web** | ❌ FAIL | Check run logs |
 | **gs-admin** | ✅ PASS | |
 | **gs-api** | ✅ PASS | |
 | **gs-mail** | ✅ PASS | |
 
-## 4. App-Level Repairs Only
+## 4. App-Level Repairs Required
 
-✅ No app-level repairs needed.
+Failures detected in: gs-web build failed.
+**Guidance:** You may fix these inside `apps/*`. Do not modify `.github/`, `infra/`, or root scripts.
 
-## 5. No Expansion Rule
+## 5. Recommendations
 
-✅ Stabilization check clean. No expansion actions taken.
+### ❌ Actions Required
 
-## Stop Condition
+- New scripts detected in root package.json: verify:web-dist, memory:check
+- New workflows detected: canonical-structure-check.yml
 
-If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.
+**Do not self-fix. Escalate governance violations.**
+**App-level repairs (types, imports) are permitted in apps/* only.**
