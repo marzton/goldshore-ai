@@ -1,99 +1,213 @@
 ---
-import { GSButton } from '@goldshore/ui';
-import MarketingLayout from '../layouts/MarketingLayout.astro';
-import ParallaxHero from '../components/hero/ParallaxHero.astro';
-import '../styles/home.css';
+import WebLayout from '../layouts/WebLayout.astro';
 
 export const prerender = true;
-
-const features = [
-  {
-    title: 'Vibe Coding',
-    body: 'Aesthetic-driven development where code flows like fluid dynamics. Provable experience.',
-    icon: 'palette'
-  },
-  {
-    title: 'Cinematic Ops',
-    body: 'Infrastructure monitoring that feels like a sci-fi HUD. Real-time, responsive, and beautiful.',
-    icon: 'monitor_heart'
-  },
-  {
-    title: 'Applied Intelligence',
-    body: "AI agents that don't just work—they perform. Seamless integration into your workflow.",
-    icon: 'psychology'
-  }
-];
-
-const highlights = [
-  { label: 'Global Latency', value: '< 30ms', tone: 'success' },
-  { label: 'System Status', value: 'Normal', tone: 'success' },
-  { label: 'Active Nodes', value: '24/24', tone: 'info' },
-  { label: 'Threat Level', value: 'None', tone: '' }
-];
 ---
 
-<MarketingLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
-  <div class="cinematic-wrapper">
-    <div class="stars-container">
-      <div class="stars"></div>
+<WebLayout title="Gold Shore | Shaping Waves" description="Engineered for decisive control.">
+  <section class="gs-hero" aria-labelledby="gs-hero-title">
+    <div class="gs-orbital-field" data-orbital-field aria-hidden="true">
+      <div class="gs-orbital-dust"></div>
     </div>
 
-    <ParallaxHero />
+    <div class="gs-container gs-hero-content">
+      <h1 id="gs-hero-title">Gold Shore</h1>
+      <p class="hero-tagline">Engineered for Decisive Control.</p>
 
-    <section class="gs-hero home-hero parallax-section" style="padding-top: 0;">
-    <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.08" aria-hidden="true"></div>
-    <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.14" aria-hidden="true"></div>
-    <div class="parallax-layer gs-parallax layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
-
-      <div class="gs-card gs-pulse-frame hero-card reveal">
-        <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
-        <div class="gs-grid columns-2">
-          {highlights.map((item) => (
-            <div class="gs-kpi">
-              <span>{item.label}</span>
-              <strong>{item.value}</strong>
-              <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
-            </div>
-          ))}
-        </div>
-        <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
+      <div class="hero-actions">
+        <a href="/contact" class="gs-button">Start</a>
       </div>
-    </section>
-
-    <section class="features-section blueprint-section parallax-section">
-      <div class="parallax-layer gs-parallax layer-blueprint" data-parallax="0.04" aria-hidden="true"></div>
-      <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.1" aria-hidden="true"></div>
-      <div class="parallax-layer gs-parallax layer-sheen" data-parallax="0.16" aria-hidden="true"></div>
-      <div class="features-grid">
-        {features.map((feature, i) => (
-          <div class="feature-card glass-panel reveal lux-card" style={`transition-delay: ${0.1 + i * 0.1}s;`}>
-            <div class="icon-box">
-              <span class="material-symbols-rounded">{feature.icon}</span>
-            </div>
-            <h3>{feature.title}</h3>
-            <p>{feature.body}</p>
-          </div>
-        ))}
-      </div>
-      <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
     </div>
   </section>
 
-  <section class="features-section blueprint-section parallax-section">
-    <div class="parallax-layer gs-parallax layer-blueprint" data-parallax="0.04" aria-hidden="true"></div>
-    <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.1" aria-hidden="true"></div>
-    <div class="parallax-layer gs-parallax layer-sheen" data-parallax="0.16" aria-hidden="true"></div>
-    <div class="features-grid">
-      {features.map((feature, i) => (
-        <div class="feature-card glass-panel reveal lux-card" style={`transition-delay: ${0.1 + (i * 0.1)}s;`}>
-          <div class="icon-box">
-            <span class="material-symbols-rounded">{feature.icon}</span>
-          </div>
-          <h3>{feature.title}</h3>
-          <p>{feature.body}</p>
-        </div>
-      ))}
+  <section class="gs-section gs-home-panels" aria-label="Core intelligence capabilities">
+    <div class="gs-container gs-panel-grid">
+      <article class="gs-panel gs-tilt">
+        <h3 class="gs-section-title">Risk Radar</h3>
+        <p>Macro-pattern intelligence infrastructure tuned for scenario clarity.</p>
+      </article>
+      <article class="gs-panel gs-tilt">
+        <h3 class="gs-section-title">Resilience Mesh</h3>
+        <p>Operational safeguards that harden critical paths without introducing drag.</p>
+      </article>
+      <article class="gs-panel gs-tilt">
+        <h3 class="gs-section-title">Signal Governance</h3>
+        <p>Decision cadence controls that preserve institutional discipline under pressure.</p>
+      </article>
     </div>
   </section>
-  </div>
-</MarketingLayout>
+</WebLayout>
+
+<script>
+  const orbitalField = document.querySelector('[data-orbital-field]');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (orbitalField && !prefersReducedMotion) {
+    const updateParallax = () => {
+      const y = window.scrollY;
+      orbitalField.style.transform = `translate3d(0, ${Math.min(y * 0.15, 120)}px, 0)`;
+    };
+
+    updateParallax();
+    window.addEventListener('scroll', updateParallax, { passive: true });
+  }
+
+  const panels = document.querySelectorAll('.gs-tilt');
+
+  if (!prefersReducedMotion && panels.length > 0) {
+    panels.forEach((panel) => {
+      panel.addEventListener('mousemove', (e) => {
+        const rect = panel.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const rotateX = ((y / rect.height) - 0.5) * -6;
+        const rotateY = ((x / rect.width) - 0.5) * 6;
+
+        panel.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(8px)`;
+      });
+
+      panel.addEventListener('mouseleave', () => {
+        panel.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      });
+    });
+  }
+</script>
+
+<style>
+  .gs-hero {
+    position: relative;
+    min-height: calc(100svh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    isolation: isolate;
+    background: #000;
+    text-align: center;
+  }
+
+  .gs-hero-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .gs-orbital-field {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    overflow: hidden;
+    z-index: 0;
+    will-change: transform;
+  }
+
+  .gs-orbital-field::before,
+  .gs-orbital-field::after {
+    content: '';
+    position: absolute;
+    width: clamp(760px, 72vw, 1200px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    filter: blur(180px);
+    opacity: 0.35;
+    animation: gsPulse 18s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  .gs-orbital-field::before {
+    top: -400px;
+    left: -300px;
+    background: radial-gradient(circle, rgba(70, 110, 255, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
+  }
+
+  .gs-orbital-field::after {
+    bottom: -500px;
+    right: -400px;
+    background: radial-gradient(circle, rgba(255, 140, 40, 0.5) 0%, rgba(0, 0, 0, 0) 65%);
+    animation-delay: 6s;
+  }
+
+  .gs-orbital-dust {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+    background-size: 120px 120px;
+    opacity: 0.05;
+    animation: gsDrift 90s linear infinite;
+    will-change: transform;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    letter-spacing: 0.03em;
+  }
+
+  .hero-tagline {
+    color: var(--gs-color-subtle);
+    margin: 1rem 0 0;
+    font-size: 1.1rem;
+  }
+
+  .hero-actions {
+    margin-top: 2rem;
+  }
+
+  .gs-home-panels {
+    padding-top: 4rem;
+  }
+
+  .gs-home-panels::before {
+    display: none;
+  }
+
+  .gs-panel-grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .gs-section-title {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    letter-spacing: 0.01em;
+  }
+
+  @keyframes gsPulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.28;
+    }
+
+    50% {
+      transform: scale(1.08);
+      opacity: 0.4;
+    }
+
+    100% {
+      transform: scale(1.02);
+      opacity: 0.32;
+    }
+  }
+
+  @keyframes gsDrift {
+    from {
+      transform: translateY(0);
+    }
+
+    to {
+      transform: translateY(-200px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gs-orbital-field,
+    .gs-orbital-field::before,
+    .gs-orbital-field::after,
+    .gs-orbital-dust {
+      animation: none;
+      transform: none;
+    }
+  }
+</style>
