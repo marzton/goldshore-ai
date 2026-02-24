@@ -1,6 +1,15 @@
 import { Hono } from 'hono';
+import sanitizeHtml from 'sanitize-html';
 import { requirePermission } from '../auth';
 import { Env, Variables } from '../types';
+
+const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
+  allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'h1', 'h2', 'span']),
+  allowedAttributes: {
+    ...sanitizeHtml.defaults.allowedAttributes,
+    img: ['src', 'alt', 'width', 'height']
+  }
+};
 
 type PageRow = {
   id: number;
@@ -77,11 +86,12 @@ pages.post('/', requirePermission('content:write'), async (c) => {
   }
 
   const status = allowedStatuses.has(payload.status ?? '') ? payload.status! : 'draft';
+  const sanitizedBody = sanitizeHtml(payload.body, SANITIZE_OPTIONS);
 
   const page = await c.env.DB.prepare(
     'INSERT INTO pages (slug, title, body, status) VALUES (?, ?, ?, ?) RETURNING *'
   )
-    .bind(payload.slug, payload.title, payload.body, status)
+    .bind(payload.slug, payload.title, sanitizedBody, status)
     .first<PageRow>();
 
   return c.json(page ? normalizePage(page) : { error: 'Page not found after insert' }, page ? 201 : 500);
@@ -102,11 +112,12 @@ pages.put('/:id', requirePermission('content:write'), async (c) => {
   }
 
   const status = allowedStatuses.has(payload.status ?? '') ? payload.status! : 'draft';
+  const sanitizedBody = sanitizeHtml(payload.body, SANITIZE_OPTIONS);
 
   const page = await c.env.DB.prepare(
     'UPDATE pages SET slug = ?, title = ?, body = ?, status = ?, updated_at = datetime(\'now\') WHERE id = ? RETURNING *'
   )
-    .bind(payload.slug, payload.title, payload.body, status, id)
+    .bind(payload.slug, payload.title, sanitizedBody, status, id)
     .first<PageRow>();
 
   return c.json(page ? normalizePage(page) : { error: 'Page not found' }, page ? 200 : 404);
