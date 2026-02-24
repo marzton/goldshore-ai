@@ -146,8 +146,8 @@ importers:
         specifier: ^2.16.0
         version: 2.16.0
       hono:
-        specifier: ^4.0.0
-        version: 4.11.9
+        specifier: ^4.12.1
+        version: 4.12.2
       safe-stable-stringify:
         specifier: ^2.5.0
         version: 2.5.0
@@ -1966,6 +1966,10 @@ packages:
 
   hono@4.11.9:
     resolution: {integrity: sha512-Eaw2YTGM6WOxA6CXbckaEvslr2Ne4NFsKrvc0v97JD5awbmeBLO5w9Ho9L9kmKonrwF9RJlW6BxT1PVv/agBHQ==}
+    engines: {node: '>=16.9.0'}
+
+  hono@4.12.2:
+    resolution: {integrity: sha512-gJnaDHXKDayjt8ue0n8Gs0A007yKXj4Xzb8+cNjZeYsSzzwKc0Lr+OZgYwVfB0pHfUs17EPoLvrOsEaJ9mj+Tg==}
     engines: {node: '>=16.9.0'}
 
   html-escaper@3.0.3:
@@ -5324,6 +5328,8 @@ snapshots:
       space-separated-tokens: 2.0.2
 
   hono@4.11.9: {}
+
+  hono@4.12.2: {}
 
   html-escaper@3.0.3: {}
 
