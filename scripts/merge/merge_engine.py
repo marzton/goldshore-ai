@@ -29,9 +29,10 @@ def archive_legacy(src_root, archive_root):
     shutil.copytree(src_root, archive_root)
 
 
-def handle_file(src, dest, report):
+def handle_file(src, dest, report, mode):
     if not dest.exists():
-        copy_file(src, dest)
+        if mode == "apply":
+            copy_file(src, dest)
         report["copied"].append(str(dest))
         return
 
@@ -40,12 +41,14 @@ def handle_file(src, dest, report):
         return
 
     if src.suffix == ".json":
-        deep_merge_json(dest, src)
+        if mode == "apply":
+            deep_merge_json(dest, src)
         report["json_merged"].append(str(dest))
         return
 
     if ".github/workflows" in str(dest):
-        merge_workflows(dest, src)
+        if mode == "apply":
+            merge_workflows(dest, src)
         report["workflow_merged"].append(str(dest))
         return
 
@@ -55,6 +58,7 @@ def handle_file(src, dest, report):
 def run(target, legacy, archive, mode):
     report = {
         "timestamp": datetime.utcnow().isoformat(),
+        "mode": mode,
         "copied": [],
         "identical": [],
         "json_merged": [],
@@ -70,7 +74,7 @@ def run(target, legacy, archive, mode):
             src = Path(root) / f
             rel = src.relative_to(legacy)
             dest = target / rel
-            handle_file(src, dest, report)
+            handle_file(src, dest, report, mode)
 
     if mode == "apply":
         archive_legacy(legacy, target / archive)
