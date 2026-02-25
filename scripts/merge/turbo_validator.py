@@ -4,6 +4,9 @@ from pathlib import Path
 
 def validate_turbo():
     config = json.loads(Path("turbo.json").read_text())
-    pipelines = config.get("pipeline", {})
-    if "build" not in pipelines:
+    tasks = config.get("tasks")
+    if not isinstance(tasks, dict):
+        tasks = config.get("pipeline", {})
+
+    if "build" not in tasks:
         raise Exception("Turbo build pipeline missing")
