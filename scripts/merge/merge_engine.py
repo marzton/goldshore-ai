@@ -6,6 +6,9 @@ from workflow_dedupe import merge_workflows
 from asset_fingerprint import fingerprint_asset
 
 
+EXCLUDED_DIRS = {".git", ".hg", ".svn", "__pycache__"}
+
+
 def sha256(path):
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -29,9 +32,10 @@ def archive_legacy(src_root, archive_root):
     shutil.copytree(src_root, archive_root)
 
 
-def handle_file(src, dest, report):
+def handle_file(src, dest, report, mutate=True):
     if not dest.exists():
-        copy_file(src, dest)
+        if mutate:
+            copy_file(src, dest)
         report["copied"].append(str(dest))
         return
 
@@ -40,12 +44,14 @@ def handle_file(src, dest, report):
         return
 
     if src.suffix == ".json":
-        deep_merge_json(dest, src)
+        if mutate:
+            deep_merge_json(dest, src)
         report["json_merged"].append(str(dest))
         return
 
     if ".github/workflows" in str(dest):
-        merge_workflows(dest, src)
+        if mutate:
+            merge_workflows(dest, src)
         report["workflow_merged"].append(str(dest))
         return
 
@@ -65,14 +71,17 @@ def run(target, legacy, archive, mode):
     legacy = Path(legacy)
     target = Path(target)
 
-    for root, _, files in os.walk(legacy):
+    mutate = mode == "apply"
+
+    for root, dirs, files in os.walk(legacy):
+        dirs[:] = [d for d in dirs if d not in EXCLUDED_DIRS]
         for f in files:
             src = Path(root) / f
             rel = src.relative_to(legacy)
             dest = target / rel
-            handle_file(src, dest, report)
+            handle_file(src, dest, report, mutate=mutate)
 
-    if mode == "apply":
+    if mutate:
         archive_legacy(legacy, target / archive)
 
     Path("reports/merge").mkdir(parents=True, exist_ok=True)
