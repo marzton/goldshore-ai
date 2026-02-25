@@ -13,6 +13,9 @@ SKIP_LEGACY_DIRS = {
 }
 
 
+EXCLUDED_DIRS = {".git", ".hg", ".svn", "__pycache__"}
+
+
 def sha256(path):
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -36,9 +39,9 @@ def archive_legacy(src_root, archive_root):
     shutil.copytree(src_root, archive_root)
 
 
-def handle_file(src, dest, report, mode):
+def handle_file(src, dest, report, mutate=True):
     if not dest.exists():
-        if mode == "apply":
+        if mutate:
             copy_file(src, dest)
         report["copied"].append(str(dest))
         return
@@ -52,13 +55,13 @@ def handle_file(src, dest, report, mode):
         return
 
     if src.suffix == ".json":
-        if mode == "apply":
+        if mutate:
             deep_merge_json(dest, src)
         report["json_merged"].append(str(dest))
         return
 
     if ".github/workflows" in str(dest):
-        if mode == "apply":
+        if mutate:
             merge_workflows(dest, src)
         report["workflow_merged"].append(str(dest))
         return
@@ -80,15 +83,17 @@ def run(target, legacy, archive, mode):
     legacy = Path(legacy)
     target = Path(target)
 
+    mutate = mode == "apply"
+
     for root, dirs, files in os.walk(legacy):
-        dirs[:] = [d for d in dirs if d not in SKIP_LEGACY_DIRS]
+        dirs[:] = [d for d in dirs if d not in EXCLUDED_DIRS]
         for f in files:
             src = Path(root) / f
             rel = src.relative_to(legacy)
             dest = target / rel
-            handle_file(src, dest, report, mode)
+            handle_file(src, dest, report, mutate=mutate)
 
-    if mode == "apply":
+    if mutate:
         archive_legacy(legacy, target / archive)
 
     Path("reports/merge").mkdir(parents=True, exist_ok=True)
