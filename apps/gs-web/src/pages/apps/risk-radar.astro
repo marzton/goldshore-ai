@@ -1,4 +1,22 @@
 ---
+import WebLayout from '../../layouts/WebLayout.astro';
+
+export const prerender = true;
+---
+
+<WebLayout title="Risk Radar | Gold Shore" description="Forthcoming operational threat visualization system.">
+  <section class="gs-section risk-radar blueprint-bg">
+    <div class="gs-container">
+      <h2>Risk Radar</h2>
+      <div class="gs-card">
+        <p>
+          A forthcoming operational visualization system designed to map systemic exposure and signal volatility in
+          real time.
+        </p>
+      </div>
+    </div>
+  </section>
+</WebLayout>
 // Legacy route: `/apps/risk-radar` is retained only to redirect to canonical `/risk-radar`.
 const target = '/risk-radar';
 ---
