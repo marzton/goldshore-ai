@@ -91,7 +91,6 @@ try {
 
   if (newScripts.length > 0) {
      const msg = `New scripts detected in root package.json: ${newScripts.join(', ')}`;
-     governanceViolations.push(msg);
      violations.push(msg);
      report += `### ❌ Build Script Violation:\n- ${msg}\n\n`;
   } else {
