@@ -12,22 +12,26 @@ export type ChartMetrics = {
   series: MetricPoint[];
 };
 
+export type CloudflareHighlights = {
+  totalRequests: string;
+  cacheHitRate: string;
+  threatsBlocked: string;
+  dnsChanges: string;
+};
+
+export type CloudflareCharts = {
+  traffic: ChartMetrics;
+  cache: ChartMetrics;
+  threats: ChartMetrics;
+  dns: ChartMetrics;
+};
+
 export type CloudflareMetrics = {
   source: 'live' | 'mock';
   refreshedAt: string;
   note: string;
-  highlights: {
-    totalRequests: string;
-    cacheHitRate: string;
-    threatsBlocked: string;
-    dnsChanges: string;
-  };
-  charts: {
-    traffic: ChartMetrics;
-    cache: ChartMetrics;
-    threats: ChartMetrics;
-    dns: ChartMetrics;
-  };
+  highlights: CloudflareHighlights;
+  charts: CloudflareCharts;
 };
 
 export function getCloudflareContext(locals: any) {
