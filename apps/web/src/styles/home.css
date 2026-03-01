@@ -213,3 +213,18 @@
     transform: none;
   }
 }
+
+
+@media (max-width: 768px) {
+  .home-features {
+    padding: var(--gs-space-6) 0;
+  }
+
+  .home-features .feature-card {
+    padding: var(--gs-space-4);
+  }
+
+  .lux-card {
+    border-radius: 1rem;
+  }
+}

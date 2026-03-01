@@ -51,9 +51,20 @@
 @media (max-width: 1000px) {
   .gs-admin-grid { grid-template-columns: 72px minmax(0, 1fr); }
   .gs-admin-sidebar { padding: var(--gs-space-4) var(--gs-space-3); }
+  .gs-admin-topbar { padding: var(--gs-space-3) var(--gs-space-4); }
+  .gs-admin-content { padding: var(--gs-space-5); }
 }
 
 @media (max-width: 720px) {
   .gs-admin-grid { grid-template-columns: 1fr; }
-  .gs-admin-sidebar { flex-direction: row; align-items: center; justify-content: space-between; }
+  .gs-admin-sidebar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gs-space-3);
+    padding: var(--gs-space-3);
+  }
+  .gs-admin-topbar { padding: var(--gs-space-3); }
+  .gs-admin-content { padding: var(--gs-space-4) var(--gs-space-3); }
 }

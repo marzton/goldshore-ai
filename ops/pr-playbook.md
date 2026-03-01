@@ -162,6 +162,41 @@ If Git shows conflicts:
 
 ⸻
 
+
+### 2.4 Special Case: “There isn’t anything to compare” (unrelated histories)
+
+If GitHub shows:
+
+> There isn’t anything to compare. `<base>` and `<head>` are entirely different commit histories.
+
+the PR branch does not share a merge base with `main`.
+
+Quick check:
+
+```bash
+scripts/check-pr-ancestry.sh origin/main HEAD
+```
+
+Fix path:
+
+```bash
+git fetch origin main
+git checkout <pr-branch>
+
+# Preferred: preserve branch and replay on main
+git rebase origin/main
+
+# If rebase cannot work because the branch was born from a different root:
+git checkout -b <new-branch> origin/main
+git cherry-pick <old-branch-commit-range>
+
+git push --force-with-lease
+```
+
+After this, GitHub compare view and PR diff should render normally.
+
+⸻
+
 ## 3. Inventory: Open PRs & Critical Files
 
 Use this when things feel “crowded” or you’re not sure which PR to tackle next.
