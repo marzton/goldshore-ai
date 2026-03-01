@@ -7,8 +7,14 @@
   position: absolute;
   inset: 0;
   background-image: url("/assets/blueprint-grid.svg");
-  opacity: 0.08;
+  opacity: 0.12;
   pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .gs-grid-overlay {
+    opacity: 0.08;
+  }
 }
 
 .gs-hero {
@@ -34,6 +40,49 @@
   display: flex;
   gap: 0.9rem;
   flex-wrap: wrap;
+}
+
+.gs-stars,
+.gs-stars-deep {
+  position: absolute;
+  inset: 0;
+  background-image: url("/assets/starfield.svg");
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+}
+
+.gs-stars {
+  opacity: 0.22;
+  animation: gs-drift 140s linear infinite;
+  z-index: 1;
+}
+
+.gs-stars-deep {
+  opacity: 0.1;
+  animation: gs-drift-slow 260s linear infinite;
+  z-index: 0;
+  filter: blur(0.2px);
+}
+
+@keyframes gs-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1.05);
+  }
+
+  to {
+    transform: translate3d(0, -220px, 0) scale(1.05);
+  }
+}
+
+@keyframes gs-drift-slow {
+  from {
+    transform: translate3d(0, 0, 0) scale(1.12);
+  }
+
+  to {
+    transform: translate3d(0, -160px, 0) scale(1.12);
+  }
 }
 
 .gs-vignette {
@@ -64,7 +113,15 @@
 }
 
 @keyframes gs-signal {
-  0% { transform: translateX(-55%); }
-  45% { transform: translateX(55%); }
-  100% { transform: translateX(55%); }
+  0% {
+    transform: translateX(-55%);
+  }
+
+  45% {
+    transform: translateX(55%);
+  }
+
+  100% {
+    transform: translateX(55%);
+  }
 }
