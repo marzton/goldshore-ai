@@ -35,6 +35,7 @@ const parseConfig = (input: Partial<SystemConfig> | null): SystemConfig => {
     notes: typeof input.notes === "string" ? input.notes.slice(0, 500) : DEFAULT_CONFIG.notes
   };
 };
+import { CONFIG_KEY, DEFAULT_CONFIG, parseConfig, SystemConfig } from "./system.config";
 
 const readConfig = async (kv: KVNamespace) => {
   const stored = await kv.get<SystemConfig>(CONFIG_KEY, "json");
