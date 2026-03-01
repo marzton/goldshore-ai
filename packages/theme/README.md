@@ -13,7 +13,7 @@ import '@goldshore/theme';
 Assets such as the Penrose mark are available at:
 
 ```astro
-import logo from '@goldshore/theme/assets/logo.svg';
+import logo from '@goldshore/theme/assets/penrose-logo.svg';
 ```
 
 ## Structure
