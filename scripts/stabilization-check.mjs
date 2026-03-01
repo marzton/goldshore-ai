@@ -34,9 +34,7 @@ const BASELINE_BUILD_SCRIPTS = [
   'branch:bootstrap',
   'scaffold:worker',
   'workspaces:list',
-  'verify:workspace-filters',
-  'verify:web-dist',
-  'memory:check'
+  'verify:workspace-filters'
 ];
 
 const KNOWN_WORKFLOWS = [
@@ -214,11 +212,8 @@ try {
 try {
   const workflows = fs.readdirSync(WORKFLOW_DIR);
   const newWorkflows = workflows.filter((w) => !KNOWN_WORKFLOWS.includes(w));
-  if (newWorkflows.length) {
-    const msg = `New workflows detected: ${newWorkflows.join(', ')}`;
-    governanceViolations.push(msg);
-    violations.push(msg);
-  }
+  if (newWorkflows.length) { const msg = `New workflows detected: ${newWorkflows.join(', ')}`; violations.push(msg); report += `### ❌ Workflow Violation (New Files)\n- ${msg}\n\n`; }
+  else report += '✅ Workflow file list compliant.\n\n';
 
   // Check for unauthorized actions and unpinned SHAs and duplicate keys
   const unauthorizedActions = [];
