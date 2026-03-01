@@ -1,0 +1,20 @@
+.gs-button {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  background: #f48120;
+  color: #111827;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  transition: filter 160ms ease-in-out;
+}
+
+.gs-button:hover {
+  filter: brightness(1.06);
+}
+
+.gs-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

@@ -10,7 +10,8 @@
     "deploy": "pnpm -r --filter=\"./apps/*\" deploy",
     "lint": "eslint . --ext .ts,.tsx,.astro",
     "format": "prettier --write .",
-    "check:conflicts": "bash scripts/check-conflicts.sh"
+    "check:conflicts": "bash scripts/check-conflicts.sh",
+    "audit:mergeable": "bash scripts/audit-mergeable-branches.sh"
   },
   "devDependencies": {
     "@astrojs/cloudflare": "^12.6.11",

@@ -41,6 +41,9 @@ All commands should be run from the root of the monorepo.
 - **`pnpm lint`**: Lints the entire codebase.
 - **`pnpm format`**: Formats the entire codebase using Prettier.
 
+- **`pnpm check:conflicts`**: Detects unresolved Git merge conflict markers in tracked files.
+- **`pnpm audit:mergeable`**: Fetches remote refs and audits whether each remote branch is already merged, cleanly mergeable, or conflict-prone against `origin/main` (override target/remote via script args).
+
 ## Deployment
 
 Deployments are automated via GitHub Actions, defined in the `infra/github/workflows` directory. The workflows will deploy the applications to Cloudflare Pages and Workers based on the branch and environment.

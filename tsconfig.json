@@ -3,8 +3,7 @@
     "baseUrl": ".",
     "paths": {
       "@ui/*": ["packages/ui/*"],
-      "@theme/*": ["packages/theme/*"],
-      "@schema/*": ["packages/schema/*"]
+      "@theme/*": ["packages/theme/*"]
     }
   }
 }
