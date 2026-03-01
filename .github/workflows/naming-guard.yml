@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - name: Block legacy app path references in active workflows
         run: |
