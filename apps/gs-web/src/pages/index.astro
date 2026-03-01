@@ -11,21 +11,17 @@ import WebLayout from '../layouts/WebLayout.astro';
 
     <div class="gs-hero-parallax" data-gs-parallax="1.2" aria-hidden="true"></div>
 
-    <div class="gs-container gs-hero-content">
-      <div class="gs-kicker gs-signal" data-gs-reveal>System Status: Operational</div>
-      <h1 class="gs-hero-title gs-display" data-gs-reveal>Shaping Waves with Applied Intelligence</h1>
-      <p data-gs-reveal>
-        Institutional-grade automation, resilient infrastructure, and responsive operations.
-      </p>
+export const prerender = true;
+---
 
-      <div class="gs-hero-actions" data-gs-reveal>
-        <a class="gs-button gs-button-solid" href="/services">View Services</a>
-        <a class="gs-button gs-button-outline" href="/developer">Developer</a>
-        <button class="gs-button gs-button-outline" data-gs-modal-open="subscribe">Subscribe</button>
-      </div>
+<WebLayout title="Gold Shore | Shaping Waves" description="Shaping Systems. Steering Capital.">
+  <section class="gs-section hero blueprint-bg">
+    <div class="gs-container">
+      <h1>Gold Shore</h1>
+      <p class="hero-tagline">Shaping Systems. Steering Capital.</p>
 
-      <div class="gs-signal-divider" aria-hidden="true"></div>
-
+      <div class="hero-actions">
+        <a href="/contact" class="gs-button">Start</a>
       <div style="margin-top: 2rem; display:grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
         <div class="gs-panel gs-hoverlift" data-gs-reveal>
           <div class="gs-label">Availability</div>
@@ -43,17 +39,6 @@ import WebLayout from '../layouts/WebLayout.astro';
           <div class="gs-micro gs-muted">Routed & verified</div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <div class="gs-angle-divider"></div>
-
-  <section class="gs-section">
-    <div class="gs-container">
-      <h2 class="gs-display" data-gs-reveal>Mandate</h2>
-      <p data-gs-reveal>
-        We build operator-grade systems that stay calm under pressure — and keep decision-makers in control.
-      </p>
     </div>
   </section>
 </WebLayout>
