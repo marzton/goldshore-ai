@@ -19,8 +19,8 @@
   --gs-pad: 2rem;
   --gs-section: 6rem;
   --gs-section-m: 4rem;
-  --gs-font-sans: Inter, system-ui, -apple-system, sans-serif;
-  --gs-font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  --gs-font-sans: "Atkinson", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --gs-font-serif: "Atkinson", system-ui, -apple-system, "Segoe UI", sans-serif;
   --gs-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --gs-fast: 160ms;
   --gs-mid: 300ms;
