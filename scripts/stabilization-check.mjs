@@ -61,7 +61,7 @@ const ALLOWED_ACTIONS = [
 
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
 let violations = [];
-const governanceViolations = violations;
+const governanceViolations = [];
 const appLevelIssues = [];
 
 // 1. Governance Compliance Check
@@ -252,7 +252,7 @@ if (appLevelIssues.length > 0) {
 // 5. Recommendations & Stop Condition
 report += `## 5. Recommendations\n\n`;
 
-if (governanceViolations.length === 0 && appLevelIssues.length === 0) {
+if (violations.length === 0 && appLevelIssues.length === 0) {
   report += `### ✅ Clean State\n\n`;
   report += `**Stop Condition Status:**\n`;
   report += `If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.\n`;
