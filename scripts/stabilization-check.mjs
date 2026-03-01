@@ -60,7 +60,7 @@ const ALLOWED_ACTIONS = [
 ];
 
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
-let violations = [];
+const governanceViolations = [];
 const appLevelIssues = [];
 
 // 1. Governance Compliance Check
@@ -73,7 +73,7 @@ try {
 
   if (forbiddenApps.length > 0) {
     const msg = `Forbidden directories detected in apps/: ${forbiddenApps.join(', ')}`;
-    violations.push(msg);
+    governanceViolations.push(msg);
     report += `### ❌ App Structure Violation:\n- ${msg}\n\n`;
   } else {
     report += `✅ Directory structure compliant.\n\n`;
@@ -90,7 +90,7 @@ try {
 
   if (newScripts.length > 0) {
      const msg = `New scripts detected in root package.json: ${newScripts.join(', ')}`;
-     violations.push(msg);
+     governanceViolations.push(msg);
      report += `### ❌ Build Script Violation:\n- ${msg}\n\n`;
   } else {
     report += `✅ Root build scripts compliant.\n\n`;
@@ -107,7 +107,7 @@ try {
 
   if (newWorkflows.length > 0) {
     const msg = `New workflows detected: ${newWorkflows.join(', ')}`;
-    violations.push(msg);
+    governanceViolations.push(msg);
     report += `### ❌ Workflow Violation (New Files):\n- ${msg}\n\n`;
   } else {
     report += `✅ Workflow file list compliant.\n\n`;
@@ -124,7 +124,7 @@ try {
 
     if (suspiciousModifications.length > 0) {
        const msg = `Workflows modified in last 13h: ${suspiciousModifications.join(', ')}`;
-       violations.push(msg);
+       governanceViolations.push(msg);
        report += `### ❌ Workflow Violation (Recent Changes):\n- ${msg}\n\n`;
     } else {
         report += `✅ No recent unauthorized workflow modifications.\n\n`;
@@ -155,7 +155,7 @@ try {
      // Dedup
      unauthorizedActions = [...new Set(unauthorizedActions)];
      const msg = `Unauthorized CI Actions detected: ${unauthorizedActions.join(', ')}`;
-     violations.push(msg);
+     governanceViolations.push(msg);
      report += `### ❌ CI Action Violation:\n- ${msg}\n\n`;
   } else {
     report += `✅ CI Actions compliant.\n\n`;
@@ -250,13 +250,13 @@ if (appLevelIssues.length > 0) {
 // 5. Recommendations & Stop Condition
 report += `## 5. Recommendations\n\n`;
 
-if (violations.length === 0 && appLevelIssues.length === 0) {
+if (governanceViolations.length === 0 && appLevelIssues.length === 0) {
   report += `### ✅ Clean State\n\n`;
   report += `**Stop Condition Status:**\n`;
   report += `If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.\n`;
 } else {
   report += `### ❌ Actions Required\n\n`;
-  violations.forEach(v => report += `- ${v}\n`);
+  governanceViolations.forEach(v => report += `- ${v}\n`);
   report += `\n**Do not self-fix. Escalate governance violations.**\n`;
   report += `**App-level repairs (types, imports) are permitted in apps/* only.**\n`;
 }
@@ -269,7 +269,7 @@ if (!fs.existsSync(path.dirname(REPORT_PATH))) {
 fs.writeFileSync(REPORT_PATH, report);
 console.log(`Report generated at ${REPORT_PATH}`);
 
-if (violations.length > 0) {
+if (governanceViolations.length > 0) {
   console.error('Violations detected.');
   process.exit(1);
 } else if (appLevelIssues.length > 0) {
