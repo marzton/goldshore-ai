@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "wrangler dev src/index.ts --config ../../infra/cloudflare/gs-agent.wrangler.toml",
     "deploy": "wrangler deploy --minify src/index.ts --config ../../infra/cloudflare/gs-agent.wrangler.toml",
-    "build": "npx wrangler deploy src/index.ts --dry-run --outdir=dist --config ../../infra/cloudflare/gs-agent.wrangler.toml --env prod --tsconfig ./tsconfig.json"
+    "build": "npx wrangler deploy src/index.ts --dry-run --outdir=dist --config ../../infra/cloudflare/gs-agent.wrangler.toml --env prod --tsconfig ../../apps/gs-agent/tsconfig.json"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",

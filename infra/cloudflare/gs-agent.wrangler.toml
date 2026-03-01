@@ -4,7 +4,6 @@ name = "gs-agent" # Base name, will be suffixed per environment
 main = "../../apps/gs-agent/src/index.ts"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
-# Using CLI to pass tsconfig to avoid relative path confusion with external config
 
 [env.dev]
 name = "gs-agent-dev"
