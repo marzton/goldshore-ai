@@ -1,16 +1,16 @@
 ---
-import '@goldshore/theme/styles/global.css';
+import '@goldshore/theme';
 import '../styles/gs-effects.css';
 import '../styles/layout.css';
-// Keep styles sourced from the published theme package so Vite can resolve it in all environments.
-import '@goldshore/theme';
+import { GSButton } from '@goldshore/ui';
+import logo from '../assets/logo.svg';
 import SiteNav from '../components/SiteNav.astro';
 import GlobalModal from '../components/GlobalModal.astro';
-
 
 const { title = 'Gold Shore', description = '' } = Astro.props;
 ---
 
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -19,16 +19,37 @@ const { title = 'Gold Shore', description = '' } = Astro.props;
     <meta name="description" content={description} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
+
   <body>
+    <header class="gs-header">
+      <a href="/" class="gs-logo">
+        <img src="/logo.svg" alt="Gold Shore" />
+      </a>
+
+      <nav class="gs-nav">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/services">Services</a>
+        <a href="/team">Team</a>
+        <a href="/contact">Contact</a>
+        <a href="/apps/risk-radar">Risk Radar</a>
+        <a href="/developer">Developer</a>
+      </nav>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
     <SiteNav />
     <slot />
     <footer class="gs-footer">
-      <div class="gs-container gs-muted">Gold Shore — Designed not to manage capital, but to steer it.</div>
+      <p>Applied intelligence. Resilient infrastructure. Responsive operations.</p>
     </footer>
 
     <GlobalModal />
 
-    <script>
+    <script type="module">
       import { initGoldShoreUI } from '@goldshore/theme/runtime';
       initGoldShoreUI();
     </script>
