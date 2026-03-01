@@ -1,6 +1,12 @@
 ---
 import '@goldshore/theme';
 import '../styles/page-surfaces.css';
+import "@goldshore/theme";
+import '../styles/gs-effects.css';
+import '../styles/layout.css';
+import SiteNav from '../components/SiteNav.astro';
+import GlobalModal from '../components/GlobalModal.astro';
+
 
 const { title = 'Gold Shore', description = '' } = Astro.props;
 ---
@@ -36,8 +42,17 @@ const { title = 'Gold Shore', description = '' } = Astro.props;
       <slot />
     </main>
 
+    <SiteNav />
+    <slot />
     <footer class="gs-footer">
       <p>Applied intelligence. Resilient infrastructure. Responsive operations.</p>
     </footer>
+
+    <GlobalModal />
+
+    <script>
+      import { initGoldShoreUI } from "@goldshore/theme/runtime";
+      initGoldShoreUI();
+    </script>
   </body>
 </html>
