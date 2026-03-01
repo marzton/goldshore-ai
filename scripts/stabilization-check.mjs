@@ -61,6 +61,8 @@ const ALLOWED_ACTIONS = [
 
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
 let violations = [];
+let governanceViolations = [];
+let appLevelIssues = [];
 
 // 1. Governance Compliance Check
 report += `## 1. Governance Compliance Check\n\n`;
@@ -255,7 +257,7 @@ if (governanceViolations.length === 0 && appLevelIssues.length === 0) {
   report += `If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.\n`;
 } else {
   report += `### ❌ Actions Required\n\n`;
-  violations.forEach(v => report += `- ${v}\n`);
+  [...new Set([...governanceViolations, ...violations])].forEach(v => report += `- ${v}\n`);
   report += `\n**Do not self-fix. Escalate governance violations.**\n`;
   report += `**App-level repairs (types, imports) are permitted in apps/* only.**\n`;
 }
@@ -268,7 +270,7 @@ if (!fs.existsSync(path.dirname(REPORT_PATH))) {
 fs.writeFileSync(REPORT_PATH, report);
 console.log(`Report generated at ${REPORT_PATH}`);
 
-if (violations.length > 0) {
+if (governanceViolations.length > 0 || violations.length > 0) {
   console.error('Violations detected.');
   process.exit(1);
 } else if (appLevelIssues.length > 0) {
