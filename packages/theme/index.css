@@ -1,3 +1,9 @@
+@import './reset.css';
+@import './src/styles/tokens.css';
+@import './src/styles/base.css';
+@import './src/styles/components.css';
+@import './src/styles/layout.css';
+@import './src/styles/motion.css';
 @import "./styles/tokens.css";
 @import "./styles/base.css";
 @import "./styles/layout.css";

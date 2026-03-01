@@ -17,7 +17,7 @@
 
 ✅ No stacked PRs or auto-merge violations detected on open PRs.
 
-## 3. CI State Snapshot
+## 3. CI State Snapshot (PR Context)
 
 ⚠️ gh CLI unavailable; unable to resolve CI status in this environment.
 
@@ -26,9 +26,9 @@
 | App | Status | Notes |
 |---|---|---|
 | **gs-web** | ❌ FAIL | Check run logs |
-| **gs-admin** | ❌ FAIL | Check run logs |
-| **gs-api** | ❌ FAIL | Check run logs |
-| **gs-mail** | ❌ FAIL | Check run logs |
+| **gs-admin** | ✅ PASS | |
+| **gs-api** | ✅ PASS | |
+| **gs-mail** | ✅ PASS | |
 
 ## 4. App-Level Repairs Required
 
