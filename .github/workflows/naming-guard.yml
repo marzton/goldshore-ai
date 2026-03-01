@@ -3,6 +3,9 @@ name: Naming Guard
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   naming-guard:
     runs-on: ubuntu-latest
