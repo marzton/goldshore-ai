@@ -34,10 +34,13 @@ const BASELINE_BUILD_SCRIPTS = [
   'branch:bootstrap',
   'scaffold:worker',
   'workspaces:list',
-  'verify:workspace-filters'
+  'verify:workspace-filters',
+  'verify:web-dist',
+  'memory:check'
 ];
 
 const KNOWN_WORKFLOWS = [
+  'archive-path-guard.yml', 'canonical-structure-check.yml',
   'deploy-gs-admin.yml', 'deploy-gs-agent.yml.disabled', 'deploy-gs-api.yml', 'deploy-gs-control.yml.disabled',
   'deploy-gs-gateway.yml.disabled', 'deploy-gs-mail.yml', 'deploy-gs-web.yml', 'jules-nightly.yml',
   'lockfile-guard.yml', 'manual.yml', 'naming-guard.yml', 'naming-lint.yml', 'neuralegion.yml',
@@ -358,8 +361,6 @@ report += `## 5. Recommendations\n\n`;
 
 if (violations.length === 0 && appLevelIssues.length === 0 && branchDisciplineViolations.length === 0) {
   report += `### ✅ Clean State\n\n`;
-  report += `**Stop Condition Status:**\n`;
-  report += `If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.\n`;
 } else {
   report += '### ❌ Actions Required\n\n';
   violations.forEach((v) => { report += `- ${v}\n`; });
@@ -369,6 +370,9 @@ if (violations.length === 0 && appLevelIssues.length === 0 && branchDisciplineVi
   report += '\n**Do not self-fix.** Escalate governance violations.\n';
   report += '**App-level repairs (types, imports) are permitted in `apps/*` only.**\n';
 }
+
+report += `\n**Stop Condition:**\n`;
+report += `If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.\n`;
 
 // Ensure directory exists
 if (!fs.existsSync(path.dirname(REPORT_PATH))) fs.mkdirSync(path.dirname(REPORT_PATH), { recursive: true });
