@@ -36,6 +36,8 @@ const ALLOWED_ATTRS = new Set([
   'stroke-miterlimit', 'stroke-dasharray', 'stroke-dashoffset', 'visibility'
 ]);
 
+const ATTR_REGEX = /([a-zA-Z0-9:-]+)\s*=\s*(?:"([^"]*)"|'[^']*'|([^>\s]+))/g;
+
 const sanitizeSvg = (rawSvg: string) => {
   // Robust allow-list based sanitization that preserves SVG case sensitivity.
   // This uses a tokenizer-based approach to reconstruct the SVG keeping only safe tags and attributes.
@@ -55,10 +57,12 @@ const sanitizeSvg = (rawSvg: string) => {
 
     let sanitizedTag = `<${tagName}`;
     const attrString = cleanContent.slice(cleanContent.indexOf(tagName) + tagName.length);
-    const attrRegex = /([a-zA-Z0-9:-]+)\s*=\s*(?:"([^"]*)"|'[^']*'|([^>\s]+))/g;
     let attrMatch;
 
-    while ((attrMatch = attrRegex.exec(attrString)) !== null) {
+    // Reset lastIndex because regex is global and reused
+    ATTR_REGEX.lastIndex = 0;
+
+    while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
       const name = attrMatch[1];
       const value = attrMatch[2] || attrMatch[3] || attrMatch[4];
 
