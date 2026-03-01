@@ -1,40 +1,5 @@
 import { Hono } from "hono";
 import { withContractHeaders } from "./contract";
-
-type SystemEnv = {
-  KV: KVNamespace;
-  API_VERSION?: string;
-  DEPLOY_SHA?: string;
-};
-
-type SystemConfig = {
-  maintenanceMode: boolean;
-  maxConcurrency: number;
-  notes: string;
-};
-
-const DEFAULT_CONFIG: SystemConfig = {
-  maintenanceMode: false,
-  maxConcurrency: 120,
-  notes: ""
-};
-
-const CONFIG_KEY = "gs-api:config";
-
-const parseConfig = (input: Partial<SystemConfig> | null): SystemConfig => {
-  if (!input) {
-    return { ...DEFAULT_CONFIG };
-  }
-
-  return {
-    maintenanceMode: Boolean(input.maintenanceMode),
-    maxConcurrency:
-      typeof input.maxConcurrency === "number" && Number.isFinite(input.maxConcurrency)
-        ? Math.max(1, Math.floor(input.maxConcurrency))
-        : DEFAULT_CONFIG.maxConcurrency,
-    notes: typeof input.notes === "string" ? input.notes.slice(0, 500) : DEFAULT_CONFIG.notes
-  };
-};
 import { CONFIG_KEY, DEFAULT_CONFIG, parseConfig, SystemConfig } from "./system.config";
 
 const readConfig = async (kv: KVNamespace) => {
