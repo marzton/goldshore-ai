@@ -14,8 +14,8 @@
     "@goldshore/auth": "workspace:*",
     "@goldshore/utils": "workspace:*",
     "@hono/zod-validator": "^0.7.6",
-    "hono": "^4.12.3",
-    "zod": "^3.23.8"
+    "hono": "^4.0.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241106.0",
