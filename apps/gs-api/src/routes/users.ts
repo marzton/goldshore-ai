@@ -21,10 +21,4 @@ users.get("/:id", async (c) => {
   return c.json({ id, email: `${id}@goldshore.ai` });
 });
 
-const users = new Hono();
-
-users.get("/", async (c) => {
-  return c.json([{ id: 1, email: "admin@goldshore.ai" }]);
-});
-
 export default users;

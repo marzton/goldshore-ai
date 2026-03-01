@@ -1,4 +1,4 @@
-name: Deploy Web (goldshore.ai)
+name: Deploy GS Web (goldshore.ai)
 
 permissions:
   contents: read
@@ -43,7 +43,21 @@ jobs:
 
       - name: Build web app
         working-directory: apps/gs-web
+        env:
+          PUBLIC_BUILD_TIMESTAMP: ${{ github.run_started_at }}
+          PUBLIC_COMMIT_HASH: ${{ github.sha }}
         run: pnpm build
+
+      - name: Validate build artifacts
+        working-directory: apps/gs-web
+        run: |
+          set -euo pipefail
+
+          test -d dist/_astro
+          find dist/_astro -maxdepth 1 -type f -name '*.css' -print -quit | grep -q .
+          find dist/_astro -maxdepth 1 -type f -name '*.js' -print -quit | grep -q .
+          grep -q '<link' dist/index.html
+          grep -q '/_astro/' dist/index.html
 
       - name: Deploy to Cloudflare Pages (production)
         uses: cloudflare/pages-action@v1

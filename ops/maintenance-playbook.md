@@ -250,14 +250,20 @@ Use a single canonical naming for bindings across:
 
 If many PRs are blocked or repo drift is severe:
 1. Freeze merges temporarily
-2. Create a “stabilization PR” off main:
+2. Phase A branch bootstrap (`pnpm branch:bootstrap -- <type> <slug>`) now creates `infra/stabilization-backup` before your working branch and logs the exact source ref used.
+   - Source selection order:
+     1. local `main` (if present)
+     2. `origin/HEAD` default branch target
+     3. current checked-out branch
+   - This fallback keeps stabilization automation working in repositories that do not have a local `main` branch.
+3. Create a “stabilization PR” off main/default baseline:
     - remove duplicated roots
     - regenerate lockfile
     - verify build passes
     - fix config drift
-3. Merge stabilization PR
-4. Rebase every PR onto stabilized main
-5. Close obsolete PRs
+4. Merge stabilization PR
+5. Rebase every PR onto stabilized main/default branch
+6. Close obsolete PRs
 
 ---
 
