@@ -5,6 +5,16 @@ from json_merge import deep_merge_json
 from workflow_dedupe import merge_workflows
 from asset_fingerprint import fingerprint_asset
 
+SKIP_LEGACY_DIRS = {
+    ".git",
+    ".hg",
+    ".svn",
+    "__pycache__",
+}
+
+
+EXCLUDED_DIRS = {".git", ".hg", ".svn", "__pycache__"}
+
 
 EXCLUDED_DIRS = {".git", ".hg", ".svn", "__pycache__"}
 
@@ -39,6 +49,10 @@ def handle_file(src, dest, report, mutate=True):
         report["copied"].append(str(dest))
         return
 
+    if dest.is_dir():
+        report["conflicts"].append(f"{dest} (file-vs-directory)")
+        return
+
     if sha256(src) == sha256(dest):
         report["identical"].append(str(dest))
         return
@@ -61,6 +75,7 @@ def handle_file(src, dest, report, mutate=True):
 def run(target, legacy, archive, mode):
     report = {
         "timestamp": datetime.utcnow().isoformat(),
+        "mode": mode,
         "copied": [],
         "identical": [],
         "json_merged": [],
