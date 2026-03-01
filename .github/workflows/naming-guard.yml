@@ -1,0 +1,38 @@
+name: Naming Guard
+
+on:
+  workflow_dispatch:
+
+jobs:
+  naming-guard:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+
+      - name: Block legacy app path references in active workflows
+        run: |
+          set -euo pipefail
+          legacy_pattern='apps/(api-worker|control-worker|gateway)|Astro-'
+          rg -n "$legacy_pattern" .github/workflows
+
+      - name: Block legacy workflow filenames from active workflow directory
+        run: |
+          set -euo pipefail
+          legacy_files=(
+            ".github/workflows/deploy-web.yml"
+            ".github/workflows/deploy-admin.yml"
+            ".github/workflows/deploy-api-worker.yml"
+            ".github/workflows/deploy-control-worker.yml"
+            ".github/workflows/deploy-gateway.yml"
+            ".github/workflows/deploy-agent.yml"
+            ".github/workflows/preview-control-worker.yml"
+          )
+
+          for file in "${legacy_files[@]}"; do
+            if [[ -e "$file" ]]; then
+              echo "Legacy workflow file still exists: $file"
+              exit 1
+            fi
+          done

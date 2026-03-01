@@ -6,6 +6,8 @@ interface ImportMetaEnv {
   readonly PUBLIC_API: string;
   readonly PUBLIC_AUTH_TOKEN_URL: string;
   readonly PUBLIC_AUTH_CLIENT_ID: string;
+  readonly PUBLIC_BUILD_TIMESTAMP: string;
+  readonly PUBLIC_COMMIT_HASH: string;
   readonly AUTH_CLIENT_SECRET: string;
   // Add other env vars as needed
 }

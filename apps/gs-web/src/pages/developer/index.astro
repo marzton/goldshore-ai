@@ -1,16 +1,14 @@
 ---
-import MarketingLayout from '../../layouts/MarketingLayout.astro';
+import WebLayout from '../../layouts/WebLayout.astro';
+
+export const prerender = true;
 ---
 
-<MarketingLayout title="Developers – GoldShore">
-  <section style="padding:2rem;">
-    <h1>Developer Hub</h1>
-    <p>APIs, gateway routing, workers, and documentation.</p>
-
-    <ul>
-      <li><a href="/developer/docs">Documentation</a></li>
-      <li><a href="https://admin.goldshore.ai">Admin Dashboard</a></li>
-      <li><a href="/status">System Status</a></li>
-    </ul>
+<WebLayout title="Developer | Gold Shore" description="Developer resources for Gold Shore.">
+  <section class="gs-section">
+    <div class="gs-container">
+      <h1>Developer Portal</h1>
+      <p>API documentation and technical resources coming soon.</p>
+    </div>
   </section>
-</MarketingLayout>
+</WebLayout>

@@ -1,0 +1,21 @@
+name: archive-path-guard
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Block active references to archived astro-goldshore
+        run: |
+          if rg -n "astro-goldshore/" . \
+            -g '!archive/**' \
+            -g '!.git/**' \
+            -g '!reports/migration/**'; then
+            echo 'Found forbidden references to archived astro-goldshore path.'
+            exit 1
+          fi
