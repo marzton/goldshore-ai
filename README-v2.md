@@ -72,6 +72,7 @@ See [ECOSYSTEM.md](./ECOSYSTEM.md) for full details on extensions and integratio
 ![GoldShore architecture diagram showing Cloudflare Pages for web and admin, Cloudflare Workers for API, gateway, agent, and control, and storage services (KV, R2, D1, Queues, AI Gateway).](docs/architecture/diagram.svg)
 
 Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd).
+
 ```
 /
 ├── apps/
@@ -297,15 +298,31 @@ Monorepo-wide:
 - prettier
 - tsconfig base
 
+## Website enhancement controls
+
+The marketing site rollout now uses shared CTA language and structured content blocks:
+
+- CTA labels are centralized in `src/data/site-config.json` (`primary`, `secondary`, `tertiary`).
+- Homepage offering cards, service panel metadata, team bios, and case studies live in `src/data/site-content.ts`.
+- Contact form routing and post-submit next steps are implemented under `src/pages/contact.astro` and `src/pages/contact/thanks.astro`.
+- Developer-facing maintenance notes are documented in `docs/developer-briefing.md`.
+
+### Editing playbook
+
+1. **Modify CTA labels:** update `src/data/site-config.json` and verify Header/Footer/Homepage rendering.
+2. **Add a case study:** append an object to `caseStudies` in `src/data/site-content.ts`.
+3. **Update a service panel:** edit `services` in `src/data/site-content.ts` (`objective`, `deliverables`, `timeframe`).
+4. **Adjust homepage outcomes:** edit `offerings` in `src/data/site-content.ts` for title/summary/metric rows.
+
 ## Domains & DNS
 
-| Component      | Domain                     | Hosting            |
-|----------------|----------------------------|--------------------|
-| Web            | https://goldshore.ai       | Pages              |
-| Admin          | https://admin.goldshore.ai | Pages + Access     |
-| API Worker     | https://api.goldshore.ai   | Workers            |
-| Gateway Worker | https://gw.goldshore.ai    | Workers            |
-| Control Worker | https://ops.goldshore.ai   | Workers            |
+| Component      | Domain                     | Hosting        |
+| -------------- | -------------------------- | -------------- |
+| Web            | https://goldshore.ai       | Pages          |
+| Admin          | https://admin.goldshore.ai | Pages + Access |
+| API Worker     | https://api.goldshore.ai   | Workers        |
+| Gateway Worker | https://gw.goldshore.ai    | Workers        |
+| Control Worker | https://ops.goldshore.ai   | Workers        |
 
 ## API + Gateway Routing
 

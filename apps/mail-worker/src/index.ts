@@ -1,32 +1,72 @@
 import { Hono } from 'hono';
-import { EmailMessage } from "cloudflare:email";
 
 interface Env {
-  ENV: string;
+  ENV?: string;
+  MAIL_FORWARD_TO?: string;
+  MAIL_ALLOWED_RECIPIENTS?: string;
+  MAIL_BLOCKED_SENDERS?: string;
 }
+
+const VERSION = '2026.02.10-mail-worker-fix';
 
 const app = new Hono<{ Bindings: Env }>();
 
+const splitCsv = (value?: string) =>
+  (value ?? '')
+    .split(',')
+    .map((entry) => entry.trim().toLowerCase())
+    .filter(Boolean);
+
+const isEmailLike = (value: string) => /.+@.+\..+/.test(value);
+
 app.get('/', (c) => c.text('GoldShore Mail Worker'));
 
-app.get('/health', (c) => c.json({ status: 'ok', service: 'gs-mail' }));
+app.get('/health', (c) =>
+  c.json({ status: 'ok', service: 'gs-mail', env: c.env.ENV ?? 'unknown' }),
+);
+
+app.get('/system/info', (c) =>
+  c.json({
+    service: 'gs-mail',
+    runtime: 'cloudflare-worker',
+    env: c.env.ENV ?? 'unknown',
+  }),
+);
+
+app.get('/version', (c) => c.json({ version: VERSION }));
 
 app.post('/webhook', async (c) => {
-  // Placeholder for future webhook processing
+  // Reserved for future provider hooks.
   return c.json({ received: true });
 });
 
 export default {
   fetch: app.fetch,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async email(message: EmailMessage, _env: Env, _ctx: ExecutionContext): Promise<void> {
-    // Basic email handler scaffolding
-    console.log(`Received email from ${message.from} to ${message.to}`);
+  async email(message: ForwardableEmailMessage, env: Env): Promise<void> {
+    const sender = message.from.trim().toLowerCase();
+    const recipient = message.to.trim().toLowerCase();
 
-    // Example: Forwarding (commented out until configured)
-    // await message.forward("dest@example.com");
+    const blockedSenders = splitCsv(env.MAIL_BLOCKED_SENDERS);
+    if (blockedSenders.includes(sender)) {
+      message.setReject('Sender is blocked.');
+      return;
+    }
 
-    // Example: Rejecting
-    // message.setReject("Not implemented yet");
-  }
+    const allowedRecipients = splitCsv(env.MAIL_ALLOWED_RECIPIENTS);
+    if (
+      allowedRecipients.length > 0 &&
+      !allowedRecipients.includes(recipient)
+    ) {
+      message.setReject('Recipient address not accepted.');
+      return;
+    }
+
+    const forwardTo = env.MAIL_FORWARD_TO?.trim();
+    if (!forwardTo || !isEmailLike(forwardTo)) {
+      message.setReject('Mail forwarding is not configured.');
+      return;
+    }
+
+    await message.forward(forwardTo);
+  },
 };

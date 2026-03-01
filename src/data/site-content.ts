@@ -1,18 +1,20 @@
 export const offerings = [
   {
+    title: 'Vibe Coding',
+    summary:
+      'Human-guided AI engineering loops for faster and safer delivery decisions.',
+    metric: 'Cut workflow handoff overhead by 28% across launch sprints.',
+  },
+  {
+    title: 'Cinematic Ops',
+    summary:
+      'Real-time operational visibility that keeps cross-functional teams aligned under pressure.',
+    metric: 'Reduced incident coordination lag by 39% during response drills.',
+  },
+  {
     title: 'Applied Intelligence',
     summary: 'Decision support systems tuned for high-stakes operations.',
     metric: 'Reduced operator triage time by 34% in pilot environments.',
-  },
-  {
-    title: 'Observability Engineering',
-    summary: 'Unified tracing, logging, and event health diagnostics.',
-    metric: 'Alert precision improved to 92% after telemetry redesign.',
-  },
-  {
-    title: 'Resilience Architecture',
-    summary: 'Failure-aware platform design for mission-critical runtimes.',
-    metric: 'Recovery workflows validated under 15-minute RTO constraints.',
   },
 ];
 

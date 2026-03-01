@@ -7,6 +7,15 @@
   --gray-dark: 34, 41, 57;
   --surface: 252, 254, 255;
   --border: 206, 219, 234;
+  --cta-radius: 10px;
+  --cta-padding-y: 0.6rem;
+  --cta-padding-x: 1rem;
+
+  --container-max: 1080px;
+  --space-page-inline: clamp(0.9rem, 2.4vw, 2rem);
+  --space-page-block: clamp(1.25rem, 3.2vw, 3rem);
+  --space-section: clamp(1.4rem, 3.5vw, 2.8rem);
+  --space-card: clamp(0.85rem, 2vw, 1.35rem);
 }
 
 @font-face {
@@ -23,38 +32,46 @@
   font-style: normal;
   font-display: swap;
 }
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   font-family: 'Atkinson', sans-serif;
   margin: 0;
   background: #f2f7fb;
   color: rgb(var(--gray-dark));
-  font-size: 20px;
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.2rem);
   line-height: 1.65;
 }
+
 main {
-  width: 980px;
-  max-width: calc(100% - 2em);
-  margin: auto;
-  padding: 2.5em 1em;
+  width: min(var(--container-max), 100% - (var(--space-page-inline) * 2));
+  margin: 0 auto;
+  padding: var(--space-page-block) 0;
 }
+
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.55rem 0;
   color: rgb(var(--black));
   line-height: 1.2;
 }
 h1 {
-  font-size: 2.5em;
+  font-size: clamp(1.95rem, 1.55rem + 1.45vw, 2.9rem);
 }
 h2 {
-  font-size: 1.8em;
+  font-size: clamp(1.45rem, 1.15rem + 0.9vw, 2.1rem);
 }
 h3 {
-  font-size: 1.2em;
+  font-size: clamp(1.1rem, 1rem + 0.4vw, 1.35rem);
 }
 a {
   color: rgb(var(--accent-strong));
@@ -71,23 +88,25 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 section {
-  margin: 2.5rem 0;
+  margin: var(--space-section) 0;
 }
 .grid {
   display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
 }
 .card {
   border: 1px solid rgb(var(--border));
   border-radius: 12px;
-  padding: 1rem;
+  padding: var(--space-card);
   background: rgb(var(--surface));
 }
 .button {
-  display: inline-block;
-  border-radius: 10px;
-  padding: 0.55rem 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--cta-radius);
+  padding: var(--cta-padding-y) var(--cta-padding-x);
   font-weight: 700;
   text-decoration: none;
   border: 1px solid transparent;
@@ -120,15 +139,50 @@ section {
   font-size: 0.95rem;
   color: rgb(var(--gray));
 }
-@media (max-width: 720px) {
-  body {
-    font-size: 18px;
-  }
+
+.card summary {
+  cursor: pointer;
+}
+
+.card summary:focus-visible {
+  outline: 3px solid rgb(var(--accent-strong));
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid rgb(var(--border));
+  border-radius: 8px;
+  padding: 0.62rem 0.7rem;
+  font: inherit;
+  color: inherit;
+  background: rgb(var(--surface));
+}
+
+@media (max-width: 1024px) {
   main {
-    padding: 1.2em 0.5em;
+    width: min(100% - (var(--space-page-inline) * 2), 920px);
   }
+
+  .card {
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 720px) {
   .button {
     width: 100%;
     text-align: center;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  section {
+    margin: clamp(1rem, 4vw, 1.45rem) 0;
   }
 }

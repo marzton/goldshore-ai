@@ -46,17 +46,21 @@ The template demonstrates:
 # apps/web
 
 ## Overview
+
 The public GoldShore website and user portal built with Astro and shared theme/UI packages. It deploys to Cloudflare Pages.
 
 Cloudflare metadata:
+
 - Pages project name: `gs-web` (production), `preview-web` (preview)
 - Pages bindings config: `infra/cloudflare/goldshore-web.wrangler.toml`
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
 
 ## Routes/Endpoints
+
 Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
 
 Public routes:
+
 - `/`
 - `/about`
 - `/pricing`
@@ -65,12 +69,14 @@ Public routes:
 - `/contact`
 
 Authenticated user portal:
+
 - `/app/dashboard`
 - `/app/profile`
 - `/app/logs`
 - `/app/settings`
 
 ## Local Dev
+
 ```bash
 pnpm install
 pnpm --filter ./apps/web dev
@@ -78,17 +84,45 @@ pnpm --filter ./apps/web build
 pnpm --filter ./apps/web preview
 ```
 
+## Contact form + Cloudflare mail delivery
+
+`/api/contact` stores submissions in KV/D1 and can send emails through MailChannels from Cloudflare Pages Functions.
+
+Set these environment variables in the `gs-web` Pages project:
+
+- `MAILCHANNELS_SENDER_EMAIL` (required for email send)
+- `MAILCHANNELS_SENDER_NAME` (optional, defaults to `GoldShore`)
+- `CONTACT_NOTIFICATION_EMAILS` (comma-separated recipient list for new submissions)
+- `MAILCHANNELS_API_URL` (optional override, defaults to `https://api.mailchannels.net/tx/v1/send`)
+
+Keep the existing bindings for `KV` and `DB` so submissions continue to persist even if email delivery is temporarily unavailable.
+
+## Live deployment (with themes)
+
+The live web deployment (`gs-web`) already includes GoldShore theme styling because the app imports `@goldshore/theme` in both layout and global styles.
+
+From repo root, deploy the current web build to Cloudflare Pages production:
+
+```bash
+pnpm deploy:web:live
+```
+
+This builds `@goldshore/web` and deploys `apps/web/dist` to the `gs-web` Pages project on `main`.
+
 ## Deploy
+
 - Production deploy: `.github/workflows/deploy-web.yml`
 - Preview deploy: `.github/workflows/preview-web.yml`
 - Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 ## Preview Authentication
+
 - Preview builds reuse the centralized GitHub App callback handler; OAuth completes in the shared callback service, which redirects back to the preview hostname instead of registering per-branch callbacks.
 - Cloudflare Access is enforced by the shared Access application and policy set, with preview hostnames allowlisted alongside production domains.
 - See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
+
 # GoldShore Web (Astro)
 
 Public marketing site and content hub for GoldShore.
@@ -137,15 +171,19 @@ The template demonstrates:
 ```bash
 pnpm --filter @goldshore/web dev
 ```
+
 # apps/web
 
 ## Overview
+
 The public GoldShore website and user portal built with Astro, shared theme, and UI components. It deploys to Cloudflare Pages as the primary marketing and customer-facing experience.
 
 ## Routes/Endpoints
+
 Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
 
 Public routes:
+
 - `/`
 - `/about`
 - `/pricing`
@@ -154,12 +192,14 @@ Public routes:
 - `/contact`
 
 Authenticated user portal:
+
 - `/app/dashboard`
 - `/app/profile`
 - `/app/logs`
 - `/app/settings`
 
 ## Local Dev
+
 ```bash
 pnpm install
 pnpm --filter ./apps/web dev
@@ -167,10 +207,24 @@ pnpm --filter ./apps/web build
 pnpm --filter ./apps/web preview
 ```
 
+## Live deployment (with themes)
+
+The live web deployment (`gs-web`) already includes GoldShore theme styling because the app imports `@goldshore/theme` in both layout and global styles.
+
+From repo root, deploy the current web build to Cloudflare Pages production:
+
+```bash
+pnpm deploy:web:live
+```
+
+This builds `@goldshore/web` and deploys `apps/web/dist` to the `gs-web` Pages project on `main`.
+
 ## Deploy
+
 Cloudflare Pages deploys via GitHub Actions. Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 ## Preview Authentication
+
 - Preview builds reuse the centralized GitHub App callback handler; OAuth completes in the shared callback service, which redirects back to the preview hostname instead of registering per-branch callbacks.
 - Cloudflare Access is enforced by the shared Access application and policy set, with preview hostnames allowlisted alongside production domains.
 - See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).

@@ -14,9 +14,13 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "check:pages": "tsx scripts/check-pages-200.ts",
-    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md"
+    "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md",
+    "deploy:web:live": "pnpm --filter @goldshore/web build && pnpm exec wrangler pages deploy apps/web/dist --project-name gs-web --branch main",
+    "audit:mergeable": "bash scripts/merge-audit.sh origin/main"
   },
   "devDependencies": {
+    "@astrojs/mdx": "^4.0.8",
+    "@astrojs/sitemap": "^3.6.0",
     "@astrojs/tailwind": "^6.0.2",
     "@types/node": "^25.0.1",
     "@typescript-eslint/eslint-plugin": "^8.54.0",

@@ -32,7 +32,10 @@ import Footer from '../components/Footer.astro';
         '(prefers-reduced-motion: reduce)',
       ).matches;
       const isMobile = window.matchMedia('(max-width: 720px)').matches;
-      if (radar && (prefersReduced || isMobile)) {
+      const lowCpu = navigator.hardwareConcurrency
+        ? navigator.hardwareConcurrency <= 4
+        : false;
+      if (radar && (prefersReduced || isMobile || lowCpu)) {
         radar.classList.add('radar-low-power');
       }
     </script>

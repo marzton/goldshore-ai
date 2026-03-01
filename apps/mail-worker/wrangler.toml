@@ -4,9 +4,13 @@ compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
 tsconfig = "tsconfig.json"
 
-# Mail routing configuration (if applicable)
-# [email_routing]
-# ...
+[vars]
+ENV = "production"
+# Required: mailbox where accepted inbound messages are forwarded.
+MAIL_FORWARD_TO = "ops@goldshore.ai"
+# Optional comma-separated allow/deny controls for inbound routing.
+MAIL_ALLOWED_RECIPIENTS = "mail@goldshore.ai,support@goldshore.ai,ops@goldshore.ai"
+MAIL_BLOCKED_SENDERS = ""
 
 [env.dev]
 name = "gs-mail-dev"
@@ -16,3 +20,9 @@ name = "gs-mail-preview"
 
 [env.prod]
 name = "gs-mail-prod"
+
+[env.prod.vars]
+ENV = "production"
+MAIL_FORWARD_TO = "ops@goldshore.ai"
+MAIL_ALLOWED_RECIPIENTS = "mail@goldshore.ai,support@goldshore.ai,ops@goldshore.ai"
+MAIL_BLOCKED_SENDERS = ""
