@@ -19,16 +19,67 @@ const ALLOWED_MIME_TYPES = new Map([
 // 5MB limit to prevent DoS via large file uploads
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
+const ALLOWED_TAGS = new Set([
+  'svg', 'g', 'path', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon',
+  'text', 'tspan', 'defs', 'linearGradient', 'radialGradient', 'stop', 'mask',
+  'clipPath', 'use', 'symbol', 'image', 'style', 'view', 'desc', 'title', 'metadata',
+  'a'
+]);
+
+const ALLOWED_ATTRS = new Set([
+  'version', 'xmlns', 'x', 'y', 'width', 'height', 'viewBox', 'preserveAspectRatio',
+  'd', 'fill', 'stroke', 'stroke-width', 'opacity', 'transform', 'points', 'r',
+  'cx', 'cy', 'rx', 'ry', 'x1', 'y1', 'x2', 'y2', 'font-family', 'font-size',
+  'text-anchor', 'class', 'id', 'stop-color', 'stop-opacity', 'offset',
+  'gradientUnits', 'gradientTransform', 'spreadMethod', 'href', 'xlink:href',
+  'style', 'fill-opacity', 'stroke-opacity', 'stroke-linecap', 'stroke-linejoin',
+  'stroke-miterlimit', 'stroke-dasharray', 'stroke-dashoffset', 'visibility'
+]);
+
+const ATTR_REGEX = /([a-zA-Z0-9:-]+)\s*=\s*(?:"([^"]*)"|'[^']*'|([^>\s]+))/g;
+
 const sanitizeSvg = (rawSvg: string) => {
-  let sanitized = rawSvg
-    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
-    .replace(/<foreignObject[\s\S]*?>[\s\S]*?<\/foreignObject>/gi, '')
-    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-    .replace(/(href|xlink:href)\s*=\s*("|')\s*javascript:[^\2]*\2/gi, '')
-    .replace(/(href|xlink:href)\s*=\s*javascript:[^\s>]+/gi, '');
+  // Robust allow-list based sanitization that preserves SVG case sensitivity.
+  // This uses a tokenizer-based approach to reconstruct the SVG keeping only safe tags and attributes.
+  const sanitized = rawSvg.replace(/<([^>]+)>/g, (match, tagContent) => {
+    const isClosing = tagContent.startsWith('/');
+    if (isClosing) {
+      const tagName = tagContent.slice(1).split(/\s/)[0];
+      return ALLOWED_TAGS.has(tagName) ? `</${tagName}>` : '';
+    }
+
+    const isSelfClosing = tagContent.endsWith('/');
+    const cleanContent = isSelfClosing ? tagContent.slice(0, -1) : tagContent;
+
+    const parts = cleanContent.trim().split(/\s+/);
+    const tagName = parts[0];
+    if (!ALLOWED_TAGS.has(tagName)) return '';
+
+    let sanitizedTag = `<${tagName}`;
+    const attrString = cleanContent.slice(cleanContent.indexOf(tagName) + tagName.length);
+    let attrMatch;
+
+    // Reset lastIndex because regex is global and reused
+    ATTR_REGEX.lastIndex = 0;
+
+    while ((attrMatch = ATTR_REGEX.exec(attrString)) !== null) {
+      const name = attrMatch[1];
+      const value = attrMatch[2] || attrMatch[3] || attrMatch[4];
+
+      if (ALLOWED_ATTRS.has(name)) {
+        // Block javascript: URIs in href and xlink:href
+        if ((name === 'href' || name === 'xlink:href') && value.toLowerCase().trim().startsWith('javascript:')) {
+          continue;
+        }
+        sanitizedTag += ` ${name}="${value}"`;
+      }
+    }
+
+    return sanitizedTag + (isSelfClosing ? ' />' : '>');
+  });
 
   if (!sanitized.trim().startsWith('<svg')) {
-    sanitized = `<svg xmlns=\"http://www.w3.org/2000/svg\">${sanitized}</svg>`;
+    return `<svg xmlns="http://www.w3.org/2000/svg">${sanitized}</svg>`;
   }
 
   return sanitized;
