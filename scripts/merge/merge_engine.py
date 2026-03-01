@@ -5,6 +5,19 @@ from json_merge import deep_merge_json
 from workflow_dedupe import merge_workflows
 from asset_fingerprint import fingerprint_asset
 
+SKIP_LEGACY_DIRS = {
+    ".git",
+    ".hg",
+    ".svn",
+    "__pycache__",
+}
+
+
+EXCLUDED_DIRS = {".git", ".hg", ".svn", "__pycache__"}
+
+
+EXCLUDED_DIRS = {".git", ".hg", ".svn", "__pycache__"}
+
 
 def sha256(path):
     h = hashlib.sha256()
@@ -34,6 +47,10 @@ def handle_file(src, dest, report, mode):
         if mode == "apply":
             copy_file(src, dest)
         report["copied"].append(str(dest))
+        return
+
+    if dest.is_dir():
+        report["conflicts"].append(f"{dest} (file-vs-directory)")
         return
 
     if sha256(src) == sha256(dest):
@@ -69,14 +86,17 @@ def run(target, legacy, archive, mode):
     legacy = Path(legacy)
     target = Path(target)
 
-    for root, _, files in os.walk(legacy):
+    mutate = mode == "apply"
+
+    for root, dirs, files in os.walk(legacy):
+        dirs[:] = [d for d in dirs if d not in EXCLUDED_DIRS]
         for f in files:
             src = Path(root) / f
             rel = src.relative_to(legacy)
             dest = target / rel
             handle_file(src, dest, report, mode)
 
-    if mode == "apply":
+    if mutate:
         archive_legacy(legacy, target / archive)
 
     Path("reports/merge").mkdir(parents=True, exist_ok=True)

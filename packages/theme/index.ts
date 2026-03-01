@@ -182,17 +182,7 @@ function initParallax() {
     }
   };
 
-  const syncParallaxMotion = (reduceMotion: boolean) => {
-    if (reduceMotion) {
-      disableParallax();
-      return;
-    }
-
-    enableParallax();
-  };
-
-  syncParallaxMotion(prefersReducedMotion());
-  onReducedMotionChange(syncParallaxMotion);
+  syncMotion(enableParallax, disableParallax);
 }
 
 function initTilt() {
@@ -281,17 +271,7 @@ function initTilt() {
     });
   };
 
-  const syncTiltMotion = (reduceMotion: boolean) => {
-    if (reduceMotion) {
-      disableTilt();
-      return;
-    }
-
-    enableTilt();
-  };
-
-  syncTiltMotion(prefersReducedMotion());
-  onReducedMotionChange(syncTiltMotion);
+  syncMotion(enableTilt, disableTilt);
 }
 
 function initReveal() {
@@ -314,4 +294,26 @@ function initReveal() {
   );
 
   els.forEach((el) => io.observe(el));
+}
+
+
+function prefersReducedMotion() {
+  return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+}
+
+function onReducedMotionChange(cb: (reduce: boolean) => void) {
+  window.matchMedia?.("(prefers-reduced-motion: reduce)")?.addEventListener("change", (e) => cb(e.matches));
+}
+
+function syncMotion(enable: () => void, disable: () => void) {
+  const sync = (reduceMotion: boolean) => {
+    if (reduceMotion) {
+      disable();
+    } else {
+      enable();
+    }
+  };
+
+  sync(prefersReducedMotion());
+  onReducedMotionChange(sync);
 }
