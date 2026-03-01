@@ -12,9 +12,11 @@
   "dependencies": {
     "@goldshore/ai-providers": "workspace:^",
     "@goldshore/auth": "workspace:^",
-    "hono": "^4.0.0",
+    "@goldshore/utils": "workspace:^",
+    "@types/sanitize-html": "^2.16.0",
+    "hono": "^4.12.1",
     "safe-stable-stringify": "^2.5.0",
-    "@goldshore/utils": "workspace:^"
+    "sanitize-html": "^2.17.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241106.0",
