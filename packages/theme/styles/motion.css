@@ -7,9 +7,14 @@
 }
 
 [data-gs-reveal] {
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--gs-slow) var(--gs-ease), transform var(--gs-slow) var(--gs-ease);
+}
+
+html.gs-motion-ready [data-gs-reveal] {
   opacity: 0;
   transform: translateY(18px);
-  transition: opacity var(--gs-slow) var(--gs-ease), transform var(--gs-slow) var(--gs-ease);
 }
 
 [data-gs-reveal].is-in {
