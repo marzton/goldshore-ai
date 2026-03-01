@@ -112,8 +112,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/auth
       hono:
-        specifier: ^4.0.0
-        version: 4.11.9
+        specifier: ^4.12.3
+        version: 4.12.3
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20260207.0
@@ -140,8 +140,8 @@ importers:
         specifier: ^2.16.0
         version: 2.16.0
       hono:
-        specifier: ^4.12.1
-        version: 4.12.2
+        specifier: ^4.12.3
+        version: 4.12.3
       safe-stable-stringify:
         specifier: ^2.5.0
         version: 2.5.0
@@ -172,10 +172,10 @@ importers:
         version: link:../../packages/utils
       '@hono/zod-validator':
         specifier: ^0.7.6
-        version: 0.7.6(hono@4.11.9)(zod@3.25.76)
+        version: 0.7.6(hono@4.12.3)(zod@3.25.76)
       hono:
-        specifier: ^4.0.0
-        version: 4.11.9
+        specifier: ^4.12.3
+        version: 4.12.3
       zod:
         specifier: ^3.23.8
         version: 3.25.76
@@ -199,8 +199,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/auth
       hono:
-        specifier: ^4.0.0
-        version: 4.11.9
+        specifier: ^4.12.3
+        version: 4.12.3
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20241106.0
@@ -221,8 +221,8 @@ importers:
   apps/gs-mail:
     dependencies:
       hono:
-        specifier: ^4.0.0
-        version: 4.11.9
+        specifier: ^4.12.3
+        version: 4.12.3
       postal-mime:
         specifier: 2.7.3
         version: 2.7.3
@@ -1899,12 +1899,8 @@ packages:
   hastscript@9.0.1:
     resolution: {integrity: sha512-g7df9rMFX/SPi34tyGCyUBREQoKkapwdY/T04Qn9TDWfHhAYt4/I0gMVirzK5wEzeUqIjEB+LXC/ypb7Aqno5w==}
 
-  hono@4.11.9:
-    resolution: {integrity: sha512-Eaw2YTGM6WOxA6CXbckaEvslr2Ne4NFsKrvc0v97JD5awbmeBLO5w9Ho9L9kmKonrwF9RJlW6BxT1PVv/agBHQ==}
-    engines: {node: '>=16.9.0'}
-
-  hono@4.12.2:
-    resolution: {integrity: sha512-gJnaDHXKDayjt8ue0n8Gs0A007yKXj4Xzb8+cNjZeYsSzzwKc0Lr+OZgYwVfB0pHfUs17EPoLvrOsEaJ9mj+Tg==}
+  hono@4.12.3:
+    resolution: {integrity: sha512-SFsVSjp8sj5UumXOOFlkZOG6XS9SJDKw0TbwFeV+AJ8xlST8kxK5Z/5EYa111UY8732lK2S/xB653ceuaoGwpg==}
     engines: {node: '>=16.9.0'}
 
   html-escaper@3.0.3:
@@ -3583,9 +3579,9 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@hono/zod-validator@0.7.6(hono@4.11.9)(zod@3.25.76)':
+  '@hono/zod-validator@0.7.6(hono@4.12.3)(zod@3.25.76)':
     dependencies:
-      hono: 4.11.9
+      hono: 4.12.3
       zod: 3.25.76
 
   '@humanwhocodes/config-array@0.13.0':
@@ -5143,9 +5139,7 @@ snapshots:
       property-information: 7.1.0
       space-separated-tokens: 2.0.2
 
-  hono@4.11.9: {}
-
-  hono@4.12.2: {}
+  hono@4.12.3: {}
 
   html-escaper@3.0.3: {}
 
