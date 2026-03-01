@@ -18,7 +18,13 @@ jobs:
         run: |
           set -euo pipefail
           legacy_pattern='apps/(api-worker|control-worker|gateway)|Astro-'
-          rg -n "$legacy_pattern" .github/workflows
+
+          if rg -n --glob '!naming-guard.yml' "$legacy_pattern" .github/workflows; then
+            echo "Legacy app path references found in active workflow files."
+            exit 1
+          fi
+
+          echo "No legacy app path references found in active workflow files."
 
       - name: Block legacy workflow filenames from active workflow directory
         run: |

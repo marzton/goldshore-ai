@@ -61,6 +61,8 @@ const ALLOWED_ACTIONS = [
 
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
 let violations = [];
+let governanceViolations = [];
+let appLevelIssues = [];
 
 // 1. Governance Compliance Check
 report += `## 1. Governance Compliance Check\n\n`;
@@ -90,6 +92,7 @@ try {
   if (newScripts.length > 0) {
      const msg = `New scripts detected in root package.json: ${newScripts.join(', ')}`;
      governanceViolations.push(msg);
+     violations.push(msg);
      report += `### ❌ Build Script Violation:\n- ${msg}\n\n`;
   } else {
     report += `✅ Root build scripts compliant.\n\n`;
