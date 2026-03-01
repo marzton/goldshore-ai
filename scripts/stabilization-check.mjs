@@ -61,8 +61,8 @@ const ALLOWED_ACTIONS = [
 
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
 let violations = [];
-let governanceViolations = [];
-let appLevelIssues = [];
+const governanceViolations = violations;
+const appLevelIssues = [];
 
 // 1. Governance Compliance Check
 report += `## 1. Governance Compliance Check\n\n`;
