@@ -30,20 +30,6 @@ app.use(
       }
       const allowedOrigins = (c.env.ALLOWED_ORIGINS ?? "https://admin.goldshore.ai,https://admin-preview.goldshore.ai,http://localhost:4321").split(",");
       return allowedOrigins.map((s) => s.trim()).includes(origin) ? origin : undefined;
-const allowedOrigins = new Set([
-  "https://admin.goldshore.ai",
-  "https://admin-preview.goldshore.ai",
-  "http://localhost:4321"
-]);
-
-app.use(
-  "*",
-  cors({
-    origin: (origin) => {
-      if (!origin) {
-        return undefined;
-      }
-      return allowedOrigins.has(origin) ? origin : undefined;
     },
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization", "CF-Access-Jwt-Assertion"],
@@ -95,7 +81,8 @@ app.route("/cloudflare", cloudflareRoutes);
 
 export default {
   fetch: app.fetch,
-  async scheduled(_controller, env, _ctx) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async scheduled(_controller: ScheduledController, env: ControlEnv, _ctx: ExecutionContext) {
     await env.CONTROL_LOGS.put(Date.now().toString(), "control-run");
     await syncDNS(env);
     await rotateKeys(env);
