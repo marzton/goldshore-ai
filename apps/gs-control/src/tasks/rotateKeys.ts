@@ -57,6 +57,4 @@ export async function rotateKeys(env: ControlEnv) {
   await env.CONTROL_LOGS.put(auditKey, JSON.stringify(auditLog));
 
   console.log(`[${timestamp}] Key rotation complete. Audit log stored at: ${auditKey}`);
-export async function rotateKeys(_env: ControlEnv) {
-  console.log("Rotating API keys (todo)");
 }
