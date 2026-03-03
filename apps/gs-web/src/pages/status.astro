@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import StatusDiagnostics from '../components/StatusDiagnostics.astro';
-import logo from '../assets/logo.svg';
+const logo = '/assets/brand/logo.svg';
 
 const buildTimestamp =
   import.meta.env.PUBLIC_BUILD_TIMESTAMP ||
@@ -22,7 +22,7 @@ const shortCommitHash = commitHash === 'unknown' ? commitHash : commitHash.slice
     </div>
   </section>
 
-  <section class="gs-section">
+  <section class="gs-section gs-blueprint-bg">
     <div class="gs-card">
       <ul style="list-style: none; padding: 0; display: grid; gap: 1rem;">
         <li style="display: flex; justify-content: space-between; align-items: center;">
@@ -51,7 +51,7 @@ const shortCommitHash = commitHash === 'unknown' ? commitHash : commitHash.slice
   </section>
 
   <StatusDiagnostics />
-  <section class="gs-section">
+  <section class="gs-section gs-blueprint-bg">
     <div class="gs-card">
       <h2>Frontend Deployment Diagnostics</h2>
       <p>Use this section to verify that the deployed HTML has linked CSS/JS bundles and the logo asset resolves.</p>

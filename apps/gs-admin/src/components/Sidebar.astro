@@ -1,4 +1,5 @@
 ---
+import { SharedHeader } from '@goldshore/ui';
 import type { AdminPermission } from '@goldshore/auth';
 
 const links: Array<{ href: string; label: string; requiredPermission?: AdminPermission }> = [
@@ -44,13 +45,17 @@ const isActive = (href: string) => {
 };
 ---
 <aside class="gs-admin-sidebar" id="admin-sidebar" aria-label="Admin navigation">
-  <div class="sidebar-header">
-    <a class="gs-logo" href="https://goldshore.ai" target="_blank" rel="noopener noreferrer">
-      {logo ? <img src={logo.src || logo} alt="GoldShore logo" width="23" height="32" fetchpriority="high" loading="eager" /> : <span aria-hidden="true">◆</span>}
-      <span>GoldShore</span>
-    </a>
+  <SharedHeader
+    class="sidebar-header"
+    href="https://goldshore.ai"
+    target="_blank"
+    rel="noopener noreferrer"
+    logoSrc={logo?.src || logo || '/assets/brand/logo.svg'}
+    logoAlt="GoldShore logo"
+  >
+    <span slot="brand-text">GoldShore</span>
     <button id="sidebar-close" class="sidebar-close" aria-label="Close menu">✕</button>
-  </div>
+  </SharedHeader>
   <nav class="gs-sidebar-links">
     {visibleLinks.map((link) => (
       <a
