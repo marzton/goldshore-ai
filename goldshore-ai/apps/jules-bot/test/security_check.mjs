@@ -105,7 +105,9 @@ try {
   }
 
 } catch (e) {
-  console.error(e);
+  const errorMessage = (e && e.message) ? e.message : String(e);
+  const safeMessage = errorMessage.replace(/[\r\n]+/g, ' ');
+  console.error('Error during security check:', safeMessage);
   exitCode = 1;
 } finally {
   serverProcess.kill();
