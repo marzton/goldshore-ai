@@ -34,6 +34,16 @@ app.post('/webhook', async (c) => {
   return c.json({ received: true });
 });
 
+app.post('/api/subscribe', async (c) => {
+  // Store email in KV or send to mailbox
+  return c.json({ status: 'subscribed' });
+});
+
+app.post('/api/contact', async (c) => {
+  // Store email in KV or send to mailbox
+  return c.json({ status: 'sent' });
+});
+
 export default {
   fetch: app.fetch,
   async email(message: EmailMessage, env: Env): Promise<void> {
