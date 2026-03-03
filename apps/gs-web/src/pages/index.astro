@@ -1,70 +1,81 @@
 ---
 import WebLayout from '../layouts/WebLayout.astro';
----
-
-<WebLayout title="Gold Shore | Shaping Waves" description="Designed not to manage capital, but to steer it.">
-  <section class="gs-hero gs-blueprint-bg" data-gs-hero>
-    <div class="gs-stars-deep" aria-hidden="true"></div>
-    <div class="gs-stars" aria-hidden="true"></div>
-    <div class="gs-grid-overlay" aria-hidden="true"></div>
-    <div class="gs-vignette" aria-hidden="true"></div>
-
-    <div class="gs-hero-parallax" data-gs-parallax="1.2" aria-hidden="true"></div>
 
     <div class="gs-container gs-hero-content">
       <div class="gs-kicker gs-signal" data-gs-reveal>System Status: Operational</div>
-      <h1 class="gs-hero-title gs-display" data-gs-reveal>Shaping Waves with Applied Intelligence</h1>
+      <h1 class="gs-hero-title gs-display" data-gs-reveal>
+        Shaping Waves with Applied Intelligence
+      </h1>
       <p data-gs-reveal>
         Institutional-grade automation, resilient infrastructure, and responsive operations.
       </p>
 
-      <div class="gs-hero-actions" data-gs-reveal>
-        <a class="gs-button gs-button-solid" href="/services">View Services</a>
-        <a class="gs-button gs-button-outline" href="/developer">Developer</a>
-        <button class="gs-button gs-button-outline" data-gs-modal-open="subscribe">Subscribe</button>
-      </div>
+<WebLayout
+  title="Gold Shore — Institutional Infrastructure & Operational Systems"
+  description="Gold Shore builds resilient infrastructure, automation, and operational platforms designed for real-time systems, reliability, and controlled performance."
+>
+  <section class="gs-section hero blueprint-bg">
+    <div class="gs-container">
+      <h1>Designed not to manage capital, but to steer it.</h1>
+      <p class="hero-tagline">
+        Institutional-grade automation, resilient infrastructure, and responsive operations for mission-critical systems.
+      </p>
 
-      <div class="gs-signal-divider" aria-hidden="true"></div>
-
-      <div style="margin-top: 2rem; display:grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
-        <div class="gs-panel gs-hoverlift" data-gs-reveal>
-          <div class="gs-label">Availability</div>
-          <div style="font-size:2.2rem; font-weight:700; margin-top:0.4rem;">99.995%</div>
-          <div class="gs-micro gs-muted">Measured across surfaces</div>
-        </div>
-        <div class="gs-panel gs-hoverlift" data-gs-reveal>
-          <div class="gs-label">Deploys / Week</div>
-          <div style="font-size:2.2rem; font-weight:700; margin-top:0.4rem;">48</div>
-          <div class="gs-micro gs-muted">Change with control</div>
-        </div>
-        <div class="gs-panel gs-hoverlift" data-gs-reveal>
-          <div class="gs-label">Signals / Day</div>
-          <div style="font-size:2.2rem; font-weight:700; margin-top:0.4rem;">2.1B</div>
-          <div class="gs-micro gs-muted">Routed & verified</div>
-        </div>
+      <div class="hero-actions">
+        <a href="/services" class="gs-button">View Services</a>
+        <a href="/developer" class="gs-button ghost">Developer Hub</a>
+        <a href="/contact" class="gs-button ghost">Subscribe for Briefs</a>
       </div>
     </div>
   </section>
-
-  <div class="gs-angle-divider"></div>
 
   <section class="gs-section">
     <div class="gs-container">
-      <h2 class="gs-display" data-gs-reveal>Mandate</h2>
-      <p data-gs-reveal>
-        We build operator-grade systems that stay calm under pressure — and keep decision-makers in control.
+      <h2>Built for performance under pressure</h2>
+      <p>
+        At Gold Shore, we build operator-grade systems that stay calm under pressure — keeping decision-makers in
+        control. Our solutions combine performance, observability, and automation to power resilient infrastructure
+        capable of handling scale, volatility, and real-time requirements with precision.
       </p>
     </div>
   </section>
-</WebLayout>
 
-<style>
-  .gs-hero-parallax {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 2;
-    background: radial-gradient(circle at 20% 30%, rgba(90, 140, 255, 0.08), transparent 55%);
-    mix-blend-mode: screen;
-  }
-</style>
+  <section class="gs-section">
+    <div class="gs-container">
+      <h2>What We Do</h2>
+      <p>
+        Gold Shore solves the toughest infrastructure challenges facing modern organizations. Our approach blends
+        engineering discipline with operational rigor — not hype, not hype cycles, not trends — just results.
+      </p>
+      <ul>
+        <li><strong>Institutional Intelligence:</strong> Insightful, data-driven systems that anticipate and adapt.</li>
+        <li><strong>Command Infrastructure:</strong> Foundational platforms engineered for reliability and control.</li>
+        <li><strong>Quiet Power:</strong> Robust performance without noise — eliminating friction and risk.</li>
+        <li><strong>Operational Resilience:</strong> Solutions that keep running when others fail.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="gs-section">
+    <div class="gs-container">
+      <h2>Feature Highlights</h2>
+      <ul>
+        <li><strong>High-Availability That Matters:</strong> 99.995% uptime engineered and measured across surfaces.</li>
+        <li><strong>Accelerated Deployments:</strong> Frequent, safe deployments with automated testing and rollback.</li>
+        <li><strong>Signal Integrity at Scale:</strong> Billions of events routed, verified, and operationalized daily.</li>
+        <li><strong>Unified Observability:</strong> Status that is visible, actionable, and contextual across teams.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="gs-section">
+    <div class="gs-container">
+      <h2>Join the Signal Brief</h2>
+      <p>Subscribe for periodic insights on releases, tooling, and systemic operations.</p>
+      <div class="hero-actions">
+        <a href="/contact" class="gs-button">Subscribe for Briefs</a>
+        <a href="/contact" class="gs-button ghost">Speak with Us</a>
+      </div>
+    </div>
+  </section>
+</WebLayout>

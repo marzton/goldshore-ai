@@ -1,0 +1,12 @@
+name = "gs-admin"
+main = "dist/_worker.js"
+compatibility_date = "2026-02-24"
+
+[env.preview]
+route = "preview.admin.goldshore.ai/*"
+
+[env.preview.vars]
+PREVIEW_MODE = "true"
+
+[env.production]
+route = "admin.goldshore.ai/*"
