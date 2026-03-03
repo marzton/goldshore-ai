@@ -169,7 +169,8 @@ async function main(): Promise<void> {
   const keys: ConfigKey[] = ["ROUTING_TABLE", "SERVICE_STATUS", "AI_ORCHESTRATION"];
 
   console.log("Starting Cloudflare KV sync...");
-  console.log(`- Account: ${accountId}`);
+  const maskedAccountId = accountId.length > 4 ? accountId.slice(-4).padStart(accountId.length, "*") : "[redacted]";
+  console.log(`- Account: ${maskedAccountId}`);
   console.log(`- Namespace: ${namespaceId}`);
 
   const results = await Promise.all(
