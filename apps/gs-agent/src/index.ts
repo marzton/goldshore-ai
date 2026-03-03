@@ -1,48 +1,40 @@
-// GoldShore Agent Worker
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
 import { verifyAccess } from '@goldshore/auth';
 
 interface Env {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	AI: any;
 	CLOUDFLARE_ACCESS_AUDIENCE?: string;
 	CLOUDFLARE_TEAM_DOMAIN?: string;
+	// Added binding for our shared JSON config
+	AGENT_KV: KVNamespace; 
 }
 
 const app = new Hono<{ Bindings: Env }>();
 
-// Sentinel: Add security headers to all responses (Defense in Depth)
+// 1. Security & Middleware
 app.use('*', secureHeaders());
+app.use('*', cors({
+	origin: '*', 
+	allowMethods: ['GET', 'POST', 'OPTIONS'],
+	allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
+}));
 
-// Sentinel: Add CORS protection
-app.use(
-	'*',
-	cors({
-		origin: '*', // Adjust if stricter policy is needed
-		allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-		allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
-		exposeHeaders: ['Content-Length'],
-		maxAge: 600,
-	}),
-);
-
-// Sentinel: CRITICAL - Enforce Authentication on all sensitive endpoints
+// 2. Auth Guard (Public vs Protected)
 app.use('*', async (c, next) => {
-	// Allow root (status check) and health check to remain public
-	if (c.req.path === '/' || c.req.path === '/health' || c.req.path === '/templates') {
+	const publicPaths = ['/', '/health', '/templates'];
+	if (publicPaths.includes(c.req.path)) {
 		await next();
 		return;
 	}
 
 	const authorized = await verifyAccess(c.req.raw, c.env);
-	if (!authorized) {
-		return c.json({ error: 'Unauthorized' }, 401);
-	}
+	if (!authorized) return c.json({ error: 'Unauthorized' }, 401);
 	await next();
 });
 
+// 3. Status Page (Updated with Service Info)
 app.get('/', (c) => {
 	return c.html(`
     <!DOCTYPE html>
@@ -54,16 +46,15 @@ app.get('/', (c) => {
         body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
         .container { text-align: center; border: 1px solid #334155; padding: 2rem; border-radius: 8px; background: #1e293b; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         h1 { margin-bottom: 0.5rem; color: #f472b6; }
-        p { color: #94a3b8; }
-        .status { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 4px; background: #db2777; color: #fff; font-size: 0.875rem; font-weight: 600; margin-top: 1rem; }
+        .status { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 4px; background: #059669; color: #fff; font-size: 0.875rem; font-weight: 600; margin-top: 1rem; }
       </style>
     </head>
     <body>
       <div class="container">
         <h1>GoldShore Agent</h1>
-        <p>AI Autonomous Service</p>
-        <div class="status">STANDBY</div>
-        <p><small>Service: gs-agent</small></p>
+        <p>Autonomous Background Processor</p>
+        <div class="status">ACTIVE & LISTENING</div>
+        <p><small>Service: gs-agent-v2</small></p>
       </div>
     </body>
     </html>
@@ -72,41 +63,35 @@ app.get('/', (c) => {
 
 app.get('/health', (c) => c.json({ status: 'ok', service: 'gs-agent' }));
 
-app.get('/templates', (c) => {
+// 4. Template Engine with KV integration
+app.get('/templates', async (c) => {
+	// Retrieve your custom JSON list from the KV store
+	const rawConfig = await c.env.AGENT_KV.get("GATEWAY_SETTINGS");
+	const activeConfig = rawConfig ? JSON.parse(rawConfig) : [];
+
 	return c.json({
 		service: 'gs-agent',
-		description: 'Agent templates for HITL workflows, AI orchestration, and ops automation.',
+		config_snapshot: activeConfig,
 		modules: [
-			{
-				name: 'operator-assist',
-				purpose: 'Human-in-the-loop review queues for approvals, escalations, and audits.',
-			},
-			{
-				name: 'ai-routing',
-				purpose: 'Route prompts to Gemini, ChatGPT, Jules, or internal models.',
-			},
-			{
-				name: 'market-intel',
-				purpose: 'Fuse Alpaca, Thinkorswim, and internal signals for market operations.',
-			},
-		],
-		nextSteps: [
-			'Add durable objects for stateful agent sessions.',
-			'Attach queue consumers for long-running tasks.',
-			'Expose admin telemetry endpoints for observability.',
-		],
+			{ name: 'operator-assist', purpose: 'Human-in-the-loop review queues.' },
+			{ name: 'ai-routing', purpose: 'Gemini/GPT orchestration.' },
+			{ name: 'market-intel', purpose: 'Alpaca & Signal fusion.' }
+		]
 	});
 });
 
+// 5. Background Queue Handler
 export default {
 	fetch: app.fetch,
-	async queue(batch: MessageBatch<unknown>, env: Env): Promise<void> {
-		console.info(
-			JSON.stringify({
-				event: 'queue_batch_received',
-				count: batch.messages.length,
+	async queue(batch: MessageBatch<any>, env: Env): Promise<void> {
+		for (const message of batch.messages) {
+			console.info({
+				event: 'job_processed',
+				id: message.id,
+				body: message.body,
 				timestamp: new Date().toISOString(),
-			}),
-		);
+			});
+			message.ack(); // Complete the job
+		}
 	},
 };
