@@ -5,6 +5,8 @@ on:
 
 jobs:
   prevent-lockfile-drift:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
 
     steps:
