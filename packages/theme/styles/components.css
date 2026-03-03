@@ -1,3 +1,4 @@
+/* Header / Nav */
 .gs-header {
   position: sticky;
   top: 0;
@@ -29,7 +30,7 @@
 
 .gs-brand-text {
   font-weight: 650;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.10em;
   font-size: 0.9rem;
   opacity: 0.9;
 }
@@ -46,9 +47,7 @@
   transition: opacity var(--gs-mid) var(--gs-ease);
 }
 
-.gs-nav a:hover {
-  opacity: 1;
-}
+.gs-nav a:hover { opacity: 1; }
 
 .gs-nav-toggle {
   display: none;
@@ -65,6 +64,7 @@
   line-height: 1;
 }
 
+/* Mobile panel */
 .gs-mobile-panel {
   position: fixed;
   inset: 0;
@@ -75,9 +75,7 @@
   z-index: 60;
 }
 
-.gs-mobile-panel.is-open {
-  transform: translateY(0);
-}
+.gs-mobile-panel.is-open { transform: translateY(0); }
 
 .gs-mobile-panel-inner {
   padding: 88px var(--gs-pad) 24px var(--gs-pad);
@@ -114,15 +112,11 @@
 }
 
 @media (max-width: 860px) {
-  .gs-nav {
-    display: none;
-  }
-
-  .gs-nav-toggle {
-    display: inline-flex;
-  }
+  .gs-nav { display: none; }
+  .gs-nav-toggle { display: inline-flex; }
 }
 
+/* Panels & mirror frames */
 .gs-panel,
 .gs-mirror-frame {
   position: relative;
@@ -133,16 +127,14 @@
   overflow: hidden;
 }
 
-.gs-panel {
-  padding: 2.4rem;
-}
+.gs-panel { padding: 2.4rem; }
 
 .gs-panel::before,
 .gs-mirror-frame::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 70% 30%, rgba(90, 140, 255, 0.14), transparent 64%);
+  background: radial-gradient(circle at 70% 30%, rgba(90,140,255,0.14), transparent 64%);
   pointer-events: none;
 }
 
@@ -150,16 +142,15 @@
   content: "";
   position: absolute;
   inset: -2px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 30%, rgba(255, 255, 255, 0.03));
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), transparent 30%, rgba(255,255,255,0.03));
   opacity: 0;
   transition: opacity var(--gs-mid) var(--gs-ease);
   pointer-events: none;
 }
 
-.gs-mirror-frame:hover::after {
-  opacity: 1;
-}
+.gs-mirror-frame:hover::after { opacity: 1; }
 
+/* Buttons (controlled, institutional) */
 .gs-button {
   display: inline-flex;
   align-items: center;
@@ -170,8 +161,11 @@
   font-weight: 650;
   letter-spacing: 0.02em;
   border: 1px solid var(--gs-border);
-  transition: transform var(--gs-mid) var(--gs-ease), box-shadow var(--gs-mid) var(--gs-ease),
-    border-color var(--gs-mid) var(--gs-ease), background var(--gs-mid) var(--gs-ease);
+  transition:
+    transform var(--gs-mid) var(--gs-ease),
+    box-shadow var(--gs-mid) var(--gs-ease),
+    border-color var(--gs-mid) var(--gs-ease),
+    background var(--gs-mid) var(--gs-ease);
   user-select: none;
 }
 
@@ -182,8 +176,8 @@
 
 .gs-button-solid:hover {
   transform: translateY(-1px);
-  border-color: rgba(90, 140, 255, 0.8);
-  box-shadow: 0 0 26px rgba(90, 140, 255, 0.18);
+  border-color: rgba(90,140,255,0.8);
+  box-shadow: 0 0 26px rgba(90,140,255,0.18);
 }
 
 .gs-button-outline {
@@ -192,15 +186,12 @@
 
 .gs-button-outline:hover {
   transform: translateY(-1px);
-  border-color: rgba(90, 140, 255, 0.55);
-  box-shadow: 0 0 18px rgba(90, 140, 255, 0.1);
+  border-color: rgba(90,140,255,0.55);
+  box-shadow: 0 0 18px rgba(90,140,255,0.10);
 }
 
-.gs-form {
-  display: grid;
-  gap: 0.8rem;
-  margin-top: 1rem;
-}
+/* Forms */
+.gs-form { display: grid; gap: 0.8rem; margin-top: 1rem; }
 
 .gs-input {
   width: 100%;
@@ -213,6 +204,6 @@
 }
 
 .gs-input:focus {
-  border-color: rgba(90, 140, 255, 0.55);
-  box-shadow: 0 0 0 4px rgba(90, 140, 255, 0.12);
+  border-color: rgba(90,140,255,0.55);
+  box-shadow: 0 0 0 4px rgba(90,140,255,0.12);
 }

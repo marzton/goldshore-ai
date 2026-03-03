@@ -19,7 +19,8 @@ const links: Array<{ href: string; label: string; requiredPermission?: AdminPerm
   { href: '/admin/users', label: 'Users', requiredPermission: 'users:read' },
   { href: '/admin/pii-scans', label: 'PII Scans' },
   { href: '/admin/logs', label: 'Logs', requiredPermission: 'audit:read' },
-  { href: '/admin/settings', label: 'Settings' }
+  { href: '/admin/settings', label: 'Settings' },
+  { href: '/appearance/hero', label: 'Hero Engine' }
 ];
 
 const { logo, permissions = [] } = Astro.props;
@@ -50,7 +51,7 @@ const isActive = (href: string) => {
     href="https://goldshore.ai"
     target="_blank"
     rel="noopener noreferrer"
-    logoSrc={logo?.src || logo || '/assets/logo.svg'}
+    logoSrc={logo?.src || logo || '/assets/brand/logo.svg'}
     logoAlt="GoldShore logo"
   >
     <span slot="brand-text">GoldShore</span>
