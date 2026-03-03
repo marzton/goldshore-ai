@@ -1,17 +1,37 @@
 import { Hono } from 'hono';
+import { EmailInboxLogsSchema, type EmailLog } from '../../../packages/schema/src/system.ts';
 
 interface Env {
   ENV?: string;
   MAIL_FORWARD_TO?: string;
   MAIL_ALLOWED_RECIPIENTS?: string;
   MAIL_BLOCKED_SENDERS?: string;
+  GS_CONFIG: KVNamespace;
 }
 
-const VERSION = '2026.02.10-mail-worker-fix';
+const VERSION = '2026.03.03-mail-inbox-log';
 
 const app = new Hono<{ Bindings: Env }>();
 
 const isEmailLike = (value: string) => /.+@.+\..+/.test(value);
+
+const readInboxLogs = async (kv: KVNamespace): Promise<EmailLog[]> => {
+  const rawLogs = await kv.get('EMAIL_INBOX_LOGS', 'text');
+  if (!rawLogs) return [];
+
+  try {
+    const parsed = JSON.parse(rawLogs);
+    const validated = EmailInboxLogsSchema.safeParse(parsed);
+    if (!validated.success) {
+      console.warn('Invalid EMAIL_INBOX_LOGS shape detected. Resetting mailbox log.');
+      return [];
+    }
+    return validated.data;
+  } catch (error) {
+    console.warn('Unable to parse EMAIL_INBOX_LOGS. Resetting mailbox log.', error);
+    return [];
+  }
+};
 
 app.get('/', (c) => c.text('GoldShore Mail Worker'));
 
@@ -46,13 +66,28 @@ app.post('/api/contact', async (c) => {
 
 export default {
   fetch: app.fetch,
-  async email(message: EmailMessage, env: Env): Promise<void> {
-    // Basic email handler scaffolding
+  async email(message: ForwardableEmailMessage, env: Env): Promise<void> {
     console.log(`Received email from ${message.from} to ${message.to}`);
+
+    const emailLog: EmailLog = {
+      id: crypto.randomUUID(),
+      from: message.from,
+      to: message.to,
+      subject: message.headers.get('subject') || 'No Subject',
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      const logs = await readInboxLogs(env.GS_CONFIG);
+      logs.unshift(emailLog);
+      await env.GS_CONFIG.put('EMAIL_INBOX_LOGS', JSON.stringify(logs.slice(0, 100)));
+      console.log(`✅ Logged email from ${message.from} to GS_CONFIG`);
+    } catch (error) {
+      console.error('❌ Failed to log email to KV:', error);
+    }
 
     const forwardTo = env.MAIL_FORWARD_TO?.trim();
     if (!forwardTo || !isEmailLike(forwardTo)) {
-      message.setReject('Mail forwarding is not configured.');
       return;
     }
 
