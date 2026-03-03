@@ -60,10 +60,8 @@ const ALLOWED_ACTIONS = [
 ];
 
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
-let violations = [];
-// Keep app-level issues list in module scope so checks and final exit logic share it.
 const governanceViolations = [];
-const violations = governanceViolations;
+// Keep issue lists in module scope so checks and final exit logic share them.
 const appLevelIssues = [];
 
 // 1. Governance Compliance Check
