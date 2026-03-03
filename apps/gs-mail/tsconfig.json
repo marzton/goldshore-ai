@@ -1,13 +1,16 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "lib": ["es2020"],
+    "lib": ["esnext"],
     "types": ["@cloudflare/workers-types"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "target": "ES2022",
+    "target": "ESNext",
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@goldshore/schema": ["../../packages/schema/src/system.ts"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "../../packages/schema/src"]
 }
