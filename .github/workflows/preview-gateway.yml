@@ -1,4 +1,4 @@
-name: Preview Gateway Worker (gw-preview.goldshore.ai)
+name: Preview API Gateway (gw.goldshore.ai)
 
 permissions:
   contents: read
@@ -19,11 +19,9 @@ on:
       - "pnpm-lock.yaml"
 
 jobs:
-  deploy-preview-gateway:
+  preview-gateway:
     runs-on: ubuntu-latest
-    if: |
-      contains(github.event.pull_request.labels.*.name, 'preview') ||
-      (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
+    if: false # Explicitly disable job
 
     steps:
       - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
@@ -55,4 +53,4 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: pnpm exec wrangler deploy --env preview --config wrangler.toml
+        run: pnpm exec wrangler deploy --env preview

@@ -21,9 +21,7 @@ on:
 jobs:
   preview-agent:
     runs-on: ubuntu-latest
-    if: |
-      contains(github.event.pull_request.labels.*.name, 'preview') ||
-      (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
+    if: false # Explicitly disable job
 
     steps:
       - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
@@ -59,3 +57,4 @@ jobs:
         run: pnpm exec wrangler deploy --env preview --config ../../infra/cloudflare/gs-agent.wrangler.toml
 
 # // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43
+        run: pnpm exec wrangler deploy --env preview --config ../../infra/cloudflare/gs-agent.wrangler.toml

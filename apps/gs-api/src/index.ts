@@ -12,6 +12,7 @@ import templates from './routes/templates';
 import admin from './routes/admin';
 import media from './routes/media';
 import pages from './routes/pages';
+import internal from './routes/internal';
 
 type Env = {
   KV: KVNamespace;
@@ -122,6 +123,7 @@ app.route('/templates', templates);
 app.route('/admin', admin);
 app.route('/media', media);
 app.route('/pages', pages);
+app.route('/internal', internal);
 
 // V1 Routes
 const v1 = new Hono<{ Bindings: Env }>();
