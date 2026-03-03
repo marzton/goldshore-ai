@@ -8,7 +8,7 @@ routes = [
   { pattern = "api.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
 
-[vars]
+[env.prod.vars]
 ENV = "production"
 
 # Sentinel: Audience tag for Cloudflare Access.
@@ -20,18 +20,18 @@ CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
 # Used to fetch JWKS for token verification.
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 
-[[kv_namespaces]]
+[[env.prod.kv_namespaces]]
 binding = "KV"
 id = "gs_api_kv_001"
 
-[[r2_buckets]]
+[[env.prod.r2_buckets]]
 binding = "ASSETS"
 bucket_name = "gs-assets"
 
-[[d1_databases]]
+[[env.prod.d1_databases]]
 binding = "DB"
 database_name = "goldshore"
 database_id = "gs_db_001"
 
-[ai]
+[env.prod.ai]
 binding = "AI"

@@ -24,7 +24,7 @@
   .gs-modal-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(0,0,0,0.55);
     backdrop-filter: blur(10px);
   }
   .gs-modal-panel {
@@ -35,15 +35,7 @@
     transition: transform var(--gs-mid) var(--gs-ease);
     z-index: 1;
   }
-  .gs-modal.is-open .gs-modal-panel {
-    transform: translateY(0);
-  }
-  .gs-modal-close {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-  }
-  .gs-modal-title {
-    margin-top: 0.2rem;
-  }
+  .gs-modal.is-open .gs-modal-panel { transform: translateY(0); }
+  .gs-modal-close { position: absolute; top: 14px; right: 14px; }
+  .gs-modal-title { margin-top: 0.2rem; }
 </style>
