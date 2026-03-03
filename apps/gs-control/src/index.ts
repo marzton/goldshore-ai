@@ -81,8 +81,7 @@ app.route("/cloudflare", cloudflareRoutes);
 
 export default {
   fetch: app.fetch,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async scheduled(_controller: ScheduledController, env: ControlEnv, _ctx: ExecutionContext) {
+  async scheduled(_: ScheduledController, env: ControlEnv) {
     await env.CONTROL_LOGS.put(Date.now().toString(), "control-run");
     await syncDNS(env);
     await rotateKeys(env);
