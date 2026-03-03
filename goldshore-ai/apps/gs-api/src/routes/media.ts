@@ -1,4 +1,6 @@
 import { Hono } from 'hono';
+import createDOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
 
 type MediaRecord = {
   id: string;
@@ -20,15 +22,20 @@ const ALLOWED_MIME_TYPES = new Map([
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 const sanitizeSvg = (rawSvg: string) => {
-  let sanitized = rawSvg
-    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
-    .replace(/<foreignObject[\s\S]*?>[\s\S]*?<\/foreignObject>/gi, '')
-    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-    .replace(/(href|xlink:href)\s*=\s*("|')\s*javascript:[^\2]*\2/gi, '')
-    .replace(/(href|xlink:href)\s*=\s*javascript:[^\s>]+/gi, '');
+  // Use DOMPurify with JSDOM to robustly sanitize SVG content and strip
+  // event handlers, scripts, and other active content.
+  const { window } = new JSDOM('');
+  const DOMPurify = createDOMPurify(window as unknown as Window);
+
+  let sanitized = DOMPurify.sanitize(rawSvg, {
+    USE_PROFILES: { svg: true, svgFilters: true },
+    // Ensure scriptable attributes and event handlers are removed.
+    ADD_TAGS: [],
+    ADD_ATTR: []
+  });
 
   if (!sanitized.trim().startsWith('<svg')) {
-    sanitized = `<svg xmlns=\"http://www.w3.org/2000/svg\">${sanitized}</svg>`;
+    sanitized = `<svg xmlns="http://www.w3.org/2000/svg">${sanitized}</svg>`;
   }
 
   return sanitized;
