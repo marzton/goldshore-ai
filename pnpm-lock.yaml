@@ -77,6 +77,9 @@ importers:
       yaml:
         specifier: ^2.8.2
         version: 2.8.2
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
 
   apps/gs-admin:
     dependencies:
@@ -89,6 +92,9 @@ importers:
       '@goldshore/integrations':
         specifier: workspace:*
         version: link:../../packages/integrations
+      '@goldshore/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
       '@goldshore/theme':
         specifier: workspace:*
         version: link:../../packages/theme
@@ -176,6 +182,9 @@ importers:
       '@goldshore/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@goldshore/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
       '@goldshore/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -305,7 +314,11 @@ importers:
 
   packages/integrations: {}
 
-  packages/schema: {}
+  packages/schema:
+    dependencies:
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
 
   packages/theme: {}
 

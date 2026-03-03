@@ -1,16 +1,28 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "lib": ["esnext"],
-    "types": ["@cloudflare/workers-types"],
+    "lib": [
+      "esnext"
+    ],
+    "types": [
+      "@cloudflare/workers-types"
+    ],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "target": "ESNext",
     "strict": true,
     "skipLibCheck": true,
     "paths": {
-      "@goldshore/schema": ["../../packages/schema/src/system.ts"]
+      "@goldshore/schema": [
+        "../../packages/schema/src/system.ts"
+      ]
     }
   },
-  "include": ["src", "../../packages/schema/src"]
+  "include": [
+    "src",
+    "../../packages/schema/src"
+  ],
+  "exclude": [
+    "src/**/*.test.ts"
+  ]
 }

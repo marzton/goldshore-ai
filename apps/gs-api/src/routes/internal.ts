@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { EmailInboxLogsSchema, ServiceStatusSchema } from '@goldshore/schema';
 import { Env, Variables } from '../types';
+import { loadSystemSyncSnapshot } from './system.config';
 
 const internal = new Hono<{ Bindings: Env; Variables: Variables }>();
 
@@ -37,9 +38,16 @@ internal.get('/inbox-status', async (c) => {
       timestamp: new Date().toISOString(),
       services: statusResult.success ? statusResult.data : EMPTY_SERVICES,
       inbox: {
-        count: logsResult.success ? logsResult.data.length : 0,
-        recent: logsResult.success ? logsResult.data.slice(0, 5) : []
-      }
+        count: snapshot.EMAIL_INBOX_LOGS.length,
+        recent: snapshot.EMAIL_INBOX_LOGS.slice(0, 5),
+      },
+      routing: {
+        hostCount: Object.keys(snapshot.ROUTING_TABLE).length,
+      },
+      orchestration: {
+        preferredModel: snapshot.AI_ORCHESTRATION.preferred_model,
+        queueConcurrency: snapshot.AI_ORCHESTRATION.queue_concurrency,
+      },
     });
   } catch (error) {
     console.error('[internal/inbox-status] failed to fetch KV data', error);

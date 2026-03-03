@@ -15,6 +15,9 @@ MAIL_FORWARD_TO = "ops@goldshore.ai"
 
 [env.dev]
 name = "gs-mail-dev"
+[[env.dev.kv_namespaces]]
+binding = "GS_CONFIG"
+id = "9cc2209906a94851b704be57543987a9"
 [env.dev.vars]
 ENV = "development"
 
