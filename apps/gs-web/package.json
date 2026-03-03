@@ -12,13 +12,14 @@
     "check": "astro check",
     "lint": "eslint .",
     "test": "playwright test",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "verify:dist": "node ../../scripts/verify-web-dist.mjs"
   },
   "dependencies": {
     "@goldshore/config": "workspace:^",
     "@goldshore/theme": "workspace:*",
     "@goldshore/ui": "workspace:*",
-    "astro": "^5.15.9",
+    "astro": "^5.17.1",
     "fuse.js": "^7.1.0"
   },
   "devDependencies": {

@@ -42,7 +42,7 @@ importers:
         specifier: ^8.55.0
         version: 8.55.0(eslint@8.57.1)(typescript@5.9.3)
       astro:
-        specifier: ^5.15.9
+        specifier: ^5.17.1
         version: 5.17.2(@types/node@25.2.3)(jiti@1.21.7)(rollup@4.57.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
       eslint:
         specifier: ^8.57.0
@@ -96,7 +96,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       astro:
-        specifier: ^5.15.9
+        specifier: ^5.17.1
         version: 5.17.2(@types/node@25.2.3)(jiti@1.21.7)(rollup@4.57.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
     devDependencies:
       '@astrojs/cloudflare':
@@ -249,7 +249,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       astro:
-        specifier: ^5.15.9
+        specifier: ^5.17.1
         version: 5.17.2(@types/node@25.2.3)(jiti@1.21.7)(rollup@4.57.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
       fuse.js:
         specifier: ^7.1.0
@@ -270,8 +270,6 @@ importers:
       typescript:
         specifier: ^5.4.2
         version: 5.9.3
-
-  apps/jules-bot: {}
 
   packages/ai-providers: {}
 
