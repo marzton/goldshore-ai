@@ -4,19 +4,25 @@ compatibility_date = "2025-01-10"
 compatibility_flags = ["nodejs_compat"]
 
 workers_dev = false
+
+# Added routes for all desired subdomains
 routes = [
+  { pattern = "gateway.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
 
 [vars]
 ENV = "production"
 API_ORIGIN = "https://api.goldshore.ai"
-CLOUDFLARE_ACCESS_AUDIENCE = ""
-CLOUDFLARE_TEAM_DOMAIN = ""
+# These should be filled from your Access Dashboard
+CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b"
+CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
 
 [[kv_namespaces]]
 binding = "GATEWAY_KV"
-id = "goldshore-gw-kv"
+# Updated to use your actual production namespace ID
+id = "9cc2209906a94851b704be57543987a9"
 
 [[queues.producers]]
 binding = "JOB_QUEUE"
@@ -29,3 +35,6 @@ environment = "prod"
 
 [ai]
 binding = "AI"
+
+[observability]
+enabled = true

@@ -1,0 +1,147 @@
+---
+// apps/gs-admin/src/components/InboxDashboard.astro
+---
+<div class="gs-card border border-slate-800 bg-slate-900/50 p-6 rounded-xl">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="gs-text-xl font-bold text-white flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
+      Live Inbox Status
+    </h2>
+    <div id="inbox-count" class="text-xs font-mono text-slate-400 bg-slate-800 px-2 py-1 rounded">
+      LOGS: --
+    </div>
+  </div>
+
+  <div class="overflow-hidden rounded-lg border border-slate-800">
+    <table class="w-full text-sm text-left">
+      <thead class="bg-slate-800/50 text-slate-400">
+        <tr>
+<div class="gs-card space-y-4">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h2 class="text-2xl font-semibold">Inbox Activity</h2>
+      <p class="text-sm gs-text-subtle">Recent messages retrieved through the gs-admin proxy.</p>
+    </div>
+    <div id="inbox-count" class="text-xs font-mono gs-text-subtle">
+      Messages: --
+    </div>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm text-left">
+      <thead>
+        <tr class="border-b border-[var(--gs-border)] gs-text-subtle">
+          <th class="px-4 py-2">Time</th>
+          <th class="px-4 py-2">From</th>
+          <th class="px-4 py-2">Subject</th>
+        </tr>
+      </thead>
+      <tbody id="inbox-tbody" class="divide-y divide-slate-800 text-slate-300">
+        <tr class="animate-pulse">
+          <td colspan="3" class="px-4 py-8 text-center text-slate-500 italic">
+            Scanning GoldShore mail streams...
+          </td>
+      <tbody id="inbox-tbody" class="divide-y divide-[var(--gs-border)]">
+        <tr>
+          <td colspan="3" class="px-4 py-6 text-center gs-text-subtle">Loading inbox activity…</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // Logic to fetch from the newly implemented gs-api endpoint
+  async function updateInbox() {
+    const tbody = document.getElementById('inbox-tbody');
+    const countBadge = document.getElementById('inbox-count');
+
+    try {
+      const res = await fetch('https://api.goldshore.ai/internal/inbox-status');
+      const data = await res.json();
+
+      if (!data.success || !data.inbox.recent.length) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500">No recent logs found.</td></tr>`;
+        return;
+      }
+
+      countBadge.innerText = `LOGS: ${data.inbox.count}`;
+      tbody.innerHTML = data.inbox.recent.map(mail => `
+        <tr class="hover:bg-slate-800/30 transition-colors">
+          <td class="px-4 py-3 text-xs text-slate-500 font-mono">
+            ${new Date(mail.timestamp).toLocaleTimeString()}
+          </td>
+          <td class="px-4 py-3 font-medium text-pink-400/80">${mail.from}</td>
+          <td class="px-4 py-3 text-slate-400 truncate max-w-xs">${mail.subject}</td>
+        </tr>
+      `).join('');
+
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-400">Failed to connect to GS-API</td></tr>`;
+    }
+  }
+
+  // Initial load and poll every 30 seconds
+  const tbody = document.getElementById('inbox-tbody');
+  const countBadge = document.getElementById('inbox-count');
+
+  const escapeHtml = (value = '') =>
+    String(value)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+
+  const renderMessage = (message) => {
+    const sentAt = message?.timestamp ? new Date(message.timestamp).toLocaleTimeString() : 'Unknown';
+    const from = escapeHtml(message?.from ?? 'Unknown sender');
+    const subject = escapeHtml(message?.subject ?? 'No subject');
+
+    return `<tr>
+      <td class="px-4 py-3 gs-text-subtle">${sentAt}</td>
+      <td class="px-4 py-3">${from}</td>
+      <td class="px-4 py-3">${subject}</td>
+    </tr>`;
+  };
+
+  const setStatusRow = (message, toneClass = 'gs-text-subtle') => {
+    if (!tbody) return;
+    tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center ${toneClass}">${message}</td></tr>`;
+  };
+
+  async function updateInbox() {
+    if (!tbody || !countBadge) return;
+
+    setStatusRow('Loading inbox activity…');
+
+    try {
+      const response = await fetch('/api/gs-api/inbox-status');
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok || !data?.success) {
+        countBadge.textContent = 'Messages: --';
+        setStatusRow('Unable to fetch inbox activity right now.', 'gs-text-danger');
+        return;
+      }
+
+      const inboxCount = Number.isFinite(data?.inbox?.count) ? data.inbox.count : 0;
+      const recent = Array.isArray(data?.inbox?.recent) ? data.inbox.recent : [];
+
+      countBadge.textContent = `Messages: ${inboxCount}`;
+
+      if (!recent.length) {
+        setStatusRow('Inbox is empty. No recent messages found.', 'gs-text-warning');
+        return;
+      }
+
+      tbody.innerHTML = recent.map(renderMessage).join('');
+    } catch {
+      countBadge.textContent = 'Messages: --';
+      setStatusRow('Unable to fetch inbox activity right now.', 'gs-text-danger');
+    }
+  }
+
+  updateInbox();
+  setInterval(updateInbox, 30000);
+</script>
