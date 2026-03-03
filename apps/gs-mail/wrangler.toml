@@ -1,3 +1,6 @@
 name = "gs-mail"
 main = "src/index.ts"
 compatibility_date = "2024-11-01"
+
+[env.prod]
+# Empty prod environment for deployment
