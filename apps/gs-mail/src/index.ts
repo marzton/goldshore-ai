@@ -10,6 +10,7 @@ interface Env {
   MAIL_FORWARD_TO?: string; // Standardized to match your scaffolding
   FORWARD_TO?: string;      // Support for existing alias
   MAIL_BLOCKED_SENDERS?: string;
+  GS_CONFIG: KVNamespace;
 }
 
 const VERSION = '2026.03.03-integrated-mail-persistent';
@@ -19,6 +20,30 @@ const isEmailLike = (value: string) => /.+@.+\..+/.test(value);
 // --- Hono API Routes (Web Traffic) ---
 
 app.get('/', (c) => c.text('GoldShore Mail Worker - PERSISTENT ACTIVE'));
+const VERSION = '2026.03.03-mail-inbox-log';
+
+const app = new Hono<{ Bindings: Env }>();
+const isEmailLike = (value: string) => /.+@.+\..+/.test(value);
+
+const readInboxLogs = async (kv: KVNamespace): Promise<EmailLog[]> => {
+  const rawLogs = await kv.get('EMAIL_INBOX_LOGS', 'text');
+  if (!rawLogs) return [];
+
+  try {
+    const parsed = JSON.parse(rawLogs);
+    const validated = EmailInboxLogsSchema.safeParse(parsed);
+    if (!validated.success) {
+      console.warn('Invalid EMAIL_INBOX_LOGS shape detected. Resetting mailbox log.');
+      return [];
+    }
+    return validated.data;
+  } catch (error) {
+    console.warn('Unable to parse EMAIL_INBOX_LOGS. Resetting mailbox log.', error);
+    return [];
+  }
+};
+
+app.get('/', (c) => c.text('GoldShore Mail Worker'));
 
 app.get('/health', (c) =>
   c.json({ 
@@ -51,6 +76,28 @@ export default {
     const blocked = env.MAIL_BLOCKED_SENDERS?.split(',').map(s => s.trim()) || [];
     if (blocked.includes(sender)) {
       message.setReject(`Sender ${sender} is blocked.`);
+  async email(message: ForwardableEmailMessage, env: Env): Promise<void> {
+    console.log(`Received email from ${message.from} to ${message.to}`);
+
+    const emailLog: EmailLog = {
+      id: crypto.randomUUID(),
+      from: message.from,
+      to: message.to,
+      subject: message.headers.get('subject') || 'No Subject',
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      const logs = await readInboxLogs(env.GS_CONFIG);
+      logs.unshift(emailLog);
+      await env.GS_CONFIG.put('EMAIL_INBOX_LOGS', JSON.stringify(logs.slice(0, 100)));
+      console.log(`✅ Logged email from ${message.from} to GS_CONFIG`);
+    } catch (error) {
+      console.error('❌ Failed to log email to KV:', error);
+    }
+
+    const forwardTo = env.MAIL_FORWARD_TO?.trim();
+    if (!forwardTo || !isEmailLike(forwardTo)) {
       return;
     }
 
@@ -73,6 +120,22 @@ export default {
             const rawLogs = await env.GS_CONFIG.get('EMAIL_INBOX_LOGS', 'json');
             const parseResult = EmailInboxLogsSchema.safeParse(rawLogs);
             const currentLogs = parseResult.success ? parseResult.data : [];
+            const rawLogs = await env.GS_CONFIG.get('EMAIL_INBOX_LOGS');
+            let currentLogs: Array<typeof validation.data> = [];
+
+            if (rawLogs) {
+              try {
+                const parsedLogs = JSON.parse(rawLogs);
+                const parseResult = EmailInboxLogsSchema.safeParse(parsedLogs);
+                if (parseResult.success) {
+                  currentLogs = parseResult.data;
+                } else {
+                  console.error('❌ Existing EMAIL_INBOX_LOGS payload failed schema validation:', parseResult.error);
+                }
+              } catch (err) {
+                console.error('❌ Failed to parse EMAIL_INBOX_LOGS payload:', err);
+              }
+            }
 
             // Prepend and truncate to 100 per SOP
             const updatedLogs = [validation.data, ...currentLogs].slice(0, 100);

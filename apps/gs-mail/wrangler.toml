@@ -15,15 +15,15 @@ MAIL_FORWARD_TO = "ops@goldshore.ai"
 
 [env.dev]
 name = "gs-mail-dev"
+[[env.dev.kv_namespaces]]
+binding = "GS_CONFIG"
+id = "9cc2209906a94851b704be57543987a9"
 [env.dev.vars]
 ENV = "development"
 
 [env.prod]
-name = "gs-mail"
-# In prod, we ensure the KV and Vars are explicitly locked
-[[env.prod.kv_namespaces]]
+# Empty prod environment for deployment
+
+[[kv_namespaces]]
 binding = "GS_CONFIG"
 id = "9cc2209906a94851b704be57543987a9"
-[env.prod.vars]
-ENV = "production"
-MAIL_FORWARD_TO = "ops@goldshore.ai"

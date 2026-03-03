@@ -2,11 +2,7 @@ import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import { cors } from "hono/cors";
 import { verifyAccessWithClaims } from "@goldshore/auth";
-import { 
-    RoutingTableSchema, 
-    ServiceStatusSchema, 
-    AiOrchestrationSchema 
-} from "@goldshore/schema";
+import { parseSystemSyncWritePayload } from "@goldshore/schema";
 
 import * as DNS from "./libs/dns";
 import * as Workers from "./libs/workers";
