@@ -18,8 +18,11 @@ jobs:
         run: |
           set -euo pipefail
           legacy_pattern='apps/(api-worker|control-worker|gateway)|Astro-'
-          if rg -n --glob '!naming-guard.yml' "$legacy_pattern" .github/workflows; then
-            echo "Legacy app path references found in active workflows."
+          matches=$(rg -n "$legacy_pattern" .github/workflows --glob '!naming-guard.yml' || true)
+
+          if [[ -n "$matches" ]]; then
+            echo "Legacy app path references found in active workflows:"
+            echo "$matches"
             exit 1
           fi
 
