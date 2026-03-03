@@ -10,3 +10,6 @@
 @import "./styles/components.css";
 @import "./styles/blueprint.css";
 @import "./styles/motion.css";
+@import "./styles/scroll.css";
+@import "./styles/edge-light.css";
+@import "./styles/pulsar.css";
