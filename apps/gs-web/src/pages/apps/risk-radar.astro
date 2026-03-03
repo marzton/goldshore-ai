@@ -1,17 +1,38 @@
 ---
-// Legacy route: keep `/apps/risk-radar` as a compatibility redirect to canonical `/risk-radar`.
-return Astro.redirect('/risk-radar', 301);
+import WebLayout from '../../layouts/WebLayout.astro';
+
+export const prerender = true;
+---
+
+<WebLayout title="Risk Radar | Gold Shore" description="Forthcoming operational threat visualization system.">
+  <section class="gs-section risk-radar blueprint-bg">
+    <div class="gs-container">
+      <h2>Risk Radar</h2>
+      <div class="gs-card">
+        <p>
+          A forthcoming operational visualization system designed to map systemic exposure and signal volatility in
+          real time.
+        </p>
+      </div>
+    </div>
+  </section>
+</WebLayout>
+// Legacy route: `/apps/risk-radar` is retained only to redirect to canonical `/risk-radar`.
+const target = '/risk-radar';
 ---
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="refresh" content="0;url=/risk-radar" />
-    <link rel="canonical" href="/risk-radar" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={target} />
     <title>Redirecting to Risk Radar…</title>
   </head>
   <body>
     <p>
-      This route has moved to <a href="/risk-radar">/risk-radar</a>.
+      This route has moved to <a href={target}>{target}</a>.
     </p>
+    <script is:inline>
+      window.location.replace('/risk-radar');
+    </script>
   </body>
 </html>
