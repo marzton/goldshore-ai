@@ -1,7 +1,23 @@
 import { Hono } from 'hono';
+import { EmailInboxLogsSchema, ServiceStatusSchema } from '@goldshore/schema';
+import { Env, Variables } from '../types';
 import { loadSystemSyncSnapshot } from './system.config';
 
-const internal = new Hono<{ Bindings: any }>();
+const internal = new Hono<{ Bindings: Env; Variables: Variables }>();
+
+const EMPTY_SERVICES = {
+  maintenance_mode: false,
+  active_services: [],
+  version: 'unknown'
+};
+
+const INTERNAL_ERROR_RESPONSE = {
+  success: false,
+  error: {
+    code: 'INTERNAL_INBOX_STATUS_ERROR',
+    message: 'Failed to retrieve internal inbox status'
+  }
+};
 
 /**
  * [SOP] Internal Status Endpoint
@@ -9,12 +25,18 @@ const internal = new Hono<{ Bindings: any }>();
  */
 internal.get('/inbox-status', async (c) => {
   try {
-    const snapshot = await loadSystemSyncSnapshot(c.env.KV);
+    const [rawLogs, rawStatus] = await Promise.all([
+      c.env.KV.get('EMAIL_INBOX_LOGS', 'json'),
+      c.env.KV.get('SERVICE_STATUS', 'json')
+    ]);
+
+    const logsResult = EmailInboxLogsSchema.safeParse(rawLogs);
+    const statusResult = ServiceStatusSchema.safeParse(rawStatus);
 
     return c.json({
       success: true,
       timestamp: new Date().toISOString(),
-      services: snapshot.SERVICE_STATUS,
+      services: statusResult.success ? statusResult.data : EMPTY_SERVICES,
       inbox: {
         count: snapshot.EMAIL_INBOX_LOGS.length,
         recent: snapshot.EMAIL_INBOX_LOGS.slice(0, 5),
@@ -28,8 +50,11 @@ internal.get('/inbox-status', async (c) => {
       },
     });
   } catch (error) {
-    console.error('Internal API Error:', error);
-    return c.json({ success: false, error: 'Failed to retrieve internal system state' }, 500);
+    console.error('[internal/inbox-status] failed to fetch KV data', error);
+    return c.json({
+      ...INTERNAL_ERROR_RESPONSE,
+      timestamp: new Date().toISOString()
+    }, 500);
   }
 });
 
