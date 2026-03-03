@@ -14,7 +14,6 @@ on:
       - ready_for_review
     paths:
       - "apps/gs-agent/**"
-      - "infra/cloudflare/gs-agent.wrangler.toml"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
