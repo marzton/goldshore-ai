@@ -1,28 +1,17 @@
-export type SystemConfig = {
-  maintenanceMode: boolean;
-  maxConcurrency: number;
-  notes: string;
-};
+import { Hono } from 'hono';
+import { RoutingTableSchema } from '@goldshore/schema';
+import { Env, Variables } from '../types';
 
-export const DEFAULT_CONFIG: SystemConfig = {
-  maintenanceMode: false,
-  maxConcurrency: 120,
-  notes: ""
-};
+const config = new Hono<{ Bindings: Env; Variables: Variables }>();
 
-export const CONFIG_KEY = "gs-api:config";
+config.get('/routing', async (c) => {
+  const table = await c.env.KV.get("ROUTING_TABLE", "json");
+  const result = RoutingTableSchema.safeParse(table);
+  
+  return c.json({
+    success: result.success,
+    data: result.success ? result.data : null
+  });
+});
 
-export const parseConfig = (input: Partial<SystemConfig> | null): SystemConfig => {
-  if (!input) {
-    return { ...DEFAULT_CONFIG };
-  }
-
-  return {
-    maintenanceMode: Boolean(input.maintenanceMode),
-    maxConcurrency:
-      typeof input.maxConcurrency === "number" && Number.isFinite(input.maxConcurrency)
-        ? Math.max(1, Math.floor(input.maxConcurrency))
-        : DEFAULT_CONFIG.maxConcurrency,
-    notes: typeof input.notes === "string" ? input.notes.slice(0, 500) : DEFAULT_CONFIG.notes
-  };
-};
+export default config;
