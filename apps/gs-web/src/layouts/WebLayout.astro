@@ -1,32 +1,25 @@
 ---
 import "@goldshore/theme";
-import '../styles/gs-effects.css';
-import '../styles/layout.css';
-import SiteNav from '../components/SiteNav.astro';
-import GlobalModal from '../components/GlobalModal.astro';
-
-
-const { title = 'Gold Shore', description = '' } = Astro.props;
+import { initGoldShoreUI } from "@goldshore/theme/runtime";
+import SiteNav from "../components/SiteNav.astro";
+import GlobalModal from "../components/GlobalModal.astro";
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
     <SiteNav />
-    <slot />
     <footer class="gs-footer">
-      <div class="gs-container gs-muted">Gold Shore — Designed not to manage capital, but to steer it.</div>
+      <p>Gold Shore — Designed not to manage capital, but to steer it. All rights reserved.</p>
+      <p><a href="/legal/privacy">Privacy Policy</a> | <a href="/legal/terms">Terms of Service</a></p>
     </footer>
 
     <GlobalModal />
 
-    <script>
+    <script is:inline>
       import { initGoldShoreUI } from "@goldshore/theme/runtime";
       initGoldShoreUI();
     </script>
