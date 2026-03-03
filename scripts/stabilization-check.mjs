@@ -59,10 +59,12 @@ const ALLOWED_ACTIONS = [
   'actions/ai-inference'
 ];
 
-let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
+// Tracking arrays are intentionally initialized before any section executes.
 const violations = [];
 const governanceViolations = [];
 const appLevelIssues = [];
+
+let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
 
 // 1. Governance Compliance Check
 report += `## 1. Governance Compliance Check\n\n`;

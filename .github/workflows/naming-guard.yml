@@ -19,10 +19,17 @@ jobs:
           legacy_pattern='apps/(api-worker|control-worker|gateway)|Astro-'
           mapfile -t workflow_files < <(find .github/workflows -maxdepth 1 -type f \( -name '*.yml' -o -name '*.yaml' \) ! -name 'naming-guard.yml')
 
-          if (( ${#workflow_files[@]} > 0 )) && rg -n "$legacy_pattern" "${workflow_files[@]}"; then
+          if (( ${#workflow_files[@]} == 0 )); then
+            echo "No workflow files found to validate."
+            exit 0
+          fi
+
+          if rg -n "$legacy_pattern" "${workflow_files[@]}"; then
             echo "Found forbidden legacy workflow references."
             exit 1
           fi
+
+          echo "No forbidden legacy workflow references found."
 
       - name: Block legacy workflow filenames from active workflow directory
         run: |
