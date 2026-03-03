@@ -67,7 +67,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
+        version: 4.65.0(@cloudflare/workers-types@4.20260301.1)
       yaml:
         specifier: ^2.8.2
         version: 2.8.2
@@ -116,14 +116,14 @@ importers:
         version: 4.12.3
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20260207.0
-        version: 4.20260214.0
+        specifier: ^4.20260301.1
+        version: 4.20260301.1
       typescript:
         specifier: ^5.4.2
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
+        version: 4.65.0(@cloudflare/workers-types@4.20260301.1)
 
   apps/gs-api:
     dependencies:
@@ -150,8 +150,8 @@ importers:
         version: 2.17.1
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20241106.0
-        version: 4.20260214.0
+        specifier: ^4.20260301.1
+        version: 4.20260301.1
       tsx:
         specifier: ^4.7.1
         version: 4.21.0
@@ -160,7 +160,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
+        version: 4.65.0(@cloudflare/workers-types@4.20260301.1)
 
   apps/gs-control:
     dependencies:
@@ -181,8 +181,8 @@ importers:
         version: 4.3.6
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20241106.0
-        version: 4.20260214.0
+        specifier: ^4.20260301.1
+        version: 4.20260301.1
       tsx:
         specifier: ^4.7.1
         version: 4.21.0
@@ -191,7 +191,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
+        version: 4.65.0(@cloudflare/workers-types@4.20260301.1)
 
   apps/gs-gateway:
     dependencies:
@@ -203,8 +203,8 @@ importers:
         version: 4.12.3
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20241106.0
-        version: 4.20260214.0
+        specifier: ^4.20260301.1
+        version: 4.20260301.1
       '@types/node':
         specifier: ^25.3.3
         version: 25.3.3
@@ -216,7 +216,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
+        version: 4.65.0(@cloudflare/workers-types@4.20260301.1)
 
   apps/gs-mail:
     dependencies:
@@ -228,14 +228,14 @@ importers:
         version: 2.7.3
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20241106.0
-        version: 4.20260214.0
+        specifier: ^4.20260301.1
+        version: 4.20260301.1
       typescript:
         specifier: ^5.4.2
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.65.0(@cloudflare/workers-types@4.20260214.0)
+        version: 4.65.0(@cloudflare/workers-types@4.20260301.1)
 
   apps/gs-web:
     dependencies:
@@ -429,6 +429,9 @@ packages:
 
   '@cloudflare/workers-types@4.20260214.0':
     resolution: {integrity: sha512-qb8rgbAdJR4BAPXolXhFL/wuGtecHLh1veOyZ1mK6QqWuCdI3vK1biKC0i3lzmzdLR/DZvsN3mNtpUE8zpWGEg==}
+
+  '@cloudflare/workers-types@4.20260301.1':
+    resolution: {integrity: sha512-klKnECMb5A4GtVF0P5NH6rCjtyjqIEKJaz6kEtx9YPHhfFO2HUEarO+MI4F8WPchgeZqpGlEpDhRapzrOTw51Q==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -1127,8 +1130,8 @@ packages:
   '@types/nlcst@2.0.3':
     resolution: {integrity: sha512-vSYNSDe6Ix3q+6Z7ri9lyWqgGhJTmzRjZRqyq15N0Z/1/UnVsno9G/N40NBijoYx2seFDIl0+B2mgAb9mezUCA==}
 
-  '@types/node@25.3.3':
-    resolution: {integrity: sha512-DpzbrH7wIcBaJibpKo9nnSQL0MTRdnWttGyE5haGwK86xgMOkFLp7vEyfQPGLOJh5wNYiJ3V9PmUMDhV9u8kkQ==}
+  '@types/node@25.2.3':
+    resolution: {integrity: sha512-m0jEgYlYz+mDJZ2+F4v8D1AyQb+QzsNqRuI7xg1VQX/KlKS0qT9r1Mo16yo5F/MtifXFgaofIFsdFMox2SxIbQ==}
 
   '@types/sanitize-html@2.16.0':
     resolution: {integrity: sha512-l6rX1MUXje5ztPT0cAFtUayXF06DqPhRyfVXareEN5gGCFaP/iwsxIyKODr9XDhfxPpN6vXUFNfo5kZMXCxBtw==}
@@ -3309,8 +3312,8 @@ snapshots:
       '@cloudflare/workers-types': 4.20260214.0
       astro: 5.18.0(@types/node@25.3.3)(jiti@1.21.7)(rollup@4.59.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
       tinyglobby: 0.2.15
-      vite: 6.4.1(@types/node@25.3.3)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
-      wrangler: 4.65.0(@cloudflare/workers-types@4.20260214.0)
+      vite: 6.4.1(@types/node@25.2.3)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
+      wrangler: 4.65.0(@cloudflare/workers-types@4.20260301.1)
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -3386,7 +3389,7 @@ snapshots:
     dependencies:
       prismjs: 1.30.0
 
-  '@astrojs/tailwind@6.0.2(astro@5.18.0(@types/node@25.3.3)(jiti@1.21.7)(rollup@4.59.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))':
+  '@astrojs/tailwind@6.0.2(astro@5.17.2(@types/node@25.2.3)(jiti@1.21.7)(rollup@4.57.1)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))':
     dependencies:
       astro: 5.18.0(@types/node@25.3.3)(jiti@1.21.7)(rollup@4.59.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
       autoprefixer: 10.4.24(postcss@8.5.6)
@@ -3455,6 +3458,8 @@ snapshots:
     optional: true
 
   '@cloudflare/workers-types@4.20260214.0': {}
+
+  '@cloudflare/workers-types@4.20260301.1': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -4042,7 +4047,7 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
-  '@types/node@25.3.3':
+  '@types/node@25.2.3':
     dependencies:
       undici-types: 7.18.2
 
@@ -6512,6 +6517,23 @@ snapshots:
       workerd: 1.20260212.0
     optionalDependencies:
       '@cloudflare/workers-types': 4.20260214.0
+      fsevents: 2.3.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  wrangler@4.65.0(@cloudflare/workers-types@4.20260301.1):
+    dependencies:
+      '@cloudflare/kv-asset-handler': 0.4.2
+      '@cloudflare/unenv-preset': 2.12.1(unenv@2.0.0-rc.24)(workerd@1.20260212.0)
+      blake3-wasm: 2.1.5
+      esbuild: 0.25.12
+      miniflare: 4.20260212.0
+      path-to-regexp: 6.3.0
+      unenv: 2.0.0-rc.24
+      workerd: 1.20260212.0
+    optionalDependencies:
+      '@cloudflare/workers-types': 4.20260301.1
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil
