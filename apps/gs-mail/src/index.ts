@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { EmailInboxLogsSchema, type EmailLog } from '../../../packages/schema/src/system.ts';
+import { EmailInboxLogsSchema, EmailLogSchema } from '../../packages/schema/src/system';
 
 /**
  * Combined Environment Interface
@@ -13,6 +13,13 @@ interface Env {
   GS_CONFIG: KVNamespace;
 }
 
+const VERSION = '2026.03.03-integrated-mail-persistent';
+const app = new Hono<{ Bindings: Env }>();
+const isEmailLike = (value: string) => /.+@.+\..+/.test(value);
+
+// --- Hono API Routes (Web Traffic) ---
+
+app.get('/', (c) => c.text('GoldShore Mail Worker - PERSISTENT ACTIVE'));
 const VERSION = '2026.03.03-mail-inbox-log';
 
 const app = new Hono<{ Bindings: Env }>();
@@ -59,6 +66,16 @@ app.get('/system/info', (c) =>
 
 export default {
   fetch: app.fetch,
+
+  async email(message: ForwardableEmailMessage, env: Env, ctx: ExecutionContext): Promise<void> {
+    const sender = message.from;
+    const recipient = message.to;
+    const subject = message.headers.get('subject') || 'No Subject';
+
+    // 1. Basic Filtering (Defense in Depth)
+    const blocked = env.MAIL_BLOCKED_SENDERS?.split(',').map(s => s.trim()) || [];
+    if (blocked.includes(sender)) {
+      message.setReject(`Sender ${sender} is blocked.`);
   async email(message: ForwardableEmailMessage, env: Env): Promise<void> {
     console.log(`Received email from ${message.from} to ${message.to}`);
 
@@ -100,6 +117,9 @@ export default {
       ctx.waitUntil(
         (async () => {
           try {
+            const rawLogs = await env.GS_CONFIG.get('EMAIL_INBOX_LOGS', 'json');
+            const parseResult = EmailInboxLogsSchema.safeParse(rawLogs);
+            const currentLogs = parseResult.success ? parseResult.data : [];
             const rawLogs = await env.GS_CONFIG.get('EMAIL_INBOX_LOGS');
             let currentLogs: Array<typeof validation.data> = [];
 
