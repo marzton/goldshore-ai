@@ -15,7 +15,7 @@ on:
       - "pnpm-lock.yaml"
 
 jobs:
-  deploy:
+  deploy-mail:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
