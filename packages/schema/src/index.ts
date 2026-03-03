@@ -4,7 +4,4 @@
  */
 
 export * from './system';
-
-// If you add more schema files later (e.g., 'user.ts' or 'ai.ts'), 
-// you would export them here as well.
-
+export * from './system-sync';

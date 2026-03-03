@@ -3,9 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "main": "./index.js",
-  "types": "./index.d.ts",
+  "types": "./src/index.ts",
   "scripts": {
     "dev": "echo 'schema dev'",
     "build": "echo 'schema build'"
+  },
+  "type": "module",
+  "dependencies": {
+    "zod": "^4.3.6"
   }
 }
