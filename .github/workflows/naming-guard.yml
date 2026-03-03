@@ -23,7 +23,7 @@ jobs:
             exit 1
           fi
 
-          echo "No legacy app path references found in active workflows."
+          echo "No legacy app path references found in active workflow files."
 
       - name: Block legacy workflow filenames from active workflow directory
         run: |

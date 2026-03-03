@@ -1,0 +1,148 @@
+:root{
+  --bg:#0b0e14;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --grid:#243041;
+  --cell:#0f172a;
+  --live: rgba(34,197,94,.35);
+  --active: rgba(59,130,246,.35);
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+}
+
+.header{
+  padding:14px;
+  border-bottom:1px solid var(--grid);
+}
+
+h1{ margin:0; font-size:18px; }
+
+.controls{
+  padding:12px 14px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  border-bottom:1px solid var(--grid);
+  flex-wrap:wrap;
+}
+
+select, button{
+  background:rgba(255,255,255,.05);
+  color:var(--text);
+  border:1px solid var(--grid);
+  border-radius:8px;
+  padding:6px 10px;
+  font-weight:600;
+}
+
+button{ cursor:pointer; }
+
+.liveStatus{
+  color:var(--muted);
+  font-size:12px;
+  margin-left:auto;
+}
+
+.board{
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.axis-x{
+  text-align:center;
+  font-weight:700;
+  letter-spacing:.5px;
+}
+
+.grid-row{
+  display:flex;
+  align-items:stretch;
+  gap:10px;
+}
+
+.axis-y{
+  width:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:transparent;
+  pointer-events:none;
+}
+
+.axis-y::before{
+  content: attr(data-text);
+  display:inline-block;
+  transform: rotate(-90deg);
+  transform-origin: center center;
+  color:var(--text);
+  font-weight:700;
+  white-space:nowrap;
+  letter-spacing:.5px;
+}
+
+.gridwrap{
+  overflow:auto;
+  border:1px solid var(--grid);
+  border-radius:12px;
+}
+
+table{
+  border-collapse:collapse;
+  min-width:820px;
+  width:100%;
+}
+
+th, td{
+  border:1px solid var(--grid);
+  padding:8px;
+  text-align:center;
+  font-size:12px;
+}
+
+th{
+  background:var(--cell);
+  position:sticky;
+  top:0;
+  z-index:2;
+}
+
+td.rowhdr{
+  background:var(--cell);
+  position:sticky;
+  left:0;
+  z-index:1;
+  font-weight:700;
+}
+
+td.live{
+  background:var(--live);
+}
+
+td.active{
+  background:var(--active);
+  font-weight:800;
+}
+
+@media print{
+  @page { size: landscape; margin: 12mm; }
+
+  body * { visibility:hidden !important; }
+
+  #grid, #grid * { visibility:visible !important; }
+
+  #grid{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100% !important;
+  }
+
+  th, td{ position:static !important; }
+}
