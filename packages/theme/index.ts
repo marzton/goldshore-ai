@@ -1,5 +1,4 @@
 import { initTiltPanels } from "./runtime/tilt";
-
 export function initGoldShoreUI() {
   initNav();
   initModal();
@@ -7,6 +6,7 @@ export function initGoldShoreUI() {
   initTiltPanels();
   document.documentElement.classList.add("gs-motion-ready");
   initReveal();
+  initTiltPanels();
 }
 
 function initNav() {
