@@ -7,3 +7,6 @@
 @import "./styles/scroll.css";
 @import "./styles/edge-light.css";
 @import "./styles/pulsar.css";
+
+/* Motion++ progressive enhancement */
+@import "./styles/motion++.css";
