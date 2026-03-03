@@ -59,6 +59,10 @@ const ALLOWED_ACTIONS = [
   'actions/ai-inference'
 ];
 
+// Keep issue lists in module scope so all checks (including scheduled runs) and final
+// exit logic can safely reference them without hitting a ReferenceError.
+const appLevelIssues = [];
+
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
 // Keep governance issues in one dedicated list so they can be reported and used for exit status.
 const governanceViolations = [];
@@ -66,8 +70,6 @@ const recordGovernanceViolation = (title, message) => {
   governanceViolations.push(message);
   report += `### ❌ ${title}:\n- ${message}\n\n`;
 };
-// Keep issue lists in module scope so checks and final exit logic share them.
-const appLevelIssues = [];
 
 // 1. Governance Compliance Check
 report += `## 1. Governance Compliance Check\n\n`;
