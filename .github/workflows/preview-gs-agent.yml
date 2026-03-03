@@ -20,7 +20,7 @@ on:
       - "pnpm-lock.yaml"
 
 jobs:
-  deploy-preview-agent:
+  preview-agent:
     runs-on: ubuntu-latest
     if: |
       contains(github.event.pull_request.labels.*.name, 'preview') ||

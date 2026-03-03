@@ -14,7 +14,7 @@ on:
       - "pnpm-lock.yaml"
 
 jobs:
-  deploy:
+  deploy-api:
     runs-on: ubuntu-latest
     name: Deploy
     steps:
