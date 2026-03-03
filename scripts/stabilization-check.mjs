@@ -60,7 +60,12 @@ const ALLOWED_ACTIONS = [
 ];
 
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
+// Keep governance issues in one dedicated list so they can be reported and used for exit status.
 const governanceViolations = [];
+const recordGovernanceViolation = (title, message) => {
+  governanceViolations.push(message);
+  report += `### ❌ ${title}:\n- ${message}\n\n`;
+};
 // Keep issue lists in module scope so checks and final exit logic share them.
 const appLevelIssues = [];
 
@@ -74,8 +79,7 @@ try {
 
   if (forbiddenApps.length > 0) {
     const msg = `Forbidden directories detected in apps/: ${forbiddenApps.join(', ')}`;
-    governanceViolations.push(msg);
-    report += `### ❌ App Structure Violation:\n- ${msg}\n\n`;
+    recordGovernanceViolation('App Structure Violation', msg);
   } else {
     report += `✅ Directory structure compliant.\n\n`;
   }
@@ -91,8 +95,7 @@ try {
 
   if (newScripts.length > 0) {
      const msg = `New scripts detected in root package.json: ${newScripts.join(', ')}`;
-     governanceViolations.push(msg);
-     report += `### ❌ Build Script Violation:\n- ${msg}\n\n`;
+     recordGovernanceViolation('Build Script Violation', msg);
   } else {
     report += `✅ Root build scripts compliant.\n\n`;
   }
@@ -108,8 +111,7 @@ try {
 
   if (newWorkflows.length > 0) {
     const msg = `New workflows detected: ${newWorkflows.join(', ')}`;
-    governanceViolations.push(msg);
-    report += `### ❌ Workflow Violation (New Files):\n- ${msg}\n\n`;
+    recordGovernanceViolation('Workflow Violation (New Files)', msg);
   } else {
     report += `✅ Workflow file list compliant.\n\n`;
   }
@@ -125,8 +127,7 @@ try {
 
     if (suspiciousModifications.length > 0) {
        const msg = `Workflows modified in last 13h: ${suspiciousModifications.join(', ')}`;
-       governanceViolations.push(msg);
-       report += `### ❌ Workflow Violation (Recent Changes):\n- ${msg}\n\n`;
+       recordGovernanceViolation('Workflow Violation (Recent Changes)', msg);
     } else {
         report += `✅ No recent unauthorized workflow modifications.\n\n`;
     }
@@ -156,8 +157,7 @@ try {
      // Dedup
      unauthorizedActions = [...new Set(unauthorizedActions)];
      const msg = `Unauthorized CI Actions detected: ${unauthorizedActions.join(', ')}`;
-     governanceViolations.push(msg);
-     report += `### ❌ CI Action Violation:\n- ${msg}\n\n`;
+     recordGovernanceViolation('CI Action Violation', msg);
   } else {
     report += `✅ CI Actions compliant.\n\n`;
   }
