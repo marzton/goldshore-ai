@@ -1,60 +1,36 @@
 import { Hono } from 'hono';
-import { EmailInboxLogsSchema, ServiceStatusSchema } from '@goldshore/schema';
-import { Env, Variables } from '../types';
-import { loadSystemSyncSnapshot } from './system.config';
+import { EmailInboxLogsSchema, ServiceStatusSchema } from '../../../../packages/schema/src/system.ts';
 
-const internal = new Hono<{ Bindings: Env; Variables: Variables }>();
+const internal = new Hono<{ Bindings: SystemEnv }>();
 
-const EMPTY_SERVICES = {
-  maintenance_mode: false,
-  active_services: [],
-  version: 'unknown'
-};
-
-const INTERNAL_ERROR_RESPONSE = {
-  success: false,
-  error: {
-    code: 'INTERNAL_INBOX_STATUS_ERROR',
-    message: 'Failed to retrieve internal inbox status'
-  }
-};
-
-/**
- * [SOP] Internal Status Endpoint
- * Aggregates system health and mail logs for the Admin Dashboard.
- */
 internal.get('/inbox-status', async (c) => {
   try {
     const [rawLogs, rawStatus] = await Promise.all([
-      c.env.KV.get('EMAIL_INBOX_LOGS', 'json'),
-      c.env.KV.get('SERVICE_STATUS', 'json')
+      c.env.KV.get('EMAIL_INBOX_LOGS', 'text'),
+      c.env.KV.get('SERVICE_STATUS', 'text'),
     ]);
 
-    const logsResult = EmailInboxLogsSchema.safeParse(rawLogs);
-    const statusResult = ServiceStatusSchema.safeParse(rawStatus);
+    const parsedLogs = rawLogs ? JSON.parse(rawLogs) : [];
+    const parsedStatus = rawStatus ? JSON.parse(rawStatus) : {};
+
+    const logsResult = EmailInboxLogsSchema.safeParse(parsedLogs);
+    const statusResult = ServiceStatusSchema.partial().safeParse(parsedStatus);
+
+    const logs = logsResult.success ? logsResult.data : [];
+    const services = statusResult.success ? statusResult.data : {};
 
     return c.json({
       success: true,
       timestamp: new Date().toISOString(),
-      services: statusResult.success ? statusResult.data : EMPTY_SERVICES,
+      services,
       inbox: {
-        count: snapshot.EMAIL_INBOX_LOGS.length,
-        recent: snapshot.EMAIL_INBOX_LOGS.slice(0, 5),
-      },
-      routing: {
-        hostCount: Object.keys(snapshot.ROUTING_TABLE).length,
-      },
-      orchestration: {
-        preferredModel: snapshot.AI_ORCHESTRATION.preferred_model,
-        queueConcurrency: snapshot.AI_ORCHESTRATION.queue_concurrency,
+        count: logs.length,
+        recent: logs.slice(0, 5),
       },
     });
   } catch (error) {
-    console.error('[internal/inbox-status] failed to fetch KV data', error);
-    return c.json({
-      ...INTERNAL_ERROR_RESPONSE,
-      timestamp: new Date().toISOString()
-    }, 500);
+    console.error('Failed to retrieve inbox logs', error);
+    return c.json({ success: false, error: 'Failed to retrieve inbox logs' }, 500);
   }
 });
 
