@@ -36,12 +36,11 @@ app.post('/webhook', async (c) => {
 
 export default {
   fetch: app.fetch,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async email(message: EmailMessage, _env: Env, _ctx: ExecutionContext): Promise<void> {
+  async email(message: EmailMessage, env: Env): Promise<void> {
     // Basic email handler scaffolding
     console.log(`Received email from ${message.from} to ${message.to}`);
 
-    const forwardTo = _env.MAIL_FORWARD_TO?.trim();
+    const forwardTo = env.MAIL_FORWARD_TO?.trim();
     if (!forwardTo || !isEmailLike(forwardTo)) {
       message.setReject('Mail forwarding is not configured.');
       return;
