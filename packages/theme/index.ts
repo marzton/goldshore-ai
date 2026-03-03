@@ -87,6 +87,7 @@ function getModalTemplate(variant: string): string {
     `;
   }
 
+  // default: subscribe
   return `
     <div class="gs-modal-head">
       <div class="gs-kicker">Signal Brief</div>
@@ -103,40 +104,17 @@ function getModalTemplate(variant: string): string {
 }
 
 function initParallax() {
-  const root = document.documentElement;
-  const hero = document.querySelector<HTMLElement>('[data-gs-hero]');
-  const layers =
-    hero?.querySelectorAll<HTMLElement>('[data-gs-parallax]') ?? [];
-  let scrollBound = false;
-  let pointerBound = false;
+  const hero = document.querySelector<HTMLElement>("[data-gs-hero]");
+  if (!hero) return;
 
-  let heroRect: { left: number; top: number; width: number; height: number } | null = null;
+  const layers = hero.querySelectorAll<HTMLElement>("[data-gs-parallax]");
+  if (!layers.length) return;
 
-  const updateRect = () => {
-    if (!hero) return;
-    const r = hero.getBoundingClientRect();
-    heroRect = {
-      left: r.left + window.scrollX,
-      top: r.top + window.scrollY,
-      width: r.width,
-      height: r.height,
-    };
-  };
-
-  const onScroll = () => {
-    const y = window.scrollY || 0;
-    root.style.setProperty("--gs-parallax", `${y * -0.15}px`);
-  };
-
-  onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
-
+  // pointer parallax (very subtle)
   const onMove = (e: PointerEvent) => {
-    if (!heroRect) updateRect();
-    if (!heroRect) return;
-
-    const px = (e.pageX - heroRect.left) / heroRect.width - 0.5;
-    const py = (e.pageY - heroRect.top) / heroRect.height - 0.5;
+    const r = hero.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
 
     layers.forEach((layer) => {
       const depth = Number(layer.getAttribute("data-gs-parallax")) || 1;
@@ -146,136 +124,9 @@ function initParallax() {
     });
   };
 
+  // reduced motion guard
   const rm = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
   if (!rm) hero.addEventListener("pointermove", onMove);
-  const resetParallax = () => {
-    root.style.setProperty('--gs-parallax', '0px');
-    layers.forEach((layer) => {
-      layer.style.transform = 'translate3d(0px, 0px, 0px)';
-    });
-  };
-
-  const disableParallax = () => {
-    if (scrollBound) {
-      window.removeEventListener('scroll', onScroll);
-      scrollBound = false;
-    }
-
-    window.removeEventListener('resize', updateRect);
-
-    if (pointerBound && hero) {
-      hero.removeEventListener('pointermove', onMove);
-      pointerBound = false;
-    }
-
-    resetParallax();
-  };
-
-  const enableParallax = () => {
-    if (!scrollBound) {
-      window.addEventListener('scroll', onScroll, { passive: true });
-      scrollBound = true;
-    }
-
-    onScroll();
-    window.addEventListener('resize', updateRect, { passive: true });
-
-    if (!pointerBound && hero && layers.length) {
-      hero.addEventListener('pointermove', onMove);
-      pointerBound = true;
-    }
-  };
-
-  syncMotion(enableParallax, disableParallax);
-}
-
-function initTilt() {
-  const cards = document.querySelectorAll<HTMLElement>(".gs-tilt");
-  if (!cards.length) return;
-
-  const isFine = window.matchMedia?.("(pointer:fine)")?.matches;
-  if (!isFine) return;
-
-  const listeners = new Map<
-    HTMLElement,
-    {
-      onMove: (e: PointerEvent) => void;
-      reset: () => void;
-      updateRect: () => void;
-    }
-  >();
-
-  const resetTilt = () => {
-    cards.forEach((el) => {
-      el.style.setProperty('--tiltX', '0deg');
-      el.style.setProperty('--tiltY', '0deg');
-    });
-  };
-
-  const disableTilt = () => {
-    cards.forEach((el) => {
-      const bound = listeners.get(el);
-      if (!bound) return;
-
-      el.removeEventListener('pointermove', bound.onMove);
-      el.removeEventListener('pointerleave', bound.reset);
-      window.removeEventListener('resize', bound.updateRect);
-      listeners.delete(el);
-    });
-
-    resetTilt();
-  };
-
-  const enableTilt = () => {
-    cards.forEach((el) => {
-      if (listeners.has(el)) return;
-
-      const max = 7;
-      let rafId: number | null = null;
-      let pendingEvent: PointerEvent | null = null;
-
-      const process = () => {
-        if (!pendingEvent) {
-          rafId = null;
-          return;
-        }
-
-        const r = el.getBoundingClientRect();
-        const e = pendingEvent;
-        const px = (e.clientX - r.left) / r.width;
-        const py = (e.clientY - r.top) / r.height;
-        const tiltY = (px - 0.5) * (max * 2);
-        const tiltX = (0.5 - py) * (max * 2);
-        el.style.setProperty('--tiltX', `${tiltX.toFixed(2)}deg`);
-        el.style.setProperty('--tiltY', `${tiltY.toFixed(2)}deg`);
-
-        rafId = null;
-      };
-
-      const onMove = (e: PointerEvent) => {
-        pendingEvent = e;
-        if (rafId === null) {
-          rafId = requestAnimationFrame(process);
-        }
-      };
-
-      const reset = () => {
-        if (rafId !== null) {
-          cancelAnimationFrame(rafId);
-          rafId = null;
-        }
-        pendingEvent = null;
-        el.style.setProperty('--tiltX', '0deg');
-        el.style.setProperty('--tiltY', '0deg');
-      };
-
-      listeners.set(el, { onMove, reset, updateRect: () => {} });
-      el.addEventListener('pointermove', onMove);
-      el.addEventListener('pointerleave', reset);
-    });
-  };
-
-  syncMotion(enableTilt, disableTilt);
 }
 
 function initReveal() {
@@ -298,26 +149,4 @@ function initReveal() {
   );
 
   els.forEach((el) => io.observe(el));
-}
-
-
-function prefersReducedMotion() {
-  return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
-}
-
-function onReducedMotionChange(cb: (reduce: boolean) => void) {
-  window.matchMedia?.("(prefers-reduced-motion: reduce)")?.addEventListener("change", (e) => cb(e.matches));
-}
-
-function syncMotion(enable: () => void, disable: () => void) {
-  const sync = (reduceMotion: boolean) => {
-    if (reduceMotion) {
-      disable();
-    } else {
-      enable();
-    }
-  };
-
-  sync(prefersReducedMotion());
-  onReducedMotionChange(sync);
 }
