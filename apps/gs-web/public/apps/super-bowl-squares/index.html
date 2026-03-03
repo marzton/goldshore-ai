@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Super Bowl Squares</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="header">
+  <h1>Super Bowl Squares</h1>
+</header>
+
+<div class="controls">
+  <select id="personSelect">
+    <option value="">— Select name —</option>
+  </select>
+
+  <button id="rotateBtn">Rotate Axes</button>
+  <button id="pdfBtn">Export PDF</button>
+
+  <span id="liveStatus" class="liveStatus">LIVE: not connected</span>
+</div>
+
+<div class="board">
+  <div id="xLabel" class="axis-x">New England Patriots</div>
+
+  <div class="grid-row">
+    <div id="yLabel" class="axis-y" data-text="Seattle Seahawks"></div>
+
+    <div class="gridwrap">
+      <table id="grid"></table>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
