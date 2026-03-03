@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { EmailInboxLogsSchema, EmailLogSchema } from '../../packages/schema/src/system';
+import { EmailInboxLogsSchema, EmailLogSchema } from '../../../packages/schema/src/system';
 
 /**
  * Combined Environment Interface
@@ -70,9 +70,22 @@ export default {
       ctx.waitUntil(
         (async () => {
           try {
-            const rawLogs = await env.GS_CONFIG.get('EMAIL_INBOX_LOGS', 'json');
-            const parseResult = EmailInboxLogsSchema.safeParse(rawLogs);
-            const currentLogs = parseResult.success ? parseResult.data : [];
+            const rawLogs = await env.GS_CONFIG.get('EMAIL_INBOX_LOGS');
+            let currentLogs: Array<typeof validation.data> = [];
+
+            if (rawLogs) {
+              try {
+                const parsedLogs = JSON.parse(rawLogs);
+                const parseResult = EmailInboxLogsSchema.safeParse(parsedLogs);
+                if (parseResult.success) {
+                  currentLogs = parseResult.data;
+                } else {
+                  console.error('❌ Existing EMAIL_INBOX_LOGS payload failed schema validation:', parseResult.error);
+                }
+              } catch (err) {
+                console.error('❌ Failed to parse EMAIL_INBOX_LOGS payload:', err);
+              }
+            }
 
             // Prepend and truncate to 100 per SOP
             const updatedLogs = [validation.data, ...currentLogs].slice(0, 100);

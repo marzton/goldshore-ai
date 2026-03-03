@@ -8,7 +8,8 @@
     "deploy": "wrangler deploy",
     "build": "wrangler deploy --dry-run --outdir=dist",
     "lint": "eslint src/**",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/*.test.ts"
   },
   "dependencies": {
     "hono": "^4.12.3",
