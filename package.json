@@ -22,7 +22,8 @@
     "workspaces:list": "pnpm -r list --depth -1",
     "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry && turbo run build --filter=@goldshore/gs-control --dry",
     "verify:web-dist": "node scripts/verify-web-dist.mjs",
-    "memory:check": "node scripts/validate-canonical-structure.mjs"
+    "memory:check": "node scripts/validate-canonical-structure.mjs",
+    "sync:infra": "tsx scripts/sync-gateway.ts"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
@@ -42,7 +43,8 @@
     "tsx": "^4.21.0",
     "typescript": "^5.4.2",
     "wrangler": "^4.63.0",
-    "yaml": "^2.8.2"
+    "yaml": "^2.8.2",
+    "zod": "^3.25.76"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
