@@ -12,12 +12,13 @@ const MASTER_CONFIG: MasterConfig = {
     'gateway.goldshore.ai': { role: 'ingress', worker: 'gs-gateway' },
     'agent.goldshore.ai': { role: 'alias', target: 'gateway.goldshore.ai' },
     'api.goldshore.ai': { role: 'backend', worker: 'gs-api' },
+    'agent.internal.goldshore.ai': { role: 'backend', worker: 'gs-agent' },
     'admin.goldshore.ai': { role: 'frontend', project: 'gs-admin-pages' },
     'mail.goldshore.ai': { role: 'mx-only', provider: 'cloudflare-email' },
   },
   SERVICE_STATUS: {
     maintenance_mode: false,
-    active_services: ['gateway', 'api', 'agent', 'admin'],
+    active_services: ['gs-gateway', 'gs-api', 'gs-agent', 'gs-admin'],
   },
   AI_ORCHESTRATION: {
     preferred_model: 'gpt-4-turbo',
@@ -133,13 +134,15 @@ const payload: ConfigPayload = {
   ROUTING_TABLE: {
     api: { role: "backend", worker: "gs-api", priority: 1 },
     gateway: { role: "ingress", worker: "gs-gateway", priority: 1 },
+    agent: { role: "backend", worker: "gs-agent", priority: 1 },
+    "agent.goldshore.ai": { role: "alias", target: "gateway", priority: 1 },
     admin: { role: "frontend", project: "gs-admin", priority: 1 },
     web: { role: "frontend", project: "gs-web", priority: 1 },
     mail: { role: "mx-only", target: "gs-mail", priority: 1 },
   },
   SERVICE_STATUS: {
     maintenance_mode: false,
-    active_services: ["gs-api", "gs-gateway", "gs-mail", "gs-web", "gs-admin"],
+    active_services: ["gs-api", "gs-gateway", "gs-agent", "gs-mail", "gs-web", "gs-admin"],
     version: "2026-03-03",
     last_sync: new Date().toISOString(),
   },
