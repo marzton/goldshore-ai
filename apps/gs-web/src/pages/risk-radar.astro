@@ -1,0 +1,72 @@
+---
+import WebLayout from '../../layouts/WebLayout.astro';
+
+export const prerender = true;
+
+// Mock data representing systemic exposure levels
+const risks = [
+  { ID: "CI-01", Label: "Workflow Governance", Exposure: 12, Status: "Stable" },
+  { ID: "SEC-04", Label: "PII Leakage", Exposure: 45, Status: "Monitoring" },
+  { ID: "OPS-09", Label: "Branch Divergence", Exposure: 82, Status: "Critical" }
+];
+---
+
+<WebLayout title="Risk Radar | Gold Shore" description="Operational threat visualization system.">
+  <section class="gs-section risk-radar blueprint-bg min-h-screen">
+    <div class="gs-container py-12">
+      <header class="mb-12">
+        <h2 class="text-5xl font-bold gs-heading mb-4">Risk Radar</h2>
+        <p class="text-xl text-[var(--gs-text-secondary)] max-w-2xl">
+          Systemic exposure mapping and signal volatility monitoring in real time.
+        </p>
+      </header>
+
+      
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="gs-card bg-black p-8 rounded-3xl border border-[var(--gs-border-primary)] flex items-center justify-center min-h-[400px]">
+          <div class="radar-ping"></div>
+          <p class="text-blue-400 font-mono animate-pulse">Scanning Operational Perimeter...</p>
+        </div>
+
+        <div class="gs-card p-6 rounded-3xl border border-[var(--gs-border-primary)] bg-white">
+          <h3 class="text-lg font-bold mb-6">Exposure Registry</h3>
+          <div class="space-y-4">
+            {risks.map(risk => (
+              <div class="flex items-center justify-between p-4 rounded-xl bg-[var(--gs-bg-tertiary)] border border-[var(--gs-border-primary)]">
+                <div>
+                  <span class="text-xs font-mono text-gray-400">{risk.ID}</span>
+                  <p class="font-bold">{risk.Label}</p>
+                </div>
+                <div class="text-right">
+                  <div class="h-2 w-24 bg-gray-200 rounded-full mb-1">
+                    <div class="h-full bg-blue-600 rounded-full" style={`width: ${risk.Exposure}%`}></div>
+                  </div>
+                  <span class={`text-xs font-bold uppercase ${risk.Status === 'Critical' ? 'text-red-500' : 'text-emerald-500'}`}>{risk.Status}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</WebLayout>
+
+<style>
+  .blueprint-bg {
+    background-image: radial-gradient(var(--gs-border-primary) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .radar-ping {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 50%;
+    animation: ping 4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  @keyframes ping {
+    75%, 100% { transform: scale(2); opacity: 0; }
+  }
+</style>

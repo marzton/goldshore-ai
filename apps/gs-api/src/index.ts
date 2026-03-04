@@ -2,7 +2,6 @@ import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
 import { verifyAccessWithClaims, type AccessTokenPayload } from '@goldshore/auth';
-import { verifyAccess } from '@goldshore/auth';
 import users from './routes/users';
 import health from './routes/health';
 import ai from './routes/ai';
@@ -12,11 +11,14 @@ import templates from './routes/templates';
 import admin from './routes/admin';
 import media from './routes/media';
 import pages from './routes/pages';
+import internal from './routes/internal';
 
 type Env = {
   KV: KVNamespace;
+  CONTROL_LOGS?: KVNamespace;
   DB: D1Database;
   ASSETS: R2Bucket;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   AI: any;
   OPENAI_API_KEY?: string;
   GEMINI_API_KEY?: string;
@@ -24,6 +26,7 @@ type Env = {
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
   // Sentinel: Added support for dynamic team domain
   CLOUDFLARE_TEAM_DOMAIN?: string;
+  CONTROL_SYNC_TOKEN?: string;
 };
 
 const app = new Hono<{ Bindings: Env; Variables: { accessClaims: AccessTokenPayload | null } }>();
@@ -38,9 +41,6 @@ const ALLOWED_ORIGIN_PATTERNS = [
 const isAllowedOrigin = (origin: string) => {
   return ALLOWED_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin));
 };
-};
-
-const app = new Hono<{ Bindings: Env }>();
 
 // Sentinel: Security Middleware
 app.use('*', secureHeaders());
@@ -52,10 +52,6 @@ app.use('*', cors({
   allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
   exposeHeaders: ['Content-Length'],
   credentials: true,
-  origin: '*',
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
-  exposeHeaders: ['Content-Length'],
   maxAge: 600,
 }));
 
@@ -68,16 +64,21 @@ app.use('*', async (c, next) => {
     return;
   }
 
+  if (c.req.path === '/internal/sync-runs' && c.req.method === 'POST') {
+    const controlToken = c.req.header('x-control-sync-token');
+    if (controlToken && c.env.CONTROL_SYNC_TOKEN && controlToken === c.env.CONTROL_SYNC_TOKEN) {
+      c.set('accessClaims', null);
+      await next();
+      return;
+    }
+  }
+
   // Verify Cloudflare Access JWT
   const claims = await verifyAccessWithClaims(c.req.raw, c.env);
   if (!claims) {
     return c.json({ error: 'Unauthorized' }, 401);
   }
   c.set('accessClaims', claims);
-  const authorized = await verifyAccess(c.req.raw, c.env);
-  if (!authorized) {
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
   await next();
 });
 
@@ -122,6 +123,7 @@ app.route('/templates', templates);
 app.route('/admin', admin);
 app.route('/media', media);
 app.route('/pages', pages);
+app.route('/internal', internal);
 
 // V1 Routes
 const v1 = new Hono<{ Bindings: Env }>();

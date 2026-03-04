@@ -1,23 +1,11 @@
 {
   "name": "@goldshore/theme",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
-  "main": "index.css",
-  "files": [
-    "*.css",
-    "src/styles/*.css",
-    "src/*.ts",
-    "assets/*"
-  ],
   "exports": {
     ".": "./index.css",
-    "./tokens": "./src/styles/tokens.css",
-    "./styles/tokens": "./src/styles/tokens.css",
-    "./styles/base": "./src/styles/base.css",
-    "./styles/components": "./src/styles/components.css",
-    "./styles/layout": "./src/styles/layout.css",
-    "./manager": "./src/theme-manager.ts",
-    "./assets/logo.svg": "./assets/logo.svg"
+    "./runtime": "./index.ts",
+    "./manager": "./src/manager.ts"
   }
 }
