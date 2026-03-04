@@ -8,6 +8,120 @@ import { z } from 'zod';
 const DEFAULT_ACCOUNT_ID = 'f77de112d2019e5456a3198a8bb50bd2';
 const DEFAULT_NAMESPACE_ID = '9cc2209906a94851b704be57543987a9';
 
+const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
+const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID ?? DEFAULT_ACCOUNT_ID;
+const NAMESPACE_ID = process.env.GS_KV_NAMESPACE_ID ?? DEFAULT_NAMESPACE_ID;
+
+const MASTER_CONFIG: MasterConfig = {
+  ROUTING_TABLE: {
+    'gateway.goldshore.ai': { role: 'ingress', worker: 'gs-gateway' },
+    'agent.goldshore.ai': { role: 'alias', target: 'gateway.goldshore.ai' },
+    'api.goldshore.ai': { role: 'backend', worker: 'gs-api' },
+    'agent.internal.goldshore.ai': { role: 'backend', worker: 'gs-agent' },
+    'admin.goldshore.ai': { role: 'frontend', project: 'gs-admin-pages' },
+    'mail.goldshore.ai': { role: 'mx-only', provider: 'cloudflare-email' },
+  },
+  SERVICE_STATUS: {
+    maintenance_mode: false,
+    active_services: ['gs-gateway', 'gs-api', 'gs-agent', 'gs-admin'],
+  },
+  AI_ORCHESTRATION: {
+    preferred_model: 'gpt-4-turbo',
+    agent_modules: ['operator-assist', 'market-intel'],
+    queue_concurrency: 10,
+  },
+};
+
+function assertEnvironment(): void {
+  if (!CLOUDFLARE_API_TOKEN) {
+    throw new Error('CLOUDFLARE_API_TOKEN is required.');
+  }
+}
+
+async function syncConfig(config: MasterConfig): Promise<void> {
+  console.log('🚀 Starting GoldShore System Sync...');
+
+  for (const [key, value] of Object.entries(config)) {
+    const url = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/workers/kv/namespaces/${NAMESPACE_ID}/values/${key}`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(value),
+      });
+
+      if (response.ok) {
+        console.log(`✅ ${key} synchronized successfully.`);
+      } else {
+        const error = await response.text();
+        console.error(`❌ Failed to sync ${key}: ${error}`);
+      }
+    } catch (error) {
+      console.error(`🚨 Network Error syncing ${key}:`, error);
+    }
+  }
+}
+
+async function runFinalVerification(): Promise<void> {
+  console.log('\n📬 Checking /internal/inbox-status...');
+  try {
+    const finalVerify = await fetch('https://api.goldshore.ai/internal/inbox-status');
+    const data = await finalVerify.json() as { success?: boolean; inbox?: { count?: number } };
+
+    if (data.success) {
+      console.log(`🎉 SYSTEM ONLINE: ${data.inbox?.count ?? 0} emails logged in KV.`);
+    } else {
+      console.error('⚠️ SYSTEM PARTIAL: API is up but KV logs are inaccessible.');
+    }
+  } catch (error) {
+    console.error('⚠️ Final verification failed due to network/auth issue:', error);
+import { z } from "zod";
+
+type ConfigKey = "ROUTING_TABLE" | "SERVICE_STATUS" | "AI_ORCHESTRATION";
+
+const RoutingTargetSchema = z
+  .object({
+    role: z.enum(["ingress", "alias", "backend", "frontend", "mx-only"]),
+    worker: z.string().min(1).optional(),
+    target: z.string().min(1).optional(),
+    project: z.string().min(1).optional(),
+    priority: z.number().int().min(1).default(1),
+  })
+  .strict();
+
+const RoutingTableSchema = z.record(z.string().min(1), RoutingTargetSchema);
+
+const ServiceStatusSchema = z
+  .object({
+    maintenance_mode: z.boolean().default(false),
+    active_services: z.array(z.string().min(1)).min(1),
+    version: z.string().min(1),
+    last_sync: z.string().datetime().optional(),
+  })
+  .strict();
+
+const AiProviderConfigSchema = z
+  .object({
+    provider: z.enum(["openai", "anthropic", "google", "cloudflare-ai"]),
+    model: z.string().min(1),
+    enabled: z.boolean().default(true),
+    priority: z.number().int().min(1),
+  })
+  .strict();
+
+const AiOrchestrationSchema = z
+  .object({
+    default_provider: z.string().min(1),
+    providers: z.array(AiProviderConfigSchema).min(1),
+    fallback_chain: z.array(z.string().min(1)).min(1),
+    max_retries: z.number().int().min(0).max(10).default(2),
+  })
+  .strict();
+
 const ConfigPayloadSchema = z
   .object({
     ROUTING_TABLE: RoutingTableSchema,
@@ -33,18 +147,18 @@ type SyncLedger = z.infer<typeof SyncLedgerSchema>;
 
 const MASTER_CONFIG: ConfigPayload = {
   ROUTING_TABLE: {
-    'gw.goldshore.ai': { role: 'ingress', worker: 'gs-gateway', priority: 1 },
-    'gateway.goldshore.ai': { role: 'ingress', worker: 'gs-gateway', priority: 2 },
-    'agent.goldshore.ai': { role: 'alias', target: 'gw.goldshore.ai', priority: 1 },
-    'api.goldshore.ai': { role: 'backend', worker: 'gs-api', priority: 1 },
-    'admin.goldshore.ai': { role: 'frontend', project: 'gs-admin-pages', priority: 1 },
-    'mail.goldshore.ai': { role: 'mx-only', target: 'cloudflare-email', priority: 1 },
-    'ops.goldshore.ai': { role: 'backend', worker: 'gs-control', priority: 1 },
+    api: { role: "backend", worker: "gs-api", priority: 1 },
+    gateway: { role: "ingress", worker: "gs-gateway", priority: 1 },
+    agent: { role: "backend", worker: "gs-agent", priority: 1 },
+    "agent.goldshore.ai": { role: "alias", target: "gateway", priority: 1 },
+    admin: { role: "frontend", project: "gs-admin", priority: 1 },
+    web: { role: "frontend", project: "gs-web", priority: 1 },
+    mail: { role: "mx-only", target: "gs-mail", priority: 1 },
   },
   SERVICE_STATUS: {
     maintenance_mode: false,
-    active_services: ['gs-gateway', 'gs-api', 'gs-agent', 'gs-admin', 'gs-mail', 'gs-control'],
-    version: '2026-03-03',
+    active_services: ["gs-api", "gs-gateway", "gs-agent", "gs-mail", "gs-web", "gs-admin"],
+    version: "2026-03-03",
     last_sync: new Date().toISOString(),
   },
   AI_ORCHESTRATION: {
