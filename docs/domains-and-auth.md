@@ -6,10 +6,10 @@ This document captures the Cloudflare Access applications and policies that prot
 
 ## Access applications and policies
 
-| Access application | Policy name | Domain coverage | Notes |
-| --- | --- | --- | --- |
-| GoldShore Admin | GoldShore-Admin-ZT | `admin.goldshore.ai`, `admin-preview.goldshore.ai`, `*-preview.goldshore.ai` (admin preview branches), `{branch}.goldshore-pages.dev` (admin preview pages) | Admin cockpit is protected by Access with an email allowlist + identity provider requirement. Preview domains should be attached to the same application to match production enforcement. |
-| GoldShore Web (Preview) | GoldShore-Web-Preview | `preview.goldshore.ai`, `*-preview.goldshore.ai` (web preview branches), `{branch}.goldshore-pages.dev` (web preview pages) | Web production (`goldshore.ai`, `www.goldshore.ai`) is public, but preview domains must be gated behind Access. |
+| Access application      | Policy name           | Domain coverage                                                                                                                                             | Notes                                                                                                                                                                                     |
+| ----------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GoldShore Admin         | GoldShore-Admin-ZT    | `admin.goldshore.ai`, `admin-preview.goldshore.ai`, `*-preview.goldshore.ai` (admin preview branches), `{branch}.goldshore-pages.dev` (admin preview pages) | Admin cockpit is protected by Access with an email allowlist + identity provider requirement. Preview domains should be attached to the same application to match production enforcement. |
+| GoldShore Web (Preview) | GoldShore-Web-Preview | `preview.goldshore.ai`, `*-preview.goldshore.ai` (web preview branches), `{branch}.goldshore-pages.dev` (web preview pages)                                 | Web production (`goldshore.ai`, `www.goldshore.ai`) is public, but preview domains must be gated behind Access.                                                                           |
 
 ## Identity providers and session policy alignment
 
@@ -22,6 +22,7 @@ Preview applications should mirror production configuration wherever Access is e
 
 - Cloudflare desired state for Access policy naming and domain ownership lives in `infra/cloudflare/desired-state.yaml`.
 - Pages custom domains for admin and web are documented in `infra/cloudflare/BINDINGS_MAP.md`.
+
 # Domains & Auth (Single Source of Truth)
 
 This document is the canonical reference for GoldShore domains, preview URLs, Cloudflare Access policy coverage, and GitHub App callback endpoints.
