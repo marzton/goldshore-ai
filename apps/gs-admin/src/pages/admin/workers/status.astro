@@ -2,10 +2,60 @@
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
 <AdminLayout title="Worker Status | GoldShore Admin">
-    <section class="max-w-5xl mx-auto py-24 px-6">
-        <h1 class="text-3xl gs-heading mb-4">Worker Status</h1>
-        <p class="text-[var(--gs-text-secondary)]">
-            Health checks and uptime metrics for each worker will appear here.
-        </p>
+    <section class="max-w-5xl mx-auto py-24 px-6 space-y-6">
+        <div>
+            <h1 class="text-3xl gs-heading mb-2">Worker Status</h1>
+            <p class="text-[var(--gs-text-secondary)]">
+                Latest DNS sync outcomes grouped by subdomain.
+            </p>
+        </div>
+
+        <div class="rounded-xl border border-white/10 overflow-hidden">
+            <table class="w-full text-sm">
+                <thead class="bg-black/30">
+                    <tr>
+                        <th class="text-left px-4 py-3">Subdomain</th>
+                        <th class="text-left px-4 py-3">Last Successful Sync</th>
+                        <th class="text-left px-4 py-3">Last Error</th>
+                        <th class="text-left px-4 py-3">Last Error At</th>
+                    </tr>
+                </thead>
+                <tbody id="sync-status-body">
+                    <tr>
+                        <td colspan="4" class="px-4 py-4 text-[var(--gs-text-secondary)]">Loading status…</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </section>
+
+    <script>
+      const body = document.getElementById('sync-status-body');
+
+      fetch('/api/gs-api/sync-runs', { headers: { Accept: 'application/json' } })
+        .then((response) => response.json())
+        .then((payload) => {
+          const runs = Array.isArray(payload?.runs) ? payload.runs : [];
+
+          if (!body) return;
+
+          if (!runs.length) {
+            body.innerHTML = '<tr><td colspan="4" class="px-4 py-4 text-[var(--gs-text-secondary)]">No sync runs found.</td></tr>';
+            return;
+          }
+
+          body.innerHTML = runs.map((run) => `
+            <tr class="border-t border-white/10">
+              <td class="px-4 py-3">${run.subdomain ?? '-'}</td>
+              <td class="px-4 py-3">${run.last_successful_sync ?? 'Never'}</td>
+              <td class="px-4 py-3">${run.last_error ?? '-'}</td>
+              <td class="px-4 py-3">${run.last_error_at ?? '-'}</td>
+            </tr>
+          `).join('');
+        })
+        .catch(() => {
+          if (!body) return;
+          body.innerHTML = '<tr><td colspan="4" class="px-4 py-4 text-red-400">Failed to load sync status.</td></tr>';
+        });
+    </script>
 </AdminLayout>

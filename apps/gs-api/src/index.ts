@@ -25,6 +25,7 @@ type Env = {
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
   // Sentinel: Added support for dynamic team domain
   CLOUDFLARE_TEAM_DOMAIN?: string;
+  CONTROL_SYNC_TOKEN?: string;
 };
 
 const app = new Hono<{ Bindings: Env; Variables: { accessClaims: AccessTokenPayload | null } }>();
@@ -60,6 +61,15 @@ app.use('*', async (c, next) => {
     c.set('accessClaims', null);
     await next();
     return;
+  }
+
+  if (c.req.path === '/internal/sync-runs' && c.req.method === 'POST') {
+    const controlToken = c.req.header('x-control-sync-token');
+    if (controlToken && c.env.CONTROL_SYNC_TOKEN && controlToken === c.env.CONTROL_SYNC_TOKEN) {
+      c.set('accessClaims', null);
+      await next();
+      return;
+    }
   }
 
   // Verify Cloudflare Access JWT
