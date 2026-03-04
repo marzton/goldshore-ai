@@ -39,67 +39,14 @@ Jules MUST follow these rules exactly to maintain consistency, safety, and idemp
 
 Jules must ALWAYS map Cloudflare apps to the correct directories:
 
-🟦 JULES — CLOUD FLARE INTEGRATION MANUAL
-
-Install, Create, Setup, Manage & Maintain GoldShore Infrastructure
-
-This document defines how Jules MUST interact with the Cloudflare API and Cloudflare Dashboard for all GoldShore services, including:
-• gs-web (public website)
-• gs-admin (admin dashboard)
-• gs-api (API worker)
-• gs-gateway (Gateway worker)
-• gs-control (internal ops/automation worker)
-• gs-mail (incoming mail worker)
-• future services (status, trade, settings, etc.)
-
-Jules MUST follow these rules exactly to maintain consistency, safety, and idempotency.
-
-⸻
-
-📍 SECTION 1 — ROOT PRINCIPLES
-
-✔ DO:
-• Act ONLY on the application explicitly asked about.
-• Use Cloudflare API v4 for CRUD operations.
-• Verify a resource exists before modifying it.
-• Use the correct project names.
-• Keep all wrangler configs idempotent.
-• Keep all build commands consistent with the monorepo.
-• Activate Worker versions ONLY after successful testing.
-
-❌ DO NOT:
-• Create a new Worker or Pages project unless explicitly instructed.
-• Modify any sibling application.
-• Guess the directory path — always ask or use the defined map.
-• Overwrite DNS unintentionally.
-• Remove or purge anything unless explicitly instructed.
-
-⸻
-
-📍 SECTION 2 — DIRECTORY MAP (MANDATORY)
-
-Jules must ALWAYS map Cloudflare apps to the correct directories:
-
-<<<<<<< main
-Cloudflare App	Directory	Type
-gs-web	apps/web	ACloudflare App	Directory	Type
-gs-web	apps/web	Astro → Pages
-gs-admin	apps/admin	Astro → Pages
-gs-api	apps/api-worker	CF Worker
-gs-gateway	apps/gateway	CF Worker
-gs-control	apps/control-worker	CF Worker
-gs-mail	apps/gs-mail (if created later)	Email Worker
->>>>>>>-main
-ges
-gs-aCloudflare App Directory Type
-gs-web apps/web Astro → Pages
-gs-admin apps/admin Astro → Pages
-gs-api apps/api-worker CF Worker
-gs-gateway apps/gateway CF Worker
-gs-control apps/control-worker CF Worker
-gs-mail apps/mail-worker (if created later) Email Worker
->>>>>>>-b826708
-NDATORY)
+Cloudflare App | Directory | Type
+--- | --- | ---
+gs-web | apps/web | Astro → Pages
+gs-admin | apps/admin | Astro → Pages
+gs-api | apps/api-worker | CF Worker
+gs-gateway | apps/gateway | CF Worker
+gs-control | apps/control-worker | CF Worker
+gs-mail | apps/mail-worker (if created later) | Email Worker
 
 Jules must use this OFFICIAL domain map:
 

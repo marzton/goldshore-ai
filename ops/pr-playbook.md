@@ -412,72 +412,40 @@ gh pr view <id> \
 
 Flag PRs that touch:
 
-<<<<<<< main
-- package.json, pnpm-lock.yam- package.json, pnpm-lock.yaml
-- apps/admin/\*
-- apps/web/\*
-- apps/api-worker/_, apps/gateway/_, apps/control-worker/\*
-- tsconfig.json, astro.config.mjs, wrangler.toml
-- shared packages/\* (theme, ui, auth, utils, etc.)
->>>>>>>-main
-
-- `apps- `package.json`, `pnpm-lock.yaml`
+- `package.json`, `pnpm-lock.yaml`
 - `apps/admin/*`
 - `apps/web/*`
 - `apps/api-worker/*`, `apps/gateway/*`, `apps/control-worker/*`
 - `tsconfig.json`, `astro.config.mjs`, `wrangler.toml`
 - `shared packages/*` (`theme`, `ui`, `auth`, `utils`, etc.)
->>>>>>>-b826708
-ed/merged before small copy changes.
+
+Prioritize these for conflict resolution so foundational changes are stabilized before small copy updates are reviewed/merged.
 
 ⸻
 
 ### 3.3 Decide Merge Order
 
-<<<<<<< main
-Recommended priority:
+**Recommended priority:**
 
-1. InfraRecommended priority:
-
-1. Infra / config PRs
-   - Root package.json
-   - tsconfig.json
-   - .github/workflows/\*
-   - infra/cloudflare/\*
-   - wrangler.toml changes
-2. Workers
-   - apps/api-worker
-   - apps/gateway
-   - apps/control-worker
-3. Web/Admin frameworks
-   - apps/web/astro.config.mjs, apps/admin/astro.config.mjs
+1. **Infra / config PRs**
+   - Root `package.json`
+   - `tsconfig.json`
+   - `.github/workflows/*`
+   - `infra/cloudflare/*`
+   - `wrangler.toml` changes
+2. **Workers**
+   - `apps/api-worker`
+   - `apps/gateway`
+   - `apps/control-worker`
+3. **Web/Admin frameworks**
+   - `apps/web/astro.config.mjs`, `apps/admin/astro.config.mjs`
    - WebLayout, AdminLayout, NavBar, Footer
-4. Pages and content
-   - apps/web/src/pages/\*
-   - apps/gs-admin/src/pages/\*
-5. Docs / README / comment-only PRs
->>>>>>>-main
-ra / con**Recommended priority:**
+4. **Pages and content**
+   - `apps/web/src/pages/*`
+   - `apps/admin/src/pages/*`
+5. **Docs / README / comment-only PRs**
 
-1.  **Infra / config PRs**
-    - Root `package.json`
-    - `tsconfig.json`
-    - `.github/workflows/*`
-    - `infra/cloudflare/*`
-    - `wrangler.toml` changes
-2.  **Workers**
-    - `apps/api-worker`
-    - `apps/gateway`
-    - `apps/control-worker`
-3.  **Web/Admin frameworks**
-    - `apps/web/astro.config.mjs`, `apps/admin/astro.config.mjs`
-    - WebLayout, AdminLayout, NavBar, Footer
-4.  **Pages and content**
-    - `apps/web/src/pages/*`
-    - `apps/admin/src/pages/*`
-5.  **Docs / README / comment-only PRs**
->>>>>>>-b826708
- Jules evolves into a hybrid GitHub App + Actions bot, the idea is:
+As Jules evolves into a hybrid GitHub App + Actions bot, the idea is:
 
 - Let Jules handle:
   - Lockfile regeneration
@@ -513,14 +481,12 @@ Until that’s live, this playbook is the manual version of what Jules will even
 
 ⸻
 
-<<<<<<< main
-**Scenario B — PR touches apps/web/src/pages/index.as**Scenario B — PR touches apps/web/src/pages/index.astro and apps/gs-admin/src/pages/index.astro**
->>>>>>>-main
- apps/ad**Scenario B — PR touches apps/web/src/pages/index.astro and apps/admin/src/pages/index.astro**
->>>>>>>+b826708
- those .astro files manually
+**Scenario B — PR touches apps/web/src/pages/index.astro and apps/admin/src/pages/index.astro**
+
+1. Rebase/merge latest `main`
+2. Resolve those `.astro` files manually
 3. Delete/regenerate lockfile if needed
-4. Build: pnpm build
+4. Build: `pnpm build`
 5. Push, then re-run CI
 
 ⸻
