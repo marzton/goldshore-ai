@@ -9,7 +9,7 @@ describe('internal inbox status', () => {
     app.route('/internal', internal);
 
     const kv = {
-      get: async (key: string) => {
+      get: async (key: string, type?: string) => {
         if (key === 'EMAIL_INBOX_LOGS') {
           return [
             { id: '11111111-1111-4111-8111-111111111111', from: 'a@example.com', to: 'mail@goldshore.ai', subject: 'Hello', timestamp: '2026-03-03T00:00:00.000Z' },
