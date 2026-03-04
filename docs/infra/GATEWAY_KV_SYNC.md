@@ -5,6 +5,7 @@ Use `sync:infra` to validate and upload the canonical gateway control keys to Cl
 - `ROUTING_TABLE`
 - `SERVICE_STATUS`
 - `AI_ORCHESTRATION`
+- `INFRA_SYNC_LEDGER` (sync metadata + last-run timestamp)
 
 ## Required environment variables
 
