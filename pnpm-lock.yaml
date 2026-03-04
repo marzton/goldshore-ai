@@ -146,7 +146,7 @@ importers:
         specifier: workspace:^
         version: link:../../packages/auth
       '@goldshore/schema':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../packages/schema
       '@goldshore/utils':
         specifier: workspace:^
@@ -314,11 +314,7 @@ importers:
 
   packages/integrations: {}
 
-  packages/schema:
-    dependencies:
-      zod:
-        specifier: ^4.3.6
-        version: 4.3.6
+  packages/schema: {}
 
   packages/theme: {}
 
