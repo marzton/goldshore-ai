@@ -30,7 +30,7 @@ This document is the canonical reference for GoldShore domains, preview URLs, Cl
 
 - `goldshore.ai`
 - `api.goldshore.ai`
-- `gw.goldshore.ai`
+- `gw.goldshore.ai` (canonical gateway hostname; not `gateway.goldshore.ai`)
 - `ops.goldshore.ai`
 
 ## Preview domains
@@ -49,7 +49,7 @@ Cloudflare Access is enforced on internal tooling and protected previews. The ta
 | Admin cockpit | `admin.goldshore.ai`, `admin-preview.goldshore.ai`, `*-preview.goldshore.ai`, `{branch}.goldshore-pages.dev` | Yes (GoldShore-Admin-ZT) | Internal admin dashboard, email allowlist + IdP/OTP. |
 | Control worker | `ops.goldshore.ai` | Yes | Internal ops workflows and automation. |
 | API worker | `api.goldshore.ai` | Optional | Enable for private endpoints only. |
-| Gateway worker | `gw.goldshore.ai` | Optional | Depends on routing/auth design. |
+| Gateway worker | `gw.goldshore.ai` | Optional | Canonical hostname is `gw.goldshore.ai` (not `gateway.goldshore.ai`); depends on routing/auth design. |
 | Mail handler | `mail.goldshore.ai` | No | Cloudflare mail routing cannot authenticate. |
 
 ## GitHub App callback URLs
