@@ -11,17 +11,13 @@ describe('internal inbox status', () => {
     const kv = {
       get: async (key: string, type?: string) => {
         if (key === 'EMAIL_INBOX_LOGS') {
-          if (type === 'json') {
-            return [
+          return [
             { id: '11111111-1111-4111-8111-111111111111', from: 'a@example.com', to: 'mail@goldshore.ai', subject: 'Hello', timestamp: '2026-03-03T00:00:00.000Z' },
             { id: '22222222-2222-4222-8222-222222222222', from: 'b@example.com', to: 'mail@goldshore.ai', subject: 'World', timestamp: '2026-03-03T01:00:00.000Z' },
           ];
-          }
         }
         if (key === 'SERVICE_STATUS') {
-          if (type === 'json') {
-            return { maintenance_mode: false, active_services: ['gateway', 'api'], version: '2026-03-03' };
-          }
+          return { maintenance_mode: false, active_services: ['gateway', 'api'], version: '2026.03.04' };
         }
         return null;
       },
@@ -36,62 +32,55 @@ describe('internal inbox status', () => {
     assert.deepStrictEqual(data.services.active_services, ['gateway', 'api']);
   });
 
-  it('stores and returns sync run summaries', async () => {
+  it('returns dns sync telemetry and MASTER_CONFIG report fields', async () => {
     const app = new Hono();
     app.route('/internal', internal);
 
-    let inserted: any[] = [];
+    const run = {
+      runId: 'run-1',
+      actor: 'cron:scheduled',
+      startedAt: '2026-03-04T00:00:00.000Z',
+      endedAt: '2026-03-04T00:00:15.000Z',
+      success: false,
+      driftStatus: 'drifted',
+      results: [
+        {
+          hostname: 'api.goldshore.ai',
+          checkUrl: 'https://api.goldshore.ai/health',
+          startedAt: '2026-03-04T00:00:00.000Z',
+          endedAt: '2026-03-04T00:00:05.000Z',
+          statusCode: 500,
+          success: false,
+          driftStatus: 'drifted',
+          driftNotes: ['Health check failed with HTTP 500.'],
+        },
+      ],
+    };
 
-    const db = {
-      prepare: (query: string) => {
-        if (query.includes('INSERT INTO sync_runs')) {
-          return {
-            bind: (...values: unknown[]) => ({
-              run: async () => {
-                inserted = values as any[];
-                return { success: true };
-              },
-            }),
-          };
-        }
-
-        return {
-          all: async () => ({
-            results: [
-              {
-                subdomain: 'api.goldshore.ai',
-                last_successful_sync: '2026-03-03T01:00:00.000Z',
-                last_error_at: '2026-03-03T00:00:00.000Z',
-                last_error: '{"checks":[{"ok":false}]}',
-              },
-            ],
-          }),
-        };
+    const controlLogs = {
+      get: async (key: string) => {
+        if (key === 'dns_sync_runs_index') return ['dns_sync_run:2026-03-04T00:00:00.000Z:run-1'];
+        if (key === 'dns_sync_run:2026-03-04T00:00:00.000Z:run-1') return run;
+        return null;
       },
     };
 
-    const createRes = await app.request('/internal/sync-runs', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        subdomain: 'api.goldshore.ai',
-        actor: 'gs-control:cron',
-        started_at: '2026-03-03T00:00:00.000Z',
-        completed_at: '2026-03-03T00:01:00.000Z',
-        result: 'success',
-        drift_summary: '{"checks":[]}',
-      }),
-    }, { DB: db } as any);
+    const kv = {
+      get: async (key: string) => {
+        if (key === 'SERVICE_STATUS') {
+          return { maintenance_mode: false, active_services: ['gateway', 'api'], version: '2026.03.04', last_sync: '2026-03-03T23:00:00.000Z' };
+        }
+        return null;
+      },
+    };
 
-    assert.strictEqual(createRes.status, 200);
-    assert.strictEqual(inserted[0], 'api.goldshore.ai');
-    assert.strictEqual(inserted[4], 'success');
-
-    const summaryRes = await app.request('/internal/sync-runs/summary', {}, { DB: db } as any);
-    assert.strictEqual(summaryRes.status, 200);
-    const summaryData = await summaryRes.json() as any;
-    assert.strictEqual(summaryData.success, true);
-    assert.strictEqual(summaryData.runs.length, 1);
-    assert.strictEqual(summaryData.runs[0].subdomain, 'api.goldshore.ai');
+    const res = await app.request('/internal/dns-sync-status', {}, { KV: kv, CONTROL_LOGS: controlLogs } as any);
+    assert.strictEqual(res.status, 200);
+    const data = await res.json() as any;
+    assert.strictEqual(data.success, true);
+    assert.strictEqual(data.masterConfigReport.syncSource, 'durable');
+    assert.strictEqual(data.masterConfigReport.driftStatusComputed, 'drifted');
+    assert.strictEqual(data.masterConfigReport.lastSyncTimestampVerified, '2026-03-04T00:00:15.000Z');
+    assert.strictEqual(data.latestRun.results[0].hostname, 'api.goldshore.ai');
   });
 });

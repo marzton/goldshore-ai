@@ -25,6 +25,11 @@ CONTROL_SYNC_TOKEN = "set-a-shared-secret"
 binding = "KV"
 id = "gs_api_kv_001"
 
+
+[[env.prod.kv_namespaces]]
+binding = "CONTROL_LOGS"
+id = "gs_control_logs_001"
+
 [[env.prod.r2_buckets]]
 binding = "ASSETS"
 bucket_name = "gs-assets"

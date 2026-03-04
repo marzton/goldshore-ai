@@ -1,18 +1,37 @@
 import { Hono } from 'hono';
-import { 
-  EmailInboxLogsSchema, 
-  ServiceStatusSchema 
+import {
+  EmailInboxLogsSchema,
+  ServiceStatusSchema,
 } from '@goldshore/schema';
 
 const internal = new Hono<{ Bindings: any }>();
 
-type SyncRunPayload = {
-  subdomain: string;
+const DNS_SYNC_RUN_INDEX_KEY = 'dns_sync_runs_index';
+
+type DnsSyncRun = {
+  runId: string;
   actor: string;
-  started_at: string;
-  completed_at?: string | null;
-  result: 'success' | 'error';
-  drift_summary?: string | null;
+  startedAt: string;
+  endedAt: string;
+  success: boolean;
+  driftStatus: 'in_sync' | 'drifted';
+  results: Array<{
+    hostname: string;
+    checkUrl: string;
+    startedAt: string;
+    endedAt: string;
+    statusCode: number | null;
+    success: boolean;
+    driftStatus: 'in_sync' | 'drifted';
+    driftNotes: string[];
+  }>;
+};
+
+const parseDnsSyncRun = (value: unknown): DnsSyncRun | null => {
+  if (!value || typeof value !== 'object') return null;
+  const run = value as DnsSyncRun;
+  if (!run.runId || !Array.isArray(run.results)) return null;
+  return run;
 };
 
 /**
@@ -48,67 +67,36 @@ internal.get('/inbox-status', async (c) => {
   }
 });
 
-internal.post('/sync-runs', async (c) => {
-  const payload = await c.req.json<Partial<SyncRunPayload>>().catch(() => null);
+internal.get('/dns-sync-status', async (c) => {
+  const controlLogs = c.env.CONTROL_LOGS ?? c.env.KV;
+  const [serviceStatusRaw, runIndexRaw] = await Promise.all([
+    c.env.KV.get('SERVICE_STATUS', 'json'),
+    controlLogs.get(DNS_SYNC_RUN_INDEX_KEY, 'json'),
+  ]);
 
-  if (
-    !payload?.subdomain ||
-    !payload.actor ||
-    !payload.started_at ||
-    !payload.result ||
-    !['success', 'error'].includes(payload.result)
-  ) {
-    return c.json({ success: false, error: 'Invalid sync run payload' }, 400);
-  }
+  const statusResult = ServiceStatusSchema.safeParse(serviceStatusRaw);
+  const runKeys = Array.isArray(runIndexRaw) ? runIndexRaw.filter((key): key is string => typeof key === 'string') : [];
+  const runsRaw = await Promise.all(runKeys.slice(0, 20).map((key) => controlLogs.get(key, 'json')));
+  const runs = runsRaw
+    .map(parseDnsSyncRun)
+    .filter((run): run is DnsSyncRun => Boolean(run))
+    .sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
 
-  await c.env.DB.prepare(
-    `INSERT INTO sync_runs (subdomain, actor, started_at, completed_at, result, drift_summary)
-     VALUES (?, ?, ?, ?, ?, ?)`
-  )
-    .bind(
-      payload.subdomain,
-      payload.actor,
-      payload.started_at,
-      payload.completed_at ?? null,
-      payload.result,
-      payload.drift_summary ?? null
-    )
-    .run();
+  const latestRun = runs[0] ?? null;
+  const inferredLastSync = statusResult.success ? statusResult.data.last_sync ?? null : null;
+  const verifiedLastSync = latestRun?.endedAt ?? inferredLastSync;
 
-  return c.json({ success: true });
-});
-
-internal.get('/sync-runs/summary', async (c) => {
-  const { results } = await c.env.DB.prepare(
-    `SELECT
-      s.subdomain,
-      (
-        SELECT completed_at
-        FROM sync_runs
-        WHERE subdomain = s.subdomain AND result = 'success'
-        ORDER BY datetime(completed_at) DESC
-        LIMIT 1
-      ) AS last_successful_sync,
-      (
-        SELECT completed_at
-        FROM sync_runs
-        WHERE subdomain = s.subdomain AND result = 'error'
-        ORDER BY datetime(completed_at) DESC
-        LIMIT 1
-      ) AS last_error_at,
-      (
-        SELECT drift_summary
-        FROM sync_runs
-        WHERE subdomain = s.subdomain AND result = 'error'
-        ORDER BY datetime(completed_at) DESC
-        LIMIT 1
-      ) AS last_error
-    FROM sync_runs s
-    GROUP BY s.subdomain
-    ORDER BY s.subdomain ASC`
-  ).all();
-
-  return c.json({ success: true, runs: results ?? [] });
+  return c.json({
+    success: true,
+    checkedAt: new Date().toISOString(),
+    latestRun,
+    runs,
+    masterConfigReport: {
+      lastSyncTimestampVerified: verifiedLastSync,
+      syncSource: latestRun ? 'durable' : inferredLastSync ? 'inferred' : 'none',
+      driftStatusComputed: latestRun?.driftStatus ?? 'unknown',
+    },
+  });
 });
 
 export default internal;
