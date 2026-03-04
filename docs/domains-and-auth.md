@@ -31,7 +31,7 @@ This document is the canonical reference for GoldShore domains, preview URLs, Cl
 
 - `goldshore.ai`
 - `api.goldshore.ai`
-- `gw.goldshore.ai`
+- `gw.goldshore.ai` (canonical gateway hostname; not `gateway.goldshore.ai`)
 - `ops.goldshore.ai`
 
 ## Preview domains
@@ -43,28 +43,15 @@ This document is the canonical reference for GoldShore domains, preview URLs, Cl
 
 Cloudflare Access is enforced on internal tooling and protected previews. The table below captures the Access policy names and the domains they protect.
 
-### Evidence legend
-
-- **Declared (repo/docs):** what repository configuration/docs assert about policy intent.
-- **Verified live (Cloudflare Access API evidence):** what Cloudflare Access API artifacts prove in the live account.
-- **Confidence level:**
-  - `High` when declared and live evidence agree.
-  - `Medium` when only declared evidence is present, or live evidence is partial.
-  - `Low` when evidence conflicts or is missing.
-
-`Strictly enforced` should be used only when declared and verified-live evidence agree.
-
-| Surface                                                                                                                      | Declared (repo/docs)                     | Verified live (Cloudflare Access API evidence) | Enforcement classification                  | Confidence level  | Notes                                                |
-| ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ---------------------------------------------- | ------------------------------------------- | ----------------- | ---------------------------------------------------- |
-| Public web (`goldshore.ai`, `www.goldshore.ai`)                                                                              | Public web                               | [artifact reference or `not collected`]        | Public                                      | [High/Medium/Low] | Public marketing site.                               |
-| Web previews (`preview.goldshore.ai`, `*-preview.goldshore.ai`, `{branch}.goldshore-pages.dev`)                              | Access protected (GoldShore-Web-Preview) | [artifact reference or `not collected`]        | [Strictly enforced / Configurable/Optional] | [High/Medium/Low] | Preview builds should remain Access gated.           |
-| Admin cockpit (`admin.goldshore.ai`, `admin-preview.goldshore.ai`, `*-preview.goldshore.ai`, `{branch}.goldshore-pages.dev`) | Access protected (GoldShore-Admin-ZT)    | [artifact reference or `not collected`]        | [Strictly enforced / Configurable/Optional] | [High/Medium/Low] | Internal admin dashboard, email allowlist + IdP/OTP. |
-| Control worker (`ops.goldshore.ai`)                                                                                          | Access protected                         | [artifact reference or `not collected`]        | [Strictly enforced / Configurable/Optional] | [High/Medium/Low] | Internal ops workflows and automation.               |
-| API worker (`api.goldshore.ai`)                                                                                              | Optional/private endpoints               | [artifact reference or `not collected`]        | Configurable/Optional\*                     | [High/Medium/Low] | Enable for private endpoints only.                   |
-| Gateway worker (`gw.goldshore.ai`)                                                                                           | Optional/depends on routing design       | [artifact reference or `not collected`]        | Configurable/Optional\*                     | [High/Medium/Low] | Depends on routing/auth design.                      |
-| Mail handler (`mail.goldshore.ai`)                                                                                           | No Access                                | [artifact reference or `not collected`]        | Public                                      | [High/Medium/Low] | Cloudflare mail routing cannot authenticate.         |
-
-\* Keep `api.goldshore.ai` and `gw.goldshore.ai` as `Configurable/Optional` unless a live Access application binding is explicitly proven.
+| Access application | Policy name | Domains protected | Notes |
+| --- | --- | --- | --- |
+| Public web | `goldshore.ai`, `www.goldshore.ai` | No | Public marketing site. |
+| Web previews | `preview.goldshore.ai`, `*-preview.goldshore.ai`, `{branch}.goldshore-pages.dev` | Yes (GoldShore-Web-Preview) | Preview builds for the marketing site should remain Access gated. |
+| Admin cockpit | `admin.goldshore.ai`, `admin-preview.goldshore.ai`, `*-preview.goldshore.ai`, `{branch}.goldshore-pages.dev` | Yes (GoldShore-Admin-ZT) | Internal admin dashboard, email allowlist + IdP/OTP. |
+| Control worker | `ops.goldshore.ai` | Yes | Internal ops workflows and automation. |
+| API worker | `api.goldshore.ai` | Optional | Enable for private endpoints only. |
+| Gateway worker | `gw.goldshore.ai` | Optional | Canonical hostname is `gw.goldshore.ai` (not `gateway.goldshore.ai`); depends on routing/auth design. |
+| Mail handler | `mail.goldshore.ai` | No | Cloudflare mail routing cannot authenticate. |
 
 ## GitHub App callback URLs
 
