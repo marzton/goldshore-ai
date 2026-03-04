@@ -83,7 +83,6 @@ const ALLOWED_ACTIONS = [
 ];
 
 const governanceViolations = [];
-const violations = governanceViolations;
 const appLevelIssues = [];
 
 const run = (cmd) => execSync(cmd, { encoding: 'utf8' }).trim();
@@ -140,7 +139,6 @@ function getCiStatus(branch) {
         '⚠️ gh CLI unavailable; unable to resolve CI status in this environment.',
     };
 
-  // 1. Try to find PR for current branch
   const prNumberFromRef = process.env.GITHUB_REF?.startsWith('refs/pull/')
     ? process.env.GITHUB_REF.split('/')[2]
     : null;
@@ -191,10 +189,7 @@ function getCiStatus(branch) {
       checks,
     };
   } else {
-    // 2. Fallback: Check commit status (e.g. running on main)
     const commitSha = run('git rev-parse HEAD');
-    // gh run list --commit is not supported directly in all versions, try checking runs for the commit via api or list
-    // A simpler way: gh run list --json headSha,conclusion,name,url
     const runsRaw = tryRun(
       `gh run list --limit 20 --json headSha,conclusion,name,url,status`,
     );
@@ -236,7 +231,6 @@ function checkBranchDiscipline() {
   if (!tryRun('gh --version')) return [];
   const violations = [];
 
-  // Check open PRs for base branch != main (Stacked PRs)
   const openPrsRaw = tryRun(
     `gh pr list --state open --json number,baseRefName,headRefName,autoMergeRequest,url`,
   );
@@ -244,14 +238,12 @@ function checkBranchDiscipline() {
     const openPrs = JSON.parse(openPrsRaw);
 
     openPrs.forEach((pr) => {
-      // Stacked PR Check
       if (pr.baseRefName !== 'main') {
         violations.push(
           `PR #${pr.number} targets '${pr.baseRefName}' (not 'main'). Stacked PRs on codex/* branches are discouraged.`,
         );
       }
 
-      // Auto-merge Check
       if (pr.autoMergeRequest) {
         violations.push(
           `PR #${pr.number} has auto-merge enabled. Auto-merge on unstable PRs is discouraged.`,
@@ -288,47 +280,37 @@ report += `**Date:** ${new Date().toUTCString()}\n\n`;
 
 report += '## 1. Governance Compliance Check\n\n';
 
-// Check Apps Structure
 try {
   const apps = fs
     .readdirSync(APPS_DIR)
     .filter((f) => fs.statSync(path.join(APPS_DIR, f)).isDirectory());
   const forbiddenApps = apps.filter((app) => !ALLOWED_APPS.includes(app));
   if (forbiddenApps.length) {
-    const msg = `Forbidden directories detected in apps/: ${forbiddenApps.join(', ')}`;
-    governanceViolations.push(msg);
-    violations.push(msg);
+    governanceViolations.push(`Forbidden directories detected in apps/: ${forbiddenApps.join(', ')}`);
   }
 } catch (e) {
   governanceViolations.push(`Could not scan apps directory: ${e.message}`);
 }
 
-// Check Root Scripts
 try {
   const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
   const newScripts = Object.keys(pkg.scripts || {}).filter(
     (s) => !BASELINE_BUILD_SCRIPTS.includes(s),
   );
   if (newScripts.length) {
-    const msg = `New scripts detected in root package.json: ${newScripts.join(', ')}`;
-    governanceViolations.push(msg);
-    violations.push(msg);
+    governanceViolations.push(`New scripts detected in root package.json: ${newScripts.join(', ')}`);
   }
 } catch (e) {
   governanceViolations.push(`Could not parse root package.json: ${e.message}`);
 }
 
-// Check Workflows
 try {
   const workflows = fs.readdirSync(WORKFLOW_DIR);
   const newWorkflows = workflows.filter((w) => !KNOWN_WORKFLOWS.includes(w));
   if (newWorkflows.length) {
-    const msg = `New workflows detected: ${newWorkflows.join(', ')}`;
-    violations.push(msg);
-    report += `### ❌ Workflow Violation (New Files)\n- ${msg}\n\n`;
-  } else report += '✅ Workflow file list compliant.\n\n';
+    governanceViolations.push(`New workflows detected: ${newWorkflows.join(', ')}`);
+  }
 
-  // Check for unauthorized actions and unpinned SHAs and duplicate keys
   const unauthorizedActions = [];
   const unpinnedActions = [];
   const duplicateKeys = [];
@@ -340,14 +322,12 @@ try {
         const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
         const lines = content.split('\n');
 
-        // Duplicate Key Heuristic
         let lastIndent = -1;
         let lastKey = '';
 
         lines.forEach((line, idx) => {
           if (!line.trim() || line.trim().startsWith('#')) return;
 
-          // Check for key pattern "  key:" (no dash)
           const match = line.match(/^(\s*)([a-zA-Z0-9_-]+):/);
           if (match) {
             const indent = match[1].length;
@@ -361,16 +341,13 @@ try {
             lastIndent = indent;
             lastKey = key;
           } else if (line.trim().startsWith('-')) {
-            // List item resets simple heuristic
             lastIndent = -1;
             lastKey = '';
           } else {
-            // Other content resets
             lastIndent = -1;
             lastKey = '';
           }
 
-          // Check for actions
           const usesMatch = line.match(/uses:\s*([\"']?)([^\"'\s#]+)\1/);
           if (usesMatch) {
             let actionRef = usesMatch[2];
@@ -383,7 +360,6 @@ try {
               unauthorizedActions.push(`${actionName} (in ${w})`);
             }
 
-            // Check for unpinned SHA (must be 40 hex chars)
             const isSha = version && /^[0-9a-f]{40}$/.test(version);
             if (!isSha) {
               unpinnedActions.push(
@@ -399,23 +375,17 @@ try {
 
   const uniqueUnauthorized = [...new Set(unauthorizedActions)];
   if (uniqueUnauthorized.length) {
-    const msg = `Unauthorized CI Actions detected: ${uniqueUnauthorized.join(', ')}`;
-    governanceViolations.push(msg);
-    violations.push(msg);
+    governanceViolations.push(`Unauthorized CI Actions detected: ${uniqueUnauthorized.join(', ')}`);
   }
 
   const uniqueUnpinned = [...new Set(unpinnedActions)];
   if (uniqueUnpinned.length) {
-    const msg = `Unpinned CI Actions detected (must use SHA): ${uniqueUnpinned.join(', ')}`;
-    governanceViolations.push(msg);
-    violations.push(msg);
+    governanceViolations.push(`Unpinned CI Actions detected (must use SHA): ${uniqueUnpinned.join(', ')}`);
   }
 
   const uniqueDuplicates = [...new Set(duplicateKeys)];
   if (uniqueDuplicates.length) {
-    const msg = `YAML syntax errors (duplicate keys) detected: ${uniqueDuplicates.join(', ')}`;
-    governanceViolations.push(msg);
-    violations.push(msg);
+    governanceViolations.push(`YAML syntax errors (duplicate keys) detected: ${uniqueDuplicates.join(', ')}`);
   }
 } catch (e) {
   governanceViolations.push(`Could not scan workflows: ${e.message}`);
@@ -476,18 +446,17 @@ if (appLevelIssues.length) {
   report += '## 4. App-Level Repairs\n\n✅ No app-level repairs needed.\n\n';
 }
 
-// 5. Recommendations & Stop Condition
 report += `## 5. Recommendations\n\n`;
 
 if (
-  violations.length === 0 &&
+  governanceViolations.length === 0 &&
   appLevelIssues.length === 0 &&
   branchDisciplineViolations.length === 0
 ) {
   report += `### ✅ Clean State\n\n`;
 } else {
   report += '### ❌ Actions Required\n\n';
-  violations.forEach((v) => {
+  governanceViolations.forEach((v) => {
     report += `- ${v}\n`;
   });
   appLevelIssues.forEach((v) => {
@@ -505,15 +474,9 @@ if (
 report += `\n**Stop Condition:**\n`;
 report += `If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.\n`;
 
-// Ensure directory exists
 if (!fs.existsSync(path.dirname(REPORT_PATH)))
   fs.mkdirSync(path.dirname(REPORT_PATH), { recursive: true });
 fs.writeFileSync(REPORT_PATH, report);
 console.log(`Report generated at ${REPORT_PATH}`);
 
-// Exit non-zero if issues found, to flag in CI log (but maybe we want to commit the report anyway, so exit 0?)
-// The user says "Do not self-fix. Escalate via comment only."
-// But in a workflow, if we exit 1, the workflow fails.
-// We want the workflow to succeed in *running* and *reporting*.
-// So we exit 0, but the report contains the failures.
 process.exit(0);
