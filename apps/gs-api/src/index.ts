@@ -15,6 +15,7 @@ import internal from './routes/internal';
 
 type Env = {
   KV: KVNamespace;
+  CONTROL_LOGS?: KVNamespace;
   DB: D1Database;
   ASSETS: R2Bucket;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
