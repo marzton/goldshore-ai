@@ -22,7 +22,7 @@ describe('System Config Logic', () => {
         notes: "Maintenance window"
       };
       const result = parseConfig(input);
-      assert.deepStrictEqual(result, input);
+      assert.deepStrictEqual(result, { ...DEFAULT_CONFIG, ...input });
     });
 
     it('merges partial config with defaults', () => {
@@ -31,9 +31,8 @@ describe('System Config Logic', () => {
       };
       const result = parseConfig(input);
       assert.deepStrictEqual(result, {
-        maintenanceMode: true,
-        maxConcurrency: DEFAULT_CONFIG.maxConcurrency,
-        notes: DEFAULT_CONFIG.notes
+        ...DEFAULT_CONFIG,
+        maintenanceMode: true
       });
     });
 
