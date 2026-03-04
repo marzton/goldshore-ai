@@ -2,6 +2,7 @@ import { type AccessTokenPayload } from "@goldshore/auth";
 
 export type Env = {
   KV: KVNamespace;
+  CONTROL_LOGS?: KVNamespace;
   DB: D1Database;
   ASSETS: R2Bucket;
   AI: any;
