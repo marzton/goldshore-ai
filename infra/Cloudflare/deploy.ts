@@ -8,7 +8,7 @@ import { smoke, lighthouse } from "./tests";
 import { changedPaths, pathsMatchOnly, withinDailyCap } from "./guards";
 
 type Cfg = ReturnType<typeof loadCfg>;
-function loadCfg() { return YAML.parse(fs.readFileSync("infra/cf/config.yaml","utf8")); }
+function loadCfg() { return YAML.parse(fs.readFileSync("infra/Cloudflare/config.yaml","utf8")); }
 
 async function countTodayDeploys(deployments: any[]) {
   const today = new Date().toISOString().slice(0,10);
