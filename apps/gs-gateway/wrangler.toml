@@ -5,9 +5,8 @@ compatibility_flags = ["nodejs_compat"]
 
 workers_dev = false
 
-# Added routes for all desired subdomains
+# Canonical gateway hostname is gw.goldshore.ai.
 routes = [
-  { pattern = "gateway.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
