@@ -1,1 +1,1 @@
-export const schema = {};
+export * from './system.ts';

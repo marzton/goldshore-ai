@@ -1,6 +1,7 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { GSButton } from '@goldshore/ui';
+import InboxTable from '../../components/InboxTable.astro';
 ---
 <AdminLayout title="System | GoldShore Admin">
     <section class="max-w-6xl mx-auto py-16 px-6 space-y-10">
@@ -16,6 +17,7 @@ import { GSButton } from '@goldshore/ui';
         </header>
 
         <div class="grid gap-6 lg:grid-cols-2">
+            <InboxTable />
             <div class="gs-card space-y-4 lg:col-span-2">
                 <div>
                     <h2 class="text-xl font-semibold">Managed Resources</h2>
