@@ -180,10 +180,22 @@ const API_BASE = import.meta.env.PUBLIC_API;
       const card = document.createElement('button');
       card.type = 'button';
       card.className = 'media-modal__card';
-      card.innerHTML = `
-        <div class="media-modal__preview"><img src="${item.url}" alt="${item.filename}" /></div>
-        <div class="media-modal__meta">${item.filename}</div>
-      `;
+
+      const previewDiv = document.createElement('div');
+      previewDiv.className = 'media-modal__preview';
+
+      const img = document.createElement('img');
+      img.src = item.url;
+      img.alt = item.filename;
+      previewDiv.appendChild(img);
+
+      const metaDiv = document.createElement('div');
+      metaDiv.className = 'media-modal__meta';
+      metaDiv.textContent = item.filename;
+
+      card.appendChild(previewDiv);
+      card.appendChild(metaDiv);
+
       card.addEventListener('click', () => {
         insertAtCursor(`\\n<img src=\"${item.url}\" alt=\"${item.filename}\" />\\n`);
         closeModal();
