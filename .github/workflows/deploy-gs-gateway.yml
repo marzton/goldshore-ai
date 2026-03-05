@@ -1,4 +1,8 @@
+<<<<<<< main-HEAD-2
 name: Deploy GS Gateway Worker (gw.goldshore.ai)
+=======
+name: Deploy API Gateway (gw.goldshore.ai)
+>>>>>>> chore/working-copy
 
 permissions:
   contents: read
@@ -16,7 +20,8 @@ on:
 jobs:
   deploy-gateway:
     runs-on: ubuntu-latest
-    name: Deploy Gateway Worker
+    name: Deploy API Gateway
+    if: false # Explicitly disable job
 
     steps:
       - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
