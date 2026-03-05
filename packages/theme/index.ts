@@ -5,10 +5,13 @@ export function initGoldShoreUI() {
   initReveal();
   initTilt();
   initScrollHints();
+  initHeroPulsar();
 }
 
 function initNav() {
-  const toggle = document.querySelector<HTMLButtonElement>('[data-gs-nav-toggle]');
+  const toggle = document.querySelector<HTMLButtonElement>(
+    '[data-gs-nav-toggle]',
+  );
   const panel = document.querySelector<HTMLElement>('[data-gs-mobile-panel]');
   if (!toggle || !panel) return;
 
@@ -25,7 +28,8 @@ function initNav() {
 
   panel.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
-    if (t.matches('[data-gs-nav-close]') || t.matches('[data-gs-mobile-panel]')) setOpen(false);
+    if (t.matches('[data-gs-nav-close]') || t.matches('[data-gs-mobile-panel]'))
+      setOpen(false);
   });
 
   window.addEventListener('keydown', (e) => {
@@ -38,7 +42,9 @@ function initModal() {
   if (!root) return;
 
   const backdrop = root.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
-  const closeBtn = root.querySelector<HTMLButtonElement>('[data-gs-modal-close]');
+  const closeBtn = root.querySelector<HTMLButtonElement>(
+    '[data-gs-modal-close]',
+  );
   const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
 
   const openModal = (html: string) => {
@@ -63,7 +69,9 @@ function initModal() {
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', (e) => (e.key === 'Escape' ? closeModal() : null));
+  window.addEventListener('keydown', (e) =>
+    e.key === 'Escape' ? closeModal() : null,
+  );
 }
 
 function getModalTemplate(variant: string): string {
@@ -128,7 +136,9 @@ function initReveal() {
   const rm = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   if (rm) return;
 
-  const els = Array.from(document.querySelectorAll<HTMLElement>('[data-gs-reveal]'));
+  const els = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-gs-reveal]'),
+  );
   if (!els.length) return;
 
   const io = new IntersectionObserver(
@@ -154,12 +164,15 @@ function initTilt() {
   const hover = window.matchMedia?.('(hover: hover)')?.matches;
   if (!fine || !hover) return;
 
-  const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-gs-tilt]'));
+  const panels = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-gs-tilt]'),
+  );
   if (!panels.length) return;
 
   document.documentElement.classList.add('gs-tilt-on');
 
-  const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
+  const clamp = (n: number, min: number, max: number) =>
+    Math.max(min, Math.min(max, n));
 
   panels.forEach((el) => {
     el.classList.add('gs-tilt');
@@ -194,5 +207,106 @@ function initScrollHints() {
   if (typeof CSS !== 'undefined' && typeof CSS.supports === 'function') {
     const ok = CSS.supports('animation-timeline: view()');
     if (ok) document.documentElement.classList.add('gs-view-timeline');
+  }
+}
+
+function initHeroPulsar() {
+  const canvas = document.getElementById(
+    'pulsar-field',
+  ) as HTMLCanvasElement | null;
+  const ctx = canvas?.getContext('2d');
+  if (!canvas || !ctx) return;
+
+  const reduceMotion = window.matchMedia?.(
+    '(prefers-reduced-motion: reduce)',
+  )?.matches;
+  if (reduceMotion) return;
+
+  const host = canvas.closest<HTMLElement>('[data-gs-hero]');
+  const particles: Array<{
+    x: number;
+    y: number;
+    r: number;
+    speed: number;
+    opacity: number;
+  }> = [];
+  const PARTICLE_COUNT = 60;
+  let raf = 0;
+  let active = true;
+
+  const resize = () => {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+  };
+
+  const createParticle = () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 3 + 1,
+    speed: Math.random() * 0.3 + 0.05,
+    opacity: Math.random() * 0.6 + 0.2,
+  });
+
+  const seedParticles = () => {
+    particles.length = 0;
+    for (let i = 0; i < PARTICLE_COUNT; i += 1)
+      particles.push(createParticle());
+  };
+
+  const loop = () => {
+    if (!active) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach((particle) => {
+      particle.y -= particle.speed;
+      if (particle.y < 0) particle.y = canvas.height;
+
+      const gradient = ctx.createRadialGradient(
+        particle.x,
+        particle.y,
+        0,
+        particle.x,
+        particle.y,
+        particle.r * 6,
+      );
+      gradient.addColorStop(0, `rgba(90,140,255,${particle.opacity})`);
+      gradient.addColorStop(1, 'transparent');
+
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(particle.x, particle.y, particle.r * 6, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    raf = requestAnimationFrame(loop);
+  };
+
+  const setActive = (next: boolean) => {
+    if (active === next) return;
+    active = next;
+    host?.classList.toggle('gs-hero-anim-paused', !active);
+    if (active) raf = requestAnimationFrame(loop);
+    else cancelAnimationFrame(raf);
+  };
+
+  resize();
+  seedParticles();
+  raf = requestAnimationFrame(loop);
+
+  const onResize = () => {
+    resize();
+    seedParticles();
+  };
+
+  window.addEventListener('resize', onResize);
+
+  if (host && typeof IntersectionObserver !== 'undefined') {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setActive(Boolean(entry?.isIntersecting));
+      },
+      { threshold: 0.05 },
+    );
+    observer.observe(host);
   }
 }

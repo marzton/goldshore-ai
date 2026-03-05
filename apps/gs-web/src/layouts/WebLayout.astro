@@ -1,17 +1,18 @@
 ---
-import "@goldshore/theme";
-import "../styles/brand.css";
-import SiteNav from "../components/SiteNav.astro";
-import GlobalModal from "../components/GlobalModal.astro";
+import '@goldshore/theme';
+import '../styles/brand.css';
+import '../styles/home.css';
+import SiteNav from '../components/SiteNav.astro';
+import GlobalModal from '../components/GlobalModal.astro';
 
 interface Props {
   title?: string;
   description?: string;
 }
 
-const { 
-  title = "Gold Shore", 
-  description = "Institutional-grade automation and intelligence." 
+const {
+  title = 'Gold Shore',
+  description = 'Institutional-grade automation and intelligence.',
 } = Astro.props;
 ---
 
@@ -36,7 +37,7 @@ const {
       <div class="gs-container">
         <p>Gold Shore — Designed not to manage capital, but to steer it.</p>
         <p>
-          <a href="/legal/privacy">Privacy Policy</a> | 
+          <a href="/legal/privacy">Privacy Policy</a> |
           <a href="/legal/terms">Terms of Service</a>
         </p>
       </div>
@@ -45,7 +46,7 @@ const {
     <GlobalModal />
 
     <script>
-      import { initGoldShoreUI } from "@goldshore/theme/runtime";
+      import { initGoldShoreUI } from '@goldshore/theme/runtime';
       initGoldShoreUI();
     </script>
   </body>
