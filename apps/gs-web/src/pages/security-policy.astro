@@ -33,37 +33,14 @@ export const prerender = true;
         <li>Status updates: at least every 14 days for in-progress reports</li>
       </ul>
 
-
-
-      <h2>JWT Secret Management (JWTHS256KEY)</h2>
-      <p>
-        For HS256 signing, use a high-entropy secret with at least 32 bytes (256 bits).
-        Generate it locally and store it only as a Worker secret.
-      </p>
-      <pre><code>node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"</code></pre>
-      <p>
-        Bind the generated value to Cloudflare Workers with:
-      </p>
-      <pre><code>wrangler secret put JWTHS256KEY</code></pre>
-      <p>
-        Never commit JWT secrets in source control or plain-text configuration files.
-      </p>
-
-      <h2>Credential Rotation</h2>
-      <p>
-        If any API keys or personal access tokens are exposed in prompts, logs, screenshots,
-        or commits, treat them as compromised and rotate them immediately.
-      </p>
-      <ul>
-        <li>Revoke and regenerate exposed GitHub personal access tokens.</li>
-        <li>Rotate Cloudflare API tokens and service credentials.</li>
-        <li>Update dependent systems and confirm least-privilege scopes.</li>
-      </ul>
-
       <h2>How to Report</h2>
       <p>
         Send reports to <a href="mailto:security@goldshore.ai">security@goldshore.ai</a> and include
         reproduction steps, affected endpoints, and any proof-of-concept details needed for validation.
+      </p>
+      <p>
+        For encrypted communication, use the public key at
+        <a href="/pgp-key.txt">/pgp-key.txt</a>.
       </p>
 
       <p>
