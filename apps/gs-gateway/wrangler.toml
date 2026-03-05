@@ -6,7 +6,10 @@ compatibility_flags = ["nodejs_compat"]
 workers_dev = false
 
 [env.preview]
-routes = [{ pattern = "gw-preview.goldshore.ai/*", zone_name = "goldshore.ai" }]
+routes = [
+  { pattern = "gw-preview.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "gateway-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
 
 [env.preview.vars]
 ENV = "preview"
