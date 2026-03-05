@@ -92,7 +92,7 @@ wrangler deploy --dry-run --config apps/gs-control/wrangler.toml --env prod
 
 ### Role enforcement
 - `gs-control` (brain): ensure `control.goldshore.ai` and `ops.goldshore.ai` resolve to `gs-control` and are protected by Cloudflare Access policy.
-- `gs-gateway` (guard): update `gateway-preview.goldshore.ai` to target `gs-gateway` (not `gs-control`).
+- `gs-gateway` (guard): ensure `gw-preview.goldshore.ai` targets `gs-gateway` (not `gs-control`).
 
 ### R2 custom domain provisioning
 ```bash
@@ -156,4 +156,6 @@ All incoming webhook requests must pass Web Crypto HMAC SHA-256 validation befor
 | JWT Key | `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"` | Secure HS256 signing key material |
 | DMARC | Remove duplicate/invalid TXT | DMARC alignment restored |
 | R2 DNS | `assets` CNAME to `public.goldshore.ai` | Custom asset URL in place |
-| Gateway Fix | Repoint `gateway-preview` to `gs-gateway` | Correct traffic routing |
+| Gateway Fix | Repoint `gw-preview` to `gs-gateway` | Correct traffic routing |
+
+Canonical hostnames for preview/prod surfaces are maintained in `docs/infra/HOSTNAME_REFERENCE.md`.
