@@ -43,37 +43,26 @@ const links = [
   </div>
 
   <div class="gs-mobile-panel-inner">
-    <nav class="gs-mobile-links" aria-label="Mobile Primary">
-      {links.map(l => <a class="gs-mobile-link-item" href={l.href}>{l.label}</a>)}
-      <button
-        class="gs-mobile-link-item gs-mobile-link-trigger"
-        type="button"
-        data-gs-modal-open="admin"
-        aria-haspopup="dialog"
-      >
-        Admin Login
-      </button>
-      <button
-        class="gs-mobile-link-item gs-mobile-link-trigger"
-        type="button"
-        data-gs-modal-open="subscribe"
-        aria-haspopup="dialog"
-      >
-        Subscribe
-      </button>
+    <nav aria-label="Mobile Primary">
+      <div class="gs-mobile-links">
+        {links.map(l => <a class="gs-mobile-link-item" href={l.href}>{l.label}</a>)}
+        <button
+          class="gs-mobile-link-item gs-mobile-link-trigger"
+          type="button"
+          data-gs-modal-open="admin"
+          aria-haspopup="dialog"
+        >
+          Admin Login
+        </button>
+        <button
+          class="gs-mobile-link-item gs-mobile-link-trigger"
+          type="button"
+          data-gs-modal-open="subscribe"
+          aria-haspopup="dialog"
+        >
+          Subscribe
+        </button>
+      </div>
     </nav>
   </div>
 </div>
-
-<style>
-  .gs-mobile-links .gs-mobile-link-trigger {
-    appearance: none;
-    background: none;
-    border: 0;
-    border-radius: 0;
-    cursor: pointer;
-    padding: 0;
-    text-align: left;
-    width: 100%;
-  }
-</style>
