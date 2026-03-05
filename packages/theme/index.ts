@@ -21,6 +21,7 @@ function initNav() {
   const setOpen = (open: boolean) => {
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     panel.classList.toggle('is-open', open);
+    panel.setAttribute('aria-hidden', open ? 'false' : 'true');
     document.documentElement.classList.toggle('gs-lock', open);
   };
 
@@ -38,9 +39,14 @@ function initNav() {
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') setOpen(false);
   });
+
+  panel.querySelectorAll<HTMLAnchorElement>('.gs-mobile-links a').forEach((link) => {
+    link.addEventListener('click', () => setOpen(false));
+  });
 }
 
-export function initModal() {
+
+function initModal() {
   const root = document.querySelector<HTMLElement>('[data-gs-modal]');
   if (!root) return;
 
@@ -139,8 +145,7 @@ export function initModal() {
     const trigger = el.closest<HTMLElement>('[data-gs-modal-open]');
     if (!trigger) return;
 
-    lastFocused = document.activeElement;
-    const variant = trigger.getAttribute('data-gs-modal-open') || 'subscribe';
+    const variant = trigger.getAttribute('data-gs-modal-open') || 'admin';
     openModal(getModalTemplate(variant), trigger);
   });
 
