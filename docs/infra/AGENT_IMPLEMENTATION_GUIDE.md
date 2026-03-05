@@ -91,8 +91,9 @@ wrangler deploy --dry-run --config apps/gs-control/wrangler.toml --env prod
 ## 2) DNS and Architecture Alignment
 
 ### Role enforcement
-- `gs-control` (brain): ensure `control.goldshore.ai` and `ops.goldshore.ai` resolve to `gs-control` and are protected by Cloudflare Access policy.
-- `gs-gateway` (guard): ensure `gw-preview.goldshore.ai` targets `gs-gateway` (not `gs-control`).
+- `gs-control` (brain): keep `ops.goldshore.ai` as the canonical control-plane hostname for `gs-control` and enforce Cloudflare Access policy on that endpoint.
+  - Rationale: the deployed Worker routes and service references are standardized on `ops.goldshore.ai` (`ops-preview.goldshore.ai` for preview), so introducing `control.goldshore.ai` as a first-class endpoint adds duplicate DNS and policy surface area without an operational requirement.
+- `gs-gateway` (guard): update `gateway-preview.goldshore.ai` to target `gs-gateway` (not `gs-control`).
 
 ### R2 custom domain provisioning
 ```bash
