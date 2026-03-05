@@ -5,6 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./index.css",
-    "./runtime": "./index.ts"
+    "./runtime": "./index.ts",
+    "./manager": "./src/manager.ts",
+    "./styles/global.css": "./src/styles/global.css"
   }
 }
