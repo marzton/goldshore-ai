@@ -20,10 +20,9 @@
     "branch:bootstrap": "bash scripts/branch-bootstrap.sh",
     "scaffold:worker": "node scripts/scaffold-worker.mjs",
     "workspaces:list": "pnpm -r list --depth -1",
-    "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry && turbo run build --filter=@goldshore/gs-control --dry",
     "verify:web-dist": "node scripts/verify-web-dist.mjs",
     "memory:check": "node scripts/validate-canonical-structure.mjs",
-    "sync:infra": "tsx scripts/sync-gateway.ts"
+    "sync:infra": "tsx scripts/sync-gateway.ts",
     "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry",
     "repo:clean": "git clean -xfd -e .env -e env.secrets.runtime.json",
     "repo:install": "pnpm install --frozen-lockfile",
