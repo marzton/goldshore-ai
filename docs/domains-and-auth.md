@@ -20,8 +20,8 @@ Preview applications should mirror production configuration wherever Access is e
 
 ## Source-of-truth references
 
-- Cloudflare desired state for Access policy naming and domain ownership lives in `infra/cloudflare/desired-state.yaml`.
-- Pages custom domains for admin and web are documented in `infra/cloudflare/BINDINGS_MAP.md`.
+- Cloudflare desired state for Access policy naming and domain ownership lives in `infra/Cloudflare/desired-state.yaml`.
+- Pages custom domains for admin and web are documented in `infra/Cloudflare/BINDINGS_MAP.md`.
 
 # Domains & Auth (Single Source of Truth)
 
