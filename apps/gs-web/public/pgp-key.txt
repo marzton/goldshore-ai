@@ -1,0 +1,3 @@
+# Gold Shore Security Contact PGP Key
+# Replace this placeholder with your ASCII-armored public key block.
+# URL referenced by security.txt: https://goldshore.ai/pgp-key.txt
