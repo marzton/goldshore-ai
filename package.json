@@ -20,7 +20,8 @@
     "branch:bootstrap": "bash scripts/branch-bootstrap.sh",
     "scaffold:worker": "node scripts/scaffold-worker.mjs",
     "workspaces:list": "pnpm -r list --depth -1",
-    "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry"
+    "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry",
+    "audit": "bash scripts/branch-audit.sh && node scripts/file-integrity-check.js && pnpm -r build"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",

@@ -1,0 +1,11 @@
+---
+interface Props {
+  src?: string;
+  alt?: string;
+  class?: string;
+}
+
+const { src = '/packages/brand/logo-penrose.svg', alt = 'Gold Shore Labs', class: className = 'logo' } = Astro.props;
+---
+
+<img src={src} alt={alt} class={className} />
