@@ -13,6 +13,24 @@ export const prerender = true;
         and week-one engagement outline.
       </p>
 
+      <form class="contact-form">
+        <label for="name">
+          Name <span style="color: var(--gs-accent-blue);" aria-hidden="true">*</span>
+        </label>
+        <input id="name" type="text" required aria-required="true" placeholder="Enter your full name" />
+
+        <label for="email">
+          Email <span style="color: var(--gs-accent-blue);" aria-hidden="true">*</span>
+        </label>
+        <input id="email" type="email" required aria-required="true" placeholder="you@company.com" />
+
+        <label for="brief">
+          Project Brief <span style="color: var(--gs-accent-blue);" aria-hidden="true">*</span>
+        </label>
+        <textarea id="brief" rows="5" required aria-required="true" placeholder="Tell us about your infrastructure goals..."></textarea>
+
+        <button type="submit" class="gs-button">Send Message</button>
+      </form>
       <div class="grid gap-4 md:grid-cols-2" style="margin: 1rem 0;">
         <article class="gs-card">
           <h2>Guided intake</h2>
