@@ -21,6 +21,7 @@ function initNav() {
   const setOpen = (open: boolean) => {
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     panel.classList.toggle('is-open', open);
+    panel.setAttribute('aria-hidden', open ? 'false' : 'true');
     document.documentElement.classList.toggle('gs-lock', open);
   };
 
@@ -38,7 +39,12 @@ function initNav() {
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') setOpen(false);
   });
+
+  panel.querySelectorAll<HTMLAnchorElement>('.gs-mobile-links a').forEach((link) => {
+    link.addEventListener('click', () => setOpen(false));
+  });
 }
+
 
 function initModal() {
   const root = document.querySelector<HTMLElement>('[data-gs-modal]');
@@ -54,6 +60,8 @@ function initModal() {
 
   let opener: HTMLElement | null = null;
 
+  const isOpen = () => root.classList.contains('is-open');
+
   const getFocusableElements = () => {
     if (!panel) return [];
 
@@ -66,9 +74,7 @@ function initModal() {
   };
 
   const focusDialog = () => {
-    const focusable = getFocusableElements();
-    const firstFocusable = focusable[0];
-    (firstFocusable ?? panel)?.focus();
+    (closeBtn ?? panel)?.focus();
   };
 
   const openModal = (html: string, trigger: HTMLElement) => {
@@ -90,6 +96,7 @@ function initModal() {
   };
 
   const closeModal = () => {
+    if (!isOpen()) return;
     root.classList.remove('is-open');
     document.documentElement.classList.remove('gs-lock');
     if (lastFocused && lastFocused instanceof HTMLElement) {
@@ -99,7 +106,7 @@ function initModal() {
   };
 
   const onKeydown = (e: KeyboardEvent) => {
-    if (!root.classList.contains('is-open')) return;
+    if (!isOpen()) return;
 
     if (e.key === 'Escape') {
       closeModal();
@@ -138,16 +145,13 @@ function initModal() {
     const trigger = el.closest<HTMLElement>('[data-gs-modal-open]');
     if (!trigger) return;
 
-    lastFocused = document.activeElement;
-    const variant = trigger.getAttribute('data-gs-modal-open') || 'subscribe';
+    const variant = trigger.getAttribute('data-gs-modal-open') || 'admin';
     openModal(getModalTemplate(variant), trigger);
   });
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', (e) =>
-    e.key === 'Escape' ? closeModal() : null,
-  );
+  window.addEventListener('keydown', onKeydown);
 }
 
 function getModalTemplate(variant: string): string {
