@@ -90,11 +90,11 @@ function getCiStatus(branch) {
       conclusion: item.conclusion || (item.state === 'SUCCESS' ? 'SUCCESS' : item.state),
     }));
 
-    const hasFailed = checks.some(c => ['FAILURE', 'TIMED_OUT', 'CANCELLED'].includes(c.conclusion));
+    const hasFailed = checks.some(c => ['FAILURE', 'TIMED_OUT', 'CANCELLED', 'ACTION_REQUIRED'].includes(c.conclusion));
     const state = hasFailed ? '❌ FAIL' : checks.every(c => c.status === 'COMPLETED') ? '✅ PASS' : '🟡 PENDING';
     return { summary: `${state} PR #${pr.number} checks. [Link](${pr.url})`, checks };
   }
-  return { summary: '⚠️ No active PR found for this branch; skipping detailed check rollup.' };
+  return { summary: '⚠️ No active PR found; skipping detailed CI rollup.' };
 }
 
 function checkBranchDiscipline() {
@@ -120,66 +120,64 @@ function checkBuild(name, command) {
   }
 }
 
-// --- Report Generation ---
+// --- Execution ---
 const { branch, baseRef, behind, ahead, divergenceNote } = getBranchInfo();
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
 
-// Section 1: Governance
+// 1. Governance
 report += '## 1. Governance Compliance Check\n\n';
 
 const apps = fs.readdirSync(APPS_DIR).filter(f => fs.statSync(path.join(APPS_DIR, f)).isDirectory());
-apps.filter(a => !ALLOWED_APPS.includes(a)).forEach(a => governanceViolations.push(`Forbidden app directory: ${a}`));
+apps.filter(a => !ALLOWED_APPS.includes(a)).forEach(a => governanceViolations.push(`Forbidden app: ${a}`));
 
 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 Object.keys(pkg.scripts || {}).filter(s => !BASELINE_BUILD_SCRIPTS.includes(s))
-  .forEach(s => governanceViolations.push(`Unauthorized root script: ${s}`));
+  .forEach(s => governanceViolations.push(`Unauthorized script: ${s}`));
 
 const workflows = fs.readdirSync(WORKFLOW_DIR);
-workflows.filter(w => !KNOWN_WORKFLOWS.includes(w)).forEach(w => governanceViolations.push(`Unknown workflow file: ${w}`));
+workflows.filter(w => !KNOWN_WORKFLOWS.includes(w)).forEach(w => governanceViolations.push(`Unknown workflow: ${w}`));
 
-// Deep scan workflows for unpinned/unauthorized actions
 workflows.filter(w => w.endsWith('.yml')).forEach(w => {
   const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
   const actionMatches = content.matchAll(/uses:\s*([\w\-\/]+)@([\w\.]+)/g);
   for (const match of actionMatches) {
     const [_, action, version] = match;
+    if (action.startsWith('./') || action.startsWith('docker://')) continue;
     if (!ALLOWED_ACTIONS.includes(action)) governanceViolations.push(`Unauthorized Action: ${action} in ${w}`);
-    if (!/^[0-9a-f]{40}$/.test(version)) governanceViolations.push(`Unpinned Action: ${action}@${version} in ${w} (use SHA)`);
+    if (!/^[0-9a-f]{40}$/.test(version)) governanceViolations.push(`Unpinned Action: ${action}@${version} in ${w}`);
   }
 });
 
 if (governanceViolations.length) {
   report += '### ❌ Violations Detected\n';
   governanceViolations.forEach(v => report += `- ${v}\n`);
-  report += '\n**Action:** Do not self-fix. Escalate via comment only.\n\n';
 } else {
   report += '✅ No governance violations detected.\n\n';
 }
 
-// Section 2: Branch Discipline
-report += `## 2. Branch Discipline Check\n\n**Branch:** ${branch} | **Divergence:** -${behind} / +${ahead}\n\n`;
+// 2. Branch Discipline
+report += `## 2. Branch Discipline Check\n\n**Branch:** ${branch} | **Ahead:** ${ahead} | **Behind:** ${behind}\n\n`;
 if (divergenceNote) report += `${divergenceNote}\n\n`;
 const branchViolations = checkBranchDiscipline();
 branchViolations.forEach(v => report += `- ${v}\n`);
 
-// Section 3: CI Status
+// 3. CI Status & Local Build
 report += '## 3. CI State Snapshot\n\n' + getCiStatus(branch).summary + '\n\n';
 report += '### Local Build Verification\n\n| App | Status | Notes |\n|---|---|---|\n';
 ['gs-web', 'gs-admin', 'gs-api', 'gs-mail'].forEach(app => {
   report += checkBuild(app, `pnpm --filter @goldshore/${app} build`) + '\n';
 });
 
-// Section 4 & 5: Repairs & Recommendations
-report += `\n## 4. App-Level Repairs\n\n${appLevelIssues.length ? '❌ Failures: ' + appLevelIssues.join(', ') : '✅ None required.'}\n\n`;
+// 4. Repairs & Recommendations
+report += `\n## 4. App-Level Repairs\n\n${appLevelIssues.length ? '❌ Failures detected.' : '✅ None required.'}\n\n`;
 report += '## 5. Recommendations\n\n';
 if (governanceViolations.length || appLevelIssues.length || branchViolations.length) {
-  report += '### ❌ Actions Required\n- Fix app-level build issues in `apps/*`.\n- Escalate governance violations.\n';
+  report += '### ❌ Actions Required\n- Fix app-level failures in `apps/*`.\n- Escalate governance violations.\n';
 } else {
-  report += '### ✅ Clean State\nNo immediate actions required.\n';
+  report += '### ✅ Clean State\n\n';
 }
 
 // Finalize
 if (!fs.existsSync(path.dirname(REPORT_PATH))) fs.mkdirSync(path.dirname(REPORT_PATH), { recursive: true });
 fs.writeFileSync(REPORT_PATH, report);
-console.log(`Report successfully generated at ${REPORT_PATH}`);
 process.exit(0);
