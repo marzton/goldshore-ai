@@ -23,8 +23,7 @@
     "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry && turbo run build --filter=@goldshore/gs-control --dry",
     "verify:web-dist": "node scripts/verify-web-dist.mjs",
     "memory:check": "node scripts/validate-canonical-structure.mjs",
-    "sync:infra": "tsx scripts/sync-gateway.ts"
-    "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry",
+    "sync:infra": "tsx scripts/sync-gateway.ts",
     "repo:clean": "git clean -xfd -e .env -e env.secrets.runtime.json",
     "repo:install": "pnpm install --frozen-lockfile",
     "repo:health": "node scripts/repo-health.mjs",
