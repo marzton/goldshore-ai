@@ -2,13 +2,99 @@
 import WebLayout from '../layouts/WebLayout.astro';
 
 export const prerender = true;
+
+const teamMembers = [
+  {
+    name: 'Maya Chen',
+    role: 'Principal Platform Architect',
+    specialization:
+      'Distributed systems reliability and cloud platform modernization.',
+    credibility: [
+      'Led multi-region migrations for regulated workloads.',
+      'Designed SLO programs adopted across three platform organizations.',
+    ],
+  },
+  {
+    name: 'Elias Navarro',
+    role: 'Head of Infrastructure Automation',
+    specialization:
+      'Delivery pipelines, infrastructure-as-code governance, and recovery orchestration.',
+    credibility: [
+      'Scaled release automation from weekly to hourly deploy cycles.',
+      'Built incident automation reducing MTTR for critical services.',
+    ],
+  },
+  {
+    name: 'Priya Raman',
+    role: 'Director of Security Engineering',
+    specialization:
+      'Identity controls, secure access architecture, and application security posture.',
+    credibility: [
+      'Implemented zero-trust access standards for hybrid engineering teams.',
+      'Advised audit-readiness and control mapping for high-compliance environments.',
+    ],
+  },
+  {
+    name: 'Jonas Feld',
+    role: 'Developer Experience Lead',
+    specialization:
+      'API productization, SDK ergonomics, and docs systems for engineering teams.',
+    credibility: [
+      'Launched developer portals supporting internal and partner integrations.',
+      'Created API governance frameworks that reduced integration defects.',
+    ],
+  },
+];
 ---
 
 <WebLayout title="Team | Gold Shore" description="Meet the Gold Shore team.">
   <section class="gs-section">
     <div class="gs-container">
-      <h1>Team</h1>
-      <p>Small, elite engineering leadership.</p>
+      <p class="gs-micro">Team</p>
+      <h1>Role-Based Leadership</h1>
+      <p>
+        We pair platform operators, security specialists, and
+        developer-experience leaders to deliver outcomes that hold up under real
+        production pressure.
+      </p>
+    </div>
+  </section>
+
+  <section class="gs-section">
+    <div class="gs-container gs-grid-2">
+      {
+        teamMembers.map((member) => (
+          <article class="gs-panel">
+            <p class="gs-micro">{member.role}</p>
+            <h2>{member.name}</h2>
+            <p>{member.specialization}</p>
+            <h3>Credibility points</h3>
+            <ul>
+              {member.credibility.map((point) => (
+                <li>{point}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="gs-section">
+    <div class="gs-container">
+      <aside class="gs-panel">
+        <p class="gs-micro">Work with the team</p>
+        <h2>Bring your challenge to an intake session</h2>
+        <p>
+          Start with a guided intake and we will align the right team roles to
+          your architecture, timeline, and operating model.
+        </p>
+        <p>
+          <a href="/intake">Launch intake wizard</a>
+          ·
+          <a href="/contact">Contact us directly</a>
+        </p>
+      </aside>
     </div>
   </section>
 </WebLayout>
