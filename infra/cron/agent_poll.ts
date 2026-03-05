@@ -87,16 +87,24 @@ async function checkCloudflare() {
 
 async function scanGitConflicts() {
   const repos = cfg.github.repos as string[];
-  for (const repo of repos) {
-    const conflicts = await findOpenConflicts(cfg.github.org, repo);
-    for (const pr of conflicts as any[]) {
-      if (cfg.rules.open_conflicts.open_pr_comment) {
-        await commentOnPR(cfg.github.org, repo, pr.number,
-          "Automated notice: this PR is in a conflicted state (`mergeable_state=dirty`). " +
-          "Recommended fix: `git fetch origin && git rebase origin/main`, then resolve, then `git push --force-with-lease`.");
-      }
-    }
-  }
+  await Promise.all(
+    repos.map(async (repo) => {
+      const conflicts = await findOpenConflicts(cfg.github.org, repo);
+      await Promise.all(
+        (conflicts as any[]).map(async (pr) => {
+          if (cfg.rules.open_conflicts.open_pr_comment) {
+            await commentOnPR(
+              cfg.github.org,
+              repo,
+              pr.number,
+              "Automated notice: this PR is in a conflicted state (`mergeable_state=dirty`). " +
+                "Recommended fix: `git fetch origin && git rebase origin/main`, then resolve, then `git push --force-with-lease`."
+            );
+          }
+        })
+      );
+    })
+  );
 }
 
 async function main() {
@@ -104,6 +112,11 @@ async function main() {
   await ensurePagesOutputDirRule();
   await scanGitConflicts();
   logger.info("Agent poll completed.");
+  log("Agent poll completed.");
 }
 
-main().catch(e => { logger.error(e.stack || e); process.exit(1); });
+main().catch(e => {
+  logger.error(e.stack || e);
+  err(e.stack || e);
+  process.exit(1);
+});
