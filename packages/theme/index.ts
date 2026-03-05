@@ -40,16 +40,75 @@ function initModal() {
   const backdrop = root.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
   const closeBtn = root.querySelector<HTMLButtonElement>('[data-gs-modal-close]');
   const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
+  const panel = root.querySelector<HTMLElement>('.gs-modal-panel');
 
-  const openModal = (html: string) => {
+  let opener: HTMLElement | null = null;
+
+  const getFocusableElements = () => {
+    if (!panel) return [];
+
+    const selectors =
+      'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
+
+    return Array.from(panel.querySelectorAll<HTMLElement>(selectors)).filter(
+      (el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true',
+    );
+  };
+
+  const focusDialog = () => {
+    const focusable = getFocusableElements();
+    const firstFocusable = focusable[0];
+    (firstFocusable ?? panel)?.focus();
+  };
+
+  const openModal = (html: string, trigger: HTMLElement) => {
+    opener = trigger;
     if (body) body.innerHTML = html;
     root.classList.add('is-open');
     document.documentElement.classList.add('gs-lock');
+    focusDialog();
   };
 
   const closeModal = () => {
     root.classList.remove('is-open');
     document.documentElement.classList.remove('gs-lock');
+    opener?.focus();
+    opener = null;
+  };
+
+  const onKeydown = (e: KeyboardEvent) => {
+    if (!root.classList.contains('is-open')) return;
+
+    if (e.key === 'Escape') {
+      closeModal();
+      return;
+    }
+
+    if (e.key !== 'Tab' || !panel) return;
+
+    const focusable = getFocusableElements();
+    if (!focusable.length) {
+      e.preventDefault();
+      panel.focus();
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement as HTMLElement | null;
+
+    if (e.shiftKey) {
+      if (active === first || active === panel) {
+        e.preventDefault();
+        last.focus();
+      }
+      return;
+    }
+
+    if (active === last) {
+      e.preventDefault();
+      first.focus();
+    }
   };
 
   document.addEventListener('click', (e) => {
@@ -58,12 +117,12 @@ function initModal() {
     if (!trigger) return;
 
     const variant = trigger.getAttribute('data-gs-modal-open') || 'subscribe';
-    openModal(getModalTemplate(variant));
+    openModal(getModalTemplate(variant), trigger);
   });
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', (e) => (e.key === 'Escape' ? closeModal() : null));
+  window.addEventListener('keydown', onKeydown);
 }
 
 function getModalTemplate(variant: string): string {
@@ -71,8 +130,8 @@ function getModalTemplate(variant: string): string {
     return `
       <div class="gs-modal-head">
         <div class="gs-kicker gs-signal">Secure Access</div>
-        <h2 class="gs-modal-title gs-display">Admin Login</h2>
-        <p class="gs-muted">Restricted. Authentication required.</p>
+        <h2 class="gs-modal-title gs-display" id="gs-modal-title">Admin Login</h2>
+        <p class="gs-muted" id="gs-modal-description">Restricted. Authentication required.</p>
       </div>
       <form class="gs-form" action="https://admin.goldshore.ai/login" method="POST">
         <label class="gs-label">Email</label>
@@ -86,10 +145,10 @@ function getModalTemplate(variant: string): string {
   }
 
   return `
-    <div class="gs-modal-head">
+      <div class="gs-modal-head">
       <div class="gs-kicker">Signal Brief</div>
-      <h2 class="gs-modal-title gs-display">Subscribe</h2>
-      <p class="gs-muted">Periodic updates on releases, systems, and operational tooling.</p>
+      <h2 class="gs-modal-title gs-display" id="gs-modal-title">Subscribe</h2>
+      <p class="gs-muted" id="gs-modal-description">Periodic updates on releases, systems, and operational tooling.</p>
     </div>
     <form class="gs-form" action="/api/subscribe" method="POST">
       <label class="gs-label">Email</label>
