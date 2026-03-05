@@ -1,0 +1,52 @@
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html.gs-motion-ready [data-gs-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+  filter: blur(2px);
+  transition: opacity var(--gs-d-4) var(--gs-ease-out), transform var(--gs-d-4) var(--gs-ease-out), filter var(--gs-d-4) var(--gs-ease-out);
+}
+
+html.gs-motion-ready [data-gs-reveal].is-in {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+.gs-hoverlift {
+  transition: transform var(--gs-mid) var(--gs-ease), border-color var(--gs-mid) var(--gs-ease);
+}
+
+.gs-hoverlift:hover {
+  transform: translateY(-2px);
+  border-color: rgba(90, 140, 255, 0.25);
+}
+
+
+@supports (animation-timeline: view()) {
+  html.gs-motion-ready [data-gs-reveal] {
+    opacity: 0;
+    transform: translateY(40px);
+    animation: gs-scroll-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 40%;
+  }
+
+  @keyframes gs-scroll-in {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

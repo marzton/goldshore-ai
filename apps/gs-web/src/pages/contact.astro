@@ -4,47 +4,24 @@ import WebLayout from '../layouts/WebLayout.astro';
 export const prerender = true;
 ---
 
-<WebLayout title="Contact | Gold Shore" description="Contact Gold Shore.">
+<WebLayout title="Contact | Gold Shore" description="Platform engagements, partnerships, and infrastructure advisory.">
   <section class="gs-section gs-blueprint-bg">
     <div class="gs-container">
-      <h1>Contact</h1>
+      <h1 class="gs-display" data-gs-reveal>Contact</h1>
+      <p data-gs-reveal>For platform engagements, developer partnerships, or infrastructure advisory:</p>
+      <p data-gs-reveal><strong>Email:</strong> contact@goldshore.ai<br /><strong>Developer Access:</strong> developer@goldshore.ai</p>
 
-    <form class="contact-form">
-      <label for="name">Name</label>
-      <input id="name" type="text" />
-
-      <label for="email">Email</label>
-      <input id="email" type="email" />
-
-      <label for="brief">Project Brief</label>
-      <textarea id="brief" rows="5"></textarea>
-
-      <button type="submit">Send</button>
-    </form>
+      <div class="gs-panel" style="margin-top:2rem;" data-gs-reveal>
+        <div class="gs-label">Inquiry Categories</div>
+        <ul style="margin-top:0.8rem;">
+          <li>Infrastructure Advisory</li>
+          <li>Platform Architecture</li>
+          <li>Automation &amp; CI/CD</li>
+          <li>Secure Surface Design</li>
+          <li>Risk Radar Access</li>
+        </ul>
+        <p style="margin-top:1rem;">All inquiries are reviewed with discretion and structured evaluation.</p>
+      </div>
+    </div>
   </section>
 </WebLayout>
-
-<style>
-  .contact-form {
-    display: grid;
-    gap: 0.75rem;
-    max-width: 620px;
-  }
-
-  input,
-  textarea {
-    border: 1px solid #1f2937;
-    background: #020617;
-    color: #e5e7eb;
-    padding: 0.75rem;
-  }
-
-  button {
-    justify-self: start;
-    border: 1px solid #334155;
-    background: transparent;
-    color: #e5e7eb;
-    padding: 0.75rem 1.25rem;
-    cursor: pointer;
-  }
-</style>
