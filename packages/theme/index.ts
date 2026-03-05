@@ -1,3 +1,6 @@
+const MODAL_TITLE_ID = 'gs-modal-title';
+const MODAL_DESCRIPTION_ID = 'gs-modal-description';
+
 export function initGoldShoreUI() {
   initNav();
   initModal();
@@ -72,13 +75,13 @@ function initModal() {
     if (body) body.innerHTML = html;
     root.classList.add('is-open');
     document.documentElement.classList.add('gs-lock');
-    focusDialog();
+    requestAnimationFrame(focusDialog);
   };
 
   const closeModal = () => {
     root.classList.remove('is-open');
     document.documentElement.classList.remove('gs-lock');
-    opener?.focus();
+    if (opener?.isConnected) opener.focus();
     opener = null;
   };
 
@@ -128,9 +131,7 @@ function initModal() {
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', (e) =>
-    e.key === 'Escape' ? closeModal() : null,
-  );
+  window.addEventListener('keydown', onKeydown);
 }
 
 function getModalTemplate(variant: string): string {
@@ -138,8 +139,8 @@ function getModalTemplate(variant: string): string {
     return `
       <div class="gs-modal-head">
         <div class="gs-kicker gs-signal">Secure Access</div>
-        <h2 class="gs-modal-title gs-display" id="gs-modal-title">Admin Login</h2>
-        <p class="gs-muted" id="gs-modal-description">Restricted. Authentication required.</p>
+        <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Admin Login</h2>
+        <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Restricted. Authentication required.</p>
       </div>
       <form class="gs-form" action="https://admin.goldshore.ai/login" method="POST">
         <label class="gs-label">Email</label>
@@ -155,8 +156,8 @@ function getModalTemplate(variant: string): string {
   return `
       <div class="gs-modal-head">
       <div class="gs-kicker">Signal Brief</div>
-      <h2 class="gs-modal-title gs-display" id="gs-modal-title">Subscribe</h2>
-      <p class="gs-muted" id="gs-modal-description">Periodic updates on releases, systems, and operational tooling.</p>
+      <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Subscribe</h2>
+      <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Periodic updates on releases, systems, and operational tooling.</p>
     </div>
     <form class="gs-form" action="/api/subscribe" method="POST">
       <label class="gs-label">Email</label>
