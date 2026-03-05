@@ -227,13 +227,13 @@ Recommended priority:
    - Root package.json
    - tsconfig.json
    - .github/workflows/*
-   - infra/cloudflare/*
+   - infra/Cloudflare/*
 
 1. Infra / config PRs
    - Root package.json
    - tsconfig.json
    - .github/workflows/\*
-   - infra/cloudflare/\*
+   - infra/Cloudflare/\*
    - wrangler.toml changes
 2. Workers
    - apps/gs-api
