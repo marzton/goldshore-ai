@@ -4,7 +4,7 @@ import WebLayout from '../../layouts/WebLayout.astro';
 export const prerender = true;
 
 const apiBase = String(
-  import.meta.env.PUBLIC_API || 'https://api.goldshore.dev',
+  import.meta.env.PUBLIC_API || '',
 );
 const demoToken = 'demo_test_token_replace_me';
 
@@ -46,6 +46,7 @@ print(resp.json())`;
 >
   <section class="gs-section">
     <div class="gs-container">
+      <p class="gs-micro">Developer Platform</p>
       <h1>Developer Portal</h1>
       <p>
         Build against Gold Shore APIs with predictable auth, typed payloads, and
@@ -54,7 +55,7 @@ print(resp.json())`;
       <p>
         <a href="/developer/docs">Read full docs</a>
         ·
-        <a href="/developer/api/system/info">OpenAPI endpoint reference</a>
+        <a href="/developer/api">OpenAPI endpoint reference</a>
       </p>
     </div>
   </section>
@@ -62,7 +63,28 @@ print(resp.json())`;
   <section class="gs-section">
     <div class="gs-container gs-grid-3">
       <article class="gs-panel">
-        <h2>Auth model overview</h2>
+        <p class="gs-micro">API model</p>
+        <h2>API model overview</h2>
+        <p>
+          Gold Shore APIs follow a resource-oriented model with JSON request and
+          response payloads, deterministic status codes, and stable versioning
+          under <code>/v1</code>.
+        </p>
+        <ul>
+          <li><strong>Format:</strong> JSON over HTTPS</li>
+          <li>
+            <strong>Versioning:</strong> path versioned (<code>/v1/*</code>)
+          </li>
+          <li>
+            <strong>Errors:</strong> structured error envelope with trace context
+          </li>
+        </ul>
+        <p><a href="/developer/docs/model">API model guide</a></p>
+      </article>
+
+      <article class="gs-panel">
+        <p class="gs-micro">Authentication</p>
+        <h2>Auth summary</h2>
         <p>
           Gold Shore endpoints expect a bearer token on every request. In
           production, use your Cloudflare Access / service-issued JWT. For local
@@ -82,7 +104,8 @@ print(resp.json())`;
       </article>
 
       <article class="gs-panel">
-        <h2>Endpoint categories</h2>
+        <p class="gs-micro">Endpoints</p>
+        <h2>Endpoint grouping</h2>
         <p>API paths are grouped to keep integrations easy to navigate:</p>
         <ul>
           <li>
@@ -104,22 +127,24 @@ print(resp.json())`;
         </ul>
         <p><a href="/developer/docs/endpoints">Endpoint guide</a></p>
       </article>
+    </div>
+  </section>
 
+  <section class="gs-section">
+    <div class="gs-container">
       <article class="gs-panel">
-        <h2>Quickstart</h2>
-        <ol>
-          <li>Create or mint a developer token.</li>
-          <li>
-            Call <code>/v1/system/info</code> to verify auth and base URL.
-          </li>
-          <li>
-            Place a test order in sandbox mode before enabling live routes.
-          </li>
-        </ol>
+        <p class="gs-micro">OpenAPI</p>
+        <h2>Specification path and embedded docs</h2>
         <p>
-          <a href="/developer/docs/quickstart">Quickstart docs</a>
+          Use the generated OpenAPI-driven reference at
+          <code>/developer/api</code> for schema and endpoint details. Start directly
+          at <code>/developer/api/system/info</code> for connectivity checks.
+        </p>
+        <p>
+          <a href="/developer/api">Open API reference</a>
           ·
-          <a href="/developer/sdk">SDK resources</a>
+          <a href="/developer/api/system/info">Open system info endpoint docs</a
+          >
         </p>
       </article>
     </div>
@@ -165,6 +190,7 @@ print(resp.json())`;
   <section class="gs-section">
     <div class="gs-container">
       <aside class="gs-panel sandbox-callout" aria-label="Try it sandbox">
+        <p class="gs-micro">Sandbox</p>
         <h2>Try it / Sandbox</h2>
         <p>
           Start with non-production endpoints to validate payloads and auth
@@ -177,36 +203,41 @@ print(resp.json())`;
           ·
           <a href="/developer/docs/sandbox">Sandbox usage guide</a>
         </p>
+        <p>
+          <a href="/contact">Talk to integration support</a>
+          ·
+          <a href="/intake">Start technical intake</a>
+        </p>
       </aside>
     </div>
   </section>
-
-  <script>
-    const copyButtons = document.querySelectorAll('[data-copy-target]');
-
-    copyButtons.forEach((button) => {
-      button.addEventListener('click', async () => {
-        const targetId = button.dataset.copyTarget;
-        if (!targetId) return;
-
-        const target = document.getElementById(targetId);
-        const content = target?.textContent?.trim();
-        if (!content) return;
-
-        try {
-          await navigator.clipboard.writeText(content);
-          const original = button.textContent;
-          button.textContent = 'Copied';
-          setTimeout(() => {
-            button.textContent = original || 'Copy';
-          }, 1200);
-        } catch {
-          button.textContent = 'Copy failed';
-        }
-      });
-    });
-  </script>
 </WebLayout>
+
+<script>
+  const copyButtons = document.querySelectorAll('[data-copy-target]');
+
+  copyButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      const targetId = button.getAttribute('data-copy-target');
+      if (!targetId) return;
+
+      const target = document.getElementById(targetId);
+      const content = target?.textContent?.trim();
+      if (!content) return;
+
+      try {
+        await navigator.clipboard.writeText(content);
+        const original = button.textContent;
+        button.textContent = 'Copied';
+        setTimeout(() => {
+          button.textContent = original || 'Copy';
+        }, 1200);
+      } catch {
+        button.textContent = 'Copy failed';
+      }
+    });
+  });
+</script>
 
 <style>
   .snippet-card {
