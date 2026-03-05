@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 name: Preview GS Web (goldshore.ai)
+=======
+name: Preview gs-web
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
 
 permissions:
   contents: read
@@ -26,13 +30,21 @@ jobs:
       (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
 
     steps:
+<<<<<<< HEAD
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+=======
+      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
 
       - uses: pnpm/action-setup@v4
         with:
           run_install: false
 
       - uses: actions/setup-node@v6
+<<<<<<< HEAD
+=======
+      - uses: actions/setup-node@v6
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
         with:
           node-version: 22
           cache: pnpm
@@ -49,6 +61,7 @@ jobs:
       - name: Validate canonical worker names
         run: pnpm validate:names
 
+<<<<<<< HEAD
       - name: Build GS web app (preview)
         working-directory: apps/gs-web
         env:
@@ -74,6 +87,21 @@ jobs:
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
+=======
+      - name: Build web app (preview)
+        working-directory: apps/gs-web
+      - name: Build web app (preview)
+        working-directory: apps/web
+        env:
+          PUBLIC_API: https://api-preview.goldshore.ai
+          PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
+        run: pnpm build
+
+      - name: Deploy to Cloudflare Pages (preview)
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: preview-web
           directory: apps/gs-web/dist

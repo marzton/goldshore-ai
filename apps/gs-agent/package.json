@@ -5,6 +5,7 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
+<<<<<<< main-HEAD-2
     "dev": "wrangler dev src/index.ts --env dev",
     "deploy": "wrangler deploy src/index.ts --env prod",
     "build": "wrangler deploy src/index.ts --dry-run --outdir=dist --env prod"
@@ -12,6 +13,15 @@
   "dependencies": {
     "@goldshore/auth": "workspace:*",
     "hono": "^4.12.3"
+=======
+    "dev": "wrangler dev src/index.ts",
+    "deploy": "wrangler deploy --minify src/index.ts --env prod",
+    "build": "wrangler deploy src/index.ts --dry-run --outdir=dist"
+    "dev": "wrangler dev src/index.ts --config ../../infra/cloudflare/gs-agent.wrangler.toml",
+    "deploy": "wrangler deploy --minify src/index.ts --config ../../infra/cloudflare/gs-agent.wrangler.toml",
+    "deploy:preview": "wrangler deploy --env preview --config ../../infra/cloudflare/gs-agent.wrangler.toml",
+    "build": "wrangler deploy src/index.ts --dry-run --outdir=dist --config ../../infra/cloudflare/gs-agent.wrangler.toml"
+>>>>>>> chore/working-copy
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260301.1",
