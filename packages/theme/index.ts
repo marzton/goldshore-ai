@@ -40,7 +40,7 @@ function initNav() {
   });
 }
 
-function initModal() {
+export function initModal() {
   const root = document.querySelector<HTMLElement>('[data-gs-modal]');
   if (!root) return;
 
@@ -54,6 +54,8 @@ function initModal() {
 
   let opener: HTMLElement | null = null;
 
+  const isOpen = () => root.classList.contains('is-open');
+
   const getFocusableElements = () => {
     if (!panel) return [];
 
@@ -66,9 +68,7 @@ function initModal() {
   };
 
   const focusDialog = () => {
-    const focusable = getFocusableElements();
-    const firstFocusable = focusable[0];
-    (firstFocusable ?? panel)?.focus();
+    (closeBtn ?? panel)?.focus();
   };
 
   const openModal = (html: string, trigger: HTMLElement) => {
@@ -90,6 +90,7 @@ function initModal() {
   };
 
   const closeModal = () => {
+    if (!isOpen()) return;
     root.classList.remove('is-open');
     document.documentElement.classList.remove('gs-lock');
     if (lastFocused && lastFocused instanceof HTMLElement) {
@@ -99,7 +100,7 @@ function initModal() {
   };
 
   const onKeydown = (e: KeyboardEvent) => {
-    if (!root.classList.contains('is-open')) return;
+    if (!isOpen()) return;
 
     if (e.key === 'Escape') {
       closeModal();
@@ -145,9 +146,7 @@ function initModal() {
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', (e) =>
-    e.key === 'Escape' ? closeModal() : null,
-  );
+  window.addEventListener('keydown', onKeydown);
 }
 
 function getModalTemplate(variant: string): string {
