@@ -2,13 +2,33 @@
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { Card, Table } from '@goldshore/ui';
 
+const apiBase = import.meta.env.PUBLIC_API || Astro.url.origin;
+const gatewayBase = import.meta.env.PUBLIC_GATEWAY || apiBase;
+const adminBase = Astro.url.origin;
+
+const normalizeServiceUrl = (value: string) => value && value !== 'undefined' ? value : adminBase;
+
+const buildSiblingOrigin = (baseUrl: string, targetSubdomain: string) => {
+  try {
+    const url = new URL(baseUrl);
+    const hostParts = url.hostname.split('.');
+    if (hostParts.length > 2) {
+      hostParts[0] = targetSubdomain;
+      url.hostname = hostParts.join('.');
+    }
+    return url.origin;
+  } catch {
+    return baseUrl;
+  }
+};
+
 const services = [
-  { id: 'gs-web', label: 'Web (Pages)', role: 'Public site', url: 'https://goldshore.ai', status: 'online' },
-  { id: 'gs-admin', label: 'Admin (Pages)', role: 'Control panel', url: 'https://admin.goldshore.ai', status: 'online' },
-  { id: 'gs-api', label: 'API Worker', role: 'Core API', url: 'https://api.goldshore.ai', status: 'online' },
-  { id: 'gs-gateway', label: 'Gateway Worker', role: 'Routing /api/*', url: 'https://gw.goldshore.ai', status: 'unknown' },
-  { id: 'gs-control', label: 'Control Worker', role: 'Infra automation', url: 'https://ops.goldshore.ai', status: 'unknown' },
-  { id: 'gs-mail', label: 'Mail Worker', role: 'Email routing', url: 'https://gs-mail.goldshore.workers.dev', status: 'unknown' }
+  { id: 'gs-web', label: 'Web (Pages)', role: 'Public site', url: normalizeServiceUrl(buildSiblingOrigin(adminBase, 'www')), status: 'online' },
+  { id: 'gs-admin', label: 'Admin (Pages)', role: 'Control panel', url: normalizeServiceUrl(adminBase), status: 'online' },
+  { id: 'gs-api', label: 'API Worker', role: 'Core API', url: normalizeServiceUrl(apiBase), status: 'online' },
+  { id: 'gs-gateway', label: 'Gateway Worker', role: 'Routing /api/*', url: normalizeServiceUrl(gatewayBase), status: 'unknown' },
+  { id: 'gs-control', label: 'Control Worker', role: 'Infra automation', url: normalizeServiceUrl(buildSiblingOrigin(gatewayBase, 'ops')), status: 'unknown' },
+  { id: 'gs-mail', label: 'Mail Worker', role: 'Email routing', url: normalizeServiceUrl(buildSiblingOrigin(apiBase, 'mail')), status: 'unknown' }
 ];
 
 const checks = [

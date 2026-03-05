@@ -1,23 +1,31 @@
 import { Hono } from "hono";
 import { createHash } from "node:crypto";
 import { applyAnalysisPolicy, getProvider, type AnalysisRequest } from "@goldshore/ai-providers";
+import { AiOrchestrationSchema } from "@goldshore/schema";
 import safeStableStringify from "safe-stable-stringify";
 import { logAuditEvent } from "@goldshore/utils";
+import { Env, Variables } from '../types';
 
-type Env = {
-  KV: KVNamespace;
-  OPENAI_API_KEY?: string;
-  GEMINI_API_KEY?: string;
-};
+const ai = new Hono<{ Bindings: Env; Variables: Variables }>();
 
-const ai = new Hono<{ Bindings: Env }>();
-
-ai.get("/", (c) => c.json({ message: "AI endpoint" }));
+ai.get("/", (c) => c.json({ service: "gs-ai", status: "operational" }));
 
 ai.post("/analysis", async (c) => {
+  // 1. Load System Orchestration Config
+  const rawConfig = await c.env.KV.get("AI_ORCHESTRATION", "json");
+  const configResult = AiOrchestrationSchema.safeParse(rawConfig);
+  const orchestrator = configResult.success ? configResult.data : { 
+    preferred_model: "gpt-4o", 
+    agent_modules: [], 
+    queue_concurrency: 5,
+    retry_attempts: 3 
+  };
+
   let body: AnalysisRequest;
   try {
     body = await c.req.json();
+    // Inject the system's preferred model if the request doesn't override it
+    if (!body.model) body.model = orchestrator.preferred_model;
   } catch (error) {
     return c.json({ error: "Invalid JSON payload" }, 400);
   }
@@ -26,8 +34,7 @@ ai.post("/analysis", async (c) => {
   try {
     policyResult = applyAnalysisPolicy(body);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Invalid request";
-    return c.json({ error: message }, 400);
+    return c.json({ error: error instanceof Error ? error.message : "Invalid request" }, 400);
   }
 
   const provider = getProvider(policyResult.sanitized.provider);
@@ -35,79 +42,65 @@ ai.post("/analysis", async (c) => {
     return c.json({ error: "Unsupported provider" }, 400);
   }
 
-  const apiKey =
-    policyResult.sanitized.provider === "openai"
+  const apiKey = policyResult.sanitized.provider === "openai"
       ? c.env.OPENAI_API_KEY
       : c.env.GEMINI_API_KEY;
 
   const startedAt = Date.now();
-
-  // Create a cache key based on the sanitized input
   const inputHash = createHash("sha256")
     .update(safeStableStringify(policyResult.sanitized))
     .digest("hex");
   const cacheKey = `analysis:${inputHash}`;
 
-  // Check cache
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let providerResponse: any;
   let isCached = false;
 
-  try {
-    const cached = await c.env.KV.get(cacheKey, "json");
-    if (cached) {
-      providerResponse = cached;
-      isCached = true;
-    }
-  } catch (err) {
-    console.error("Failed to read from cache:", err);
+  // Cache Check
+  const cached = await c.env.KV.get(cacheKey, "json").catch(() => null);
+  if (cached) {
+    providerResponse = cached;
+    isCached = true;
   }
 
   if (!providerResponse) {
+    // Execution with system-defined retry attempts
     providerResponse = await provider.analyze(policyResult.sanitized.input, {
       apiKey,
       fetch,
+      model: body.model,
+      retries: orchestrator.retry_attempts
     });
 
-    // Store in cache (fire and forget via waitUntil)
-    try {
-      const cacheValue = JSON.stringify(providerResponse);
-      c.executionCtx.waitUntil(
-        c.env.KV.put(cacheKey, cacheValue, { expirationTtl: 86400 })
-      ); // 24 hours
-    } catch (err) {
-      console.error("Failed to write to cache:", err);
-    }
+    // Cache Write
+    c.executionCtx.waitUntil(
+      c.env.KV.put(cacheKey, JSON.stringify(providerResponse), { expirationTtl: 86400 })
+    );
   }
 
   const durationMs = Date.now() - startedAt;
 
+  // Audit Logging
   c.executionCtx.waitUntil(
     logAuditEvent(c.env.KV, {
       action: "ai.analysis",
       status: "success",
       metadata: {
         request: policyResult.sanitized,
-        response: {
-          provider: providerResponse.provider,
-          // output is sensitive and should not be logged
-        },
-        redactions: policyResult.redactions,
+        orchestration: orchestrator,
         durationMs,
         cache: isCached ? "HIT" : "MISS",
       },
     })
   );
 
-  const response = c.json({
+  return c.json({
     ...providerResponse,
     redactions: policyResult.redactions,
     durationMs,
+    orchestrated_by: "gs-control"
+  }, {
+    headers: { "X-Cache": isCached ? "HIT" : "MISS" }
   });
-
-  response.headers.set("X-Cache", isCached ? "HIT" : "MISS");
-
-  return response;
 });
 
 export default ai;
