@@ -4,11 +4,13 @@ compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
 
 workers_dev = false
+
+[env.prod]
 routes = [
   { pattern = "api.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
 
-[vars]
+[env.prod.vars]
 ENV = "production"
 
 # Sentinel: Audience tag for Cloudflare Access.
@@ -19,19 +21,25 @@ CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
 # Sentinel: Team domain for Cloudflare Access (e.g., goldshore.cloudflareaccess.com).
 # Used to fetch JWKS for token verification.
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
+CONTROL_SYNC_TOKEN = "set-a-shared-secret"
 
-[[kv_namespaces]]
+[[env.prod.kv_namespaces]]
 binding = "KV"
 id = "gs_api_kv_001"
 
-[[r2_buckets]]
+
+[[env.prod.kv_namespaces]]
+binding = "CONTROL_LOGS"
+id = "gs_control_logs_001"
+
+[[env.prod.r2_buckets]]
 binding = "ASSETS"
 bucket_name = "gs-assets"
 
-[[d1_databases]]
+[[env.prod.d1_databases]]
 binding = "DB"
 database_name = "goldshore"
 database_id = "gs_db_001"
 
-[ai]
+[env.prod.ai]
 binding = "AI"
