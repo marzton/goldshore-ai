@@ -10,16 +10,22 @@ export const prerender = true;
       <h1>Contact</h1>
 
       <form class="contact-form">
-        <label for="name">Name</label>
-        <input id="name" type="text" />
+        <label for="name">
+          Name <span style="color: var(--gs-accent-blue);" aria-hidden="true">*</span>
+        </label>
+        <input id="name" type="text" required aria-required="true" placeholder="Enter your full name" />
 
-        <label for="email">Email</label>
-        <input id="email" type="email" />
+        <label for="email">
+          Email <span style="color: var(--gs-accent-blue);" aria-hidden="true">*</span>
+        </label>
+        <input id="email" type="email" required aria-required="true" placeholder="you@company.com" />
 
-        <label for="brief">Project Brief</label>
-        <textarea id="brief" rows="5"></textarea>
+        <label for="brief">
+          Project Brief <span style="color: var(--gs-accent-blue);" aria-hidden="true">*</span>
+        </label>
+        <textarea id="brief" rows="5" required aria-required="true" placeholder="Tell us about your infrastructure goals..."></textarea>
 
-        <button type="submit" class="gs-button">Send</button>
+        <button type="submit" class="gs-button">Send Message</button>
       </form>
     </div>
   </section>
