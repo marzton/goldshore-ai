@@ -9,6 +9,7 @@ describe('internal inbox status', () => {
     app.route('/internal', internal);
 
     const kv = {
+<<<<<<< HEAD
       get: async (key: string, type?: string) => {
         if (key === 'EMAIL_INBOX_LOGS') {
           return [
@@ -18,6 +19,17 @@ describe('internal inbox status', () => {
         }
         if (key === 'SERVICE_STATUS') {
           return { maintenance_mode: false, active_services: ['gateway', 'api'], version: '2026.03.04' };
+=======
+      get: async (key: string) => {
+        if (key === 'EMAIL_INBOX_LOGS') {
+          return JSON.stringify([
+            { id: '1', from: 'a@example.com', to: 'mail@goldshore.ai', subject: 'Hello', timestamp: '2026-03-03T00:00:00.000Z' },
+            { id: '2', from: 'b@example.com', to: 'mail@goldshore.ai', subject: 'World', timestamp: '2026-03-03T01:00:00.000Z' },
+          ]);
+        }
+        if (key === 'SERVICE_STATUS') {
+          return JSON.stringify({ maintenance_mode: false, active_services: ['gateway', 'api'] });
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
         }
         return null;
       },
@@ -31,6 +43,7 @@ describe('internal inbox status', () => {
     assert.strictEqual(data.inbox.recent.length, 2);
     assert.deepStrictEqual(data.services.active_services, ['gateway', 'api']);
   });
+<<<<<<< HEAD
 
   it('returns dns sync telemetry and MASTER_CONFIG report fields', async () => {
     const app = new Hono();
@@ -83,4 +96,6 @@ describe('internal inbox status', () => {
     assert.strictEqual(data.masterConfigReport.lastSyncTimestampVerified, '2026-03-04T00:00:15.000Z');
     assert.strictEqual(data.latestRun.results[0].hostname, 'api.goldshore.ai');
   });
+=======
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
 });
