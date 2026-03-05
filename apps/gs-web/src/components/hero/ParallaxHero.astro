@@ -1,0 +1,37 @@
+---
+import HeroLogo from './HeroLogo.astro';
+---
+
+<section
+  class="hero gs-cinematic-hero"
+  data-hero-root
+  aria-label="Gold Shore hero"
+>
+  <div class="hero-bg" aria-hidden="true">
+    <canvas class="hero-canvas" data-stars></canvas>
+    <canvas class="hero-canvas" data-shooting></canvas>
+    <div class="hero-vignette"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-mark">
+      <HeroLogo />
+    </div>
+
+    <h1 class="hero-title">Gold Shore</h1>
+    <p class="hero-subtitle">
+      Designed not to manage capital, but to steer it.
+    </p>
+
+    <div class="hero-actions">
+      <a class="btn primary" href="/intake">Start</a>
+      <a class="btn ghost" href="/developer">Developer</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { mountHero } from './mountHero';
+
+  mountHero();
+</script>

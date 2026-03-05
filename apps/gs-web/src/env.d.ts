@@ -4,8 +4,12 @@
 // Type definitions for environment variables
 interface ImportMetaEnv {
   readonly PUBLIC_API: string;
+  readonly PUBLIC_GATEWAY: string;
+  readonly PUBLIC_ENV: 'production' | 'preview' | 'development';
   readonly PUBLIC_AUTH_TOKEN_URL: string;
   readonly PUBLIC_AUTH_CLIENT_ID: string;
+  readonly PUBLIC_BUILD_TIMESTAMP: string;
+  readonly PUBLIC_COMMIT_HASH: string;
   readonly AUTH_CLIENT_SECRET: string;
   // Add other env vars as needed
 }
@@ -33,6 +37,7 @@ interface D1Database {
 interface Env {
   KV: KVNamespace;
   DB: D1Database;
+  HERO_CONFIG_KV?: KVNamespace;
   CONTACT_TTL_SECONDS?: string;
   CONTACT_NOTIFICATION_EMAILS?: string;
   MAILCHANNELS_SENDER_EMAIL?: string;
