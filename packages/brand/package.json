@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./brand.json": "./brand.json",
     "./logo-penrose.svg": "./logo-penrose.svg",
     "./logo-horizontal.svg": "./logo-horizontal.svg",
     "./favicon.svg": "./favicon.svg",

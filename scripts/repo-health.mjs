@@ -3,7 +3,8 @@ import fs from "node:fs";
 const required = [
   "packages/brand/logo-penrose.svg",
   "packages/brand/logo-horizontal.svg",
-  "packages/brand/favicon.svg"
+  "packages/brand/favicon.svg",
+  "packages/brand/brand.json"
 ];
 
 const driftPatterns = [
