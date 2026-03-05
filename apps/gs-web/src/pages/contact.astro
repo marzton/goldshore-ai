@@ -4,10 +4,14 @@ import WebLayout from '../layouts/WebLayout.astro';
 export const prerender = true;
 ---
 
-<WebLayout title="Contact | Gold Shore" description="Contact Gold Shore.">
+<WebLayout title="Contact | Gold Shore" description="Start a guided engagement intake.">
   <section class="gs-section">
     <div class="gs-container">
       <h1>Contact</h1>
+      <p>
+        Start with the guided intake to receive a tailored service recommendation
+        and week-one engagement outline.
+      </p>
 
       <form class="contact-form" id="contact-form" novalidate>
         <label for="name">Name</label>
@@ -55,6 +59,19 @@ export const prerender = true;
           <span id="submit-text">Send</span>
         </button>
       </form>
+      <div class="grid gap-4 md:grid-cols-2" style="margin: 1rem 0;">
+        <article class="gs-card">
+          <h2>Guided intake</h2>
+          <p>Best for active projects that need architecture, security, or operational support.</p>
+          <a class="gs-button gs-button-solid" href="/intake">Launch intake wizard</a>
+        </article>
+
+        <article class="gs-card">
+          <h2>General inquiry</h2>
+          <p>For media, partnerships, or lightweight requests.</p>
+          <a class="gs-button gs-button-outline" href="mailto:hello@goldshore.ai">Email hello@goldshore.ai</a>
+        </article>
+      </div>
     </div>
   </section>
 </WebLayout>
