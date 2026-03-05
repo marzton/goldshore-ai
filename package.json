@@ -27,7 +27,8 @@
     "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry",
     "repo:clean": "git clean -xfd -e .env -e env.secrets.runtime.json",
     "repo:install": "pnpm install --frozen-lockfile",
-    "repo:health": "node scripts/repo-health.mjs"
+    "repo:health": "node scripts/repo-health.mjs",
+    "audit": "pnpm run repo:health"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
