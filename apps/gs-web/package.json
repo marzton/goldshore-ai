@@ -22,7 +22,8 @@
     "@goldshore/ui": "workspace:*",
     "@goldshore/utils": "workspace:*",
     "astro": "^5.18.0",
-    "fuse.js": "^7.1.0"
+    "fuse.js": "^7.1.0",
+    "@goldshore/brand": "workspace:*"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
