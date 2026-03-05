@@ -24,6 +24,3 @@ ENV = "development"
 [env.prod]
 # Empty prod environment for deployment
 
-[[kv_namespaces]]
-binding = "GS_CONFIG"
-id = "9cc2209906a94851b704be57543987a9"

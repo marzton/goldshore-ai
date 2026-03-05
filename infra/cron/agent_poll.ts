@@ -58,8 +58,16 @@ async function checkCloudflare() {
     }
     if (check.type === "dns_records") {
       const dns = await getDNSRecords();
+      const dnsIndex = new Map<string, any[]>();
+      for (const d of dns as any[]) {
+        const key = `${d.name}|${d.type}`;
+        if (!dnsIndex.has(key)) dnsIndex.set(key, []);
+        dnsIndex.get(key)!.push(d);
+      }
       for (const req of check.required) {
-        const hit = (dns as any[]).find((d: any) => d.name === req.name && d.type === req.type && (req.contains ? (String(d.content || "").includes(req.contains)) : true));
+        const key = `${req.name}|${req.type}`;
+        const records = dnsIndex.get(key) || [];
+        const hit = records.find((d: any) => (req.contains ? (String(d.content || "").includes(req.contains)) : true));
         if (!hit) {
           await openOpsIssue(cfg.github.org, "goldshore", `DNS missing/invalid: ${req.name} (${req.type})`,
             `Record is missing or does not match required constraints.\n\nRequired: \`${JSON.stringify(req)}\``, cfg.ai_agent.triage_labels);
