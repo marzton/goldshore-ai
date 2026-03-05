@@ -1,5 +1,10 @@
 ---
 import WebLayout from '../layouts/WebLayout.astro';
+import Controls from '../components/risk-radar/Controls.astro';
+import OrbitalMap from '../components/risk-radar/OrbitalMap.astro';
+import DetailsPanel from '../components/risk-radar/DetailsPanel.astro';
+import Legend from '../components/risk-radar/Legend.astro';
+import { readFile } from 'node:fs/promises';
 
 export const prerender = true;
 
