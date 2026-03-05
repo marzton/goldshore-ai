@@ -43,6 +43,12 @@ jobs:
 
       - name: Build admin app
         working-directory: apps/gs-admin
+        env:
+          PUBLIC_API: https://api.goldshore.ai
+          PUBLIC_GATEWAY: https://gw.goldshore.ai
+          PUBLIC_ENV: production
+          PUBLIC_BUILD_TIMESTAMP: ${{ github.run_started_at }}
+          PUBLIC_COMMIT_HASH: ${{ github.sha }}
         run: pnpm build
 
       - name: Deploy to Cloudflare Pages (production)
