@@ -1,28 +1,36 @@
-name: Deploy GS Agent Worker (gs-agent)
+name: Preview GS Control Worker (ops-preview.goldshore.ai)
 
 permissions:
   contents: read
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+      - ready_for_review
     paths:
-      - "apps/gs-agent/**"
-      - "infra/cloudflare/gs-agent.wrangler.toml"
+      - "apps/gs-control/**"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
 
 jobs:
-  deploy-agent:
+  preview-control:
     runs-on: ubuntu-latest
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'preview') ||
+      (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
+
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          run_install: false
 
       - uses: actions/setup-node@v6
         with:
@@ -41,9 +49,9 @@ jobs:
       - name: Validate canonical worker names
         run: pnpm validate:names
 
-      - name: Deploy agent worker (production)
-        working-directory: apps/gs-agent
+      - name: Deploy GS Control worker (preview)
+        working-directory: apps/gs-control
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: pnpm exec wrangler deploy --env prod --config wrangler.toml
+        run: pnpm exec wrangler deploy --env preview --config wrangler.toml

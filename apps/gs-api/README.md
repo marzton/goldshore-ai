@@ -41,8 +41,8 @@ pnpm --filter ./apps/gs-api build
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-api-worker.yml`
-- Preview deploy: `.github/workflows/preview-api-worker.yml`
+- Production deploy: `.github/workflows/deploy-gs-api.yml`
+- Preview deploy: `.github/workflows/preview-gs-api.yml`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
