@@ -16,6 +16,20 @@ Assets such as the Penrose mark are available at:
 import logo from '@goldshore/theme/assets/penrose-logo.svg';
 ```
 
+## Supported CSS Import Paths
+
+The package exposes the following public CSS entry points:
+
+- `@goldshore/theme` (aggregated default theme stylesheet)
+- `@goldshore/theme/index.css`
+- `@goldshore/theme/styles/global.css`
+- `@goldshore/theme/styles/tokens.css`
+- `@goldshore/theme/styles/base.css`
+- `@goldshore/theme/styles/layout.css`
+- `@goldshore/theme/styles/components.css`
+- `@goldshore/theme/styles/motion.css`
+- `@goldshore/theme/styles/*` for additional files under `src/styles`
+
 ## Structure
 
 - `src/styles/tokens.css`: colors, spacing, radii, typography, and shadows.
