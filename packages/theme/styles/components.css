@@ -103,8 +103,16 @@
 }
 
 .gs-mobile-links button {
+  appearance: none;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  padding: 1rem 1.05rem;
+  border: 1px solid var(--gs-border);
+  border-radius: var(--gs-r-md);
+  background: rgba(10, 16, 28, 0.55);
+  cursor: pointer;
   width: 100%;
-  justify-content: center;
 }
 
 .gs-mobile-top {
