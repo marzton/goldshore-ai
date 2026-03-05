@@ -9,18 +9,141 @@ export const prerender = true;
     <div class="gs-container">
       <h1>Contact</h1>
 
-      <form class="contact-form">
+      <form class="contact-form" id="contact-form" novalidate>
         <label for="name">Name</label>
-        <input id="name" type="text" />
+        <input
+          id="name"
+          name="name"
+          type="text"
+          autocomplete="name"
+          required
+          aria-required="true"
+        />
 
         <label for="email">Email</label>
-        <input id="email" type="email" />
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          required
+          aria-required="true"
+        />
 
         <label for="brief">Project Brief</label>
-        <textarea id="brief" rows="5"></textarea>
+        <p id="brief-help" class="field-help">
+          Share a short summary of your goals, timeline, and budget.
+        </p>
+        <textarea
+          id="brief"
+          name="projectBrief"
+          rows="5"
+          autocomplete="off"
+          required
+          aria-required="true"
+          aria-describedby="brief-help"></textarea>
 
-        <button type="submit" class="gs-button">Send</button>
+        <div
+          id="form-status"
+          class="form-status"
+          aria-live="polite"
+          role="status"
+        >
+        </div>
+
+        <button type="submit" class="gs-button" id="submit-button">
+          <span id="submit-text">Send</span>
+        </button>
       </form>
     </div>
   </section>
 </WebLayout>
+
+<script>
+  const form = document.querySelector('#contact-form');
+  const submitButton = document.querySelector('#submit-button');
+  const submitText = document.querySelector('#submit-text');
+  const formStatus = document.querySelector('#form-status');
+
+  const setStatus = (message, type) => {
+    if (!formStatus) return;
+    formStatus.textContent = message;
+    formStatus.classList.remove('success', 'error', 'progress');
+
+    if (type) {
+      formStatus.classList.add(type);
+    }
+  };
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      setStatus(
+        'Please complete all required fields before submitting.',
+        'error',
+      );
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.setAttribute('aria-busy', 'true');
+    submitText.textContent = 'Sending…';
+    setStatus('Sending your message…', 'progress');
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+      form.reset();
+      setStatus('Thanks! Your message has been sent successfully.', 'success');
+    } catch {
+      setStatus(
+        'Something went wrong while sending your message. Please try again.',
+        'error',
+      );
+    } finally {
+      submitButton.disabled = false;
+      submitButton.removeAttribute('aria-busy');
+      submitText.textContent = 'Send';
+    }
+  });
+</script>
+
+<style>
+  .field-help {
+    margin: 0.25rem 0 0.5rem;
+    color: #666;
+    font-size: 0.95rem;
+  }
+
+  .form-status {
+    margin: 0.75rem 0;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    min-height: 1.25rem;
+  }
+
+  .form-status.progress {
+    background: #f5f7ff;
+    border-color: #c8d1ff;
+    color: #25348a;
+  }
+
+  .form-status.success {
+    background: #effaf2;
+    border-color: #b9e6c3;
+    color: #0a5f25;
+  }
+
+  .form-status.error {
+    background: #fff3f3;
+    border-color: #ffc9c9;
+    color: #8f1717;
+  }
+
+  #submit-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+</style>
