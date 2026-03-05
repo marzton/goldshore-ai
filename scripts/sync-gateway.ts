@@ -1,9 +1,13 @@
+<<<<<<< HEAD
 import {
   AiOrchestrationSchema,
   RoutingTableSchema,
   ServiceStatusSchema,
 } from '../packages/schema/src/system.ts';
 import { z } from 'zod';
+=======
+import { MasterConfigSchema, type MasterConfig } from '../packages/schema/src/system.ts';
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
 
 const DEFAULT_ACCOUNT_ID = 'f77de112d2019e5456a3198a8bb50bd2';
 const DEFAULT_NAMESPACE_ID = '9cc2209906a94851b704be57543987a9';
@@ -17,13 +21,20 @@ const MASTER_CONFIG: MasterConfig = {
     'gateway.goldshore.ai': { role: 'ingress', worker: 'gs-gateway' },
     'agent.goldshore.ai': { role: 'alias', target: 'gateway.goldshore.ai' },
     'api.goldshore.ai': { role: 'backend', worker: 'gs-api' },
+<<<<<<< HEAD
     'agent.internal.goldshore.ai': { role: 'backend', worker: 'gs-agent' },
+=======
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
     'admin.goldshore.ai': { role: 'frontend', project: 'gs-admin-pages' },
     'mail.goldshore.ai': { role: 'mx-only', provider: 'cloudflare-email' },
   },
   SERVICE_STATUS: {
     maintenance_mode: false,
+<<<<<<< HEAD
     active_services: ['gs-gateway', 'gs-api', 'gs-agent', 'gs-admin'],
+=======
+    active_services: ['gateway', 'api', 'agent', 'admin'],
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
   },
   AI_ORCHESTRATION: {
     preferred_model: 'gpt-4-turbo',
@@ -79,6 +90,7 @@ async function runFinalVerification(): Promise<void> {
     }
   } catch (error) {
     console.error('⚠️ Final verification failed due to network/auth issue:', error);
+<<<<<<< HEAD
 import { z } from "zod";
 
 type ConfigKey = "ROUTING_TABLE" | "SERVICE_STATUS" | "AI_ORCHESTRATION";
@@ -262,10 +274,13 @@ async function verifyInboxStatus(): Promise<{ ok: boolean; status?: number; deta
       ok: false,
       detail: error instanceof Error ? error.message : "Unknown verification error",
     };
+=======
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
   }
 }
 
 async function main(): Promise<void> {
+<<<<<<< HEAD
   const token = getRequiredEnv('CLOUDFLARE_API_TOKEN');
   const accountId = resolveEnvWithFallback('CLOUDFLARE_ACCOUNT_ID', DEFAULT_ACCOUNT_ID);
   const namespaceId = resolveEnvWithFallback('GS_KV_NAMESPACE_ID', DEFAULT_NAMESPACE_ID);
@@ -331,4 +346,23 @@ async function main(): Promise<void> {
 main().catch((error) => {
   console.error(`❌ sync:infra failed: ${error instanceof Error ? error.message : String(error)}`);
   process.exit(1);
+=======
+  assertEnvironment();
+  const parseResult = MasterConfigSchema.safeParse(MASTER_CONFIG);
+
+  if (!parseResult.success) {
+    console.error('❌ Invalid MASTER_CONFIG.');
+    console.error(parseResult.error.format());
+    process.exitCode = 1;
+    return;
+  }
+
+  await syncConfig(parseResult.data);
+  await runFinalVerification();
+}
+
+main().catch((error) => {
+  console.error('❌ System sync failed:', error);
+  process.exitCode = 1;
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
 });
