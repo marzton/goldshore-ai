@@ -40,16 +40,30 @@ function initModal() {
   const backdrop = root.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
   const closeBtn = root.querySelector<HTMLButtonElement>('[data-gs-modal-close]');
   const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
+  let lastFocused: Element | null = null;
 
   const openModal = (html: string) => {
     if (body) body.innerHTML = html;
     root.classList.add('is-open');
     document.documentElement.classList.add('gs-lock');
+
+    // Focus trap setup
+    const focusable = root.querySelectorAll<HTMLElement>(
+      "button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])"
+    );
+    if (focusable.length) {
+      setTimeout(() => focusable[0].focus(), 100);
+    } else {
+      setTimeout(() => root.focus(), 100);
+    }
   };
 
   const closeModal = () => {
     root.classList.remove('is-open');
     document.documentElement.classList.remove('gs-lock');
+    if (lastFocused && lastFocused instanceof HTMLElement) {
+      lastFocused.focus();
+    }
   };
 
   document.addEventListener('click', (e) => {
@@ -57,6 +71,7 @@ function initModal() {
     const trigger = el.closest<HTMLElement>('[data-gs-modal-open]');
     if (!trigger) return;
 
+    lastFocused = document.activeElement;
     const variant = trigger.getAttribute('data-gs-modal-open') || 'subscribe';
     openModal(getModalTemplate(variant));
   });
@@ -71,15 +86,15 @@ function getModalTemplate(variant: string): string {
     return `
       <div class="gs-modal-head">
         <div class="gs-kicker gs-signal">Secure Access</div>
-        <h2 class="gs-modal-title gs-display">Admin Login</h2>
-        <p class="gs-muted">Restricted. Authentication required.</p>
+        <h2 id="gs-modal-title" class="gs-modal-title gs-display">Admin Login</h2>
+        <p id="gs-modal-desc" class="gs-muted">Restricted. Authentication required.</p>
       </div>
       <form class="gs-form" action="https://admin.goldshore.ai/login" method="POST">
-        <label class="gs-label">Email</label>
-        <input class="gs-input" name="email" type="email" autocomplete="email" required />
-        <label class="gs-label">Password</label>
-        <input class="gs-input" name="password" type="password" autocomplete="current-password" required />
-        <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Login</button>
+        <label for="admin-email" class="gs-label">Email</label>
+        <input id="admin-email" class="gs-input" name="email" type="email" autocomplete="email" aria-required="true" required />
+        <label for="admin-password" class="gs-label">Password</label>
+        <input id="admin-password" class="gs-input" name="password" type="password" autocomplete="current-password" aria-required="true" required />
+        <button class="gs-button gs-button-solid gs-edge-scan" type="submit" aria-label="Login to admin panel">Login</button>
       </form>
       <div class="gs-micro gs-muted">If you are not authorized, this will fail silently.</div>
     `;
@@ -88,13 +103,13 @@ function getModalTemplate(variant: string): string {
   return `
     <div class="gs-modal-head">
       <div class="gs-kicker">Signal Brief</div>
-      <h2 class="gs-modal-title gs-display">Subscribe</h2>
-      <p class="gs-muted">Periodic updates on releases, systems, and operational tooling.</p>
+      <h2 id="gs-modal-title" class="gs-modal-title gs-display">Subscribe</h2>
+      <p id="gs-modal-desc" class="gs-muted">Periodic updates on releases, systems, and operational tooling.</p>
     </div>
     <form class="gs-form" action="/api/subscribe" method="POST">
-      <label class="gs-label">Email</label>
-      <input class="gs-input" name="email" type="email" autocomplete="email" required />
-      <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Request Access</button>
+      <label for="subscribe-email" class="gs-label">Email</label>
+      <input id="subscribe-email" class="gs-input" name="email" type="email" autocomplete="email" aria-required="true" required />
+      <button class="gs-button gs-button-solid gs-edge-scan" type="submit" aria-label="Request subscription access">Request Access</button>
       <div class="gs-micro gs-muted">No spam. No public list. Controlled distribution.</div>
     </form>
   `;
