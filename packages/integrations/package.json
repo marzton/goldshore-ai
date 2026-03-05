@@ -5,5 +5,4 @@
   "scripts": {
     "test": "tsx --test **/*.test.ts"
   }
-  "main": "index.ts"
 }
