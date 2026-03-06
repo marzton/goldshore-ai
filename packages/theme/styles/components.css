@@ -115,6 +115,8 @@
 }
 
 .gs-mobile-links button {
+  width: 100%;
+  justify-content: center;
   appearance: none;
   text-align: left;
   color: inherit;
