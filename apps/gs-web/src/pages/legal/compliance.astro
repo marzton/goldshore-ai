@@ -2,17 +2,15 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const entityMeta = [
-  ['Legal entity', 'Gold Shore AI, LLC'],
-  ['Registered jurisdiction', 'New York, United States'],
-  ['FEIN / EIN', 'Available under NDA during onboarding'],
-  ['NYS entity ID', 'Available under NDA during onboarding'],
-  ['Registered address', 'Published in onboarding packet'],
-  ['Certificate of authority', 'Current; latest filing confirmation available on request']
+  ['FEIN / EIN', 'Shared in the onboarding packet under NDA.'],
+  ['NYS entity ID', 'Shared in the onboarding packet under NDA.'],
+  ['Registered address', 'Published in onboarding packet.'],
+  ['Certificate of authority', 'Current; latest filing confirmation available on request.']
 ];
 ---
 
 <BaseLayout title="Legal & Compliance | GoldShore" description="Entity and compliance disclosures.">
-  <section class="gs-section gs-blueprint-bg gs-section--padded">
+  <section class="gs-section gs-section--padded legal-compliance-section">
     <div class="gs-container">
       <h1>Legal &amp; Compliance</h1>
       <p>
@@ -50,9 +48,17 @@ const entityMeta = [
             <li><a href="/legal/privacy">Privacy policy</a></li>
             <li><a href="/legal/terms">Terms of service</a></li>
             <li><a href="/status">Service status and maintenance updates</a></li>
+            <li><a href="/security-policy">Security policy</a></li>
+            <li><a href="/disclosure-policy">Disclosure policy</a></li>
           </ul>
         </article>
       </div>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .legal-compliance-section {
+    background: linear-gradient(180deg, var(--gs-bg-0) 0%, var(--gs-bg-1) 100%);
+  }
+</style>
