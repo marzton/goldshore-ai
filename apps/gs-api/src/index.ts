@@ -2,7 +2,6 @@ import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
 import { verifyAccessWithClaims, type AccessTokenPayload } from '@goldshore/auth';
-import { verifyAccess } from '@goldshore/auth';
 import users from './routes/users';
 import health from './routes/health';
 import ai from './routes/ai';
@@ -11,19 +10,24 @@ import system from './routes/system';
 import templates from './routes/templates';
 import admin from './routes/admin';
 import media from './routes/media';
+import webhook from './routes/webhook';
+import oauth from './routes/oauth';
 import pages from './routes/pages';
+import internal from './routes/internal';
 
 type Env = {
   KV: KVNamespace;
+  CONTROL_LOGS?: KVNamespace;
   DB: D1Database;
   ASSETS: R2Bucket;
-  AI: any;
+  AI: Ai;
   OPENAI_API_KEY?: string;
   GEMINI_API_KEY?: string;
   // Sentinel: Added support for Audience verification to prevent auth bypass
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
   // Sentinel: Added support for dynamic team domain
   CLOUDFLARE_TEAM_DOMAIN?: string;
+  CONTROL_SYNC_TOKEN?: string;
 };
 
 const app = new Hono<{ Bindings: Env; Variables: { accessClaims: AccessTokenPayload | null } }>();
@@ -38,9 +42,6 @@ const ALLOWED_ORIGIN_PATTERNS = [
 const isAllowedOrigin = (origin: string) => {
   return ALLOWED_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin));
 };
-};
-
-const app = new Hono<{ Bindings: Env }>();
 
 // Sentinel: Security Middleware
 app.use('*', secureHeaders());
@@ -52,20 +53,25 @@ app.use('*', cors({
   allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
   exposeHeaders: ['Content-Length'],
   credentials: true,
-  origin: '*',
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
-  exposeHeaders: ['Content-Length'],
   maxAge: 600,
 }));
 
 // Enforce Authentication (Defense in Depth)
 app.use('*', async (c, next) => {
   // Allow health checks, root, and CORS preflight
-  if (c.req.path === '/health' || c.req.path.startsWith('/health/') || c.req.path === '/' || c.req.method === 'OPTIONS') {
+  if (c.req.path === '/health' || c.req.path.startsWith('/health/') || c.req.path === '/' || c.req.method === 'OPTIONS' || c.req.path.startsWith('/webhook') || c.req.path.startsWith('/oauth')) {
     c.set('accessClaims', null);
     await next();
     return;
+  }
+
+  if (c.req.path === '/internal/sync-runs' && c.req.method === 'POST') {
+    const controlToken = c.req.header('x-control-sync-token');
+    if (controlToken && c.env.CONTROL_SYNC_TOKEN && controlToken === c.env.CONTROL_SYNC_TOKEN) {
+      c.set('accessClaims', null);
+      await next();
+      return;
+    }
   }
 
   // Verify Cloudflare Access JWT
@@ -74,10 +80,6 @@ app.use('*', async (c, next) => {
     return c.json({ error: 'Unauthorized' }, 401);
   }
   c.set('accessClaims', claims);
-  const authorized = await verifyAccess(c.req.raw, c.env);
-  if (!authorized) {
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
   await next();
 });
 
@@ -114,6 +116,8 @@ app.get('/', (c) => {
 
 // Core routes
 app.route('/health', health);
+app.route('/webhook', webhook);
+app.route('/oauth', oauth);
 app.route('/ai', ai);
 app.route('/users', users);
 app.route('/user', user);
@@ -122,6 +126,7 @@ app.route('/templates', templates);
 app.route('/admin', admin);
 app.route('/media', media);
 app.route('/pages', pages);
+app.route('/internal', internal);
 
 // V1 Routes
 const v1 = new Hono<{ Bindings: Env }>();
