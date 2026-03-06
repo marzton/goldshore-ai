@@ -1,12 +1,11 @@
-name: Deploy GS API Worker
+name: Deploy gs-api
 
 permissions:
   contents: read
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - "apps/gs-api/**"
       - "packages/**"
@@ -16,7 +15,6 @@ on:
 jobs:
   deploy-api:
     runs-on: ubuntu-latest
-    name: Deploy API Worker
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
@@ -41,7 +39,7 @@ jobs:
       - name: Validate canonical worker names
         run: pnpm validate:names
 
-      - name: Deploy GS API worker to Cloudflare (production)
+      - name: Deploy API worker (production)
         working-directory: apps/gs-api
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
