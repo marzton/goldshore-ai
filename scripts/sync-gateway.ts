@@ -1,9 +1,13 @@
+<<<<<<< HEAD
 import {
   AiOrchestrationSchema,
   RoutingTableSchema,
   ServiceStatusSchema,
 } from '../packages/schema/src/system.ts';
 import { z } from 'zod';
+=======
+import { MasterConfigSchema, type MasterConfig } from '../packages/schema/src/system.ts';
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
 
 const DEFAULT_ACCOUNT_ID = 'f77de112d2019e5456a3198a8bb50bd2';
 const DEFAULT_NAMESPACE_ID = '9cc2209906a94851b704be57543987a9';
@@ -17,13 +21,20 @@ const MASTER_CONFIG: MasterConfig = {
     'gateway.goldshore.ai': { role: 'ingress', worker: 'gs-gateway' },
     'agent.goldshore.ai': { role: 'alias', target: 'gateway.goldshore.ai' },
     'api.goldshore.ai': { role: 'backend', worker: 'gs-api' },
+<<<<<<< HEAD
     'agent.internal.goldshore.ai': { role: 'backend', worker: 'gs-agent' },
+=======
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
     'admin.goldshore.ai': { role: 'frontend', project: 'gs-admin-pages' },
     'mail.goldshore.ai': { role: 'mx-only', provider: 'cloudflare-email' },
   },
   SERVICE_STATUS: {
     maintenance_mode: false,
+<<<<<<< HEAD
     active_services: ['gs-gateway', 'gs-api', 'gs-agent', 'gs-admin'],
+=======
+    active_services: ['gateway', 'api', 'agent', 'admin'],
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
   },
   AI_ORCHESTRATION: {
     preferred_model: 'gpt-4-turbo',
@@ -79,6 +90,7 @@ async function runFinalVerification(): Promise<void> {
     }
   } catch (error) {
     console.error('⚠️ Final verification failed due to network/auth issue:', error);
+<<<<<<< HEAD
 import { z } from "zod";
 
 type ConfigKey = "ROUTING_TABLE" | "SERVICE_STATUS" | "AI_ORCHESTRATION";
@@ -130,6 +142,15 @@ const ConfigPayloadSchema = z
   })
   .strict();
 
+type ConfigPayload = z.infer<typeof ConfigPayloadSchema>;
+
+const DEFAULT_ACCOUNT_ID = process.env.CF_ACCOUNT_ID;
+const DEFAULT_NAMESPACE_ID = "9cc2209906a94851b704be57543987a9";
+
+const payload: ConfigPayload = {
+  ROUTING_TABLE: {
+    api: { role: "backend", worker: "gs-api", priority: 1 },
+    gateway: { role: "ingress", worker: "gs-gateway", priority: 1 },
 const SyncLedgerSchema = z
   .object({
     last_sync: z.string().datetime(),
@@ -162,6 +183,17 @@ const MASTER_CONFIG: ConfigPayload = {
     last_sync: new Date().toISOString(),
   },
   AI_ORCHESTRATION: {
+    default_provider: "openai",
+    providers: [
+      { provider: "openai", model: "gpt-5-mini", enabled: true, priority: 1 },
+      { provider: "anthropic", model: "claude-3-5-sonnet", enabled: true, priority: 2 },
+    ],
+    fallback_chain: ["openai", "anthropic"],
+    max_retries: 2,
+  },
+};
+
+function getRequiredEnv(name: "CLOUDFLARE_API_TOKEN"): string {
     preferred_model: 'gpt-5-mini',
     agent_modules: ['operator-assist', 'market-intel'],
     queue_concurrency: 10,
@@ -178,12 +210,15 @@ function getRequiredEnv(name: 'CLOUDFLARE_API_TOKEN'): string {
 }
 
 function resolveEnvWithFallback(
-  primary: 'CLOUDFLARE_ACCOUNT_ID' | 'GS_KV_NAMESPACE_ID',
-  fallback: string,
+  primary: "CLOUDFLARE_ACCOUNT_ID" | "GS_KV_NAMESPACE_ID",
+  fallback: string | undefined,
+  hint: string,
 ): string {
-  const value = process.env[primary]?.trim() ?? fallback;
+  const value = process.env[primary]?.trim() ?? fallback?.trim();
   if (!value) {
-    throw new Error(`Unable to resolve required environment variable: ${primary}.`);
+    throw new Error(
+      `Unable to resolve ${primary}. Set ${primary}${hint ? ` (${hint})` : ""}.`,
+    );
   }
   return value;
 }
@@ -196,15 +231,15 @@ async function putKvValue(args: {
   accountId: string;
   namespaceId: string;
   token: string;
-  key: string;
+  key: ConfigKey;
   value: unknown;
-}): Promise<{ key: string; ok: boolean; status: number; detail?: string }> {
+}): Promise<{ key: ConfigKey; ok: boolean; status: number; detail?: string }> {
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${args.accountId}/storage/kv/namespaces/${args.namespaceId}/values/${encodeURIComponent(args.key)}`;
   const response = await fetch(endpoint, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
       Authorization: `Bearer ${args.token}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(args.value),
   });
@@ -223,11 +258,10 @@ async function putKvValue(args: {
 }
 
 async function verifyInboxStatus(): Promise<{ ok: boolean; status?: number; detail?: string }> {
-  const endpoint = 'https://api.goldshore.ai/internal/inbox-status';
-
+  const endpoint = "https://api.goldshore.ai/internal/inbox-status";
   try {
     const response = await fetch(endpoint, {
-      headers: { Accept: 'application/json' },
+      headers: { Accept: "application/json" },
     });
 
     if (!response.ok) {
@@ -238,12 +272,15 @@ async function verifyInboxStatus(): Promise<{ ok: boolean; status?: number; deta
   } catch (error) {
     return {
       ok: false,
-      detail: error instanceof Error ? error.message : 'Unknown verification error',
+      detail: error instanceof Error ? error.message : "Unknown verification error",
     };
+=======
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
   }
 }
 
 async function main(): Promise<void> {
+<<<<<<< HEAD
   const token = getRequiredEnv('CLOUDFLARE_API_TOKEN');
   const accountId = resolveEnvWithFallback('CLOUDFLARE_ACCOUNT_ID', DEFAULT_ACCOUNT_ID);
   const namespaceId = resolveEnvWithFallback('GS_KV_NAMESPACE_ID', DEFAULT_NAMESPACE_ID);
@@ -309,4 +346,23 @@ async function main(): Promise<void> {
 main().catch((error) => {
   console.error(`❌ sync:infra failed: ${error instanceof Error ? error.message : String(error)}`);
   process.exit(1);
+=======
+  assertEnvironment();
+  const parseResult = MasterConfigSchema.safeParse(MASTER_CONFIG);
+
+  if (!parseResult.success) {
+    console.error('❌ Invalid MASTER_CONFIG.');
+    console.error(parseResult.error.format());
+    process.exitCode = 1;
+    return;
+  }
+
+  await syncConfig(parseResult.data);
+  await runFinalVerification();
+}
+
+main().catch((error) => {
+  console.error('❌ System sync failed:', error);
+  process.exitCode = 1;
+>>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
 });
