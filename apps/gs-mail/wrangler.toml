@@ -1,7 +1,6 @@
 name = "gs-mail"
 main = "src/index.ts"
-<<<<<<< main-HEAD-2
-compatibility_date = "2026-03-03" # Updated to current standards
+compatibility_date = "2026-03-05"
 compatibility_flags = ["nodejs_compat"]
 
 [env.dev]
@@ -20,26 +19,13 @@ binding = "GS_CONFIG"
 id = "9cc2209906a94851b704be57543987a9"
 [env.preview.vars]
 ENV = "preview"
-# Preview-safe labeled alias to avoid production mailbox routing.
 MAIL_FORWARD_TO = "ops+preview@goldshore.ai"
 
 [env.prod]
 name = "gs-mail"
-
 [[env.prod.kv_namespaces]]
 binding = "GS_CONFIG"
 id = "9cc2209906a94851b704be57543987a9"
-
 [env.prod.vars]
 ENV = "prod"
 MAIL_FORWARD_TO = "ops@goldshore.ai"
-=======
-compatibility_date = "2024-11-01"
-
-[env.prod]
-# Empty prod environment for deployment
-
-[[kv_namespaces]]
-binding = "GS_CONFIG"
-id = "9cc2209906a94851b704be57543987a9"
->>>>>>> chore/working-copy
