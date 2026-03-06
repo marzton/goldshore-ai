@@ -49,3 +49,13 @@ export type MasterConfig = z.infer<typeof MasterConfigSchema>;
 export type ServiceStatus = z.infer<typeof ServiceStatusSchema>;
 export type EmailLog = z.infer<typeof EmailLogSchema>;
 export { AiOrchestrationSchema };
+
+export const KeyRotationAuditSchema = z.object({
+  action: z.literal('rotate_keys'),
+  timestamp: z.string().datetime(),
+  results: z.array(z.object({
+    name: z.string(),
+    status: z.enum(['success', 'error']),
+    error: z.string().optional(),
+  }))
+});

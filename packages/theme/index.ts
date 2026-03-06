@@ -38,6 +38,13 @@ function initNav() {
   };
 
   window.addEventListener('keydown', onKeydown);
+
+  // Mobile nav click to close listeners
+  panel.addEventListener('click', (e) => {
+    if (e.target instanceof HTMLAnchorElement) {
+      setOpen(false);
+    }
+  });
 }
 
 function initModal() {
@@ -99,7 +106,7 @@ function initModal() {
     opener = null;
   };
 
-  const onKeydown = (e: KeyboardEvent) => {
+  const onKeydownModal = (e: KeyboardEvent) => {
     if (!isOpen()) return;
 
     if (e.key === 'Escape') {
@@ -145,7 +152,7 @@ function initModal() {
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', onKeydown);
+  window.addEventListener('keydown', onKeydownModal);
 }
 
 function getModalTemplate(variant: string): string {

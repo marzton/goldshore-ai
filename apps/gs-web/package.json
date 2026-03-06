@@ -11,7 +11,7 @@
     "astro": "astro",
     "check": "astro check",
     "lint": "eslint .",
-    "test": "echo skip playwright",
+    "test": "playwright test",
     "test:unit": "node --experimental-strip-types --test tests/unit/**/*.test.ts",
     "test:e2e": "playwright test",
     "verify:dist": "node ../../scripts/verify-web-dist.mjs"

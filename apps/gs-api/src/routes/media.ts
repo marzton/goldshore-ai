@@ -32,18 +32,18 @@ const allowedAttrs = new Set([
 
 function sanitizeSvg(svg: string): string {
   const tagRegex = /<\/?([a-zA-Z0-9-]+)([^>]*)>/g;
-  const attrRegex = /([a-zA-Z0-9-]+)="([^"]*)"/g;
 
   return svg.replace(tagRegex, (match, tag, attrs) => {
     if (!allowedTags.has(tag)) return '';
 
     let cleanAttrs = '';
+    const attrRegex = /([a-zA-Z0-9-]+)="([^"]*)"/g;
     let attrMatch;
     while ((attrMatch = attrRegex.exec(attrs)) !== null) {
       const attr = attrMatch[1];
       const value = attrMatch[2];
 
-      if (value.trim().toLowerCase().startsWith('javascript:')) continue;
+      if (/^(javascript|data|vbscript):/i.test(value.trim())) continue;
 
       if (allowedAttrs.has(attr)) {
         cleanAttrs += ` ${attr}="${value}"`;
