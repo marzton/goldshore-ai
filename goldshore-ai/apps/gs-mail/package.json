@@ -9,12 +9,12 @@
     "lint": "eslint src/**"
   },
   "dependencies": {
-    "hono": "^4.12.4"
+    "hono": "^4.12.5"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241106.0",
     "postal-mime": "^2.7.3",
     "typescript": "^5.4.0",
-    "wrangler": "^4.63.0"
+    "wrangler": "^4.71.0"
   }
 }
