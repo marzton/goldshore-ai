@@ -3,15 +3,11 @@
   data-gs-modal
   role="dialog"
   aria-modal="true"
-  aria-labelledby="gs-modal-title"
-  aria-describedby="gs-modal-desc"
   tabindex="-1"
 >
   <div class="gs-modal-backdrop" data-gs-modal-backdrop></div>
   <div class="gs-modal-panel gs-mirror-frame">
-    <button class="gs-modal-close gs-icon-btn" data-gs-modal-close aria-label="Close">×</button>
-    <h2 id="gs-modal-title" class="sr-only">Modal</h2>
-    <p id="gs-modal-desc" class="sr-only">Modal Content</p>
+    <button class="gs-modal-close gs-icon-btn" data-gs-modal-close aria-label="Close dialog">×</button>
     <div class="gs-modal-body" data-gs-modal-body></div>
   </div>
 </div>
@@ -49,12 +45,3 @@
   .gs-modal-close { position: absolute; top: 14px; right: 14px; }
   .gs-modal-title { margin-top: 0.2rem; }
 </style>
-
-<script>
-  document.addEventListener("keydown", (e) => {
-    if (e.key !== "Escape") return;
-    const openModal = document.querySelector(".gs-modal.is-open");
-    if (!openModal) return;
-    openModal.querySelector("[data-gs-modal-close],.gs-modal-close")?.click();
-  });
-</script>

@@ -14,30 +14,25 @@ const links = [
 <header class="gs-header">
   <div class="gs-container gs-nav-inner">
     <a class="gs-brand" href="/">
-      @-- Replace with your real SVG path --
       <img class="gs-logo" src="/packages/brand/logo-penrose.svg" alt="Gold Shore" />
       <span class="gs-brand-text">GOLD SHORE</span>
     </a>
 
     <nav class="gs-nav" aria-label="Primary">
       {links.map(l => <a href={l.href}>{l.label}</a>)}
-      <button type="button" class="gs-button gs-button-outline" data-gs-modal-open="admin" aria-haspopup="dialog">Admin</button>
-      <button type="button" class="gs-button gs-button-solid" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
+      <button class="gs-button gs-button-outline" type="button" data-gs-modal-open="admin" aria-haspopup="dialog">Admin</button>
+      <button class="gs-button gs-button-solid" type="button" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
     </nav>
 
-    <button class="gs-nav-toggle" data-gs-nav-toggle aria-expanded="false" aria-label="Open menu">
+    <button class="gs-nav-toggle" type="button" data-gs-nav-toggle aria-expanded="false" aria-controls="gs-mobile-panel" aria-label="Open menu">
+      <span aria-hidden="true">☰</span>
       <span class="sr-only">Open menu</span>
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="3" y1="12" x2="21" y2="12"></line>
-        <line x1="3" y1="6" x2="21" y2="6"></line>
-        <line x1="3" y1="18" x2="21" y2="18"></line>
-      </svg>
     </button>
   </div>
 </header>
 
 @-- Mobile overlay panel --
-<div class="gs-mobile-panel" data-gs-mobile-panel>
+<div class="gs-mobile-panel" id="gs-mobile-panel" data-gs-mobile-panel>
   <div class="gs-mobile-top">
     <div class="gs-brand">
       <img class="gs-logo" src="/packages/brand/logo-penrose.svg" alt="Gold Shore" />
@@ -49,8 +44,21 @@ const links = [
   <div class="gs-mobile-panel-inner">
     <nav class="gs-mobile-links" aria-label="Mobile Primary">
       {links.map(l => <a href={l.href}>{l.label}</a>)}
-      <button type="button" class="gs-button gs-button-outline" data-gs-modal-open="admin" aria-haspopup="dialog">Admin Login</button>
-      <button type="button" class="gs-button gs-button-solid" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
+      <button type="button" data-gs-modal-open="admin" aria-haspopup="dialog">Admin Login</button>
+      <button type="button" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
     </nav>
   </div>
 </div>
+
+<style>
+  .gs-mobile-links .gs-mobile-link-trigger {
+    appearance: none;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+    width: 100%;
+  }
+</style>
