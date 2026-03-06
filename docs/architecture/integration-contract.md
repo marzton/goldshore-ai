@@ -1,63 +1,114 @@
-# Integration Contract
+# Cross-Service Integration Contract
 
-This contract captures runtime integration boundaries between frontend apps, edge workers, and mail status APIs.
+This contract defines required runtime values and service links so preview and production stacks remain isolated.
 
-## 1) Frontend runtime contract (`PUBLIC_*`)
+## Frontend origin contract
 
-All browser-facing apps (`gs-web`, `gs-admin`) must consume backend origins from `PUBLIC_*` variables instead of hardcoding hostnames.
+### Required `PUBLIC_*` variables
 
-### Required
+- `PUBLIC_API`
+- `PUBLIC_GATEWAY`
 
-- `PUBLIC_API`: base URL for API calls (e.g. `/system/info`, `/internal/inbox-status` via proxied routes).
-- `PUBLIC_GATEWAY`: base URL for gateway-routed API traffic.
-- `PUBLIC_ENV`: environment marker (`development`, `preview`, `production`).
+### Allowed values by env
 
-### Optional/extended
+- Preview
+  - `PUBLIC_API=https://api-preview.goldshore.ai`
+  - `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
+- Production
+  - `PUBLIC_API=https://api.goldshore.ai`
+  - `PUBLIC_GATEWAY=https://gw.goldshore.ai`
 
-- `PUBLIC_CONTROL`: ops/control surface origin for control UI links or ops tooling.
-- `PUBLIC_MAIL`: mail-worker origin (diagnostics/health only; not direct SMTP routing).
-- `PUBLIC_WEB`, `PUBLIC_ADMIN`: canonical app origin references for cross-app links.
+Frontends must never point preview builds at production worker hostnames.
 
-## 2) Worker service binding contract by environment
+## Worker service binding contract
 
-Worker-to-worker service bindings must follow this topology in every non-dev deployed environment.
+### gs-gateway
 
-| Worker | Required service bindings | Preview target | Prod target |
-| --- | --- | --- | --- |
-| `gs-gateway` | `API` | `gs-api` (`environment = "preview"`) | `gs-api` (`environment = "prod"`) |
-| `gs-control` | `API`, `GATEWAY` | `gs-api` + `gs-gateway` (`environment = "preview"`) | `gs-api` + `gs-gateway` (`environment = "prod"`) |
-| `gs-api` | none (inbound service target) | n/a | n/a |
-| `gs-mail` | none (event-driven email handler) | n/a | n/a |
+- Preview: bind `API` to `gs-api` with `environment = "preview"`
+- Prod: bind `API` to `gs-api` with `environment = "prod"`
 
-## 3) Mail endpoint contract
+### gs-control
 
-### Canonical read endpoint (mail status via API)
+- Preview:
+  - bind `API` to `gs-api` preview
+  - bind `GATEWAY` to `gs-gateway` preview
+- Prod:
+  - bind `API` to `gs-api` prod
+  - bind `GATEWAY` to `gs-gateway` prod
 
-- **Path:** `GET /internal/inbox-status` (served by `gs-api`, consumed by admin).
-- **Payload shape (response):**
-  - `success: boolean`
-  - `timestamp: string (ISO-8601)`
-  - `services: object` (service status snapshot)
-  - `inbox.count: number`
-  - `inbox.recent: EmailLog[]` (latest entries)
+## Mail intake contract
 
-### CORS expectations
+Worker: `gs-mail`
 
-- Browser clients should call this endpoint through same-origin frontend/API proxy routes where possible.
-- Direct cross-origin calls are permitted only from approved `goldshore.ai` app origins and must remain aligned with API CORS policy.
-- No wildcard `*` CORS policy should be used for authenticated or internal mail status routes.
+### Endpoint
 
-## 4) Required Cloudflare bindings per worker
+- `POST /v1/forms/intake`
 
-The following bindings are required at deploy time for canonical operation.
+### CORS
 
-| Worker | KV | D1 | R2 | Queues | AI | Service bindings |
-| --- | --- | --- | --- | --- | --- | --- |
-| `gs-api` | `KV`, `CONTROL_LOGS` | `DB` | `ASSETS` | — | `AI` | — |
-| `gs-gateway` | `GATEWAY_KV` | — | — | `JOB_QUEUE` (producer) | `AI` | `API -> gs-api` |
-| `gs-control` | `CONTROL_LOGS` | — | `STATE` | — | — | `API -> gs-api`, `GATEWAY -> gs-gateway` |
-| `gs-mail` | `GS_CONFIG` | — | — | — | — | — |
-| `gs-web` (Pages) | (project vars) | (optional app-specific) | (optional app-specific) | — | — | — |
-| `gs-admin` (Pages) | (project vars) | — | — | — | — | — |
+Allowed origins:
 
-If a worker adds/removes a binding, this contract must be updated in the same PR.
+- `https://goldshore.ai`
+- Pages preview origins (`*.pages.dev`)
+
+`OPTIONS /v1/forms/intake` must return preflight headers.
+
+### Auth and headers
+
+- Optional bearer auth via `GS_MAIL_API_TOKEN`.
+- Outbound sender must use verified domain address:
+  - `From: onboarding@goldshore.ai`
+- User email from payload must be set in `Reply-To`.
+
+### Payload shape
+
+```json
+{
+  "submission": {
+    "id": "uuid",
+    "formType": "contact",
+    "name": "Jane Doe",
+    "email": "jane@example.com",
+    "company": "Example Inc",
+    "message": "Need onboarding support",
+    "receivedAt": "2026-03-06T12:00:00.000Z"
+  },
+  "recipients": [{ "email": "ops@goldshore.ai", "name": "Ops" }],
+  "subject": "New contact submission",
+  "text": "...",
+  "html": "..."
+}
+```
+
+### Response shape
+
+- Success: `{ "ok": true }`
+- Failure: `{ "ok": false, "error": "..." }`
+
+## Required Cloudflare bindings by worker
+
+### gs-api
+
+- KV: `KV`, `CONTROL_LOGS`
+- D1: `DB`
+- R2: `ASSETS`
+- AI: `AI`
+
+### gs-gateway
+
+- KV: `GATEWAY_KV`
+- Queues producer: `JOB_QUEUE`
+- Service: `API`
+- AI: `AI`
+
+### gs-control
+
+- KV: `CONTROL_LOGS`
+- R2: `STATE`
+- Services: `API`, `GATEWAY`
+
+### gs-mail
+
+- KV: `GS_CONFIG`
+- Secret: `RESEND_API_KEY`
+- Optional secret: `GS_MAIL_API_TOKEN`

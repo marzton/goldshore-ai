@@ -1,42 +1,76 @@
-# Deployment Environments
+# Cloudflare Environments and Domain Matrix
 
-This document defines canonical environment names, hostname ownership, public origin mapping, and workflow trigger policy for Goldshore services.
+This document is the canonical source of truth for Goldshore Cloudflare environment naming, domain ownership, frontend public origins, and deploy triggers.
 
-## Canonical environment names
+## Environment model
 
-- `dev`: local development and/or ephemeral worker environments used before PR preview deployment.
-- `preview`: pull-request deploy targets under `*-preview.goldshore.ai`.
-- `prod`: production deploy targets under `*.goldshore.ai`.
+All services use these environment names:
 
-## Hostname ownership matrix
+- `dev`
+- `preview`
+- `prod`
 
-| Service | Dev | Preview | Prod |
-| --- | --- | --- | --- |
-| `gs-api` | `*.workers.dev` / local (`wrangler dev`) | `api-preview.goldshore.ai` | `api.goldshore.ai` |
-| `gs-gateway` | `*.workers.dev` / local (`wrangler dev`) | `gw-preview.goldshore.ai` (`gateway-preview.goldshore.ai` alias) | `gw.goldshore.ai` (`gateway.goldshore.ai`, `agent.goldshore.ai` aliases) |
-| `gs-control` | `*.workers.dev` / local (`wrangler dev`) | `ops-preview.goldshore.ai` | `ops.goldshore.ai` (`control.goldshore.ai` alias) |
-| `gs-mail` | `*.workers.dev` / local (`wrangler dev`) | `mail-preview.goldshore.ai` (reserved; optional) | `mail.goldshore.ai` |
-| `gs-web` | local Astro dev server | `preview.goldshore.ai` (+ branch preview hosts) | `goldshore.ai` (`www.goldshore.ai`) |
-| `gs-admin` | local Astro dev server | `admin-preview.goldshore.ai` (+ branch preview hosts) | `admin.goldshore.ai` |
+Workers must deploy with explicit environment selection:
 
-## Preview vs prod frontend origin mapping (`PUBLIC_*`)
+- `wrangler deploy --env preview`
+- `wrangler deploy --env prod`
 
-The browser/runtime contract should switch as a pair: preview frontends target preview worker origins, production frontends target production worker origins.
+## Domain ownership matrix
 
-| Variable | Preview value | Prod value |
-| --- | --- | --- |
-| `PUBLIC_API` | `https://api-preview.goldshore.ai` | `https://api.goldshore.ai` |
-| `PUBLIC_GATEWAY` | `https://gw-preview.goldshore.ai` | `https://gw.goldshore.ai` |
-| `PUBLIC_CONTROL` | `https://ops-preview.goldshore.ai` | `https://ops.goldshore.ai` |
-| `PUBLIC_MAIL` | `https://mail-preview.goldshore.ai` (if enabled) | `https://mail.goldshore.ai` |
-| `PUBLIC_WEB` | `https://preview.goldshore.ai` | `https://goldshore.ai` |
-| `PUBLIC_ADMIN` | `https://admin-preview.goldshore.ai` | `https://admin.goldshore.ai` |
+| Surface | Type | Production hostname | Preview hostname | Owner | Notes |
+|---|---|---|---|---|---|
+| Public site | Pages | `goldshore.ai` | Cloudflare Pages branch URL | `gs-web` | Uses `PUBLIC_API` and `PUBLIC_GATEWAY`. |
+| Admin cockpit | Pages | `admin.goldshore.ai` | Cloudflare Pages branch URL | `gs-admin` | Uses `PUBLIC_API` and `PUBLIC_GATEWAY`. |
+| API | Worker | `api.goldshore.ai` | `api-preview.goldshore.ai` | `gs-api` | Routed worker hostname. |
+| Gateway | Worker | `gw.goldshore.ai` | `gw-preview.goldshore.ai` | `gs-gateway` | Service-binds to `gs-api` in same env. |
+| Ops/control | Worker | `ops.goldshore.ai` | `ops-preview.goldshore.ai` | `gs-control` | Service-binds to `gs-api` and `gs-gateway` in same env. |
+| Mail intake | Worker | `mail.goldshore.ai` (optional) | `mail-preview.goldshore.ai` | `gs-mail` | Stable HTTP intake endpoint. |
 
-## Workflow trigger policy
+## Frontend runtime contract
 
-- **Production deploys (`prod`)**: trigger from push events on `main` for deploy workflows.
-- **Preview deploys (`preview`)**: trigger on PR events when:
-  - the PR has label `preview`, or
-  - the PR transitions to `ready_for_review` targeting `main`.
+### gs-web
 
-This keeps previews opt-in via label while still allowing ready-for-review PRs against `main` to auto-deploy preview surfaces.
+- Prod
+  - `PUBLIC_API=https://api.goldshore.ai`
+  - `PUBLIC_GATEWAY=https://gw.goldshore.ai`
+- Preview
+  - `PUBLIC_API=https://api-preview.goldshore.ai`
+  - `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
+
+### gs-admin
+
+- Prod
+  - `PUBLIC_API=https://api.goldshore.ai`
+  - `PUBLIC_GATEWAY=https://gw.goldshore.ai`
+- Preview
+  - `PUBLIC_API=https://api-preview.goldshore.ai`
+  - `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
+
+## Worker binding contract summary
+
+- `gs-gateway` (`preview`, `prod`)
+  - `API -> gs-api` in same environment
+- `gs-control` (`preview`, `prod`)
+  - `API -> gs-api` in same environment
+  - `GATEWAY -> gs-gateway` in same environment
+- `gs-mail` (`preview`, `prod`)
+  - No service binding required for intake
+  - Must expose CORS-safe endpoint and authenticated provider path
+
+## Deploy trigger matrix
+
+| Service | Preview trigger | Production trigger |
+|---|---|---|
+| `gs-api` | PR with `preview` label | `main` push |
+| `gs-gateway` | PR with `preview` label | `main` push |
+| `gs-control` | PR with `preview` label | `main` push |
+| `gs-mail` | PR with `preview` label | `main` push |
+| `gs-web` | PR with `preview` label | `main` push |
+| `gs-admin` | PR with `preview` label | `main` push |
+
+## Contributor quickstart
+
+1. Set Worker and Pages secrets/vars for `preview` and `prod`.
+2. Deploy workers with explicit `--env`.
+3. Ensure frontends use `PUBLIC_API` and `PUBLIC_GATEWAY` values matching their env.
+4. Validate no worker routes or service bindings point from preview to production.
