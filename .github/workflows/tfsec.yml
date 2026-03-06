@@ -6,12 +6,27 @@
 name: tfsec
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
   schedule:
     - cron: '42 15 * * 2'
+  push:
+    branches: [ "main" ]
+    paths:
+      - "infra/**"
+      - "**/*.tf"
+      - "**/*.tfvars"
+      - ".github/workflows/tfsec.yml"
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - "infra/**"
+      - "**/*.tf"
+      - "**/*.tfvars"
+      - ".github/workflows/tfsec.yml"
+
+concurrency:
+  group: tfsec-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   tfsec:
