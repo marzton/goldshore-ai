@@ -21,6 +21,7 @@ function initNav() {
   const setOpen = (open: boolean) => {
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     panel.classList.toggle('is-open', open);
+    panel.setAttribute('aria-hidden', open ? 'false' : 'true');
     document.documentElement.classList.toggle('gs-lock', open);
   };
 
@@ -38,7 +39,12 @@ function initNav() {
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') setOpen(false);
   });
+
+  panel.querySelectorAll<HTMLAnchorElement>('.gs-mobile-links a').forEach((link) => {
+    link.addEventListener('click', () => setOpen(false));
+  });
 }
+
 
 function initModal() {
   const root = document.querySelector<HTMLElement>('[data-gs-modal]');
@@ -49,9 +55,12 @@ function initModal() {
     '[data-gs-modal-close]',
   );
   const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
+  let lastFocused: Element | null = null;
   const panel = root.querySelector<HTMLElement>('.gs-modal-panel');
 
   let opener: HTMLElement | null = null;
+
+  const isOpen = () => root.classList.contains('is-open');
 
   const getFocusableElements = () => {
     if (!panel) return [];
@@ -65,9 +74,7 @@ function initModal() {
   };
 
   const focusDialog = () => {
-    const focusable = getFocusableElements();
-    const firstFocusable = focusable[0];
-    (firstFocusable ?? panel)?.focus();
+    (closeBtn ?? panel)?.focus();
   };
 
   const openModal = (html: string, trigger: HTMLElement) => {
@@ -75,18 +82,31 @@ function initModal() {
     if (body) body.innerHTML = html;
     root.classList.add('is-open');
     document.documentElement.classList.add('gs-lock');
+
+    // Focus trap setup
+    const focusable = root.querySelectorAll<HTMLElement>(
+      "button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])"
+    );
+    if (focusable.length) {
+      setTimeout(() => focusable[0].focus(), 100);
+    } else {
+      setTimeout(() => root.focus(), 100);
+    }
     requestAnimationFrame(focusDialog);
   };
 
   const closeModal = () => {
+    if (!isOpen()) return;
     root.classList.remove('is-open');
     document.documentElement.classList.remove('gs-lock');
+    if (lastFocused && lastFocused instanceof HTMLElement) {
+      lastFocused.focus();
     if (opener?.isConnected) opener.focus();
     opener = null;
   };
 
   const onKeydown = (e: KeyboardEvent) => {
-    if (!root.classList.contains('is-open')) return;
+    if (!isOpen()) return;
 
     if (e.key === 'Escape') {
       closeModal();
@@ -125,13 +145,15 @@ function initModal() {
     const trigger = el.closest<HTMLElement>('[data-gs-modal-open]');
     if (!trigger) return;
 
-    const variant = trigger.getAttribute('data-gs-modal-open') || 'subscribe';
+    const variant = trigger.getAttribute('data-gs-modal-open') || 'admin';
     openModal(getModalTemplate(variant), trigger);
   });
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', onKeydown);
+  window.addEventListener('keydown', (e) =>
+    e.key === 'Escape' ? closeModal() : null,
+  );
 }
 
 function getModalTemplate(variant: string): string {
@@ -143,11 +165,11 @@ function getModalTemplate(variant: string): string {
         <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Restricted. Authentication required.</p>
       </div>
       <form class="gs-form" action="https://admin.goldshore.ai/login" method="POST">
-        <label class="gs-label">Email</label>
-        <input class="gs-input" name="email" type="email" autocomplete="email" required />
-        <label class="gs-label">Password</label>
-        <input class="gs-input" name="password" type="password" autocomplete="current-password" required />
-        <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Login</button>
+        <label for="admin-email" class="gs-label">Email</label>
+        <input id="admin-email" class="gs-input" name="email" type="email" autocomplete="email" aria-required="true" required />
+        <label for="admin-password" class="gs-label">Password</label>
+        <input id="admin-password" class="gs-input" name="password" type="password" autocomplete="current-password" aria-required="true" required />
+        <button class="gs-button gs-button-solid gs-edge-scan" type="submit" aria-label="Login to admin panel">Login</button>
       </form>
       <div class="gs-micro gs-muted">If you are not authorized, this will fail silently.</div>
     `;
@@ -160,9 +182,9 @@ function getModalTemplate(variant: string): string {
       <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Periodic updates on releases, systems, and operational tooling.</p>
     </div>
     <form class="gs-form" action="/api/subscribe" method="POST">
-      <label class="gs-label">Email</label>
-      <input class="gs-input" name="email" type="email" autocomplete="email" required />
-      <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Request Access</button>
+      <label for="subscribe-email" class="gs-label">Email</label>
+      <input id="subscribe-email" class="gs-input" name="email" type="email" autocomplete="email" aria-required="true" required />
+      <button class="gs-button gs-button-solid gs-edge-scan" type="submit" aria-label="Request subscription access">Request Access</button>
       <div class="gs-micro gs-muted">No spam. No public list. Controlled distribution.</div>
     </form>
   `;
