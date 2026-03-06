@@ -1,8 +1,5 @@
 name: CI
 
-permissions:
-  contents: read
-
 on:
   pull_request:
   push:
@@ -10,6 +7,8 @@ on:
 
 jobs:
   lint-test-build:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -31,7 +30,55 @@ jobs:
 
       - name: Repo health checks
         run: pnpm run repo:health
-        continue-on-error: false
+
+      - name: Validate theme exports
+        run: pnpm run check:theme-exports
 
       - name: Build all
         run: pnpm -r build
+
+  cloudflare-env-lint:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    if: ${{ secrets.CLOUDFLARE_ACCOUNT_ID != '' && (secrets.CLOUDFLARE_BUILD_API_TOKEN != '' || secrets.CLOUDFLARE_API_TOKEN != '') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        worker:
+          - apps/gs-gateway
+          - apps/gs-control
+          - apps/gs-api
+          - apps/gs-mail
+        env:
+          - preview
+          - prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Set pnpm version
+        run: corepack prepare pnpm@9.0.0 --activate
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Wrangler dry-run (${{ matrix.worker }} / ${{ matrix.env }})
+        working-directory: ${{ matrix.worker }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          pnpm exec wrangler deploy --dry-run --env "${{ matrix.env }}" --config wrangler.toml 2>&1 | tee wrangler.log
+          if rg -n "exists at the top level, but not on env\\.|not inherited by environments|missing binding|invalid binding" wrangler.log; then
+            echo "Cloudflare env parity lint failed"
+            exit 1
+          fi

@@ -30,7 +30,7 @@ const { rawPath } = Astro.props;
 
     <main class="api-content">
       {slug ? (
-        <ApiEndpoint openapi={openapi} path={rawPath} />
+        <ApiEndpoint openapi={openapi} endpoint={rawPath} />
       ) : (
         <div class="api-intro prose prose-slate max-w-none">
            <h1 class="text-4xl font-bold gs-heading">{openapi.info.title}</h1>
