@@ -30,43 +30,36 @@ function initNav() {
     setOpen(!open);
   });
 
-  panel.addEventListener('click', (e) => {
-    const t = e.target as HTMLElement;
-    if (t.matches('[data-gs-nav-close]') || t.matches('[data-gs-mobile-panel]'))
+  const onKeydown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && panel.classList.contains('is-open')) {
       setOpen(false);
-  });
+      toggle.focus();
+    }
+  };
 
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') setOpen(false);
-  });
-
-  panel.querySelectorAll<HTMLAnchorElement>('.gs-mobile-links a').forEach((link) => {
-    link.addEventListener('click', () => setOpen(false));
-  });
+  window.addEventListener('keydown', onKeydown);
 }
-
 
 function initModal() {
   const root = document.querySelector<HTMLElement>('[data-gs-modal]');
-  if (!root) return;
-
-  const backdrop = root.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
-  const closeBtn = root.querySelector<HTMLButtonElement>(
+  const body = root?.querySelector<HTMLElement>('[data-gs-modal-body]');
+  const backdrop = root?.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
+  const closeBtn = root?.querySelector<HTMLButtonElement>(
     '[data-gs-modal-close]',
   );
-  const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
-  let lastFocused: Element | null = null;
-  const panel = root.querySelector<HTMLElement>('.gs-modal-panel');
+  const panel = root?.querySelector<HTMLElement>('[data-gs-modal-panel]');
+
+  if (!root || !body) return;
 
   let opener: HTMLElement | null = null;
+  let lastFocused: Element | null = null;
 
   const isOpen = () => root.classList.contains('is-open');
 
   const getFocusableElements = () => {
     if (!panel) return [];
-
     const selectors =
-      'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 
     return Array.from(panel.querySelectorAll<HTMLElement>(selectors)).filter(
       (el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true',
@@ -101,6 +94,7 @@ function initModal() {
     document.documentElement.classList.remove('gs-lock');
     if (lastFocused && lastFocused instanceof HTMLElement) {
       lastFocused.focus();
+    }
     if (opener?.isConnected) opener.focus();
     opener = null;
   };
@@ -151,9 +145,7 @@ function initModal() {
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', (e) =>
-    e.key === 'Escape' ? closeModal() : null,
-  );
+  window.addEventListener('keydown', onKeydown);
 }
 
 function getModalTemplate(variant: string): string {
