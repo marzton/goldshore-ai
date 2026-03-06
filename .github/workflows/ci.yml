@@ -32,5 +32,70 @@ jobs:
         run: pnpm run repo:health
         continue-on-error: false
 
+
+      - name: Validate theme exports
+        run: pnpm run check:theme-exports
+
       - name: Build all
         run: pnpm -r build
+
+  cloudflare-dry-run-bindings:
+    name: Cloudflare dry-run binding checks
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && vars.CLOUDFLARE_ACCOUNT_ID != '' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+          - apps/gs-gateway
+          - apps/gs-control
+          - apps/gs-api
+          - apps/gs-mail
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      WRANGLER_SEND_METRICS: "false"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Set pnpm version
+        run: corepack prepare pnpm@9.0.0 --activate
+
+      - name: Required environment variables
+        run: |
+          echo "This dry-run check requires only:"
+          echo "- CLOUDFLARE_API_TOKEN (secret)"
+          echo "- CLOUDFLARE_ACCOUNT_ID (repository variable)"
+
+      - name: Wrangler dry-run for preview and prod (${{ matrix.app }})
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${{ matrix.app }}"
+
+          run_and_check() {
+            local target_env="$1"
+            local output_file
+            output_file="$(mktemp)"
+
+            echo "Running dry-run deploy for '${target_env}' in ${{ matrix.app }}"
+            pnpm dlx wrangler deploy --dry-run --env "${target_env}" --config wrangler.toml 2>&1 | tee "${output_file}"
+
+            if rg -n "exists at the top level, but not on env\\..*|not inherited by environments" "${output_file}"; then
+              echo "::error::Detected inheritance/missing-binding warnings for env '${target_env}' in ${{ matrix.app }}"
+              exit 1
+            fi
+          }
+
+          run_and_check preview
+          run_and_check prod
