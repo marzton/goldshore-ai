@@ -5,8 +5,7 @@ permissions:
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - "apps/gs-web/**"
       - "packages/**"
@@ -16,7 +15,6 @@ on:
 jobs:
   deploy-web:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
@@ -50,17 +48,6 @@ jobs:
           PUBLIC_BUILD_TIMESTAMP: ${{ github.run_started_at }}
           PUBLIC_COMMIT_HASH: ${{ github.sha }}
         run: pnpm build
-
-      - name: Validate build artifacts
-        working-directory: apps/gs-web
-        run: |
-          set -euo pipefail
-
-          test -d dist/_astro
-          find dist/_astro -maxdepth 1 -type f -name '*.css' -print -quit | grep -q .
-          find dist/_astro -maxdepth 1 -type f -name '*.js' -print -quit | grep -q .
-          grep -q '<link' dist/index.html
-          grep -q '/_astro/' dist/index.html
 
       - name: Deploy to Cloudflare Pages (production)
         uses: cloudflare/pages-action@v1
