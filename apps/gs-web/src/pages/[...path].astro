@@ -5,7 +5,7 @@ import DefaultPageTemplate from '../components/DefaultPageTemplate.astro';
 export const prerender = false;
 
 const slug = Astro.params.path ?? '';
-const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
+const API_BASE = import.meta.env.PUBLIC_API || '';
 
 let page: {
   id: number;
