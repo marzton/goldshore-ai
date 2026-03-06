@@ -52,8 +52,8 @@ routes = [
 ]
 
 [env.prod.vars]
-ENV = "production"
-NODE_ENV = "production"
+ENV = "prod"
+NODE_ENV = "prod"
 OTEL_SERVICE_NAME = "goldshore-core-prod"
 
 # Sentinel: Audience tag for Cloudflare Access.
