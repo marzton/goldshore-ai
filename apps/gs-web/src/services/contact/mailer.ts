@@ -1,14 +1,11 @@
 import { isValidEmail } from '../../utils/security';
 import type { FormConfig, MailRecipient, Submission } from './types';
 
-const DEFAULT_MAILCHANNELS_API_URL = 'https://api.mailchannels.net/tx/v1/send';
-
 export const dedupeRecipients = (recipients: MailRecipient[]) => {
   const unique = new Map<string, MailRecipient>();
   recipients.forEach((recipient) => {
     const email = recipient.email.trim().toLowerCase();
-    if (!email) return;
-    if (!isValidEmail(email)) return;
+    if (!email || !isValidEmail(email)) return;
     if (!unique.has(email)) {
       unique.set(email, {
         email,
@@ -68,9 +65,7 @@ export const buildSubmissionDigest = (submission: Submission) => {
 
   const filtered = pairs.filter(([, value]) => value);
 
-  const text = filtered
-    .map(([label, value]) => `${label}: ${value}`)
-    .join('\n');
+  const text = filtered.map(([label, value]) => `${label}: ${value}`).join('\n');
   const html = filtered
     .map(
       ([label, value]) =>
@@ -79,62 +74,4 @@ export const buildSubmissionDigest = (submission: Submission) => {
     .join('');
 
   return { text, html };
-};
-
-export const sendMail = async (
-  env: Env,
-  to: MailRecipient[],
-  subject: string,
-  text: string,
-  html: string,
-  replyTo?: MailRecipient,
-) => {
-  const fromEmail = env.MAILCHANNELS_SENDER_EMAIL?.trim();
-  const fromName = env.MAILCHANNELS_SENDER_NAME?.trim() || 'GoldShore';
-  if (!fromEmail || !isValidEmail(fromEmail) || to.length === 0) {
-    return {
-      attempted: false,
-      reason: 'missing_mail_configuration',
-    };
-  }
-
-  const payload = {
-    personalizations: [
-      {
-        to,
-      },
-    ],
-    from: {
-      email: fromEmail,
-      name: fromName,
-    },
-    ...(replyTo ? { reply_to: replyTo } : {}),
-    subject,
-    content: [
-      {
-        type: 'text/plain',
-        value: text,
-      },
-      {
-        type: 'text/html',
-        value: html,
-      },
-    ],
-  };
-
-  const endpoint = env.MAILCHANNELS_API_URL || DEFAULT_MAILCHANNELS_API_URL;
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
-
-  return {
-    attempted: true,
-    ok: response.ok,
-    status: response.status,
-    body: await response.text(),
-  };
 };

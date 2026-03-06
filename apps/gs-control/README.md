@@ -48,8 +48,8 @@ pnpm --filter ./apps/gs-control run-task
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-control-worker.yml`
-- Preview deploy: `.github/workflows/preview-control-worker.yml`
+- Production deploy: `.github/workflows/deploy-gs-control.yml.disabled`
+- Preview deploy: `.github/workflows/preview-gs-control.yml.disabled`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 - Store `CLOUDFLARE_API_TOKEN` in Cloudflare secrets (via `wrangler secret put`) rather than committing env values
 
