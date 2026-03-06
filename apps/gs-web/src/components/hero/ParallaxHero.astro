@@ -1,8 +1,12 @@
 ---
-import Logo from '@goldshore/brand/Logo.astro';
+import HeroLogo from './HeroLogo.astro';
 ---
 
-<section class="hero gs-cinematic-hero" data-hero-root aria-label="Gold Shore hero">
+<section
+  class="hero gs-cinematic-hero"
+  data-hero-root
+  aria-label="Gold Shore hero"
+>
   <div class="hero-bg" aria-hidden="true">
     <canvas class="hero-canvas" data-stars></canvas>
     <canvas class="hero-canvas" data-shooting></canvas>
@@ -11,11 +15,13 @@ import Logo from '@goldshore/brand/Logo.astro';
 
   <div class="hero-content">
     <div class="hero-mark">
-      <Logo variant="mark" class="w-40 h-40" />
+      <HeroLogo />
     </div>
 
     <h1 class="hero-title">Gold Shore</h1>
-    <p class="hero-subtitle">Designed not to manage capital, but to steer it.</p>
+    <p class="hero-subtitle">
+      Designed not to manage capital, but to steer it.
+    </p>
 
     <div class="hero-actions">
       <a class="btn primary" href="/intake">Start</a>
