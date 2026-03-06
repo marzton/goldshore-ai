@@ -5,7 +5,26 @@
   "type": "module",
   "exports": {
     ".": "./index.css",
+<<<<<<< main-HEAD-2
+    "./index.css": "./index.css",
+    "./styles/global.css": "./styles/global.css",
+    "./styles/tokens.css": "./styles/tokens.css",
+    "./styles/base.css": "./styles/base.css",
+    "./styles/layout.css": "./styles/layout.css",
+    "./styles/components.css": "./styles/components.css",
+    "./styles/motion.css": "./styles/motion.css",
+    "./styles/*": "./styles/*",
     "./runtime": "./index.ts",
     "./manager": "./src/manager.ts"
+=======
+    "./tokens": "./src/styles/tokens.css",
+    "./styles/tokens": "./src/styles/tokens.css",
+    "./styles/base": "./src/styles/base.css",
+    "./styles/components": "./src/styles/components.css",
+    "./styles/layout": "./src/styles/layout.css",
+    "./styles/global.css": "./index.css",
+    "./manager": "./src/theme-manager.ts",
+    "./assets/logo.svg": "./assets/logo.svg"
+>>>>>>> chore/working-copy
   }
 }

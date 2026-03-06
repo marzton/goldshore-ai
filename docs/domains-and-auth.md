@@ -22,6 +22,7 @@ Preview applications should mirror production configuration wherever Access is e
 
 - Cloudflare desired state for Access policy naming and domain ownership lives in `infra/cloudflare/desired-state.yaml`.
 - Pages custom domains for admin and web are documented in `infra/cloudflare/BINDINGS_MAP.md`.
+- Canonical preview/prod hostnames are documented in `docs/infra/HOSTNAME_REFERENCE.md`.
 
 # Domains & Auth (Single Source of Truth)
 
@@ -50,7 +51,7 @@ Cloudflare Access is enforced on internal tooling and protected previews. The ta
 | Admin cockpit | `admin.goldshore.ai`, `admin-preview.goldshore.ai`, `*-preview.goldshore.ai`, `{branch}.goldshore-pages.dev` | Yes (GoldShore-Admin-ZT) | Internal admin dashboard, email allowlist + IdP/OTP. |
 | Control worker | `ops.goldshore.ai` | Yes | Internal ops workflows and automation. |
 | API worker | `api.goldshore.ai` | Optional | Enable for private endpoints only. |
-| Gateway worker | `gw.goldshore.ai` | Optional | Canonical hostname is `gw.goldshore.ai` (not `gateway.goldshore.ai`); depends on routing/auth design. |
+| Gateway worker | `gw.goldshore.ai`, `gw-preview.goldshore.ai` | Optional | Canonical hostnames are `gw.goldshore.ai` (prod) and `gw-preview.goldshore.ai` (preview); legacy aliases `gateway.goldshore.ai` / `gateway-preview.goldshore.ai` may remain routed for compatibility. |
 | Mail handler | `mail.goldshore.ai` | No | Cloudflare mail routing cannot authenticate. |
 
 ## GitHub App callback URLs
