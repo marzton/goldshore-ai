@@ -1,10 +1,5 @@
 ---
 import WebLayout from '../layouts/WebLayout.astro';
-import Controls from '../components/risk-radar/Controls.astro';
-import OrbitalMap from '../components/risk-radar/OrbitalMap.astro';
-import DetailsPanel from '../components/risk-radar/DetailsPanel.astro';
-import Legend from '../components/risk-radar/Legend.astro';
-import { readFile } from 'node:fs/promises';
 
 export const prerender = true;
 
@@ -94,6 +89,7 @@ const radarMockData = {
     }
   }
 };
+const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
 ---
 
 <WebLayout title="Risk Radar | Gold Shore" description="Operational threat visualization system.">
@@ -106,7 +102,7 @@ const radarMockData = {
         </p>
       </header>
 
-      <div class="grid grid-cols-1 gap-6 xl:grid-cols-12" id="risk-radar-app">
+      <div class="grid grid-cols-1 gap-6 xl:grid-cols-12" id="risk-radar-app" data-radar-data={radarDataEncoded}>
         <aside class="gs-card rounded-3xl border border-[var(--gs-border-primary)] bg-white p-6 xl:col-span-3">
           <h3 class="mb-4 text-lg font-bold">Controls</h3>
           <div class="space-y-4 text-sm">
@@ -160,10 +156,6 @@ const radarMockData = {
           </div>
         </aside>
       </div>
-
-      <div class="mt-6">
-        <Legend statusLegend={radarData.legend.status} metricLegend={radarData.legend.metrics} />
-      </div>
     </div>
 
     <script type="application/json" id="risk-radar-data" set:html={JSON.stringify(radarMockData)}></script>
@@ -171,7 +163,9 @@ const radarMockData = {
 </WebLayout>
 
 <script>
-  const data = JSON.parse(document.getElementById('risk-radar-data')?.textContent ?? '{}');
+  const root = document.getElementById('risk-radar-app');
+  const encodedData = root?.dataset?.radarData ?? '';
+  const data = encodedData ? JSON.parse(decodeURIComponent(encodedData)) : {};
   const svg = document.getElementById('risk-radar-graph');
   const detailsPanel = document.getElementById('details-panel');
   const visibleCount = document.getElementById('visible-count');
@@ -199,16 +193,36 @@ const radarMockData = {
       status: 'all',
       environment: 'all'
     },
-    simulatedNodeIds: new Set()
+    simulatedNodeIds: new Set(),
+    simulationTimeoutId: null
   };
 
   const services = data.services ?? [];
   const tiers = data.tiers ?? [];
+  const baseMetrics = new Map(services.map((service) => [service.id, { pressure: service.pressure, drift: service.drift }]));
 
   const uniqueStatuses = [...new Set(services.map((service) => service.status))];
   const uniqueEnvironments = [...new Set(services.map((service) => service.environment))];
 
   const toOptionMarkup = (items) => ['<option value="all">All</option>', ...items.map((item) => `<option value="${item}">${item}</option>`)].join('');
+
+  const resetSimulation = () => {
+    state.simulatedNodeIds.forEach((serviceId) => {
+      const service = dependencyMap.get(serviceId);
+      const baseline = baseMetrics.get(serviceId);
+      if (!service || !baseline) {
+        return;
+      }
+      service.pressure = baseline.pressure;
+      service.drift = baseline.drift;
+    });
+
+    state.simulatedNodeIds.clear();
+    if (state.simulationTimeoutId) {
+      window.clearTimeout(state.simulationTimeoutId);
+      state.simulationTimeoutId = null;
+    }
+  };
 
   tierSelect.innerHTML = toOptionMarkup(tiers.map((tier) => tier.id));
   statusSelect.innerHTML = toOptionMarkup(uniqueStatuses);
@@ -337,35 +351,6 @@ const radarMockData = {
       ? formatServiceDetails(selectedService)
       : 'Hover or click a service node to inspect pressure, drift, dependencies, and environment.';
 
-    svg.querySelectorAll('.node-group').forEach((nodeElement) => {
-      const serviceId = nodeElement.getAttribute('data-node-id');
-      if (!serviceId) {
-        return;
-      }
-
-      nodeElement.addEventListener('mouseenter', () => {
-        state.hoveredNodeId = serviceId;
-        render();
-      });
-
-      nodeElement.addEventListener('mouseleave', () => {
-        state.hoveredNodeId = null;
-        render();
-      });
-
-      nodeElement.addEventListener('click', () => {
-        state.activeNodeId = serviceId;
-        render();
-      });
-
-      nodeElement.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          state.activeNodeId = serviceId;
-          render();
-        }
-      });
-    });
   };
 
   const onFilterChange = () => {
@@ -382,6 +367,7 @@ const radarMockData = {
   environmentSelect.addEventListener('change', onFilterChange);
 
   simulateButton.addEventListener('click', () => {
+    resetSimulation();
     const visibleServices = getVisibleServices();
     if (visibleServices.length === 0) {
       return;
@@ -399,14 +385,77 @@ const radarMockData = {
 
     render();
 
-    window.setTimeout(() => {
-      impacted.forEach((service) => {
-        state.simulatedNodeIds.delete(service.id);
-        service.pressure = Math.max(0, service.pressure - 18);
-        service.drift = Math.max(0, service.drift - 22);
-      });
+    state.simulationTimeoutId = window.setTimeout(() => {
+      resetSimulation();
       render();
     }, prefersReducedMotion ? 1200 : 2500);
+  });
+
+  svg.addEventListener('mouseover', (event) => {
+    const nodeElement = event.target.closest('.node-group');
+    if (!nodeElement) {
+      return;
+    }
+
+    const serviceId = nodeElement.getAttribute('data-node-id');
+    if (!serviceId || state.hoveredNodeId === serviceId) {
+      return;
+    }
+
+    state.hoveredNodeId = serviceId;
+    render();
+  });
+
+  svg.addEventListener('mouseout', (event) => {
+    const fromNode = event.target.closest('.node-group');
+    if (!fromNode) {
+      return;
+    }
+
+    const related = event.relatedTarget;
+    if (related instanceof Element && fromNode.contains(related)) {
+      return;
+    }
+
+    if (state.hoveredNodeId !== null) {
+      state.hoveredNodeId = null;
+      render();
+    }
+  });
+
+  svg.addEventListener('click', (event) => {
+    const nodeElement = event.target.closest('.node-group');
+    if (!nodeElement) {
+      return;
+    }
+
+    const serviceId = nodeElement.getAttribute('data-node-id');
+    if (!serviceId) {
+      return;
+    }
+
+    state.activeNodeId = serviceId;
+    render();
+  });
+
+  svg.addEventListener('keydown', (event) => {
+    const nodeElement = event.target.closest('.node-group');
+    if (!nodeElement) {
+      return;
+    }
+
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    const serviceId = nodeElement.getAttribute('data-node-id');
+    if (!serviceId) {
+      return;
+    }
+
+    state.activeNodeId = serviceId;
+    render();
   });
 
   render();
