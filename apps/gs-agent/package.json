@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy --minify src/index.ts --env prod",
+    "deploy:preview": "wrangler deploy --minify src/index.ts --env dev",
     "build": "wrangler deploy src/index.ts --dry-run --outdir=dist"
   },
   "dependencies": {
