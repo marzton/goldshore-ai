@@ -1,6 +1,9 @@
 import { isValidEmail } from '../../utils/security';
 import type { FormConfig, MailRecipient, Submission } from './types';
 
+const RESEND_API_URL = 'https://api.resend.com/emails';
+const POSTMARK_API_URL = 'https://api.postmarkapp.com/email';
+
 export const dedupeRecipients = (recipients: MailRecipient[]) => {
   const unique = new Map<string, MailRecipient>();
   recipients.forEach((recipient) => {
@@ -74,4 +77,103 @@ export const buildSubmissionDigest = (submission: Submission) => {
     .join('');
 
   return { text, html };
+};
+
+const isVerifiedFromAddress = (fromEmail: string, fromDomain: string) => {
+  const normalizedEmail = fromEmail.toLowerCase();
+  const normalizedDomain = fromDomain.toLowerCase();
+  return normalizedEmail.endsWith(`@${normalizedDomain}`);
+};
+
+export const sendMail = async (
+  env: Env,
+  to: MailRecipient[],
+  subject: string,
+  text: string,
+  html: string,
+  replyTo?: MailRecipient,
+) => {
+  const fromEmail = env.MAIL_FROM_EMAIL?.trim();
+  const fromName = env.MAIL_FROM_NAME?.trim() || 'GoldShore';
+  const fromDomain = env.MAIL_FROM_DOMAIN?.trim();
+
+  if (
+    !fromEmail ||
+    !fromDomain ||
+    !isValidEmail(fromEmail) ||
+    !isVerifiedFromAddress(fromEmail, fromDomain) ||
+    to.length === 0
+  ) {
+    return {
+      attempted: false,
+      reason: 'missing_mail_configuration',
+    };
+  }
+
+  const validReplyTo =
+    replyTo && isValidEmail(replyTo.email)
+      ? { email: replyTo.email.trim().toLowerCase(), name: replyTo.name?.trim() }
+      : undefined;
+
+  if (env.RESEND_API_KEY?.trim()) {
+    const payload = {
+      from: fromName ? `${fromName} <${fromEmail}>` : fromEmail,
+      to: to.map((recipient) => recipient.email),
+      subject,
+      text,
+      html,
+      ...(validReplyTo ? { reply_to: validReplyTo.email } : {}),
+    };
+
+    const response = await fetch(RESEND_API_URL, {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${env.RESEND_API_KEY.trim()}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    return {
+      attempted: true,
+      ok: response.ok,
+      status: response.status,
+      body: await response.text(),
+      provider: 'resend',
+    };
+  }
+
+  if (env.POSTMARK_SERVER_TOKEN?.trim()) {
+    const payload = {
+      From: fromName ? `${fromName} <${fromEmail}>` : fromEmail,
+      To: to.map((recipient) => recipient.email).join(','),
+      Subject: subject,
+      TextBody: text,
+      HtmlBody: html,
+      ...(validReplyTo ? { ReplyTo: validReplyTo.email } : {}),
+    };
+
+    const response = await fetch(POSTMARK_API_URL, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-Postmark-Server-Token': env.POSTMARK_SERVER_TOKEN.trim(),
+      },
+      body: JSON.stringify(payload),
+    });
+
+    return {
+      attempted: true,
+      ok: response.ok,
+      status: response.status,
+      body: await response.text(),
+      provider: 'postmark',
+    };
+  }
+
+  return {
+    attempted: false,
+    reason: 'missing_provider_credentials',
+  };
 };

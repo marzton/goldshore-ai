@@ -5,7 +5,8 @@ permissions:
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
       - "apps/gs-admin/**"
       - "packages/**"
@@ -15,6 +16,8 @@ on:
 jobs:
   deploy-admin:
     runs-on: ubuntu-latest
+    name: Deploy Admin
+
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
@@ -39,7 +42,7 @@ jobs:
       - name: Validate canonical worker names
         run: pnpm validate:names
 
-      - name: Build admin app
+      - name: Build admin app (production)
         working-directory: apps/gs-admin
         env:
           PUBLIC_API: https://api.goldshore.ai
