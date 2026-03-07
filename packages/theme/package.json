@@ -15,6 +15,6 @@
     "./styles/*": "./styles/*",
     "./runtime": "./index.ts",
     "./manager": "./src/manager.ts",
-    "./assets/logo.svg": "./assets/logo.svg"
+    "./styles/global.css": "./src/styles/global.css"
   }
 }
