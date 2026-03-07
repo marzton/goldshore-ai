@@ -2,8 +2,18 @@ name: Repo Health
 
 on:
   pull_request:
-  push:
-    branches: [main]
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - "scripts/**"
+      - "pnpm-lock.yaml"
+      - "package.json"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/repo-health.yml"
+
+concurrency:
+  group: repo-health-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
