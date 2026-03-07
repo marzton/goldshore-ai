@@ -110,14 +110,21 @@ pnpm --filter ./apps/gs-web preview
 
 ## Contact form + Cloudflare mail delivery
 
-`/api/contact` stores submissions in KV/D1 and can send emails through MailChannels from Cloudflare Pages Functions.
+`/api/contact` stores submissions in KV/D1 and posts intake notifications to `gs-mail` at `POST /v1/forms/intake`.
 
 Set these environment variables in the `gs-web` Pages project:
 
-- `MAILCHANNELS_SENDER_EMAIL` (required for email send)
-- `MAILCHANNELS_SENDER_NAME` (optional, defaults to `GoldShore`)
+- `GS_MAIL_API_URL` (base URL for `gs-mail`)
+- `GS_MAIL_API_TOKEN` (bearer token shared with `gs-mail`)
 - `CONTACT_NOTIFICATION_EMAILS` (comma-separated recipient list for new submissions)
-- `MAILCHANNELS_API_URL` (optional override, defaults to `https://api.mailchannels.net/tx/v1/send`)
+
+Set these environment variables in the `gs-mail` Worker project as secrets:
+
+- `FORM_INTAKE_AUTH_TOKEN` (must match `GS_MAIL_API_TOKEN`)
+- `MAIL_FROM_EMAIL` (must be under your verified sending domain)
+- `MAIL_FROM_DOMAIN` (verified sending domain, enforced)
+- `MAIL_FROM_NAME` (optional, defaults to `GoldShore`)
+- `RESEND_API_KEY` **or** `POSTMARK_SERVER_TOKEN`
 
 Keep the existing bindings for `KV` and `DB` so submissions continue to persist even if email delivery is temporarily unavailable.
 

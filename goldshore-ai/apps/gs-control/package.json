@@ -12,13 +12,13 @@
     "@goldshore/auth": "workspace:*",
     "@goldshore/utils": "workspace:*",
     "@hono/zod-validator": "^0.7.6",
-    "hono": "^4.0.0",
+    "hono": "^4.12.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241106.0",
     "typescript": "^5.4.0",
     "tsx": "^4.7.1",
-    "wrangler": "^4.63.0"
+    "wrangler": "^4.71.0"
   }
 }
