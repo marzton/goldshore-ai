@@ -138,7 +138,9 @@ function initModal() {
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', onKeydown);
+  window.addEventListener('keydown', (e) =>
+    e.key === 'Escape' ? closeModal() : null,
+  );
 }
 
 function getModalTemplate(variant: string): string {
