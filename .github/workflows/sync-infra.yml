@@ -27,10 +27,6 @@ jobs:
       - name: Run system sync
         run: pnpm sync:infra
         env:
-<<<<<<< HEAD
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
-=======
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
->>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           GS_KV_NAMESPACE_ID: ${{ secrets.GS_KV_NAMESPACE_ID }}

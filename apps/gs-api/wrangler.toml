@@ -13,6 +13,8 @@ routes = [
 
 [env.preview.vars]
 ENV = "preview"
+NODE_ENV = "preview"
+OTEL_SERVICE_NAME = "goldshore-core-preview"
 
 # Sentinel: Audience tag for Cloudflare Access.
 # CRITICAL: This must be set to the specific Application Audience (AUD) tag
