@@ -8,38 +8,161 @@ import { readFile } from 'node:fs/promises';
 
 export const prerender = true;
 
-const radarData = JSON.parse(
-  await readFile(new URL('../../public/data/risk-radar.sample.json', import.meta.url), 'utf-8')
-);
-const uiState = radarData?.snapshot?.uiState ?? 'loading';
+const radarMockData = {
+  snapshot: {
+    generatedAt: '2026-03-05T00:00:00Z',
+    uiState: 'ready'
+  },
+  tiers: [
+    { id: 'T1', label: 'Core', radius: 92 },
+    { id: 'T2', label: 'Critical Surface', radius: 158 },
+    { id: 'T3', label: 'Extended Surface', radius: 224 }
+  ],
+  services: [
+    {
+      id: 'CI-01',
+      label: 'Workflow Governance',
+      tier: 'T1',
+      status: 'stable',
+      environment: 'prod',
+      pressure: 24,
+      drift: 18,
+      signal: 76,
+      dependencies: ['OBS-02', 'AUTH-10']
+    },
+    {
+      id: 'OBS-02',
+      label: 'Signal Correlator',
+      tier: 'T1',
+      status: 'monitoring',
+      environment: 'staging',
+      pressure: 43,
+      drift: 51,
+      signal: 62,
+      dependencies: ['NET-07']
+    },
+    {
+      id: 'SEC-04',
+      label: 'PII Leakage Guard',
+      tier: 'T2',
+      status: 'monitoring',
+      environment: 'prod',
+      pressure: 58,
+      drift: 63,
+      signal: 57,
+      dependencies: ['CI-01', 'OPS-09']
+    },
+    {
+      id: 'OPS-09',
+      label: 'Branch Divergence',
+      tier: 'T3',
+      status: 'critical',
+      environment: 'prod',
+      pressure: 82,
+      drift: 79,
+      signal: 42,
+      dependencies: []
+    },
+    {
+      id: 'AUTH-10',
+      label: 'Identity Broker',
+      tier: 'T2',
+      status: 'stable',
+      environment: 'dev',
+      pressure: 21,
+      drift: 16,
+      signal: 84,
+      dependencies: ['NET-07']
+    },
+    {
+      id: 'NET-07',
+      label: 'Gateway Firewall',
+      tier: 'T3',
+      status: 'stable',
+      environment: 'staging',
+      pressure: 26,
+      drift: 29,
+      signal: 71,
+      dependencies: []
+    }
+  ],
+  legend: {
+    status: {
+      stable: 'Contained and operating within policy thresholds.',
+      monitoring: 'Active watch due to elevated drift or telemetry noise.',
+      critical: 'Immediate mitigation required. Breach likelihood elevated.'
+    }
+  }
+};
 ---
 
 <WebLayout title="Risk Radar | Gold Shore" description="Operational threat visualization system.">
   <section class="gs-section risk-radar blueprint-bg min-h-screen">
     <div class="gs-container py-12">
-      <header class="mb-10">
+      <header class="mb-8">
         <h2 class="mb-4 text-5xl font-bold gs-heading">Risk Radar</h2>
         <p class="max-w-2xl text-xl text-[var(--gs-text-secondary)]">
           Systemic exposure mapping and signal volatility monitoring in near real time.
         </p>
       </header>
 
-      <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
-        <div class="xl:col-span-3">
-          <Controls tiers={radarData.tiers} selectedTier="all" state={uiState} />
-        </div>
+      <div class="grid grid-cols-1 gap-6 xl:grid-cols-12" id="risk-radar-app">
+        <aside class="gs-card rounded-3xl border border-[var(--gs-border-primary)] bg-white p-6 xl:col-span-3">
+          <h3 class="mb-4 text-lg font-bold">Controls</h3>
+          <div class="space-y-4 text-sm">
+            <label class="block">
+              <span class="mb-2 block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--gs-text-secondary)]">Tier</span>
+              <select id="filter-tier" class="w-full rounded-xl border border-[var(--gs-border-primary)] bg-[var(--gs-bg-tertiary)] px-3 py-2"></select>
+            </label>
 
-        <div class="xl:col-span-6">
-          <OrbitalMap tiers={radarData.tiers} nodes={radarData.nodes} state={uiState} />
-        </div>
+            <label class="block">
+              <span class="mb-2 block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--gs-text-secondary)]">Status</span>
+              <select id="filter-status" class="w-full rounded-xl border border-[var(--gs-border-primary)] bg-[var(--gs-bg-tertiary)] px-3 py-2"></select>
+            </label>
 
-        <div class="xl:col-span-3">
-          <DetailsPanel nodes={radarData.nodes} />
-        </div>
+            <label class="block">
+              <span class="mb-2 block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--gs-text-secondary)]">Environment</span>
+              <select id="filter-environment" class="w-full rounded-xl border border-[var(--gs-border-primary)] bg-[var(--gs-bg-tertiary)] px-3 py-2"></select>
+            </label>
+
+            <button id="simulate-event" class="w-full rounded-xl border border-blue-600/40 bg-blue-600/10 px-3 py-2 font-semibold text-blue-700 transition hover:bg-blue-600/20">
+              Simulate Event
+            </button>
+
+            <div class="rounded-xl border border-[var(--gs-border-primary)] bg-[var(--gs-bg-tertiary)] p-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--gs-text-secondary)]">Snapshot</p>
+              <p id="snapshot-state" class="mt-1 font-mono text-sm text-blue-700"></p>
+            </div>
+          </div>
+        </aside>
+
+        <section class="gs-card relative rounded-3xl border border-[var(--gs-border-primary)] bg-black/95 p-6 text-white xl:col-span-6">
+          <header class="mb-4 flex items-center justify-between">
+            <h3 class="text-lg font-bold">Orbital Map</h3>
+            <span id="visible-count" class="rounded-full border border-blue-500/50 bg-blue-500/20 px-3 py-1 text-xs uppercase tracking-[0.12em] text-blue-200"></span>
+          </header>
+          <svg id="risk-radar-graph" viewBox="0 0 560 560" class="h-[440px] w-full rounded-2xl border border-blue-500/25 bg-slate-950/90" aria-label="Risk radar graph"></svg>
+        </section>
+
+        <aside class="gs-card rounded-3xl border border-[var(--gs-border-primary)] bg-white p-6 xl:col-span-3">
+          <h3 class="mb-4 text-lg font-bold">Details Panel</h3>
+          <article id="details-panel" class="rounded-xl border border-[var(--gs-border-primary)] bg-[var(--gs-bg-tertiary)] p-4 text-sm">
+            Hover or click a service node to inspect pressure, drift, dependencies, and environment.
+          </article>
+
+          <div class="mt-6 rounded-xl border border-[var(--gs-border-primary)] bg-[var(--gs-bg-tertiary)] p-4 text-sm">
+            <h4 class="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--gs-text-secondary)]">Status Legend</h4>
+            <ul class="space-y-2">
+              {Object.entries(radarMockData.legend.status).map(([key, text]) => (
+                <li><strong class="capitalize">{key}:</strong> {text}</li>
+              ))}
+            </ul>
+          </div>
+        </aside>
       </div>
 
       <div class="mt-6">
-        <Legend statusLegend={radarData.legend.status} metricLegend={radarData.legend.metrics} />
+        <Legend statusLegend={radarMockData.legend.status} metricLegend={radarMockData.legend.metrics} />
       </div>
     </div>
 
@@ -48,9 +171,7 @@ const uiState = radarData?.snapshot?.uiState ?? 'loading';
 </WebLayout>
 
 <script>
-  const root = document.getElementById('risk-radar-app');
-  const encodedData = root?.dataset?.radarData ?? '';
-  const data = encodedData ? JSON.parse(decodeURIComponent(encodedData)) : {};
+  const data = JSON.parse(document.getElementById('risk-radar-data')?.textContent ?? '{}');
   const svg = document.getElementById('risk-radar-graph');
   const detailsPanel = document.getElementById('details-panel');
   const visibleCount = document.getElementById('visible-count');
@@ -78,36 +199,16 @@ const uiState = radarData?.snapshot?.uiState ?? 'loading';
       status: 'all',
       environment: 'all'
     },
-    simulatedNodeIds: new Set(),
-    simulationTimeoutId: null
+    simulatedNodeIds: new Set()
   };
 
   const services = data.services ?? [];
   const tiers = data.tiers ?? [];
-  const baseMetrics = new Map(services.map((service) => [service.id, { pressure: service.pressure, drift: service.drift }]));
 
   const uniqueStatuses = [...new Set(services.map((service) => service.status))];
   const uniqueEnvironments = [...new Set(services.map((service) => service.environment))];
 
   const toOptionMarkup = (items) => ['<option value="all">All</option>', ...items.map((item) => `<option value="${item}">${item}</option>`)].join('');
-
-  const resetSimulation = () => {
-    state.simulatedNodeIds.forEach((serviceId) => {
-      const service = dependencyMap.get(serviceId);
-      const baseline = baseMetrics.get(serviceId);
-      if (!service || !baseline) {
-        return;
-      }
-      service.pressure = baseline.pressure;
-      service.drift = baseline.drift;
-    });
-
-    state.simulatedNodeIds.clear();
-    if (state.simulationTimeoutId) {
-      window.clearTimeout(state.simulationTimeoutId);
-      state.simulationTimeoutId = null;
-    }
-  };
 
   tierSelect.innerHTML = toOptionMarkup(tiers.map((tier) => tier.id));
   statusSelect.innerHTML = toOptionMarkup(uniqueStatuses);
@@ -236,6 +337,35 @@ const uiState = radarData?.snapshot?.uiState ?? 'loading';
       ? formatServiceDetails(selectedService)
       : 'Hover or click a service node to inspect pressure, drift, dependencies, and environment.';
 
+    svg.querySelectorAll('.node-group').forEach((nodeElement) => {
+      const serviceId = nodeElement.getAttribute('data-node-id');
+      if (!serviceId) {
+        return;
+      }
+
+      nodeElement.addEventListener('mouseenter', () => {
+        state.hoveredNodeId = serviceId;
+        render();
+      });
+
+      nodeElement.addEventListener('mouseleave', () => {
+        state.hoveredNodeId = null;
+        render();
+      });
+
+      nodeElement.addEventListener('click', () => {
+        state.activeNodeId = serviceId;
+        render();
+      });
+
+      nodeElement.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          state.activeNodeId = serviceId;
+          render();
+        }
+      });
+    });
   };
 
   const onFilterChange = () => {
@@ -252,7 +382,6 @@ const uiState = radarData?.snapshot?.uiState ?? 'loading';
   environmentSelect.addEventListener('change', onFilterChange);
 
   simulateButton.addEventListener('click', () => {
-    resetSimulation();
     const visibleServices = getVisibleServices();
     if (visibleServices.length === 0) {
       return;
@@ -270,77 +399,14 @@ const uiState = radarData?.snapshot?.uiState ?? 'loading';
 
     render();
 
-    state.simulationTimeoutId = window.setTimeout(() => {
-      resetSimulation();
+    window.setTimeout(() => {
+      impacted.forEach((service) => {
+        state.simulatedNodeIds.delete(service.id);
+        service.pressure = Math.max(0, service.pressure - 18);
+        service.drift = Math.max(0, service.drift - 22);
+      });
       render();
     }, prefersReducedMotion ? 1200 : 2500);
-  });
-
-  svg.addEventListener('mouseover', (event) => {
-    const nodeElement = event.target.closest('.node-group');
-    if (!nodeElement) {
-      return;
-    }
-
-    const serviceId = nodeElement.getAttribute('data-node-id');
-    if (!serviceId || state.hoveredNodeId === serviceId) {
-      return;
-    }
-
-    state.hoveredNodeId = serviceId;
-    render();
-  });
-
-  svg.addEventListener('mouseout', (event) => {
-    const fromNode = event.target.closest('.node-group');
-    if (!fromNode) {
-      return;
-    }
-
-    const related = event.relatedTarget;
-    if (related instanceof Element && fromNode.contains(related)) {
-      return;
-    }
-
-    if (state.hoveredNodeId !== null) {
-      state.hoveredNodeId = null;
-      render();
-    }
-  });
-
-  svg.addEventListener('click', (event) => {
-    const nodeElement = event.target.closest('.node-group');
-    if (!nodeElement) {
-      return;
-    }
-
-    const serviceId = nodeElement.getAttribute('data-node-id');
-    if (!serviceId) {
-      return;
-    }
-
-    state.activeNodeId = serviceId;
-    render();
-  });
-
-  svg.addEventListener('keydown', (event) => {
-    const nodeElement = event.target.closest('.node-group');
-    if (!nodeElement) {
-      return;
-    }
-
-    if (event.key !== 'Enter' && event.key !== ' ') {
-      return;
-    }
-
-    event.preventDefault();
-    const serviceId = nodeElement.getAttribute('data-node-id');
-    if (!serviceId) {
-      return;
-    }
-
-    state.activeNodeId = serviceId;
-    render();
   });
 
   render();
