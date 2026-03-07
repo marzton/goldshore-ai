@@ -30,43 +30,40 @@ function initNav() {
     setOpen(!open);
   });
 
-  panel.addEventListener('click', (e) => {
-    const t = e.target as HTMLElement;
-    if (t.matches('[data-gs-nav-close]') || t.matches('[data-gs-mobile-panel]'))
+  const onKeydown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && panel.classList.contains('is-open')) {
       setOpen(false);
-  });
+      toggle.focus();
+    }
+  };
 
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') setOpen(false);
-  });
+  window.addEventListener('keydown', onKeydown);
 
-  panel.querySelectorAll<HTMLAnchorElement>('.gs-mobile-links a').forEach((link) => {
-    link.addEventListener('click', () => setOpen(false));
+  // Mobile nav click to close listeners
+  panel.addEventListener('click', (e) => {
+    if (e.target instanceof HTMLAnchorElement) {
+      setOpen(false);
+    }
   });
 }
 
-
 function initModal() {
   const root = document.querySelector<HTMLElement>('[data-gs-modal]');
-  if (!root) return;
-
-  const backdrop = root.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
-  const closeBtn = root.querySelector<HTMLButtonElement>(
+  const body = root?.querySelector<HTMLElement>('[data-gs-modal-body]');
+  const backdrop = root?.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
+  const closeBtn = root?.querySelector<HTMLButtonElement>(
     '[data-gs-modal-close]',
   );
   const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
-  let lastFocused: Element | null = null;
   const panel = root.querySelector<HTMLElement>('.gs-modal-panel');
 
   let opener: HTMLElement | null = null;
-
-  const isOpen = () => root.classList.contains('is-open');
+  let lastFocused: Element | null = null;
 
   const getFocusableElements = () => {
     if (!panel) return [];
-
     const selectors =
-      'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 
     return Array.from(panel.querySelectorAll<HTMLElement>(selectors)).filter(
       (el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true',
@@ -74,7 +71,9 @@ function initModal() {
   };
 
   const focusDialog = () => {
-    (closeBtn ?? panel)?.focus();
+    const focusable = getFocusableElements();
+    const firstFocusable = focusable[0];
+    (firstFocusable ?? panel)?.focus();
   };
 
   const openModal = (html: string, trigger: HTMLElement) => {
@@ -82,31 +81,19 @@ function initModal() {
     if (body) body.innerHTML = html;
     root.classList.add('is-open');
     document.documentElement.classList.add('gs-lock');
-
-    // Focus trap setup
-    const focusable = root.querySelectorAll<HTMLElement>(
-      "button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])"
-    );
-    if (focusable.length) {
-      setTimeout(() => focusable[0].focus(), 100);
-    } else {
-      setTimeout(() => root.focus(), 100);
-    }
-    requestAnimationFrame(focusDialog);
+    focusDialog();
   };
 
   const closeModal = () => {
     if (!isOpen()) return;
     root.classList.remove('is-open');
     document.documentElement.classList.remove('gs-lock');
-    if (lastFocused && lastFocused instanceof HTMLElement) {
-      lastFocused.focus();
-    if (opener?.isConnected) opener.focus();
+    opener?.focus();
     opener = null;
   };
 
   const onKeydown = (e: KeyboardEvent) => {
-    if (!isOpen()) return;
+    if (!root.classList.contains('is-open')) return;
 
     if (e.key === 'Escape') {
       closeModal();
@@ -145,15 +132,13 @@ function initModal() {
     const trigger = el.closest<HTMLElement>('[data-gs-modal-open]');
     if (!trigger) return;
 
-    const variant = trigger.getAttribute('data-gs-modal-open') || 'admin';
+    const variant = trigger.getAttribute('data-gs-modal-open') || 'subscribe';
     openModal(getModalTemplate(variant), trigger);
   });
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', (e) =>
-    e.key === 'Escape' ? closeModal() : null,
-  );
+  window.addEventListener('keydown', onKeydown);
 }
 
 function getModalTemplate(variant: string): string {
@@ -161,8 +146,8 @@ function getModalTemplate(variant: string): string {
     return `
       <div class="gs-modal-head">
         <div class="gs-kicker gs-signal">Secure Access</div>
-        <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Admin Login</h2>
-        <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Restricted. Authentication required.</p>
+        <h2 class="gs-modal-title gs-display" id="gs-modal-title">Admin Login</h2>
+        <p class="gs-muted" id="gs-modal-description">Restricted. Authentication required.</p>
       </div>
       <form class="gs-form" action="https://admin.goldshore.ai/login" method="POST">
         <label for="admin-email" class="gs-label">Email</label>
@@ -178,8 +163,8 @@ function getModalTemplate(variant: string): string {
   return `
       <div class="gs-modal-head">
       <div class="gs-kicker">Signal Brief</div>
-      <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Subscribe</h2>
-      <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Periodic updates on releases, systems, and operational tooling.</p>
+      <h2 class="gs-modal-title gs-display" id="gs-modal-title">Subscribe</h2>
+      <p class="gs-muted" id="gs-modal-description">Periodic updates on releases, systems, and operational tooling.</p>
     </div>
     <form class="gs-form" action="/api/subscribe" method="POST">
       <label for="subscribe-email" class="gs-label">Email</label>
