@@ -1,68 +1,85 @@
-# Epic: Hero Mark Animation (Accessible, low CPU)
+# Hero Mark Animation System (Accessible, Low CPU)
+
+## Epic
+**Hero Mark Animation**
 
 ## Objectives
-- Make the hero feel premium and "alive" without heavy JS or WebGL.
-- Respect accessibility preferences.
-- Keep performance predictable on mobile.
+- Make the hero feel premium and alive without heavy JS/WebGL.
+- Respect accessibility preferences by default.
+- Keep performance predictable on mobile and low-power devices.
 
 ---
 
-## Issue H-0 — Create HeroLogo component and inline SVG
+## H-0 — Create `HeroLogo` component + inline SVG
 
 **Targets**
 - `apps/gs-web/src/components/hero/HeroLogo.astro`
-- Replace usage in `apps/gs-web/src/pages/index.astro` (or hero component)
+- Replace usage in `apps/gs-web/src/pages/index.astro` (or shared hero component)
 
 **Work**
-- Inline the mark SVG (no text)
+- Inline logo mark SVG (mark only; no text).
 - Add class hooks:
   - `.gs-hero-logo`
   - `.gs-logo-stroke`
   - `.gs-logo-glow`
 
 **Acceptance criteria**
-- Hero uses the new component
-- No layout shift
+- Hero uses `HeroLogo` component.
+- No layout shift introduced.
 
 ---
 
-## Issue H-1 — Stroke-draw intro animation
+## H-1 — Stroke-draw intro animation
 
 **Work**
-- Use `stroke-dasharray` + `stroke-dashoffset` to "draw" outline.
-- Duration ~1.0–1.6s, ease-out.
+- Implement path draw effect using `stroke-dasharray` + `stroke-dashoffset`.
+- Duration target: ~1.0–1.6s with ease-out timing.
 
 **Acceptance criteria**
-- Animation runs once on load
-- Looks clean on dark backgrounds
-- Does not rely on JS
+- Animation runs once on page load.
+- Visuals remain crisp/legible on dark backgrounds.
+- No JS required for primary draw animation.
 
 ---
 
-## Issue H-2 — Idle glow pulse + reduced motion
+## H-2 — Idle glow pulse + reduced motion
 
 **Work**
-- Add subtle glow pulse (6–10s loop) using `filter: drop-shadow()` or gradient stop animation.
-- Add reduced motion handling:
-  - disable all animation for reduce-motion users
+- Add subtle idle glow pulse (6–10s loop) via `filter: drop-shadow()` or gradient stop animation.
+- Add reduced-motion handling:
+  - disable intro and idle animation for users with reduced motion preference.
 
 **Acceptance criteria**
-- Idle pulse is subtle, not distracting
-- Reduced motion turns off all animations
+- Pulse feels subtle and non-distracting.
+- Reduced-motion users receive static hero mark.
 
 ---
 
-## Issue H-3 (Optional) — Pause when offscreen (micro JS)
+## H-3 (Optional) — Offscreen pause via micro JS
 
 **Work**
-- Use `IntersectionObserver` to toggle an `.is-paused` class.
-- When paused, disable animations.
+- Use `IntersectionObserver` to toggle `.is-paused` when logo/hero exits viewport.
+- In paused state, disable animations.
 
 **Acceptance criteria**
-- Animation stops when hero is not visible
-- No visual glitches when returning to view
+- Animation pauses when hero is offscreen.
+- No visible glitch when returning onscreen.
 
 ---
 
-## Implementation notes
-- Keep PRs small and themed (one concept per PR).
+## Implementation guidelines
+- Favor CSS-first animation architecture.
+- Keep JS optional and tiny (only lifecycle/pause logic when needed).
+- Keep animation definitions centralized in theme/web styles, not scattered inline.
+- Ensure meaningful experience remains when animation is disabled.
+
+## Performance and accessibility guardrails
+- Avoid continuous expensive paints.
+- Keep effect stack minimal (few filters, no heavy blur chains).
+- Validate with:
+  - keyboard navigation checks
+  - reduced-motion checks
+  - mobile CPU sanity checks
+
+## Definition of done
+- Hero mark animation implemented with accessible defaults, reduced-motion support, and stable performance characteristics.

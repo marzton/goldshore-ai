@@ -8,6 +8,11 @@ import {
 interface Env {
   GS_CONFIG: KVNamespace;
   ENV?: string;
+  RESEND_API_KEY?: string;
+  MAIL_FROM_EMAIL?: string;
+  MAIL_PROVIDER?: string;
+  GS_MAIL_API_TOKEN?: string;
+  MAIL_ALLOWED_ORIGINS?: string;
   MAIL_FORWARD_TO?: string;
   FORWARD_TO?: string;
   MAIL_BLOCKED_SENDERS?: string;
@@ -41,7 +46,11 @@ const RESEND_API_URL = 'https://api.resend.com/emails';
 const POSTMARK_API_URL = 'https://api.postmarkapp.com/email';
 
 const app = new Hono<{ Bindings: Env }>();
-const isEmailLike = (value: string) => /.+@.+\..+/.test(value);
+const VERSION = '2026.03.06-mail-intake-resend';
+const JSON_HEADERS = { 'content-type': 'application/json; charset=utf-8' };
+
+const isValidEmail = (value?: string): value is string =>
+  Boolean(value && /.+@.+\..+/.test(value));
 
 const readInboxLogs = async (kv: KVNamespace): Promise<EmailLog[]> => {
   const rawLogs = await kv.get('EMAIL_INBOX_LOGS', 'text');
@@ -59,6 +68,10 @@ const readInboxLogs = async (kv: KVNamespace): Promise<EmailLog[]> => {
     console.warn('Unable to parse EMAIL_INBOX_LOGS. Resetting mailbox log.', error);
     return [];
   }
+  headers.set('access-control-allow-methods', 'POST, OPTIONS');
+  headers.set('access-control-allow-headers', 'authorization, content-type');
+  headers.set('access-control-max-age', '600');
+  return headers;
 };
 
 const hasVerifiedFromDomain = (fromEmail: string, fromDomain: string) =>
@@ -149,22 +162,18 @@ const isAuthorized = (request: Request, token?: string) => {
 
 app.get('/', (c) => c.text('GoldShore Mail Worker'));
 
-app.get('/health', (c) =>
-  c.json({
-    status: 'ok',
-    service: 'gs-mail',
-    env: c.env.ENV ?? 'production',
-    version: VERSION,
-  }),
-);
+const sendViaResend = async (
+  env: Env,
+  payload: Required<Pick<IntakePayload, 'recipients' | 'subject' | 'text' | 'html'>> & IntakePayload,
+) => {
+  if (!env.RESEND_API_KEY) {
+    return { ok: false, error: 'missing_resend_api_key' };
+  }
 
-app.get('/system/info', (c) =>
-  c.json({
-    service: 'gs-mail',
-    runtime: 'cloudflare-worker',
-    kv_bound: !!c.env.GS_CONFIG,
-  }),
-);
+  const from = env.MAIL_FROM_EMAIL?.trim() || 'onboarding@goldshore.ai';
+  if (!isValidEmail(from)) {
+    return { ok: false, error: 'invalid_sender' };
+  }
 
 app.post('/v1/forms/intake', async (c) => {
   if (!isAuthorized(c.req.raw, c.env.FORM_INTAKE_AUTH_TOKEN)) {
@@ -229,6 +238,32 @@ export default {
       console.error('Schema validation failed for inbound mail:', parsedEntry.error);
       return;
     }
+  }
+
+  const payload = (await c.req.json().catch(() => null)) as IntakePayload | null;
+  const recipients = payload?.recipients?.filter((recipient) => isValidEmail(recipient.email));
+  const subject = payload?.subject?.trim();
+  const text = payload?.text?.trim();
+  const html = payload?.html?.trim();
+
+  if (!recipients?.length || !subject || !text || !html) {
+    return new Response(JSON.stringify({ ok: false, error: 'invalid_payload' }), { status: 400, headers });
+  }
+
+  const result = await sendViaResend(c.env, {
+    ...payload,
+    recipients,
+    subject,
+    text,
+    html,
+  });
+
+  if (!result.ok) {
+    return new Response(JSON.stringify(result), { status: 502, headers });
+  }
+
+  return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
+});
 
     ctx.waitUntil(
       (async () => {
@@ -247,6 +282,12 @@ export default {
       await message.forward(forwardTo);
       return;
     }
+    const newLogs = [logEntry, ...currentLogs].slice(0, 100);
+    await env.GS_CONFIG.put('EMAIL_INBOX_LOGS', JSON.stringify(newLogs));
+  };
+
+  ctx.waitUntil(persistLog());
+}
 
     console.warn('Forwarding skipped: target missing or invalid.');
   },
