@@ -160,20 +160,110 @@ const isAuthorized = (request: Request, token?: string) => {
   return authHeader === `Bearer ${token.trim()}`;
 };
 
+const hasVerifiedFromDomain = (fromEmail: string, fromDomain: string) =>
+  fromEmail.toLowerCase().endsWith(`@${fromDomain.toLowerCase()}`);
+
+const sendViaProvider = async (
+  env: Env,
+  to: IntakeRecipient[],
+  subject: string,
+  text: string,
+  html: string,
+  replyTo?: string,
+) => {
+  const fromEmail = env.MAIL_FROM_EMAIL?.trim();
+  const fromName = env.MAIL_FROM_NAME?.trim() || 'GoldShore';
+  const fromDomain = env.MAIL_FROM_DOMAIN?.trim();
+
+  if (
+    !fromEmail ||
+    !fromDomain ||
+    !hasVerifiedFromDomain(fromEmail, fromDomain) ||
+    to.length === 0
+  ) {
+    return { attempted: false, reason: 'missing_mail_configuration' };
+  }
+
+  if (env.RESEND_API_KEY?.trim()) {
+    const response = await fetch(RESEND_API_URL, {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${env.RESEND_API_KEY.trim()}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: `${fromName} <${fromEmail}>`,
+        to: to.map((recipient) => recipient.email),
+        subject,
+        text,
+        html,
+        ...(replyTo ? { reply_to: replyTo } : {}),
+      }),
+    });
+
+    return {
+      attempted: true,
+      ok: response.ok,
+      status: response.status,
+      provider: 'resend',
+      body: await response.text(),
+    };
+  }
+
+  if (env.POSTMARK_SERVER_TOKEN?.trim()) {
+    const response = await fetch(POSTMARK_API_URL, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-Postmark-Server-Token': env.POSTMARK_SERVER_TOKEN.trim(),
+      },
+      body: JSON.stringify({
+        From: `${fromName} <${fromEmail}>`,
+        To: to.map((recipient) => recipient.email).join(','),
+        Subject: subject,
+        TextBody: text,
+        HtmlBody: html,
+        ...(replyTo ? { ReplyTo: replyTo } : {}),
+      }),
+    });
+
+    return {
+      attempted: true,
+      ok: response.ok,
+      status: response.status,
+      provider: 'postmark',
+      body: await response.text(),
+    };
+  }
+
+  return { attempted: false, reason: 'missing_provider_credentials' };
+};
+
+const isAuthorized = (request: Request, token?: string) => {
+  if (!token?.trim()) return false;
+  const authHeader = request.headers.get('authorization') ?? '';
+  return authHeader === `Bearer ${token.trim()}`;
+};
+
 app.get('/', (c) => c.text('GoldShore Mail Worker'));
 
-const sendViaResend = async (
-  env: Env,
-  payload: Required<Pick<IntakePayload, 'recipients' | 'subject' | 'text' | 'html'>> & IntakePayload,
-) => {
-  if (!env.RESEND_API_KEY) {
-    return { ok: false, error: 'missing_resend_api_key' };
-  }
+app.get('/health', (c) =>
+  c.json({
+    status: 'ok',
+    service: 'gs-mail',
+    env: c.env.ENV ?? 'production',
+    version: VERSION,
+  }),
+);
 
-  const from = env.MAIL_FROM_EMAIL?.trim() || 'onboarding@goldshore.ai';
-  if (!isValidEmail(from)) {
-    return { ok: false, error: 'invalid_sender' };
-  }
+app.get('/system/info', (c) =>
+  c.json({
+    service: 'gs-mail',
+    runtime: 'cloudflare-worker',
+    kv_bound: !!c.env.GS_CONFIG,
+  }),
+);
 
 app.post('/v1/forms/intake', async (c) => {
   if (!isAuthorized(c.req.raw, c.env.FORM_INTAKE_AUTH_TOKEN)) {
