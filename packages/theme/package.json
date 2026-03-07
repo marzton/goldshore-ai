@@ -22,7 +22,7 @@
     "./styles/motion.css": "./styles/motion.css",
     "./styles/*": "./styles/*",
     "./runtime": "./index.ts",
-    "./manager": "./src/manager.ts"
+    "./manager": "./src/manager.ts",
     "./tokens": "./src/styles/tokens.css",
     "./styles/tokens": "./src/styles/tokens.css",
     "./styles/base": "./src/styles/base.css",
