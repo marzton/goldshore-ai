@@ -15,7 +15,9 @@ health.get('/', async (c) => {
     status: 'ok',
     service: 'gs-api',
     timestamp,
-    version: '2026.03.03'
+    version: '2026.03.03',
+    schemaVersion: 'v1.0.0', // added for contracts test
+    apiVersion: c.env.API_VERSION ?? 'unknown'
   };
 
   if (isDeep) {
