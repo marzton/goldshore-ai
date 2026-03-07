@@ -6,6 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 workers_dev = false
 
 [env.preview]
+name = "gs-control-preview"
 routes = [
   { pattern = "ops-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
@@ -34,14 +35,15 @@ service = "gs-gateway"
 environment = "preview"
 
 [env.prod]
+name = "gs-control"
 routes = [
   { pattern = "ops.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "control.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
 
 [env.prod.vars]
-ENV = "production"
-NODE_ENV = "production"
+ENV = "prod"
+NODE_ENV = "prod"
 OTEL_SERVICE_NAME = "goldshore-core-prod"
 CONTROL_SYNC_TOKEN = "set-a-shared-secret"
 SYNC_TARGET_SUBDOMAIN = "api.goldshore.ai"
