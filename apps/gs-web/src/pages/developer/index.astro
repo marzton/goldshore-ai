@@ -211,6 +211,51 @@ print(resp.json())`;
       </aside>
     </div>
   </section>
+
+  <section class="gs-section">
+    <div class="gs-container">
+      <aside class="gs-panel sandbox-callout" aria-label="Try it sandbox">
+        <h2>Try it / Sandbox</h2>
+        <p>
+          Start with non-production endpoints to validate payloads and auth
+          flow. Sandbox responses may be mocked while we expand full market
+          simulation.
+        </p>
+        <p>
+          <a href="/developer/api/sandbox/orders">Open sandbox order endpoint</a
+          >
+          ·
+          <a href="/developer/docs/sandbox">Sandbox usage guide</a>
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <script>
+    const copyButtons = document.querySelectorAll('[data-copy-target]');
+
+    copyButtons.forEach((button) => {
+      button.addEventListener('click', async () => {
+        const targetId = button.dataset.copyTarget;
+        if (!targetId) return;
+
+        const target = document.getElementById(targetId);
+        const content = target?.textContent?.trim();
+        if (!content) return;
+
+        try {
+          await navigator.clipboard.writeText(content);
+          const original = button.textContent;
+          button.textContent = 'Copied';
+          setTimeout(() => {
+            button.textContent = original || 'Copy';
+          }, 1200);
+        } catch {
+          button.textContent = 'Copy failed';
+        }
+      });
+    });
+  </script>
 </WebLayout>
 
 <script>
