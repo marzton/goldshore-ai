@@ -14,6 +14,7 @@
     "./styles/motion.css": "./src/styles/motion.css",
     "./styles/*": "./src/styles/*",
     "./runtime": "./index.ts",
-    "./manager": "./src/manager.ts"
+    "./manager": "./src/manager.ts",
+    "./styles/global.css": "./src/styles/global.css"
   }
 }
