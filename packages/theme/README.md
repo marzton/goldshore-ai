@@ -28,7 +28,7 @@ The package exposes the following public CSS entry points:
 - `@goldshore/theme/styles/layout.css`
 - `@goldshore/theme/styles/components.css`
 - `@goldshore/theme/styles/motion.css`
-- `@goldshore/theme/styles/*` for additional files under `styles`
+- `@goldshore/theme/styles/*` for additional files under `src/styles`
 
 ## Structure
 

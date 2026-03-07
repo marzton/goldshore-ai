@@ -8,8 +8,7 @@ export const dedupeRecipients = (recipients: MailRecipient[]) => {
   const unique = new Map<string, MailRecipient>();
   recipients.forEach((recipient) => {
     const email = recipient.email.trim().toLowerCase();
-    if (!email) return;
-    if (!isValidEmail(email)) return;
+    if (!email || !isValidEmail(email)) return;
     if (!unique.has(email)) {
       unique.set(email, {
         email,
@@ -69,9 +68,7 @@ export const buildSubmissionDigest = (submission: Submission) => {
 
   const filtered = pairs.filter(([, value]) => value);
 
-  const text = filtered
-    .map(([label, value]) => `${label}: ${value}`)
-    .join('\n');
+  const text = filtered.map(([label, value]) => `${label}: ${value}`).join('\n');
   const html = filtered
     .map(
       ([label, value]) =>
