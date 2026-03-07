@@ -29,6 +29,7 @@ interface Env {
   MAIL_PROVIDER?: string;
   GS_MAIL_API_TOKEN?: string;
   MAIL_ALLOWED_ORIGINS?: string;
+  MAIL_FORWARD_TO?: string;
 }
 
 const app = new Hono<{ Bindings: Env }>();
@@ -170,6 +171,37 @@ app.get('/health', (c) =>
   ),
 );
 
+async function handleEmail(message: ForwardableEmailMessage, env: Env, ctx: ExecutionContext) {
+  if (env.MAIL_FORWARD_TO) {
+    await message.forward(env.MAIL_FORWARD_TO);
+  }
+
+  const logEntry = {
+    id: crypto.randomUUID(),
+    from: message.from,
+    to: message.to,
+    subject: message.headers.get('subject') || 'No Subject',
+    timestamp: new Date().toISOString(),
+  };
+
+  const persistLog = async () => {
+    let currentLogs: Array<Record<string, unknown>> = [];
+    try {
+      const rawLogs = await env.GS_CONFIG.get('EMAIL_INBOX_LOGS');
+      if (rawLogs) {
+        currentLogs = JSON.parse(rawLogs);
+      }
+    } catch (error) {
+      console.error('Failed to parse EMAIL_INBOX_LOGS payload:', error);
+    }
+    const newLogs = [logEntry, ...currentLogs].slice(0, 100);
+    await env.GS_CONFIG.put('EMAIL_INBOX_LOGS', JSON.stringify(newLogs));
+  };
+
+  ctx.waitUntil(persistLog());
+}
+
 export default {
   fetch: app.fetch,
+  email: handleEmail,
 };
