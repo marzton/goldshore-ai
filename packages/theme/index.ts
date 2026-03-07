@@ -54,14 +54,11 @@ function initModal() {
   const closeBtn = root?.querySelector<HTMLButtonElement>(
     '[data-gs-modal-close]',
   );
-  const panel = root?.querySelector<HTMLElement>('[data-gs-modal-panel]');
-
-  if (!root || !body) return;
+  const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
+  const panel = root.querySelector<HTMLElement>('.gs-modal-panel');
 
   let opener: HTMLElement | null = null;
   let lastFocused: Element | null = null;
-
-  const isOpen = () => root.classList.contains('is-open');
 
   const getFocusableElements = () => {
     if (!panel) return [];
@@ -74,7 +71,9 @@ function initModal() {
   };
 
   const focusDialog = () => {
-    (closeBtn ?? panel)?.focus();
+    const focusable = getFocusableElements();
+    const firstFocusable = focusable[0];
+    (firstFocusable ?? panel)?.focus();
   };
 
   const openModal = (html: string, trigger: HTMLElement) => {
@@ -82,19 +81,19 @@ function initModal() {
     if (body) body.innerHTML = html;
     root.classList.add('is-open');
     document.documentElement.classList.add('gs-lock');
-    requestAnimationFrame(focusDialog);
+    focusDialog();
   };
 
   const closeModal = () => {
     if (!isOpen()) return;
     root.classList.remove('is-open');
     document.documentElement.classList.remove('gs-lock');
-    if (opener?.isConnected) opener.focus();
+    opener?.focus();
     opener = null;
   };
 
-  const onKeydownModal = (e: KeyboardEvent) => {
-    if (!isOpen()) return;
+  const onKeydown = (e: KeyboardEvent) => {
+    if (!root.classList.contains('is-open')) return;
 
     if (e.key === 'Escape') {
       closeModal();
@@ -133,7 +132,7 @@ function initModal() {
     const trigger = el.closest<HTMLElement>('[data-gs-modal-open]');
     if (!trigger) return;
 
-    const variant = trigger.getAttribute('data-gs-modal-open') || 'admin';
+    const variant = trigger.getAttribute('data-gs-modal-open') || 'subscribe';
     openModal(getModalTemplate(variant), trigger);
   });
 
@@ -147,8 +146,8 @@ function getModalTemplate(variant: string): string {
     return `
       <div class="gs-modal-head">
         <div class="gs-kicker gs-signal">Secure Access</div>
-        <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Admin Login</h2>
-        <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Restricted. Authentication required.</p>
+        <h2 class="gs-modal-title gs-display" id="gs-modal-title">Admin Login</h2>
+        <p class="gs-muted" id="gs-modal-description">Restricted. Authentication required.</p>
       </div>
       <form class="gs-form" action="https://admin.goldshore.ai/login" method="POST">
         <label for="admin-email" class="gs-label">Email</label>
@@ -164,8 +163,8 @@ function getModalTemplate(variant: string): string {
   return `
       <div class="gs-modal-head">
       <div class="gs-kicker">Signal Brief</div>
-      <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Subscribe</h2>
-      <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Periodic updates on releases, systems, and operational tooling.</p>
+      <h2 class="gs-modal-title gs-display" id="gs-modal-title">Subscribe</h2>
+      <p class="gs-muted" id="gs-modal-description">Periodic updates on releases, systems, and operational tooling.</p>
     </div>
     <form class="gs-form" action="/api/subscribe" method="POST">
       <label for="subscribe-email" class="gs-label">Email</label>
