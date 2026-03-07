@@ -82,16 +82,6 @@ function initModal() {
     if (body) body.innerHTML = html;
     root.classList.add('is-open');
     document.documentElement.classList.add('gs-lock');
-
-    // Focus trap setup
-    const focusable = root.querySelectorAll<HTMLElement>(
-      "button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])"
-    );
-    if (focusable.length) {
-      setTimeout(() => focusable[0].focus(), 100);
-    } else {
-      setTimeout(() => root.focus(), 100);
-    }
     requestAnimationFrame(focusDialog);
   };
 
@@ -99,9 +89,6 @@ function initModal() {
     if (!isOpen()) return;
     root.classList.remove('is-open');
     document.documentElement.classList.remove('gs-lock');
-    if (lastFocused && lastFocused instanceof HTMLElement) {
-      lastFocused.focus();
-    }
     if (opener?.isConnected) opener.focus();
     opener = null;
   };
@@ -152,7 +139,7 @@ function initModal() {
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', onKeydownModal);
+  window.addEventListener('keydown', onKeydown);
 }
 
 function getModalTemplate(variant: string): string {
