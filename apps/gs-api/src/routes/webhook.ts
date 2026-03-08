@@ -25,20 +25,15 @@ app.post('/github', async (c) => {
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('');
 
-  if (sig.length !== hexSignature.length || !crypto.subtle.verify) {
-    // Basic fallback if timing safe equals not available
-    if (sig !== hexSignature) {
-      return c.json({ error: 'Invalid signature' }, 401);
-    }
-  } else {
-    // Timing safe comparison if available
-    let mismatch = 0;
-    for (let i = 0; i < sig.length; ++i) {
-      mismatch |= (sig.charCodeAt(i) ^ hexSignature.charCodeAt(i));
-    }
-    if (mismatch !== 0) {
-      return c.json({ error: 'Invalid signature' }, 401);
-    }
+  // Constant-time comparison to prevent timing attacks
+  let mismatch = sig.length === hexSignature.length ? 0 : 1;
+  const len = Math.min(sig.length, hexSignature.length);
+  for (let i = 0; i < len; i++) {
+    mismatch |= sig.charCodeAt(i) ^ hexSignature.charCodeAt(i);
+  }
+
+  if (mismatch !== 0) {
+    return c.json({ error: 'Invalid signature' }, 401);
   }
 
   // Handle GitHub App webhook events
