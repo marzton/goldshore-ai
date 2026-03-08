@@ -50,7 +50,7 @@
     "wrangler": "^4.63.0",
     "yaml": "^2.8.2",
     "zod": "^4.3.6",
-    "svgo": "^3.3.2"
+    "svgo": "^4.0.1"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
