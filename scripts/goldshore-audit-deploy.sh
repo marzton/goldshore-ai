@@ -5,6 +5,9 @@ TARGET_APP="${TARGET_APP:-all}"
 REPO_ROOT="${REPO_ROOT:-/workspace/goldshore-ai}"
 API_HOST="${API_HOST:-api.goldshore.ai}"
 CORE_URL="${CORE_URL:-https://${API_HOST}/v1/status}"
+DRY_RUN="${DRY_RUN:-false}"
+CLOUDFLARE_SYNC_MODE="${CLOUDFLARE_SYNC_MODE:-wrangler}"
+CLOUDFLARE_WORKER_ENV="${CLOUDFLARE_WORKER_ENV:-production}"
 
 KV_KEYS=("ALPACA_PAPER" "ENVIRONMENT_TAG")
 SECRET_KEYS=("OPENAI_API_KEY" "ANTHROPIC_API_KEY" "AIPROXYSIGNING_KEY")
@@ -14,6 +17,65 @@ HEALTH_RESULT="failure"
 DNS_RESULT="failure"
 TLS_RESULT="failure"
 CORE_RESULT="failure"
+
+urlencode() {
+  jq -nr --arg value "$1" '$value|@uri'
+}
+
+verify_cloudflare_access() {
+  if [[ "${DRY_RUN}" == "true" ]]; then
+    echo "⚠️ DRY_RUN enabled: skipping Cloudflare token verification request and response parsing."
+    return 0
+  fi
+
+  local response
+  response="$(curl -fsS -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
+    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+    -H "Content-Type: application/json")"
+
+  if jq -e '.success == true' >/dev/null <<<"${response}"; then
+    echo "✅ Cloudflare token verification passed"
+  else
+    echo "❌ Cloudflare token verification failed"
+    return 1
+  fi
+}
+
+sync_kv_key_api() {
+  local namespace_id="$1"
+  local key="$2"
+  local value="$3"
+  local encoded_key
+  encoded_key="$(urlencode "${key}")"
+  local url="https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${namespace_id}/values/${encoded_key}"
+
+  if [[ "${DRY_RUN}" == "true" ]]; then
+    echo "⚠️ DRY_RUN enabled: skipping API KV upsert for key ${key} (${url})."
+    return 0
+  fi
+
+  curl -fsS -X PUT "${url}" \
+    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+    -H "Content-Type: text/plain" \
+    --data "${value}" >/dev/null
+}
+
+sync_worker_secret_api() {
+  local worker_name="$1"
+  local secret_name="$2"
+  local secret_value="$3"
+  local url="https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/services/${worker_name}/environments/${CLOUDFLARE_WORKER_ENV}/secrets"
+
+  if [[ "${DRY_RUN}" == "true" ]]; then
+    echo "⚠️ DRY_RUN enabled: skipping API secret update for ${worker_name}/${secret_name} (${CLOUDFLARE_WORKER_ENV})."
+    return 0
+  fi
+
+  curl -fsS -X PUT "${url}" \
+    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+    -H "Content-Type: application/json" \
+    -d "$(jq -nc --arg name "${secret_name}" --arg text "${secret_value}" '{name: $name, text: $text, type: "secret_text"}')" >/dev/null
+}
 
 post_github_deployment_status() {
   if [[ -z "${GITHUB_TOKEN:-}" || -z "${GITHUB_REPOSITORY:-}" || -z "${GITHUB_DEPLOYMENT_ID:-}" ]]; then
@@ -57,12 +119,7 @@ fi
 if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   echo "🔍 Auditing Cloudflare Production State..."
 
-  if curl -fsS -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
-    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-    -H "Content-Type: application/json" >/dev/null; then
-    echo "✅ Cloudflare token verification passed"
-  else
-    echo "❌ Cloudflare token verification failed"
+  if ! verify_cloudflare_access; then
     exit 1
   fi
 
@@ -72,7 +129,13 @@ if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
     for key in "${KV_KEYS[@]}"; do
       if [[ -z "$(npx wrangler kv:key get --namespace-id "${KV_ID}" "${key}" 2>/dev/null || true)" && -n "${!key:-}" ]]; then
         echo "📤 Syncing ${key} to KV namespace ${KV_ID}..."
-        npx wrangler kv:key put --namespace-id "${KV_ID}" "${key}" "${!key}"
+        if [[ "${CLOUDFLARE_SYNC_MODE}" == "api" ]]; then
+          sync_kv_key_api "${KV_ID}" "${key}" "${!key}"
+        elif [[ "${DRY_RUN}" == "true" ]]; then
+          echo "⚠️ DRY_RUN enabled: skipping wrangler KV sync for ${key}."
+        else
+          npx wrangler kv:key put --namespace-id "${KV_ID}" "${key}" "${!key}"
+        fi
       fi
     done
   else
@@ -85,7 +148,13 @@ if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
       for secret_key in "${SECRET_KEYS[@]}"; do
         if [[ -n "${!secret_key:-}" ]]; then
           echo "🔐 Updating Worker Secret: ${secret_key} for ${app}..."
-          echo "${!secret_key}" | npx wrangler secret put "${secret_key}"
+          if [[ "${CLOUDFLARE_SYNC_MODE}" == "api" ]]; then
+            sync_worker_secret_api "$(basename "${app}")" "${secret_key}" "${!secret_key}"
+          elif [[ "${DRY_RUN}" == "true" ]]; then
+            echo "⚠️ DRY_RUN enabled: skipping wrangler secret put for ${app}/${secret_key}."
+          else
+            echo "${!secret_key}" | npx wrangler secret put "${secret_key}"
+          fi
         fi
       done
       popd >/dev/null
