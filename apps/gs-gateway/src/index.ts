@@ -8,6 +8,7 @@ import { integrationControls } from './middleware/integration';
 import { timingSafeCompare } from './utils/timing-safe';
 
 const app = new Hono<{ Bindings: Env }>();
+const textEncoder = new TextEncoder();
 
 const BASIC_AUTH_REALM = 'gs-gateway-admin';
 
@@ -93,12 +94,44 @@ app.use('*', cors({
     'CF-Access-Jwt-Assertion',
     'X-Data-Classification',
     'X-Secrets-Access-Policy',
-    'X-Audit-Trace-Id'
+    'X-Audit-Trace-Id',
+    'X-GS-Admin-Key'
   ],
   exposeHeaders: ['Content-Length'],
   maxAge: 600,
   credentials: true
 }));
+
+const timingSafeAdminKeyMatch = (expectedKey: string, providedHeader: string | null): boolean => {
+  const expectedBytes = textEncoder.encode(expectedKey);
+  const providedBytes = textEncoder.encode(providedHeader ?? '');
+  let mismatch = expectedBytes.length ^ providedBytes.length;
+
+  // Use constant-time style byte comparison so admin key checks do not leak useful timing differences.
+  for (let i = 0; i < expectedBytes.length; i += 1) {
+    mismatch |= expectedBytes[i] ^ (providedBytes[i] ?? 0);
+  }
+
+  return mismatch === 0;
+};
+
+app.use('/admin*', async (c, next) => {
+  if (!c.env.GS_ADMIN_KEY) {
+    return c.json({ error: 'Admin key not configured' }, 500);
+  }
+
+  const adminKey = c.req.header('X-GS-Admin-Key') ?? null;
+  const expectedLength = textEncoder.encode(c.env.GS_ADMIN_KEY).length;
+  const providedLength = textEncoder.encode(adminKey ?? '').length;
+  const isWellFormed = adminKey !== null && providedLength === expectedLength;
+  const isMatch = timingSafeAdminKeyMatch(c.env.GS_ADMIN_KEY, adminKey);
+
+  if (!isWellFormed || !isMatch) {
+    return c.json({ error: 'Forbidden' }, 403);
+  }
+
+  await next();
+});
 
 // Authentication Middleware
 app.use('*', async (c, next) => {
