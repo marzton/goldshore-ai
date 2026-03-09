@@ -8,7 +8,14 @@
   tabindex="-1"
 >
   <div class="gs-modal-backdrop" data-gs-modal-backdrop></div>
-  <div class="gs-modal-panel gs-mirror-frame">
+  <div
+    class="gs-modal-panel gs-mirror-frame"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="gs-modal-title"
+    aria-describedby="gs-modal-description"
+    tabindex="-1"
+  >
     <button class="gs-modal-close gs-icon-btn" data-gs-modal-close aria-label="Close">×</button>
     <h2 id="gs-modal-title" class="sr-only">Modal</h2>
     <p id="gs-modal-desc" class="sr-only">Modal Content</p>
