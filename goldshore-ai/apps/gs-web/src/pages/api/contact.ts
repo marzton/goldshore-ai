@@ -274,21 +274,6 @@ const recipientsFromEnv = (
     .map((email) => ({ email }));
 };
 
-const resolveNotificationRecipients = (
-  formConfig: FormConfig,
-  env: Env,
-): MailRecipient[] => {
-  const fromConfig = formConfig.recipients
-    .map((recipient) => ({
-      email: recipient.email,
-      name: recipient.name,
-    }))
-    .filter((recipient) => recipient.email);
-
-  const fallback = recipientsFromEnv(env.CONTACT_NOTIFICATION_EMAILS);
-  return dedupeRecipients([...fromConfig, ...fallback]);
-};
-
 export const POST: APIRoute = async ({ request, locals }) => {
   if (!request.headers.get('content-type')?.includes('form')) {
     return new Response('Unsupported payload.', { status: 415 });
