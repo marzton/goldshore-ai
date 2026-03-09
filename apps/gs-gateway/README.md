@@ -42,8 +42,9 @@ pnpm --filter ./apps/gs-gateway build
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-gateway.yml`
-- Preview deploy: `.github/workflows/preview-gateway.yml`
+- Active preview workflow: `.github/workflows/preview-gs-gateway.yml`
+- Disabled production workflow: `.github/workflows/deploy-gs-gateway.yml.disabled`
+- While the production workflow file is disabled, production deploys are run manually using `pnpm --filter ./apps/gs-gateway deploy`.
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 - Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
