@@ -826,10 +826,25 @@ Run everything:
 
 pnpm dev
 
-Secret sync utilities:
+Audit environment parity:
 
-- `pnpm run secret:sync` syncs secrets to the Cloudflare Worker `preview` environment only; it does **not** write local runtime env files.
-- `pnpm run secret:sync:worker -- apps/gs-api` syncs secrets for `apps/gs-api` to that worker's Cloudflare `preview` environment only; it does **not** write local runtime env files.
+Use this to verify that environment variables and secrets are synchronized across staging and production environments.
+
+```bash
+pnpm run secret:audit
+```
+
+Sync missing secrets (interactive):
+
+These utilities sync missing secrets to the Cloudflare Worker `preview` environment only and do **not** write local runtime env files.
+
+```bash
+# Sync all missing secrets across the workspace to preview
+pnpm run secret:sync
+
+# Sync preview secrets for a specific worker (e.g., gs-api)
+pnpm run secret:sync:worker -- apps/gs-api
+```
 
 > Safety note: These utilities intentionally never write production secrets.
 
