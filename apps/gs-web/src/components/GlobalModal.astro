@@ -1,6 +1,11 @@
 <div
   class="gs-modal"
   data-gs-modal
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="gs-modal-title"
+  aria-describedby="gs-modal-desc"
+  tabindex="-1"
 >
   <div class="gs-modal-backdrop" data-gs-modal-backdrop></div>
   <div
@@ -51,3 +56,12 @@
   .gs-modal-close { position: absolute; top: 14px; right: 14px; }
   .gs-modal-title { margin-top: 0.2rem; }
 </style>
+
+<script>
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    const openModal = document.querySelector(".gs-modal.is-open");
+    if (!openModal) return;
+    openModal.querySelector("[data-gs-modal-close],.gs-modal-close")?.click();
+  });
+</script>
