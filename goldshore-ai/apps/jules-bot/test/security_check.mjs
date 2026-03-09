@@ -101,7 +101,11 @@ try {
 
 } catch (e) {
   const errorMessage = (e && e.message) ? e.message : String(e);
-  const safeMessage = errorMessage.replace(/[\x00-\x1F\x7F]+/g, ' ');
+  const safeMessage = String(errorMessage)
+    // Remove newline and carriage return characters to avoid log forging
+    .replace(/[\r\n]+/g, ' ')
+    // Replace any remaining ASCII control characters (including DEL) with a space
+    .replace(/[\x00-\x1F\x7F]+/g, ' ');
   console.error('Error during security check:', safeMessage);
 } finally {
   serverProcess.kill();
