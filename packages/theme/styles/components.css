@@ -98,6 +98,12 @@
 
 /* Mobile panel */
 .gs-mobile-panel {
+  --gs-mobile-safe-top: env(safe-area-inset-top, 0px);
+  --gs-mobile-header-height: 72px;
+  --gs-mobile-header-padding-top: calc(max(var(--gs-mobile-safe-top), 10px) + 8px);
+  --gs-mobile-header-padding-x: var(--gs-pad);
+  --gs-mobile-close-hit: 44px;
+  --gs-mobile-panel-content-offset: calc(var(--gs-mobile-header-height) * 0.35);
   position: fixed;
   inset: 0;
   background: rgba(5, 7, 13, 0.94);
@@ -112,8 +118,7 @@
 .gs-mobile-panel.is-open { transform: translateY(0); }
 
 .gs-mobile-panel-inner {
-  padding: 16px var(--gs-pad) calc(24px + env(safe-area-inset-bottom));
-  overflow-y: auto;
+  padding: var(--gs-mobile-panel-content-offset) var(--gs-pad) 24px var(--gs-pad);
 }
 
 .gs-mobile-links {
@@ -139,30 +144,34 @@
 }
 
 .gs-mobile-top {
-  position: relative;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) var(--gs-mobile-close-hit);
+  gap: 0.9rem;
   align-items: center;
-  gap: 0.75rem;
-  min-height: 72px;
-  padding: max(12px, env(safe-area-inset-top)) var(--gs-pad) 10px var(--gs-pad);
-  border-bottom: 1px solid var(--gs-border);
+  min-height: var(--gs-mobile-header-height);
+  padding: var(--gs-mobile-header-padding-top) var(--gs-mobile-header-padding-x) 0;
 }
 
-.gs-mobile-brand { min-width: 0; }
+.gs-mobile-top .gs-brand {
+  min-width: 0;
+}
 
-.gs-mobile-brand .gs-brand-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.gs-mobile-top .gs-brand-text {
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .gs-icon-btn {
+  width: var(--gs-mobile-close-hit);
+  min-width: var(--gs-mobile-close-hit);
+  height: var(--gs-mobile-close-hit);
   border: 1px solid var(--gs-border);
   background: rgba(10, 16, 28, 0.55);
   color: var(--gs-text);
   border-radius: 12px;
-  padding: 0.6rem 0.75rem;
+  padding: 0;
+  font-size: 1.3rem;
+  line-height: 1;
 }
 
 .gs-mobile-close {
@@ -197,6 +206,23 @@
   .gs-mobile-brand .gs-brand-text {
     font-size: 0.78rem;
     letter-spacing: 0.08em;
+@media (min-width: 861px) {
+  .gs-mobile-panel { display: none; }
+}
+
+@media (max-width: 380px) {
+  .gs-mobile-top {
+    gap: 0.65rem;
+  }
+
+  .gs-mobile-top .gs-brand {
+    flex-wrap: wrap;
+    row-gap: 0.2rem;
+  }
+
+  .gs-mobile-top .gs-brand-text {
+    font-size: 0.74rem;
+    letter-spacing: 0.07em;
   }
 }
 
