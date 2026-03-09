@@ -108,7 +108,8 @@ try {
     .replace(/[\r\n]+/g, ' ')
     .replace(/[\x00-\x1F\x7F]+/g, ' ')
     .trim();
-  console.error('Error during security check:', safeMessage);
+  const loggedMessage = JSON.stringify(safeMessage);
+  console.error('Error during security check:', loggedMessage);
 } finally {
   serverProcess.kill();
   process.exit(0); // Always exit 0 to not break the tool chain, rely on logs
