@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { parseConfig, DEFAULT_CONFIG, SystemConfig } from './system.config';
+import { parseConfig, DEFAULT_CONFIG, SystemConfig } from './system.config.ts';
 
 describe('System Config Logic', () => {
   describe('parseConfig', () => {
