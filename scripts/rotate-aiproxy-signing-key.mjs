@@ -2,17 +2,39 @@
 
 import crypto from 'node:crypto';
 
-const required = ['CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID'];
-for (const name of required) {
-  if (!process.env[name]) {
-    console.error(`Missing required environment variable: ${name}`);
+function resolveEnv(canonicalName, aliasName) {
+  const canonicalValue = process.env[canonicalName];
+  const aliasValue = process.env[aliasName];
+  const value = canonicalValue ?? aliasValue;
+  const usedAlias = canonicalValue == null && aliasValue != null;
+  return { value, usedAlias, canonicalName, aliasName };
+}
+
+const apiTokenEnv = resolveEnv('CLOUDFLARE_API_TOKEN', 'CF_API_TOKEN');
+const accountIdEnv = resolveEnv('CLOUDFLARE_ACCOUNT_ID', 'CF_ACCOUNT_ID');
+const zoneIdEnv = resolveEnv('CLOUDFLARE_ZONE_ID', 'CF_ZONE_ID');
+
+const required = [apiTokenEnv, accountIdEnv];
+for (const envVar of required) {
+  if (!envVar.value) {
+    console.error(
+      `Missing required environment variable: ${envVar.canonicalName} (legacy alias: ${envVar.aliasName})`
+    );
     process.exit(1);
   }
 }
 
-const apiToken = process.env.CLOUDFLARE_API_TOKEN;
-const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-const zoneId = process.env.CLOUDFLARE_ZONE_ID;
+for (const envVar of [apiTokenEnv, accountIdEnv, zoneIdEnv]) {
+  if (envVar.usedAlias) {
+    console.log(
+      `ℹ️ Using legacy env alias ${envVar.aliasName} for ${envVar.canonicalName}. Please migrate to the canonical name.`
+    );
+  }
+}
+
+const apiToken = apiTokenEnv.value;
+const accountId = accountIdEnv.value;
+const zoneId = zoneIdEnv.value;
 const kvNamespaceName = process.env.CLOUDFLARE_KV_NAMESPACE_NAME ?? 'GOLDSHORE_KV';
 const workerEnv = process.env.CLOUDFLARE_WORKER_ENV ?? 'production';
 const secretName = process.env.SECRET_NAME ?? 'AIPROXYSIGNING_KEY';
