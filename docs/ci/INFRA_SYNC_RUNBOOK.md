@@ -36,4 +36,20 @@ Optional for token rotation without downtime:
 
 - `CLOUDFLARE_BUILD_API_TOKEN` (if set, workflows prefer this token and fall back to `CLOUDFLARE_API_TOKEN`)
 
+### Secret migration: `CF_ZONE_ID` -> `CLOUDFLARE_ZONE_ID`
+
+Use a shell-valid migration flow when adding the new repository secret name:
+
+```bash
+# If needed, source CF_ZONE_ID first from your vault/1Password/secret manager.
+export CF_ZONE_ID='<zone-id-from-secret-store>'
+gh secret set CLOUDFLARE_ZONE_ID --body "$CF_ZONE_ID"
+```
+
+Notes:
+
+- In hosted CI docs/examples, explicitly show exporting or otherwise loading the source value first before calling `gh secret set`.
+- `gh secret set` runs in a local shell context, so you cannot directly use GitHub expression syntax like `${{ secrets.CF_ZONE_ID }}` in that command.
+- After confirming all workflows and scripts read `CLOUDFLARE_ZONE_ID`, remove the deprecated `CF_ZONE_ID` secret from GitHub.
+
 Do not store Cloudflare credentials or namespace IDs in tracked workflow files or scripts.
