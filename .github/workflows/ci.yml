@@ -44,6 +44,9 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      - name: Check package.json script key duplicates
+        run: pnpm run check:package-json-duplicates
+
       - name: Repo health checks
         run: pnpm run repo:health
 
@@ -84,6 +87,9 @@ jobs:
 
       - name: Set pnpm version
         run: corepack prepare pnpm@9.0.0 --activate
+
+      - name: Check package.json script key duplicates (dry-run job)
+        run: node scripts/check-package-json-duplicates.mjs
 
       - name: Required environment variables
         run: |

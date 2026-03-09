@@ -55,6 +55,12 @@ function initModal() {
   const backdrop = root.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
   const closeBtn = root.querySelector<HTMLButtonElement>('[data-gs-modal-close]');
   const panel = root.querySelector<HTMLElement>('.gs-modal-panel');
+  const body = root?.querySelector<HTMLElement>('[data-gs-modal-body]');
+  const backdrop = root?.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
+  const closeBtn = root?.querySelector<HTMLButtonElement>(
+    '[data-gs-modal-close]',
+  );
+  const panel = root?.querySelector<HTMLElement>('.gs-modal-panel');
 
   let opener: HTMLElement | null = null;
   let lastFocused: Element | null = null;
