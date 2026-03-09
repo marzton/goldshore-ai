@@ -37,8 +37,9 @@ These are worker API endpoints implemented in `src/index.ts` (not HTML pages). R
 ## Local Dev
 ```bash
 pnpm install
-pnpm --filter ./apps/gs-gateway dev
-pnpm --filter ./apps/gs-gateway build
+pnpm --filter @goldshore/gs-gateway dev
+pnpm --filter @goldshore/gs-gateway exec wrangler tail
+pnpm --filter @goldshore/gs-gateway build
 ```
 
 ## Deploy
