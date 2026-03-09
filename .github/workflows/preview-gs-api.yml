@@ -1,19 +1,16 @@
 name: Preview gs-api
+
 permissions:
   contents: read
 
 on:
   pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - labeled
-      - unlabeled
-      - ready_for_review
+    types: [opened, synchronize, reopened, labeled, unlabeled, ready_for_review]
     paths:
       - "apps/gs-api/**"
       - "packages/schema/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
 
 jobs:
   deploy-preview-api:
@@ -22,13 +19,12 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'preview') ||
       (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
     steps:
-      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - uses: pnpm/action-setup@v4
         with:
           run_install: false
 
-      - uses: actions/setup-node@v6
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -36,6 +32,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Check package.json script key duplicates
+        run: pnpm run check:package-json-duplicates
 
       - name: Validate workspace contract
         run: pnpm validate:workspace
@@ -47,8 +46,7 @@ jobs:
         run: pnpm validate:names
 
       - name: Deploy API worker (preview)
-        working-directory: apps/gs-api
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: pnpm exec wrangler deploy --env preview
+        run: pnpm --filter ./apps/gs-api build && pnpm wrangler deploy --env preview --outdir=apps/gs-api/dist --keep-vars --config apps/gs-api/wrangler.toml

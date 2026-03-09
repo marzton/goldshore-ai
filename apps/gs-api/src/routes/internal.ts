@@ -1,11 +1,27 @@
 import { Hono } from 'hono';
-<<<<<<< HEAD
+import { EmailInboxLogsSchema, ServiceStatusSchema } from '@goldshore/schema';
+import { Env, Variables } from '../types';
+import { loadSystemSyncSnapshot } from './system.config';
 import {
   EmailInboxLogsSchema,
   ServiceStatusSchema,
 } from '@goldshore/schema';
 
-const internal = new Hono<{ Bindings: any }>();
+const internal = new Hono<{ Bindings: Env; Variables: Variables }>();
+
+const EMPTY_SERVICES = {
+  maintenance_mode: false,
+  active_services: [],
+  version: 'unknown'
+};
+
+const INTERNAL_ERROR_RESPONSE = {
+  success: false,
+  error: {
+    code: 'INTERNAL_INBOX_STATUS_ERROR',
+    message: 'Failed to retrieve internal inbox status'
+  }
+};
 
 const DNS_SYNC_RUN_INDEX_KEY = 'dns_sync_runs_index';
 
@@ -41,6 +57,13 @@ const parseDnsSyncRun = (value: unknown): DnsSyncRun | null => {
  */
 internal.get('/inbox-status', async (c) => {
   try {
+    const [rawLogs, rawStatus] = await Promise.all([
+      c.env.KV.get('EMAIL_INBOX_LOGS', 'json'),
+      c.env.KV.get('SERVICE_STATUS', 'json')
+    ]);
+
+    const logsResult = EmailInboxLogsSchema.safeParse(rawLogs);
+    const statusResult = ServiceStatusSchema.safeParse(rawStatus);
     // 1. Concurrent fetch for performance
     const [rawLogs, rawStatus] = await Promise.all([
       c.env.KV.get("EMAIL_INBOX_LOGS", "json"),
@@ -55,6 +78,7 @@ internal.get('/inbox-status', async (c) => {
     return c.json({
       success: true,
       timestamp: new Date().toISOString(),
+      services: statusResult.success ? statusResult.data : EMPTY_SERVICES,
       // Fallback to empty state if validation fails or data is missing
       services: statusResult.success ? statusResult.data : { maintenance_mode: false, active_services: [], version: "unknown" },
       inbox: {
@@ -63,6 +87,11 @@ internal.get('/inbox-status', async (c) => {
       }
     });
   } catch (error) {
+    console.error('[internal/inbox-status] failed to fetch KV data', error);
+    return c.json({
+      ...INTERNAL_ERROR_RESPONSE,
+      timestamp: new Date().toISOString()
+    }, 500);
     console.error("Internal API Error:", error);
     return c.json({ success: false, error: "Failed to retrieve internal system state" }, 500);
   }
@@ -100,41 +129,4 @@ internal.get('/dns-sync-status', async (c) => {
   });
 });
 
-=======
-import { EmailInboxLogsSchema, ServiceStatusSchema } from '../../../../packages/schema/src/system.ts';
-
-const internal = new Hono<{ Bindings: SystemEnv }>();
-
-internal.get('/inbox-status', async (c) => {
-  try {
-    const [rawLogs, rawStatus] = await Promise.all([
-      c.env.KV.get('EMAIL_INBOX_LOGS', 'text'),
-      c.env.KV.get('SERVICE_STATUS', 'text'),
-    ]);
-
-    const parsedLogs = rawLogs ? JSON.parse(rawLogs) : [];
-    const parsedStatus = rawStatus ? JSON.parse(rawStatus) : {};
-
-    const logsResult = EmailInboxLogsSchema.safeParse(parsedLogs);
-    const statusResult = ServiceStatusSchema.partial().safeParse(parsedStatus);
-
-    const logs = logsResult.success ? logsResult.data : [];
-    const services = statusResult.success ? statusResult.data : {};
-
-    return c.json({
-      success: true,
-      timestamp: new Date().toISOString(),
-      services,
-      inbox: {
-        count: logs.length,
-        recent: logs.slice(0, 5),
-      },
-    });
-  } catch (error) {
-    console.error('Failed to retrieve inbox logs', error);
-    return c.json({ success: false, error: 'Failed to retrieve inbox logs' }, 500);
-  }
-});
-
->>>>>>> 9a7cd1bf7c1ad35699a74d37fff8bae63408bf13
 export default internal;

@@ -1,7 +1,7 @@
 import { describe, it, mock, afterEach } from 'node:test';
 import assert from 'node:assert';
 import { Hono } from 'hono';
-import media from './media';
+import media from './media.ts';
 
 describe('Media Endpoint Security', () => {
   // Save original fetch
@@ -41,7 +41,7 @@ describe('Media Endpoint Security', () => {
       method: 'GET',
     }, {
       DB: mockDB,
-      ASSETS: mockAssets,
+      Assets: mockAssets,
     });
 
     assert.strictEqual(res.status, 200);
@@ -82,7 +82,7 @@ describe('Media Endpoint Security', () => {
 
     const res = await app.fetch(req, {
       DB: mockDB,
-      ASSETS: mockAssets,
+      Assets: mockAssets,
     });
 
     assert.strictEqual(res.status, 200);
@@ -121,7 +121,7 @@ describe('Media Endpoint Security', () => {
 
     const res = await app.fetch(req, {
       DB: mockDB,
-      ASSETS: mockAssets,
+      Assets: mockAssets,
     });
 
     assert.strictEqual(res.status, 413, 'Should return 413 Payload Too Large');
