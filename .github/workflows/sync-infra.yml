@@ -1,0 +1,74 @@
+name: Sync Infrastructure (Cloudflare)
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "infra/Cloudflare/**"
+      - "infra/cron/**"
+      - "docs/ci/INFRA_SYNC_RUNBOOK.md"
+  workflow_dispatch:
+  schedule:
+    - cron: "30 3 * * 1"
+
+jobs:
+  sync-infra:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+name: Sync GoldShore Infrastructure
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run infra sync utility
+        run: pnpm tsx infra/Cloudflare/deploy.ts
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_KV_NAMESPACE_API_ID: ${{ secrets.CLOUDFLARE_KV_NAMESPACE_API_ID }}
+          CF_KV_NAMESPACE_GATEWAY_ID: ${{ secrets.CLOUDFLARE_KV_NAMESPACE_GATEWAY_ID }}
+      - name: Verify sync script is defined
+        run: node -e "const scripts = require('./package.json').scripts ?? {}; if (!scripts['sync:infra']) { throw new Error('Missing package.json script: sync:infra'); }"
+
+      - name: Run system sync
+        run: pnpm run sync:infra
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GS_KV_NAMESPACE_ID: ${{ secrets.GS_KV_NAMESPACE_ID }}

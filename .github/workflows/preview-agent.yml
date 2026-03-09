@@ -14,7 +14,6 @@ on:
       - ready_for_review
     paths:
       - "apps/gs-agent/**"
-      - "infra/cloudflare/gs-agent.wrangler.toml"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -22,18 +21,15 @@ on:
 jobs:
   preview-agent:
     runs-on: ubuntu-latest
-    if: |
-      contains(github.event.pull_request.labels.*.name, 'preview') ||
-      (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
+    if: false # Explicitly disabled in favor of preview-gs-agent.yml
 
     steps:
-      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - uses: pnpm/action-setup@v4
         with:
           run_install: false
 
-      - uses: actions/setup-node@v6
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -41,6 +37,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Check package.json script key duplicates
+        run: pnpm run check:package-json-duplicates
 
       - name: Validate workspace contract
         run: pnpm validate:workspace
@@ -54,9 +53,6 @@ jobs:
       - name: Deploy agent worker (preview)
         working-directory: apps/gs-agent
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: pnpm exec wrangler deploy --env preview --config wrangler.toml
-        run: pnpm exec wrangler deploy --env preview --config ../../infra/cloudflare/gs-agent.wrangler.toml
-
-# // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43

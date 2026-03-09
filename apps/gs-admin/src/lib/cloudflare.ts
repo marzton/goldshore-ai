@@ -1,4 +1,10 @@
-export function getCloudflareContext(locals: any) {
+export type CloudflareRuntimeLocals = {
+  runtime?: {
+    env?: Record<string, string | undefined>;
+  };
+};
+
+export function getCloudflareContext(locals: CloudflareRuntimeLocals): Record<string, string | undefined> {
   return locals.runtime?.env || process.env;
 }
 

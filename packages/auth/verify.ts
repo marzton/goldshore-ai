@@ -7,11 +7,13 @@ export interface Env {
     CLOUDFLARE_TEAM_DOMAIN?: string;
 }
 
-// Sentinel: Default to existing hardcoded values if not provided in Env
-const DEFAULT_TEAM_DOMAIN = "goldshore.cloudflareaccess.com";
+export interface Dependencies {
+    createRemoteJWKSet: typeof createRemoteJWKSet;
+    jwtVerify: typeof jwtVerify;
+}
 
 // Dependencies object to allow mocking in tests
-export const deps = {
+export const deps: Dependencies = {
     createRemoteJWKSet,
     jwtVerify
 };
@@ -19,20 +21,9 @@ export const deps = {
 // Cache JWKS sets by domain to avoid recreation on every request while supporting multiple domains if needed
 const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
 
-export interface Dependencies {
-    createRemoteJWKSet: typeof createRemoteJWKSet;
-    jwtVerify: typeof jwtVerify;
-}
-
 function getJwks(domain: string, deps: Dependencies) {
     if (!jwksCache.has(domain)) {
         jwksCache.set(domain, deps.createRemoteJWKSet(new URL(`https://${domain}/cdn-cgi/access/certs`)));
-// Cache JWKS sets by domain to avoid recreation on every request while supporting multiple domains if needed
-const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
-
-function getJwks(domain: string) {
-    if (!jwksCache.has(domain)) {
-        jwksCache.set(domain, createRemoteJWKSet(new URL(`https://${domain}/cdn-cgi/access/certs`)));
     }
     return jwksCache.get(domain)!;
 }
@@ -46,13 +37,15 @@ export type AccessTokenPayload = JWTPayload & {
 
 // Internal function with dependencies exposed for testing
 export async function verifyAccessWithClaimsInternal(req: Request, env: Env, deps: Dependencies) {
-export async function verifyAccessWithClaims(req: Request, env: Env) {
   const token = req.headers.get("CF-Access-Jwt-Assertion");
   if (!token) return null;
 
-  const teamDomain = (env && env.CLOUDFLARE_TEAM_DOMAIN) || DEFAULT_TEAM_DOMAIN;
+  const teamDomain = env && env.CLOUDFLARE_TEAM_DOMAIN;
+  if (!teamDomain) {
+    console.error("Missing CLOUDFLARE_TEAM_DOMAIN");
+    return null;
+  }
   const JWKS = getJwks(teamDomain, deps);
-  const JWKS = getJwks(teamDomain);
 
   try {
     const options: { issuer: string; audience?: string } = {
@@ -66,7 +59,6 @@ export async function verifyAccessWithClaims(req: Request, env: Env) {
     }
 
     const { payload } = await deps.jwtVerify(token, JWKS, options);
-    const { payload } = await jwtVerify(token, JWKS, options);
     return payload as AccessTokenPayload;
   } catch (e) {
     console.error("Token verification failed", e);

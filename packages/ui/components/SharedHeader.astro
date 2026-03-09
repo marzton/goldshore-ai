@@ -1,0 +1,28 @@
+---
+interface Props {
+  class?: string;
+  linkClass?: string;
+  href?: string;
+  logoSrc?: string;
+  logoAlt?: string;
+  target?: '_blank' | '_self' | '_parent' | '_top';
+  rel?: string;
+}
+
+const {
+  class: className = '',
+  linkClass = 'gs-logo',
+  href = '/',
+  logoSrc = '/packages/brand/logo-penrose.svg',
+  logoAlt = 'Gold Shore',
+  target,
+  rel
+} = Astro.props as Props;
+---
+<header class={className}>
+  <a class={linkClass} href={href} target={target} rel={rel}>
+    <img src={logoSrc} alt={logoAlt} width="23" height="32" fetchpriority="high" loading="eager" />
+    <slot name="brand-text" />
+  </a>
+  <slot />
+</header>

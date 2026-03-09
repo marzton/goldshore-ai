@@ -11,6 +11,8 @@ interface Props {
 }
 
 const { title = 'GoldShore Admin', requiredPermission, requiredRole } = Astro.props;
+const logoSrc = '/assets/logo.svg';
+
 const session = Astro.locals.adminSession ?? {
   roles: [],
   permissions: [],
@@ -21,13 +23,8 @@ const isPermissionAllowed = requiredPermission
   ? session.permissions.includes(requiredPermission)
   : true;
 const isAuthorized = isRoleAllowed && isPermissionAllowed;
-
-interface Props {
-  title?: string;
-}
-
-const { title = 'GoldShore Admin' } = Astro.props;
-const logoSrc = '/assets/logo.svg';
+const envLabel = import.meta.env.PUBLIC_API?.includes('preview') ? 'Preview' : 'Production';
+const envKey = envLabel.toLowerCase();
 ---
 <html lang="en">
   <head>
@@ -36,7 +33,7 @@ const logoSrc = '/assets/logo.svg';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script>
-      import { initTheme } from '@goldshore/theme/src/theme-manager';
+      import { initTheme } from '@goldshore/theme/manager';
       initTheme();
     </script>
     <script>
@@ -105,7 +102,6 @@ const logoSrc = '/assets/logo.svg';
       });
     </script>
     <style is:global>
-      /* Mobile Sidebar Logic */
       .sidebar-toggle {
         display: none;
         background: none;
@@ -121,7 +117,7 @@ const logoSrc = '/assets/logo.svg';
       .sidebar-close {
         display: none;
         background: none;
-        border: 1px solid rgba(255,255,255,0.1);
+        border: 1px solid var(--gs-color-border);
         color: inherit;
         font-size: 1rem;
         cursor: pointer;
@@ -134,19 +130,12 @@ const logoSrc = '/assets/logo.svg';
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        margin-bottom: 1rem; /* Adjust as needed based on theme */
-      }
-
-      /* Only apply margin if not already handled by theme's sidebar layout */
-      .gs-admin-sidebar .gs-logo {
-        margin-bottom: 0 !important; /* Reset if flex container handles it */
       }
 
       .sidebar-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(0,0,0,0.5);
-        backdrop-filter: blur(2px);
+        background: rgba(0, 0, 0, 0.5);
         z-index: 99;
         opacity: 0;
         pointer-events: none;
@@ -158,6 +147,30 @@ const logoSrc = '/assets/logo.svg';
         pointer-events: auto;
       }
 
+
+      .sidebar-env-ribbon {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 0.25rem 0.5rem;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        background: var(--env-color, var(--gs-color-accent));
+        color: #111827;
+      }
+
+      body[data-env="preview"] {
+        --env-color: #f59e0b;
+      }
+
+      body[data-env="production"] {
+        --env-color: #22c55e;
+      }
+
+      body[data-env="preview"] .gs-admin-topbar {
+        border-bottom: 2px solid #f59e0b;
+      }
+
       @media (max-width: 1024px) {
         .gs-admin-grid {
           display: block !important;
@@ -165,15 +178,12 @@ const logoSrc = '/assets/logo.svg';
 
         .gs-admin-sidebar {
           position: fixed;
-          top: 0; bottom: 0; left: 0;
+          inset: 0 auto 0 0;
           width: 280px;
           z-index: 100;
           transform: translateX(-100%);
           transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 5px 0 25px rgba(0,0,0,0.5);
-          background: #050505; /* Deep dark background fallback */
-          border-right: 1px solid rgba(255,255,255,0.1);
-          padding: 1.5rem;
+          box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
           overflow-y: auto;
         }
 
@@ -194,17 +204,13 @@ const logoSrc = '/assets/logo.svg';
           display: flex;
           flex-direction: column;
         }
-
-        .gs-admin-topbar {
-            padding-left: 1rem; /* Ensure space for toggle */
-        }
       }
     </style>
   </head>
-  <body>
+  <body data-env={envKey}>
     <a href="#admin-content" class="skip-link">Skip to content</a>
     <div class="gs-admin-grid">
-      <Sidebar logo={logoSrc} permissions={session.permissions} />
+      <Sidebar logo={logoSrc} permissions={session.permissions} envLabel={envLabel} />
       <div class="gs-admin-main">
         <Topbar title={title} session={session} />
         <main id="admin-content" class="gs-admin-content">
@@ -225,11 +231,6 @@ const logoSrc = '/assets/logo.svg';
               </div>
             </section>
           )}
-      <Sidebar logo={logoSrc} />
-      <div class="gs-admin-main">
-        <Topbar title={title} />
-        <main id="admin-content" class="gs-admin-content">
-          <slot />
         </main>
       </div>
     </div>

@@ -7,11 +7,11 @@ export default defineConfig({
     timeout: 5_000,
   },
   use: {
-    baseURL: 'http://127.0.0.1:4321',
+    baseURL: 'http://localhost:4321',
     trace: 'retain-on-failure',
   },
   webServer: {
-    command: 'pnpm dev -- --host 127.0.0.1 --port 4321',
+    command: 'npx http-server ./dist -p 4321',
     port: 4321,
     reuseExistingServer: !process.env.CI,
   },
