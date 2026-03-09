@@ -246,18 +246,6 @@ const safeRedirect = (redirectTo: string | null, origin: string) => {
   return new URL(trimmed, origin);
 };
 
-const recipientsFromEnv = (
-  rawRecipients: string | undefined,
-): MailRecipient[] => {
-  if (!rawRecipients) return [];
-
-  return rawRecipients
-    .split(',')
-    .map((entry) => entry.trim())
-    .filter(Boolean)
-    .map((email) => ({ email }));
-};
-
 export const POST: APIRoute = async ({ request, locals }) => {
   if (!request.headers.get('content-type')?.includes('form')) {
     return new Response('Unsupported payload.', { status: 415 });
