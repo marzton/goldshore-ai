@@ -7,7 +7,7 @@ Cloudflare metadata (from `wrangler.toml`):
 - Worker name: `gs-gateway`
 - Route: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md)
 - Compatibility date: `2025-01-10`
-- Bindings: `gs-kv`, `GATEWAY_KV` (KV), `JOB_QUEUE` (Queues producer), `AI` (AI Gateway)
+- Bindings: `GATEWAY_KV` (KV), `JOB_QUEUE` (Queues producer), `API` (service binding), `AI` (AI Gateway)
 - Environment variables: `ENV=production`, `API_ORIGIN=https://api.goldshore.ai`, `CLOUDFLARE_ACCESS_AUDIENCE`, `CLOUDFLARE_TEAM_DOMAIN`
 
 ## Routes/Endpoints
@@ -26,9 +26,9 @@ Configuration highlights (from `wrangler.toml`):
 - `API_ORIGIN=https://api.goldshore.ai`
 - `CLOUDFLARE_ACCESS_AUDIENCE` (required for Access verification)
 - `CLOUDFLARE_TEAM_DOMAIN` (required for Access verification)
-- `ADMIN_INTERNAL_SECRET` (**required secret**, provisioned via Cloudflare secret management, not `[vars]`)
-- KV bindings: `gs-kv`, `GATEWAY_KV`
+- KV binding: `GATEWAY_KV`
 - Queue producer: `JOB_QUEUE`
+- Service binding: `API`
 - AI binding: `AI`
 
 ## Secret Provisioning
@@ -66,9 +66,13 @@ pnpm --filter ./apps/gs-gateway build
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-gateway.yml`
-- Preview deploy: `.github/workflows/preview-gateway.yml`
-- Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
+- Preview deploy workflow: [`.github/workflows/preview-gs-gateway.yml`](../../.github/workflows/preview-gs-gateway.yml)
+- Production deploy workflow file exists at [`.github/workflows/deploy-gs-gateway.yml.disabled`](../../.github/workflows/deploy-gs-gateway.yml.disabled) and is intentionally disabled (not executed by GitHub Actions).
+- Current production deploy is triggered manually via:
+  ```bash
+  pnpm --filter ./apps/gs-gateway deploy
+  ```
+  This runs `wrangler deploy` for the worker using `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` credentials.
 - Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
