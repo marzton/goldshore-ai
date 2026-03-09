@@ -7,9 +7,13 @@ route = "preview.admin.goldshore.ai/*"
 
 [env.preview.vars]
 PREVIEW_MODE = "true"
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 
 [env.production]
 route = "admin.goldshore.ai/*"
+
+[env.production.vars]
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 
 [[kv_namespaces]]
 binding = "GS_CONFIG"

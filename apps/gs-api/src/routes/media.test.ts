@@ -1,7 +1,7 @@
 import { describe, it, mock, afterEach } from 'node:test';
 import assert from 'node:assert';
 import { Hono } from 'hono';
-import media from './media';
+import media from './media.ts';
 
 describe('Media Endpoint Security', () => {
   // Save original fetch
