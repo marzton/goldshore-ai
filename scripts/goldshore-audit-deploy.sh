@@ -5,7 +5,7 @@ TARGET_APP="${TARGET_APP:-all}"
 REPO_ROOT="${REPO_ROOT:-/workspace/goldshore-ai}"
 API_HOST="${API_HOST:-api.goldshore.ai}"
 CORE_URL="${CORE_URL:-https://${API_HOST}/v1/status}"
-DRY_RUN="${DRY_RUN:-0}"
+DRY_RUN="${DRY_RUN:-false}"
 
 KV_KEYS=("ALPACA_PAPER" "ENVIRONMENT_TAG")
 SECRET_KEYS=("OPENAI_API_KEY" "ANTHROPIC_API_KEY" "AIPROXYSIGNING_KEY")
@@ -16,126 +16,46 @@ DNS_RESULT="failure"
 TLS_RESULT="failure"
 CORE_RESULT="failure"
 
-cf_api() {
-  local method="$1"
-  local endpoint="$2"
-  local payload="${3:-}"
-
-  if [[ "${DRY_RUN}" == "1" ]]; then
-    echo "🧪 DRY_RUN: would call Cloudflare API ${method} ${endpoint}" >&2
-    return 0
-  fi
-
-  local args=(
-    -fsS
-    -X "${method}"
-    "https://api.cloudflare.com/client/v4${endpoint}"
-    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}"
-    -H "Content-Type: application/json"
-  )
-
-  if [[ -n "${payload}" ]]; then
-    args+=(-d "${payload}")
-  fi
-
-  curl "${args[@]}"
+warn() {
+  echo "⚠️ $1"
 }
 
-verify_cloudflare_access() {
-  if [[ "${DRY_RUN}" == "1" ]]; then
-    echo "🧪 DRY_RUN: skipping live token/account verification"
+fail_or_warn() {
+  local message="$1"
+  if [[ "${DRY_RUN}" == "true" ]]; then
+    warn "[dry-run] ${message}"
     return 0
   fi
 
-  local token_verify
-  token_verify="$(cf_api GET '/user/tokens/verify')"
-  if ! jq -e '.success == true' >/dev/null <<<"${token_verify}"; then
-    echo "❌ Cloudflare token verification failed"
-    return 1
-  fi
-  echo "✅ Cloudflare token verification passed"
-
-  if [[ -n "${CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
-    local account_verify
-    account_verify="$(cf_api GET "/accounts/${CLOUDFLARE_ACCOUNT_ID}")"
-    if ! jq -e '.success == true' >/dev/null <<<"${account_verify}"; then
-      echo "❌ Cloudflare account verification failed for account ${CLOUDFLARE_ACCOUNT_ID}"
-      return 1
-    fi
-    echo "✅ Cloudflare account verification passed (${CLOUDFLARE_ACCOUNT_ID})"
-  fi
-cf_api_json_or_skip() {
-  local operation="$1"
-  shift
-
-  if [[ "${DRY_RUN}" == "1" ]]; then
-    echo "ℹ️ ${operation} skipped in dry-run"
-    return 2
-  fi
-
-  "$@"
+  echo "❌ ${message}"
+  exit 1
 }
 
-verify_cloudflare_access() {
-  if [[ "${DRY_RUN}" == "1" ]]; then
-    echo "ℹ️ Cloudflare token verification skipped in dry-run"
-    return 0
-  fi
+validate_gateway_auth_preflight() {
+  echo "🔎 Running AI Gateway auth preflight checks..."
 
-  local verify_response
-  if ! verify_response="$(cf_api_json_or_skip "Cloudflare token verification" curl -fsS -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
-    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-    -H "Content-Type: application/json")"; then
-    echo "❌ Cloudflare token verification failed"
-    return 1
-  fi
-
-  if jq -e '.success == true' >/dev/null <<<"${verify_response}"; then
-    echo "✅ Cloudflare token verification passed"
+  local endpoint="${AIPROXY_ENDPOINT:-}"
+  if [[ -z "${endpoint}" ]]; then
+    fail_or_warn "AIPROXY_ENDPOINT is missing. Expected an AI Gateway URL host containing gateway.ai.cloudflare.com."
+  elif [[ "${endpoint}" != *"gateway.ai.cloudflare.com"* ]]; then
+    fail_or_warn "AIPROXY_ENDPOINT must contain gateway.ai.cloudflare.com. Current value: ${endpoint}"
   else
-    echo "❌ Cloudflare token verification returned invalid response"
-    return 1
-  fi
-}
-
-sync_via_api() {
-  if [[ "${DRY_RUN}" == "1" ]]; then
-    echo "ℹ️ Cloudflare KV/secret sync skipped in dry-run"
-    return 0
+    echo "✅ AIPROXY_ENDPOINT configured: ${endpoint}"
   fi
 
-  local kv_list
-  if ! kv_list="$(npx wrangler kv:namespace list)"; then
-    echo "❌ Failed to list Cloudflare KV namespaces"
-    return 1
-  fi
-
-  local kv_id
-  kv_id="$(jq -r '.[] | select(.title | contains("GOLDSHORE_KV")) | .id' <<<"${kv_list}" | head -n1)"
-
-  if [[ -n "${kv_id}" ]]; then
-    for key in "${KV_KEYS[@]}"; do
-      if [[ -z "$(npx wrangler kv:key get --namespace-id "${kv_id}" "${key}" 2>/dev/null || true)" && -n "${!key:-}" ]]; then
-        echo "📤 Syncing ${key} to KV namespace ${kv_id}..."
-        npx wrangler kv:key put --namespace-id "${kv_id}" "${key}" "${!key}"
-      fi
-    done
+  if [[ -z "${AIPROXYSIGNING_KEY:-}" ]]; then
+    export AIPROXYSIGNING_KEY
+    AIPROXYSIGNING_KEY="$(node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))")"
+    warn "AIPROXYSIGNING_KEY was missing; generated ephemeral fallback for this run. Persist it in Worker secrets/KV for runtime use."
   else
-    echo "⚠️ Warning: GOLDSHORE_KV namespace not found."
+    echo "✅ AIPROXYSIGNING_KEY provided via environment"
   fi
 
-  for app in "${WORKER_APPS[@]}"; do
-    if [[ -d "${app}" ]]; then
-      pushd "${app}" >/dev/null
-      for secret_key in "${SECRET_KEYS[@]}"; do
-        if [[ -n "${!secret_key:-}" ]]; then
-          echo "🔐 Updating Worker Secret: ${secret_key} for ${app}..."
-          echo "${!secret_key}" | npx wrangler secret put "${secret_key}"
-        fi
-      done
-      popd >/dev/null
-    fi
-  done
+  if [[ -z "${endpoint}" || "${endpoint}" != *"gateway.ai.cloudflare.com"* ]]; then
+    warn "Gateway auth preflight completed with configuration warnings. Rotation/deploy steps may run, but runtime gateway auth remains misconfigured."
+  else
+    echo "✅ Gateway auth preflight checks passed"
+  fi
 }
 
 post_github_deployment_status() {
@@ -171,11 +91,7 @@ cd "${REPO_ROOT}" || {
 
 node -e "const fs=require('fs'); try { const p=JSON.parse(fs.readFileSync('package.json', 'utf8')); fs.writeFileSync('package.json', JSON.stringify(p, null, 2) + '\\n'); } catch(e) { console.error('Repairing JSON structure...'); const raw=fs.readFileSync('package.json', 'utf8').replace(/,(\\s*[\\]}])/g, '$1'); fs.writeFileSync('package.json', raw); }"
 
-if [[ -z "${AIPROXYSIGNING_KEY:-}" ]]; then
-  export AIPROXYSIGNING_KEY
-  AIPROXYSIGNING_KEY="$(node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))")"
-  echo "✅ AIPROXYSIGNING_KEY generated"
-fi
+validate_gateway_auth_preflight
 
 if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   echo "🔍 Auditing Cloudflare Production State..."
