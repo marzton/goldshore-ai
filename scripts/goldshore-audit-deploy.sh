@@ -16,6 +16,54 @@ DNS_RESULT="failure"
 TLS_RESULT="failure"
 CORE_RESULT="failure"
 
+cf_api() {
+  local method="$1"
+  local endpoint="$2"
+  local payload="${3:-}"
+
+  if [[ "${DRY_RUN}" == "1" ]]; then
+    echo "🧪 DRY_RUN: would call Cloudflare API ${method} ${endpoint}" >&2
+    return 0
+  fi
+
+  local args=(
+    -fsS
+    -X "${method}"
+    "https://api.cloudflare.com/client/v4${endpoint}"
+    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}"
+    -H "Content-Type: application/json"
+  )
+
+  if [[ -n "${payload}" ]]; then
+    args+=(-d "${payload}")
+  fi
+
+  curl "${args[@]}"
+}
+
+verify_cloudflare_access() {
+  if [[ "${DRY_RUN}" == "1" ]]; then
+    echo "🧪 DRY_RUN: skipping live token/account verification"
+    return 0
+  fi
+
+  local token_verify
+  token_verify="$(cf_api GET '/user/tokens/verify')"
+  if ! jq -e '.success == true' >/dev/null <<<"${token_verify}"; then
+    echo "❌ Cloudflare token verification failed"
+    return 1
+  fi
+  echo "✅ Cloudflare token verification passed"
+
+  if [[ -n "${CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
+    local account_verify
+    account_verify="$(cf_api GET "/accounts/${CLOUDFLARE_ACCOUNT_ID}")"
+    if ! jq -e '.success == true' >/dev/null <<<"${account_verify}"; then
+      echo "❌ Cloudflare account verification failed for account ${CLOUDFLARE_ACCOUNT_ID}"
+      return 1
+    fi
+    echo "✅ Cloudflare account verification passed (${CLOUDFLARE_ACCOUNT_ID})"
+  fi
 cf_api_json_or_skip() {
   local operation="$1"
   shift
@@ -131,6 +179,36 @@ fi
 
 if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   echo "🔍 Auditing Cloudflare Production State..."
+
+  if ! verify_cloudflare_access; then
+    exit 1
+  fi
+
+  KV_ID="$(npx wrangler kv:namespace list | jq -r '.[] | select(.title | contains("GOLDSHORE_KV")) | .id' | head -n1)"
+
+  if [[ -n "${KV_ID}" ]]; then
+    for key in "${KV_KEYS[@]}"; do
+      if [[ -z "$(npx wrangler kv:key get --namespace-id "${KV_ID}" "${key}" 2>/dev/null || true)" && -n "${!key:-}" ]]; then
+        echo "📤 Syncing ${key} to KV namespace ${KV_ID}..."
+        npx wrangler kv:key put --namespace-id "${KV_ID}" "${key}" "${!key}"
+      fi
+    done
+  else
+    echo "⚠️ Warning: GOLDSHORE_KV namespace not found."
+  fi
+
+  for app in "${WORKER_APPS[@]}"; do
+    if [[ -d "${app}" ]]; then
+      pushd "${app}" >/dev/null
+      for secret_key in "${SECRET_KEYS[@]}"; do
+        if [[ -n "${!secret_key:-}" ]]; then
+          echo "🔐 Updating Worker Secret: ${secret_key} for ${app}..."
+          echo "${!secret_key}" | npx wrangler secret put "${secret_key}"
+        fi
+      done
+      popd >/dev/null
+    fi
+  done
   verify_cloudflare_access
   sync_via_api
 else
