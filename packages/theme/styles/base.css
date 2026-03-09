@@ -22,6 +22,17 @@ img, svg { display: block; max-width: 100%; }
 
 a { color: inherit; text-decoration: none; }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:not([tabindex='-1']):focus-visible {
+  outline: 2px solid var(--gs-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--gs-accent-soft);
+}
+
 .gs-display,
 h1, h2 {
   font-family: var(--gs-font-serif);

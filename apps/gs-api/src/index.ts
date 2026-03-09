@@ -10,14 +10,17 @@ import system from './routes/system';
 import templates from './routes/templates';
 import admin from './routes/admin';
 import media from './routes/media';
+import webhook from './routes/webhook';
+import oauth from './routes/oauth';
 import pages from './routes/pages';
 import internal from './routes/internal';
+import type { GoldShoreTask } from '@goldshore/schema';
 
 type Env = {
   KV: KVNamespace;
   CONTROL_LOGS?: KVNamespace;
   DB: D1Database;
-  ASSETS: R2Bucket;
+  Assets: R2Bucket;
   AI: Ai;
   OPENAI_API_KEY?: string;
   GEMINI_API_KEY?: string;
@@ -57,7 +60,7 @@ app.use('*', cors({
 // Enforce Authentication (Defense in Depth)
 app.use('*', async (c, next) => {
   // Allow health checks, root, and CORS preflight
-  if (c.req.path === '/health' || c.req.path.startsWith('/health/') || c.req.path === '/' || c.req.method === 'OPTIONS') {
+  if (c.req.path === '/health' || c.req.path.startsWith('/health/') || c.req.path === '/' || c.req.method === 'OPTIONS' || c.req.path.startsWith('/webhook') || c.req.path.startsWith('/oauth')) {
     c.set('accessClaims', null);
     await next();
     return;
@@ -114,6 +117,8 @@ app.get('/', (c) => {
 
 // Core routes
 app.route('/health', health);
+app.route('/webhook', webhook);
+app.route('/oauth', oauth);
 app.route('/ai', ai);
 app.route('/users', users);
 app.route('/user', user);
@@ -134,4 +139,45 @@ v1.get('/logs', (c) => c.json({ logs: ['log1', 'log2'] }));
 
 app.route('/v1', v1);
 
-export default app;
+export const queue: ExportedHandlerQueueHandler<Env> = async (batch, env) => {
+  console.log(`[queue] Received ${batch.messages.length} messages.`);
+
+  for (const message of batch.messages) {
+    const task = message.body as GoldShoreTask;
+
+    try {
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS queue_handshake_events (
+          id TEXT PRIMARY KEY,
+          source TEXT NOT NULL,
+          action TEXT NOT NULL,
+          payload TEXT NOT NULL,
+          processed_at TEXT NOT NULL
+        )
+      `).run();
+
+      const processedAt = new Date().toISOString();
+      await env.DB.prepare(
+        'INSERT OR REPLACE INTO queue_handshake_events (id, source, action, payload, processed_at) VALUES (?, ?, ?, ?, ?)'
+      )
+        .bind(task.id, task.source, task.action, JSON.stringify(task.payload ?? null), processedAt)
+        .run();
+
+      const objectKey = `handshake/${task.id}.json`;
+      await env.Assets.put(objectKey, JSON.stringify({ ...task, processedAt }, null, 2), {
+        httpMetadata: { contentType: 'application/json' }
+      });
+
+      message.ack();
+      console.log('[queue] Processed task', task.id);
+    } catch (error) {
+      message.retry();
+      console.error('[queue] Failed task', task.id, error);
+    }
+  }
+};
+
+export default {
+  fetch: app.fetch,
+  queue
+};
