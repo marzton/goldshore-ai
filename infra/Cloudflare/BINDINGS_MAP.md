@@ -46,11 +46,9 @@
 
 ## Workers
 
-> **Source of truth:** Worker service names in this document must mirror the app-local `wrangler.toml` names.
-
 ### 3. API Worker
 
-- Service Name: `gs-api`
+- Service Name: `astro-gs-api`
 - Code: `apps/gs-api`
 - Routes:
   - `api.goldshore.ai/*`
@@ -75,7 +73,7 @@
 
 ### 4. Gateway Worker
 
-- Service Name: `gs-gateway`
+- Service Name: `astro-gs-gateway`
 - Code: `apps/gs-gateway`
 - Routes:
   - `gw.goldshore.ai/*`
@@ -85,7 +83,7 @@
 
 - Service:
   - Binding: `API`
-  - Service: `gs-api`
+  - Service: `astro-gs-api`
   - Environment: `production`
 - KV:
   - Binding: `GATEWAY_KV`
