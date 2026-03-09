@@ -12,6 +12,7 @@
   "dependencies": {
     "@goldshore/ai-providers": "workspace:^",
     "@goldshore/auth": "workspace:^",
+        "@goldshore/core-schema": "workspace:*",
     "hono": "^4.0.0",
     "safe-stable-stringify": "^2.5.0",
     "@goldshore/utils": "workspace:^"
