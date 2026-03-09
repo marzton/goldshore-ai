@@ -5,6 +5,7 @@ TARGET_APP="${TARGET_APP:-all}"
 REPO_ROOT="${REPO_ROOT:-/workspace/goldshore-ai}"
 API_HOST="${API_HOST:-api.goldshore.ai}"
 CORE_URL="${CORE_URL:-https://${API_HOST}/v1/status}"
+DRY_RUN="${DRY_RUN:-false}"
 
 KV_KEYS=("ALPACA_PAPER" "ENVIRONMENT_TAG")
 SECRET_KEYS=("OPENAI_API_KEY" "ANTHROPIC_API_KEY" "AIPROXYSIGNING_KEY")
@@ -14,6 +15,48 @@ HEALTH_RESULT="failure"
 DNS_RESULT="failure"
 TLS_RESULT="failure"
 CORE_RESULT="failure"
+
+warn() {
+  echo "⚠️ $1"
+}
+
+fail_or_warn() {
+  local message="$1"
+  if [[ "${DRY_RUN}" == "true" ]]; then
+    warn "[dry-run] ${message}"
+    return 0
+  fi
+
+  echo "❌ ${message}"
+  exit 1
+}
+
+validate_gateway_auth_preflight() {
+  echo "🔎 Running AI Gateway auth preflight checks..."
+
+  local endpoint="${AIPROXY_ENDPOINT:-}"
+  if [[ -z "${endpoint}" ]]; then
+    fail_or_warn "AIPROXY_ENDPOINT is missing. Expected an AI Gateway URL host containing gateway.ai.cloudflare.com."
+  elif [[ "${endpoint}" != *"gateway.ai.cloudflare.com"* ]]; then
+    fail_or_warn "AIPROXY_ENDPOINT must contain gateway.ai.cloudflare.com. Current value: ${endpoint}"
+  else
+    echo "✅ AIPROXY_ENDPOINT configured: ${endpoint}"
+  fi
+
+  if [[ -z "${AIPROXYSIGNING_KEY:-}" ]]; then
+    export AIPROXYSIGNING_KEY
+    AIPROXYSIGNING_KEY="$(node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))")"
+    warn "AIPROXYSIGNING_KEY was missing; generated ephemeral fallback for this run. Persist it in Worker secrets/KV for runtime use."
+  else
+    echo "✅ AIPROXYSIGNING_KEY provided via environment"
+  fi
+
+  if [[ -z "${endpoint}" || "${endpoint}" != *"gateway.ai.cloudflare.com"* ]]; then
+    warn "Gateway auth preflight completed with configuration warnings. Rotation/deploy steps may run, but runtime gateway auth remains misconfigured."
+  else
+    echo "✅ Gateway auth preflight checks passed"
+  fi
+}
 
 post_github_deployment_status() {
   if [[ -z "${GITHUB_TOKEN:-}" || -z "${GITHUB_REPOSITORY:-}" || -z "${GITHUB_DEPLOYMENT_ID:-}" ]]; then
@@ -48,21 +91,12 @@ cd "${REPO_ROOT}" || {
 
 node -e "const fs=require('fs'); try { const p=JSON.parse(fs.readFileSync('package.json', 'utf8')); fs.writeFileSync('package.json', JSON.stringify(p, null, 2) + '\\n'); } catch(e) { console.error('Repairing JSON structure...'); const raw=fs.readFileSync('package.json', 'utf8').replace(/,(\\s*[\\]}])/g, '$1'); fs.writeFileSync('package.json', raw); }"
 
-if [[ -z "${AIPROXYSIGNING_KEY:-}" ]]; then
-  export AIPROXYSIGNING_KEY
-  AIPROXYSIGNING_KEY="$(node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))")"
-  echo "✅ AIPROXYSIGNING_KEY generated"
-fi
+validate_gateway_auth_preflight
 
 if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   echo "🔍 Auditing Cloudflare Production State..."
 
-  if curl -fsS -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
-    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-    -H "Content-Type: application/json" >/dev/null; then
-    echo "✅ Cloudflare token verification passed"
-  else
-    echo "❌ Cloudflare token verification failed"
+  if ! verify_cloudflare_access; then
     exit 1
   fi
 
@@ -91,6 +125,8 @@ if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
       popd >/dev/null
     fi
   done
+  verify_cloudflare_access
+  sync_via_api
 else
   echo "⚠️ Warning: CLOUDFLARE_API_TOKEN not detected."
 fi

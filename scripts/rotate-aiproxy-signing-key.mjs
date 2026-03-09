@@ -18,11 +18,53 @@ const workerEnv = process.env.CLOUDFLARE_WORKER_ENV ?? 'production';
 const secretName = process.env.SECRET_NAME ?? 'AIPROXYSIGNING_KEY';
 const kvKey = process.env.KV_KEY ?? 'AIPROXYSIGNING_KEY';
 const dryRun = process.argv.includes('--dry-run');
+const validateGatewayAuth = process.argv.includes('--validate-gateway-auth') || process.argv.includes('--validate-env');
 
 const headers = {
   Authorization: `Bearer ${apiToken}`,
   'Content-Type': 'application/json'
 };
+
+function warnOrFail(message) {
+  if (dryRun) {
+    console.warn(`⚠️ [dry-run] ${message}`);
+    return;
+  }
+
+  throw new Error(message);
+}
+
+function validateGatewayAuthPreflight() {
+  const endpoint = process.env.AIPROXY_ENDPOINT;
+  let hasExpectedHost = false;
+  if (typeof endpoint === 'string') {
+    try {
+      const url = new URL(endpoint);
+      const hostname = url.hostname.toLowerCase();
+      hasExpectedHost =
+        hostname === 'gateway.ai.cloudflare.com' ||
+        hostname.endsWith('.gateway.ai.cloudflare.com');
+    } catch {
+      hasExpectedHost = false;
+    }
+  }
+
+  if (!endpoint) {
+    warnOrFail('AIPROXY_ENDPOINT is missing. Rotation can succeed, but runtime AI Gateway auth will be misconfigured.');
+  } else if (!hasExpectedHost) {
+    warnOrFail(`AIPROXY_ENDPOINT should have hostname gateway.ai.cloudflare.com. Current value: ${endpoint}`);
+  } else {
+    console.log(`✅ AIPROXY_ENDPOINT configured: ${endpoint}`);
+  }
+
+  if (dryRun || validateGatewayAuth) {
+    if (hasExpectedHost) {
+      console.log('✅ Gateway auth preflight passed.');
+    } else {
+      console.warn('⚠️ Gateway auth preflight finished with warnings. Rotation status and runtime auth status differ until AIPROXY_ENDPOINT is fixed.');
+    }
+  }
+}
 
 async function cfRequest(path, init = {}) {
   const response = await fetch(`https://api.cloudflare.com/client/v4${path}`, {
@@ -173,6 +215,8 @@ async function listHealthChecks() {
 }
 
 async function run() {
+  validateGatewayAuthPreflight();
+
   await verifyToken();
   await getAccount();
   await getZoneDetails();
@@ -195,7 +239,18 @@ async function run() {
 
   await listWorkerDataUsage();
   await listHealthChecks();
-  console.log(dryRun ? '✅ Dry run complete.' : '✅ Rotation complete.');
+  if (dryRun) {
+    console.log('✅ Dry run complete (no secrets were changed).');
+  } else {
+    console.log('✅ Rotation complete (secret rotation operations succeeded).');
+  }
+
+  const endpoint = process.env.AIPROXY_ENDPOINT;
+  if (!endpoint || !endpoint.includes('gateway.ai.cloudflare.com')) {
+    console.warn('⚠️ Rotation succeeded, but runtime gateway auth is still misconfigured: set AIPROXY_ENDPOINT to your Cloudflare AI Gateway URL.');
+  } else {
+    console.log('✅ Runtime gateway auth endpoint appears configured.');
+  }
 }
 
 run().catch((error) => {
