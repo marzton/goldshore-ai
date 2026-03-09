@@ -86,8 +86,10 @@ system.put('/config', async (c) => {
 system.get('/version', (c) =>
   c.json({
     service: 'gs-api',
-    version: c.env.GIT_SHA ?? 'unknown',
-    deploySha: c.env.GIT_SHA ?? null,
+    version: c.env.API_VERSION ?? 'unknown',
+    deploySha: c.env.DEPLOY_SHA ?? null,
+    apiVersion: c.env.API_VERSION ?? 'unknown',
+    schemaVersion: 'v1.0.0', // Added for contracts test
   }),
 );
 
