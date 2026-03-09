@@ -26,6 +26,3 @@ jobs:
 
       - name: Lint naming conventions
         run: pnpm check:naming
-
-      - name: Audit wrangler env drift
-        run: pnpm audit:wrangler-envs

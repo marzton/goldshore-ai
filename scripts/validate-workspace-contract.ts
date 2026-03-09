@@ -1,8 +1,8 @@
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import path from "node:path";
 import { join, relative } from "node:path";
-import { validateWorkerStructure } from "./validate-worker-structure.ts";
-import { validateWorkerNames } from "./validate-worker-names.ts";
+import { validateWorkerStructure } from "./validate-worker-structure";
+import { validateWorkerNames } from "./validate-worker-names";
 
 const APPS_DIR = path.resolve(process.cwd(), "apps");
 
