@@ -5,6 +5,7 @@ import { verifyAccess } from '@goldshore/auth';
 import { STATUS_PAGE_HTML } from './templates/status';
 import { type Env } from './types';
 import { integrationControls } from './middleware/integration';
+import { timingSafeCompare } from './utils/timing-safe';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -105,8 +106,39 @@ app.get('/', (c) => {
 });
 
 // Example specific routes
+
+app.get('/admin', (c) => {
+  const configuredAdminToken = c.env.ADMIN_TOKEN;
+
+  if (!configuredAdminToken) {
+    return c.json({ error: 'Admin access not configured' }, 503);
+  }
+
+  const providedAdminToken = c.req.header('x-admin-token');
+  const authorized = timingSafeCompare(providedAdminToken, configuredAdminToken);
+
+  if (!authorized) {
+    return c.json({ error: 'Forbidden' }, 403);
+  }
+
+  return c.json({ message: 'Admin access granted' });
+});
+
 app.get('/user/login', (c) => c.json({ message: 'Gateway Login Placeholder' }));
 app.post('/v1/chat', (c) => c.json({ message: 'Gateway Chat Placeholder' }));
+
+app.use('/admin/*', async (c, next) => {
+  if (!c.env.ADMIN_INTERNAL_SECRET) {
+    return c.json(
+      {
+        error: 'Admin route unavailable: ADMIN_INTERNAL_SECRET is not configured. Contact an operator.'
+      },
+      503
+    );
+  }
+
+  await next();
+});
 
 // Forwarding fallback
 app.all('*', async (c) => {
