@@ -37,6 +37,7 @@
     "secret:sync": "bash scripts/sync-preview-secrets.sh",
     "secret:sync:worker": "bash scripts/sync-preview-secrets.sh --worker",
     "validate:json-keys": "node scripts/validate-package-json-keys.mjs"
+    "validate:preview-bindings": "tsx scripts/validate-preview-bindings.ts"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
