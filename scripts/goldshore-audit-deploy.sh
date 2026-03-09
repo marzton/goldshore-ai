@@ -5,6 +5,8 @@ TARGET_APP="${TARGET_APP:-all}"
 REPO_ROOT="${REPO_ROOT:-/workspace/goldshore-ai}"
 API_HOST="${API_HOST:-api.goldshore.ai}"
 CORE_URL="${CORE_URL:-https://${API_HOST}/v1/status}"
+ORIGINAL_CLOUDFLARE_ZONE_ID="${CLOUDFLARE_ZONE_ID:-}"
+CLOUDFLARE_ZONE_ID="${CLOUDFLARE_ZONE_ID:-${CF_ZONE_ID:-}}"
 
 KV_KEYS=("ALPACA_PAPER" "ENVIRONMENT_TAG")
 SECRET_KEYS=("OPENAI_API_KEY" "ANTHROPIC_API_KEY" "AIPROXYSIGNING_KEY")
@@ -40,6 +42,10 @@ post_github_deployment_status() {
 }
 
 echo "🚀 Initializing GoldShore Audit & Deployment: ${TARGET_APP}"
+
+if [[ -z "${ORIGINAL_CLOUDFLARE_ZONE_ID:-}" && -n "${CF_ZONE_ID:-}" ]]; then
+  echo "ℹ️ Using CF_ZONE_ID fallback; prefer CLOUDFLARE_ZONE_ID"
+fi
 
 cd "${REPO_ROOT}" || {
   echo "❌ Failed to enter ${REPO_ROOT}"
