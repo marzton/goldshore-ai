@@ -35,7 +35,8 @@
     "setup:dev": "bash scripts/setup.sh",
     "secret:audit": "node scripts/secret-audit.mjs",
     "secret:sync": "bash scripts/sync-preview-secrets.sh",
-    "secret:sync:worker": "bash scripts/sync-preview-secrets.sh --worker"
+    "secret:sync:worker": "bash scripts/sync-preview-secrets.sh --worker",
+    "validate:json-keys": "node scripts/validate-package-json-keys.mjs"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
