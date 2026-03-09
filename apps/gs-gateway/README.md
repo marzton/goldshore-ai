@@ -8,7 +8,7 @@ Cloudflare metadata (from `wrangler.toml`):
 - Route: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md)
 - Compatibility date: `2025-01-10`
 - Bindings: `gs-kv`, `GATEWAY_KV` (KV), `JOB_QUEUE` (Queues producer), `AI` (AI Gateway)
-- Environment variables: `ENV=production`, `API_ORIGIN=https://api.goldshore.ai`, `CLOUDFLARE_ACCESS_AUDIENCE`, `CLOUDFLARE_TEAM_DOMAIN`
+- Environment variables: `ENV=production`, `API_ORIGIN=https://api.goldshore.ai`, `CLOUDFLARE_ACCESS_AUDIENCE`, `CLOUDFLARE_TEAM_DOMAIN`, `ADMIN_TOKEN` (optional second factor for `/admin`)
 
 ## Routes/Endpoints
 These are worker API endpoints implemented in `src/index.ts` (not HTML pages). The router file is the source of truth.
@@ -26,6 +26,7 @@ Configuration highlights (from `wrangler.toml`):
 - `API_ORIGIN=https://api.goldshore.ai`
 - `CLOUDFLARE_ACCESS_AUDIENCE` (required for Access verification)
 - `CLOUDFLARE_TEAM_DOMAIN` (required for Access verification)
+- `ADMIN_TOKEN` (optional; if set, `/admin` and `/admin/*` also require `Authorization: Bearer <token>` and return `403` on mismatch)
 - KV bindings: `gs-kv`, `GATEWAY_KV`
 - Queue producer: `JOB_QUEUE`
 - AI binding: `AI`

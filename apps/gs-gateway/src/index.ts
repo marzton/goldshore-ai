@@ -69,6 +69,29 @@ app.use('*', async (c, next) => {
     await next();
 });
 
+
+// Optional second factor for /admin routes
+app.use('*', async (c, next) => {
+  if (!(c.req.path === '/admin' || c.req.path.startsWith('/admin/'))) {
+    await next();
+    return;
+  }
+
+  const adminToken = c.env.ADMIN_TOKEN;
+  if (!adminToken) {
+    await next();
+    return;
+  }
+
+  const authHeader = c.req.header('Authorization') || '';
+  const expected = `Bearer ${adminToken}`;
+  if (authHeader !== expected) {
+    return c.json({ error: 'Forbidden' }, 403);
+  }
+
+  await next();
+});
+
 // Integration controls: data classification, secrets access, and audit trail enforcement
 app.use('*', integrationControls);
 
