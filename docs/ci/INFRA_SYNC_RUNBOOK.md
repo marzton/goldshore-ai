@@ -32,6 +32,7 @@ Set these repository secrets before enabling the workflow:
 - `CLOUDFLARE_KV_NAMESPACE_API_ID`
 - `CLOUDFLARE_KV_NAMESPACE_GATEWAY_ID`
 
+Do not store Cloudflare credentials or namespace IDs in tracked workflow files or scripts.
 Optional for token rotation without downtime:
 
 - `CLOUDFLARE_BUILD_API_TOKEN` (if set, workflows prefer this token and fall back to `CLOUDFLARE_API_TOKEN`)
