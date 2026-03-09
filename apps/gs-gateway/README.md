@@ -61,8 +61,13 @@ These are worker API endpoints implemented in `src/index.ts` (not HTML pages). R
 ## Local Dev
 ```bash
 pnpm install
-pnpm --filter ./apps/gs-gateway dev
-pnpm --filter ./apps/gs-gateway build
+pnpm --filter @goldshore/gs-gateway dev
+pnpm --filter @goldshore/gs-gateway build
+```
+
+## Logs
+```bash
+pnpm --filter @goldshore/gs-gateway exec wrangler tail
 ```
 
 ## Deploy
@@ -77,5 +82,5 @@ pnpm --filter ./apps/gs-gateway build
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 ```bash
-pnpm --filter ./apps/gs-gateway deploy
+pnpm --filter @goldshore/gs-gateway deploy
 ```
