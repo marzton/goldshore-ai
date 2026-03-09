@@ -98,6 +98,25 @@ preflight_env_checks() {
     exit 1
 CORE_RESULT="failure"
 
+urlencode_kv_key() {
+  node -e 'console.log(encodeURIComponent(process.argv[1]))' "$1"
+}
+
+validate_kv_key_encoding() {
+  local existing_key="ALPACA_PAPER"
+  local existing_encoded
+  existing_encoded="$(urlencode_kv_key "${existing_key}")"
+  if [[ "${existing_encoded}" != "${existing_key}" ]]; then
+    echo "❌ KV key encoding validation failed for existing key: ${existing_key}"
+    exit 1
+  fi
+
+  local special_key="env/prod flag?"
+  local special_encoded
+  special_encoded="$(urlencode_kv_key "${special_key}")"
+  if [[ "${special_encoded}" != "env%2Fprod%20flag%3F" ]]; then
+    echo "❌ KV key encoding validation failed for special-character key: ${special_key}"
+    exit 1
 enforce_required_env() {
   local key="$1"
   local reason="$2"
@@ -366,10 +385,21 @@ elif [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   KV_ID="$(npx wrangler kv:namespace list | jq -r '.[] | select(.title | contains("GOLDSHORE_KV")) | .id' | head -n1)"
 
   if [[ -n "${KV_ID}" ]]; then
+    validate_kv_key_encoding
+
     for key in "${KV_KEYS[@]}"; do
       if [[ -z "$(npx wrangler kv:key get --namespace-id "${KV_ID}" "${key}" 2>/dev/null || true)" && -n "${!key:-}" ]]; then
         echo "📤 Syncing ${key} to KV namespace ${KV_ID}..."
-        npx wrangler kv:key put --namespace-id "${KV_ID}" "${key}" "${!key}"
+        if [[ -n "${CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
+          encoded_key="$(urlencode_kv_key "${key}")"
+          kv_write_url="https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${KV_ID}/values/${encoded_key}"
+          curl -fsS -X PUT "${kv_write_url}" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: text/plain" \
+            --data-binary "${!key}" >/dev/null
+        else
+          npx wrangler kv:key put --namespace-id "${KV_ID}" "${key}" "${!key}"
+        fi
       fi
     done
   else
