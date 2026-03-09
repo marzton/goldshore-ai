@@ -26,9 +26,33 @@ Configuration highlights (from `wrangler.toml`):
 - `API_ORIGIN=https://api.goldshore.ai`
 - `CLOUDFLARE_ACCESS_AUDIENCE` (required for Access verification)
 - `CLOUDFLARE_TEAM_DOMAIN` (required for Access verification)
+- `ADMIN_INTERNAL_SECRET` (**required secret**, provisioned via Cloudflare secret management, not `[vars]`)
 - KV bindings: `gs-kv`, `GATEWAY_KV`
 - Queue producer: `JOB_QUEUE`
 - AI binding: `AI`
+
+## Secret Provisioning
+`ADMIN_INTERNAL_SECRET` is intentionally **not** committed in `wrangler.toml` under `[vars]`.
+
+Set it through Cloudflare Worker secret management for each environment:
+
+```bash
+# From repo root
+cd apps/gs-gateway
+
+# Set secret for default environment
+wrangler secret put ADMIN_INTERNAL_SECRET
+
+# Or for a named environment (example)
+wrangler secret put ADMIN_INTERNAL_SECRET --env production
+```
+
+You can also set the same secret in the Cloudflare dashboard: Worker → Settings → Variables → Secrets.
+
+### Expected behavior when secret is missing
+- Requests that depend on `ADMIN_INTERNAL_SECRET` should fail closed (unauthorized / forbidden) rather than bypassing protection.
+- Deploys may still succeed, but protected admin/internal flows will not authenticate correctly until the secret is set.
+- If this occurs, provision the secret and redeploy (or restart local dev) so the Worker picks up the new secret value.
 
 ## Routes/Endpoints
 These are worker API endpoints implemented in `src/index.ts` (not HTML pages). Route handlers are defined in `src/index.ts`.
