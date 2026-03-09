@@ -17,6 +17,8 @@
     "validate:names": "tsx scripts/validate-worker-names.ts",
     "validate:workers": "tsx scripts/validate-worker-names.ts",
     "validate:workspace": "tsx scripts/validate-workspace-contract.ts",
+    "check:package-json-duplicates": "node scripts/check-package-json-duplicates.mjs",
+    "validate": "pnpm check:naming && pnpm check:package-json-duplicates && pnpm validate:workspace && pnpm validate:structure && pnpm validate:names && pnpm validate:preview-bindings",
     "validate": "pnpm check:naming && pnpm validate:workspace && pnpm validate:structure && pnpm validate:names && pnpm validate:preview-bindings",
     "validate:preview-bindings": "tsx scripts/validate-preview-bindings.ts",
     "branch:bootstrap": "bash scripts/branch-bootstrap.sh",
