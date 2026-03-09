@@ -37,17 +37,22 @@ These are worker API endpoints implemented in `src/index.ts` (not HTML pages). R
 ## Local Dev
 ```bash
 pnpm install
-pnpm --filter ./apps/gs-gateway dev
-pnpm --filter ./apps/gs-gateway build
+pnpm --filter @goldshore/gs-gateway dev
+pnpm --filter @goldshore/gs-gateway build
+```
+
+## Logs
+```bash
+pnpm --filter @goldshore/gs-gateway exec wrangler tail
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-gateway.yml`
-- Preview deploy: `.github/workflows/preview-gateway.yml`
+- Production deploy (currently disabled): `.github/workflows/deploy-gs-gateway.yml.disabled`
+- Preview deploy: `.github/workflows/preview-gs-gateway.yml`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 - Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 ```bash
-pnpm --filter ./apps/gs-gateway deploy
+pnpm --filter @goldshore/gs-gateway deploy
 ```
