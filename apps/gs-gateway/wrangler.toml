@@ -13,6 +13,9 @@ ENV = "production"
 API_ORIGIN = "https://api.goldshore.ai"
 CLOUDFLARE_ACCESS_AUDIENCE = ""
 CLOUDFLARE_TEAM_DOMAIN = ""
+# NOTE: Do not put ADMIN_INTERNAL_SECRET in [vars].
+# Provision it as a Cloudflare Worker secret via dashboard or:
+#   wrangler secret put ADMIN_INTERNAL_SECRET
 
 [[kv_namespaces]]
 binding = "GATEWAY_KV"
