@@ -6,28 +6,34 @@ When preview binding recovery requires deleting and re-deploying a Worker, use t
 
 ### Safety Preconditions (required before any delete)
 
-- [ ] Confirm current git branch and identify the exact target Worker for the rollback action.
-- [ ] Confirm the command explicitly includes `--env preview`.
-- [ ] Confirm the Worker name ends with `-preview` or otherwise matches the approved preview naming convention.
-- [ ] Capture and log the currently deployed version identifier before deleting (for example: deployment ID, version hash, or Wrangler deployment timestamp output).
+- [ ] Confirm current git branch and target Worker before running a destructive command.
+  ```bash
+  git branch --show-current
+  ```
+- [ ] Confirm every destructive or deploy command includes `--env preview`.
+- [ ] Confirm the Worker name ends with `-preview` or matches the approved preview naming convention.
+- [ ] Capture the currently deployed version identifier in logs before delete.
+  ```bash
+  npx wrangler deployments list --name <worker-preview-name> --env preview | head -n 20
+  ```
 
 ### Explicit preview delete + redeploy examples
 
-> Do not run a generic delete command. Execute the per-worker command that matches the rollback target.
+> Do not run a generic delete command. Execute only the per-worker command set that matches the rollback target.
 
-- **`gs-api` preview Worker**
+- **`gs-api` preview Worker (`apps/gs-api/wrangler.toml`)**
   ```bash
   npx wrangler delete gs-api-preview --env preview
   npx wrangler deploy --config apps/gs-api/wrangler.toml --env preview
   ```
 
-- **`gs-gateway` preview Worker**
+- **`gs-gateway` preview Worker (`apps/gs-gateway/wrangler.toml`)**
   ```bash
   npx wrangler delete gs-gateway-preview --env preview
   npx wrangler deploy --config apps/gs-gateway/wrangler.toml --env preview
   ```
 
-- **Legacy worker path reference (`legacy/api-worker`)**
+- **Legacy worker path reference (`archive/legacy/api-worker/wrangler.toml`)**
   ```bash
   npx wrangler delete legacy-api-preview --env preview
   npx wrangler deploy --config archive/legacy/api-worker/wrangler.toml --env preview
@@ -35,15 +41,22 @@ When preview binding recovery requires deleting and re-deploying a Worker, use t
 
 ### Post-delete redeploy verification (mandatory)
 
-After redeploying, verify both deployment success and service health:
+After each redeploy, verification is not complete until both checks pass:
 
-1. Confirm Wrangler reports successful deployment for the target preview Worker.
-2. Run the preview health check endpoint and verify a success response.
+1. **Deployment success:** Wrangler output must show a successful deploy for the exact preview Worker.
+2. **Health endpoint success:** Run the matching preview health endpoint and require a successful (`2xx`) response.
 
-Example:
+Per-worker verification examples:
 
 ```bash
-curl -fsS https://<preview-hostname>/healthz
+# gs-api
+curl -fsS https://gs-api-preview.<preview-domain>/healthz
+
+# gs-gateway
+curl -fsS https://gs-gateway-preview.<preview-domain>/healthz
+
+# legacy-api
+curl -fsS https://legacy-api-preview.<preview-domain>/healthz
 ```
 
-Record both the successful deployment output and health-check result in rollback logs.
+Record the pre-delete deployed version identifier, redeploy success output, and health-check output in rollback logs.
