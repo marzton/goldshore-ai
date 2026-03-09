@@ -5,6 +5,7 @@ TARGET_APP="${TARGET_APP:-all}"
 REPO_ROOT="${REPO_ROOT:-/workspace/goldshore-ai}"
 API_HOST="${API_HOST:-api.goldshore.ai}"
 CORE_URL="${CORE_URL:-https://${API_HOST}/v1/status}"
+CLOUDFLARE_WORKER_ENV="${CLOUDFLARE_WORKER_ENV:-production}"
 
 KV_KEYS=("ALPACA_PAPER" "ENVIRONMENT_TAG")
 SECRET_KEYS=("OPENAI_API_KEY" "ANTHROPIC_API_KEY" "AIPROXYSIGNING_KEY")
@@ -55,7 +56,7 @@ if [[ -z "${AIPROXYSIGNING_KEY:-}" ]]; then
 fi
 
 if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
-  echo "🔍 Auditing Cloudflare Production State..."
+  echo "🔍 Auditing Cloudflare Worker State (env: ${CLOUDFLARE_WORKER_ENV})..."
 
   if curl -fsS -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
     -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
@@ -84,8 +85,8 @@ if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
       pushd "${app}" >/dev/null
       for secret_key in "${SECRET_KEYS[@]}"; do
         if [[ -n "${!secret_key:-}" ]]; then
-          echo "🔐 Updating Worker Secret: ${secret_key} for ${app}..."
-          echo "${!secret_key}" | npx wrangler secret put "${secret_key}"
+          echo "🔐 Updating Worker Secret: ${secret_key} for ${app} (env: ${CLOUDFLARE_WORKER_ENV})..."
+          echo "${!secret_key}" | npx wrangler secret put "${secret_key}" --env "${CLOUDFLARE_WORKER_ENV}"
         fi
       done
       popd >/dev/null
