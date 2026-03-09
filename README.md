@@ -577,11 +577,14 @@ Features:
 # 💻 Local Development
 ## Local Development
 
-Install dependencies:
+Install dependencies (after selecting the pinned Node.js version):
 
 ```bash
+nvm use  # or fnm/asdf/volta equivalent
 pnpm install
 ```
+
+The pinned local version files (`.nvmrc` and `.node-version`) are set to `22.0.0`, consistent with `package.json` `engines.node` (`>=22.0.0`).
 
 Run everything:
 
