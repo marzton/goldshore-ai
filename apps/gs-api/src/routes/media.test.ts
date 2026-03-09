@@ -41,7 +41,7 @@ describe('Media Endpoint Security', () => {
       method: 'GET',
     }, {
       DB: mockDB,
-      ASSETS: mockAssets,
+      Assets: mockAssets,
     });
 
     assert.strictEqual(res.status, 200);
@@ -82,7 +82,7 @@ describe('Media Endpoint Security', () => {
 
     const res = await app.fetch(req, {
       DB: mockDB,
-      ASSETS: mockAssets,
+      Assets: mockAssets,
     });
 
     assert.strictEqual(res.status, 200);
@@ -121,7 +121,7 @@ describe('Media Endpoint Security', () => {
 
     const res = await app.fetch(req, {
       DB: mockDB,
-      ASSETS: mockAssets,
+      Assets: mockAssets,
     });
 
     assert.strictEqual(res.status, 413, 'Should return 413 Payload Too Large');

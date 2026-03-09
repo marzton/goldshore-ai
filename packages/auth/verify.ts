@@ -40,9 +40,9 @@ export async function verifyAccessWithClaimsInternal(req: Request, env: Env, dep
   const token = req.headers.get("CF-Access-Jwt-Assertion");
   if (!token) return null;
 
-  const teamDomain = env?.CLOUDFLARE_TEAM_DOMAIN;
+  const teamDomain = env && env.CLOUDFLARE_TEAM_DOMAIN;
   if (!teamDomain) {
-    console.error("Missing CLOUDFLARE_TEAM_DOMAIN in environment");
+    console.error("Missing CLOUDFLARE_TEAM_DOMAIN");
     return null;
   }
   const JWKS = getJwks(teamDomain, deps);
