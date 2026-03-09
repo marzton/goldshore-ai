@@ -57,6 +57,32 @@ app.get('/system/info', (c) =>
   }),
 );
 
+app.get('/version', (c) => c.json({ version: VERSION }));
+
+app.post('/webhook', async (c) => {
+  // Reserved for future provider hooks.
+  return c.json({ received: true });
+});
+
+app.post('/api/subscribe', async (c) => {
+  // Store email in KV or send to mailbox
+  return c.json({ status: 'subscribed' });
+});
+
+app.post('/api/contact', async (c) => {
+  // Store email in KV or send to mailbox
+  return c.json({ status: 'sent' });
+});
+
+export default {
+  fetch: app.fetch,
+  async email(message: EmailMessage, env: Env): Promise<void> {
+    // Basic email handler scaffolding
+    console.log(`Received email from ${message.from} to ${message.to}`);
+
+    const forwardTo = env.MAIL_FORWARD_TO?.trim();
+    if (!forwardTo || !isEmailLike(forwardTo)) {
+      message.setReject('Mail forwarding is not configured.');
 // Persistence present; code hygiene risk due to merge duplication has been removed in this unified handler.
 export default {
   fetch: app.fetch,

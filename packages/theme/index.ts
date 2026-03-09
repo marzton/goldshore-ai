@@ -315,6 +315,54 @@ function initHeroPulsar() {
       particles.push(createParticle());
   };
 
+function initTilt() {
+  const rm = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  if (rm) return;
+
+  const fine = window.matchMedia?.('(pointer: fine)')?.matches;
+  const hover = window.matchMedia?.('(hover: hover)')?.matches;
+  if (!fine || !hover) return;
+
+  const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-gs-tilt]'));
+  if (!panels.length) return;
+
+  document.documentElement.classList.add('gs-tilt-on');
+
+  const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
+
+  panels.forEach((el) => {
+    el.classList.add('gs-tilt');
+
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+
+      const ry = (px - 0.5) * 8;
+      const rx = -(py - 0.5) * 6;
+
+      el.style.setProperty('--gs-tilt-x', `${clamp(rx, -8, 8)}deg`);
+      el.style.setProperty('--gs-tilt-y', `${clamp(ry, -10, 10)}deg`);
+      el.style.setProperty('--gs-tilt-glare-x', `${px * 100}%`);
+      el.style.setProperty('--gs-tilt-glare-y', `${py * 100}%`);
+    };
+
+    const onLeave = () => {
+      el.style.setProperty('--gs-tilt-x', '0deg');
+      el.style.setProperty('--gs-tilt-y', '0deg');
+      el.style.setProperty('--gs-tilt-glare-x', '50%');
+      el.style.setProperty('--gs-tilt-glare-y', '35%');
+    };
+
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerleave', onLeave);
+  });
+}
+
+function initScrollHints() {
+  if (typeof CSS !== 'undefined' && typeof CSS.supports === 'function') {
+    const ok = CSS.supports('animation-timeline: view()');
+    if (ok) document.documentElement.classList.add('gs-view-timeline');
   const loop = () => {
     if (!active) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
