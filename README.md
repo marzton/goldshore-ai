@@ -608,7 +608,8 @@ Run everything:
 Run all workspace apps in parallel:
 
 ```bash
-pnpm dev
+bash scripts/setup-secrets.sh
+pnpm run sync:cf
 ```
 
 Run individual apps by package name:
