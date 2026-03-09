@@ -21,6 +21,7 @@ export type ProviderConfig = {
   fetch: typeof fetch;
   apiKey?: string;
   model?: string;
+  aiProxyEndpoint?: string;
 };
 
 export interface AnalysisProvider {
