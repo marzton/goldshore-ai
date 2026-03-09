@@ -9,7 +9,7 @@ on:
       - main
     paths:
       - "apps/gs-agent/**"
-      - ".github/workflows/deploy-gs-agent.yml.disabled"
+      - "infra/cloudflare/gs-agent.wrangler.toml"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"

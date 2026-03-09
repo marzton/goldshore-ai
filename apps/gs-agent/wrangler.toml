@@ -6,6 +6,7 @@ tsconfig = "tsconfig.json"
 
 [vars]
 ENV = "production"
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 
 [ai]
 binding = "AI"
@@ -35,11 +36,13 @@ queues = { consumers = [{ queue = "goldshore-jobs", max_batch_size = 10, max_bat
 name = "gs-agent-dev"
 [env.dev.vars]
   ENV = "development"
+  CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 
 [env.prod]
 name = "gs-agent"
 [env.prod.vars]
   ENV = "production"
+  CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 [[env.prod.queues.consumers]]
   queue = "goldshore-jobs"
   max_batch_size = 10
