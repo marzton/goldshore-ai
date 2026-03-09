@@ -131,3 +131,28 @@ queue = "goldshore-jobs"
 
 [env.prod.ai]
 binding = "AI"
+
+[env.preview]
+name = "gs-api-preview"
+
+[env.preview.vars]
+ENV = "preview"
+CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
+CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+
+[[env.preview.kv_namespaces]]
+binding = "KV"
+id = "9cc2209906a94851b704be57543987a9"
+
+[[env.preview.r2_buckets]]
+binding = "ASSETS"
+bucket_name = "goldshore-api"
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "goldshore"
+database_id = "2b7cb4cd-f9b3-4107-9f03-ae76e99f0c14"
+
+[env.preview.ai]
+binding = "AI"
