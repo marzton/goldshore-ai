@@ -15,6 +15,26 @@ DNS_RESULT="failure"
 TLS_RESULT="failure"
 CORE_RESULT="failure"
 
+url_encode() {
+  local raw="${1:-}"
+  python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$raw"
+}
+
+sync_via_api() {
+  local namespace_id="$1"
+  local key="$2"
+  local value="$3"
+  local encoded_key
+  encoded_key="$(url_encode "$key")"
+
+  echo "📤 Syncing ${key} to KV namespace ${namespace_id} via API..."
+  curl -fsS -X PUT \
+    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+    -H "Content-Type: text/plain" \
+    "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${namespace_id}/values/${encoded_key}" \
+    --data-binary "$value" >/dev/null
+}
+
 post_github_deployment_status() {
   if [[ -z "${GITHUB_TOKEN:-}" || -z "${GITHUB_REPOSITORY:-}" || -z "${GITHUB_DEPLOYMENT_ID:-}" ]]; then
     echo "ℹ️ Skipping GitHub deployment status update (missing GITHUB_TOKEN, GITHUB_REPOSITORY, or GITHUB_DEPLOYMENT_ID)."
@@ -71,8 +91,12 @@ if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   if [[ -n "${KV_ID}" ]]; then
     for key in "${KV_KEYS[@]}"; do
       if [[ -z "$(npx wrangler kv:key get --namespace-id "${KV_ID}" "${key}" 2>/dev/null || true)" && -n "${!key:-}" ]]; then
-        echo "📤 Syncing ${key} to KV namespace ${KV_ID}..."
-        npx wrangler kv:key put --namespace-id "${KV_ID}" "${key}" "${!key}"
+        if [[ "${KV_SYNC_MODE:-wrangler}" == "api" ]]; then
+          sync_via_api "${KV_ID}" "${key}" "${!key}"
+        else
+          echo "📤 Syncing ${key} to KV namespace ${KV_ID}..."
+          npx wrangler kv:key put --namespace-id "${KV_ID}" "${key}" "${!key}"
+        fi
       fi
     done
   else
