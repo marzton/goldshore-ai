@@ -13,6 +13,8 @@ ENV = "production"
 API_ORIGIN = "https://api.goldshore.ai"
 CLOUDFLARE_ACCESS_AUDIENCE = ""
 CLOUDFLARE_TEAM_DOMAIN = ""
+# Placeholder only for local/dev; production value must be set via Cloudflare secrets/vars.
+ADMIN_INTERNAL_SECRET = "__SET_IN_CLOUDFLARE_SECRETS__"
 
 [[kv_namespaces]]
 binding = "GATEWAY_KV"
