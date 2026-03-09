@@ -2,129 +2,27 @@
 import WebLayout from '../layouts/WebLayout.astro';
 
 export const prerender = true;
-
-const services = [
-  {
-    title: 'Infrastructure Automation',
-    description:
-      'Automate provisioning, deployment, and operational guardrails so platform changes ship quickly without sacrificing control.',
-    outcomes: [
-      'Reduce manual release toil and improve deployment consistency.',
-      'Shorten incident recovery windows with repeatable runbooks.',
-      'Standardize environments across staging and production.',
-    ],
-    artifacts: [
-      'Infrastructure-as-code modules',
-      'CI/CD pipeline templates',
-      'Operations runbook pack',
-    ],
-  },
-  {
-    title: 'Real-Time Signal Processing',
-    description:
-      'Capture, enrich, and route high-velocity operational signals with observability built in from ingestion to action.',
-    outcomes: [
-      'Improve signal quality and reduce alert fatigue.',
-      'Accelerate response through event routing and prioritization.',
-      'Create auditable telemetry from source to downstream systems.',
-    ],
-    artifacts: [
-      'Event schema and routing map',
-      'Streaming pipeline implementation',
-      'Signal quality dashboard',
-    ],
-  },
-  {
-    title: 'Resilient Platform Architecture',
-    description:
-      'Design fault-tolerant systems that handle scale, dependency failures, and changing demand without operational drag.',
-    outcomes: [
-      'Increase uptime with defensive system design patterns.',
-      'Lower systemic risk through reliability controls and testing.',
-      'Align architecture decisions with service-level objectives.',
-    ],
-    artifacts: [
-      'Target-state architecture blueprint',
-      'Resilience and failure-mode review',
-      'Capacity and reliability plan',
-    ],
-  },
-  {
-    title: 'Developer Ecosystem & Tooling',
-    description:
-      'Enable internal and external builders with clear APIs, SDK pathways, and documentation workflows that scale adoption.',
-    outcomes: [
-      'Increase developer onboarding speed and integration quality.',
-      'Improve release confidence with shared tooling standards.',
-      'Expand platform adoption through better docs and DX.',
-    ],
-    artifacts: [
-      'API/SDK integration guide',
-      'Developer portal structure',
-      'Observability + analytics instrumentation',
-    ],
-  },
-];
 ---
 
-<WebLayout
-  title="Services | Gold Shore"
-  description="Capabilities spanning infrastructure automation, observability, and secure platform operations."
->
+<WebLayout title="Services | Gold Shore" description="Capabilities spanning infrastructure automation, observability, and secure platform operations.">
   <section class="gs-section">
     <div class="gs-container">
-      <p class="gs-micro">Service Portfolio</p>
       <h1>Capabilities &amp; Services</h1>
-      <p>
-        Gold Shore engagements are structured for measurable progress, fast
-        delivery cycles, and high-confidence operational outcomes.
-      </p>
-    </div>
-  </section>
 
-  <section class="gs-section">
-    <div class="gs-container gs-grid-2">
-      {
-        services.map((service) => (
-          <article class="gs-panel">
-            <p class="gs-micro">Service</p>
-            <h2>{service.title}</h2>
-            <p>{service.description}</p>
+      <h2>Infrastructure Automation</h2>
+      <p>Automate deployments, monitoring, scaling, and recovery with confidence. Reduce toil; increase reliability.</p>
 
-            <h3>Outcomes</h3>
-            <ul>
-              {service.outcomes.map((outcome) => (
-                <li>{outcome}</li>
-              ))}
-            </ul>
+      <h2>Real-Time Signal Processing</h2>
+      <p>Capture, enrich, and route high-velocity signals with verification, observability, and operational clarity.</p>
 
-            <h3>Delivery artifacts</h3>
-            <ul>
-              {service.artifacts.map((artifact) => (
-                <li>{artifact}</li>
-              ))}
-            </ul>
-          </article>
-        ))
-      }
-    </div>
-  </section>
+      <h2>Resilient Platform Architecture</h2>
+      <p>Build platforms designed for uptime, backed by defensive design and controlled complexity.</p>
 
-  <section class="gs-section">
-    <div class="gs-container">
-      <aside class="gs-panel">
-        <p class="gs-micro">Engagement CTA</p>
-        <h2>Need a scoped delivery plan?</h2>
-        <p>
-          Share your current architecture and operational constraints. We will
-          return a recommended service track and week-one execution plan.
-        </p>
-        <p>
-          <a href="/intake">Start intake flow</a>
-          ·
-          <a href="/contact">Contact Gold Shore</a>
-        </p>
-      </aside>
+      <h2>Developer Ecosystem &amp; Tooling</h2>
+      <p>Empower engineering teams with extendable interfaces, SDKs, observability dashboards, and documentation built for scale.</p>
+
+      <h2>Secure Access &amp; Identity Controls</h2>
+      <p>Protect administrative surfaces with robust access controls, managed OAuth, and context-aware protections.</p>
     </div>
   </section>
 </WebLayout>

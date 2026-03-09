@@ -1,5 +1,5 @@
 export function getGsApiBaseUrl(env: any) {
-  return env.GS_API_URL || env.PUBLIC_API || env.API_ORIGIN || '';
+  return env.API_ORIGIN || 'https://api.goldshore.ai';
 }
 
 export function buildGsApiHeaders(request: Request) {
