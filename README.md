@@ -577,7 +577,15 @@ Features:
 # 💻 Local Development
 ## Local Development
 
-Install dependencies (after selecting the pinned Node.js version):
+Initialize your local environment (Node + pnpm validation + install):
+
+```bash
+pnpm run setup:dev
+```
+
+This runs `scripts/setup.sh`, which reads the pinned Node.js version from `.nvmrc` (with `.node-version` fallback), validates `node --version`, and then runs `pnpm install --frozen-lockfile`. If your version does not match, it prints remediation commands (`nvm install && nvm use`).
+
+Manual equivalent:
 
 ```bash
 nvm use  # or fnm/asdf/volta equivalent
@@ -586,18 +594,19 @@ pnpm install
 
 The pinned local version files (`.nvmrc` and `.node-version`) are set to `22.0.0`, consistent with `package.json` `engines.node` (`>=22.0.0`).
 
+Helpful setup/sync utilities:
+
+```bash
+bash scripts/setup-secrets.sh
+pnpm run sync:cf
+```
+
 Run everything:
 
 ```bash
 pnpm dev
 ```
 
-Run individual app:
-
-```bash
-pnpm --filter @goldshore/web dev
-pnpm --filter @goldshore/admin dev
-pnpm --filter @goldshore/api-worker dev
 Run individual apps:
 
 ```bash
