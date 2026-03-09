@@ -577,11 +577,14 @@ Features:
 # 💻 Local Development
 ## Local Development
 
-Install dependencies:
+Install dependencies (recommended):
 
 ```bash
-pnpm install
+pnpm setup:dev
 ```
+
+This command validates your Node.js version against `.nvmrc`/`.node-version`, checks for `pnpm`, and runs a frozen lockfile install.
+
 
 Run everything:
 
