@@ -9,6 +9,7 @@ Cloudflare metadata (from `wrangler.toml`):
 - Compatibility date: `2025-01-10`
 - Bindings: `GATEWAY_KV` (KV), `JOB_QUEUE` (Queues producer), `API` (service binding), `AI` (AI Gateway)
 - Environment variables: `ENV=production`, `API_ORIGIN=https://api.goldshore.ai`, `CLOUDFLARE_ACCESS_AUDIENCE`, `CLOUDFLARE_TEAM_DOMAIN`
+- Optional additive `/admin` secret: set `ADMIN_INTERNAL_SECRET` via Cloudflare secrets (do not commit plaintext secrets to `wrangler.toml`)
 
 ## Routes/Endpoints
 These are worker API endpoints implemented in `src/index.ts` (not HTML pages). The router file is the source of truth.

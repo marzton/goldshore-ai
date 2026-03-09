@@ -41,7 +41,7 @@ const KNOWN_WORKFLOWS = [
   'lockfile-guard.yml', 'manual.yml', 'naming-guard.yml', 'naming-lint.yml', 'neuralegion.yml',
   'palette-manual.yml', 'pii-scan.yml', 'preview-agent.yml', 'preview-gs-admin.yml',
   'preview-gs-api.yml', 'preview-gs-gateway.yml', 'preview-gs-web.yml', 'route-collision-check.yml',
-  'sonarcloud.yml', 'summary.yml', 'tfsec.yml', 'stabilization-task.yml'
+  'sonarcloud.yml', 'summary.yml', 'tfsec.yml', 'stabilization-task.yml', 'gateway-validation.yml'
 ];
 
 const ALLOWED_ACTIONS = [
