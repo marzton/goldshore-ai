@@ -8,7 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "lint": "eslint .",
-    "test": "echo 'No tests configured for @goldshore/gs-admin'"
+    "test": "node --experimental-strip-types --test src/**/*.test.ts"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
@@ -16,11 +16,12 @@
     "@goldshore/integrations": "workspace:*",
     "@goldshore/theme": "workspace:*",
     "@goldshore/ui": "workspace:*",
-    "astro": "^5.17.1"
+    "astro": "^5.18.0",
+    "@goldshore/schema": "workspace:*"
   },
   "devDependencies": {
     "@astrojs/cloudflare": "^12.6.12",
-    "@types/node": "^25.0.1",
+    "@types/node": "^25.3.3",
     "tsx": "^4.21.0",
     "typescript": "^5.4.2"
   }

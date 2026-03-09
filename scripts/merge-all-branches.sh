@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BASE="${1:-origin/main}"
+STAGING="${2:-merge/all-branches}"
+REPORT_DIR="reports/branch-merge"
+mkdir -p "$REPORT_DIR"
+
+git fetch --all --prune
+
+# Create/reset staging branch
+git checkout -B "$STAGING" "$BASE"
+
+# List remote branches (exclude main + HEAD)
+mapfile -t BRANCHES < <(
+  git for-each-ref --format='%(refname:short)' refs/remotes/origin \
+  | grep -vE '^origin/(main|HEAD)$'
+)
+
+echo "Merging into $STAGING from $BASE" | tee "$REPORT_DIR/summary.txt"
+echo "" >> "$REPORT_DIR/summary.txt"
+: > "$REPORT_DIR/conflicts.txt"
+
+if [ "${#BRANCHES[@]}" -eq 0 ]; then
+  echo "No remote branches to merge." | tee -a "$REPORT_DIR/summary.txt"
+  exit 0
+fi
+
+for rb in "${BRANCHES[@]}"; do
+  echo "==> Merge $rb" | tee -a "$REPORT_DIR/summary.txt"
+
+  if git merge --no-ff --no-edit "$rb"; then
+    echo "OK: $rb" | tee -a "$REPORT_DIR/summary.txt"
+    continue
+  fi
+
+  echo "CONFLICT: $rb" | tee -a "$REPORT_DIR/summary.txt"
+
+  ./scripts/resolve-conflicts-by-policy.sh "$rb" "$REPORT_DIR" || true
+
+  if git diff --name-only --diff-filter=U | grep -q .; then
+    echo "UNRESOLVED after policy: $rb" | tee -a "$REPORT_DIR/summary.txt"
+    {
+      echo "--- $rb ---"
+      git diff --name-only --diff-filter=U
+      git diff --unified=0 --diff-filter=U || true
+    } >> "$REPORT_DIR/conflicts.txt"
+    git merge --abort
+  else
+    git commit -m "Merge $rb (policy-resolved conflicts)"
+    echo "RESOLVED by policy: $rb" | tee -a "$REPORT_DIR/summary.txt"
+  fi
+done
+
+echo "Done. See $REPORT_DIR" | tee -a "$REPORT_DIR/summary.txt"

@@ -1,12 +1,13 @@
 ---
 const links = [
-  { href: '/', label: 'Home' },
-  { href: '/about', label: 'About' },
-  { href: '/services', label: 'Services' },
-  { href: '/risk-radar', label: 'Risk Radar' },
-  { href: '/team', label: 'Team' },
-  { href: '/contact', label: 'Contact' },
-  { href: '/developer', label: 'Developer' }
+  { href: "/", label: "Home" },
+  { href: "/workflows", label: "Workflows" },
+  { href: "/services", label: "Services" },
+  { href: "/risk-radar", label: "Risk Radar" },
+  { href: "/developer", label: "Developer Hub" },
+  { href: "/about", label: "About" },
+  { href: "/team", label: "Team" },
+  { href: "/contact", label: "Contact" }
 ];
 ---
 
@@ -18,16 +19,22 @@ const links = [
     </a>
 
     <nav class="gs-nav" aria-label="Primary">
-      {links.map((l) => <a href={l.href}>{l.label}</a>)}
-      <button class="gs-button gs-button-outline" data-gs-modal-open="admin">Admin</button>
-      <button class="gs-button gs-button-solid" data-gs-modal-open="subscribe">Subscribe</button>
+      {links.map(l => <a href={l.href}>{l.label}</a>)}
+      <button type="button" class="gs-button gs-button-outline" data-gs-modal-open="admin" aria-haspopup="dialog">Admin</button>
+      <button type="button" class="gs-button gs-button-solid" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
+      <button class="gs-button gs-button-outline" type="button" data-gs-modal-open="admin" aria-haspopup="dialog">Admin</button>
+      <button class="gs-button gs-button-solid" type="button" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
     </nav>
 
-    <button class="gs-nav-toggle" data-gs-nav-toggle aria-expanded="false" aria-label="Open menu"></button>
+    <button class="gs-nav-toggle" type="button" data-gs-nav-toggle aria-expanded="false" aria-controls="gs-mobile-panel" aria-label="Open menu">
+      <span aria-hidden="true">☰</span>
+      <span class="sr-only">Open menu</span>
+    </button>
   </div>
 </header>
 
-<div class="gs-mobile-panel" data-gs-mobile-panel>
+@-- Mobile overlay panel --
+<div class="gs-mobile-panel" id="gs-mobile-panel" data-gs-mobile-panel>
   <div class="gs-mobile-top">
     <div class="gs-brand">
       <img class="gs-logo" src="/assets/penrose.svg" alt="Gold Shore" />
@@ -37,10 +44,23 @@ const links = [
   </div>
 
   <div class="gs-mobile-panel-inner">
-    <div class="gs-mobile-links">
-      {links.map((l) => <a href={l.href}>{l.label}</a>)}
-      <a href="#" data-gs-modal-open="admin">Admin Login</a>
-      <a href="#" data-gs-modal-open="subscribe">Subscribe</a>
-    </div>
+    <nav class="gs-mobile-links" aria-label="Mobile Primary">
+      {links.map(l => <a href={l.href}>{l.label}</a>)}
+      <button type="button" data-gs-modal-open="admin" aria-haspopup="dialog">Admin Login</button>
+      <button type="button" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
+    </nav>
   </div>
 </div>
+
+<style>
+  .gs-mobile-links .gs-mobile-link-trigger {
+    appearance: none;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+    width: 100%;
+  }
+</style>

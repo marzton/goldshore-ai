@@ -15,10 +15,11 @@
     "@goldshore/utils": "workspace:*",
     "@hono/zod-validator": "^0.7.6",
     "hono": "^4.0.0",
-    "zod": "^3.23.8"
+    "zod": "^4.3.6",
+    "@goldshore/schema": "workspace:*"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241106.0",
+    "@cloudflare/workers-types": "^4.20260301.1",
     "tsx": "^4.7.1",
     "typescript": "^5.4.0",
     "wrangler": "^4.63.0"

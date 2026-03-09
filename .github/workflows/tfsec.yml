@@ -6,12 +6,27 @@
 name: tfsec
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
   schedule:
     - cron: '42 15 * * 2'
+  push:
+    branches: [ "main" ]
+    paths:
+      - "infra/**"
+      - "**/*.tf"
+      - "**/*.tfvars"
+      - ".github/workflows/tfsec.yml"
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - "infra/**"
+      - "**/*.tf"
+      - "**/*.tfvars"
+      - ".github/workflows/tfsec.yml"
+
+concurrency:
+  group: tfsec-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   tfsec:
@@ -24,7 +39,7 @@ jobs:
 
     steps:
       - name: Clone repo
-        uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Run tfsec
         uses: aquasecurity/tfsec-sarif-action@21ded20e8ca120cd9d3d6ab04ef746477542a608
@@ -32,7 +47,7 @@ jobs:
           sarif_file: tfsec.sarif
 
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           # Path to SARIF file relative to the root of the repository
           sarif_file: tfsec.sarif
