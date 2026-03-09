@@ -1,25 +1,31 @@
-name: Preview gs-api
+name: Preview GS API Worker
 
 permissions:
   contents: read
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, labeled, unlabeled, ready_for_review]
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+      - ready_for_review
     paths:
       - "apps/gs-api/**"
-      - "packages/schema/**"
+      - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
 
 jobs:
-  deploy-preview-api:
+  preview-api:
     runs-on: ubuntu-latest
     if: |
       contains(github.event.pull_request.labels.*.name, 'preview') ||
       (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - uses: pnpm/action-setup@v4
         with:
@@ -42,8 +48,9 @@ jobs:
       - name: Validate canonical worker names
         run: pnpm validate:names
 
-      - name: Deploy API worker (preview)
+      - name: Deploy GS API worker (preview)
+        working-directory: apps/gs-api
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: APP_NAME=gs-api pnpm --filter ./apps/$APP_NAME build && APP_NAME=gs-api pnpm wrangler deploy --env preview --outdir=apps/$APP_NAME/dist --keep-vars --config apps/$APP_NAME/wrangler.toml
+        run: pnpm exec wrangler deploy --env preview

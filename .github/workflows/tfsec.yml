@@ -6,27 +6,12 @@
 name: tfsec
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: '42 15 * * 2'
   push:
     branches: [ "main" ]
-    paths:
-      - "infra/**"
-      - "**/*.tf"
-      - "**/*.tfvars"
-      - ".github/workflows/tfsec.yml"
   pull_request:
     branches: [ "main" ]
-    paths:
-      - "infra/**"
-      - "**/*.tf"
-      - "**/*.tfvars"
-      - ".github/workflows/tfsec.yml"
-
-concurrency:
-  group: tfsec-${{ github.ref }}
-  cancel-in-progress: true
+  schedule:
+    - cron: '42 15 * * 2'
 
 jobs:
   tfsec:
@@ -39,7 +24,7 @@ jobs:
 
     steps:
       - name: Clone repo
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - name: Run tfsec
         uses: aquasecurity/tfsec-sarif-action@21ded20e8ca120cd9d3d6ab04ef746477542a608

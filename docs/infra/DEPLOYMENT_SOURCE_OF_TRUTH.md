@@ -48,9 +48,3 @@ Agents must not alter the Cloudflare root build target unless explicitly authori
 - `infra/build-root-change`
 
 Any proposed change without this phase label is structural drift and must be rejected.
-
-
-## Related contracts
-
-- Environment matrix and deploy trigger policy: [`docs/deployments/environments.md`](../deployments/environments.md)
-- Runtime integration/binding contract: [`docs/architecture/integration-contract.md`](../architecture/integration-contract.md)

@@ -21,29 +21,29 @@ const apiBase = import.meta.env.PUBLIC_API ?? '';
       <span class="pill">Create &amp; edit</span>
     </div>
     <form id="content-form" class="form-grid">
-      <label for="content-title">
+      <label>
         Title
-        <input type="text" id="content-title" name="title" placeholder="GoldShore Summer Campaign" required />
+        <input type="text" name="title" placeholder="GoldShore Summer Campaign" required />
       </label>
-      <label for="content-slug">
+      <label>
         Slug
-        <input type="text" id="content-slug" name="slug" placeholder="/campaigns/summer-2025" required />
+        <input type="text" name="slug" placeholder="/campaigns/summer-2025" required />
       </label>
-      <label for="content-status">
+      <label>
         Status
-        <select id="content-status" name="status">
+        <select name="status">
           <option value="draft">Draft</option>
           <option value="review">In review</option>
           <option value="published">Published</option>
         </select>
       </label>
-      <label for="content-body" class="full">
+      <label class="full">
         Body
-        <textarea id="content-body" name="body" rows="5" placeholder="Write the primary body content..."></textarea>
+        <textarea name="body" rows="5" placeholder="Write the primary body content..."></textarea>
       </label>
-      <label for="content-metadata" class="full">
+      <label class="full">
         Metadata (JSON)
-        <textarea id="content-metadata" name="metadata" rows="3" placeholder='{"heroImage":"r2://...","seoTitle":"GoldShore"}'></textarea>
+        <textarea name="metadata" rows="3" placeholder='{"heroImage":"r2://...","seoTitle":"GoldShore"}'></textarea>
       </label>
       <button class="btn-primary" type="submit">Save page</button>
       <span id="content-status" class="status-text">Awaiting changes</span>
@@ -60,17 +60,17 @@ const apiBase = import.meta.env.PUBLIC_API ?? '';
       <span class="pill">Uploads</span>
     </div>
     <form id="media-form" class="form-grid">
-      <label for="media-file" class="full">
+      <label class="full">
         File
-        <input type="file" id="media-file" name="file" required />
+        <input type="file" name="file" required />
       </label>
-      <label for="media-alt-text">
+      <label>
         Alt text
-        <input type="text" id="media-alt-text" name="altText" placeholder="Hero image of the GoldShore team" />
+        <input type="text" name="altText" placeholder="Hero image of the GoldShore team" />
       </label>
-      <label for="media-tags">
+      <label>
         Tags
-        <input type="text" id="media-tags" name="tags" placeholder="hero, website, campaign" />
+        <input type="text" name="tags" placeholder="hero, website, campaign" />
       </label>
       <button class="btn-primary" type="submit">Upload asset</button>
       <span id="media-status" class="status-text">Awaiting upload</span>
@@ -87,25 +87,25 @@ const apiBase = import.meta.env.PUBLIC_API ?? '';
       <span class="pill">Structured inputs</span>
     </div>
     <form id="form-config" class="form-grid">
-      <label for="form-name">
+      <label>
         Form name
-        <input type="text" id="form-name" name="name" placeholder="Investor Contact" required />
+        <input type="text" name="name" placeholder="Investor Contact" required />
       </label>
-      <label for="form-slug">
+      <label>
         Slug
-        <input type="text" id="form-slug" name="slug" placeholder="investor-contact" required />
+        <input type="text" name="slug" placeholder="investor-contact" required />
       </label>
-      <label for="form-description" class="full">
+      <label class="full">
         Description
-        <input type="text" id="form-description" name="description" placeholder="Inbound investor inquiries for the pipeline." />
+        <input type="text" name="description" placeholder="Inbound investor inquiries for the pipeline." />
       </label>
-      <label for="form-fields" class="full">
+      <label class="full">
         Fields (JSON)
-        <textarea id="form-fields" name="fields" rows="4" placeholder='[{"id":"email","type":"email","label":"Email"}]'></textarea>
+        <textarea name="fields" rows="4" placeholder='[{"id":"email","type":"email","label":"Email"}]'></textarea>
       </label>
-      <label for="form-settings" class="full">
+      <label class="full">
         Settings (JSON)
-        <textarea id="form-settings" name="settings" rows="3" placeholder='{"notify":"ops@goldshore.ai"}'></textarea>
+        <textarea name="settings" rows="3" placeholder='{"notify":"ops@goldshore.ai"}'></textarea>
       </label>
       <button class="btn-primary" type="submit">Save form</button>
       <span id="form-status" class="status-text">Awaiting changes</span>
