@@ -32,7 +32,7 @@ const heroVariant = normalizeHeroVariant(
       >
         <div class="gs-label">Availability</div>
         <div class="gs-stat">99.995%</div>
-        <div class="gs-qualifier">Last 30 days</div>
+        <div class="gs-meta">Service Availability · Last 30 days</div>
       </article>
       <article
         class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
@@ -41,10 +41,7 @@ const heroVariant = normalizeHeroVariant(
       >
         <div class="gs-label">Deploy Cadence</div>
         <div class="gs-stat">48/day</div>
-        <div class="gs-qualifier">
-          Release evidence and engineering metrics in
-          <a href="/developer">Developer Hub</a>
-        </div>
+        <div class="gs-meta">Production deploys · <a href="/developer">Developer Hub</a></div>
       </article>
       <article
         class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
@@ -53,7 +50,7 @@ const heroVariant = normalizeHeroVariant(
       >
         <div class="gs-label">Signal Integrity</div>
         <div class="gs-stat">4.8B</div>
-        <div class="gs-qualifier">Events processed and data points validated</div>
+        <div class="gs-meta">Signals processed · rolling volume</div>
       </article>
     </div>
   </section>
@@ -132,21 +129,16 @@ const heroVariant = normalizeHeroVariant(
     margin-top: 0.5rem;
   }
 
-  .gs-qualifier {
-    margin-top: 0.75rem;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.78);
+  .gs-meta {
+    margin-top: 0.55rem;
+    color: var(--gs-muted);
+    font-size: 0.9rem;
   }
 
-  .gs-qualifier a {
-    color: var(--gs-accent, #5a8cff);
+  .gs-meta a {
+    color: var(--gs-text);
     text-decoration: underline;
-    text-underline-offset: 0.14em;
-  }
-
-  .gs-qualifier a:hover {
-    color: #7ea0ff;
+    text-underline-offset: 3px;
   }
 
   .gs-edge-light {
