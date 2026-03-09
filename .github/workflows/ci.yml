@@ -28,9 +28,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: "pnpm"
@@ -43,6 +43,9 @@ jobs:
 
       - name: Install
         run: pnpm install --frozen-lockfile
+
+      - name: Check package.json script key duplicates
+        run: pnpm run check:package-json-duplicates
 
       - name: Repo health checks
         run: pnpm run repo:health
@@ -73,9 +76,9 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
       WRANGLER_SEND_METRICS: "false"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
 
@@ -84,6 +87,9 @@ jobs:
 
       - name: Set pnpm version
         run: corepack prepare pnpm@9.0.0 --activate
+
+      - name: Check package.json script key duplicates (dry-run job)
+        run: node scripts/check-package-json-duplicates.mjs
 
       - name: Required environment variables
         run: |
@@ -95,7 +101,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cd "${{ matrix.app }}"
 
           run_and_check() {
             local target_env="$1"
@@ -103,7 +108,7 @@ jobs:
             output_file="$(mktemp)"
 
             echo "Running dry-run deploy for '${target_env}' in ${{ matrix.app }}"
-            pnpm dlx wrangler deploy --dry-run --env "${target_env}" --config wrangler.toml 2>&1 | tee "${output_file}"
+            pnpm dlx wrangler deploy --dry-run --env "${target_env}" --config "${{ matrix.app }}/wrangler.toml" 2>&1 | tee "${output_file}"
 
             if rg -n "exists at the top level, but not on env\\..*|not inherited by environments" "${output_file}"; then
               echo "::error::Detected inheritance/missing-binding warnings for env '${target_env}' in ${{ matrix.app }}"
