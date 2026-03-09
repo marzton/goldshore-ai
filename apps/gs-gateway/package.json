@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev src/index.ts",
-    "deploy": "wrangler deploy",
-    "build": "npx wrangler deploy --dry-run --outdir=dist",
+    "dev": "wrangler dev src/index.ts --config wrangler.toml",
+    "deploy": "wrangler deploy --config wrangler.toml",
+    "build": "npx wrangler deploy --dry-run --outdir=dist --config wrangler.toml",
     "test": "tsx src/repro_cors.test.ts"
   },
   "dependencies": {

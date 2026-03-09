@@ -1,0 +1,37 @@
+name: Validate Gateway Deploy Config
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    paths:
+      - "package.json"
+      - "apps/gs-gateway/**"
+      - ".github/workflows/*gs-gateway*.yml"
+      - ".github/workflows/*gs-gateway*.yml.disabled"
+
+jobs:
+  gateway-config-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate root package.json syntax
+        run: jq . package.json >/dev/null
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate gateway wrangler config via dry run
+        run: pnpm --filter @goldshore/gs-gateway exec wrangler deploy --dry-run --config apps/gs-gateway/wrangler.toml
