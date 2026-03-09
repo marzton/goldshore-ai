@@ -21,6 +21,14 @@ max_batch_timeout = 5
 binding = "AGENT_KV"
 id = "9cc2209906a94851b704be57543987a9" # Shared GS_API_DATA for config
 
+
+[env.preview]
+name = "gs-agent-preview"
+ai = { binding = "AI" }
+kv_namespaces = [{ binding = "AGENT_KV", id = "9cc2209906a94851b704be57543987a9" }]
+vars = { ENV = "preview" }
+queues = { consumers = [{ queue = "goldshore-jobs", max_batch_size = 10, max_batch_timeout = 5 }] }
+
 # --- Environment Configurations ---
 
 [env.dev]
