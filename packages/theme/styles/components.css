@@ -51,6 +51,8 @@
 
 .gs-nav-toggle {
   display: none;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--gs-border);
   background: rgba(10, 16, 28, 0.55);
   color: var(--gs-text);
@@ -58,10 +60,17 @@
   padding: 0.65rem 0.75rem;
 }
 
-.gs-nav-toggle::before {
-  content: "☰";
-  font-size: 1.2rem;
-  line-height: 1;
+/* Accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Mobile panel */
@@ -91,6 +100,11 @@
   border: 1px solid var(--gs-border);
   border-radius: var(--gs-r-md);
   background: rgba(10, 16, 28, 0.55);
+}
+
+.gs-mobile-links button {
+  width: 100%;
+  justify-content: center;
 }
 
 .gs-mobile-top {
