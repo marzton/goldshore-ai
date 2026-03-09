@@ -13,6 +13,7 @@ routes = [
 
 [env.preview.vars]
 ENV = "preview"
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 CONTROL_SYNC_TOKEN = "set-a-shared-secret"
 SYNC_TARGET_SUBDOMAIN = "api-preview.goldshore.ai"
 
@@ -44,6 +45,7 @@ routes = [
 [env.prod.vars]
 ENV = "prod"
 NODE_ENV = "prod"
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 OTEL_SERVICE_NAME = "goldshore-core-prod"
 CONTROL_SYNC_TOKEN = "set-a-shared-secret"
 SYNC_TARGET_SUBDOMAIN = "api.goldshore.ai"
