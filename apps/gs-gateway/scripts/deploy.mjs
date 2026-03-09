@@ -2,21 +2,21 @@ import { spawnSync } from 'node:child_process';
 
 const commandTemplates = {
   preview: {
-    build: ['wrangler', 'deploy', '--dry-run', '--outdir=dist/preview', '--env', 'preview'],
+    deploy: ['wrangler', 'deploy', '--env', 'preview'],
   },
   prod: {
-    build: ['wrangler', 'deploy', '--dry-run', '--outdir=dist/prod', '--env', 'prod'],
+    deploy: ['wrangler', 'deploy', '--env', 'prod'],
   },
 };
 
 const env = process.argv[2] ?? process.env.GS_GATEWAY_ENV;
 
 if (!env || !commandTemplates[env]) {
-  console.error('Missing or unsupported build environment. Use one of: preview, prod.');
+  console.error('Missing or unsupported deploy environment. Use one of: preview, prod.');
   process.exit(1);
 }
 
-const result = spawnSync('npx', commandTemplates[env].build, {
+const result = spawnSync('npx', commandTemplates[env].deploy, {
   stdio: 'inherit',
   shell: process.platform === 'win32',
 });
