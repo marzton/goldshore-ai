@@ -1,5 +1,6 @@
 ---
 import WebLayout from '../../layouts/WebLayout.astro';
+import developerCopyScriptUrl from '../../scripts/developer-copy.ts?url';
 
 export const prerender = true;
 
@@ -86,8 +87,10 @@ print(resp.json())`;
         <p>API paths are grouped to keep integrations easy to navigate:</p>
         <ul>
           <li>
-            <a href="/developer/api/status">System</a>: health, version,
-            metadata.
+            <a href="/developer/api/status">System</a>: health and status endpoint.
+          </li>
+          <li>
+            <a href="/developer/api">API index</a>: browse available endpoints from the OpenAPI source.
           </li>
         </ul>
         <p><a href="/developer/docs/api/overview">Endpoint guide</a></p>
@@ -160,39 +163,16 @@ print(resp.json())`;
           simulation.
         </p>
         <p>
-          <a href="/developer/api/status">Open sandbox order endpoint</a>
+          <a href="/developer/api/status">Open status endpoint</a>
           ·
-          <a href="/developer/docs/api/system-info">Sandbox usage guide</a>
+          <a href="/developer/docs/gateway/routing">Gateway usage guide</a>
         </p>
       </aside>
     </div>
   </section>
 
-  <script>
-    const copyButtons = document.querySelectorAll('[data-copy-target]');
+  <script type="module" src={developerCopyScriptUrl}></script>
 
-    copyButtons.forEach((button) => {
-      button.addEventListener('click', async () => {
-        const targetId = button.dataset.copyTarget;
-        if (!targetId) return;
-
-        const target = document.getElementById(targetId);
-        const content = target?.textContent?.trim();
-        if (!content) return;
-
-        try {
-          await navigator.clipboard.writeText(content);
-          const original = button.textContent;
-          button.textContent = 'Copied';
-          setTimeout(() => {
-            button.textContent = original || 'Copy';
-          }, 1200);
-        } catch {
-          button.textContent = 'Copy failed';
-        }
-      });
-    });
-  </script>
 </WebLayout>
 
 <style>
