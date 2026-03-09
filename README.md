@@ -583,6 +583,28 @@ Install dependencies:
 pnpm install
 ```
 
+### Audit Environment Parity
+
+1. `pnpm run secret:audit`
+
+```bash
+pnpm run secret:audit
+```
+
+### Sync Missing Secrets (Interactive)
+
+2. `pnpm run secret:sync`
+
+```bash
+pnpm run secret:sync
+```
+
+3. `pnpm run secret:sync:worker -- apps/gs-api`
+
+```bash
+pnpm run secret:sync:worker -- apps/gs-api
+```
+
 Run everything:
 
 ```bash
@@ -595,6 +617,8 @@ Run individual app:
 pnpm --filter @goldshore/web dev
 pnpm --filter @goldshore/admin dev
 pnpm --filter @goldshore/api-worker dev
+```
+
 Run individual apps:
 
 ```bash
@@ -643,7 +667,9 @@ pnpm --filter @goldshore/control-worker deploy
 
 ---
 
-# 📌 Versioning Strategy
+Additional worker deploy targets:
+
+```bash
 pnpm --filter ./apps/api-worker deploy
 pnpm --filter ./apps/gateway deploy
 pnpm --filter ./apps/control-worker deploy
