@@ -14,6 +14,7 @@ import webhook from './routes/webhook';
 import oauth from './routes/oauth';
 import pages from './routes/pages';
 import internal from './routes/internal';
+import type { GoldShoreTask } from '@goldshore/schema';
 
 type Env = {
   KV: KVNamespace;
@@ -138,4 +139,45 @@ v1.get('/logs', (c) => c.json({ logs: ['log1', 'log2'] }));
 
 app.route('/v1', v1);
 
-export default app;
+export const queue: ExportedHandlerQueueHandler<Env> = async (batch, env) => {
+  console.log(`[queue] Received ${batch.messages.length} messages.`);
+
+  for (const message of batch.messages) {
+    const task = message.body as GoldShoreTask;
+
+    try {
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS queue_handshake_events (
+          id TEXT PRIMARY KEY,
+          source TEXT NOT NULL,
+          action TEXT NOT NULL,
+          payload TEXT NOT NULL,
+          processed_at TEXT NOT NULL
+        )
+      `).run();
+
+      const processedAt = new Date().toISOString();
+      await env.DB.prepare(
+        'INSERT OR REPLACE INTO queue_handshake_events (id, source, action, payload, processed_at) VALUES (?, ?, ?, ?, ?)'
+      )
+        .bind(task.id, task.source, task.action, JSON.stringify(task.payload ?? null), processedAt)
+        .run();
+
+      const objectKey = `handshake/${task.id}.json`;
+      await env.Assets.put(objectKey, JSON.stringify({ ...task, processedAt }, null, 2), {
+        httpMetadata: { contentType: 'application/json' }
+      });
+
+      message.ack();
+      console.log('[queue] Processed task', task.id);
+    } catch (error) {
+      message.retry();
+      console.error('[queue] Failed task', task.id, error);
+    }
+  }
+};
+
+export default {
+  fetch: app.fetch,
+  queue
+};
