@@ -203,6 +203,14 @@ app.get('/', (c) => {
 });
 
 // Example specific routes
+app.get('/admin', (c) =>
+  c.json({
+    service: 'gs-gateway',
+    route: '/admin',
+    status: 'protected',
+    protections: ['verifyAccess', 'integrationControls']
+  })
+);
 
 app.get('/admin', (c) => {
   const configuredAdminToken = c.env.ADMIN_TOKEN;
