@@ -5,6 +5,7 @@ TARGET_APP="${TARGET_APP:-all}"
 REPO_ROOT="${REPO_ROOT:-/workspace/goldshore-ai}"
 API_HOST="${API_HOST:-api.goldshore.ai}"
 CORE_URL="${CORE_URL:-https://${API_HOST}/v1/status}"
+DRY_RUN="${DRY_RUN:-0}"
 
 KV_KEYS=("ALPACA_PAPER" "ENVIRONMENT_TAG")
 SECRET_KEYS=("OPENAI_API_KEY" "ANTHROPIC_API_KEY" "AIPROXYSIGNING_KEY")
@@ -14,6 +15,56 @@ HEALTH_RESULT="failure"
 DNS_RESULT="failure"
 TLS_RESULT="failure"
 CORE_RESULT="failure"
+
+cf_api() {
+  local method="$1"
+  local endpoint="$2"
+  local payload="${3:-}"
+
+  if [[ "${DRY_RUN}" == "1" ]]; then
+    echo "🧪 DRY_RUN: would call Cloudflare API ${method} ${endpoint}" >&2
+    return 0
+  fi
+
+  local args=(
+    -fsS
+    -X "${method}"
+    "https://api.cloudflare.com/client/v4${endpoint}"
+    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}"
+    -H "Content-Type: application/json"
+  )
+
+  if [[ -n "${payload}" ]]; then
+    args+=(-d "${payload}")
+  fi
+
+  curl "${args[@]}"
+}
+
+verify_cloudflare_access() {
+  if [[ "${DRY_RUN}" == "1" ]]; then
+    echo "🧪 DRY_RUN: skipping live token/account verification"
+    return 0
+  fi
+
+  local token_verify
+  token_verify="$(cf_api GET '/user/tokens/verify')"
+  if ! jq -e '.success == true' >/dev/null <<<"${token_verify}"; then
+    echo "❌ Cloudflare token verification failed"
+    return 1
+  fi
+  echo "✅ Cloudflare token verification passed"
+
+  if [[ -n "${CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
+    local account_verify
+    account_verify="$(cf_api GET "/accounts/${CLOUDFLARE_ACCOUNT_ID}")"
+    if ! jq -e '.success == true' >/dev/null <<<"${account_verify}"; then
+      echo "❌ Cloudflare account verification failed for account ${CLOUDFLARE_ACCOUNT_ID}"
+      return 1
+    fi
+    echo "✅ Cloudflare account verification passed (${CLOUDFLARE_ACCOUNT_ID})"
+  fi
+}
 
 post_github_deployment_status() {
   if [[ -z "${GITHUB_TOKEN:-}" || -z "${GITHUB_REPOSITORY:-}" || -z "${GITHUB_DEPLOYMENT_ID:-}" ]]; then
@@ -57,12 +108,7 @@ fi
 if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   echo "🔍 Auditing Cloudflare Production State..."
 
-  if curl -fsS -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
-    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-    -H "Content-Type: application/json" >/dev/null; then
-    echo "✅ Cloudflare token verification passed"
-  else
-    echo "❌ Cloudflare token verification failed"
+  if ! verify_cloudflare_access; then
     exit 1
   fi
 
