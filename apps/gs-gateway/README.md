@@ -7,7 +7,7 @@ Cloudflare metadata (from `wrangler.toml`):
 - Worker name: `gs-gateway`
 - Route: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md)
 - Compatibility date: `2025-01-10`
-- Bindings: `gs-kv`, `GATEWAY_KV` (KV), `JOB_QUEUE` (Queues producer), `AI` (AI Gateway)
+- Bindings: `gs-kv`, `GATEWAY_KV` (KV), `JOBS_QUEUE` (Queues producer), `AI` (AI Gateway)
 - Environment variables: `ENV=production`, `API_ORIGIN=https://api.goldshore.ai`, `CLOUDFLARE_ACCESS_AUDIENCE`, `CLOUDFLARE_TEAM_DOMAIN`
 
 ## Routes/Endpoints
@@ -27,7 +27,7 @@ Configuration highlights (from `wrangler.toml`):
 - `CLOUDFLARE_ACCESS_AUDIENCE` (required for Access verification)
 - `CLOUDFLARE_TEAM_DOMAIN` (required for Access verification)
 - KV bindings: `gs-kv`, `GATEWAY_KV`
-- Queue producer: `JOB_QUEUE`
+- Queue producer: `JOBS_QUEUE`
 - AI binding: `AI`
 
 ## Routes/Endpoints

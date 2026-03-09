@@ -19,7 +19,7 @@ type Env = {
   KV: KVNamespace;
   CONTROL_LOGS?: KVNamespace;
   DB: D1Database;
-  ASSETS: R2Bucket;
+  Assets: R2Bucket;
   AI: Ai;
   OPENAI_API_KEY?: string;
   GEMINI_API_KEY?: string;
