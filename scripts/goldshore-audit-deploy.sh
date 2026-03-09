@@ -5,6 +5,14 @@ TARGET_APP="${TARGET_APP:-all}"
 REPO_ROOT="${REPO_ROOT:-/workspace/goldshore-ai}"
 API_HOST="${API_HOST:-api.goldshore.ai}"
 CORE_URL="${CORE_URL:-https://${API_HOST}/v1/status}"
+CLOUDFLARE_SYNC_MODE="${CLOUDFLARE_SYNC_MODE:-api}"
+DRY_RUN="${DRY_RUN:-0}"
+
+for arg in "$@"; do
+  if [[ "$arg" == "--dry-run" ]]; then
+    DRY_RUN=1
+  fi
+done
 
 KV_KEYS=("ALPACA_PAPER" "ENVIRONMENT_TAG")
 SECRET_KEYS=("OPENAI_API_KEY" "ANTHROPIC_API_KEY" "AIPROXYSIGNING_KEY")
@@ -14,6 +22,53 @@ HEALTH_RESULT="failure"
 DNS_RESULT="failure"
 TLS_RESULT="failure"
 CORE_RESULT="failure"
+
+enforce_required_env() {
+  local key="$1"
+  local reason="$2"
+
+  if [[ -n "${!key:-}" ]]; then
+    return 0
+  fi
+
+  if [[ "${DRY_RUN}" == "1" ]]; then
+    echo "🧪 [dry-run] Would require ${key} (${reason})"
+    return 0
+  fi
+
+  echo "❌ Missing required env var: ${key} (${reason})"
+  exit 1
+}
+
+run_preflight_validation() {
+  echo "🔎 Running preflight validation..."
+  echo "ℹ️ Cloudflare sync mode: ${CLOUDFLARE_SYNC_MODE}"
+
+  if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
+    echo "⚠️ Warning: ANTHROPIC_API_KEY not detected (optional)."
+  fi
+
+  if [[ -z "${OPENAI_API_KEY:-}" ]]; then
+    echo "⚠️ Warning: OPENAI_API_KEY not detected (optional)."
+  fi
+
+  if [[ -z "${CLOUDFLARE_ZONE_ID:-}" ]]; then
+    echo "⚠️ Warning: CLOUDFLARE_ZONE_ID not detected (optional)."
+  fi
+
+  if [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
+    echo "⚠️ Warning: CLOUDFLARE_API_TOKEN not detected. Cloudflare sync checks will be skipped."
+    return 0
+  fi
+
+  if [[ "${CLOUDFLARE_SYNC_MODE}" == "api" ]]; then
+    enforce_required_env "CLOUDFLARE_ACCOUNT_ID" "required when CLOUDFLARE_SYNC_MODE=api"
+  elif [[ "${CLOUDFLARE_SYNC_MODE}" == "wrangler" ]]; then
+    echo "ℹ️ CLOUDFLARE_ACCOUNT_ID is not required when CLOUDFLARE_SYNC_MODE=wrangler."
+  else
+    echo "⚠️ Warning: Unknown CLOUDFLARE_SYNC_MODE='${CLOUDFLARE_SYNC_MODE}'. Expected 'api' or 'wrangler'."
+  fi
+}
 
 post_github_deployment_status() {
   if [[ -z "${GITHUB_TOKEN:-}" || -z "${GITHUB_REPOSITORY:-}" || -z "${GITHUB_DEPLOYMENT_ID:-}" ]]; then
@@ -41,6 +96,10 @@ post_github_deployment_status() {
 
 echo "🚀 Initializing GoldShore Audit & Deployment: ${TARGET_APP}"
 
+if [[ "${DRY_RUN}" == "1" ]]; then
+  echo "🧪 Running in dry-run mode"
+fi
+
 cd "${REPO_ROOT}" || {
   echo "❌ Failed to enter ${REPO_ROOT}"
   exit 1
@@ -53,6 +112,8 @@ if [[ -z "${AIPROXYSIGNING_KEY:-}" ]]; then
   AIPROXYSIGNING_KEY="$(node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))")"
   echo "✅ AIPROXYSIGNING_KEY generated"
 fi
+
+run_preflight_validation
 
 if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   echo "🔍 Auditing Cloudflare Production State..."
