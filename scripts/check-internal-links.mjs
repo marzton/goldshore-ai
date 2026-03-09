@@ -91,7 +91,14 @@ for (const sourceRoute of routes) {
   const hrefs = listHrefs(sourceHtml);
 
   for (const href of hrefs) {
-    if (!href || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) {
+    if (
+      !href ||
+      href.startsWith('mailto:') ||
+      href.startsWith('tel:') ||
+      href.startsWith('javascript:') ||
+      href.startsWith('data:') ||
+      href.startsWith('vbscript:')
+    ) {
       continue;
     }
 
