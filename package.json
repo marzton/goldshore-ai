@@ -17,7 +17,7 @@
     "validate:names": "tsx scripts/validate-worker-names.ts",
     "validate:workers": "tsx scripts/validate-worker-names.ts",
     "validate:workspace": "tsx scripts/validate-workspace-contract.ts",
-    "validate": "pnpm check:naming && pnpm validate:workspace && pnpm validate:structure && pnpm validate:names",
+    "validate": "pnpm check:naming && pnpm validate:workspace && pnpm validate:structure && pnpm validate:names && pnpm validate:preview-bindings",
     "branch:bootstrap": "bash scripts/branch-bootstrap.sh",
     "scaffold:worker": "node scripts/scaffold-worker.mjs",
     "workspaces:list": "pnpm -r list --depth -1",
@@ -33,11 +33,14 @@
     "secret:audit": "node scripts/secret-audit.mjs",
     "secret:sync": "bash scripts/sync-preview-secrets.sh",
     "secret:sync:worker": "bash scripts/sync-preview-secrets.sh --worker"
+    "validate:preview-bindings": "node scripts/validate-preview-bindings.js"
+    "validate:preview-bindings": "tsx scripts/validate-preview-bindings.ts"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
     "@astrojs/sitemap": "^3.6.0",
     "@astrojs/tailwind": "^6.0.2",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^25.3.3",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.56.1",
@@ -45,16 +48,17 @@
     "eslint": "^10.0.3",
     "eslint-plugin-astro": "^1.6.0",
     "form-data": "^4.0.5",
+    "globals": "^15.15.0",
     "octokit": "^5.0.5",
     "prettier": "^3.2.5",
     "prettier-plugin-astro": "^0.14.1",
+    "svgo": "^4.0.1",
     "tailwindcss": "^3.4.19",
     "tsx": "^4.21.0",
     "typescript": "^5.4.2",
     "wrangler": "^4.63.0",
     "yaml": "^2.8.2",
-    "zod": "^4.3.6",
-    "svgo": "^4.0.1"
+    "zod": "^4.3.6"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
