@@ -1,11 +1,15 @@
 import type { KVNamespace, Fetcher } from '@cloudflare/workers-types';
 
 export type Env = {
-  API: Fetcher;
-  GATEWAY_KV: KVNamespace;
+  API?: Fetcher;
+  GATEWAY_KV?: KVNamespace;
   AI: any;
+  ADMIN_INTERNAL_SECRET?: string;
   ENV: string;
+  ADMIN_TOKEN?: string;
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
   CLOUDFLARE_TEAM_DOMAIN?: string;
   API_ORIGIN?: string;
+  ADMIN_USER?: string;
+  ADMIN_PASS?: string;
 };
