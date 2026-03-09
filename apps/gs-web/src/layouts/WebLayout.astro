@@ -87,6 +87,13 @@ const pageSchemas = Array.isArray(structuredData)
 
     <GlobalModal />
 
+    <script>
+      import { initGoldShoreUI } from '@goldshore/theme/runtime';
+      import { initParallax } from '@goldshore/config/parallax';
+
+      initGoldShoreUI();
+      initParallax();
+    </script>
     <script type="module" src={themeRuntimeUrl}></script>
   </body>
 </html>
