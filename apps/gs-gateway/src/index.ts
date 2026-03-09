@@ -1,13 +1,63 @@
-import { Hono } from 'hono';
+import { Context, Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
 import { verifyAccess } from '@goldshore/auth';
 import { STATUS_PAGE_HTML } from './templates/status';
 import { type Env } from './types';
 import { integrationControls } from './middleware/integration';
+import { timingSafeCompare } from './utils/timing-safe';
 
 const app = new Hono<{ Bindings: Env }>();
 const textEncoder = new TextEncoder();
+
+const BASIC_AUTH_REALM = 'gs-gateway-admin';
+
+const timingSafeEqual = (a: string, b: string): boolean => {
+  const encoder = new TextEncoder();
+  const left = encoder.encode(a);
+  const right = encoder.encode(b);
+  const maxLength = Math.max(left.length, right.length);
+  let diff = left.length ^ right.length;
+
+  for (let i = 0; i < maxLength; i += 1) {
+    diff |= (left[i] ?? 0) ^ (right[i] ?? 0);
+  }
+
+  return diff === 0;
+};
+
+const unauthorizedBasicAuthResponse = (c: Context<{ Bindings: Env }>, message = 'Unauthorized') => {
+  c.header('WWW-Authenticate', `Basic realm="${BASIC_AUTH_REALM}", charset="UTF-8"`);
+  return c.json({ error: message }, 401);
+};
+
+const parseBasicAuth = (authorization: string | undefined): { user: string; pass: string } | null => {
+  if (!authorization) {
+    return null;
+  }
+
+  const [scheme, token, ...rest] = authorization.trim().split(/\s+/);
+  if (rest.length > 0 || !scheme || !token || scheme.toLowerCase() !== 'basic') {
+    return null;
+  }
+
+  let decoded: string;
+  try {
+    decoded = atob(token);
+  } catch {
+    return null;
+  }
+
+  const separatorIndex = decoded.indexOf(':');
+  if (separatorIndex < 0) {
+    return null;
+  }
+
+  return {
+    user: decoded.slice(0, separatorIndex),
+    pass: decoded.slice(separatorIndex + 1)
+  };
+};
 
 const ALLOWED_ORIGINS = [
   'https://goldshore.ai',
@@ -102,8 +152,56 @@ app.use('*', async (c, next) => {
     await next();
 });
 
+
+// Optional second factor for /admin routes
+app.use('*', async (c, next) => {
+  if (!(c.req.path === '/admin' || c.req.path.startsWith('/admin/'))) {
+    await next();
+    return;
+  }
+
+  const adminToken = c.env.ADMIN_TOKEN;
+  if (!adminToken) {
+    await next();
+    return;
+  }
+
+  const authHeader = c.req.header('Authorization') || '';
+  const expected = `Bearer ${adminToken}`;
+  if (authHeader !== expected) {
+    return c.json({ error: 'Forbidden' }, 403);
+  }
+
+  await next();
+});
+
 // Integration controls: data classification, secrets access, and audit trail enforcement
 app.use('*', integrationControls);
+
+const adminBasicAuth = async (c: Context<{ Bindings: Env }>, next: () => Promise<void>) => {
+  const adminUser = c.env.ADMIN_USER;
+  const adminPass = c.env.ADMIN_PASS;
+
+  if (!adminUser || !adminPass) {
+    return c.json({
+      error: 'Admin access is temporarily unavailable. Operators must set ADMIN_USER and ADMIN_PASS.'
+    }, 503);
+  }
+
+  const credentials = parseBasicAuth(c.req.header('authorization'));
+  if (!credentials) {
+    return unauthorizedBasicAuthResponse(c, 'Malformed or missing Basic Authorization header');
+  }
+
+  if (!timingSafeEqual(credentials.user, adminUser) || !timingSafeEqual(credentials.pass, adminPass)) {
+    return unauthorizedBasicAuthResponse(c, 'Invalid admin credentials');
+  }
+
+  await next();
+};
+
+app.use('/admin', adminBasicAuth);
+app.use('/admin/*', adminBasicAuth);
 
 app.get('/health', (c) => c.json({ status: 'ok', service: 'gs-gateway' }));
 app.get('/templates', (c) =>
@@ -138,8 +236,47 @@ app.get('/', (c) => {
 });
 
 // Example specific routes
+app.get('/admin', (c) =>
+  c.json({
+    service: 'gs-gateway',
+    route: '/admin',
+    status: 'protected',
+    protections: ['verifyAccess', 'integrationControls']
+  })
+);
+
+app.get('/admin', (c) => {
+  const configuredAdminToken = c.env.ADMIN_TOKEN;
+
+  if (!configuredAdminToken) {
+    return c.json({ error: 'Admin access not configured' }, 503);
+  }
+
+  const providedAdminToken = c.req.header('x-admin-token');
+  const authorized = timingSafeCompare(providedAdminToken, configuredAdminToken);
+
+  if (!authorized) {
+    return c.json({ error: 'Forbidden' }, 403);
+  }
+
+  return c.json({ message: 'Admin access granted' });
+});
+
 app.get('/user/login', (c) => c.json({ message: 'Gateway Login Placeholder' }));
 app.post('/v1/chat', (c) => c.json({ message: 'Gateway Chat Placeholder' }));
+
+app.use('/admin/*', async (c, next) => {
+  if (!c.env.ADMIN_INTERNAL_SECRET) {
+    return c.json(
+      {
+        error: 'Admin route unavailable: ADMIN_INTERNAL_SECRET is not configured. Contact an operator.'
+      },
+      503
+    );
+  }
+
+  await next();
+});
 
 // Forwarding fallback
 app.all('*', async (c) => {
