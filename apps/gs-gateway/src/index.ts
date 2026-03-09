@@ -127,6 +127,19 @@ app.get('/admin', (c) => {
 app.get('/user/login', (c) => c.json({ message: 'Gateway Login Placeholder' }));
 app.post('/v1/chat', (c) => c.json({ message: 'Gateway Chat Placeholder' }));
 
+app.use('/admin/*', async (c, next) => {
+  if (!c.env.ADMIN_INTERNAL_SECRET) {
+    return c.json(
+      {
+        error: 'Admin route unavailable: ADMIN_INTERNAL_SECRET is not configured. Contact an operator.'
+      },
+      503
+    );
+  }
+
+  await next();
+});
+
 // Forwarding fallback
 app.all('*', async (c) => {
     // If we have an API binding, use it (recommended for Service Bindings)
