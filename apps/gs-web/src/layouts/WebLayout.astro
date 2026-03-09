@@ -4,6 +4,7 @@ import '../styles/brand.css';
 import '../styles/home.css';
 import SiteNav from '../components/SiteNav.astro';
 import GlobalModal from '../components/GlobalModal.astro';
+import themeRuntimeUrl from '../scripts/theme-runtime.ts?url';
 
 interface Props {
   title?: string;
@@ -23,6 +24,19 @@ const {
     <meta name="description" content={description} />
     <title>{title}</title>
     <slot name="head" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Gold Shore',
+      url: 'https://goldshore.ai',
+      logo: 'https://goldshore.ai/assets/logo.svg',
+      description: 'Institutional-grade automation and intelligence systems.',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: 'https://goldshore.ai/developer/docs/search?q={search_term_string}',
+        'query-input': 'required name=search_term_string'
+      }
+    })} />
   </head>
   <body class="gs-theme-root">
     <SiteNav />
@@ -47,9 +61,6 @@ const {
 
     <GlobalModal />
 
-    <script>
-      import { initGoldShoreUI } from '@goldshore/theme/runtime';
-      initGoldShoreUI();
-    </script>
+    <script type="module" src={themeRuntimeUrl}></script>
   </body>
 </html>
