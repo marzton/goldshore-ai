@@ -183,7 +183,7 @@ Objective
 Remove shared deployment mutation.
 
 Actions
-	•	Remove infra/Cloudflare/*
+	•	Remove infra/cloudflare/*
 	•	Each worker owns:
 	•	Its own wrangler.toml
 	•	Its own deploy script

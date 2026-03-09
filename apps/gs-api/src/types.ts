@@ -8,7 +8,6 @@ export type Env = {
   AI: Ai;
   OPENAI_API_KEY?: string;
   GEMINI_API_KEY?: string;
-  AIPROXY_ENDPOINT?: string;
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
   CLOUDFLARE_TEAM_DOMAIN?: string;
   GIT_SHA?: string;

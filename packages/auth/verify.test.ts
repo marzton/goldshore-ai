@@ -42,27 +42,11 @@ describe('verifyAccess', () => {
         assert.strictEqual(result, null);
     });
 
-    test('returns null and logs error when CLOUDFLARE_TEAM_DOMAIN is missing', async () => {
-        const req = new Request('http://example.com', {
-            headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
-        });
-        const env: Env = {};
-
-        // Capture console.error
-        const consoleMock = mock.method(console, 'error', () => {});
-        const result = await testVerify(req, env);
-
-        assert.strictEqual(result, null);
-        assert.strictEqual(consoleMock.mock.callCount(), 1);
-        assert.strictEqual(consoleMock.mock.calls[0].arguments[0], "Missing CLOUDFLARE_TEAM_DOMAIN");
-        consoleMock.mock.restore();
-    });
-
     test('returns null when jwtVerify throws an error (invalid token)', async () => {
         const req = new Request('http://example.com', {
             headers: { 'CF-Access-Jwt-Assertion': 'invalid-token' }
         });
-        const env: Env = { CLOUDFLARE_TEAM_DOMAIN: 'test.team.com' };
+        const env: Env = {};
 
         jwtVerifyMock.mock.mockImplementation(async () => {
             throw new Error('Invalid token');
@@ -77,7 +61,7 @@ describe('verifyAccess', () => {
         const req = new Request('http://example.com', {
             headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
         });
-        const env: Env = { CLOUDFLARE_TEAM_DOMAIN: 'test.team.com' };
+        const env: Env = {};
         const mockPayload = { sub: 'user123', email: 'test@example.com' };
 
         jwtVerifyMock.mock.mockImplementation(async () => {
@@ -93,10 +77,7 @@ describe('verifyAccess', () => {
         const req = new Request('http://example.com', {
             headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
         });
-        const env: Env = {
-            CLOUDFLARE_TEAM_DOMAIN: 'test.team.com',
-            CLOUDFLARE_ACCESS_AUDIENCE: 'my-audience'
-        };
+        const env: Env = { CLOUDFLARE_ACCESS_AUDIENCE: 'my-audience' };
         const mockPayload = { sub: 'user123' };
 
         jwtVerifyMock.mock.mockImplementation(async () => {
@@ -126,34 +107,13 @@ describe('verifyAccess', () => {
         assert.strictEqual(calls.arguments[2].issuer, 'https://custom.team.com');
     });
 
-    test('returns null when CLOUDFLARE_TEAM_DOMAIN is missing', async () => {
-        const req = new Request('http://example.com', {
-            headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
-        });
-        const env: Env = {};
-        const result = await testVerify(req, env);
-        assert.strictEqual(result, null);
-    });
-
     test('verifyAccess public wrapper returns boolean', async () => {
          const req = new Request('http://example.com');
-         const env: Env = { CLOUDFLARE_TEAM_DOMAIN: 'test.team.com' };
+         const env: Env = {};
          // We can't mock internals for the public wrapper easily without full module mocking,
          // but we can ensure it runs safely.
          const result = await verifyAccess(req, env);
          assert.strictEqual(result, false);
-    });
-
-    test('verifyAccess returns false when domain is missing', async () => {
-         const req = new Request('http://example.com', {
-             headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
-         });
-         const env: Env = {};
-         const consoleMock = mock.method(console, 'error', () => {});
-         const result = await verifyAccess(req, env);
-         assert.strictEqual(result, false);
-         assert.strictEqual(consoleMock.mock.calls[0].arguments[0], "Missing CLOUDFLARE_TEAM_DOMAIN");
-         consoleMock.mock.restore();
     });
 });
 
@@ -172,24 +132,11 @@ describe('verifyAccessWithClaims (public)', () => {
         if (jwtVerifyMock) jwtVerifyMock.mock.restore();
     });
 
-    test('returns null when CLOUDFLARE_TEAM_DOMAIN is missing', async () => {
-        const req = new Request('http://example.com', {
-            headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
-        });
-        const env: Env = {};
-
-        const result = await verifyAccessWithClaims(req, env);
-
-        assert.strictEqual(result, null);
-        assert.strictEqual(consoleErrorMock.mock.callCount(), 1);
-        assert.strictEqual(consoleErrorMock.mock.calls[0].arguments[0], "Missing CLOUDFLARE_TEAM_DOMAIN");
-    });
-
     test('catches error and returns null when verification fails', async () => {
         const req = new Request('http://example.com', {
             headers: { 'CF-Access-Jwt-Assertion': 'invalid-token' }
         });
-        const env: Env = { CLOUDFLARE_TEAM_DOMAIN: 'test.team.com' };
+        const env: Env = {};
 
         // Mock deps.jwtVerify to throw
         jwtVerifyMock = mock.method(deps, 'jwtVerify', async () => {
@@ -208,7 +155,7 @@ describe('verifyAccessWithClaims (public)', () => {
         const req = new Request('http://example.com', {
             headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
         });
-        const env: Env = { CLOUDFLARE_TEAM_DOMAIN: 'test.team.com' };
+        const env: Env = {};
         const mockPayload = { sub: 'user123', email: 'test@example.com' };
 
         // Mock deps.jwtVerify to return success

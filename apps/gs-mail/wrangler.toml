@@ -1,38 +1,34 @@
 name = "gs-mail"
 main = "src/index.ts"
-compatibility_date = "2026-03-05"
+compatibility_date = "2026-03-03" # Updated to current standards
 compatibility_flags = ["nodejs_compat"]
-workers_dev = false
+
+# This binding is CRITICAL for the EMAIL_INBOX_LOGS persistence logic
+[[kv_namespaces]]
+binding = "GS_CONFIG"
+id = "9cc2209906a94851b704be57543987a9"
+
+[vars]
+ENV = "production"
+# Standardized forwarding address per SOP
+MAIL_FORWARD_TO = "ops@goldshore.ai"
 
 [env.dev]
 name = "gs-mail-dev"
-
 [[env.dev.kv_namespaces]]
 binding = "GS_CONFIG"
 id = "9cc2209906a94851b704be57543987a9"
-
 [env.dev.vars]
-ENV = "dev"
-MAIL_FROM_EMAIL = "onboarding@goldshore.ai"
-MAIL_PROVIDER = "resend"
-MAIL_FORWARD_TO = "ops+dev@goldshore.ai"
-
-[env.preview]
-name = "gs-mail-preview"
-
-[[env.preview.kv_namespaces]]
-binding = "GS_CONFIG"
-id = "9cc2209906a94851b704be57543987a9"
-
-[env.preview.vars]
-ENV = "preview"
-MAIL_FORWARD_TO = "ops+preview@goldshore.ai"
+ENV = "development"
 
 [env.prod]
 name = "gs-mail"
+
 [[env.prod.kv_namespaces]]
 binding = "GS_CONFIG"
 id = "9cc2209906a94851b704be57543987a9"
+
 [env.prod.vars]
-ENV = "prod"
+ENV = "production"
 MAIL_FORWARD_TO = "ops@goldshore.ai"
+

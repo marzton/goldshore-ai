@@ -21,7 +21,6 @@ function initNav() {
   const setOpen = (open: boolean) => {
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     panel.classList.toggle('is-open', open);
-    panel.setAttribute('aria-hidden', open ? 'false' : 'true');
     document.documentElement.classList.toggle('gs-lock', open);
   };
 
@@ -30,20 +29,14 @@ function initNav() {
     setOpen(!open);
   });
 
-  const onKeydown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape' && panel.classList.contains('is-open')) {
-      setOpen(false);
-      toggle.focus();
-    }
-  };
-
-  window.addEventListener('keydown', onKeydown);
-
-  // Mobile nav click to close listeners
   panel.addEventListener('click', (e) => {
-    if (e.target instanceof HTMLAnchorElement) {
+    const t = e.target as HTMLElement;
+    if (t.matches('[data-gs-nav-close]') || t.matches('[data-gs-mobile-panel]'))
       setOpen(false);
-    }
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setOpen(false);
   });
 }
 
@@ -51,28 +44,20 @@ function initModal() {
   const root = document.querySelector<HTMLElement>('[data-gs-modal]');
   if (!root) return;
 
-  const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
   const backdrop = root.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
   const closeBtn = root.querySelector<HTMLButtonElement>(
     '[data-gs-modal-close]',
   );
+  const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
   const panel = root.querySelector<HTMLElement>('.gs-modal-panel');
-  const closeBtn = root.querySelector<HTMLButtonElement>('[data-gs-modal-close]');
-  const panel = root.querySelector<HTMLElement>('.gs-modal-panel');
-  const body = root?.querySelector<HTMLElement>('[data-gs-modal-body]');
-  const backdrop = root?.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
-  const closeBtn = root?.querySelector<HTMLButtonElement>(
-    '[data-gs-modal-close]',
-  );
-  const panel = root?.querySelector<HTMLElement>('.gs-modal-panel');
 
   let opener: HTMLElement | null = null;
-  let lastFocused: Element | null = null;
 
   const getFocusableElements = () => {
     if (!panel) return [];
+
     const selectors =
-      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
+      'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 
     return Array.from(panel.querySelectorAll<HTMLElement>(selectors)).filter(
       (el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true',
@@ -90,14 +75,13 @@ function initModal() {
     if (body) body.innerHTML = html;
     root.classList.add('is-open');
     document.documentElement.classList.add('gs-lock');
-    focusDialog();
+    requestAnimationFrame(focusDialog);
   };
 
   const closeModal = () => {
-    if (!isOpen()) return;
     root.classList.remove('is-open');
     document.documentElement.classList.remove('gs-lock');
-    opener?.focus();
+    if (opener?.isConnected) opener.focus();
     opener = null;
   };
 
@@ -157,15 +141,15 @@ function getModalTemplate(variant: string): string {
     return `
       <div class="gs-modal-head">
         <div class="gs-kicker gs-signal">Secure Access</div>
-        <h2 class="gs-modal-title gs-display" id="gs-modal-title">Admin Login</h2>
-        <p class="gs-muted" id="gs-modal-description">Restricted. Authentication required.</p>
+        <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Admin Login</h2>
+        <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Restricted. Authentication required.</p>
       </div>
       <form class="gs-form" action="https://admin.goldshore.ai/login" method="POST">
-        <label for="admin-email" class="gs-label">Email</label>
-        <input id="admin-email" class="gs-input" name="email" type="email" autocomplete="email" aria-required="true" required />
-        <label for="admin-password" class="gs-label">Password</label>
-        <input id="admin-password" class="gs-input" name="password" type="password" autocomplete="current-password" aria-required="true" required />
-        <button class="gs-button gs-button-solid gs-edge-scan" type="submit" aria-label="Login to admin panel">Login</button>
+        <label class="gs-label">Email</label>
+        <input class="gs-input" name="email" type="email" autocomplete="email" required />
+        <label class="gs-label">Password</label>
+        <input class="gs-input" name="password" type="password" autocomplete="current-password" required />
+        <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Login</button>
       </form>
       <div class="gs-micro gs-muted">If you are not authorized, this will fail silently.</div>
     `;
@@ -174,13 +158,13 @@ function getModalTemplate(variant: string): string {
   return `
       <div class="gs-modal-head">
       <div class="gs-kicker">Signal Brief</div>
-      <h2 class="gs-modal-title gs-display" id="gs-modal-title">Subscribe</h2>
-      <p class="gs-muted" id="gs-modal-description">Periodic updates on releases, systems, and operational tooling.</p>
+      <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Subscribe</h2>
+      <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Periodic updates on releases, systems, and operational tooling.</p>
     </div>
     <form class="gs-form" action="/api/subscribe" method="POST">
-      <label for="subscribe-email" class="gs-label">Email</label>
-      <input id="subscribe-email" class="gs-input" name="email" type="email" autocomplete="email" aria-required="true" required />
-      <button class="gs-button gs-button-solid gs-edge-scan" type="submit" aria-label="Request subscription access">Request Access</button>
+      <label class="gs-label">Email</label>
+      <input class="gs-input" name="email" type="email" autocomplete="email" required />
+      <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Request Access</button>
       <div class="gs-micro gs-muted">No spam. No public list. Controlled distribution.</div>
     </form>
   `;
@@ -331,6 +315,54 @@ function initHeroPulsar() {
       particles.push(createParticle());
   };
 
+function initTilt() {
+  const rm = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  if (rm) return;
+
+  const fine = window.matchMedia?.('(pointer: fine)')?.matches;
+  const hover = window.matchMedia?.('(hover: hover)')?.matches;
+  if (!fine || !hover) return;
+
+  const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-gs-tilt]'));
+  if (!panels.length) return;
+
+  document.documentElement.classList.add('gs-tilt-on');
+
+  const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
+
+  panels.forEach((el) => {
+    el.classList.add('gs-tilt');
+
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+
+      const ry = (px - 0.5) * 8;
+      const rx = -(py - 0.5) * 6;
+
+      el.style.setProperty('--gs-tilt-x', `${clamp(rx, -8, 8)}deg`);
+      el.style.setProperty('--gs-tilt-y', `${clamp(ry, -10, 10)}deg`);
+      el.style.setProperty('--gs-tilt-glare-x', `${px * 100}%`);
+      el.style.setProperty('--gs-tilt-glare-y', `${py * 100}%`);
+    };
+
+    const onLeave = () => {
+      el.style.setProperty('--gs-tilt-x', '0deg');
+      el.style.setProperty('--gs-tilt-y', '0deg');
+      el.style.setProperty('--gs-tilt-glare-x', '50%');
+      el.style.setProperty('--gs-tilt-glare-y', '35%');
+    };
+
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerleave', onLeave);
+  });
+}
+
+function initScrollHints() {
+  if (typeof CSS !== 'undefined' && typeof CSS.supports === 'function') {
+    const ok = CSS.supports('animation-timeline: view()');
+    if (ok) document.documentElement.classList.add('gs-view-timeline');
   const loop = () => {
     if (!active) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
