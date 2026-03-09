@@ -369,6 +369,8 @@ node -e "const fs=require('fs'); try { const p=JSON.parse(fs.readFileSync('packa
 
 validate_gateway_auth_preflight
 
+if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
+  echo "🔍 Auditing Cloudflare Worker state (env: ${CLOUDFLARE_WORKER_ENV})..."
 run_preflight_validation
 
 preflight_env_checks
@@ -420,8 +422,8 @@ elif [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
             echo "🧪 [dry-run] echo <redacted> | npx wrangler secret put ${secret_key}"
           fi
         if [[ -n "${!secret_key:-}" ]]; then
-          echo "🔐 Updating Worker Secret: ${secret_key} for ${app}..."
-          echo "${!secret_key}" | npx wrangler secret put "${secret_key}"
+          echo "🔐 Updating Worker Secret: ${secret_key} for ${app} (env: ${CLOUDFLARE_WORKER_ENV})..."
+          echo "${!secret_key}" | npx wrangler secret put "${secret_key}" --env "${CLOUDFLARE_WORKER_ENV}"
         fi
       done
       popd >/dev/null
