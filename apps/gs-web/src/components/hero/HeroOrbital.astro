@@ -1,12 +1,15 @@
 ---
 import HeroLogo from './HeroLogo.astro';
+
+const runtimeEnv = Astro.locals.runtime?.env as { GS_SYSTEM_STATUS?: string } | undefined;
+const systemStatus = runtimeEnv?.GS_SYSTEM_STATUS ?? 'Operational';
 ---
 
 <section class="gs-hero gs-hero-orbital gs-depth-bg" data-gs-hero>
-  <canvas id="pulsar-field" aria-hidden="true"></canvas>
+  <canvas id="pulsar-field" aria-hidden="true" data-parallax="0.03"></canvas>
 
-  <div class="gs-container gs-seq gs-vt gs-hero-content">
-    <div class="gs-i-0 gs-kicker gs-signal">System Status: Operational</div>
+  <div class="gs-container gs-seq gs-vt gs-hero-content" data-parallax="-0.015">
+    <div class="gs-i-0 gs-kicker gs-signal">System Status: {systemStatus}</div>
 
     <div class="gs-i-1 gs-hero-mark">
       <HeroLogo />
