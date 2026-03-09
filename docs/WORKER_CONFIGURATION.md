@@ -22,7 +22,7 @@ The AI agent service.
 
 - **Directory:** `apps/gs-agent`
 - **Package Name:** `@goldshore/agent`
-- **Wrangler:** `infra/Cloudflare/gs-agent.wrangler.toml` (external config)
+- **Wrangler:** `infra/cloudflare/gs-agent.wrangler.toml` (external config)
 - **Deployment:** CI workflow (`deploy-agent.yml`).
 - **Bindings:**
   - `AI`: Cloudflare Workers AI binding.
@@ -72,7 +72,7 @@ The backend API service.
 
 - **Directory:** `apps/gs-api`
 - **Package Name:** `gs-api`
-- **Wrangler:** `wrangler.toml` (locally defined) or `infra/Cloudflare/goldshore-api.wrangler.toml`.
+- **Wrangler:** `wrangler.toml` (locally defined) or `infra/cloudflare/goldshore-api.wrangler.toml`.
 - **Deployment:** CI workflow (`deploy-api-worker.yml`).
 - **Bindings:** likely similar to gateway (KV, D1, etc.).
 - **Purpose:** Core business logic and data access layer.

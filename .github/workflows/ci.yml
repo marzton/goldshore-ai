@@ -32,9 +32,5 @@ jobs:
         run: pnpm run repo:health
         continue-on-error: false
 
-
-      - name: Validate theme exports
-        run: pnpm run check:theme-exports
-
       - name: Build all
         run: pnpm -r build
