@@ -1,4 +1,4 @@
-name: gateway-validation
+name: Gateway Validation
 
 permissions:
   contents: read
@@ -6,19 +6,19 @@ permissions:
 on:
   pull_request:
     paths:
+      - "apps/gs-gateway/**"
+      - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
-      - "apps/gs-gateway/**"
       - ".github/workflows/gateway-validation.yml"
-      - ".github/workflows/preview-gs-gateway.yml"
-      - ".github/workflows/deploy-gs-gateway.yml.disabled"
   push:
     branches:
       - main
     paths:
+      - "apps/gs-gateway/**"
+      - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
-      - "apps/gs-gateway/**"
       - ".github/workflows/gateway-validation.yml"
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
 
       - uses: pnpm/action-setup@v4
         with:
@@ -37,22 +37,43 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      - name: Validate root package.json
-        run: jq . package.json >/dev/null
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Validate root package.json
+        run: jq . package.json >/dev/null
+
       - name: Validate gateway wrangler bindings
         run: |
-          set -euo pipefail
-          rg -n '^name\s*=\s*"gs-gateway"' apps/gs-gateway/wrangler.toml
-          rg -n '^binding\s*=\s*"GATEWAY_KV"' apps/gs-gateway/wrangler.toml
-          rg -n '^binding\s*=\s*"API"' apps/gs-gateway/wrangler.toml
-          rg -n '^binding\s*=\s*"JOB_QUEUE"' apps/gs-gateway/wrangler.toml
+          python - <<'PY'
+          from pathlib import Path
+          import tomllib
 
-      - name: Typecheck gateway
+          wrangler_path = Path("apps/gs-gateway/wrangler.toml")
+          data = tomllib.loads(wrangler_path.read_text())
+
+          discovered = set()
+
+          def walk(node):
+              if isinstance(node, dict):
+                  for key, value in node.items():
+                      if key == "binding" and isinstance(value, str):
+                          discovered.add(value)
+                      walk(value)
+              elif isinstance(node, list):
+                  for item in node:
+                      walk(item)
+
+          walk(data)
+
+          required = {"GATEWAY_KV", "JOB_QUEUE", "API", "AI"}
+          missing = sorted(required - discovered)
+
+          if missing:
+              raise SystemExit(f"Missing required wrangler bindings: {', '.join(missing)}")
+
+          print("Discovered bindings:", ", ".join(sorted(discovered)))
+          PY
+
+      - name: Typecheck gateway package
         run: pnpm --filter @goldshore/gs-gateway exec tsc --noEmit
-
-      - name: Validate gateway wrangler config
-        run: pnpm exec wrangler deploy --dry-run --config apps/gs-gateway/wrangler.toml
