@@ -608,7 +608,8 @@ Run everything:
 Run all workspace apps in parallel:
 
 ```bash
-pnpm dev
+bash scripts/setup-secrets.sh
+pnpm run sync:cf
 ```
 
 Run individual apps by package name:
@@ -881,6 +882,28 @@ pnpm install
 Run everything:
 
 pnpm dev
+
+Audit environment parity:
+
+Use this to verify that environment variables and secrets are synchronized across staging and production environments.
+
+```bash
+pnpm run secret:audit
+```
+
+Sync missing secrets (interactive):
+
+These utilities sync missing secrets to the Cloudflare Worker `preview` environment only and do **not** write local runtime env files.
+
+```bash
+# Sync all missing secrets across the workspace to preview
+pnpm run secret:sync
+
+# Sync preview secrets for a specific worker (e.g., gs-api)
+pnpm run secret:sync:worker -- apps/gs-api
+```
+
+> Safety note: These utilities intentionally never write production secrets.
 
 Run only the admin app:
 

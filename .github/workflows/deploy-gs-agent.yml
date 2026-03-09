@@ -30,6 +30,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Check package.json script key duplicates
+        run: pnpm run check:package-json-duplicates
+
       - name: Validate workspace contract
         run: pnpm validate:workspace
 
