@@ -108,6 +108,21 @@ app.get('/', (c) => {
 app.get('/user/login', (c) => c.json({ message: 'Gateway Login Placeholder' }));
 app.post('/v1/chat', (c) => c.json({ message: 'Gateway Chat Placeholder' }));
 
+// Admin route: protected by global auth middleware + route-level email domain check
+app.get('/admin', (c) => {
+  const authenticatedEmail = c.req.header('CF-Access-Authenticated-User-Email');
+
+  if (!authenticatedEmail?.endsWith('@goldshore.ai')) {
+    return c.json({ error: 'Forbidden' }, 403);
+  }
+
+  return c.json({
+    service: 'gs-gateway',
+    area: 'admin',
+    message: 'Admin access granted'
+  });
+});
+
 // Forwarding fallback
 app.all('*', async (c) => {
     // If we have an API binding, use it (recommended for Service Bindings)
