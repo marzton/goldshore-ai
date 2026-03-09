@@ -10,6 +10,7 @@ ENV = "production"
 API_ORIGIN = "https://api.goldshore.ai"
 CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b"
 CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
+AIPROXY_ENDPOINT = "https://gateway.ai.cloudflare.com/v1/<account-id>/goldshore-api"
 
 [[d1_databases]]
 binding = "DB"
@@ -32,6 +33,9 @@ environment = "prod"
 [ai]
 binding = "AI"
 
+[observability]
+enabled = true
+
 # --- PREVIEW (Non-Production) ---
 [env.preview]
 name = "gs-gateway-preview"
@@ -40,7 +44,7 @@ routes = [
   { pattern = "gateway-preview.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "status-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
-vars = { ENV = "preview", API_ORIGIN = "https://api-preview.goldshore.ai", CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b", CLOUDFLARE_TEAM_DOMAIN = "gsl-ops" }
+vars = { ENV = "preview", API_ORIGIN = "https://api-preview.goldshore.ai", CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b", CLOUDFLARE_TEAM_DOMAIN = "gsl-ops", AIPROXY_ENDPOINT = "https://gateway.ai.cloudflare.com/v1/<account-id>/goldshore-api" }
 
 [[env.preview.d1_databases]]
 binding = "DB"
@@ -72,7 +76,7 @@ routes = [
   { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "status.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
-vars = { ENV = "production", API_ORIGIN = "https://api.goldshore.ai", CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b", CLOUDFLARE_TEAM_DOMAIN = "gsl-ops" }
+vars = { ENV = "production", API_ORIGIN = "https://api.goldshore.ai", CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b", CLOUDFLARE_TEAM_DOMAIN = "gsl-ops", AIPROXY_ENDPOINT = "https://gateway.ai.cloudflare.com/v1/<account-id>/goldshore-api" }
 
 [[env.prod.d1_databases]]
 binding = "DB"

@@ -575,39 +575,53 @@ Features:
 ---
 
 # 💻 Local Development
-## Local Development
 
-Initialize your local environment (Node + pnpm validation + install):
-
-```bash
-pnpm run setup:dev
-```
-
-This runs `scripts/setup.sh`, which reads the pinned Node.js version from `.nvmrc` (with `.node-version` fallback), validates `node --version`, and then runs `pnpm install --frozen-lockfile`. If your version does not match, it prints remediation commands (`nvm install && nvm use`).
-
-Manual equivalent:
+Install dependencies (recommended):
 
 ```bash
-nvm use  # or fnm/asdf/volta equivalent
-pnpm install
+pnpm setup:dev
 ```
 
-The pinned local version files (`.nvmrc` and `.node-version`) are set to `22.0.0`, consistent with `package.json` `engines.node` (`>=22.0.0`).
+### Audit Environment Parity
 
-Helpful setup/sync utilities:
+1. `pnpm run secret:audit`
+
+```bash
+pnpm run secret:audit
+```
+
+### Sync Missing Secrets (Interactive)
+
+2. `pnpm run secret:sync`
+
+```bash
+pnpm run secret:sync
+```
+
+3. `pnpm run secret:sync:worker -- apps/gs-api`
+
+```bash
+pnpm run secret:sync:worker -- apps/gs-api
+```
+
+Run everything:
+Run all workspace apps in parallel:
 
 ```bash
 bash scripts/setup-secrets.sh
 pnpm run sync:cf
 ```
 
-Run everything:
+Run individual apps by package name:
 
 ```bash
-pnpm dev
+pnpm --filter @goldshore/web dev
+pnpm --filter @goldshore/admin dev
+pnpm --filter @goldshore/api-worker dev
 ```
 
 Run individual apps:
+Run individual apps by workspace path (monorepo-friendly):
 
 ```bash
 pnpm --filter ./apps/web dev
@@ -617,15 +631,40 @@ pnpm --filter ./apps/gateway dev
 pnpm --filter ./apps/gs-agent dev
 ```
 
-Build all:
+Build everything:
 
 ```bash
 pnpm build
 ```
 
+### Local Development Secrets
+
+Use the secret audit helper to discover worker targets that are currently eligible for preview secret sync:
+### Audit Environment Parity
+
+Use this to verify secrets and environment variables are in sync across environments.
+
+```bash
+pnpm run secret:audit
+```
+
+> Note: this command currently performs discovery/audit for preview sync eligibility. It is not a full cross-environment parity audit.
+
 ---
+### Sync Missing Secrets (Interactive)
+
+Use these to interactively sync missing environment variables/secrets.
+
+```bash
+pnpm run secret:sync
+```
+
+```bash
+pnpm run secret:sync:worker -- apps/gs-api
+```
 
 # 🚀 Deployment Guide
+
 ## Testing
 
 Playwright tests live in:
@@ -635,7 +674,7 @@ apps/admin/tests
 apps/web/tests
 ```
 
-Run:
+Run tests:
 
 ```bash
 pnpm test
@@ -645,7 +684,7 @@ pnpm test
 
 Pages deploy automatically via GitHub Actions.
 
-Workers deploy:
+Deploy Workers by package name:
 
 ```bash
 pnpm --filter @goldshore/api-worker deploy
@@ -653,16 +692,22 @@ pnpm --filter @goldshore/gateway deploy
 pnpm --filter @goldshore/control-worker deploy
 ```
 
----
+Deploy Workers by workspace path (monorepo-friendly):
 
-# 📌 Versioning Strategy
+Additional worker deploy targets:
+
+```bash
 pnpm --filter ./apps/api-worker deploy
 pnpm --filter ./apps/gateway deploy
 pnpm --filter ./apps/control-worker deploy
 pnpm --filter ./apps/gs-agent deploy
 ```
 
-## Versioning Strategy
+---
+
+# 📌 Versioning Strategy
+
+
 
 - `main` → Production
 - `feature/*` → Preview Deployments
@@ -837,6 +882,28 @@ pnpm install
 Run everything:
 
 pnpm dev
+
+Audit environment parity:
+
+Use this to verify that environment variables and secrets are synchronized across staging and production environments.
+
+```bash
+pnpm run secret:audit
+```
+
+Sync missing secrets (interactive):
+
+These utilities sync missing secrets to the Cloudflare Worker `preview` environment only and do **not** write local runtime env files.
+
+```bash
+# Sync all missing secrets across the workspace to preview
+pnpm run secret:sync
+
+# Sync preview secrets for a specific worker (e.g., gs-api)
+pnpm run secret:sync:worker -- apps/gs-api
+```
+
+> Safety note: These utilities intentionally never write production secrets.
 
 Run only the admin app:
 
