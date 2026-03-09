@@ -16,6 +16,10 @@ When preview binding recovery requires deleting and re-deploying a Worker, use t
   ```bash
   npx wrangler deployments list --name <worker-preview-name> --env preview | head -n 20
   ```
+- [ ] Run automated guardrail validation before any delete command.
+  ```bash
+  node scripts/validate-preview-bindings.js --worker <worker-preview-name> --env preview --version-id <deployment-id-or-hash> --health-url https://<preview-hostname>/healthz
+  ```
 
 ### Explicit preview delete + redeploy examples
 
