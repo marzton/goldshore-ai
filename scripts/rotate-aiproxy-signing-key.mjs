@@ -2,6 +2,29 @@
 
 import crypto from 'node:crypto';
 
+const apiToken = process.env.CLOUDFLARE_API_TOKEN ?? process.env.CF_API_TOKEN;
+const accountId = process.env.CLOUDFLARE_ACCOUNT_ID ?? process.env.CF_ACCOUNT_ID;
+const zoneId = process.env.CLOUDFLARE_ZONE_ID ?? process.env.CF_ZONE_ID;
+
+if (!apiToken) {
+  console.error('Missing required environment variable: CLOUDFLARE_API_TOKEN (or CF_API_TOKEN fallback)');
+  process.exit(1);
+}
+if (!accountId) {
+  console.error('Missing required environment variable: CLOUDFLARE_ACCOUNT_ID (or CF_ACCOUNT_ID fallback)');
+  process.exit(1);
+}
+
+if (!process.env.CLOUDFLARE_API_TOKEN && process.env.CF_API_TOKEN) {
+  console.log('⚠️ Using CF_API_TOKEN fallback; prefer CLOUDFLARE_API_TOKEN');
+}
+if (!process.env.CLOUDFLARE_ACCOUNT_ID && process.env.CF_ACCOUNT_ID) {
+  console.log('⚠️ Using CF_ACCOUNT_ID fallback; prefer CLOUDFLARE_ACCOUNT_ID');
+}
+if (!process.env.CLOUDFLARE_ZONE_ID && process.env.CF_ZONE_ID) {
+  console.log('⚠️ Using CF_ZONE_ID fallback; prefer CLOUDFLARE_ZONE_ID');
+}
+
 const required = ['CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID'];
 for (const name of required) {
   if (!process.env[name]) {
@@ -18,6 +41,8 @@ const workerEnv = process.env.CLOUDFLARE_WORKER_ENV ?? 'production';
 const secretName = process.env.SECRET_NAME ?? 'AIPROXYSIGNING_KEY';
 const kvKey = process.env.KV_KEY ?? 'AIPROXYSIGNING_KEY';
 const dryRun = process.argv.includes('--dry-run');
+const maxRetries = Number(process.env.CLOUDFLARE_MAX_RETRIES ?? 3);
+const validateGatewayAuth = process.argv.includes('--validate-gateway-auth') || process.argv.includes('--validate-env');
 
 const usingLegacyZoneFallback = !process.env.CLOUDFLARE_ZONE_ID && Boolean(process.env.CF_ZONE_ID);
 
@@ -29,6 +54,88 @@ const headers = {
   Authorization: `Bearer ${apiToken}`,
   'Content-Type': 'application/json'
 };
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function cfRequest(path, init = {}) {
+  let attempt = 0;
+  while (attempt < maxRetries) {
+    attempt += 1;
+    try {
+      const response = await fetch(`https://api.cloudflare.com/client/v4${path}`, {
+        ...init,
+        headers: {
+          ...headers,
+          ...(init.headers ?? {})
+        }
+      });
+
+      let payload;
+      try {
+        payload = await response.json();
+      } catch {
+        payload = {};
+      }
+
+      if (!response.ok || payload.success === false) {
+        const errors = payload?.errors?.map((err) => err.message).join('; ') || response.statusText;
+        if (attempt < maxRetries && [429, 500, 502, 503, 504].includes(response.status)) {
+          await sleep(attempt * 300);
+          continue;
+        }
+        throw new Error(`Cloudflare API ${response.status} ${path}: ${errors}`);
+      }
+
+      return payload.result;
+    } catch (error) {
+      if (attempt >= maxRetries) {
+        throw error;
+      }
+      await sleep(attempt * 300);
+    }
+  }
+
+  throw new Error(`Cloudflare API request failed after retries: ${path}`);
+function warnOrFail(message) {
+  if (dryRun) {
+    console.warn(`⚠️ [dry-run] ${message}`);
+    return;
+  }
+
+  throw new Error(message);
+}
+
+function validateGatewayAuthPreflight() {
+  const endpoint = process.env.AIPROXY_ENDPOINT;
+  let hasExpectedHost = false;
+  if (typeof endpoint === 'string') {
+    try {
+      const url = new URL(endpoint);
+      const hostname = url.hostname.toLowerCase();
+      hasExpectedHost =
+        hostname === 'gateway.ai.cloudflare.com' ||
+        hostname.endsWith('.gateway.ai.cloudflare.com');
+    } catch {
+      hasExpectedHost = false;
+    }
+  }
+
+  if (!endpoint) {
+    warnOrFail('AIPROXY_ENDPOINT is missing. Rotation can succeed, but runtime AI Gateway auth will be misconfigured.');
+  } else if (!hasExpectedHost) {
+    warnOrFail(`AIPROXY_ENDPOINT should have hostname gateway.ai.cloudflare.com. Current value: ${endpoint}`);
+  } else {
+    console.log(`✅ AIPROXY_ENDPOINT configured: ${endpoint}`);
+  }
+
+  if (dryRun || validateGatewayAuth) {
+    if (hasExpectedHost) {
+      console.log('✅ Gateway auth preflight passed.');
+    } else {
+      console.warn('⚠️ Gateway auth preflight finished with warnings. Rotation status and runtime auth status differ until AIPROXY_ENDPOINT is fixed.');
+    }
+  }
+}
 
 async function cfRequest(path, init = {}) {
   const response = await fetch(`https://api.cloudflare.com/client/v4${path}`, {
@@ -62,6 +169,7 @@ async function verifyToken() {
 async function getAccount() {
   const accounts = await cfRequest('/accounts');
   const account = accounts.find((entry) => entry.id === accountId);
+  if (!account) throw new Error(`Account ${accountId} was not found for this token.`);
   if (!account) {
     throw new Error(`Account ${accountId} was not found for this token.`);
   }
@@ -79,6 +187,7 @@ async function getZoneDetails() {
 
 async function listWorkers() {
   const services = await cfRequest(`/accounts/${accountId}/workers/services`);
+  if (!services.length) throw new Error('No worker services found for account.');
   if (!services.length) {
     throw new Error('No worker services found for account.');
   }
@@ -89,6 +198,7 @@ async function listWorkers() {
 async function resolveKvNamespaceId() {
   const namespaces = await cfRequest(`/accounts/${accountId}/storage/kv/namespaces`);
   const match = namespaces.find((ns) => ns.title.includes(kvNamespaceName));
+  if (!match) throw new Error(`KV namespace containing "${kvNamespaceName}" not found.`);
   if (!match) {
     throw new Error(`KV namespace containing "${kvNamespaceName}" not found.`);
   }
@@ -105,6 +215,7 @@ async function upsertWorkerSecret(serviceName, value) {
 
   await cfRequest(path, {
     method: 'PUT',
+    body: JSON.stringify({ name: secretName, text: value, type: 'secret_text' })
     body: JSON.stringify({
       name: secretName,
       text: value,
@@ -126,6 +237,18 @@ async function listWorkerDeployments(serviceName) {
   console.log(`✅ ${serviceName}: ${deployments.length} deployment record(s)`);
 }
 
+async function upsertKvBulk(namespaceId, key, value) {
+  const path = `/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/bulk`;
+  if (dryRun) {
+    console.log(`🧪 [dry-run] Would bulk write KV key ${key}`);
+    return;
+  }
+
+  await cfRequest(path, {
+    method: 'PUT',
+    body: JSON.stringify([{ key, value }])
+  });
+  console.log(`✅ Bulk wrote KV value for ${key}`);
 async function upsertKvValue(namespaceId, key, value) {
   const path = `/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${encodeURIComponent(key)}`;
   if (dryRun) {
@@ -179,6 +302,8 @@ async function listHealthChecks() {
 }
 
 async function run() {
+  validateGatewayAuthPreflight();
+
   await verifyToken();
   await getAccount();
   await getZoneDetails();
@@ -196,12 +321,35 @@ async function run() {
   }
 
   const namespaceId = await resolveKvNamespaceId();
+  await upsertKvBulk(namespaceId, kvKey, newSigningKey);
+  if (!dryRun) {
+    await readKvValue(namespaceId, kvKey);
+  }
+
+  await listWorkerDataUsage();
+  await listHealthChecks();
+  console.log(dryRun ? '✅ Dry run complete.' : '✅ Rotation complete.');
+}
+
+run().catch((error) => {
+  console.error('❌ Rotation script failed. See higher-level logs or re-run with debugging enabled.');
   await upsertKvValue(namespaceId, kvKey, newSigningKey);
   await readKvValue(namespaceId, kvKey);
 
   await listWorkerDataUsage();
   await listHealthChecks();
-  console.log(dryRun ? '✅ Dry run complete.' : '✅ Rotation complete.');
+  if (dryRun) {
+    console.log('✅ Dry run complete (no secrets were changed).');
+  } else {
+    console.log('✅ Rotation complete (secret rotation operations succeeded).');
+  }
+
+  const endpoint = process.env.AIPROXY_ENDPOINT;
+  if (!endpoint || !endpoint.includes('gateway.ai.cloudflare.com')) {
+    console.warn('⚠️ Rotation succeeded, but runtime gateway auth is still misconfigured: set AIPROXY_ENDPOINT to your Cloudflare AI Gateway URL.');
+  } else {
+    console.log('✅ Runtime gateway auth endpoint appears configured.');
+  }
 }
 
 run().catch((error) => {
