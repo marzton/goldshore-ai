@@ -2,17 +2,29 @@
 
 import crypto from 'node:crypto';
 
-const required = ['CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID'];
-for (const name of required) {
-  if (!process.env[name]) {
-    console.error(`Missing required environment variable: ${name}`);
-    process.exit(1);
-  }
+const apiToken = process.env.CLOUDFLARE_API_TOKEN ?? process.env.CF_API_TOKEN;
+const accountId = process.env.CLOUDFLARE_ACCOUNT_ID ?? process.env.CF_ACCOUNT_ID;
+const zoneId = process.env.CLOUDFLARE_ZONE_ID ?? process.env.CF_ZONE_ID;
+
+if (!apiToken) {
+  console.error('Missing required environment variable: CLOUDFLARE_API_TOKEN (or CF_API_TOKEN fallback)');
+  process.exit(1);
+}
+if (!accountId) {
+  console.error('Missing required environment variable: CLOUDFLARE_ACCOUNT_ID (or CF_ACCOUNT_ID fallback)');
+  process.exit(1);
 }
 
-const apiToken = process.env.CLOUDFLARE_API_TOKEN;
-const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-const zoneId = process.env.CLOUDFLARE_ZONE_ID;
+if (!process.env.CLOUDFLARE_API_TOKEN && process.env.CF_API_TOKEN) {
+  console.log('⚠️ Using CF_API_TOKEN fallback; prefer CLOUDFLARE_API_TOKEN');
+}
+if (!process.env.CLOUDFLARE_ACCOUNT_ID && process.env.CF_ACCOUNT_ID) {
+  console.log('⚠️ Using CF_ACCOUNT_ID fallback; prefer CLOUDFLARE_ACCOUNT_ID');
+}
+if (!process.env.CLOUDFLARE_ZONE_ID && process.env.CF_ZONE_ID) {
+  console.log('⚠️ Using CF_ZONE_ID fallback; prefer CLOUDFLARE_ZONE_ID');
+}
+
 const kvNamespaceName = process.env.CLOUDFLARE_KV_NAMESPACE_NAME ?? 'GOLDSHORE_KV';
 const workerEnv = process.env.CLOUDFLARE_WORKER_ENV ?? 'production';
 const secretName = process.env.SECRET_NAME ?? 'AIPROXYSIGNING_KEY';
