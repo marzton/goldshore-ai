@@ -576,10 +576,10 @@ Features:
 
 # 💻 Local Development
 
-Install dependencies:
+Install dependencies (recommended):
 
 ```bash
-pnpm install
+pnpm setup:dev
 ```
 
 ### Audit Environment Parity
