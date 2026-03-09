@@ -7,6 +7,8 @@ const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
 const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID ?? DEFAULT_ACCOUNT_ID;
 const NAMESPACE_ID = process.env.GS_KV_NAMESPACE_ID ?? DEFAULT_NAMESPACE_ID;
 
+type InboxStatusResponse = { success?: boolean; inbox?: { count?: number } };
+
 const MASTER_CONFIG: MasterConfig = {
   ROUTING_TABLE: {
     'gateway.goldshore.ai': { role: 'ingress', worker: 'gs-gateway' },
@@ -80,7 +82,7 @@ async function runFinalVerification(): Promise<void> {
   console.log('\n📬 Checking /internal/inbox-status...');
   try {
     const finalVerify = await fetch('https://api.goldshore.ai/internal/inbox-status');
-    const data = await finalVerify.json() as { success?: boolean; inbox?: { count?: number } };
+    const data = await finalVerify.json() as InboxStatusResponse;
 
     if (data.success) {
       console.log(`🎉 SYSTEM ONLINE: ${data.inbox?.count ?? 0} emails logged in KV.`);
