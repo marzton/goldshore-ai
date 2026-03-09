@@ -1,8 +1,8 @@
 import type { KVNamespace, Fetcher } from '@cloudflare/workers-types';
 
 export type Env = {
-  API: Fetcher;
-  GATEWAY_KV: KVNamespace;
+  API?: Fetcher;
+  GATEWAY_KV?: KVNamespace;
   AI: any;
   ENV: string;
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
