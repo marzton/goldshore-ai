@@ -21,7 +21,7 @@ CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 
 [[kv_namespaces]]
 binding = "GATEWAY_KV"
-id = "goldshore-gw-kv"
+id = "9cc2209906a94851b704be57543987a9"
 
 [[queues.producers]]
 binding = "JOB_QUEUE"
@@ -54,7 +54,7 @@ CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 
 [[env.preview.kv_namespaces]]
 binding = "GATEWAY_KV"
-id = "goldshore-gw-kv"
+id = "9cc2209906a94851b704be57543987a9"
 
 [[env.preview.queues.producers]]
 binding = "JOB_QUEUE"
