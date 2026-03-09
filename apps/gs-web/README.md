@@ -144,6 +144,7 @@ Cloudflare Pages settings for monorepo correctness:
 - **Root directory:** `apps/gs-web`
 - **Build command:** `pnpm build`
 - **Output directory:** `dist`
+- **Node.js version:** `22.x` (set in Pages project settings to satisfy `engines.node >=22.0.0`)
 
 If root is left at repository root, Pages looks for `/dist` and fails with `Output directory "dist" not found`.
 
@@ -261,6 +262,7 @@ Cloudflare Pages settings for monorepo correctness:
 - **Root directory:** `apps/gs-web`
 - **Build command:** `pnpm build`
 - **Output directory:** `dist`
+- **Node.js version:** `22.x` (set in Pages project settings to satisfy `engines.node >=22.0.0`)
 
 If root is left at repository root, Pages looks for `/dist` and fails with `Output directory "dist" not found`.
 
