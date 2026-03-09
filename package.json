@@ -4,13 +4,14 @@
   "packageManager": "pnpm@9.0.0",
   "scripts": {
     "dev": "turbo run dev --parallel",
-    "build": "pnpm build:openapi && turbo run build",
+    "build": "pnpm check:theme-exports && pnpm build:openapi && turbo run build",
     "build:openapi": "node scripts/build-openapi.mjs",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "check:pages": "tsx scripts/check-pages-200.ts",
     "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/gs-admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md",
     "check:docs-consistency": "node scripts/check-doc-consistency.mjs",
+    "check:theme-exports": "node scripts/check-theme-exports.mjs",
     "check:naming": "node scripts/lint-naming.mjs",
     "validate:structure": "tsx scripts/validate-worker-structure.ts",
     "validate:names": "tsx scripts/validate-worker-names.ts",
@@ -24,6 +25,8 @@
     "verify:web-dist": "node scripts/verify-web-dist.mjs",
     "memory:check": "node scripts/validate-canonical-structure.mjs",
     "sync:infra": "tsx scripts/sync-gateway.ts",
+    "sync:cf": "echo 'Run codex sync script here' && tsx scripts/sync-gateway.ts",
+    "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry",
     "repo:clean": "git clean -xfd -e .env -e env.secrets.runtime.json",
     "repo:install": "pnpm install --frozen-lockfile",
     "repo:health": "node scripts/repo-health.mjs",
@@ -37,7 +40,7 @@
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.56.1",
     "astro": "^5.17.1",
-    "eslint": "^8.57.0",
+    "eslint": "^10.0.3",
     "eslint-plugin-astro": "^1.6.0",
     "form-data": "^4.0.5",
     "octokit": "^5.0.5",
@@ -49,7 +52,7 @@
     "wrangler": "^4.63.0",
     "yaml": "^2.8.2",
     "zod": "^4.3.6",
-    "svgo": "^3.3.2"
+    "svgo": "^4.0.1"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
