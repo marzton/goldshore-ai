@@ -1,0 +1,5 @@
+name = "gs-web"
+pages_build_output_dir = "dist"
+
+[vars]
+# Shared environment variables for Pages Functions can go here.
