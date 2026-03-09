@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
-import { parse } from 'yaml';
 
 const REPORT_PATH = 'docs/ci/CURRENT_STATE.md';
 const APPS_DIR = 'apps';
