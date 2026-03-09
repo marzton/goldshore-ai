@@ -58,7 +58,7 @@ You can also set the same secret in the Cloudflare dashboard: Worker → Setting
 These are worker API endpoints implemented in `src/index.ts` (not HTML pages). Route handlers are defined in `src/index.ts`.
 - `https://gw.goldshore.ai/*` (proxy + routing entrypoint)
 
-## Local Dev
+## Operational commands (repo-standard)
 ```bash
 pnpm install
 pnpm --filter @goldshore/gs-gateway dev
@@ -84,3 +84,7 @@ pnpm --filter @goldshore/gs-gateway exec wrangler tail
 ```bash
 pnpm --filter @goldshore/gs-gateway deploy
 ```
+
+## Deploy workflows
+- Production deploy: `.github/workflows/deploy-gateway.yml`
+- Preview deploy: `.github/workflows/preview-gateway.yml`
