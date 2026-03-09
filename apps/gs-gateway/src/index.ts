@@ -5,6 +5,7 @@ import { verifyAccess } from '@goldshore/auth';
 import { STATUS_PAGE_HTML } from './templates/status';
 import { type Env } from './types';
 import { integrationControls } from './middleware/integration';
+import type { GoldShoreTask } from '@goldshore/schema';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -105,6 +106,24 @@ app.get('/', (c) => {
 });
 
 // Example specific routes
+app.get('/test/handshake', async (c) => {
+  const testPayload: GoldShoreTask = {
+    id: crypto.randomUUID(),
+    source: 'Codex-Gateway',
+    action: 'validate-connection',
+    payload: {
+      route: '/test/handshake',
+      timestamp: Date.now()
+    },
+    priority: 1
+  };
+
+  await c.env.JOBS_QUEUE.send(testPayload);
+  console.log('[queue] Dispatched handshake task', testPayload.id);
+
+  return c.json({ status: 'Message Dispatched', payload: testPayload });
+});
+
 app.get('/user/login', (c) => c.json({ message: 'Gateway Login Placeholder' }));
 app.post('/v1/chat', (c) => c.json({ message: 'Gateway Chat Placeholder' }));
 
