@@ -4,8 +4,6 @@
 // Type definitions for environment variables
 interface ImportMetaEnv {
   readonly PUBLIC_API: string;
-  readonly PUBLIC_GATEWAY: string;
-  readonly PUBLIC_ENV: 'production' | 'preview' | 'development';
   readonly PUBLIC_AUTH_TOKEN_URL: string;
   readonly PUBLIC_AUTH_CLIENT_ID: string;
   readonly PUBLIC_BUILD_TIMESTAMP: string;
