@@ -52,7 +52,7 @@ The public GoldShore website and user portal built with Astro and shared theme/U
 Cloudflare metadata:
 
 - Pages project name: `gs-web` (production), `preview-web` (preview)
-- Pages bindings config: `infra/Cloudflare/goldshore-web.wrangler.toml`
+- Pages bindings config: `infra/cloudflare/goldshore-web.wrangler.toml`
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
 - Public diagnostics metadata injected during GitHub Actions builds:
   - `PUBLIC_BUILD_TIMESTAMP` = `${{ github.run_started_at }}` (ISO timestamp for the workflow run)
@@ -110,21 +110,14 @@ pnpm --filter ./apps/gs-web preview
 
 ## Contact form + Cloudflare mail delivery
 
-`/api/contact` stores submissions in KV/D1 and posts intake notifications to `gs-mail` at `POST /v1/forms/intake`.
+`/api/contact` stores submissions in KV/D1 and can send emails through MailChannels from Cloudflare Pages Functions.
 
 Set these environment variables in the `gs-web` Pages project:
 
-- `GS_MAIL_API_URL` (base URL for `gs-mail`)
-- `GS_MAIL_API_TOKEN` (bearer token shared with `gs-mail`)
+- `MAILCHANNELS_SENDER_EMAIL` (required for email send)
+- `MAILCHANNELS_SENDER_NAME` (optional, defaults to `GoldShore`)
 - `CONTACT_NOTIFICATION_EMAILS` (comma-separated recipient list for new submissions)
-
-Set these environment variables in the `gs-mail` Worker project as secrets:
-
-- `FORM_INTAKE_AUTH_TOKEN` (must match `GS_MAIL_API_TOKEN`)
-- `MAIL_FROM_EMAIL` (must be under your verified sending domain)
-- `MAIL_FROM_DOMAIN` (verified sending domain, enforced)
-- `MAIL_FROM_NAME` (optional, defaults to `GoldShore`)
-- `RESEND_API_KEY` **or** `POSTMARK_SERVER_TOKEN`
+- `MAILCHANNELS_API_URL` (optional override, defaults to `https://api.mailchannels.net/tx/v1/send`)
 
 Keep the existing bindings for `KV` and `DB` so submissions continue to persist even if email delivery is temporarily unavailable.
 
@@ -144,7 +137,6 @@ Cloudflare Pages settings for monorepo correctness:
 - **Root directory:** `apps/gs-web`
 - **Build command:** `pnpm build`
 - **Output directory:** `dist`
-- **Node.js version:** `22.x` (set in Pages project settings to satisfy `engines.node >=22.0.0`)
 
 If root is left at repository root, Pages looks for `/dist` and fails with `Output directory "dist" not found`.
 
@@ -262,7 +254,6 @@ Cloudflare Pages settings for monorepo correctness:
 - **Root directory:** `apps/gs-web`
 - **Build command:** `pnpm build`
 - **Output directory:** `dist`
-- **Node.js version:** `22.x` (set in Pages project settings to satisfy `engines.node >=22.0.0`)
 
 If root is left at repository root, Pages looks for `/dist` and fails with `Output directory "dist" not found`.
 

@@ -353,35 +353,6 @@ Examples:
 
 ⸻
 
-📍 SECTION 16 — WORKER BUILD SETTINGS (DASHBOARD GUARDRAIL)
-
-When opening **Cloudflare Dashboard → Workers & Pages → gs-api → Settings → Builds**,
-Jules must verify the project identity and commands are for **gs-api** only (never copied from gateway).
-
-Mandatory values for **gs-api**:
-
-- **Project identity:** `gs-api`
-- **Build command:**
-
-```bash
-pnpm --filter ./apps/gs-api build
-```
-
-- **Deploy command:**
-
-```bash
-pnpm wrangler deploy --config apps/gs-api/wrangler.toml --env prod --outdir=apps/gs-api/dist
-```
-
-Validation requirements after saving:
-
-1. Trigger a rebuild from the Dashboard.
-2. Confirm build logs include `apps/gs-api` in the build step command.
-3. Confirm deploy logs include `apps/gs-api/wrangler.toml` and `apps/gs-api/dist` in the deploy step command.
-4. If any `gs-gateway` reference appears, stop and correct settings before retrying.
-
-⸻
-
 🎯 FINAL CHECKLIST FOR JULES
 
 Jules MUST verify before ANY change:

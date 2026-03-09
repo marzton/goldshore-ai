@@ -157,7 +157,7 @@ if (governanceViolations.length) {
 }
 
 // Section 2: Branch Discipline
-report += `## 2. Branch Discipline Check\n\n**Current Branch:** ${branch}\n**Divergence vs ${baseRef}:** Behind: ${behind}, Ahead: ${ahead}\n\n`;
+report += `## 2. Branch Discipline Check\n\n**Branch:** ${branch} | **Divergence:** -${behind} / +${ahead}\n\n`;
 if (divergenceNote) report += `${divergenceNote}\n\n`;
 const branchViolations = checkBranchDiscipline();
 branchViolations.forEach(v => report += `- ${v}\n`);
