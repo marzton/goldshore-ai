@@ -49,12 +49,11 @@ function initNav() {
 
 function initModal() {
   const root = document.querySelector<HTMLElement>('[data-gs-modal]');
-  const body = root?.querySelector<HTMLElement>('[data-gs-modal-body]');
-  const backdrop = root?.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
-  const closeBtn = root?.querySelector<HTMLButtonElement>(
-    '[data-gs-modal-close]',
-  );
+  if (!root) return;
+
   const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
+  const backdrop = root.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
+  const closeBtn = root.querySelector<HTMLButtonElement>('[data-gs-modal-close]');
   const panel = root.querySelector<HTMLElement>('.gs-modal-panel');
 
   let opener: HTMLElement | null = null;
