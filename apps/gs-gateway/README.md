@@ -9,6 +9,7 @@ Cloudflare metadata (from `wrangler.toml`):
 - Compatibility date: `2025-01-10`
 - Bindings: `gs-kv`, `GATEWAY_KV` (KV), `JOB_QUEUE` (Queues producer), `AI` (AI Gateway)
 - Environment variables: `ENV=production`, `API_ORIGIN=https://api.goldshore.ai`, `CLOUDFLARE_ACCESS_AUDIENCE`, `CLOUDFLARE_TEAM_DOMAIN`
+- Optional additive `/admin` secret: set `ADMIN_INTERNAL_SECRET` via Cloudflare secrets (do not commit plaintext secrets to `wrangler.toml`)
 
 ## Routes/Endpoints
 These are worker API endpoints implemented in `src/index.ts` (not HTML pages). The router file is the source of truth.
@@ -37,17 +38,17 @@ These are worker API endpoints implemented in `src/index.ts` (not HTML pages). R
 ## Local Dev
 ```bash
 pnpm install
-pnpm --filter ./apps/gs-gateway dev
-pnpm --filter ./apps/gs-gateway build
+pnpm --filter @goldshore/gs-gateway dev
+pnpm --filter @goldshore/gs-gateway build
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-gateway.yml`
-- Preview deploy: `.github/workflows/preview-gateway.yml`
+- Production deploy: `.github/workflows/deploy-gs-gateway.yml.disabled` (currently disabled)
+- Preview deploy: `.github/workflows/preview-gs-gateway.yml`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 - Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 ```bash
-pnpm --filter ./apps/gs-gateway deploy
+pnpm --filter @goldshore/gs-gateway deploy
 ```

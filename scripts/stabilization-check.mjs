@@ -41,7 +41,7 @@ const KNOWN_WORKFLOWS = [
   'lockfile-guard.yml', 'manual.yml', 'naming-guard.yml', 'naming-lint.yml', 'neuralegion.yml',
   'palette-manual.yml', 'pii-scan.yml', 'preview-agent.yml', 'preview-gs-admin.yml',
   'preview-gs-api.yml', 'preview-gs-gateway.yml', 'preview-gs-web.yml', 'route-collision-check.yml',
-  'sonarcloud.yml', 'summary.yml', 'tfsec.yml', 'stabilization-task.yml'
+  'sonarcloud.yml', 'summary.yml', 'tfsec.yml', 'stabilization-task.yml', 'gateway-validation.yml'
 ];
 
 const ALLOWED_ACTIONS = [
@@ -91,6 +91,7 @@ try {
   if (newScripts.length > 0) {
      const msg = `New scripts detected in root package.json: ${newScripts.join(', ')}`;
      governanceViolations.push(msg);
+     violations.push(msg);
      report += `### ❌ Build Script Violation:\n- ${msg}\n\n`;
   } else {
     report += `✅ Root build scripts compliant.\n\n`;
@@ -256,7 +257,7 @@ if (governanceViolations.length === 0 && appLevelIssues.length === 0) {
   report += `If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.\n`;
 } else {
   report += `### ❌ Actions Required\n\n`;
-  violations.forEach(v => report += `- ${v}\n`);
+  [...new Set([...governanceViolations, ...violations])].forEach(v => report += `- ${v}\n`);
   report += `\n**Do not self-fix. Escalate governance violations.**\n`;
   report += `**App-level repairs (types, imports) are permitted in apps/* only.**\n`;
 }

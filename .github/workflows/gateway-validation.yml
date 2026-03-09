@@ -1,0 +1,58 @@
+name: gateway-validation
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    paths:
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "apps/gs-gateway/**"
+      - ".github/workflows/gateway-validation.yml"
+      - ".github/workflows/preview-gs-gateway.yml"
+      - ".github/workflows/deploy-gs-gateway.yml.disabled"
+  push:
+    branches:
+      - main
+    paths:
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "apps/gs-gateway/**"
+      - ".github/workflows/gateway-validation.yml"
+
+jobs:
+  validate-gateway:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Validate root package.json
+        run: jq . package.json >/dev/null
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate gateway wrangler bindings
+        run: |
+          set -euo pipefail
+          rg -n '^name\s*=\s*"gs-gateway"' apps/gs-gateway/wrangler.toml
+          rg -n '^binding\s*=\s*"GATEWAY_KV"' apps/gs-gateway/wrangler.toml
+          rg -n '^binding\s*=\s*"API"' apps/gs-gateway/wrangler.toml
+          rg -n '^binding\s*=\s*"JOB_QUEUE"' apps/gs-gateway/wrangler.toml
+
+      - name: Typecheck gateway
+        run: pnpm --filter @goldshore/gs-gateway exec tsc --noEmit
+
+      - name: Validate gateway wrangler config
+        run: pnpm exec wrangler deploy --dry-run --config apps/gs-gateway/wrangler.toml

@@ -29,6 +29,9 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      - name: Validate root package.json
+        run: jq . package.json >/dev/null
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -42,11 +45,10 @@ jobs:
         run: pnpm validate:names
 
       - name: Build web app
-        working-directory: apps/gs-web
         env:
           PUBLIC_BUILD_TIMESTAMP: ${{ github.run_started_at }}
           PUBLIC_COMMIT_HASH: ${{ github.sha }}
-        run: pnpm build
+        run: pnpm --filter @goldshore/gs-web build
 
       - name: Validate build artifacts
         working-directory: apps/gs-web
