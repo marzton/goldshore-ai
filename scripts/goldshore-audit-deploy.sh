@@ -99,6 +99,24 @@ preflight_env_checks() {
     exit 1
 CORE_RESULT="failure"
 
+url_encode() {
+  local raw="${1:-}"
+  python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$raw"
+}
+
+sync_via_api() {
+  local namespace_id="$1"
+  local key="$2"
+  local value="$3"
+  local encoded_key
+  encoded_key="$(url_encode "$key")"
+
+  echo "📤 Syncing ${key} to KV namespace ${namespace_id} via API..."
+  curl -fsS -X PUT \
+    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+    -H "Content-Type: text/plain" \
+    "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${namespace_id}/values/${encoded_key}" \
+    --data-binary "$value" >/dev/null
 urlencode_kv_key() {
   node -e 'console.log(encodeURIComponent(process.argv[1]))' "$1"
 }
@@ -392,6 +410,10 @@ elif [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
 
     for key in "${KV_KEYS[@]}"; do
       if [[ -z "$(npx wrangler kv:key get --namespace-id "${KV_ID}" "${key}" 2>/dev/null || true)" && -n "${!key:-}" ]]; then
+        if [[ "${KV_SYNC_MODE:-wrangler}" == "api" ]]; then
+          sync_via_api "${KV_ID}" "${key}" "${!key}"
+        else
+          echo "📤 Syncing ${key} to KV namespace ${KV_ID}..."
         echo "📤 Syncing ${key} to KV namespace ${KV_ID}..."
         if [[ -n "${CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
           encoded_key="$(urlencode_kv_key "${key}")"
