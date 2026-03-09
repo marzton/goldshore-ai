@@ -15,6 +15,17 @@ const env = {
   PORT: PORT
 };
 
+function escapeForLog(value) {
+  const str = String(value);
+  const noControlChars = str.replace(/[\x00-\x1F\x7F]+/g, ' ');
+  return noControlChars
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // Assuming running from repo root
 const serverPath = path.resolve('apps/jules-bot/src/index.mjs');
 console.log(`Starting server from ${serverPath}`);
@@ -105,8 +116,7 @@ try {
   }
 
 } catch (e) {
-  const errorMessage = (e && e.message) ? e.message : String(e);
-  const safeMessage = errorMessage.replace(/[\x00-\x1F\x7F]+/g, ' ');
+  const safeMessage = escapeForLog((e && e.message) ? e.message : e);
   console.error('Error during security check:', safeMessage);
   exitCode = 1;
 } finally {
