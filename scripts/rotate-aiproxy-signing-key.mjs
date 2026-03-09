@@ -35,7 +35,7 @@ for (const name of required) {
 
 const apiToken = process.env.CLOUDFLARE_API_TOKEN;
 const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-const zoneId = process.env.CLOUDFLARE_ZONE_ID;
+const zoneId = process.env.CLOUDFLARE_ZONE_ID ?? process.env.CF_ZONE_ID;
 const kvNamespaceName = process.env.CLOUDFLARE_KV_NAMESPACE_NAME ?? 'GOLDSHORE_KV';
 const workerEnv = process.env.CLOUDFLARE_WORKER_ENV ?? 'production';
 const secretName = process.env.SECRET_NAME ?? 'AIPROXYSIGNING_KEY';
@@ -43,6 +43,12 @@ const kvKey = process.env.KV_KEY ?? 'AIPROXYSIGNING_KEY';
 const dryRun = process.argv.includes('--dry-run');
 const maxRetries = Number(process.env.CLOUDFLARE_MAX_RETRIES ?? 3);
 const validateGatewayAuth = process.argv.includes('--validate-gateway-auth') || process.argv.includes('--validate-env');
+
+const usingLegacyZoneFallback = !process.env.CLOUDFLARE_ZONE_ID && Boolean(process.env.CF_ZONE_ID);
+
+if (usingLegacyZoneFallback) {
+  console.log('ℹ️ Using CF_ZONE_ID fallback; prefer CLOUDFLARE_ZONE_ID');
+}
 
 const headers = {
   Authorization: `Bearer ${apiToken}`,

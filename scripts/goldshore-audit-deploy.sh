@@ -5,6 +5,8 @@ TARGET_APP="${TARGET_APP:-all}"
 REPO_ROOT="${REPO_ROOT:-/workspace/goldshore-ai}"
 API_HOST="${API_HOST:-api.goldshore.ai}"
 CORE_URL="${CORE_URL:-https://${API_HOST}/v1/status}"
+ORIGINAL_CLOUDFLARE_ZONE_ID="${CLOUDFLARE_ZONE_ID:-}"
+CLOUDFLARE_ZONE_ID="${CLOUDFLARE_ZONE_ID:-${CF_ZONE_ID:-}}"
 CLOUDFLARE_SYNC_MODE="${CLOUDFLARE_SYNC_MODE:-wrangler}" # wrangler|api
 CLOUDFLARE_WORKER_ENV="${CLOUDFLARE_WORKER_ENV:-production}"
 DRY_RUN="${DRY_RUN:-0}"
@@ -333,6 +335,8 @@ sync_via_wrangler() {
     echo "⚠️ Warning: GOLDSHORE_KV namespace not found (wrangler mode)."
 echo "🚀 Initializing GoldShore Audit & Deployment: ${TARGET_APP}"
 
+if [[ -z "${ORIGINAL_CLOUDFLARE_ZONE_ID:-}" && -n "${CF_ZONE_ID:-}" ]]; then
+  echo "ℹ️ Using CF_ZONE_ID fallback; prefer CLOUDFLARE_ZONE_ID"
 if [[ "${DRY_RUN}" == "1" ]]; then
   echo "🧪 Running in dry-run mode"
 fi
