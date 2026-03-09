@@ -92,6 +92,11 @@ async function runFinalVerification(): Promise<void> {
   }
 }
 
+function normalizeErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
 async function main(): Promise<void> {
   assertEnvironment();
   const parseResult = MasterConfigSchema.safeParse(MASTER_CONFIG);
@@ -108,6 +113,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((error) => {
-  console.error('❌ System sync failed:', error);
+  console.error('❌ System sync failed:', normalizeErrorMessage(error));
   process.exitCode = 1;
 });
