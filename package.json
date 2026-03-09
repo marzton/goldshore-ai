@@ -32,8 +32,7 @@
     "audit": "pnpm run repo:health",
     "secret:audit": "node scripts/secret-audit.mjs",
     "secret:sync": "bash scripts/sync-preview-secrets.sh",
-    "secret:sync:worker": "bash scripts/sync-preview-secrets.sh --worker"
-    "validate:preview-bindings": "node scripts/validate-preview-bindings.js"
+    "secret:sync:worker": "bash scripts/sync-preview-secrets.sh --worker",
     "validate:preview-bindings": "tsx scripts/validate-preview-bindings.ts"
   },
   "devDependencies": {
