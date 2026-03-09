@@ -68,8 +68,7 @@ ai.post("/analysis", async (c) => {
       apiKey,
       fetch,
       model: body.model,
-      retries: orchestrator.retry_attempts,
-      aiProxyEndpoint: c.env.AIPROXY_ENDPOINT
+      retries: orchestrator.retry_attempts
     });
 
     // Cache Write

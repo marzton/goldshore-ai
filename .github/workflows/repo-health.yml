@@ -2,24 +2,14 @@ name: Repo Health
 
 on:
   pull_request:
-    paths:
-      - "apps/**"
-      - "packages/**"
-      - "scripts/**"
-      - "pnpm-lock.yaml"
-      - "package.json"
-      - "pnpm-workspace.yaml"
-      - ".github/workflows/repo-health.yml"
-
-concurrency:
-  group: repo-health-${{ github.ref }}
-  cancel-in-progress: true
+  push:
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
-  repo-health:
+  audit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

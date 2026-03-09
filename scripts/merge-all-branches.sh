@@ -19,12 +19,6 @@ mapfile -t BRANCHES < <(
 
 echo "Merging into $STAGING from $BASE" | tee "$REPORT_DIR/summary.txt"
 echo "" >> "$REPORT_DIR/summary.txt"
-: > "$REPORT_DIR/conflicts.txt"
-
-if [ "${#BRANCHES[@]}" -eq 0 ]; then
-  echo "No remote branches to merge." | tee -a "$REPORT_DIR/summary.txt"
-  exit 0
-fi
 
 for rb in "${BRANCHES[@]}"; do
   echo "==> Merge $rb" | tee -a "$REPORT_DIR/summary.txt"
