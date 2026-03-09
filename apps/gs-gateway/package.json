@@ -5,9 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "node ./scripts/dev.mjs",
-    "deploy": "wrangler deploy",
-    "build": "node ./scripts/build.mjs",
-    "test": "tsx src/repro_cors.test.ts"
+    "build": "node ./scripts/build.mjs build preview",
+    "test": "tsx src/repro_cors.test.ts",
+    "deploy:preview": "node ./scripts/build.mjs deploy preview",
+    "deploy:prod": "node ./scripts/build.mjs deploy prod",
+    "build:preview": "node ./scripts/build.mjs build preview",
+    "build:prod": "node ./scripts/build.mjs build prod",
+    "deploy": "node ./scripts/build.mjs deploy preview"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
