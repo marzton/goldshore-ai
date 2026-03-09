@@ -104,7 +104,7 @@ try {
   const safeMessage = errorMessage
     .replace(/[\r\n]+/g, ' ')        // remove line breaks to prevent log injection
     .replace(/[\x00-\x1F\x7F]+/g, ' '); // normalize other control characters
-  console.error('Error during security check:', safeMessage);
+  console.error('Error during security check (sanitized):', JSON.stringify(safeMessage));
 } finally {
   serverProcess.kill();
   process.exit(0); // Always exit 0 to not break the tool chain, rely on logs
