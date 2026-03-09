@@ -1,5 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import StatusDiagnostics from '../components/StatusDiagnostics.astro';
+const logo = '/packages/brand/logo-penrose.svg';
+
+const buildTimestamp =
+  import.meta.env.PUBLIC_BUILD_TIMESTAMP ||
+  import.meta.env.CF_PAGES_COMMIT_TIMESTAMP ||
+  new Date().toISOString();
+const commitHash =
+  import.meta.env.PUBLIC_COMMIT_SHA ||
+  import.meta.env.CF_PAGES_COMMIT_SHA ||
+  'unknown';
+const shortCommitHash = commitHash === 'unknown' ? commitHash : commitHash.slice(0, 12);
 ---
 
 <BaseLayout title="Status | GoldShore" description="System status">
@@ -10,7 +22,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <section class="gs-section">
+  <section class="gs-section gs-blueprint-bg">
     <div class="gs-card">
       <ul style="list-style: none; padding: 0; display: grid; gap: 1rem;">
         <li style="display: flex; justify-content: space-between; align-items: center;">
@@ -23,18 +35,43 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <li style="display: flex; justify-content: space-between; align-items: center;">
           <span>Web Application</span>
           <span style="color: #4ade80; display: flex; align-items: center; gap: 0.5rem;">
-             <span style="width: 8px; height: 8px; border-radius: 50%; background: currentColor;"></span>
-             Operational
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: currentColor;"></span>
+            Operational
           </span>
         </li>
         <li style="display: flex; justify-content: space-between; align-items: center;">
           <span>Background Workers</span>
           <span style="color: #4ade80; display: flex; align-items: center; gap: 0.5rem;">
-             <span style="width: 8px; height: 8px; border-radius: 50%; background: currentColor;"></span>
-             Operational
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: currentColor;"></span>
+            Operational
           </span>
         </li>
       </ul>
     </div>
   </section>
+
+  <StatusDiagnostics />
+  <section class="gs-section gs-blueprint-bg">
+    <div class="gs-card">
+      <h2>Frontend Deployment Diagnostics</h2>
+      <p>Use this section to verify that the deployed HTML has linked CSS/JS bundles and the logo asset resolves.</p>
+      <ul style="list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 0.75rem;">
+        <li><strong>Build timestamp:</strong> <code>{buildTimestamp}</code></li>
+        <li><strong>Commit hash:</strong> <code>{shortCommitHash}</code></li>
+        <li><strong>Logo path:</strong> <code>{logo.src}</code></li>
+        <li><strong>Stylesheet link count:</strong> <span id="status-css-count">…</span></li>
+        <li><strong>Script tag count:</strong> <span id="status-js-count">…</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <script is:inline>
+    const cssCount = document.querySelectorAll('link[rel="stylesheet"]').length;
+    const jsCount = document.querySelectorAll('script').length;
+    const cssNode = document.getElementById('status-css-count');
+    const jsNode = document.getElementById('status-js-count');
+
+    if (cssNode) cssNode.textContent = String(cssCount);
+    if (jsNode) jsNode.textContent = String(jsCount);
+  </script>
 </BaseLayout>

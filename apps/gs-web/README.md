@@ -54,6 +54,30 @@ Cloudflare metadata:
 - Pages project name: `gs-web` (production), `preview-web` (preview)
 - Pages bindings config: `infra/cloudflare/goldshore-web.wrangler.toml`
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
+- Public diagnostics metadata injected during GitHub Actions builds:
+  - `PUBLIC_BUILD_TIMESTAMP` = `${{ github.run_started_at }}` (ISO timestamp for the workflow run)
+  - `PUBLIC_COMMIT_HASH` = `${{ github.sha }}` (full commit SHA used for the build)
+- `/status` renders this metadata plus runtime counts for stylesheet links and scripts, and the layout logo asset path from `meta[name="gs-logo-src"]`.
+
+## CSP compatibility
+
+Approved outbound `connect-src` origins for browser runtime network calls in `src`:
+
+- `'self'` for same-origin endpoints (for example `/api/contact` and `/api/docs-search`).
+- `https://api.goldshore.ai` for production API calls (for example docs "Try it" console requests via `PUBLIC_API`).
+- `https://api-preview.goldshore.ai` for preview API calls in preview deployments.
+
+Keep `connect-src` scoped to these explicit hosts unless a new client-side integration is added and reviewed.
+
+## CSP compatibility
+
+Approved outbound `connect-src` origins for browser runtime network calls in `src`:
+
+- `'self'` for same-origin endpoints (for example `/api/contact` and `/api/docs-search`).
+- `https://api.goldshore.ai` for production API calls (for example docs "Try it" console requests via `PUBLIC_API`).
+- `https://api-preview.goldshore.ai` for preview API calls in preview deployments.
+
+Keep `connect-src` scoped to these explicit hosts unless a new client-side integration is added and reviewed.
 
 ## Routes/Endpoints
 
@@ -104,10 +128,17 @@ The live web deployment (`gs-web`) already includes GoldShore theme styling beca
 From repo root, deploy the current web build to Cloudflare Pages production:
 
 ```bash
-pnpm deploy:web:live
+pnpm --filter @goldshore/gs-web build
 ```
 
-This builds `@goldshore/web` and deploys `apps/gs-web/dist` to the `gs-web` Pages project on `main`.
+This builds `@goldshore/gs-web` and produces `apps/gs-web/dist` for deployment to the `gs-web` Pages project on `main`.
+
+Cloudflare Pages settings for monorepo correctness:
+- **Root directory:** `apps/gs-web`
+- **Build command:** `pnpm build`
+- **Output directory:** `dist`
+
+If root is left at repository root, Pages looks for `/dist` and fails with `Output directory "dist" not found`.
 
 ## Deploy
 
@@ -214,10 +245,17 @@ The live web deployment (`gs-web`) already includes GoldShore theme styling beca
 From repo root, deploy the current web build to Cloudflare Pages production:
 
 ```bash
-pnpm deploy:web:live
+pnpm --filter @goldshore/gs-web build
 ```
 
-This builds `@goldshore/web` and deploys `apps/gs-web/dist` to the `gs-web` Pages project on `main`.
+This builds `@goldshore/gs-web` and produces `apps/gs-web/dist` for deployment to the `gs-web` Pages project on `main`.
+
+Cloudflare Pages settings for monorepo correctness:
+- **Root directory:** `apps/gs-web`
+- **Build command:** `pnpm build`
+- **Output directory:** `dist`
+
+If root is left at repository root, Pages looks for `/dist` and fails with `Output directory "dist" not found`.
 
 ## Deploy
 
