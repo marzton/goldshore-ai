@@ -5,10 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev src/index.ts",
-    "deploy": "wrangler deploy",
+    "deploy": "wrangler deploy --env prod",
+    "deploy:dev": "wrangler deploy --env dev",
+    "deploy:preview": "wrangler deploy --env preview",
+    "deploy:prod": "wrangler deploy --env prod",
     "build": "wrangler deploy --dry-run --outdir=dist",
     "lint": "eslint src/**",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/*.test.ts"
   },
   "dependencies": {
     "hono": "^4.12.3",

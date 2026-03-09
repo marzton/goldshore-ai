@@ -1,27 +1,10 @@
-export type MetricPoint = {
-  label: string;
-  value: number;
-  display: string;
-};
-
-export type ChartMetrics = {
-  title: string;
-  description: string;
-  summary: string;
-  trend: string;
-  series: MetricPoint[];
-};
-
-export type CloudflareMetrics = {
-  highlights: {
-    totalRequests: string;
-    cacheHitRate: string;
-    threatsBlocked: string;
-    dnsChanges: string;
+export type CloudflareRuntimeLocals = {
+  runtime?: {
+    env?: Record<string, string | undefined>;
   };
 };
 
-export function getCloudflareContext(locals: any) {
+export function getCloudflareContext(locals: CloudflareRuntimeLocals): Record<string, string | undefined> {
   return locals.runtime?.env || process.env;
 }
 

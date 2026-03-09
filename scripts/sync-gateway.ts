@@ -1,0 +1,120 @@
+import { MasterConfigSchema, type MasterConfig } from '../packages/schema/src/system.ts';
+
+const DEFAULT_ACCOUNT_ID = 'f77de112d2019e5456a3198a8bb50bd2';
+const DEFAULT_NAMESPACE_ID = '9cc2209906a94851b704be57543987a9';
+
+const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
+const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID ?? DEFAULT_ACCOUNT_ID;
+const NAMESPACE_ID = process.env.GS_KV_NAMESPACE_ID ?? DEFAULT_NAMESPACE_ID;
+
+type InboxStatusResponse = { success?: boolean; inbox?: { count?: number } };
+
+const MASTER_CONFIG: MasterConfig = {
+  ROUTING_TABLE: {
+    'gateway.goldshore.ai': { role: 'ingress', worker: 'gs-gateway' },
+    'agent.goldshore.ai': { role: 'alias', target: 'gateway.goldshore.ai' },
+    'api.goldshore.ai': { role: 'backend', worker: 'gs-api' },
+    'agent.internal.goldshore.ai': { role: 'backend', worker: 'gs-agent' },
+    'admin.goldshore.ai': { role: 'frontend', project: 'gs-admin-pages' },
+    'mail.goldshore.ai': { role: 'mx-only', provider: 'cloudflare-email' },
+  },
+  SERVICE_STATUS: {
+    maintenance_mode: false,
+    active_services: ['gs-gateway', 'gs-api', 'gs-agent', 'gs-admin'],
+  },
+  AI_ORCHESTRATION: {
+    preferred_model: 'gpt-4-turbo',
+    agent_modules: ['operator-assist', 'market-intel'],
+    queue_concurrency: 10,
+    retry_attempts: 3,
+    cache_ttl_seconds: 86400,
+  },
+};
+
+function assertEnvironment(): void {
+  if (!CLOUDFLARE_API_TOKEN) {
+    throw new Error('CLOUDFLARE_API_TOKEN is required.');
+  }
+}
+
+async function syncConfig(config: MasterConfig): Promise<void> {
+  console.log('🚀 Starting GoldShore System Sync...');
+
+  const entries = Object.entries(config);
+
+  const results = await Promise.allSettled(
+    entries.map(async ([key, value]) => {
+      const url = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/workers/kv/namespaces/${NAMESPACE_ID}/values/${key}`;
+
+      try {
+        const response = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(value),
+        });
+
+        if (response.ok) {
+          console.log(`✅ ${key} synchronized successfully.`);
+        } else {
+          const error = await response.text();
+          console.error(`❌ Failed to sync ${key}: ${error}`);
+          throw new Error(`Failed to sync ${key}: ${error}`);
+        }
+      } catch (error) {
+        console.error(`🚨 Network Error syncing ${key}:`, error);
+        throw error;
+      }
+    })
+  );
+
+  const failures = results.filter((r) => r.status === 'rejected');
+  if (failures.length > 0) {
+    console.error(`\n⚠️ Sync completed with ${failures.length} failures.`);
+  } else {
+    console.log('\n✨ All configuration keys synchronized successfully.');
+  }
+}
+
+async function runFinalVerification(): Promise<void> {
+  console.log('\n📬 Checking /internal/inbox-status...');
+  try {
+    const finalVerify = await fetch('https://api.goldshore.ai/internal/inbox-status');
+    const data = await finalVerify.json() as InboxStatusResponse;
+
+    if (data.success) {
+      console.log(`🎉 SYSTEM ONLINE: ${data.inbox?.count ?? 0} emails logged in KV.`);
+    } else {
+      console.error('⚠️ SYSTEM PARTIAL: API is up but KV logs are inaccessible.');
+    }
+  } catch (error) {
+    console.error('⚠️ Final verification failed due to network/auth issue:', error);
+  }
+}
+
+function normalizeErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
+async function main(): Promise<void> {
+  assertEnvironment();
+  const parseResult = MasterConfigSchema.safeParse(MASTER_CONFIG);
+
+  if (!parseResult.success) {
+    console.error('❌ Invalid MASTER_CONFIG.');
+    console.error(parseResult.error.format());
+    process.exitCode = 1;
+    return;
+  }
+
+  await syncConfig(parseResult.data);
+  await runFinalVerification();
+}
+
+main().catch((error) => {
+  console.error('❌ System sync failed:', normalizeErrorMessage(error));
+  process.exitCode = 1;
+});

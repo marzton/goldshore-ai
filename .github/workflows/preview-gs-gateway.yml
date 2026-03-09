@@ -26,7 +26,7 @@ jobs:
       (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
 
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - uses: pnpm/action-setup@v4
         with:
@@ -40,6 +40,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Check package.json script key duplicates
+        run: pnpm run check:package-json-duplicates
+
       - name: Validate workspace contract
         run: pnpm validate:workspace
 
@@ -50,8 +53,7 @@ jobs:
         run: pnpm validate:names
 
       - name: Deploy GS Gateway worker (preview)
-        working-directory: apps/gs-gateway
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: pnpm exec wrangler deploy --env preview --config wrangler.toml
+        run: pnpm --filter ./apps/gs-gateway build && pnpm wrangler deploy --env preview --outdir=apps/gs-gateway/dist --keep-vars --config apps/gs-gateway/wrangler.toml
