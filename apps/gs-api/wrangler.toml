@@ -13,6 +13,7 @@ OTEL_SERVICE_NAME = "goldshore-core-prod"
 CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+AIPROXY_ENDPOINT = "https://gateway.ai.cloudflare.com/v1/<account-id>/goldshore-api"
 
 [[d1_databases]]
 binding = "DB"
@@ -54,7 +55,7 @@ name = "gs-api-preview"
 routes = [
   { pattern = "api-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
-vars = { ENV = "preview", API_ORIGIN = "https://api-preview.goldshore.ai", NODE_ENV = "preview", OTEL_SERVICE_NAME = "goldshore-core-preview", CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE", CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com", CONTROL_SYNC_TOKEN = "set-a-shared-secret" }
+vars = { ENV = "preview", API_ORIGIN = "https://api-preview.goldshore.ai", NODE_ENV = "preview", OTEL_SERVICE_NAME = "goldshore-core-preview", CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE", CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com", CONTROL_SYNC_TOKEN = "set-a-shared-secret", AIPROXY_ENDPOINT = "https://gateway.ai.cloudflare.com/v1/<account-id>/goldshore-api" }
 
 [[env.preview.d1_databases]]
 binding = "DB"
@@ -96,7 +97,7 @@ name = "gs-api"
 routes = [
   { pattern = "api.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
-vars = { ENV = "production", API_ORIGIN = "https://api.goldshore.ai", NODE_ENV = "production", OTEL_SERVICE_NAME = "goldshore-core-prod", CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE", CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com", CONTROL_SYNC_TOKEN = "set-a-shared-secret" }
+vars = { ENV = "production", API_ORIGIN = "https://api.goldshore.ai", NODE_ENV = "production", OTEL_SERVICE_NAME = "goldshore-core-prod", CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE", CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com", CONTROL_SYNC_TOKEN = "set-a-shared-secret", AIPROXY_ENDPOINT = "https://gateway.ai.cloudflare.com/v1/<account-id>/goldshore-api" }
 
 [[env.prod.d1_databases]]
 binding = "DB"
@@ -131,3 +132,4 @@ queue = "goldshore-jobs"
 
 [env.prod.ai]
 binding = "AI"
+
