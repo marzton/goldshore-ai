@@ -188,6 +188,7 @@
   .gs-nav-actions {
     display: flex;
     align-items: center;
+    gap: 0.65rem;
     margin-left: 2rem;
   }
 }
@@ -197,21 +198,13 @@
   .gs-nav-toggle { display: inline-flex; }
 }
 
-@media (max-width: 380px) {
-  .gs-mobile-top {
-    min-height: 64px;
-    gap: 0.5rem;
-  }
-
-  .gs-mobile-brand .gs-brand-text {
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
 @media (min-width: 861px) {
   .gs-mobile-panel { display: none; }
 }
 
 @media (max-width: 380px) {
   .gs-mobile-top {
+    min-height: 64px;
     gap: 0.65rem;
   }
 
