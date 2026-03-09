@@ -8,4 +8,5 @@ export type Env = {
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
   CLOUDFLARE_TEAM_DOMAIN?: string;
   API_ORIGIN?: string;
+  ADMIN_TOKEN?: string;
 };
