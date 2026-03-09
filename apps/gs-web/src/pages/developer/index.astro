@@ -1,5 +1,6 @@
 ---
 import WebLayout from '../../layouts/WebLayout.astro';
+import developerCopyScriptUrl from '../../scripts/developer-copy.ts?url';
 
 export const prerender = true;
 
@@ -54,7 +55,7 @@ print(resp.json())`;
       <p>
         <a href="/developer/docs">Read full docs</a>
         ·
-        <a href="/developer/api/system/info">OpenAPI endpoint reference</a>
+        <a href="/developer/api/status">OpenAPI endpoint reference</a>
       </p>
     </div>
   </section>
@@ -78,7 +79,7 @@ print(resp.json())`;
           </li>
           <li><strong>Rotation:</strong> short-lived tokens recommended</li>
         </ul>
-        <p><a href="/developer/docs/auth">Auth docs</a></p>
+        <p><a href="/developer/docs/auth/overview">Auth docs</a></p>
       </article>
 
       <article class="gs-panel">
@@ -86,23 +87,13 @@ print(resp.json())`;
         <p>API paths are grouped to keep integrations easy to navigate:</p>
         <ul>
           <li>
-            <a href="/developer/api/system/info">System</a>: health, version,
-            metadata.
+            <a href="/developer/api/status">System</a>: health and status endpoint.
           </li>
           <li>
-            <a href="/developer/api/portfolio">Portfolio</a>: balances and
-            positions.
-          </li>
-          <li>
-            <a href="/developer/api/orders">Orders</a>: create, list, and cancel
-            orders.
-          </li>
-          <li>
-            <a href="/developer/api/webhooks">Webhooks</a>: outbound event
-            delivery.
+            <a href="/developer/api">API index</a>: browse available endpoints from the OpenAPI source.
           </li>
         </ul>
-        <p><a href="/developer/docs/endpoints">Endpoint guide</a></p>
+        <p><a href="/developer/docs/api/overview">Endpoint guide</a></p>
       </article>
 
       <article class="gs-panel">
@@ -117,7 +108,7 @@ print(resp.json())`;
           </li>
         </ol>
         <p>
-          <a href="/developer/docs/quickstart">Quickstart docs</a>
+          <a href="/developer/docs/getting-started">Quickstart docs</a>
           ·
           <a href="/developer/sdk">SDK resources</a>
         </p>
@@ -172,40 +163,16 @@ print(resp.json())`;
           simulation.
         </p>
         <p>
-          <a href="/developer/api/sandbox/orders">Open sandbox order endpoint</a
-          >
+          <a href="/developer/api/status">Open status endpoint</a>
           ·
-          <a href="/developer/docs/sandbox">Sandbox usage guide</a>
+          <a href="/developer/docs/gateway/routing">Gateway usage guide</a>
         </p>
       </aside>
     </div>
   </section>
 
-  <script>
-    const copyButtons = document.querySelectorAll('[data-copy-target]');
+  <script type="module" src={developerCopyScriptUrl}></script>
 
-    copyButtons.forEach((button) => {
-      button.addEventListener('click', async () => {
-        const targetId = button.dataset.copyTarget;
-        if (!targetId) return;
-
-        const target = document.getElementById(targetId);
-        const content = target?.textContent?.trim();
-        if (!content) return;
-
-        try {
-          await navigator.clipboard.writeText(content);
-          const original = button.textContent;
-          button.textContent = 'Copied';
-          setTimeout(() => {
-            button.textContent = original || 'Copy';
-          }, 1200);
-        } catch {
-          button.textContent = 'Copy failed';
-        }
-      });
-    });
-  </script>
 </WebLayout>
 
 <style>
