@@ -14,7 +14,12 @@ ai.post("/analysis", async (c) => {
   // 1. Load System Orchestration Config
   const rawConfig = await c.env.KV.get("AI_ORCHESTRATION", "json");
   const configResult = AiOrchestrationSchema.safeParse(rawConfig);
-  const orchestrator = configResult.success ? configResult.data : AiOrchestrationSchema.parse({});
+  const orchestrator = configResult.success ? configResult.data : { 
+    preferred_model: "gpt-4o", 
+    agent_modules: [], 
+    queue_concurrency: 5,
+    retry_attempts: 3 
+  };
 
   let body: AnalysisRequest;
   try {
@@ -63,7 +68,8 @@ ai.post("/analysis", async (c) => {
       apiKey,
       fetch,
       model: body.model,
-      retries: orchestrator.retry_attempts
+      retries: orchestrator.retry_attempts,
+      aiProxyEndpoint: c.env.AIPROXY_ENDPOINT
     });
 
     // Cache Write
