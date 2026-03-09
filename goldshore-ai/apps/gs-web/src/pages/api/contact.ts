@@ -289,41 +289,6 @@ const resolveNotificationRecipients = (
   return dedupeRecipients([...fromConfig, ...fallback]);
 };
 
-const buildSubmissionDigest = (submission: Submission) => {
-  const pairs: Array<[string, string]> = [
-    ['Submission ID', submission.id],
-    ['Form type', submission.formType],
-    ['Received', submission.receivedAt],
-    ['Name', submission.name],
-    ['Email', submission.email],
-    ['Company', submission.company],
-    ['Role', submission.role],
-    ['Website', submission.website],
-    ['Team size', submission.teamSize],
-    ['Industry', submission.industry],
-    ['Timeline', submission.timeline],
-    ['Budget', submission.budget],
-    ['Goals', submission.goals],
-    ['Message', submission.message],
-    ['IP', submission.ipAddress ?? ''],
-    ['User agent', submission.userAgent ?? ''],
-  ];
-
-  const filtered = pairs.filter(([, value]) => value);
-
-  const text = filtered
-    .map(([label, value]) => `${label}: ${value}`)
-    .join('\n');
-  const html = filtered
-    .map(
-      ([label, value]) =>
-        `<p><strong>${label}:</strong> ${value.replace(/</g, '&lt;')}</p>`,
-    )
-    .join('');
-
-  return { text, html };
-};
-
 const sendMail = async (
   env: Env,
   to: MailRecipient[],
