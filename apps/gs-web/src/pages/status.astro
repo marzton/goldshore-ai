@@ -8,7 +8,7 @@ const buildTimestamp =
   import.meta.env.CF_PAGES_COMMIT_TIMESTAMP ||
   new Date().toISOString();
 const commitHash =
-  import.meta.env.PUBLIC_COMMIT_SHA ||
+  import.meta.env.PUBLIC_COMMIT_HASH ||
   import.meta.env.CF_PAGES_COMMIT_SHA ||
   'unknown';
 const shortCommitHash = commitHash === 'unknown' ? commitHash : commitHash.slice(0, 12);
