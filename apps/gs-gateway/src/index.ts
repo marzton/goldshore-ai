@@ -105,6 +105,15 @@ app.get('/', (c) => {
 });
 
 // Example specific routes
+app.get('/admin', (c) =>
+  c.json({
+    service: 'gs-gateway',
+    route: '/admin',
+    status: 'protected',
+    protections: ['verifyAccess', 'integrationControls']
+  })
+);
+
 app.get('/user/login', (c) => c.json({ message: 'Gateway Login Placeholder' }));
 app.post('/v1/chat', (c) => c.json({ message: 'Gateway Chat Placeholder' }));
 
