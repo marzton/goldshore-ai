@@ -1,5 +1,6 @@
 ---
 import HeroLogo from './HeroLogo.astro';
+import statusCheckScriptUrl from '../../scripts/status-check.ts?url';
 
 const runtimeEnv = Astro.locals.runtime?.env as { GS_SYSTEM_STATUS?: string } | undefined;
 const systemStatus = runtimeEnv?.GS_SYSTEM_STATUS ?? 'Operational';
@@ -9,7 +10,10 @@ const systemStatus = runtimeEnv?.GS_SYSTEM_STATUS ?? 'Operational';
   <canvas id="pulsar-field" aria-hidden="true" data-parallax="0.03"></canvas>
 
   <div class="gs-container gs-seq gs-vt gs-hero-content" data-parallax="-0.015">
-    <div class="gs-i-0 gs-kicker gs-signal">System Status: {systemStatus}</div>
+    <div class="gs-i-0 gs-kicker gs-signal">
+      <span class="gs-status-dot" data-gs-status-dot aria-hidden="true"></span>
+      <span data-gs-system-status>System Status: {systemStatus}</span>
+    </div>
 
     <div class="gs-i-1 gs-hero-mark">
       <HeroLogo />
@@ -30,3 +34,6 @@ const systemStatus = runtimeEnv?.GS_SYSTEM_STATUS ?? 'Operational';
     </div>
   </div>
 </section>
+
+
+<script type="module" src={statusCheckScriptUrl}></script>

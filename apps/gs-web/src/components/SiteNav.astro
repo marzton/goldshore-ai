@@ -14,14 +14,20 @@ const links = [
 <header class="gs-header">
   <div class="gs-container gs-nav-inner">
     <a class="gs-brand" href="/">
-      <img class="gs-logo" src="/packages/brand/logo-penrose.svg" alt="Gold Shore" />
+      <img class="gs-logo" src="/assets/brand/logo-penrose.svg" alt="Gold Shore" />
       <span class="gs-brand-text">GOLD SHORE</span>
     </a>
 
-    <nav class="gs-nav" aria-label="Primary">
-      {links.map(l => <a href={l.href}>{l.label}</a>)}
-      <button class="gs-button gs-button-outline" type="button" data-gs-modal-open="admin" aria-haspopup="dialog">Admin</button>
-      <button class="gs-button gs-button-solid" type="button" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
+    <nav class="gs-nav gs-nav-desktop" aria-label="Primary">
+      <div class="gs-nav-links">
+        {links.map((l) => (
+          <a class="gs-nav-link" href={l.href}>{l.label}</a>
+        ))}
+      </div>
+
+      <div class="gs-nav-actions">
+        <a href="/contact" class="gs-button gs-button-primary">Request Briefing</a>
+      </div>
     </nav>
 
     <button class="gs-nav-toggle" type="button" data-gs-nav-toggle aria-expanded="false" aria-controls="gs-mobile-panel" aria-label="Open menu">
@@ -34,24 +40,17 @@ const links = [
 <!-- Mobile overlay panel -->
 <div class="gs-mobile-panel" id="gs-mobile-panel" data-gs-mobile-panel aria-hidden="true">
   <div class="gs-mobile-top">
-    <div class="gs-brand">
-      <img class="gs-logo" src="/packages/brand/logo-penrose.svg" alt="Gold Shore" />
+    <a class="gs-brand gs-mobile-brand" href="/">
+      <img class="gs-logo" src="/assets/brand/logo-penrose.svg" alt="Gold Shore" />
       <span class="gs-brand-text">GOLD SHORE</span>
-    </div>
-    <button class="gs-icon-btn" data-gs-nav-close aria-label="Close menu">×</button>
+    </a>
+    <button class="gs-icon-btn gs-mobile-close" data-gs-nav-close aria-label="Close menu">×</button>
   </div>
 
   <div class="gs-mobile-panel-inner">
     <nav class="gs-mobile-links" aria-label="Mobile Primary">
-      {links.map(l => <a class="gs-mobile-link-item" href={l.href}>{l.label}</a>)}
-      <button
-        class="gs-mobile-link-item gs-mobile-link-trigger"
-        type="button"
-        data-gs-modal-open="admin"
-        aria-haspopup="dialog"
-      >
-        Admin Login
-      </button>
+      {links.map((l) => <a class="gs-mobile-link-item" href={l.href}>{l.label}</a>)}
+      <a class="gs-mobile-link-item gs-button gs-button-primary" href="/contact">Request Briefing</a>
       <button
         class="gs-mobile-link-item gs-mobile-link-trigger"
         type="button"
