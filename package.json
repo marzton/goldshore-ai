@@ -20,7 +20,6 @@
     "audit:wrangler-envs": "node scripts/audit-wrangler-envs.mjs",
     "check:package-json-duplicates": "node scripts/check-package-json-duplicates.mjs",
     "validate": "pnpm check:naming && pnpm check:package-json-duplicates && pnpm validate:workspace && pnpm validate:structure && pnpm validate:names && pnpm validate:preview-bindings",
-    "validate": "pnpm check:naming && pnpm validate:workspace && pnpm validate:structure && pnpm validate:names && pnpm validate:preview-bindings",
     "validate:preview-bindings": "tsx scripts/validate-preview-bindings.ts",
     "branch:bootstrap": "bash scripts/branch-bootstrap.sh",
     "scaffold:worker": "node scripts/scaffold-worker.mjs",
@@ -40,7 +39,6 @@
     "secret:sync": "bash scripts/sync-preview-secrets.sh",
     "secret:sync:worker": "bash scripts/sync-preview-secrets.sh --worker",
     "validate:json-keys": "node scripts/validate-package-json-keys.mjs"
-    "validate:preview-bindings": "tsx scripts/validate-preview-bindings.ts"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
