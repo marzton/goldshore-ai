@@ -4,6 +4,7 @@ import statusCheckScriptUrl from '../../scripts/status-check.ts?url';
 
 const runtimeEnv = Astro.locals.runtime?.env as { GS_SYSTEM_STATUS?: string } | undefined;
 const systemStatus = runtimeEnv?.GS_SYSTEM_STATUS ?? 'Operational';
+const isOperational = systemStatus.trim().toLowerCase() === 'operational';
 ---
 
 <section class="gs-hero gs-hero-orbital gs-depth-bg" data-gs-hero>
