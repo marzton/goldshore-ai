@@ -1,13 +1,9 @@
 import { Hono } from 'hono';
-<<<<<<< main-HEAD-2
 import {
   EmailInboxLogsSchema,
   EmailLogSchema,
   type EmailLog,
 } from '../../../packages/schema/src/system';
-=======
-import { EmailInboxLogsSchema, type EmailLog } from '../../../packages/schema/src/system.ts';
->>>>>>> chore/working-copy
 
 interface Env {
   GS_CONFIG: KVNamespace;
@@ -15,26 +11,17 @@ interface Env {
   MAIL_FORWARD_TO?: string;
   FORWARD_TO?: string;
   MAIL_BLOCKED_SENDERS?: string;
-  GS_CONFIG: KVNamespace;
 }
 
 const VERSION = '2026.03.03-mail-inbox-log';
-<<<<<<< main-HEAD-2
-=======
-
->>>>>>> chore/working-copy
 const app = new Hono<{ Bindings: Env }>();
 const isEmailLike = (value: string) => /.+@.+\..+/.test(value);
 
 const readInboxLogs = async (kv: KVNamespace): Promise<EmailLog[]> => {
   const rawLogs = await kv.get('EMAIL_INBOX_LOGS', 'text');
-<<<<<<< main-HEAD-2
   if (!rawLogs) {
     return [];
   }
-=======
-  if (!rawLogs) return [];
->>>>>>> chore/working-copy
 
   try {
     const parsed = JSON.parse(rawLogs);
@@ -43,10 +30,7 @@ const readInboxLogs = async (kv: KVNamespace): Promise<EmailLog[]> => {
       console.warn('Invalid EMAIL_INBOX_LOGS shape detected. Resetting mailbox log.');
       return [];
     }
-<<<<<<< main-HEAD-2
 
-=======
->>>>>>> chore/working-copy
     return validated.data;
   } catch (error) {
     console.warn('Unable to parse EMAIL_INBOX_LOGS. Resetting mailbox log.', error);
@@ -73,10 +57,35 @@ app.get('/system/info', (c) =>
   }),
 );
 
+app.get('/version', (c) => c.json({ version: VERSION }));
+
+app.post('/webhook', async (c) => {
+  // Reserved for future provider hooks.
+  return c.json({ received: true });
+});
+
+app.post('/api/subscribe', async (c) => {
+  // Store email in KV or send to mailbox
+  return c.json({ status: 'subscribed' });
+});
+
+app.post('/api/contact', async (c) => {
+  // Store email in KV or send to mailbox
+  return c.json({ status: 'sent' });
+});
+
+export default {
+  fetch: app.fetch,
+  async email(message: EmailMessage, env: Env): Promise<void> {
+    // Basic email handler scaffolding
+    console.log(`Received email from ${message.from} to ${message.to}`);
+
+    const forwardTo = env.MAIL_FORWARD_TO?.trim();
+    if (!forwardTo || !isEmailLike(forwardTo)) {
+      message.setReject('Mail forwarding is not configured.');
 // Persistence present; code hygiene risk due to merge duplication has been removed in this unified handler.
 export default {
   fetch: app.fetch,
-<<<<<<< main-HEAD-2
 
   async email(message: ForwardableEmailMessage, env: Env, ctx: ExecutionContext): Promise<void> {
     const sender = message.from;
@@ -86,36 +95,6 @@ export default {
     const blocked = env.MAIL_BLOCKED_SENDERS?.split(',').map((item) => item.trim()) || [];
     if (blocked.includes(sender)) {
       message.setReject(`Sender ${sender} is blocked.`);
-=======
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async email(message: EmailMessage, _env: Env, _ctx: ExecutionContext): Promise<void> {
-    // Basic email handler scaffolding
-    console.log(`Received email from ${message.from} to ${message.to}`);
-
-    const forwardTo = _env.MAIL_FORWARD_TO?.trim();
-  async email(message: ForwardableEmailMessage, env: Env): Promise<void> {
-    console.log(`Received email from ${message.from} to ${message.to}`);
-
-    const emailLog: EmailLog = {
-      id: crypto.randomUUID(),
-      from: message.from,
-      to: message.to,
-      subject: message.headers.get('subject') || 'No Subject',
-      timestamp: new Date().toISOString(),
-    };
-
-    try {
-      const logs = await readInboxLogs(env.GS_CONFIG);
-      logs.unshift(emailLog);
-      await env.GS_CONFIG.put('EMAIL_INBOX_LOGS', JSON.stringify(logs.slice(0, 100)));
-      console.log(`✅ Logged email from ${message.from} to GS_CONFIG`);
-    } catch (error) {
-      console.error('❌ Failed to log email to KV:', error);
-    }
-
-    const forwardTo = env.MAIL_FORWARD_TO?.trim();
-    if (!forwardTo || !isEmailLike(forwardTo)) {
->>>>>>> chore/working-copy
       return;
     }
 
@@ -125,6 +104,44 @@ export default {
       to: recipient,
       subject,
       timestamp: new Date().toISOString(),
+    };
+
+    const validation = EmailLogSchema.safeParse(newEntry);
+    
+    // 3. Persistence Logic (Asynchronous)
+    if (validation.success) {
+      ctx.waitUntil(
+        (async () => {
+          try {
+            const rawLogs = await env.GS_CONFIG.get('EMAIL_INBOX_LOGS');
+            let currentLogs: Array<typeof validation.data> = [];
+
+            if (rawLogs) {
+              try {
+                const parsedLogs = JSON.parse(rawLogs);
+                const parseResult = EmailInboxLogsSchema.safeParse(parsedLogs);
+                if (parseResult.success) {
+                  currentLogs = parseResult.data;
+                } else {
+                  console.error('❌ Existing EMAIL_INBOX_LOGS payload failed schema validation:', parseResult.error);
+                }
+              } catch (err) {
+                console.error('❌ Failed to parse EMAIL_INBOX_LOGS payload:', err);
+              }
+            }
+
+            // Prepend and truncate to 100 per SOP
+            const updatedLogs = [validation.data, ...currentLogs].slice(0, 100);
+
+            await env.GS_CONFIG.put('EMAIL_INBOX_LOGS', JSON.stringify(updatedLogs));
+            console.info(`✅ Logged email: ${sender} -> ${recipient}`);
+          } catch (err) {
+            console.error('❌ KV Persistence Error:', err);
+          }
+        })()
+      );
+    } else {
+      console.error('🚨 Schema Validation Failed for inbound mail:', validation.error);
     });
 
     if (!parsedEntry.success) {

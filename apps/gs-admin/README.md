@@ -42,7 +42,7 @@ The GoldShore admin cockpit is an Astro SSR dashboard protected by Cloudflare Ac
 
 Cloudflare metadata:
 - Pages project name: `gs-admin` (production), `preview-admin` (preview)
-- Pages bindings config: `infra/Cloudflare/goldshore-admin.wrangler.toml`
+- Pages bindings config: `infra/cloudflare/goldshore-admin.wrangler.toml`
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
 
 Documentation:
