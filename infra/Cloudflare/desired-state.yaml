@@ -32,48 +32,10 @@ cloudflare:
         content: "gs-api.goldshore-account.workers.dev"
         proxied: true
 
-      # E. Control Worker
-      - name: "control"
-        type: CNAME
-        content: "gs-control.goldshore-account.workers.dev"
-        proxied: true
-      - name: "ops"
-        type: CNAME
-        content: "gs-control.goldshore-account.workers.dev"
-        proxied: true
-
-      # Gateway Preview
-      - name: "gateway-preview"
-        type: CNAME
-        content: "gs-gateway.goldshore-account.workers.dev"
-        proxied: true
-
-      # R2 Assets
-      - name: "assets"
-        type: CNAME
-        content: "public.goldshore.ai"
-        proxied: true
+      # E. Control Worker (Internal only - no public DNS)
 
   access:
     policies:
-      - name: "GoldShore-Control-ZT"
-        domain: "control.goldshore.ai"
-        action: "allow"
-        rules:
-          include:
-            - email_domain: "goldshore.ai"
-          require:
-            - identity_provider: "github"
-
-      - name: "GoldShore-Ops-ZT"
-        domain: "ops.goldshore.ai"
-        action: "allow"
-        rules:
-          include:
-            - email_domain: "goldshore.ai"
-          require:
-            - identity_provider: "github"
-
       - name: "GoldShore-Admin-ZT"
         domain: "admin.goldshore.ai"
         action: "allow"
@@ -99,8 +61,6 @@ cloudflare:
         production_branch: "main"
         build_command: "pnpm --filter @goldshore/web build"
         output_dir: "apps/gs-web/dist"
-        build_env_vars:
-          NODE_VERSION: "22"
         custom_domains:
           - "goldshore.ai"
           - "www.goldshore.ai"

@@ -152,18 +152,19 @@ permissions:
   contents: read
 
 on:
-  workflow_dispatch:
-
-concurrency:
-  group: neuralegion-${{ github.ref }}
-  cancel-in-progress: true
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '38 10 * * 2'
 
 jobs:
   neuralegion-scan:
     runs-on: ubuntu-latest
     name: A job to run a Nexploit scan
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - name: Start Nexploit Scan 🏁
         id: start
         uses: NeuraLegion/run-scan@29ebd17b4fd6292ce7a238a59401668953b37fbe

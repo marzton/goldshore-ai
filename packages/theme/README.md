@@ -32,10 +32,10 @@ The package exposes the following public CSS entry points:
 
 ## Structure
 
-- `styles/tokens.css`: colors, spacing, radii, typography, and shadows.
-- `styles/base.css`: resets, typography, links, lists, and form defaults.
-- `styles/components.css`: buttons, cards, tables, badges, grids, and hero/section helpers.
-- `styles/layout.css`: layout primitives for the web and admin shells.
+- `src/styles/tokens.css`: colors, spacing, radii, typography, and shadows.
+- `src/styles/base.css`: resets, typography, links, lists, and form defaults.
+- `src/styles/components.css`: buttons, cards, tables, badges, grids, and hero/section helpers.
+- `src/styles/layout.css`: layout primitives for the web and admin shells.
 - `src/theme-manager.ts`: helper to load, apply, and persist theme preferences.
 - `assets/`: Penrose logo assets for headers and sidebars.
 

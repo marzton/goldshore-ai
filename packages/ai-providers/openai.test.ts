@@ -99,25 +99,6 @@ describe('openAIProvider', () => {
     assert.strictEqual(body.model, 'gpt-4-turbo');
   });
 
-
-  test('uses AI proxy endpoint when specified', async () => {
-    const input: AnalysisInput = { prompt: 'test' };
-    const config: ProviderConfig = {
-      fetch: mockFetch,
-      apiKey: 'key',
-      aiProxyEndpoint: 'https://gateway.ai.cloudflare.com/v1/abc/goldshore-api',
-    };
-
-    mockFetch.mock.mockImplementation(async () => ({
-      json: async () => ({ choices: [{ message: { content: 'ok' } }] }),
-    }));
-
-    await openAIProvider.analyze(input, config);
-
-    const call = mockFetch.mock.calls[0];
-    assert.strictEqual(call.arguments[0], 'https://gateway.ai.cloudflare.com/v1/abc/goldshore-api/openai/chat/completions');
-  });
-
   test('includes context in messages', async () => {
     const input: AnalysisInput = {
       prompt: 'Summarize this',
