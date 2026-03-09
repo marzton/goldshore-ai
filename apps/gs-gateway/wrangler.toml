@@ -1,30 +1,27 @@
 name = "gs-gateway"
 main = "src/index.ts"
-compatibility_date = "2025-01-10"
+compatibility_date = "2025-10-08"
 compatibility_flags = ["nodejs_compat"]
-
 workers_dev = false
 
-# Canonical gateway hostname is gw.goldshore.ai.
-routes = [
-  { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
-  { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" }
-]
-
+# --- PRODUCTION (Top Level) ---
 [vars]
 ENV = "production"
 API_ORIGIN = "https://api.goldshore.ai"
-# These should be filled from your Access Dashboard
 CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b"
 CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
 
+[[d1_databases]]
+binding = "DB"
+database_name = "goldshore"
+database_id = "33b71eca-4987-4a0c-8721-c1c777b8b6a3"
+
 [[kv_namespaces]]
 binding = "GATEWAY_KV"
-# Updated to use your actual production namespace ID
 id = "9cc2209906a94851b704be57543987a9"
 
 [[queues.producers]]
-binding = "JOB_QUEUE"
+binding = "JOBS_QUEUE"
 queue = "goldshore-jobs"
 
 [[services]]
@@ -46,3 +43,65 @@ services = [{ binding = "API", service = "gs-api", environment = "preview" }]
 vars = { ENV = "preview", API_ORIGIN = "https://api-preview.goldshore.ai", CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b", CLOUDFLARE_TEAM_DOMAIN = "gsl-ops" }
 ai = { binding = "AI" }
 queues = { producers = [{ binding = "JOB_QUEUE", queue = "goldshore-jobs" }] }
+# --- PREVIEW (Non-Production) ---
+[env.preview]
+name = "gs-gateway-preview"
+routes = [
+  { pattern = "gw-preview.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "gateway-preview.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "status-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+vars = { ENV = "preview", API_ORIGIN = "https://api-preview.goldshore.ai", CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b", CLOUDFLARE_TEAM_DOMAIN = "gsl-ops" }
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "goldshore"
+database_id = "33b71eca-4987-4a0c-8721-c1c777b8b6a3"
+
+[[env.preview.kv_namespaces]]
+binding = "GATEWAY_KV"
+id = "9cc2209906a94851b704be57543987a9"
+
+[[env.preview.queues.producers]]
+binding = "JOBS_QUEUE"
+queue = "goldshore-jobs"
+
+[[env.preview.services]]
+binding = "API"
+service = "gs-api"
+environment = "preview"
+
+[env.preview.ai]
+binding = "AI"
+
+# Maintain explicit prod environment for CI commands that deploy with --env prod.
+[env.prod]
+name = "gs-gateway"
+routes = [
+  { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "gateway.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "status.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+vars = { ENV = "production", API_ORIGIN = "https://api.goldshore.ai", CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b", CLOUDFLARE_TEAM_DOMAIN = "gsl-ops" }
+
+[[env.prod.d1_databases]]
+binding = "DB"
+database_name = "goldshore"
+database_id = "33b71eca-4987-4a0c-8721-c1c777b8b6a3"
+
+[[env.prod.kv_namespaces]]
+binding = "GATEWAY_KV"
+id = "9cc2209906a94851b704be57543987a9"
+
+[[env.prod.queues.producers]]
+binding = "JOBS_QUEUE"
+queue = "goldshore-jobs"
+
+[[env.prod.services]]
+binding = "API"
+service = "gs-api"
+environment = "prod"
+
+[env.prod.ai]
+binding = "AI"
