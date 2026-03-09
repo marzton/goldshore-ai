@@ -575,7 +575,6 @@ Features:
 ---
 
 # 💻 Local Development
-## Local Development
 
 Install dependencies:
 
@@ -583,19 +582,45 @@ Install dependencies:
 pnpm install
 ```
 
+### Audit Environment Parity
+
+1. `pnpm run secret:audit`
+
+```bash
+pnpm run secret:audit
+```
+
+### Sync Missing Secrets (Interactive)
+
+2. `pnpm run secret:sync`
+
+```bash
+pnpm run secret:sync
+```
+
+3. `pnpm run secret:sync:worker -- apps/gs-api`
+
+```bash
+pnpm run secret:sync:worker -- apps/gs-api
+```
+
 Run everything:
+Run all workspace apps in parallel:
 
 ```bash
 pnpm dev
 ```
 
-Run individual app:
+Run individual apps by package name:
 
 ```bash
 pnpm --filter @goldshore/web dev
 pnpm --filter @goldshore/admin dev
 pnpm --filter @goldshore/api-worker dev
+```
+
 Run individual apps:
+Run individual apps by workspace path (monorepo-friendly):
 
 ```bash
 pnpm --filter ./apps/web dev
@@ -605,15 +630,34 @@ pnpm --filter ./apps/gateway dev
 pnpm --filter ./apps/gs-agent dev
 ```
 
-Build all:
+Build everything:
 
 ```bash
 pnpm build
 ```
 
----
+### Audit Environment Parity
+
+Use this to verify secrets and environment variables are in sync across environments.
+
+```bash
+pnpm run secret:audit
+```
+
+### Sync Missing Secrets (Interactive)
+
+Use these to interactively sync missing environment variables/secrets.
+
+```bash
+pnpm run secret:sync
+```
+
+```bash
+pnpm run secret:sync:worker -- apps/gs-api
+```
 
 # 🚀 Deployment Guide
+
 ## Testing
 
 Playwright tests live in:
@@ -623,7 +667,7 @@ apps/admin/tests
 apps/web/tests
 ```
 
-Run:
+Run tests:
 
 ```bash
 pnpm test
@@ -633,7 +677,7 @@ pnpm test
 
 Pages deploy automatically via GitHub Actions.
 
-Workers deploy:
+Deploy Workers by package name:
 
 ```bash
 pnpm --filter @goldshore/api-worker deploy
@@ -641,16 +685,22 @@ pnpm --filter @goldshore/gateway deploy
 pnpm --filter @goldshore/control-worker deploy
 ```
 
----
+Deploy Workers by workspace path (monorepo-friendly):
 
-# 📌 Versioning Strategy
+Additional worker deploy targets:
+
+```bash
 pnpm --filter ./apps/api-worker deploy
 pnpm --filter ./apps/gateway deploy
 pnpm --filter ./apps/control-worker deploy
 pnpm --filter ./apps/gs-agent deploy
 ```
 
-## Versioning Strategy
+---
+
+# 📌 Versioning Strategy
+
+
 
 - `main` → Production
 - `feature/*` → Preview Deployments
