@@ -826,6 +826,13 @@ Run everything:
 
 pnpm dev
 
+Secret sync utilities:
+
+- `pnpm run secret:sync` syncs secrets to the Cloudflare Worker `preview` environment only; it does **not** write local runtime env files.
+- `pnpm run secret:sync:worker -- apps/gs-api` syncs secrets for `apps/gs-api` to that worker's Cloudflare `preview` environment only; it does **not** write local runtime env files.
+
+> Safety note: These utilities intentionally never write production secrets.
+
 Run only the admin app:
 
 pnpm --filter ./apps/gs-admin dev
