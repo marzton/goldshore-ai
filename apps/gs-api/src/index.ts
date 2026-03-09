@@ -24,6 +24,7 @@ type Env = {
   AI: Ai;
   OPENAI_API_KEY?: string;
   GEMINI_API_KEY?: string;
+  AIPROXY_ENDPOINT?: string;
   // Sentinel: Added support for Audience verification to prevent auth bypass
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
   // Sentinel: Added support for dynamic team domain
@@ -33,6 +34,21 @@ type Env = {
 
 const app = new Hono<{ Bindings: Env; Variables: { accessClaims: AccessTokenPayload | null } }>();
 
+
+let hasLoggedAiProxyConfig = false;
+
+app.use('*', async (c, next) => {
+  if (!hasLoggedAiProxyConfig) {
+    hasLoggedAiProxyConfig = true;
+    if (!c.env.AIPROXY_ENDPOINT) {
+      console.warn('[startup] AIPROXY_ENDPOINT is not configured; model traffic will bypass Cloudflare AI Gateway.');
+    } else {
+      console.log(`[startup] AIPROXY_ENDPOINT configured: ${c.env.AIPROXY_ENDPOINT}`);
+    }
+  }
+
+  await next();
+});
 const ALLOWED_ORIGIN_PATTERNS = [
   /^https:\/\/(www\.)?goldshore\.ai$/,
   /^https:\/\/([a-z0-9-]+\.)+goldshore\.ai$/,
