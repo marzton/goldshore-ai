@@ -1,11 +1,225 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
+
+const namespaces = [
+  {
+    id: '9cc2209906a94851b704be57543987a9',
+    name: 'GS_API_DATA',
+    env: 'preview',
+    metrics: { reads: '1.2k', writes: '45', errors: '0.00%', latency: '14ms' }
+  },
+  {
+    id: 'f77de112d2019e5456a3198a8bb50bd2',
+    name: 'GS_API_DATA',
+    env: 'production',
+    metrics: { reads: '45.8k', writes: '1.1k', errors: '0.02%', latency: '18ms' }
+  }
+];
+
+const recentEvents = [
+  {
+    id: 'req_882',
+    timestamp: '2026-03-09T08:45:12Z',
+    type: 'PUT',
+    key: 'auth:session:_tmp_882',
+    status: 'success',
+    message: 'Value updated'
+  },
+  {
+    id: 'req_618',
+    timestamp: '2026-03-09T08:42:01Z',
+    type: 'DELETE',
+    key: 'cache:v1:home_hero',
+    status: 'success',
+    message: 'Key removed'
+  },
+  {
+    id: 'req_417',
+    timestamp: '2026-03-09T08:30:55Z',
+    type: 'GET',
+    key: 'config:global',
+    status: 'error',
+    message: '404 Not Found'
+  }
+];
 ---
-<AdminLayout title="KV | GoldShore Admin">
-  <section class="max-w-5xl mx-auto py-24 px-6">
-    <h1 class="text-3xl gs-heading mb-4">KV Namespaces</h1>
-    <p class="text-[var(--gs-text-secondary)]">
-      Namespace inventory, key audits, and access checks will appear here.
-    </p>
+
+<AdminLayout title="KV Namespaces">
+  <section class="gs-grid columns-2">
+    {namespaces.map((ns) => (
+      <article class="gs-panel">
+        <div class="section-title"><span>◈</span><h3>{ns.name}</h3></div>
+        <p class="gs-helper">ID: <code>{ns.id}</code></p>
+        <span class={`gs-badge ${ns.env === 'preview' ? 'warning' : 'success'} gs-mt-3`}>
+          {ns.env}
+        </span>
+
+        <div class="gs-grid columns-4 gs-mt-4">
+          <div>
+            <p class="gs-helper">Reads</p>
+            <strong>{ns.metrics.reads}</strong>
+          </div>
+          <div>
+            <p class="gs-helper">Writes</p>
+            <strong>{ns.metrics.writes}</strong>
+          </div>
+          <div>
+            <p class="gs-helper">Error rate</p>
+            <strong class={ns.metrics.errors === '0.00%' ? 'text-status-success' : 'text-status-error'}>{ns.metrics.errors}</strong>
+          </div>
+          <div>
+            <p class="gs-helper">P95 latency</p>
+            <strong>{ns.metrics.latency}</strong>
+          </div>
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <section class="gs-panel gs-mt-6" id="kv-events-container">
+    <div class="section-title"><span>◎</span><h3>Recent access events</h3></div>
+
+    <div class="gs-grid columns-4 gs-mt-3" style="align-items: end;">
+      <label>
+        <span class="gs-helper">Search key or request ID</span>
+        <input id="kv-search" type="text" class="gs-input" placeholder="session / req_" />
+      </label>
+
+      <label>
+        <span class="gs-helper">Operation</span>
+        <select id="filter-op" class="gs-input">
+          <option value="ALL">ALL</option>
+          <option value="GET">GET</option>
+          <option value="PUT">PUT</option>
+          <option value="DELETE">DELETE</option>
+        </select>
+      </label>
+
+      <label>
+        <span class="gs-helper">Status</span>
+        <select id="filter-status" class="gs-input">
+          <option value="ALL">ALL</option>
+          <option value="success">success</option>
+          <option value="error">error</option>
+        </select>
+      </label>
+
+      <div class="flex items-center gap-3" style="display:flex;align-items:center;gap:.75rem;justify-content:flex-end;">
+        <span id="kv-counter" class="gs-helper">{recentEvents.length} / {recentEvents.length} events</span>
+        <button id="clear-kv-filters" class="gs-btn ghost" hidden>Clear filters</button>
+      </div>
+    </div>
+
+    <div style="overflow-x:auto; margin-top: 1rem;">
+      <table class="gs-table" id="kv-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Relative</th>
+            <th>Operation</th>
+            <th>Key</th>
+            <th>Request ID</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="kv-tbody"></tbody>
+      </table>
+      <p id="kv-empty" class="gs-helper" hidden>No events match your current filters.</p>
+    </div>
   </section>
 </AdminLayout>
+
+<script define:vars={{ recentEvents }}>
+  const searchInput = document.getElementById('kv-search');
+  const opFilter = document.getElementById('filter-op');
+  const statusFilter = document.getElementById('filter-status');
+  const counter = document.getElementById('kv-counter');
+  const tbody = document.getElementById('kv-tbody');
+  const emptyState = document.getElementById('kv-empty');
+  const table = document.getElementById('kv-table');
+  const clearBtn = document.getElementById('clear-kv-filters');
+
+  const formatRelative = (iso) => {
+    const deltaMs = Date.now() - new Date(iso).getTime();
+    const deltaMinutes = Math.floor(deltaMs / 60000);
+
+    if (deltaMinutes < 1) return 'just now';
+    if (deltaMinutes < 60) return `${deltaMinutes}m ago`;
+
+    const deltaHours = Math.floor(deltaMinutes / 60);
+    if (deltaHours < 24) return `${deltaHours}h ago`;
+
+    const deltaDays = Math.floor(deltaHours / 24);
+    return `${deltaDays}d ago`;
+  };
+
+  const getFilteredEvents = () => {
+    const query = searchInput?.value.trim().toLowerCase() ?? '';
+    const op = opFilter?.value ?? 'ALL';
+    const status = statusFilter?.value ?? 'ALL';
+
+    return recentEvents.filter((event) => {
+      const matchSearch =
+        event.key.toLowerCase().includes(query) ||
+        (event.id && event.id.toLowerCase().includes(query));
+      const matchOp = op === 'ALL' || event.type === op;
+      const matchStatus = status === 'ALL' || event.status === status;
+      return matchSearch && matchOp && matchStatus;
+    });
+  };
+
+  const render = () => {
+    const filtered = getFilteredEvents();
+    const total = recentEvents.length;
+
+    if (counter) counter.textContent = `${filtered.length} / ${total} events`;
+
+    const isFiltered =
+      (searchInput?.value ?? '') !== '' ||
+      (opFilter?.value ?? 'ALL') !== 'ALL' ||
+      (statusFilter?.value ?? 'ALL') !== 'ALL';
+
+    if (clearBtn) clearBtn.hidden = !isFiltered;
+
+    if (!tbody || !table || !emptyState) return;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '';
+      table.hidden = true;
+      emptyState.hidden = false;
+      return;
+    }
+
+    table.hidden = false;
+    emptyState.hidden = true;
+
+    tbody.innerHTML = filtered
+      .map((event) => {
+        const statusClass = event.status === 'success' ? 'text-status-success' : 'text-status-error';
+        const opClass = event.type === 'DELETE' ? 'text-status-error' : 'text-brand-accent';
+        return `
+          <tr>
+            <td><time datetime="${event.timestamp}">${new Date(event.timestamp).toLocaleTimeString()}</time></td>
+            <td>${formatRelative(event.timestamp)}</td>
+            <td><span class="${opClass}">${event.type}</span></td>
+            <td><code>${event.key}</code></td>
+            <td><code>${event.id || '-'}</code></td>
+            <td><span class="${statusClass}">${event.status}</span></td>
+          </tr>
+        `;
+      })
+      .join('');
+  };
+
+  searchInput?.addEventListener('input', render);
+  opFilter?.addEventListener('change', render);
+  statusFilter?.addEventListener('change', render);
+  clearBtn?.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    if (opFilter) opFilter.value = 'ALL';
+    if (statusFilter) statusFilter.value = 'ALL';
+    render();
+  });
+
+  render();
+</script>

@@ -16,7 +16,7 @@ const links: Array<{ href: string; label: string; requiredPermission?: AdminPerm
   { href: '/admin/pages/editor', label: 'Pages Editor' },
   { href: '/admin/system', label: 'System' },
   { href: '/admin/workers', label: 'Workers' },
-  { href: '/admin/kv', label: 'KV' },
+  { href: '/admin/kv', label: 'KV Namespaces' },
   { href: '/admin/users', label: 'Users', requiredPermission: 'users:read' },
   { href: '/admin/pii-scans', label: 'PII Scans' },
   { href: '/admin/logs', label: 'Logs', requiredPermission: 'audit:read' },
@@ -24,7 +24,7 @@ const links: Array<{ href: string; label: string; requiredPermission?: AdminPerm
   { href: '/appearance/hero', label: 'Hero Engine' }
 ];
 
-const { logo, permissions = [] } = Astro.props;
+const { logo, permissions = [], envLabel = "Production" } = Astro.props;
 
 const visibleLinks = links.filter((link) =>
   link.requiredPermission ? permissions.includes(link.requiredPermission) : true
@@ -58,6 +58,7 @@ const isActive = (href: string) => {
     <span slot="brand-text">GoldShore</span>
     <button id="sidebar-close" class="sidebar-close" aria-label="Close menu">✕</button>
   </SharedHeader>
+  <div class="sidebar-env-ribbon">{envLabel}</div>
   <nav class="gs-sidebar-links">
     {visibleLinks.map((link) => (
       <a
