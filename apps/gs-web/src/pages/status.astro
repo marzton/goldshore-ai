@@ -1,14 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import StatusDiagnostics from '../components/StatusDiagnostics.astro';
-const logo = '/assets/brand/logo.svg';
+const logo = '/packages/brand/logo-penrose.svg';
 
 const buildTimestamp =
   import.meta.env.PUBLIC_BUILD_TIMESTAMP ||
   import.meta.env.CF_PAGES_COMMIT_TIMESTAMP ||
   new Date().toISOString();
 const commitHash =
-  import.meta.env.PUBLIC_COMMIT_SHA ||
+  import.meta.env.PUBLIC_COMMIT_HASH ||
   import.meta.env.CF_PAGES_COMMIT_SHA ||
   'unknown';
 const shortCommitHash = commitHash === 'unknown' ? commitHash : commitHash.slice(0, 12);

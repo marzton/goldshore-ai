@@ -3,7 +3,8 @@
 The Infra Agent must follow this procedure when asked to manage
 Cloudflare applications (Pages / Workers / KV / R2 / D1 / AI / Queues).
 
-1. Always parse `infra/cloudflare/desired-state.yaml`.
+1. Always parse `infra/Cloudflare/desired-state.yaml`.
+   - Path casing matters: use `infra/Cloudflare/...` exactly, because CI/Linux filesystems are case-sensitive.
 2. Identify which resource types the user is referring to:
    - "Create a new Pages project" → Pages
    - "Add a KV binding" → Workers + KV
