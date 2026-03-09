@@ -5,7 +5,14 @@ TARGET_APP="${TARGET_APP:-all}"
 REPO_ROOT="${REPO_ROOT:-/workspace/goldshore-ai}"
 API_HOST="${API_HOST:-api.goldshore.ai}"
 CORE_URL="${CORE_URL:-https://${API_HOST}/v1/status}"
-DRY_RUN="${DRY_RUN:-false}"
+CLOUDFLARE_SYNC_MODE="${CLOUDFLARE_SYNC_MODE:-api}"
+DRY_RUN="${DRY_RUN:-0}"
+
+for arg in "$@"; do
+  if [[ "$arg" == "--dry-run" ]]; then
+    DRY_RUN=1
+  fi
+done
 
 KV_KEYS=("ALPACA_PAPER" "ENVIRONMENT_TAG")
 SECRET_KEYS=("OPENAI_API_KEY" "ANTHROPIC_API_KEY" "AIPROXYSIGNING_KEY")
@@ -16,45 +23,50 @@ DNS_RESULT="failure"
 TLS_RESULT="failure"
 CORE_RESULT="failure"
 
-warn() {
-  echo "⚠️ $1"
-}
+enforce_required_env() {
+  local key="$1"
+  local reason="$2"
 
-fail_or_warn() {
-  local message="$1"
-  if [[ "${DRY_RUN}" == "true" ]]; then
-    warn "[dry-run] ${message}"
+  if [[ -n "${!key:-}" ]]; then
     return 0
   fi
 
-  echo "❌ ${message}"
+  if [[ "${DRY_RUN}" == "1" ]]; then
+    echo "🧪 [dry-run] Would require ${key} (${reason})"
+    return 0
+  fi
+
+  echo "❌ Missing required env var: ${key} (${reason})"
   exit 1
 }
 
-validate_gateway_auth_preflight() {
-  echo "🔎 Running AI Gateway auth preflight checks..."
+run_preflight_validation() {
+  echo "🔎 Running preflight validation..."
+  echo "ℹ️ Cloudflare sync mode: ${CLOUDFLARE_SYNC_MODE}"
 
-  local endpoint="${AIPROXY_ENDPOINT:-}"
-  if [[ -z "${endpoint}" ]]; then
-    fail_or_warn "AIPROXY_ENDPOINT is missing. Expected an AI Gateway URL host containing gateway.ai.cloudflare.com."
-  elif [[ "${endpoint}" != *"gateway.ai.cloudflare.com"* ]]; then
-    fail_or_warn "AIPROXY_ENDPOINT must contain gateway.ai.cloudflare.com. Current value: ${endpoint}"
-  else
-    echo "✅ AIPROXY_ENDPOINT configured: ${endpoint}"
+  if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
+    echo "⚠️ Warning: ANTHROPIC_API_KEY not detected (optional)."
   fi
 
-  if [[ -z "${AIPROXYSIGNING_KEY:-}" ]]; then
-    export AIPROXYSIGNING_KEY
-    AIPROXYSIGNING_KEY="$(node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))")"
-    warn "AIPROXYSIGNING_KEY was missing; generated ephemeral fallback for this run. Persist it in Worker secrets/KV for runtime use."
-  else
-    echo "✅ AIPROXYSIGNING_KEY provided via environment"
+  if [[ -z "${OPENAI_API_KEY:-}" ]]; then
+    echo "⚠️ Warning: OPENAI_API_KEY not detected (optional)."
   fi
 
-  if [[ -z "${endpoint}" || "${endpoint}" != *"gateway.ai.cloudflare.com"* ]]; then
-    warn "Gateway auth preflight completed with configuration warnings. Rotation/deploy steps may run, but runtime gateway auth remains misconfigured."
+  if [[ -z "${CLOUDFLARE_ZONE_ID:-}" ]]; then
+    echo "⚠️ Warning: CLOUDFLARE_ZONE_ID not detected (optional)."
+  fi
+
+  if [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
+    echo "⚠️ Warning: CLOUDFLARE_API_TOKEN not detected. Cloudflare sync checks will be skipped."
+    return 0
+  fi
+
+  if [[ "${CLOUDFLARE_SYNC_MODE}" == "api" ]]; then
+    enforce_required_env "CLOUDFLARE_ACCOUNT_ID" "required when CLOUDFLARE_SYNC_MODE=api"
+  elif [[ "${CLOUDFLARE_SYNC_MODE}" == "wrangler" ]]; then
+    echo "ℹ️ CLOUDFLARE_ACCOUNT_ID is not required when CLOUDFLARE_SYNC_MODE=wrangler."
   else
-    echo "✅ Gateway auth preflight checks passed"
+    echo "⚠️ Warning: Unknown CLOUDFLARE_SYNC_MODE='${CLOUDFLARE_SYNC_MODE}'. Expected 'api' or 'wrangler'."
   fi
 }
 
@@ -84,6 +96,10 @@ post_github_deployment_status() {
 
 echo "🚀 Initializing GoldShore Audit & Deployment: ${TARGET_APP}"
 
+if [[ "${DRY_RUN}" == "1" ]]; then
+  echo "🧪 Running in dry-run mode"
+fi
+
 cd "${REPO_ROOT}" || {
   echo "❌ Failed to enter ${REPO_ROOT}"
   exit 1
@@ -92,6 +108,8 @@ cd "${REPO_ROOT}" || {
 node -e "const fs=require('fs'); try { const p=JSON.parse(fs.readFileSync('package.json', 'utf8')); fs.writeFileSync('package.json', JSON.stringify(p, null, 2) + '\\n'); } catch(e) { console.error('Repairing JSON structure...'); const raw=fs.readFileSync('package.json', 'utf8').replace(/,(\\s*[\\]}])/g, '$1'); fs.writeFileSync('package.json', raw); }"
 
 validate_gateway_auth_preflight
+
+run_preflight_validation
 
 if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   echo "🔍 Auditing Cloudflare Production State..."
