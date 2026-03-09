@@ -289,64 +289,6 @@ const resolveNotificationRecipients = (
   return dedupeRecipients([...fromConfig, ...fallback]);
 };
 
-const sendMail = async (
-  env: Env,
-  to: MailRecipient[],
-  subject: string,
-  text: string,
-  html: string,
-  replyTo?: MailRecipient,
-) => {
-  const fromEmail = env.MAILCHANNELS_SENDER_EMAIL?.trim();
-  const fromName = env.MAILCHANNELS_SENDER_NAME?.trim() || 'GoldShore';
-  if (!fromEmail || !isValidEmail(fromEmail) || to.length === 0) {
-    return {
-      attempted: false,
-      reason: 'missing_mail_configuration',
-    };
-  }
-
-  const payload = {
-    personalizations: [
-      {
-        to,
-      },
-    ],
-    from: {
-      email: fromEmail,
-      name: fromName,
-    },
-    ...(replyTo ? { reply_to: replyTo } : {}),
-    subject,
-    content: [
-      {
-        type: 'text/plain',
-        value: text,
-      },
-      {
-        type: 'text/html',
-        value: html,
-      },
-    ],
-  };
-
-  const endpoint = env.MAILCHANNELS_API_URL || DEFAULT_MAILCHANNELS_API_URL;
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
-
-  return {
-    attempted: true,
-    ok: response.ok,
-    status: response.status,
-    body: await response.text(),
-  };
-};
-
 export const POST: APIRoute = async ({ request, locals }) => {
   if (!request.headers.get('content-type')?.includes('form')) {
     return new Response('Unsupported payload.', { status: 415 });
