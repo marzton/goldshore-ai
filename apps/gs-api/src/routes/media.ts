@@ -72,7 +72,7 @@ media.get('/:id', async (c) => {
 
   if (!result) return c.json({ error: 'Media not found' }, 404);
 
-  const object = await c.env.ASSETS.get(result.object_key);
+  const object = await c.env.Assets.get(result.object_key);
   if (!object) return c.json({ error: 'Asset missing from storage' }, 404);
 
   const headers = new Headers();
@@ -113,7 +113,7 @@ media.post('/upload', async (c) => {
   const id = crypto.randomUUID();
   const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
 
-  await c.env.ASSETS.put(objectKey, body, { httpMetadata: { contentType } });
+  await c.env.Assets.put(objectKey, body, { httpMetadata: { contentType } });
 
   const url = new URL(c.req.url);
   url.pathname = `/media/${id}`;

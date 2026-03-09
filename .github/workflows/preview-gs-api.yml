@@ -43,8 +43,7 @@ jobs:
         run: pnpm validate:names
 
       - name: Deploy API worker (preview)
-        working-directory: apps/gs-api
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: pnpm exec wrangler deploy --env preview --config wrangler.toml
+        run: APP_NAME=gs-api pnpm --filter ./apps/$APP_NAME build && APP_NAME=gs-api pnpm wrangler deploy --env preview --outdir=apps/$APP_NAME/dist --keep-vars --config apps/$APP_NAME/wrangler.toml
