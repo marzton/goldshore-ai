@@ -20,7 +20,11 @@ export const openAIProvider: AnalysisProvider = {
     }
 
     const model = config.model ?? 'gpt-4o-mini';
-    const response = await config.fetch('https://api.openai.com/v1/chat/completions', {
+    const baseEndpoint = config.aiProxyEndpoint?.trim();
+    const endpoint = baseEndpoint
+      ? `${baseEndpoint}/openai/chat/completions`
+      : 'https://api.openai.com/v1/chat/completions';
+    const response = await config.fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

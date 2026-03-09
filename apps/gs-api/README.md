@@ -41,8 +41,8 @@ pnpm --filter ./apps/gs-api build
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-api-worker.yml`
-- Preview deploy: `.github/workflows/preview-api-worker.yml`
+- Production deploy: `.github/workflows/deploy-gs-api.yml`
+- Preview deploy: `.github/workflows/preview-gs-api.yml`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 
 ### Cloudflare Worker Builds troubleshooting
@@ -56,9 +56,21 @@ the issue is in Worker Builds project settings (not this repository code).
 Fix in Cloudflare Dashboard:
 
 1. Open **Workers & Pages** → **gs-api** → **Settings** → **Builds**.
-2. Create or select an active Worker Builds token.
-3. Save the updated token in Worker Builds settings.
-4. Re-run the build.
+2. Set **Deploy command** to:
+
+   ```bash
+   pnpm wrangler deploy --config apps/gs-api/wrangler.toml --env prod --outdir=apps/gs-api/dist
+   ```
+
+3. Set **Build command** to:
+
+   ```bash
+   pnpm wrangler deploy --config apps/gs-api/wrangler.toml --env prod --dry-run --outdir=apps/gs-api/dist
+   ```
+
+4. Ensure no stale override is inherited from another template/project (especially any command still referencing `apps/gs-gateway`).
+5. Create or select an active Worker Builds token.
+6. Save Worker Builds settings and re-run the build.
 
 Notes:
 - `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` can still be valid while Worker Builds fails.

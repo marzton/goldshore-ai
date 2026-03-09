@@ -96,6 +96,26 @@ describe('geminiProvider', () => {
     assert.strictEqual(call.arguments[0], 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=key');
   });
 
+
+  test('uses AI proxy endpoint when specified', async () => {
+    const input: AnalysisInput = { prompt: 'test' };
+    const config: ProviderConfig = {
+      fetch: mockFetch,
+      apiKey: 'key',
+      aiProxyEndpoint: 'https://gateway.ai.cloudflare.com/v1/abc/goldshore-api',
+      model: 'gemini-2.0-flash',
+    };
+
+    mockFetch.mock.mockImplementation(async () => ({
+      json: async () => ({ candidates: [{ content: { parts: [{ text: 'ok' }] } }] }),
+    }));
+
+    await geminiProvider.analyze(input, config);
+
+    const call = mockFetch.mock.calls[0];
+    assert.strictEqual(call.arguments[0], 'https://gateway.ai.cloudflare.com/v1/abc/goldshore-api/google-ai-studio/v1beta/models/gemini-2.0-flash:generateContent?key=key');
+  });
+
   test('includes context in prompt', async () => {
     const input: AnalysisInput = {
       prompt: 'Summarize this',
