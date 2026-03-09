@@ -169,6 +169,67 @@ post_github_deployment_status() {
   echo "✅ Posted GitHub deployment status: ${state}"
 }
 
+preflight_env_checks() {
+  local has_error=0
+
+  case "${CLOUDFLARE_SYNC_MODE}" in
+    wrangler|api)
+      ;;
+    *)
+      echo "❌ Unsupported CLOUDFLARE_SYNC_MODE='${CLOUDFLARE_SYNC_MODE}'. Use 'wrangler' or 'api'."
+      return 1
+      ;;
+  esac
+
+  echo "🔎 Running preflight checks (mode=${CLOUDFLARE_SYNC_MODE}, dry-run=${DRY_RUN})..."
+
+  if [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
+    if [[ "${CLOUDFLARE_SYNC_MODE}" == "api" ]]; then
+      echo "❌ Missing CLOUDFLARE_API_TOKEN (required in api mode). Export a scoped token with Workers + KV permissions."
+      has_error=1
+    else
+      echo "⚠️ CLOUDFLARE_API_TOKEN is unset. Wrangler sync will be skipped; export it to enable Cloudflare sync."
+    fi
+  fi
+
+  if [[ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
+    if [[ "${CLOUDFLARE_SYNC_MODE}" == "api" ]]; then
+      echo "❌ Missing CLOUDFLARE_ACCOUNT_ID (required in api mode). Set it from Cloudflare dashboard > Workers & Pages."
+      has_error=1
+    else
+      echo "⚠️ CLOUDFLARE_ACCOUNT_ID is unset. Some Wrangler/API commands may fail; export account id for reliable sync."
+    fi
+  fi
+
+  if [[ -n "${CF_ZONE_ID:-}" && -z "${CLOUDFLARE_ZONE_ID:-}" ]]; then
+    echo "⚠️ Detected CF_ZONE_ID but CLOUDFLARE_ZONE_ID is unset. Rename/export as CLOUDFLARE_ZONE_ID to avoid tooling mismatches."
+  fi
+
+  for secret_key in "${SECRET_KEYS[@]}"; do
+    if [[ "${secret_key}" == "AIPROXYSIGNING_KEY" ]]; then
+      continue
+    fi
+
+    if [[ -z "${!secret_key:-}" ]]; then
+      echo "⚠️ Missing expected secret ${secret_key}. Export ${secret_key} before deploy to sync Worker secrets."
+    fi
+  done
+
+  if [[ "${has_error}" -eq 1 ]]; then
+    echo "❌ Preflight checks failed due to blocking Cloudflare configuration issues."
+    return 1
+  fi
+
+  echo "✅ Preflight checks completed"
+}
+
+echo "🚀 Initializing GoldShore Audit & Deployment: ${TARGET_APP}"
+
+for arg in "$@"; do
+  if [[ "${arg}" == "--dry-run" ]]; then
+    DRY_RUN=1
+  fi
+done
 cf_api() {
   local method="$1"
   local path="$2"
@@ -287,7 +348,11 @@ validate_gateway_auth_preflight
 
 run_preflight_validation
 
-if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
+preflight_env_checks
+
+if [[ "${DRY_RUN}" == "1" ]]; then
+  echo "🧪 Dry-run mode: skipping Cloudflare sync mutations."
+elif [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   echo "🔍 Auditing Cloudflare Production State..."
 
   if ! verify_cloudflare_access; then
