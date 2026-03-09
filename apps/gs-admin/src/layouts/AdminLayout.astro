@@ -23,6 +23,8 @@ const isPermissionAllowed = requiredPermission
   ? session.permissions.includes(requiredPermission)
   : true;
 const isAuthorized = isRoleAllowed && isPermissionAllowed;
+const envLabel = import.meta.env.PUBLIC_API?.includes('preview') ? 'Preview' : 'Production';
+const envKey = envLabel.toLowerCase();
 ---
 <html lang="en">
   <head>
@@ -145,6 +147,30 @@ const isAuthorized = isRoleAllowed && isPermissionAllowed;
         pointer-events: auto;
       }
 
+
+      .sidebar-env-ribbon {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 0.25rem 0.5rem;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        background: var(--env-color, var(--gs-color-accent));
+        color: #111827;
+      }
+
+      body[data-env="preview"] {
+        --env-color: #f59e0b;
+      }
+
+      body[data-env="production"] {
+        --env-color: #22c55e;
+      }
+
+      body[data-env="preview"] .gs-admin-topbar {
+        border-bottom: 2px solid #f59e0b;
+      }
+
       @media (max-width: 1024px) {
         .gs-admin-grid {
           display: block !important;
@@ -181,10 +207,10 @@ const isAuthorized = isRoleAllowed && isPermissionAllowed;
       }
     </style>
   </head>
-  <body>
+  <body data-env={envKey}>
     <a href="#admin-content" class="skip-link">Skip to content</a>
     <div class="gs-admin-grid">
-      <Sidebar logo={logoSrc} permissions={session.permissions} />
+      <Sidebar logo={logoSrc} permissions={session.permissions} envLabel={envLabel} />
       <div class="gs-admin-main">
         <Topbar title={title} session={session} />
         <main id="admin-content" class="gs-admin-content">
