@@ -103,6 +103,10 @@ media.post('/upload', async (c) => {
 
   if (contentType === 'image/svg+xml') {
     const sanitizedSvg = sanitizeSvg(await file.text());
+    if (!sanitizedSvg.trim()) {
+      return c.json({ error: 'Invalid SVG payload' }, 400);
+    }
+
     const encoded = new TextEncoder().encode(sanitizedSvg);
     body = encoded;
     size = encoded.byteLength;
