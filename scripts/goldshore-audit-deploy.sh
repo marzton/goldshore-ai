@@ -96,12 +96,7 @@ validate_gateway_auth_preflight
 if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   echo "🔍 Auditing Cloudflare Production State..."
 
-  if curl -fsS -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
-    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-    -H "Content-Type: application/json" >/dev/null; then
-    echo "✅ Cloudflare token verification passed"
-  else
-    echo "❌ Cloudflare token verification failed"
+  if ! verify_cloudflare_access; then
     exit 1
   fi
 
@@ -130,6 +125,8 @@ if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
       popd >/dev/null
     fi
   done
+  verify_cloudflare_access
+  sync_via_api
 else
   echo "⚠️ Warning: CLOUDFLARE_API_TOKEN not detected."
 fi
