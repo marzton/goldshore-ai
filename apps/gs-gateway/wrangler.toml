@@ -10,6 +10,7 @@ routes = [
 
 [vars]
 ENV = "production"
+ADMIN_TOKEN = ""
 API_ORIGIN = "https://api.goldshore.ai"
 CLOUDFLARE_ACCESS_AUDIENCE = ""
 CLOUDFLARE_TEAM_DOMAIN = ""
