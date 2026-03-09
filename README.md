@@ -611,6 +611,16 @@ Build all:
 pnpm build
 ```
 
+### Local Development Secrets
+
+Use the secret audit helper to discover worker targets that are currently eligible for preview secret sync:
+
+```bash
+pnpm run secret:audit
+```
+
+> Note: this command currently performs discovery/audit for preview sync eligibility. It is not a full cross-environment parity audit.
+
 ---
 
 # 🚀 Deployment Guide
