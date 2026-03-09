@@ -105,8 +105,10 @@ try {
   }
 
 } catch (e) {
-  const errorMessage = (e && e.message) ? e.message : String(e);
-  const safeMessage = errorMessage.replace(/[\x00-\x1F\x7F]+/g, ' ');
+  const errorMessage = (e && e.message) ? String(e.message) : String(e);
+  const safeMessage = errorMessage
+    .replace(/[\r\n]+/g, ' ')        // remove line breaks to prevent log injection
+    .replace(/[\x00-\x1F\x7F]+/g, ' '); // normalize other control characters
   console.error('Error during security check:', safeMessage);
   exitCode = 1;
 } finally {
