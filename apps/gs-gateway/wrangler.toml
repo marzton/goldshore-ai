@@ -37,3 +37,12 @@ binding = "AI"
 
 [observability]
 enabled = true
+
+[env.preview]
+name = "gs-gateway-preview"
+compatibility_date = "2025-01-10"
+kv_namespaces = [{ binding = "GATEWAY_KV", id = "9cc2209906a94851b704be57543987a9" }]
+services = [{ binding = "API", service = "gs-api", environment = "preview" }]
+vars = { ENV = "preview", API_ORIGIN = "https://api-preview.goldshore.ai", CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b", CLOUDFLARE_TEAM_DOMAIN = "gsl-ops" }
+ai = { binding = "AI" }
+queues = { producers = [{ binding = "JOB_QUEUE", queue = "goldshore-jobs" }] }
