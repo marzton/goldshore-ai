@@ -54,8 +54,7 @@ function initModal() {
   const closeBtn = root?.querySelector<HTMLButtonElement>(
     '[data-gs-modal-close]',
   );
-  const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
-  const panel = root.querySelector<HTMLElement>('.gs-modal-panel');
+  const panel = root?.querySelector<HTMLElement>('.gs-modal-panel');
 
   let opener: HTMLElement | null = null;
   let lastFocused: Element | null = null;
