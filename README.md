@@ -582,6 +582,29 @@ Install dependencies:
 pnpm install
 ```
 
+### Audit Environment Parity
+
+1. `pnpm run secret:audit`
+
+```bash
+pnpm run secret:audit
+```
+
+### Sync Missing Secrets (Interactive)
+
+2. `pnpm run secret:sync`
+
+```bash
+pnpm run secret:sync
+```
+
+3. `pnpm run secret:sync:worker -- apps/gs-api`
+
+```bash
+pnpm run secret:sync:worker -- apps/gs-api
+```
+
+Run everything:
 Run all workspace apps in parallel:
 
 ```bash
@@ -596,6 +619,7 @@ pnpm --filter @goldshore/admin dev
 pnpm --filter @goldshore/api-worker dev
 ```
 
+Run individual apps:
 Run individual apps by workspace path (monorepo-friendly):
 
 ```bash
@@ -662,6 +686,8 @@ pnpm --filter @goldshore/control-worker deploy
 ```
 
 Deploy Workers by workspace path (monorepo-friendly):
+
+Additional worker deploy targets:
 
 ```bash
 pnpm --filter ./apps/api-worker deploy

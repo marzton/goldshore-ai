@@ -30,6 +30,9 @@
     "repo:install": "pnpm install --frozen-lockfile",
     "repo:health": "node scripts/repo-health.mjs",
     "audit": "pnpm run repo:health",
+    "secret:audit": "node scripts/secret-audit.mjs",
+    "secret:sync": "bash scripts/sync-preview-secrets.sh",
+    "secret:sync:worker": "bash scripts/sync-preview-secrets.sh --worker"
     "validate:preview-bindings": "node scripts/validate-preview-bindings.js"
     "validate:preview-bindings": "tsx scripts/validate-preview-bindings.ts"
   },
