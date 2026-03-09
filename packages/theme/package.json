@@ -13,7 +13,13 @@
     "./styles/components.css": "./styles/components.css",
     "./styles/motion.css": "./styles/motion.css",
     "./styles/*": "./styles/*",
+    "./tokens": "./styles/tokens.css",
+    "./styles/tokens": "./styles/tokens.css",
+    "./styles/base": "./styles/base.css",
+    "./styles/components": "./styles/components.css",
+    "./styles/layout": "./styles/layout.css",
     "./runtime": "./index.ts",
-    "./manager": "./src/manager.ts"
+    "./manager": "./src/manager.ts",
+    "./assets/logo.svg": "./assets/logo.svg"
   }
 }
