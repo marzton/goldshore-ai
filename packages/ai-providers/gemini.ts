@@ -18,10 +18,7 @@ export const geminiProvider: AnalysisProvider = {
     }
 
     const model = config.model ?? 'gemini-1.5-pro';
-    const baseEndpoint = config.aiProxyEndpoint?.trim();
-    const url = baseEndpoint
-      ? `${baseEndpoint}/google-ai-studio/v1beta/models/${model}:generateContent?key=${apiKey}`
-      : `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
     const response = await config.fetch(url, {
       method: 'POST',
       headers: {

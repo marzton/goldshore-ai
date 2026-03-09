@@ -1,27 +1,10 @@
 import { Hono } from 'hono';
-import { EmailInboxLogsSchema, ServiceStatusSchema } from '@goldshore/schema';
-import { Env, Variables } from '../types';
-import { loadSystemSyncSnapshot } from './system.config';
 import {
   EmailInboxLogsSchema,
   ServiceStatusSchema,
 } from '@goldshore/schema';
 
-const internal = new Hono<{ Bindings: Env; Variables: Variables }>();
-
-const EMPTY_SERVICES = {
-  maintenance_mode: false,
-  active_services: [],
-  version: 'unknown'
-};
-
-const INTERNAL_ERROR_RESPONSE = {
-  success: false,
-  error: {
-    code: 'INTERNAL_INBOX_STATUS_ERROR',
-    message: 'Failed to retrieve internal inbox status'
-  }
-};
+const internal = new Hono<{ Bindings: any }>();
 
 const DNS_SYNC_RUN_INDEX_KEY = 'dns_sync_runs_index';
 
@@ -57,13 +40,6 @@ const parseDnsSyncRun = (value: unknown): DnsSyncRun | null => {
  */
 internal.get('/inbox-status', async (c) => {
   try {
-    const [rawLogs, rawStatus] = await Promise.all([
-      c.env.KV.get('EMAIL_INBOX_LOGS', 'json'),
-      c.env.KV.get('SERVICE_STATUS', 'json')
-    ]);
-
-    const logsResult = EmailInboxLogsSchema.safeParse(rawLogs);
-    const statusResult = ServiceStatusSchema.safeParse(rawStatus);
     // 1. Concurrent fetch for performance
     const [rawLogs, rawStatus] = await Promise.all([
       c.env.KV.get("EMAIL_INBOX_LOGS", "json"),
@@ -78,7 +54,6 @@ internal.get('/inbox-status', async (c) => {
     return c.json({
       success: true,
       timestamp: new Date().toISOString(),
-      services: statusResult.success ? statusResult.data : EMPTY_SERVICES,
       // Fallback to empty state if validation fails or data is missing
       services: statusResult.success ? statusResult.data : { maintenance_mode: false, active_services: [], version: "unknown" },
       inbox: {
@@ -87,11 +62,6 @@ internal.get('/inbox-status', async (c) => {
       }
     });
   } catch (error) {
-    console.error('[internal/inbox-status] failed to fetch KV data', error);
-    return c.json({
-      ...INTERNAL_ERROR_RESPONSE,
-      timestamp: new Date().toISOString()
-    }, 500);
     console.error("Internal API Error:", error);
     return c.json({ success: false, error: "Failed to retrieve internal system state" }, 500);
   }
