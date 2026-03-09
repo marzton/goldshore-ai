@@ -95,7 +95,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cd "${{ matrix.app }}"
 
           run_and_check() {
             local target_env="$1"
@@ -103,7 +102,7 @@ jobs:
             output_file="$(mktemp)"
 
             echo "Running dry-run deploy for '${target_env}' in ${{ matrix.app }}"
-            pnpm dlx wrangler deploy --dry-run --env "${target_env}" --config wrangler.toml 2>&1 | tee "${output_file}"
+            pnpm dlx wrangler deploy --dry-run --env "${target_env}" --config "${{ matrix.app }}/wrangler.toml" 2>&1 | tee "${output_file}"
 
             if rg -n "exists at the top level, but not on env\\..*|not inherited by environments" "${output_file}"; then
               echo "::error::Detected inheritance/missing-binding warnings for env '${target_env}' in ${{ matrix.app }}"
