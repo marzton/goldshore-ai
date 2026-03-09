@@ -1,9 +1,13 @@
 ---
 import WebLayout from './WebLayout.astro';
-const { title } = Astro.props;
+const { title, description } = Astro.props;
 ---
 
-<WebLayout title={title}>
+<WebLayout title={title} description={description}>
+  <slot name="head" slot="head" />
+
+  <slot name="hero" slot="hero" />
+
   <section class="docs-shell">
     <slot />
   </section>

@@ -58,8 +58,16 @@ async function checkCloudflare() {
     }
     if (check.type === "dns_records") {
       const dns = await getDNSRecords();
+      const dnsIndex = new Map<string, any[]>();
+      for (const d of dns as any[]) {
+        const key = `${d.name}|${d.type}`;
+        if (!dnsIndex.has(key)) dnsIndex.set(key, []);
+        dnsIndex.get(key)!.push(d);
+      }
       for (const req of check.required) {
-        const hit = (dns as any[]).find((d: any) => d.name === req.name && d.type === req.type && (req.contains ? (String(d.content || "").includes(req.contains)) : true));
+        const key = `${req.name}|${req.type}`;
+        const records = dnsIndex.get(key) || [];
+        const hit = records.find((d: any) => (req.contains ? (String(d.content || "").includes(req.contains)) : true));
         if (!hit) {
           await openOpsIssue(cfg.github.org, "goldshore", `DNS missing/invalid: ${req.name} (${req.type})`,
             `Record is missing or does not match required constraints.\n\nRequired: \`${JSON.stringify(req)}\``, cfg.ai_agent.triage_labels);
@@ -79,16 +87,24 @@ async function checkCloudflare() {
 
 async function scanGitConflicts() {
   const repos = cfg.github.repos as string[];
-  for (const repo of repos) {
-    const conflicts = await findOpenConflicts(cfg.github.org, repo);
-    for (const pr of conflicts as any[]) {
-      if (cfg.rules.open_conflicts.open_pr_comment) {
-        await commentOnPR(cfg.github.org, repo, pr.number,
-          "Automated notice: this PR is in a conflicted state (`mergeable_state=dirty`). " +
-          "Recommended fix: `git fetch origin && git rebase origin/main`, then resolve, then `git push --force-with-lease`.");
-      }
-    }
-  }
+  await Promise.all(
+    repos.map(async (repo) => {
+      const conflicts = await findOpenConflicts(cfg.github.org, repo);
+      await Promise.all(
+        (conflicts as any[]).map(async (pr) => {
+          if (cfg.rules.open_conflicts.open_pr_comment) {
+            await commentOnPR(
+              cfg.github.org,
+              repo,
+              pr.number,
+              "Automated notice: this PR is in a conflicted state (`mergeable_state=dirty`). " +
+                "Recommended fix: `git fetch origin && git rebase origin/main`, then resolve, then `git push --force-with-lease`."
+            );
+          }
+        })
+      );
+    })
+  );
 }
 
 async function main() {
@@ -96,10 +112,11 @@ async function main() {
   await ensurePagesOutputDirRule();
   await scanGitConflicts();
   logger.info("Agent poll completed.");
-}
-
-main().catch(e => { logger.error(e.stack || e); process.exit(1); });
   log("Agent poll completed.");
 }
 
-main().catch(e => { err(e.stack || e); process.exit(1); });
+main().catch(e => {
+  logger.error(e.stack || e);
+  err(e.stack || e);
+  process.exit(1);
+});
