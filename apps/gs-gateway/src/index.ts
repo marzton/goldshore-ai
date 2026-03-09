@@ -265,17 +265,32 @@ app.get('/admin', (c) => {
 app.get('/user/login', (c) => c.json({ message: 'Gateway Login Placeholder' }));
 app.post('/v1/chat', (c) => c.json({ message: 'Gateway Chat Placeholder' }));
 
-app.use('/admin/*', async (c, next) => {
+app.all('/admin', (c, next) => {
   if (!c.env.ADMIN_INTERNAL_SECRET) {
     return c.json(
       {
-        error: 'Admin route unavailable: ADMIN_INTERNAL_SECRET is not configured. Contact an operator.'
+        error:
+          'Service unavailable: admin authentication is misconfigured (ADMIN_INTERNAL_SECRET is not set).'
       },
       503
     );
   }
 
-  await next();
+  return next();
+});
+
+app.all('/admin/*', (c, next) => {
+  if (!c.env.ADMIN_INTERNAL_SECRET) {
+    return c.json(
+      {
+        error:
+          'Service unavailable: admin authentication is misconfigured (ADMIN_INTERNAL_SECRET is not set).'
+      },
+      503
+    );
+  }
+
+  return next();
 });
 
 // Forwarding fallback

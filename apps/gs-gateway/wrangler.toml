@@ -14,9 +14,8 @@ ADMIN_TOKEN = ""
 API_ORIGIN = "https://api.goldshore.ai"
 CLOUDFLARE_ACCESS_AUDIENCE = ""
 CLOUDFLARE_TEAM_DOMAIN = ""
-# NOTE: Do not put ADMIN_INTERNAL_SECRET in [vars].
-# Provision it as a Cloudflare Worker secret via dashboard or:
-#   wrangler secret put ADMIN_INTERNAL_SECRET
+# Placeholder only for local/dev; production value must be set via Cloudflare secrets/vars.
+ADMIN_INTERNAL_SECRET = "__SET_IN_CLOUDFLARE_SECRETS__"
 
 [[kv_namespaces]]
 binding = "GATEWAY_KV"
