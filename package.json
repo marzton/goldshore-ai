@@ -21,6 +21,7 @@
     "branch:bootstrap": "bash scripts/branch-bootstrap.sh",
     "scaffold:worker": "node scripts/scaffold-worker.mjs",
     "workspaces:list": "pnpm -r list --depth -1",
+    "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry && turbo run build --filter=@goldshore/gs-control --dry",
     "verify:web-dist": "node scripts/verify-web-dist.mjs",
     "memory:check": "node scripts/validate-canonical-structure.mjs",
     "sync:infra": "tsx scripts/sync-gateway.ts",
@@ -39,7 +40,7 @@
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.56.1",
     "astro": "^5.17.1",
-    "eslint": "^8.57.0",
+    "eslint": "^10.0.3",
     "eslint-plugin-astro": "^1.6.0",
     "form-data": "^4.0.5",
     "octokit": "^5.0.5",
@@ -51,7 +52,7 @@
     "wrangler": "^4.63.0",
     "yaml": "^2.8.2",
     "zod": "^4.3.6",
-    "svgo": "^3.3.2"
+    "svgo": "^4.0.1"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",

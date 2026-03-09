@@ -6,7 +6,11 @@ compatibility_flags = ["nodejs_compat"]
 workers_dev = false
 
 [env.preview]
-routes = [{ pattern = "gw-preview.goldshore.ai/*", zone_name = "goldshore.ai" }]
+name = "gs-gateway-preview"
+routes = [
+  { pattern = "gw-preview.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "gateway-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
 
 [env.preview.vars]
 ENV = "preview"
@@ -31,6 +35,7 @@ environment = "preview"
 binding = "AI"
 
 [env.prod]
+name = "gs-gateway"
 routes = [
   { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "gateway.goldshore.ai/*", zone_name = "goldshore.ai" },
@@ -38,8 +43,8 @@ routes = [
 ]
 
 [env.prod.vars]
-ENV = "production"
-NODE_ENV = "production"
+ENV = "prod"
+NODE_ENV = "prod"
 OTEL_SERVICE_NAME = "goldshore-core-prod"
 API_ORIGIN = "https://api.goldshore.ai"
 CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b"

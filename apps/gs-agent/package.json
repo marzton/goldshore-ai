@@ -5,9 +5,10 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "wrangler dev src/index.ts --env dev",
-    "deploy": "wrangler deploy src/index.ts --env prod",
-    "build": "wrangler deploy src/index.ts --dry-run --outdir=dist --env prod"
+    "dev": "wrangler dev src/index.ts",
+    "deploy": "wrangler deploy --minify src/index.ts --env prod",
+    "deploy:preview": "wrangler deploy --minify src/index.ts --env dev",
+    "build": "wrangler deploy src/index.ts --dry-run --outdir=dist"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",

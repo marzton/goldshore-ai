@@ -1,12 +1,11 @@
-name: Deploy GS Gateway Worker (gw.goldshore.ai)
+name: Deploy API Gateway (gw.goldshore.ai)
 
 permissions:
   contents: read
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - "apps/gs-gateway/**"
       - "packages/**"
@@ -16,10 +15,10 @@ on:
 jobs:
   deploy-gateway:
     runs-on: ubuntu-latest
-    name: Deploy Gateway Worker
+    name: Deploy API Gateway
 
     steps:
-      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - uses: pnpm/action-setup@v4
         with:
