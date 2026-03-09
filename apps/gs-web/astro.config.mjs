@@ -1,3 +1,7 @@
 import { createAstroConfig } from '@goldshore/config/astro';
 
-export default createAstroConfig();
+export default createAstroConfig({
+  redirects: {
+    '/developer-hub': '/developer',
+  },
+});
