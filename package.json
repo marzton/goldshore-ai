@@ -17,7 +17,7 @@
     "validate:names": "tsx scripts/validate-worker-names.ts",
     "validate:workers": "tsx scripts/validate-worker-names.ts",
     "validate:workspace": "tsx scripts/validate-workspace-contract.ts",
-    "validate": "pnpm check:naming && pnpm validate:workspace && pnpm validate:structure && pnpm validate:names",
+    "validate": "pnpm check:naming && pnpm validate:workspace && pnpm validate:structure && pnpm validate:names && pnpm validate:preview-bindings",
     "branch:bootstrap": "bash scripts/branch-bootstrap.sh",
     "scaffold:worker": "node scripts/scaffold-worker.mjs",
     "workspaces:list": "pnpm -r list --depth -1",
@@ -29,7 +29,8 @@
     "repo:clean": "git clean -xfd -e .env -e env.secrets.runtime.json",
     "repo:install": "pnpm install --frozen-lockfile",
     "repo:health": "node scripts/repo-health.mjs",
-    "audit": "pnpm run repo:health"
+    "audit": "pnpm run repo:health",
+    "validate:preview-bindings": "tsx scripts/validate-preview-bindings.ts"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
