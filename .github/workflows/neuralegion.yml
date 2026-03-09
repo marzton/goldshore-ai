@@ -152,11 +152,12 @@ permissions:
   contents: read
 
 on:
-  workflow_dispatch:
-
-concurrency:
-  group: neuralegion-${{ github.ref }}
-  cancel-in-progress: true
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '38 10 * * 2'
 
 jobs:
   neuralegion-scan:
