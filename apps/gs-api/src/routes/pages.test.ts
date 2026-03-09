@@ -1,7 +1,7 @@
 import { describe, it, mock } from 'node:test';
 import assert from 'node:assert';
 import { Hono } from 'hono';
-import pages from './pages';
+import pages from './pages.ts';
 import { Env, Variables } from '../types';
 
 const mockQuery = {

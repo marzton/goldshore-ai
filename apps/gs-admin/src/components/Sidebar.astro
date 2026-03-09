@@ -16,6 +16,7 @@ const links: Array<{ href: string; label: string; requiredPermission?: AdminPerm
   { href: '/admin/pages/editor', label: 'Pages Editor' },
   { href: '/admin/system', label: 'System' },
   { href: '/admin/workers', label: 'Workers' },
+  { href: '/admin/kv', label: 'KV Namespaces' },
   { href: '/admin/users', label: 'Users', requiredPermission: 'users:read' },
   { href: '/admin/pii-scans', label: 'PII Scans' },
   { href: '/admin/logs', label: 'Logs', requiredPermission: 'audit:read' },
@@ -51,7 +52,7 @@ const isActive = (href: string) => {
     href="https://goldshore.ai"
     target="_blank"
     rel="noopener noreferrer"
-    logoSrc={logo?.src || logo || '/packages/brand/logo-penrose.svg'}
+    logoSrc={logo?.src || logo || '/assets/logo.svg'}
     logoAlt="GoldShore logo"
   >
     <span slot="brand-text">GoldShore</span>
