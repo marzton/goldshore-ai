@@ -21,6 +21,7 @@ function initNav() {
   const setOpen = (open: boolean) => {
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     panel.classList.toggle('is-open', open);
+    panel.setAttribute('aria-hidden', open ? 'false' : 'true');
     document.documentElement.classList.toggle('gs-lock', open);
   };
 
@@ -31,8 +32,13 @@ function initNav() {
 
   panel.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
-    if (t.matches('[data-gs-nav-close]') || t.matches('[data-gs-mobile-panel]'))
+    if (
+      t.matches('[data-gs-nav-close]') ||
+      t.matches('[data-gs-mobile-panel]') ||
+      t.closest('.gs-mobile-link-item')
+    ) {
       setOpen(false);
+    }
   });
 
   window.addEventListener('keydown', (e) => {
