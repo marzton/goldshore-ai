@@ -7,10 +7,18 @@ route = "preview.admin.goldshore.ai/*"
 
 [env.preview.vars]
 PREVIEW_MODE = "true"
+API_ORIGIN = "https://api-preview.goldshore.ai"
+
+[[env.preview.kv_namespaces]]
+binding = "GS_CONFIG"
+id = "9cc2209906a94851b704be57543987a9"
 
 [env.production]
 route = "admin.goldshore.ai/*"
 
-[[kv_namespaces]]
+[env.production.vars]
+API_ORIGIN = "https://api.goldshore.ai"
+
+[[env.production.kv_namespaces]]
 binding = "GS_CONFIG"
 id = "9cc2209906a94851b704be57543987a9"
