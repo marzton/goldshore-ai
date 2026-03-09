@@ -99,6 +99,8 @@ cloudflare:
         production_branch: "main"
         build_command: "pnpm --filter @goldshore/web build"
         output_dir: "apps/gs-web/dist"
+        build_env_vars:
+          NODE_VERSION: "22"
         custom_domains:
           - "goldshore.ai"
           - "www.goldshore.ai"
