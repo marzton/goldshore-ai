@@ -107,23 +107,14 @@ cd "${REPO_ROOT}" || {
 
 node -e "const fs=require('fs'); try { const p=JSON.parse(fs.readFileSync('package.json', 'utf8')); fs.writeFileSync('package.json', JSON.stringify(p, null, 2) + '\\n'); } catch(e) { console.error('Repairing JSON structure...'); const raw=fs.readFileSync('package.json', 'utf8').replace(/,(\\s*[\\]}])/g, '$1'); fs.writeFileSync('package.json', raw); }"
 
-if [[ -z "${AIPROXYSIGNING_KEY:-}" ]]; then
-  export AIPROXYSIGNING_KEY
-  AIPROXYSIGNING_KEY="$(node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))")"
-  echo "✅ AIPROXYSIGNING_KEY generated"
-fi
+validate_gateway_auth_preflight
 
 run_preflight_validation
 
 if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
   echo "🔍 Auditing Cloudflare Production State..."
 
-  if curl -fsS -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
-    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-    -H "Content-Type: application/json" >/dev/null; then
-    echo "✅ Cloudflare token verification passed"
-  else
-    echo "❌ Cloudflare token verification failed"
+  if ! verify_cloudflare_access; then
     exit 1
   fi
 
@@ -152,6 +143,8 @@ if [[ -n "${CLOUDFLARE_API_TOKEN:-}" ]]; then
       popd >/dev/null
     fi
   done
+  verify_cloudflare_access
+  sync_via_api
 else
   echo "⚠️ Warning: CLOUDFLARE_API_TOKEN not detected."
 fi
