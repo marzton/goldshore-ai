@@ -37,11 +37,13 @@ function warnOrFail(message) {
 function validateGatewayAuthPreflight() {
   const endpoint = process.env.AIPROXY_ENDPOINT;
   let hasExpectedHost = false;
-
   if (typeof endpoint === 'string') {
     try {
-      const parsed = new URL(endpoint);
-      hasExpectedHost = parsed.host === 'gateway.ai.cloudflare.com';
+      const url = new URL(endpoint);
+      const hostname = url.hostname.toLowerCase();
+      hasExpectedHost =
+        hostname === 'gateway.ai.cloudflare.com' ||
+        hostname.endsWith('.gateway.ai.cloudflare.com');
     } catch {
       hasExpectedHost = false;
     }
@@ -50,7 +52,7 @@ function validateGatewayAuthPreflight() {
   if (!endpoint) {
     warnOrFail('AIPROXY_ENDPOINT is missing. Rotation can succeed, but runtime AI Gateway auth will be misconfigured.');
   } else if (!hasExpectedHost) {
-    warnOrFail(`AIPROXY_ENDPOINT should point to https://gateway.ai.cloudflare.com. Current value: ${endpoint}`);
+    warnOrFail(`AIPROXY_ENDPOINT should have hostname gateway.ai.cloudflare.com. Current value: ${endpoint}`);
   } else {
     console.log(`✅ AIPROXY_ENDPOINT configured: ${endpoint}`);
   }
