@@ -4,8 +4,6 @@
 // Type definitions for environment variables
 interface ImportMetaEnv {
   readonly PUBLIC_API: string;
-  readonly PUBLIC_GATEWAY: string;
-  readonly PUBLIC_ENV: 'production' | 'preview' | 'development';
   readonly PUBLIC_AUTH_TOKEN_URL: string;
   readonly PUBLIC_AUTH_CLIENT_ID: string;
   readonly PUBLIC_BUILD_TIMESTAMP: string;
@@ -40,13 +38,9 @@ interface Env {
   HERO_CONFIG_KV?: KVNamespace;
   CONTACT_TTL_SECONDS?: string;
   CONTACT_NOTIFICATION_EMAILS?: string;
-  MAIL_FROM_EMAIL?: string;
-  MAIL_FROM_NAME?: string;
-  MAIL_FROM_DOMAIN?: string;
-  RESEND_API_KEY?: string;
-  POSTMARK_SERVER_TOKEN?: string;
-  GS_MAIL_API_URL?: string;
-  GS_MAIL_API_TOKEN?: string;
+  MAILCHANNELS_SENDER_EMAIL?: string;
+  MAILCHANNELS_SENDER_NAME?: string;
+  MAILCHANNELS_API_URL?: string;
 }
 
 declare namespace App {

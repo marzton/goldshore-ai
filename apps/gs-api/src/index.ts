@@ -10,8 +10,6 @@ import system from './routes/system';
 import templates from './routes/templates';
 import admin from './routes/admin';
 import media from './routes/media';
-import webhook from './routes/webhook';
-import oauth from './routes/oauth';
 import pages from './routes/pages';
 import internal from './routes/internal';
 
@@ -59,7 +57,7 @@ app.use('*', cors({
 // Enforce Authentication (Defense in Depth)
 app.use('*', async (c, next) => {
   // Allow health checks, root, and CORS preflight
-  if (c.req.path === '/health' || c.req.path.startsWith('/health/') || c.req.path === '/' || c.req.method === 'OPTIONS' || c.req.path.startsWith('/webhook') || c.req.path.startsWith('/oauth')) {
+  if (c.req.path === '/health' || c.req.path.startsWith('/health/') || c.req.path === '/' || c.req.method === 'OPTIONS') {
     c.set('accessClaims', null);
     await next();
     return;
@@ -116,8 +114,6 @@ app.get('/', (c) => {
 
 // Core routes
 app.route('/health', health);
-app.route('/webhook', webhook);
-app.route('/oauth', oauth);
 app.route('/ai', ai);
 app.route('/users', users);
 app.route('/user', user);

@@ -32,7 +32,7 @@ class MockKV {
     this.payload = payload;
   }
 
-  async get(): Promise<string | null> {
+  async get(_key: string): Promise<string | null> {
     return this.payload;
   }
 

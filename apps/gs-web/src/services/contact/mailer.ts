@@ -1,14 +1,14 @@
 import { isValidEmail } from '../../utils/security';
 import type { FormConfig, MailRecipient, Submission } from './types';
 
-const RESEND_API_URL = 'https://api.resend.com/emails';
-const POSTMARK_API_URL = 'https://api.postmarkapp.com/email';
+const DEFAULT_MAILCHANNELS_API_URL = 'https://api.mailchannels.net/tx/v1/send';
 
 export const dedupeRecipients = (recipients: MailRecipient[]) => {
   const unique = new Map<string, MailRecipient>();
   recipients.forEach((recipient) => {
     const email = recipient.email.trim().toLowerCase();
-    if (!email || !isValidEmail(email)) return;
+    if (!email) return;
+    if (!isValidEmail(email)) return;
     if (!unique.has(email)) {
       unique.set(email, {
         email,
@@ -68,7 +68,9 @@ export const buildSubmissionDigest = (submission: Submission) => {
 
   const filtered = pairs.filter(([, value]) => value);
 
-  const text = filtered.map(([label, value]) => `${label}: ${value}`).join('\n');
+  const text = filtered
+    .map(([label, value]) => `${label}: ${value}`)
+    .join('\n');
   const html = filtered
     .map(
       ([label, value]) =>
@@ -79,12 +81,6 @@ export const buildSubmissionDigest = (submission: Submission) => {
   return { text, html };
 };
 
-const isVerifiedFromAddress = (fromEmail: string, fromDomain: string) => {
-  const normalizedEmail = fromEmail.toLowerCase();
-  const normalizedDomain = fromDomain.toLowerCase();
-  return normalizedEmail.endsWith(`@${normalizedDomain}`);
-};
-
 export const sendMail = async (
   env: Env,
   to: MailRecipient[],
@@ -93,87 +89,52 @@ export const sendMail = async (
   html: string,
   replyTo?: MailRecipient,
 ) => {
-  const fromEmail = env.MAIL_FROM_EMAIL?.trim();
-  const fromName = env.MAIL_FROM_NAME?.trim() || 'GoldShore';
-  const fromDomain = env.MAIL_FROM_DOMAIN?.trim();
-
-  if (
-    !fromEmail ||
-    !fromDomain ||
-    !isValidEmail(fromEmail) ||
-    !isVerifiedFromAddress(fromEmail, fromDomain) ||
-    to.length === 0
-  ) {
+  const fromEmail = env.MAILCHANNELS_SENDER_EMAIL?.trim();
+  const fromName = env.MAILCHANNELS_SENDER_NAME?.trim() || 'GoldShore';
+  if (!fromEmail || !isValidEmail(fromEmail) || to.length === 0) {
     return {
       attempted: false,
       reason: 'missing_mail_configuration',
     };
   }
 
-  const validReplyTo =
-    replyTo && isValidEmail(replyTo.email)
-      ? { email: replyTo.email.trim().toLowerCase(), name: replyTo.name?.trim() }
-      : undefined;
-
-  if (env.RESEND_API_KEY?.trim()) {
-    const payload = {
-      from: fromName ? `${fromName} <${fromEmail}>` : fromEmail,
-      to: to.map((recipient) => recipient.email),
-      subject,
-      text,
-      html,
-      ...(validReplyTo ? { reply_to: validReplyTo.email } : {}),
-    };
-
-    const response = await fetch(RESEND_API_URL, {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${env.RESEND_API_KEY.trim()}`,
-        'content-type': 'application/json',
+  const payload = {
+    personalizations: [
+      {
+        to,
       },
-      body: JSON.stringify(payload),
-    });
-
-    return {
-      attempted: true,
-      ok: response.ok,
-      status: response.status,
-      body: await response.text(),
-      provider: 'resend',
-    };
-  }
-
-  if (env.POSTMARK_SERVER_TOKEN?.trim()) {
-    const payload = {
-      From: fromName ? `${fromName} <${fromEmail}>` : fromEmail,
-      To: to.map((recipient) => recipient.email).join(','),
-      Subject: subject,
-      TextBody: text,
-      HtmlBody: html,
-      ...(validReplyTo ? { ReplyTo: validReplyTo.email } : {}),
-    };
-
-    const response = await fetch(POSTMARK_API_URL, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'X-Postmark-Server-Token': env.POSTMARK_SERVER_TOKEN.trim(),
+    ],
+    from: {
+      email: fromEmail,
+      name: fromName,
+    },
+    ...(replyTo ? { reply_to: replyTo } : {}),
+    subject,
+    content: [
+      {
+        type: 'text/plain',
+        value: text,
       },
-      body: JSON.stringify(payload),
-    });
+      {
+        type: 'text/html',
+        value: html,
+      },
+    ],
+  };
 
-    return {
-      attempted: true,
-      ok: response.ok,
-      status: response.status,
-      body: await response.text(),
-      provider: 'postmark',
-    };
-  }
+  const endpoint = env.MAILCHANNELS_API_URL || DEFAULT_MAILCHANNELS_API_URL;
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
 
   return {
-    attempted: false,
-    reason: 'missing_provider_credentials',
+    attempted: true,
+    ok: response.ok,
+    status: response.status,
+    body: await response.text(),
   };
 };
