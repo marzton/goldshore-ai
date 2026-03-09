@@ -213,6 +213,6 @@ async function run() {
 }
 
 run().catch((error) => {
-  console.error(`❌ ${error.message}`);
+  console.error('❌ Rotation script failed. See higher-level logs or re-run with debugging enabled.');
   process.exit(1);
 });
