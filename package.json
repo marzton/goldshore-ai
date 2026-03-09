@@ -17,6 +17,7 @@
     "validate:names": "tsx scripts/validate-worker-names.ts",
     "validate:workers": "tsx scripts/validate-worker-names.ts",
     "validate:workspace": "tsx scripts/validate-workspace-contract.ts",
+    "audit:wrangler-envs": "node scripts/audit-wrangler-envs.mjs",
     "validate": "pnpm check:naming && pnpm validate:workspace && pnpm validate:structure && pnpm validate:names && pnpm validate:preview-bindings",
     "branch:bootstrap": "bash scripts/branch-bootstrap.sh",
     "scaffold:worker": "node scripts/scaffold-worker.mjs",
