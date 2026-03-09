@@ -19,12 +19,40 @@ const ALLOWED_MIME_TYPES = new Map([
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
-/**
- * [SOP] Media Asset Management
- * Handles R2 storage for images and SVGs with strict sanitization for vector assets.
- */
+const allowedTags = new Set([
+  'svg', 'g', 'path', 'circle', 'rect', 'line', 'polygon', 'polyline',
+  'ellipse', 'defs', 'clipPath', 'use', 'title', 'desc'
+]);
 
-// ... (sanitizeSvg and regex constants provided in your source remain identical)
+const allowedAttrs = new Set([
+  'xmlns', 'viewBox', 'width', 'height', 'fill', 'stroke', 'stroke-width',
+  'stroke-linecap', 'stroke-linejoin', 'd', 'cx', 'cy', 'r', 'x', 'y',
+  'x1', 'y1', 'x2', 'y2', 'points', 'id', 'class', 'transform', 'opacity'
+]);
+
+function sanitizeSvg(svg: string): string {
+  const tagRegex = /<\/?([a-zA-Z0-9-]+)([^>]*)>/g;
+
+  return svg.replace(tagRegex, (match, tag, attrs) => {
+    if (!allowedTags.has(tag)) return '';
+
+    let cleanAttrs = '';
+    const attrRegex = /([a-zA-Z0-9-]+)="([^"]*)"/g;
+    let attrMatch;
+    while ((attrMatch = attrRegex.exec(attrs)) !== null) {
+      const attr = attrMatch[1];
+      const value = attrMatch[2];
+
+      if (/^(javascript|data|vbscript):/i.test(value.trim())) continue;
+
+      if (allowedAttrs.has(attr)) {
+        cleanAttrs += ` ${attr}="${value}"`;
+      }
+    }
+
+    return `<${match.startsWith('</') ? '/' : ''}${tag}${cleanAttrs}>`;
+  });
+}
 
 const media = new Hono<{ Bindings: Env; Variables: Variables }>();
 
@@ -52,7 +80,7 @@ media.get('/:id', async (c) => {
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
   
   // Sentinel: Enforce strict CSP to mitigate SVG XSS
-  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; sandbox");
+  headers.set('Content-Security-Policy', "default-src 'none'; object-src 'none'; script-src 'none'; sandbox");
 
   return new Response(object.body, { headers });
 });
@@ -92,7 +120,7 @@ media.post('/upload', async (c) => {
 
   const createdAt = new Date().toISOString();
   await c.env.DB.prepare(
-      'INSERT INTO media_assets (id, filename, url, size, type, object_key, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
+      'INSERT INTO media_assets (id, filename, url, size, type, object_key, created_at) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING *'
     )
     .bind(id, filename, url.toString(), size, contentType, objectKey, createdAt)
     .run();

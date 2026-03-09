@@ -21,22 +21,14 @@
     "branch:bootstrap": "bash scripts/branch-bootstrap.sh",
     "scaffold:worker": "node scripts/scaffold-worker.mjs",
     "workspaces:list": "pnpm -r list --depth -1",
-<<<<<<< main-HEAD-2
+    "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry && turbo run build --filter=@goldshore/gs-control --dry",
     "verify:web-dist": "node scripts/verify-web-dist.mjs",
     "memory:check": "node scripts/validate-canonical-structure.mjs",
     "sync:infra": "tsx scripts/sync-gateway.ts",
-    "sync:cf": "echo 'Run codex sync script here' && tsx scripts/sync-gateway.ts",
-    "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry",
     "repo:clean": "git clean -xfd -e .env -e env.secrets.runtime.json",
     "repo:install": "pnpm install --frozen-lockfile",
     "repo:health": "node scripts/repo-health.mjs",
     "audit": "pnpm run repo:health"
-=======
-    "verify:workspace-filters": "turbo run build --filter=@goldshore/gs-api --dry && turbo run build --filter=@goldshore/gs-control --dry",
-    "verify:web-dist": "node scripts/verify-web-dist.mjs",
-    "memory:check": "node scripts/validate-canonical-structure.mjs",
-    "sync:infra": "tsx scripts/sync-gateway.ts"
->>>>>>> chore/working-copy
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
@@ -46,7 +38,7 @@
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.56.1",
     "astro": "^5.17.1",
-    "eslint": "^8.57.0",
+    "eslint": "^10.0.3",
     "eslint-plugin-astro": "^1.6.0",
     "form-data": "^4.0.5",
     "octokit": "^5.0.5",
@@ -57,12 +49,8 @@
     "typescript": "^5.4.2",
     "wrangler": "^4.63.0",
     "yaml": "^2.8.2",
-<<<<<<< main-HEAD-2
     "zod": "^4.3.6",
-    "svgo": "^3.3.2"
-=======
-    "zod": "^4.3.6"
->>>>>>> chore/working-copy
+    "svgo": "^4.0.1"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",

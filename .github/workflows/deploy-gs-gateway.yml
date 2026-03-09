@@ -5,8 +5,7 @@ permissions:
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - "apps/gs-gateway/**"
       - "packages/**"
@@ -17,10 +16,9 @@ jobs:
   deploy-gateway:
     runs-on: ubuntu-latest
     name: Deploy API Gateway
-    if: false # Explicitly disable job
 
     steps:
-      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - uses: pnpm/action-setup@v4
         with:
