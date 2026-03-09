@@ -2,6 +2,8 @@
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { Card, Table } from '@goldshore/ui';
 
+const envLabel = import.meta.env.PUBLIC_API?.includes('preview') ? 'Preview' : 'Production';
+const isPreview = envLabel === 'Preview';
 const apiBase = import.meta.env.PUBLIC_API || Astro.url.origin;
 const gatewayBase = import.meta.env.PUBLIC_GATEWAY || apiBase;
 const adminBase = Astro.url.origin;

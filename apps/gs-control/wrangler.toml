@@ -6,12 +6,14 @@ compatibility_flags = ["nodejs_compat"]
 workers_dev = false
 
 [env.preview]
+name = "gs-control-preview"
 routes = [
   { pattern = "ops-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
 
 [env.preview.vars]
 ENV = "preview"
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 CONTROL_SYNC_TOKEN = "set-a-shared-secret"
 SYNC_TARGET_SUBDOMAIN = "api-preview.goldshore.ai"
 
@@ -34,12 +36,17 @@ service = "gs-gateway"
 environment = "preview"
 
 [env.prod]
+name = "gs-control"
 routes = [
-  { pattern = "ops.goldshore.ai/*", zone_name = "goldshore.ai" }
+  { pattern = "ops.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "control.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
 
 [env.prod.vars]
-ENV = "production"
+ENV = "prod"
+NODE_ENV = "prod"
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
+OTEL_SERVICE_NAME = "goldshore-core-prod"
 CONTROL_SYNC_TOKEN = "set-a-shared-secret"
 SYNC_TARGET_SUBDOMAIN = "api.goldshore.ai"
 
