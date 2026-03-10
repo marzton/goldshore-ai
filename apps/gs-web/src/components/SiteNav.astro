@@ -365,15 +365,11 @@ const isCurrent = (href: string) => {
     margin: 0;
   }
 
-  .gs-mobile-links .gs-mobile-link-trigger {
-    appearance: none;
-    background: none;
-    border-radius: var(--gs-r-md);
-    border: 1px solid var(--gs-border);
-    color: inherit;
-    cursor: pointer;
-    text-align: left;
-    width: 100%;
+  @media (prefers-reduced-motion: reduce) {
+    .nav-fold-content,
+    .nav-fold-trigger svg {
+      transition: none;
+    }
   }
 
   .gs-mobile-actions {
