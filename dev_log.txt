@@ -1,0 +1,27 @@
+
+> @goldshore/gs-web@0.1.0 dev /app/apps/gs-web
+> astro dev
+
+12:00:05 [@astrojs/cloudflare] Enabling sessions with Cloudflare KV with the "SESSION" KV binding.
+12:00:05 [@astrojs/cloudflare] If you see the error "Invalid binding `SESSION`" in your build output, you need to add the binding to your wrangler config file.
+12:00:05 [WARN] [adapter] Cloudflare does not support sharp at runtime. However, you can configure `imageService: "compile"` to optimize images with sharp on prerendered pages during build time.
+12:00:08 [build] Waiting for integration "@astrojs/cloudflare", hook "astro:server:setup"...
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mA request to the Cloudflare API (/accounts/f77de112d2019e5456a3198a8bb50bd2/workers/subdomain/edge-preview) failed.[0m
+
+
+12:00:09 [ERROR] [@astrojs/cloudflare] An unhandled error occurred while running the "astro:server:setup" hook
+Failed to start the remote proxy session. There is likely additional logging output above.
+  Location:
+    /app/node_modules/.pnpm/wrangler@4.71.0_@cloudflare+workers-types@4.20260214.0/node_modules/wrangler/wrangler-dist/cli.js:295357:11
+  Stack trace:
+    at startRemoteProxySession (/app/node_modules/.pnpm/wrangler@4.71.0_@cloudflare+workers-types@4.20260214.0/node_modules/wrangler/wrangler-dist/cli.js:295357:11)
+    at async maybeStartOrUpdateRemoteProxySession (/app/node_modules/.pnpm/wrangler@4.71.0_@cloudflare+workers-types@4.20260214.0/node_modules/wrangler/wrangler-dist/cli.js:295467:32)
+    at async astro:server:setup (file:///app/node_modules/.pnpm/@astrojs+cloudflare@12.6.12_@types+node@25.3.3_astro@5.18.0_@types+node@25.3.3_jiti@1.21.7_ro_kp4n3vamvj76ocolapxhtbmhdu/node_modules/@astrojs/cloudflare/dist/index.js:151:33)
+    at async runHookInternal (file:///app/node_modules/.pnpm/astro@5.18.0_@types+node@25.3.3_jiti@1.21.7_rollup@4.59.0_tsx@4.21.0_typescript@5.9.3_yaml@2.8.2/node_modules/astro/dist/integrations/hooks.js:51:5)
+    at async configureServer (file:///app/node_modules/.pnpm/astro@5.18.0_@types+node@25.3.3_jiti@1.21.7_rollup@4.59.0_tsx@4.21.0_typescript@5.9.3_yaml@2.8.2/node_modules/astro/dist/vite-plugin-integrations-container/index.js:11:7)
+  Caused by:
+  {"type":"error","reason":"Failed to create a preview token","cause":{"text":"A request to the Cloudflare API (/accounts/f77de112d2019e5456a3198a8bb50bd2/workers/subdomain/edge-preview) failed.","notes":[{"text":"Authentication error [code: 10000]"}],"kind":"error","name":"APIError","code":10000,"accountTag":"f77de112d2019e5456a3198a8bb50bd2"},"source":"RemoteRuntimeController"}
+🪵  Logs were written to "/home/jules/.config/.wrangler/logs/wrangler-2026-03-10_12-00-04_784.log"
+/app/apps/gs-web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @goldshore/gs-web@0.1.0 dev: `astro dev`
+Exit status 1

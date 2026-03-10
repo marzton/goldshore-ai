@@ -1,23 +1,3 @@
-html,
-body {
-html, body {
-  margin: 0;
-  padding: 0;
-  background: #000;
-  color: #e5e7eb;
-  font-family: Inter, system-ui, sans-serif;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-.gs-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 72px;
 /* -----------------------------
    Base Reset
 ------------------------------ */
@@ -46,6 +26,10 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 /* -----------------------------
    Layout
 ------------------------------ */
@@ -67,8 +51,8 @@ main {
 .gs-header {
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
-  height: 72px;
   height: 80px;
   background: rgba(5,6,10,0.9);
   backdrop-filter: blur(10px);
@@ -77,9 +61,6 @@ main {
   align-items: center;
   justify-content: space-between;
   padding: 0 2rem;
-  background: rgba(0, 0, 0, 0.85);
-  background: rgba(0,0,0,0.85);
-  backdrop-filter: blur(8px);
   z-index: 1000;
 }
 
@@ -96,26 +77,8 @@ main {
 
 .gs-nav a {
   margin-left: 1.5rem;
-  color: #9ca3af;
-  text-decoration: none;
-}
-
-.gs-nav a:hover {
-  color: #fff;
-  color: white;
-}
-
-main {
-  padding-top: 72px;
-}
-
-.gs-section {
-  padding: 6rem 2rem;
-  max-width: 1100px;
-  margin: 0 auto;
-  margin-left: 2rem;
-  text-decoration: none;
   color: var(--gs-text-muted);
+  text-decoration: none;
   font-weight: 500;
   transition: color 0.2s ease;
 }
@@ -129,7 +92,9 @@ main {
 ------------------------------ */
 
 .gs-section {
-  padding: var(--gs-section-spacing) 0;
+  padding: var(--gs-section-spacing) 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
   position: relative;
 }
 
