@@ -14,7 +14,7 @@ interface Props {
 
 const {
   title = 'Gold Shore',
-  description = 'Strategic advisory and intelligence for institutional capital.',
+  description = 'Institutional-grade automation and intelligence.',
   structuredData,
 } = Astro.props;
 
@@ -84,7 +84,7 @@ const pageSchemas = Array.isArray(structuredData)
 
     <footer class="gs-footer">
       <div class="gs-container">
-        <p>Gold Shore — Shaping Waves — Steering Capital.</p>
+        <p>Gold Shore — Designed not to manage capital, but to steer it.</p>
         <nav class="gs-footer-grid" aria-label="Footer">
           <section
             class="gs-footer-column"
@@ -134,18 +134,6 @@ const pageSchemas = Array.isArray(structuredData)
 
       initGoldShoreUI();
       initParallax();
-
-      document.querySelectorAll('[data-gs-outbound-label]').forEach((node) => {
-        node.addEventListener('click', () => {
-          const label = node.getAttribute('data-gs-outbound-label');
-          if (!label || typeof window.gtag !== 'function') return;
-          window.gtag('event', 'outbound_link', {
-            event_category: 'engagement',
-            event_label: label,
-            link_text: label,
-          });
-        });
-      });
     </script>
     <script type="module" src={themeRuntimeUrl}></script>
   </body>

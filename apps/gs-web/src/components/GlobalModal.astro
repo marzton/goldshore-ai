@@ -1,7 +1,7 @@
 <div class="gs-modal" data-gs-modal>
   <div class="gs-modal-backdrop" data-gs-modal-backdrop></div>
   <div
-    class="gs-modal-panel gs-mirror-frame frosted-glass"
+    class="gs-modal-panel gs-mirror-frame"
     role="dialog"
     aria-modal="true"
     aria-labelledby="gs-modal-title"
@@ -56,24 +56,6 @@
     transition: transform var(--gs-mid) var(--gs-ease);
     z-index: 1;
   }
-
-  .frosted-glass {
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-    background-color: rgba(17, 25, 40, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.125);
-    border-radius: 12px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  }
-
-  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .frosted-glass {
-      background-color: rgba(17, 25, 40, 0.9);
-    }
-  }
-  .gs-modal.is-open .gs-modal-panel { transform: translateY(0); }
-  .gs-modal-close { position: absolute; top: 14px; right: 14px; }
-  .gs-modal-title { margin-top: 0.2rem; }
   .gs-modal.is-open .gs-modal-panel {
     transform: translateY(0);
   }
