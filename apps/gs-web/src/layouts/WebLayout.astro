@@ -1,7 +1,6 @@
 ---
 import '@goldshore/theme';
-import '../styles/brand.css';
-import '../styles/home.css';
+import '../styles/global.css';
 import SiteNav from '../components/SiteNav.astro';
 import GlobalModal from '../components/GlobalModal.astro';
 import themeRuntimeUrl from '../scripts/theme-runtime.ts?url';
@@ -14,7 +13,7 @@ interface Props {
 
 const {
   title = 'Gold Shore',
-  description = 'Strategic advisory and intelligence for institutional capital.',
+  description = 'Institutional-grade automation and intelligence.',
   structuredData,
 } = Astro.props;
 
@@ -103,7 +102,7 @@ const spanishUrl = new URL(spanishPath, siteUrl).toString();
 
     <footer class="gs-footer">
       <div class="gs-container">
-        <p>Gold Shore — Shaping Waves — Steering Capital.</p>
+        <p>Gold Shore — Designed not to manage capital, but to steer it.</p>
         <nav class="gs-footer-grid" aria-label="Footer">
           <section
             class="gs-footer-column"
@@ -153,18 +152,6 @@ const spanishUrl = new URL(spanishPath, siteUrl).toString();
 
       initGoldShoreUI();
       initParallax();
-
-      document.querySelectorAll('[data-gs-outbound-label]').forEach((node) => {
-        node.addEventListener('click', () => {
-          const label = node.getAttribute('data-gs-outbound-label');
-          if (!label || typeof window.gtag !== 'function') return;
-          window.gtag('event', 'outbound_link', {
-            event_category: 'engagement',
-            event_label: label,
-            link_text: label,
-          });
-        });
-      });
     </script>
     <script type="module" src={themeRuntimeUrl}></script>
   </body>
