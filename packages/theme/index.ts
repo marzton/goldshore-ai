@@ -12,7 +12,9 @@ export function initGoldShoreUI() {
 }
 
 function initNav() {
-  const toggle = document.querySelector<HTMLButtonElement>('[data-gs-nav-toggle]');
+  const toggle = document.querySelector<HTMLButtonElement>(
+    '[data-gs-nav-toggle]',
+  );
   const panel = document.querySelector<HTMLElement>('[data-gs-mobile-panel]');
   if (!toggle || !panel) return;
 
@@ -30,7 +32,11 @@ function initNav() {
 
   panel.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
-    if (t.matches('[data-gs-nav-close]') || t.matches('[data-gs-mobile-panel]') || t.closest('.gs-mobile-link-item')) {
+    if (
+      t.matches('[data-gs-nav-close]') ||
+      t.matches('[data-gs-mobile-panel]') ||
+      t.closest('.gs-mobile-link-item')
+    ) {
       setOpen(false);
     }
   });
@@ -45,7 +51,9 @@ function initModal() {
   if (!root) return;
 
   const backdrop = root.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
-  const closeBtn = root.querySelector<HTMLButtonElement>('[data-gs-modal-close]');
+  const closeBtn = root.querySelector<HTMLButtonElement>(
+    '[data-gs-modal-close]',
+  );
   const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
   const panel = root.querySelector<HTMLElement>('.gs-modal-panel');
 
@@ -58,7 +66,9 @@ function initModal() {
       'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 
     return Array.from(panel.querySelectorAll<HTMLElement>(selectors)).filter(
-      (el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true',
+      (el) =>
+        !el.hasAttribute('disabled') &&
+        el.getAttribute('aria-hidden') !== 'true',
     );
   };
 
@@ -153,15 +163,45 @@ function getModalTemplate(variant: string): string {
 
   return `
     <div class="gs-modal-head">
-      <div class="gs-kicker">Signal Brief</div>
-      <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Subscribe</h2>
-      <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Periodic updates on releases, systems, and operational tooling.</p>
+      <div class="gs-kicker">Strategic Intelligence Sync</div>
+      <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Access High-Fidelity Signals</h2>
+      <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Join our weekly briefing on liquidity shifts, macro regime transitions, and institutional risk management.</p>
     </div>
-    <form class="gs-form" action="/api/subscribe" method="POST">
-      <label class="gs-label">Email</label>
-      <input class="gs-input" name="email" type="email" autocomplete="email" required />
-      <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Request Access</button>
-      <div class="gs-micro gs-muted">No spam. No public list. Controlled distribution.</div>
+    <form class="gs-form" action="/api/strategic-intelligence-sync" method="POST">
+      <label class="gs-label" for="gs-sync-email">Email</label>
+      <input class="gs-input" id="gs-sync-email" name="email" type="email" autocomplete="email" required />
+
+      <label class="gs-label" for="gs-sync-inquiry-type">Inquiry type</label>
+      <input class="gs-input" id="gs-sync-inquiry-type" name="inquiry_meta.type" type="text" maxlength="80" required />
+
+      <label class="gs-label" for="gs-sync-tier">Tier assignment</label>
+      <input class="gs-input" id="gs-sync-tier" name="inquiry_meta.tier_assignment" type="number" min="1" max="5" step="1" required />
+
+      <label class="gs-label gs-inline-check" for="gs-sync-priority">
+        <input id="gs-sync-priority" name="inquiry_meta.priority" type="checkbox" value="true" />
+        Priority review requested
+      </label>
+
+      <label class="gs-label" for="gs-sync-credentials">Credentials</label>
+      <select class="gs-input" id="gs-sync-credentials" name="advisor_stats.credentials" multiple required>
+        <option value="CFA">CFA</option>
+        <option value="CFP">CFP</option>
+      </select>
+
+      <label class="gs-label" for="gs-sync-aum">AUM range</label>
+      <select class="gs-input" id="gs-sync-aum" name="advisor_stats.aum_range" required>
+        <option value="">Select range</option>
+        <option value="under_100m">Under $100M</option>
+        <option value="100m_to_500m">$100M–$500M</option>
+        <option value="500m_to_1b">$500M–$1B</option>
+        <option value="over_1b">Over $1B</option>
+      </select>
+
+      <label class="gs-label" for="gs-sync-intent">Intent score</label>
+      <input class="gs-input" id="gs-sync-intent" name="advisor_stats.intent_score" type="number" min="0" max="1" step="0.01" required />
+
+      <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Synchronize</button>
+      <div class="gs-micro gs-muted">Signal-only distribution. No spam. No resale.</div>
     </form>
   `;
 }
@@ -194,7 +234,9 @@ function initReveal() {
   const rm = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   if (rm) return;
 
-  const els = Array.from(document.querySelectorAll<HTMLElement>('[data-gs-reveal]'));
+  const els = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-gs-reveal]'),
+  );
   if (!els.length) return;
 
   const io = new IntersectionObserver(
@@ -220,12 +262,15 @@ function initTilt() {
   const hover = window.matchMedia?.('(hover: hover)')?.matches;
   if (!fine || !hover) return;
 
-  const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-gs-tilt]'));
+  const panels = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-gs-tilt]'),
+  );
   if (!panels.length) return;
 
   document.documentElement.classList.add('gs-tilt-on');
 
-  const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
+  const clamp = (n: number, min: number, max: number) =>
+    Math.max(min, Math.min(max, n));
 
   panels.forEach((el) => {
     el.classList.add('gs-tilt');
@@ -264,15 +309,25 @@ function initScrollHints() {
 }
 
 function initHeroPulsar() {
-  const canvas = document.getElementById('pulsar-field') as HTMLCanvasElement | null;
+  const canvas = document.getElementById(
+    'pulsar-field',
+  ) as HTMLCanvasElement | null;
   const ctx = canvas?.getContext('2d');
   if (!canvas || !ctx) return;
 
-  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  const reduceMotion = window.matchMedia?.(
+    '(prefers-reduced-motion: reduce)',
+  )?.matches;
   if (reduceMotion) return;
 
   const host = canvas.closest<HTMLElement>('[data-gs-hero]');
-  const particles: Array<{ x: number; y: number; r: number; speed: number; opacity: number }> = [];
+  const particles: Array<{
+    x: number;
+    y: number;
+    r: number;
+    speed: number;
+    opacity: number;
+  }> = [];
   const PARTICLE_COUNT = 60;
   let raf = 0;
   let active = true;
@@ -292,7 +347,8 @@ function initHeroPulsar() {
 
   const seedParticles = () => {
     particles.length = 0;
-    for (let i = 0; i < PARTICLE_COUNT; i += 1) particles.push(createParticle());
+    for (let i = 0; i < PARTICLE_COUNT; i += 1)
+      particles.push(createParticle());
   };
 
   const loop = () => {
