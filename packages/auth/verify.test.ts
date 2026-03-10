@@ -77,7 +77,7 @@ describe('verifyAccess', () => {
         const req = new Request('http://example.com', {
             headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
         });
-        const env: Env = { CLOUDFLARE_ACCESS_AUDIENCE: 'my-audience' };
+        const env: Env = { CLOUDFLARE_TEAM_DOMAIN: 'test.team.com', CLOUDFLARE_ACCESS_AUDIENCE: 'my-audience' };
         const mockPayload = { sub: 'user123' };
 
         jwtVerifyMock.mock.mockImplementation(async () => {
