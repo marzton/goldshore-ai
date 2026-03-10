@@ -21,6 +21,9 @@ on:
 jobs:
   preview-web:
     runs-on: ubuntu-latest
+    concurrency:
+      group: preview-gs-web-${{ github.ref }}
+      cancel-in-progress: true
     if: |
       contains(github.event.pull_request.labels.*.name, 'preview') ||
       (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
