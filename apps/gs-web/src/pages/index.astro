@@ -16,9 +16,8 @@ const heroVariant = normalizeHeroVariant(
   await env?.HERO_CONFIG_KV?.get('hero_variant'),
 );
 
-const locale = Astro.url.pathname.startsWith('/es') ? 'es' : 'en';
 const services = (await getCollection('services', ({ id }) =>
-  id.startsWith(`${locale}/`),
+  id.startsWith('en/'),
 )).sort((a, b) => a.data.order - b.data.order);
 ---
 
