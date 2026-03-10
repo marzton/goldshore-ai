@@ -180,6 +180,14 @@ const isGroupActive = (group: NavGroup) => group.links.some((link) => isActive(l
 </script>
 
 <style>
+  .gs-admin-sidebar {
+    height: 100dvh;
+    overflow-y: auto;
+    background: rgba(5, 6, 10, 0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
   .gs-sidebar-links {
     display: grid;
     gap: 0.35rem;
