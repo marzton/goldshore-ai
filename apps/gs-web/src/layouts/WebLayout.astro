@@ -83,6 +83,11 @@ const pageSchemas = Array.isArray(structuredData)
           <a href="/legal/terms">Terms of Service</a> |
           <a href="/legal/disclaimer">Disclaimer</a>
         </p>
+        <p>
+          <a href="/contact?intent=partnership" data-gs-outbound-label="partnership">Partnership</a> |
+          <a href="/media-kit" data-gs-outbound-label="media_kit">Media Kit</a> |
+          <a href="/affiliates" data-gs-outbound-label="affiliates">Affiliates</a>
+        </p>
         <p class="gs-footer-utility">
           <a href="https://admin.goldshore.ai" rel="nofollow">Admin Login</a>
         </p>
@@ -97,6 +102,18 @@ const pageSchemas = Array.isArray(structuredData)
 
       initGoldShoreUI();
       initParallax();
+
+      document.querySelectorAll('[data-gs-outbound-label]').forEach((node) => {
+        node.addEventListener('click', () => {
+          const label = node.getAttribute('data-gs-outbound-label');
+          if (!label || typeof window.gtag !== 'function') return;
+          window.gtag('event', 'outbound_link', {
+            event_category: 'engagement',
+            event_label: label,
+            link_text: label,
+          });
+        });
+      });
     </script>
     <script type="module" src={themeRuntimeUrl}></script>
   </body>
