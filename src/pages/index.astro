@@ -64,6 +64,66 @@ import { offerings } from '../data/site-content';
           }
         </div>
       </section>
+
+      <section class="sync-launch card" aria-labelledby="sync-title">
+        <div>
+          <p class="eyebrow">Strategic Intelligence Sync</p>
+          <h2 id="sync-title">Access High-Fidelity Signals</h2>
+          <p>
+            Join our weekly briefing on liquidity shifts, macro regime
+            transitions, and institutional risk management.
+          </p>
+        </div>
+        <button
+          class="button button-primary"
+          id="open-sync-modal"
+          type="button"
+        >
+          Synchronize
+        </button>
+      </section>
+
+      <dialog
+        id="sync-modal"
+        class="frosted-glass-modal"
+        aria-labelledby="sync-modal-title"
+      >
+        <form method="dialog" class="modal-shell">
+          <button class="modal-close" aria-label="Close sync modal">✕</button>
+        </form>
+        <h2 id="sync-modal-title">Access High-Fidelity Signals</h2>
+        <p>
+          Join our weekly briefing on liquidity shifts, macro regime
+          transitions, and institutional risk management.
+        </p>
+        <form class="modal-form" action="/contact/thanks" method="GET">
+          <label for="sync-email">Professional Email</label>
+          <input
+            id="sync-email"
+            name="email"
+            placeholder="name@firm.com"
+            type="email"
+            required
+          />
+
+          <label for="investor-profile">Investor Profile</label>
+          <select id="investor-profile" name="investor_profile" required>
+            <option value="">Select profile</option>
+            <option>Institutional</option>
+            <option>Family Office</option>
+            <option>UHNW</option>
+            <option>Quantitative Lead</option>
+            <option>Private Wealth Advisor</option>
+          </select>
+
+          <p class="micro-note">
+            Direct intelligence. No noise. Unsubscribe at any time.
+          </p>
+          <button class="button button-primary" type="submit"
+            >Synchronize</button
+          >
+        </form>
+      </dialog>
     </main>
     <Footer />
 
@@ -182,6 +242,23 @@ import { offerings } from '../data/site-content';
         handleFade();
         window.addEventListener('scroll', handleFade, { passive: true });
       }
+
+      const syncModal = document.getElementById('sync-modal');
+      const openSyncModal = document.getElementById('open-sync-modal');
+
+      if (syncModal instanceof HTMLDialogElement && openSyncModal) {
+        openSyncModal.addEventListener('click', () => syncModal.showModal());
+
+        syncModal.addEventListener('click', (event) => {
+          const target = event.target;
+          if (
+            target instanceof HTMLElement &&
+            target.classList.contains('modal-close')
+          ) {
+            syncModal.close();
+          }
+        });
+      }
     </script>
   </body>
 </html>
@@ -279,6 +356,60 @@ import { offerings } from '../data/site-content';
     font-size: 1.1rem;
   }
 
+  .sync-launch {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .frosted-glass-modal {
+    width: min(32rem, calc(100% - 2rem));
+    border: 1px solid rgba(255, 255, 255, 0.125);
+    border-radius: 12px;
+    background-color: rgba(17, 25, 40, 0.75);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    color: #ebf3ff;
+    padding: 1.1rem;
+  }
+
+  .frosted-glass-modal::backdrop {
+    background: rgba(3, 10, 20, 0.6);
+  }
+
+  .modal-shell {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .modal-close {
+    border: none;
+    background: transparent;
+    color: #ebf3ff;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  .modal-form {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .micro-note {
+    margin: 0.2rem 0;
+    font-size: 0.85rem;
+    color: rgba(229, 237, 248, 0.88);
+  }
+
+  @supports not (backdrop-filter: blur(12px)) {
+    .frosted-glass-modal {
+      background-color: rgba(17, 25, 40, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  }
+
   @keyframes bounce {
     0%,
     100% {
@@ -293,6 +424,11 @@ import { offerings } from '../data/site-content';
   @media (max-width: 720px) {
     .hero {
       min-height: 82vh;
+    }
+
+    .sync-launch {
+      flex-direction: column;
+      align-items: flex-start;
     }
   }
 </style>
