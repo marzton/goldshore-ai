@@ -1,0 +1,59 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+export const prerender = false;
+
+const clientCertHeader = Astro.request.headers.get('cf-client-cert-base64');
+const isAdmin = clientCertHeader !== null;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title="Admin Dashboard" description="Protected GoldShore admin portal" />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <section class="admin-container">
+        <h1>GoldShore Admin Portal</h1>
+        {
+          isAdmin ? (
+            <div class="success-box">
+              <p>Verified via mTLS Certificate.</p>
+            </div>
+          ) : (
+            <p class="error">Access Denied: Secure Identity Not Found.</p>
+          )
+        }
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .admin-container {
+    margin: 0 auto;
+    max-width: 48rem;
+    padding: 3rem 1.5rem 4rem;
+  }
+
+  .success-box {
+    border: 1px solid #1e8b5a;
+    border-radius: 0.75rem;
+    background: rgba(30, 139, 90, 0.1);
+    color: #c8f5de;
+    padding: 1rem 1.25rem;
+  }
+
+  .error {
+    border: 1px solid #a43232;
+    border-radius: 0.75rem;
+    background: rgba(164, 50, 50, 0.15);
+    color: #ffd4d4;
+    padding: 1rem 1.25rem;
+  }
+</style>
