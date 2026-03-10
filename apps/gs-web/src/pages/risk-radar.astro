@@ -1,72 +1,91 @@
 ---
-import WebLayout from '../../layouts/WebLayout.astro';
+import WebLayout from '../layouts/WebLayout.astro';
+import Controls from '../components/risk-radar/Controls.astro';
+import OrbitalMap from '../components/risk-radar/OrbitalMap.astro';
+import DetailsPanel from '../components/risk-radar/DetailsPanel.astro';
+import Legend from '../components/risk-radar/Legend.astro';
 
 export const prerender = true;
 
-// Mock data representing systemic exposure levels
-const risks = [
-  { ID: "CI-01", Label: "Workflow Governance", Exposure: 12, Status: "Stable" },
-  { ID: "SEC-04", Label: "PII Leakage", Exposure: 45, Status: "Monitoring" },
-  { ID: "OPS-09", Label: "Branch Divergence", Exposure: 82, Status: "Critical" }
-];
+type RadarStatus = 'stable' | 'monitoring' | 'critical';
+
+const radarData = {
+  snapshot: {
+    generatedAt: '2026-03-05T00:00:00Z',
+    environment: 'staging',
+    uiState: 'ready',
+  },
+  tiers: [
+    { id: 'T1', label: 'Core', radius: 72 },
+    { id: 'T2', label: 'Critical Surface', radius: 136 },
+    { id: 'T3', label: 'Extended Surface', radius: 200 },
+  ],
+  nodes: [
+    {
+      id: 'CI-01',
+      label: 'Workflow Governance',
+      tier: 'T1',
+      status: 'stable' as RadarStatus,
+      metrics: { exposure: 18, volatility: 21, signalStrength: 74 },
+      dependencies: ['OPS-09'],
+    },
+    {
+      id: 'SEC-04',
+      label: 'PII Leakage',
+      tier: 'T2',
+      status: 'monitoring' as RadarStatus,
+      metrics: { exposure: 47, volatility: 62, signalStrength: 58 },
+      dependencies: ['CI-01', 'OPS-09'],
+    },
+    {
+      id: 'OPS-09',
+      label: 'Branch Divergence',
+      tier: 'T3',
+      status: 'critical' as RadarStatus,
+      metrics: { exposure: 83, volatility: 79, signalStrength: 42 },
+      dependencies: [],
+    },
+  ],
+  legend: {
+    status: {
+      stable: 'Contained and operating within policy thresholds.',
+      monitoring: 'Active watch due to elevated drift or telemetry noise.',
+      critical: 'Immediate mitigation required. Breach likelihood elevated.',
+    },
+    metrics: {
+      exposure: 'Estimated blast radius if compromised.',
+      volatility: 'Observed change-rate across recent snapshots.',
+      signalStrength: 'Confidence in current telemetry model.',
+    },
+  },
+};
 ---
 
 <WebLayout title="Risk Radar | Gold Shore" description="Operational threat visualization system.">
-  <section class="gs-section risk-radar blueprint-bg min-h-screen">
+  <section class="gs-section risk-radar gs-blueprint-bg">
     <div class="gs-container py-12">
-      <header class="mb-12">
-        <h2 class="text-5xl font-bold gs-heading mb-4">Risk Radar</h2>
-        <p class="text-xl text-[var(--gs-text-secondary)] max-w-2xl">
-          Systemic exposure mapping and signal volatility monitoring in real time.
+      <header class="mb-8">
+        <div class="gs-kicker gs-signal" data-gs-reveal>Forthcoming Surface</div>
+        <h1 class="gs-display" data-gs-reveal>Risk Radar</h1>
+        <p class="max-w-2xl text-xl text-[var(--gs-text-secondary)]" data-gs-reveal>
+          Systemic exposure mapping and signal volatility monitoring in near real time.
         </p>
       </header>
 
-      
+      <div class="grid grid-cols-1 gap-6 xl:grid-cols-12" data-gs-reveal>
+        <aside class="xl:col-span-3">
+          <Controls tiers={radarData.tiers} selectedTier="all" state={radarData.snapshot.uiState} />
+        </aside>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div class="gs-card bg-black p-8 rounded-3xl border border-[var(--gs-border-primary)] flex items-center justify-center min-h-[400px]">
-          <div class="radar-ping"></div>
-          <p class="text-blue-400 font-mono animate-pulse">Scanning Operational Perimeter...</p>
-        </div>
+        <section class="xl:col-span-6">
+          <OrbitalMap tiers={radarData.tiers} nodes={radarData.nodes} state={radarData.snapshot.uiState} />
+        </section>
 
-        <div class="gs-card p-6 rounded-3xl border border-[var(--gs-border-primary)] bg-white">
-          <h3 class="text-lg font-bold mb-6">Exposure Registry</h3>
-          <div class="space-y-4">
-            {risks.map(risk => (
-              <div class="flex items-center justify-between p-4 rounded-xl bg-[var(--gs-bg-tertiary)] border border-[var(--gs-border-primary)]">
-                <div>
-                  <span class="text-xs font-mono text-gray-400">{risk.ID}</span>
-                  <p class="font-bold">{risk.Label}</p>
-                </div>
-                <div class="text-right">
-                  <div class="h-2 w-24 bg-gray-200 rounded-full mb-1">
-                    <div class="h-full bg-blue-600 rounded-full" style={`width: ${risk.Exposure}%`}></div>
-                  </div>
-                  <span class={`text-xs font-bold uppercase ${risk.Status === 'Critical' ? 'text-red-500' : 'text-emerald-500'}`}>{risk.Status}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <aside class="xl:col-span-3 space-y-6">
+          <DetailsPanel nodes={radarData.nodes} />
+          <Legend statusLegend={radarData.legend.status} metricLegend={radarData.legend.metrics} />
+        </aside>
       </div>
     </div>
   </section>
 </WebLayout>
-
-<style>
-  .blueprint-bg {
-    background-image: radial-gradient(var(--gs-border-primary) 1px, transparent 1px);
-    background-size: 32px 32px;
-  }
-  .radar-ping {
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    border: 1px solid rgba(59, 130, 246, 0.3);
-    border-radius: 50%;
-    animation: ping 4s cubic-bezier(0, 0, 0.2, 1) infinite;
-  }
-  @keyframes ping {
-    75%, 100% { transform: scale(2); opacity: 0; }
-  }
-</style>

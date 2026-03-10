@@ -18,8 +18,7 @@ type Env = {
   CONTROL_LOGS?: KVNamespace;
   DB: D1Database;
   ASSETS: R2Bucket;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  AI: any;
+  AI: Ai;
   OPENAI_API_KEY?: string;
   GEMINI_API_KEY?: string;
   // Sentinel: Added support for Audience verification to prevent auth bypass
