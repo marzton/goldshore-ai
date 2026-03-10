@@ -1,0 +1,16 @@
+
+> @goldshore/gs-web@0.1.0 preview /app/apps/gs-web
+> astro preview
+
+11:59:47 [@astrojs/cloudflare] Enabling sessions with Cloudflare KV with the "SESSION" KV binding.
+11:59:47 [@astrojs/cloudflare] If you see the error "Invalid binding `SESSION`" in your build output, you need to add the binding to your wrangler config file.
+11:59:47 [WARN] [adapter] Cloudflare does not support sharp at runtime. However, you can configure `imageService: "compile"` to optimize images with sharp on prerendered pages during build time.
+[preview] The @astrojs/cloudflare adapter does not support the preview command.
+  Location:
+    /app/node_modules/.pnpm/astro@5.18.0_@types+node@25.3.3_jiti@1.21.7_rollup@4.59.0_tsx@4.21.0_typescript@5.9.3_yaml@2.8.2/node_modules/astro/dist/core/preview/index.js:44:11
+  Stack trace:
+    at preview (file:///app/node_modules/.pnpm/astro@5.18.0_@types+node@25.3.3_jiti@1.21.7_rollup@4.59.0_tsx@4.21.0_typescript@5.9.3_yaml@2.8.2/node_modules/astro/dist/core/preview/index.js:44:11)
+    at async runCommand (file:///app/node_modules/.pnpm/astro@5.18.0_@types+node@25.3.3_jiti@1.21.7_rollup@4.59.0_tsx@4.21.0_typescript@5.9.3_yaml@2.8.2/node_modules/astro/dist/cli/index.js:215:22)
+/app/apps/gs-web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @goldshore/gs-web@0.1.0 preview: `astro preview`
+Exit status 1

@@ -18,12 +18,6 @@ function initNav() {
   const panel = document.querySelector<HTMLElement>('[data-gs-mobile-panel]');
   if (!toggle || !panel) return;
 
-  const setFoldExpanded = (wrapper: HTMLElement, expanded: boolean) => {
-    const trigger = wrapper.querySelector<HTMLButtonElement>('[data-gs-nav-fold-trigger]');
-    wrapper.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-    trigger?.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-  };
-
   const setOpen = (open: boolean) => {
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     panel.classList.toggle('is-open', open);
@@ -38,30 +32,12 @@ function initNav() {
 
   panel.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
-
-    const foldTrigger = t.closest<HTMLElement>('[data-gs-nav-fold-trigger]');
-    if (foldTrigger) {
-      const wrapper = foldTrigger.closest<HTMLElement>('[data-gs-nav-fold]');
-      if (wrapper) {
-        const expanded = wrapper.getAttribute('aria-expanded') === 'true';
-        setFoldExpanded(wrapper, !expanded);
-      }
-      return;
-    }
-
-    if (t.matches('[data-gs-nav-close]') || t.matches('[data-gs-mobile-panel]') || t.closest('.nav-fold-link')) {
+    if (
+      t.matches('[data-gs-nav-close]') ||
+      t.matches('[data-gs-mobile-panel]') ||
+      t.closest('.gs-mobile-link-item')
+    ) {
       setOpen(false);
-    }
-  });
-
-  panel.addEventListener('keydown', (e) => {
-    const target = e.target as HTMLElement;
-    if ((e.key === 'Enter' || e.key === ' ') && target.matches('[data-gs-nav-fold-trigger]')) {
-      e.preventDefault();
-      const wrapper = target.closest<HTMLElement>('[data-gs-nav-fold]');
-      if (!wrapper) return;
-      const expanded = wrapper.getAttribute('aria-expanded') === 'true';
-      setFoldExpanded(wrapper, !expanded);
     }
   });
 
@@ -191,18 +167,41 @@ function getModalTemplate(variant: string): string {
       <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Access High-Fidelity Signals</h2>
       <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Join our weekly briefing on liquidity shifts, macro regime transitions, and institutional risk management.</p>
     </div>
-    <form class="gs-form" action="/api/subscribe" method="POST">
-      <label class="gs-label">Professional Email</label>
-      <input class="gs-input" name="email" type="email" autocomplete="email" required />
-      <label class="gs-label">Investor Type</label>
-      <select class="gs-input" name="investorType" required>
-        <option value="institutional">Institutional</option>
-        <option value="family-office">Family Office</option>
-        <option value="uhnw">UHNW</option>
-        <option value="quantitative-lead">Quantitative Lead</option>
+    <form class="gs-form" action="/api/strategic-intelligence-sync" method="POST">
+      <label class="gs-label" for="gs-sync-email">Email</label>
+      <input class="gs-input" id="gs-sync-email" name="email" type="email" autocomplete="email" required />
+
+      <label class="gs-label" for="gs-sync-inquiry-type">Inquiry type</label>
+      <input class="gs-input" id="gs-sync-inquiry-type" name="inquiry_meta.type" type="text" maxlength="80" required />
+
+      <label class="gs-label" for="gs-sync-tier">Tier assignment</label>
+      <input class="gs-input" id="gs-sync-tier" name="inquiry_meta.tier_assignment" type="number" min="1" max="5" step="1" required />
+
+      <label class="gs-label gs-inline-check" for="gs-sync-priority">
+        <input id="gs-sync-priority" name="inquiry_meta.priority" type="checkbox" value="true" />
+        Priority review requested
+      </label>
+
+      <label class="gs-label" for="gs-sync-credentials">Credentials</label>
+      <select class="gs-input" id="gs-sync-credentials" name="advisor_stats.credentials" multiple required>
+        <option value="CFA">CFA</option>
+        <option value="CFP">CFP</option>
       </select>
+
+      <label class="gs-label" for="gs-sync-aum">AUM range</label>
+      <select class="gs-input" id="gs-sync-aum" name="advisor_stats.aum_range" required>
+        <option value="">Select range</option>
+        <option value="under_100m">Under $100M</option>
+        <option value="100m_to_500m">$100M–$500M</option>
+        <option value="500m_to_1b">$500M–$1B</option>
+        <option value="over_1b">Over $1B</option>
+      </select>
+
+      <label class="gs-label" for="gs-sync-intent">Intent score</label>
+      <input class="gs-input" id="gs-sync-intent" name="advisor_stats.intent_score" type="number" min="0" max="1" step="0.01" required />
+
       <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Synchronize</button>
-      <div class="gs-micro gs-muted">No spam. No public list. Institutional distribution only.</div>
+      <div class="gs-micro gs-muted">Signal-only distribution. No spam. No resale.</div>
     </form>
   `;
 }
