@@ -1,0 +1,222 @@
+---
+const modalId = 'gs-strategic-sync-modal';
+const titleId = 'gs-strategic-sync-title';
+const descriptionId = 'gs-strategic-sync-description';
+---
+
+<div class="gs-sync-modal" id={modalId} aria-hidden="true" data-gs-sync-modal>
+  <div class="gs-sync-modal__backdrop" data-gs-sync-close></div>
+  <section
+    class="gs-sync-modal__panel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby={titleId}
+    aria-describedby={descriptionId}
+    tabindex="-1"
+  >
+    <button
+      type="button"
+      class="gs-sync-modal__close"
+      data-gs-sync-close
+      aria-label="Close sync modal">×</button
+    >
+
+    <header class="gs-sync-modal__header">
+      <p class="gs-sync-modal__kicker">Strategic Intelligence Sync</p>
+      <h2 id={titleId}>Access High-Fidelity Signals</h2>
+      <p id={descriptionId}>
+        Join our weekly briefing on liquidity shifts, macro regime transitions,
+        and institutional risk management.
+      </p>
+    </header>
+
+    <form
+      class="gs-sync-modal__form"
+      action="/api/strategic-intelligence-sync"
+      method="post"
+    >
+      <label>
+        Inquiry type
+        <input
+          name="inquiry_meta.type"
+          type="text"
+          required
+          maxlength="80"
+          placeholder="Advisor Inquiry"
+        />
+      </label>
+
+      <label>
+        Tier assignment
+        <input
+          name="inquiry_meta.tier_assignment"
+          type="number"
+          min="1"
+          max="5"
+          step="1"
+          required
+        />
+      </label>
+
+      <label class="gs-sync-modal__checkbox">
+        <input name="inquiry_meta.priority" type="checkbox" value="true" />
+        Priority review requested
+      </label>
+
+      <fieldset>
+        <legend>Credentials</legend>
+        <label class="gs-sync-modal__checkbox">
+          <input name="advisor_stats.credentials" type="checkbox" value="CFA" />
+          CFA
+        </label>
+        <label class="gs-sync-modal__checkbox">
+          <input name="advisor_stats.credentials" type="checkbox" value="CFP" />
+          CFP
+        </label>
+      </fieldset>
+
+      <label>
+        AUM range
+        <select name="advisor_stats.aum_range" required>
+          <option value="">Select range</option>
+          <option value="under_100m">Under $100M</option>
+          <option value="100m_to_500m">$100M–$500M</option>
+          <option value="500m_to_1b">$500M–$1B</option>
+          <option value="over_1b">Over $1B</option>
+        </select>
+      </label>
+
+      <label>
+        Intent score
+        <input
+          name="advisor_stats.intent_score"
+          type="number"
+          min="0"
+          max="1"
+          step="0.01"
+          required
+        />
+      </label>
+
+      <button type="submit" class="gs-sync-modal__submit">Synchronize</button>
+    </form>
+  </section>
+</div>
+
+<style>
+  .gs-sync-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease-in-out;
+  }
+
+  .gs-sync-modal.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .gs-sync-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 8, 21, 0.66);
+    backdrop-filter: blur(12px) saturate(130%);
+  }
+
+  .gs-sync-modal__panel {
+    position: relative;
+    z-index: 1;
+    width: min(620px, 92vw);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 18px;
+    background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.14),
+      rgba(255, 255, 255, 0.06)
+    );
+    box-shadow: 0 30px 80px rgba(2, 6, 23, 0.58);
+    backdrop-filter: blur(22px) saturate(155%);
+    -webkit-backdrop-filter: blur(22px) saturate(155%);
+    padding: 1.5rem;
+    transform: translateY(16px);
+    transition: transform 200ms ease-in-out;
+  }
+
+  .gs-sync-modal.is-open .gs-sync-modal__panel {
+    transform: translateY(0);
+  }
+
+  .gs-sync-modal__close {
+    position: absolute;
+    right: 0.85rem;
+    top: 0.65rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-size: 1.45rem;
+    cursor: pointer;
+  }
+
+  .gs-sync-modal__kicker {
+    margin: 0 0 0.4rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .gs-sync-modal__header h2 {
+    margin: 0;
+  }
+
+  .gs-sync-modal__header p {
+    color: rgba(241, 245, 249, 0.84);
+  }
+
+  .gs-sync-modal__form {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .gs-sync-modal__form label,
+  .gs-sync-modal__form fieldset {
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.93rem;
+  }
+
+  .gs-sync-modal__form input,
+  .gs-sync-modal__form select {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 10px;
+    background: rgba(10, 16, 29, 0.46);
+    color: inherit;
+    padding: 0.6rem 0.65rem;
+  }
+
+  .gs-sync-modal__checkbox {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .gs-sync-modal__checkbox input {
+    width: auto;
+  }
+
+  .gs-sync-modal__submit {
+    margin-top: 0.35rem;
+    border: 0;
+    border-radius: 10px;
+    padding: 0.72rem 1.1rem;
+    background: linear-gradient(120deg, #6ea8ff, #ffc46a);
+    color: #0b1220;
+    font-weight: 650;
+    cursor: pointer;
+  }
+</style>
