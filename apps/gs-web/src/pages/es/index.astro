@@ -1,13 +1,13 @@
 ---
-import WebLayout from '../layouts/WebLayout.astro';
-import HeroBase from '../components/hero/HeroBase.astro';
-import Icon from '../components/Icon.astro';
+import WebLayout from '../../layouts/WebLayout.astro';
+import HeroBase from '../../components/hero/HeroBase.astro';
+import Icon from '../../components/Icon.astro';
 import { getCollection } from 'astro:content';
 import {
   DEFAULT_HERO_VARIANT,
   normalizeHeroVariant,
-} from '../components/hero/hero.config';
-import wavesScriptUrl from '../scripts/waves.ts?url';
+} from '../../components/hero/hero.config';
+import wavesScriptUrl from '../../scripts/waves.ts?url';
 
 const env = Astro.locals.runtime?.env as
   | { HERO_CONFIG_KV?: { get(key: string): Promise<string | null> } }
@@ -17,13 +17,13 @@ const heroVariant = normalizeHeroVariant(
 );
 
 const services = (await getCollection('services', ({ id }) =>
-  id.startsWith('en/'),
+  id.startsWith('es/'),
 )).sort((a, b) => a.data.order - b.data.order);
 ---
 
 <WebLayout
-  title="Gold Shore — Strategic Advisory & Intelligence for Managing Capital"
-  description="Gold Shore delivers advanced decision-support systems and bespoke advisory services for institutional capital across complex market regimes."
+  title="Gold Shore — Asesoría estratégica e inteligencia para la gestión de capital"
+  description="Gold Shore ofrece sistemas avanzados de apoyo a decisiones y asesoría a medida para capital institucional en entornos de mercado complejos."
 >
   <HeroBase variant={heroVariant ?? DEFAULT_HERO_VARIANT} />
 
@@ -31,12 +31,12 @@ const services = (await getCollection('services', ({ id }) =>
 
   <section class="gs-section">
     <div class="gs-container gs-panel gs-edge-light gs-edge-scan">
-      <div class="gs-label">Philosophy</div>
-      <h2>Designed to manage, balance and create capital.</h2>
+      <div class="gs-label">Filosofía</div>
+      <h2>Diseñado para gestionar, equilibrar y crear capital.</h2>
       <p>
-        Gold Shore’s philosophy combines high-fidelity signals with strategic
-        oversight to support precise, risk-aware capital allocation and durable
-        long-term outcomes.
+        La filosofía de Gold Shore combina señales de alta fidelidad con
+        supervisión estratégica para respaldar una asignación de capital precisa,
+        consciente del riesgo y orientada a resultados duraderos.
       </p>
     </div>
   </section>
@@ -60,14 +60,5 @@ const services = (await getCollection('services', ({ id }) =>
     </div>
   </section>
 
-  <div class="gs-modal" id="modal">
-    <div class="gs-modal-bg" data-close-modal></div>
-    <div class="gs-modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
-      <button class="close-btn" data-close-modal aria-label="Close">×</button>
-      <div class="modal-content" id="modal-content"></div>
-    </div>
-  </div>
-
   <script type="module" src={wavesScriptUrl}></script>
-
 </WebLayout>
