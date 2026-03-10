@@ -8,13 +8,32 @@ interface Props {
   description?: string;
 }
 
-const { title, description = 'GoldShore.ai' } = Astro.props;
+const { title, description = 'GoldShore.ai Admin' } = Astro.props;
 ---
 
-<!doctype html>
 <html lang="en">
   <head>
     <BaseHead title={title} description={description} />
+    <style>
+      body {
+        margin: 0;
+        background-color: #050505;
+        color: #ffffff;
+        font-family: system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+      }
+
+      main {
+        width: 100%;
+        max-width: 80ch;
+        margin: 0 auto;
+        padding: 8rem 2rem;
+      }
+
+      :global(body.menu-open) {
+        overflow: hidden;
+      }
+    </style>
   </head>
   <body>
     <Header />
