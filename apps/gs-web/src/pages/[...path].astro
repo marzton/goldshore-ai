@@ -56,11 +56,18 @@ if (slug) {
     </BaseLayout>
   )
 ) : (
-  <DefaultPageTemplate />
+  <DefaultPageTemplate
+    title="Page Not Found | GoldShore"
+    description="The requested page could not be found."
+  >
+    <section class="max-w-4xl mx-auto py-24 px-6 text-center">
+      <h1 class="text-4xl gs-heading mb-6" style="color: var(--gs-brand-gold);">Page Not Found</h1>
+      <p class="text-lg text-[var(--gs-text-secondary)] mb-8">
+        We can't find the page you're looking for at: <code class="bg-[var(--gs-surface)] px-2 py-1 rounded text-[var(--gs-text-primary)]">{Astro.url.pathname}</code>
+      </p>
+      <p class="text-[var(--gs-text-secondary)]">
+        Please check the URL or navigate back to the <a href="/" class="text-[var(--gs-brand-gold)] hover:underline">GoldShore Home Page</a>.
+      </p>
+    </section>
+  </DefaultPageTemplate>
 )}
-import DefaultPageTemplate from '../components/DefaultPageTemplate.astro';
-
-export const prerender = false;
----
-
-<DefaultPageTemplate />
