@@ -5,7 +5,7 @@ const services = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    icon: z.string().optional(),
+    icon: z.enum(['radar', 'ops', 'hub']).default('radar'),
     order: z.number().default(0),
   }),
 });
