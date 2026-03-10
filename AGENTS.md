@@ -16,3 +16,13 @@ Please provide as much context as possible when using these tags, including:
 *   Steps to reproduce the error or issue.
 *   Any relevant logs or error messages.
 *   The expected outcome.
+
+## Canonical Logo Enforcement
+
+- Logo Asset: `gs-penrose.svg`
+- Always reference `/logo/gs-penrose.svg`
+- Do not generate alternate Penrose geometry
+- SVG must remain stroke-based
+- `fill` must remain `none`
+- Stroke color is controlled by CSS
+- Preferred stroke-width: approximately `1.8`

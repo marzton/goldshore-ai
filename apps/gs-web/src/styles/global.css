@@ -189,3 +189,47 @@ button {
   border-top: 1px solid var(--gs-border-subtle);
   color: var(--gs-text-muted);
 }
+
+/* Canonical Penrose logo enforcement */
+.gs-header {
+  position: sticky;
+  top: 0;
+  background: rgba(10, 12, 18, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 1000;
+}
+
+.gs-logo {
+  width: 28px;
+  height: auto;
+  color: #0E3A52;
+  display: block;
+  transition: .3s ease;
+}
+
+.gs-logo path {
+  stroke: #0E3A52;
+}
+
+.gs-logo,
+.gs-logo path {
+  stroke: #0E3A52 !important;
+  fill: none !important;
+}
+
+.gs-logo:hover {
+  stroke: #1C7ED6;
+  filter: drop-shadow(0 0 6px rgba(28,126,214,.6));
+}
+
+.gs-footer {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0;
+}
+
+.footer-logo {
+  width: 34px;
+  opacity: .6;
+}
