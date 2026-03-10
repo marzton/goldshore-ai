@@ -6,6 +6,7 @@ import {
   normalizeHeroVariant,
 } from '../components/hero/hero.config';
 import wavesScriptUrl from '../scripts/waves.ts?url';
+import '../styles/home.css';
 
 const env = Astro.locals.runtime?.env as
   | { HERO_CONFIG_KV?: { get(key: string): Promise<string | null> } }
