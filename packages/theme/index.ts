@@ -12,7 +12,9 @@ export function initGoldShoreUI() {
 }
 
 function initNav() {
-  const toggle = document.querySelector<HTMLButtonElement>('[data-gs-nav-toggle]');
+  const toggle = document.querySelector<HTMLButtonElement>(
+    '[data-gs-nav-toggle]',
+  );
   const panel = document.querySelector<HTMLElement>('[data-gs-mobile-panel]');
   if (!toggle || !panel) return;
 
@@ -73,7 +75,9 @@ function initModal() {
   if (!root) return;
 
   const backdrop = root.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
-  const closeBtn = root.querySelector<HTMLButtonElement>('[data-gs-modal-close]');
+  const closeBtn = root.querySelector<HTMLButtonElement>(
+    '[data-gs-modal-close]',
+  );
   const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
   const panel = root.querySelector<HTMLElement>('.gs-modal-panel');
 
@@ -86,7 +90,9 @@ function initModal() {
       'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 
     return Array.from(panel.querySelectorAll<HTMLElement>(selectors)).filter(
-      (el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true',
+      (el) =>
+        !el.hasAttribute('disabled') &&
+        el.getAttribute('aria-hidden') !== 'true',
     );
   };
 
@@ -229,7 +235,9 @@ function initReveal() {
   const rm = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   if (rm) return;
 
-  const els = Array.from(document.querySelectorAll<HTMLElement>('[data-gs-reveal]'));
+  const els = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-gs-reveal]'),
+  );
   if (!els.length) return;
 
   const io = new IntersectionObserver(
@@ -255,12 +263,15 @@ function initTilt() {
   const hover = window.matchMedia?.('(hover: hover)')?.matches;
   if (!fine || !hover) return;
 
-  const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-gs-tilt]'));
+  const panels = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-gs-tilt]'),
+  );
   if (!panels.length) return;
 
   document.documentElement.classList.add('gs-tilt-on');
 
-  const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
+  const clamp = (n: number, min: number, max: number) =>
+    Math.max(min, Math.min(max, n));
 
   panels.forEach((el) => {
     el.classList.add('gs-tilt');
@@ -299,15 +310,25 @@ function initScrollHints() {
 }
 
 function initHeroPulsar() {
-  const canvas = document.getElementById('pulsar-field') as HTMLCanvasElement | null;
+  const canvas = document.getElementById(
+    'pulsar-field',
+  ) as HTMLCanvasElement | null;
   const ctx = canvas?.getContext('2d');
   if (!canvas || !ctx) return;
 
-  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  const reduceMotion = window.matchMedia?.(
+    '(prefers-reduced-motion: reduce)',
+  )?.matches;
   if (reduceMotion) return;
 
   const host = canvas.closest<HTMLElement>('[data-gs-hero]');
-  const particles: Array<{ x: number; y: number; r: number; speed: number; opacity: number }> = [];
+  const particles: Array<{
+    x: number;
+    y: number;
+    r: number;
+    speed: number;
+    opacity: number;
+  }> = [];
   const PARTICLE_COUNT = 60;
   let raf = 0;
   let active = true;
@@ -327,7 +348,8 @@ function initHeroPulsar() {
 
   const seedParticles = () => {
     particles.length = 0;
-    for (let i = 0; i < PARTICLE_COUNT; i += 1) particles.push(createParticle());
+    for (let i = 0; i < PARTICLE_COUNT; i += 1)
+      particles.push(createParticle());
   };
 
   const loop = () => {

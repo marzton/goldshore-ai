@@ -69,9 +69,9 @@ const heroVariant = normalizeHeroVariant(
 
   <div class="gs-modal" id="modal">
     <div class="gs-modal-bg" data-close-modal></div>
-    <div class="gs-modal-panel" role="dialog" aria-modal="true">
+    <div class="gs-modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
       <button class="close-btn" data-close-modal aria-label="Close">×</button>
-      <div class="modal-content"></div>
+      <div class="modal-content" id="modal-content"></div>
     </div>
   </div>
 
@@ -227,6 +227,49 @@ const heroVariant = normalizeHeroVariant(
   .modal-content {
     display: grid;
     gap: 0.75rem;
+  }
+
+
+  .modal-content h2 {
+    margin: 0;
+  }
+
+  .modal-helper {
+    margin: 0;
+    color: var(--gs-muted);
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .modal-field {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .modal-label {
+    font-size: 0.85rem;
+    color: var(--gs-text-muted);
+  }
+
+  .modal-input {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    background: rgba(7, 12, 24, 0.95);
+    color: var(--gs-text);
+    padding: 0.7rem 0.85rem;
+  }
+
+  .modal-input:focus-visible {
+    outline: 2px solid rgba(90, 140, 255, 0.8);
+    outline-offset: 1px;
+  }
+
+  .modal-content .gs-button {
+    width: 100%;
+    border: 0;
+    cursor: pointer;
+    text-align: center;
   }
 
   .close-btn {
