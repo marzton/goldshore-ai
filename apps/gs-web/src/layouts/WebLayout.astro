@@ -4,16 +4,39 @@ import '../styles/brand.css';
 import '../styles/home.css';
 import SiteNav from '../components/SiteNav.astro';
 import GlobalModal from '../components/GlobalModal.astro';
+import themeRuntimeUrl from '../scripts/theme-runtime.ts?url';
 
 interface Props {
   title?: string;
   description?: string;
+  structuredData?: Record<string, unknown> | Array<Record<string, unknown>>;
 }
 
 const {
   title = 'Gold Shore',
   description = 'Institutional-grade automation and intelligence.',
+  structuredData,
 } = Astro.props;
+
+const siteUrl = 'https://goldshore.ai';
+const organizationId = `${siteUrl}#organization`;
+const sameAs: string[] = [];
+
+const organizationSchema: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': organizationId,
+  name: 'Gold Shore',
+  url: siteUrl,
+  logo: `${siteUrl}/assets/brand/logo-penrose.svg`,
+  ...(sameAs.length > 0 ? { sameAs } : {}),
+};
+
+const pageSchemas = Array.isArray(structuredData)
+  ? structuredData
+  : structuredData
+    ? [structuredData]
+    : [];
 ---
 
 <html lang="en">
@@ -22,7 +45,33 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(organizationSchema)}
+    />
+    {
+      pageSchemas.map((schema) => (
+        <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+      ))
+    }
     <slot name="head" />
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'Gold Shore',
+        url: 'https://goldshore.ai',
+        logo: 'https://goldshore.ai/assets/brand/logo-penrose.svg',
+        description: 'Institutional-grade automation and intelligence systems.',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target:
+            'https://goldshore.ai/developer/docs/search?q={search_term_string}',
+          'query-input': 'required name=search_term_string',
+        },
+      })}
+    />
   </head>
   <body class="gs-theme-root">
     <SiteNav />
@@ -36,11 +85,43 @@ const {
     <footer class="gs-footer">
       <div class="gs-container">
         <p>Gold Shore — Designed not to manage capital, but to steer it.</p>
-        <p>
-          <a href="/status">System Status</a> |
-          <a href="/legal/compliance">Legal &amp; Compliance</a> |
-          <a href="/legal/privacy">Privacy Policy</a> | 
-          <a href="/legal/terms">Terms of Service</a>
+        <nav class="gs-footer-grid" aria-label="Footer">
+          <section
+            class="gs-footer-column"
+            aria-labelledby="gs-footer-strategy"
+          >
+            <h2 id="gs-footer-strategy">Strategy</h2>
+            <a href="/services">Advisory Services</a>
+            <a href="/services#regime-analysis">Regime Analysis</a>
+            <a href="/services#capital-steering">Capital Steering</a>
+          </section>
+
+          <section
+            class="gs-footer-column"
+            aria-labelledby="gs-footer-technology"
+          >
+            <h2 id="gs-footer-technology">Technology</h2>
+            <a href="/risk-radar">Risk Radar</a>
+            <a href="/workflows">Workflows</a>
+            <a href="/developer/api">GS-API</a>
+          </section>
+
+          <section class="gs-footer-column" aria-labelledby="gs-footer-company">
+            <h2 id="gs-footer-company">Company</h2>
+            <a href="/about">About</a>
+            <a href="/team">Team</a>
+            <a href="/contact">Contact</a>
+          </section>
+
+          <section class="gs-footer-column" aria-labelledby="gs-footer-legal">
+            <h2 id="gs-footer-legal">Legal</h2>
+            <a href="/legal/privacy">Privacy Policy</a>
+            <a href="/legal/terms">Terms of Service</a>
+            <a href="/legal/compliance">Disclaimer</a>
+          </section>
+        </nav>
+        <p class="gs-footer-utility">
+          <a href="https://admin.goldshore.ai" rel="nofollow">Admin Login</a>
         </p>
       </div>
     </footer>
@@ -49,7 +130,11 @@ const {
 
     <script>
       import { initGoldShoreUI } from '@goldshore/theme/runtime';
+      import { initParallax } from '@goldshore/config/parallax';
+
       initGoldShoreUI();
+      initParallax();
     </script>
+    <script type="module" src={themeRuntimeUrl}></script>
   </body>
 </html>
