@@ -11,14 +11,9 @@ import siteConfig from '../data/site-config.json';
       <details class="menu-group">
         <summary>Advisory</summary>
         <div class="submenu">
-          <HeaderLink href="/services#regime-risk">Regime &amp; Risk</HeaderLink
-          >
-          <HeaderLink href="/services#portfolio-steering"
-            >Portfolio Steering</HeaderLink
-          >
-          <HeaderLink href="/services#derivatives-strategy"
-            >Derivatives Strategy</HeaderLink
-          >
+          <HeaderLink href="/services#regime-risk">Regime &amp; Risk</HeaderLink>
+          <HeaderLink href="/services#portfolio-steering">Portfolio Steering</HeaderLink>
+          <HeaderLink href="/services#derivatives-strategy">Derivatives Strategy</HeaderLink>
         </div>
       </details>
       <details class="menu-group">
@@ -33,22 +28,22 @@ import siteConfig from '../data/site-config.json';
         <div class="submenu">
           <HeaderLink href="/about">About</HeaderLink>
           <HeaderLink href="/team">Team</HeaderLink>
-          <HeaderLink href="/partnerships-careers"
-            >Partnerships &amp; Careers</HeaderLink
-          >
+          <HeaderLink href="/partnerships-careers">Partnerships &amp; Careers</HeaderLink>
         </div>
       </details>
     </div>
-    <a class="button button-secondary" href="/contact">Request Briefing</a>
+    <a class="button button-secondary" href="/contact">{siteConfig.cta.primary}</a>
   </nav>
 </header>
+
 <style>
   header {
     margin: 0;
     padding: 0 1em;
-    background: rgb(var(--surface));
-    border-bottom: 1px solid rgb(var(--border));
+    background: #050505;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   }
+
   h2 {
     margin: 0;
     font-size: 1.1rem;
@@ -57,8 +52,9 @@ import siteConfig from '../data/site-config.json';
   h2 a,
   h2 a.active {
     text-decoration: none;
-    color: rgb(var(--black));
+    color: #ffffff;
   }
+
   nav {
     display: flex;
     gap: 1rem;
@@ -66,6 +62,7 @@ import siteConfig from '../data/site-config.json';
     justify-content: space-between;
     padding: 0.4rem 0;
   }
+
   .internal-links {
     display: flex;
     flex-wrap: nowrap;
@@ -83,17 +80,20 @@ import siteConfig from '../data/site-config.json';
     cursor: pointer;
     font-weight: 700;
     font-size: 0.95rem;
-    color: rgb(var(--black));
+    color: #ffffff;
     padding: 0.45rem 0.6rem;
     border-radius: 8px;
+    border: 1px solid transparent;
   }
 
   .menu-group summary::-webkit-details-marker {
     display: none;
   }
 
-  .menu-group[open] summary {
-    background: rgba(var(--accent-strong), 0.08);
+  .menu-group[open] summary,
+  .menu-group summary:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.04);
   }
 
   .submenu {
@@ -105,9 +105,8 @@ import siteConfig from '../data/site-config.json';
     gap: 0.12rem;
     padding: 0.4rem;
     border-radius: 10px;
-    border: 1px solid rgb(var(--border));
-    background: rgb(var(--surface));
-    box-shadow: 0 14px 28px rgba(7, 14, 26, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: #050505;
     z-index: 10;
   }
 
@@ -115,16 +114,19 @@ import siteConfig from '../data/site-config.json';
     border-radius: 8px;
     padding: 0.4rem 0.5rem;
     text-decoration: none;
+    color: #ffffff;
   }
 
   .submenu :global(a:hover) {
-    background: rgba(var(--accent-strong), 0.07);
+    background: rgba(255, 255, 255, 0.08);
   }
+
   @media (max-width: 980px) {
     nav {
       flex-direction: column;
       align-items: flex-start;
     }
+
     .internal-links {
       justify-content: flex-start;
       width: 100%;
@@ -139,20 +141,20 @@ import siteConfig from '../data/site-config.json';
     }
 
     .menu-group {
-      border: 1px solid rgb(var(--border));
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 10px;
       overflow: hidden;
       transition: all 200ms ease;
     }
 
     .menu-group summary {
-      background: rgb(var(--surface));
+      background: transparent;
     }
 
     .submenu {
       position: static;
       border: none;
-      border-top: 1px solid rgb(var(--border));
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
       box-shadow: none;
       border-radius: 0;
       transform-origin: top;
@@ -172,3 +174,28 @@ import siteConfig from '../data/site-config.json';
     }
   }
 </style>
+
+<script>
+  const menuGroups = Array.from(document.querySelectorAll('details.menu-group'));
+
+  const syncBodyScrollLock = () => {
+    const isAnyMenuOpen = menuGroups.some((group) => group.open);
+    document.body.classList.toggle('menu-open', isAnyMenuOpen);
+  };
+
+  menuGroups.forEach((group) => {
+    group.addEventListener('toggle', syncBodyScrollLock);
+  });
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    if (target.closest('.submenu a')) {
+      menuGroups.forEach((group) => {
+        group.open = false;
+      });
+      syncBodyScrollLock();
+    }
+  });
+</script>
