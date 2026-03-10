@@ -404,3 +404,40 @@
   font-size: 0.8rem;
   opacity: 0.6;
 }
+
+
+.gs-footer-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.gs-footer-column {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.gs-footer-column h2 {
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.25rem;
+  text-transform: uppercase;
+}
+
+.gs-footer-column a {
+  color: var(--gs-text-muted);
+  text-decoration: none;
+}
+
+.gs-footer-column a:hover {
+  color: var(--gs-text);
+}
+
+@media (min-width: 768px) {
+  .gs-footer-grid {
+    gap: 2rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
