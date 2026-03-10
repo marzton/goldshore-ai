@@ -1,19 +1,36 @@
 ---
-const primaryLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/services', label: 'Services' },
-  { href: '/risk-radar', label: 'Risk Radar' },
-  { href: '/developer', label: 'Developer Hub' },
-];
-
-const secondaryLinks = [
-  { href: '/workflows', label: 'Workflows' },
-  { href: '/about', label: 'About' },
-  { href: '/team', label: 'Team' },
-];
+const navigationGroups = [
+  {
+    label: 'Advisory',
+    href: '/services',
+    items: [
+      { label: 'Regime & Risk', href: '/services#regime' },
+      { label: 'Portfolio Steering', href: '/services#steering' },
+      { label: 'Derivatives Strategy', href: '/services#derivatives' },
+    ],
+  },
+  {
+    label: 'Intelligence',
+    href: '/risk-radar',
+    items: [
+      { label: 'Risk Radar', href: '/risk-radar' },
+      { label: 'Workflows', href: '/workflows' },
+    ],
+  },
+  {
+    label: 'Company',
+    href: '/about',
+    items: [
+      { label: 'About', href: '/about' },
+      { label: 'Team', href: '/team' },
+    ],
+  },
+] as const;
 
 const pathname = Astro.url.pathname;
 const isCurrent = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+const groupIsCurrent = (group: (typeof navigationGroups)[number]) =>
+  isCurrent(group.href) || group.items.some((item) => isCurrent(item.href));
 ---
 
 <header class="gs-header">
@@ -25,8 +42,10 @@ const isCurrent = (href: string) => pathname === href || pathname.startsWith(`${
 
     <nav class="gs-nav" aria-label="Primary">
       <div class="gs-nav-links">
-        {[...primaryLinks, ...secondaryLinks].map((l) => (
-          <a class="gs-nav-link" href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a>
+        {navigationGroups.map((group) => (
+          <a class="gs-nav-link" href={group.href} aria-current={groupIsCurrent(group) ? 'page' : undefined}>
+            {group.label}
+          </a>
         ))}
       </div>
       <div class="gs-nav-actions">
@@ -54,42 +73,103 @@ const isCurrent = (href: string) => pathname === href || pathname.startsWith(`${
 
   <div class="gs-mobile-panel-inner">
     <nav class="gs-mobile-links" aria-label="Mobile primary navigation">
-      <p class="gs-mobile-section-title">Primary</p>
-      {primaryLinks.map((l) => <a class="gs-mobile-link-item" href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a>)}
+      {navigationGroups.map((group, index) => {
+        const panelId = `nav-fold-panel-${index}`;
+        const expanded = groupIsCurrent(group);
 
-      <p class="gs-mobile-section-title">Platform</p>
-      {secondaryLinks.map((l) => <a class="gs-mobile-link-item" href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a>)}
+        return (
+          <div class="nav-fold-wrapper" data-gs-nav-fold aria-expanded={expanded ? 'true' : 'false'}>
+            <button
+              class="gs-mobile-link-item nav-fold-trigger"
+              type="button"
+              data-gs-nav-fold-trigger
+              aria-expanded={expanded ? 'true' : 'false'}
+              aria-controls={panelId}
+            >
+              <span>{group.label}</span>
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="nav-fold-content" id={panelId}>
+              {group.items.map((item) => (
+                <a
+                  class="gs-mobile-link-item nav-fold-link"
+                  href={item.href}
+                  aria-current={isCurrent(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        );
+      })}
     </nav>
 
     <div class="gs-mobile-actions" aria-label="Mobile actions">
       <a class="gs-button gs-button-solid" href="/contact">Request Briefing</a>
       <div class="gs-mobile-actions-secondary">
         <button class="gs-mobile-link-item gs-mobile-link-trigger" type="button" data-gs-modal-open="admin" aria-haspopup="dialog">Admin Login</button>
-        <button class="gs-mobile-link-item gs-mobile-link-trigger" type="button" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
+        <button class="gs-mobile-link-item gs-mobile-link-trigger" type="button" data-gs-modal-open="subscribe" aria-haspopup="dialog">Strategic Intelligence Sync</button>
       </div>
     </div>
   </div>
 </div>
 
 <style>
-  .gs-mobile-section-title {
-    color: var(--gs-color-subtle);
-    font-size: 0.75rem;
-    font-weight: 650;
-    letter-spacing: 0.1em;
-    margin: 0.4rem 0 0;
-    text-transform: uppercase;
+  .gs-mobile-links {
+    display: grid;
+    gap: 0.65rem;
   }
 
-  .gs-mobile-links .gs-mobile-link-trigger {
-    appearance: none;
-    background: none;
-    border-radius: var(--gs-r-md);
-    border: 1px solid var(--gs-border);
-    color: inherit;
-    cursor: pointer;
-    text-align: left;
-    width: 100%;
+  .nav-fold-wrapper {
+    display: grid;
+    gap: 0;
+  }
+
+  .nav-fold-trigger {
+    justify-content: space-between;
+    font-weight: 600;
+  }
+
+  .nav-fold-trigger svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 200ms ease;
+  }
+
+  .nav-fold-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-height 250ms ease-in-out, opacity 200ms ease-in-out;
+    display: grid;
+    gap: 0.55rem;
+    padding-left: 0.5rem;
+  }
+
+  .nav-fold-link {
+    margin-left: 0.25rem;
+  }
+
+  .nav-fold-wrapper[aria-expanded='true'] .nav-fold-content {
+    max-height: 500px;
+    opacity: 1;
+    pointer-events: auto;
+    margin-top: 0.5rem;
+  }
+
+  .nav-fold-wrapper[aria-expanded='true'] .nav-fold-trigger svg {
+    transform: rotate(180deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-fold-content,
+    .nav-fold-trigger svg {
+      transition: none;
+    }
   }
 
   .gs-mobile-actions {

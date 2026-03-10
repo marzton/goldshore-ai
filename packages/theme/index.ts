@@ -16,6 +16,12 @@ function initNav() {
   const panel = document.querySelector<HTMLElement>('[data-gs-mobile-panel]');
   if (!toggle || !panel) return;
 
+  const setFoldExpanded = (wrapper: HTMLElement, expanded: boolean) => {
+    const trigger = wrapper.querySelector<HTMLButtonElement>('[data-gs-nav-fold-trigger]');
+    wrapper.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    trigger?.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  };
+
   const setOpen = (open: boolean) => {
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     panel.classList.toggle('is-open', open);
@@ -30,8 +36,30 @@ function initNav() {
 
   panel.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
-    if (t.matches('[data-gs-nav-close]') || t.matches('[data-gs-mobile-panel]') || t.closest('.gs-mobile-link-item')) {
+
+    const foldTrigger = t.closest<HTMLElement>('[data-gs-nav-fold-trigger]');
+    if (foldTrigger) {
+      const wrapper = foldTrigger.closest<HTMLElement>('[data-gs-nav-fold]');
+      if (wrapper) {
+        const expanded = wrapper.getAttribute('aria-expanded') === 'true';
+        setFoldExpanded(wrapper, !expanded);
+      }
+      return;
+    }
+
+    if (t.matches('[data-gs-nav-close]') || t.matches('[data-gs-mobile-panel]') || t.closest('.nav-fold-link')) {
       setOpen(false);
+    }
+  });
+
+  panel.addEventListener('keydown', (e) => {
+    const target = e.target as HTMLElement;
+    if ((e.key === 'Enter' || e.key === ' ') && target.matches('[data-gs-nav-fold-trigger]')) {
+      e.preventDefault();
+      const wrapper = target.closest<HTMLElement>('[data-gs-nav-fold]');
+      if (!wrapper) return;
+      const expanded = wrapper.getAttribute('aria-expanded') === 'true';
+      setFoldExpanded(wrapper, !expanded);
     }
   });
 
@@ -153,15 +181,22 @@ function getModalTemplate(variant: string): string {
 
   return `
     <div class="gs-modal-head">
-      <div class="gs-kicker">Signal Brief</div>
-      <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Subscribe</h2>
-      <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Periodic updates on releases, systems, and operational tooling.</p>
+      <div class="gs-kicker">Strategic Intelligence Sync</div>
+      <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Access High-Fidelity Signals</h2>
+      <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Join our weekly briefing on liquidity shifts, macro regime transitions, and institutional risk management.</p>
     </div>
     <form class="gs-form" action="/api/subscribe" method="POST">
-      <label class="gs-label">Email</label>
+      <label class="gs-label">Professional Email</label>
       <input class="gs-input" name="email" type="email" autocomplete="email" required />
-      <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Request Access</button>
-      <div class="gs-micro gs-muted">No spam. No public list. Controlled distribution.</div>
+      <label class="gs-label">Investor Type</label>
+      <select class="gs-input" name="investorType" required>
+        <option value="institutional">Institutional</option>
+        <option value="family-office">Family Office</option>
+        <option value="uhnw">UHNW</option>
+        <option value="quantitative-lead">Quantitative Lead</option>
+      </select>
+      <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Synchronize</button>
+      <div class="gs-micro gs-muted">No spam. No public list. Institutional distribution only.</div>
     </form>
   `;
 }
