@@ -164,13 +164,13 @@ const initModal = () => {
     content.replaceChildren(wrapper);
   };
 
-  document.querySelectorAll<HTMLElement>('[data-modal]').forEach((button) => {
+  document.querySelectorAll<HTMLElement>('[data-gs-modal-open]').forEach((button) => {
     button.addEventListener('click', () => {
       if (!modal || !content) {
         return;
       }
 
-      const type = button.dataset.modal ?? 'subscribe';
+      const type = button.dataset.gsModalOpen ?? 'subscribe';
       renderModal(type);
       modal.classList.add('active');
     });

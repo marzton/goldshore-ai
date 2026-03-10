@@ -218,9 +218,9 @@ const mountModal = () => {
     return;
   }
 
-  document.querySelectorAll<HTMLElement>('[data-modal]').forEach((button) => {
+  document.querySelectorAll<HTMLElement>('[data-gs-modal-open]').forEach((button) => {
     button.addEventListener('click', () => {
-      const type = button.dataset.modal;
+      const type = button.dataset.gsModalOpen;
       if (type === 'admin') {
         renderAdminModal(content);
       } else {
