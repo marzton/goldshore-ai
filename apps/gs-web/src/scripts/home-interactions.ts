@@ -123,24 +123,89 @@ const createEl = <K extends keyof HTMLElementTagNameMap>(
 };
 
 const renderAdminModal = (content: HTMLElement) => {
+  const emailId = 'modal-email';
+  const passwordId = 'modal-password';
+
+  const emailLabel = createEl('label', { textContent: 'Email' });
+  emailLabel.className = 'modal-label';
+  emailLabel.htmlFor = emailId;
+  const emailInput = createEl('input', { type: 'email', placeholder: 'name@firm.com' });
+  emailInput.className = 'modal-input';
+  emailInput.id = emailId;
+
+  const helper = createEl('p', { textContent: 'Enter admin credentials to continue.' });
+  helper.id = 'modal-description';
+  helper.className = 'modal-helper';
+
+  const passwordLabel = createEl('label', { textContent: 'Password' });
+  passwordLabel.className = 'modal-label';
+  passwordLabel.htmlFor = passwordId;
+  const passwordInput = createEl('input', { type: 'password', placeholder: 'Password' });
+  passwordInput.className = 'modal-input';
+  passwordInput.id = passwordId;
+
   content.replaceChildren(
-    createEl('h2', { textContent: 'Admin Login' }),
-    createEl('input', { type: 'email', placeholder: 'Email' }),
-    createEl('input', { type: 'password', placeholder: 'Password' }),
+    (() => {
+      const heading = createEl('h2', { textContent: 'Admin Login' });
+      heading.id = 'modal-title';
+      return heading;
+    })(),
+    helper,
+    emailLabel,
+    emailInput,
+    passwordLabel,
+    passwordInput,
     createEl('button', {
-      className: 'gs-btn gs-btn-primary',
+      className: 'gs-button gs-button--primary',
       textContent: 'Login',
     }),
   );
 };
 
 const renderSubscribeModal = (content: HTMLElement) => {
+  const emailId = 'modal-email';
+  const investorId = 'modal-investor-type';
+
+  const emailLabel = createEl('label', { textContent: 'Email' });
+  emailLabel.className = 'modal-label';
+  emailLabel.htmlFor = emailId;
+  const emailInput = createEl('input', { type: 'email', placeholder: 'name@firm.com' });
+  emailInput.className = 'modal-input';
+  emailInput.id = emailId;
+
+  const investorLabel = createEl('label', { textContent: 'Investor Type' });
+  investorLabel.className = 'modal-label';
+  investorLabel.htmlFor = investorId;
+  const investorType = document.createElement('select');
+  investorType.id = investorId;
+  investorType.className = 'modal-input';
+  ['Institutional', 'Family Office', 'High-Net-Worth', 'Individual'].forEach((value) => {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = value;
+    investorType.append(option);
+  });
+
+  const support = createEl('p', {
+    textContent: 'Get weekly institutional briefings with market structure insights and signal updates.',
+  });
+  support.id = 'modal-description';
+  support.className = 'modal-helper';
+
   content.replaceChildren(
-    createEl('h2', { textContent: 'Subscribe' }),
-    createEl('input', { type: 'email', placeholder: 'Email' }),
+    (() => {
+      const heading = createEl('h2', { textContent: 'Access High-Fidelity Signals.' });
+      heading.id = 'modal-title';
+      return heading;
+    })(),
+    support,
+    emailLabel,
+    emailInput,
+    investorLabel,
+    investorType,
     createEl('button', {
-      className: 'gs-btn gs-btn-primary',
-      textContent: 'Request Access',
+      className: 'gs-button gs-button--primary',
+      textContent: 'Join the Briefing',
     }),
   );
 };
