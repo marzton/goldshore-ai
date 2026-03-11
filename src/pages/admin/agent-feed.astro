@@ -1,5 +1,5 @@
 ---
-import AdminLayout from '../../layouts/AdminLayout.astro';
+import DefaultPageTemplate from '../../components/DefaultPageTemplate.astro';
 
 const feedItems = [
   {
@@ -46,19 +46,22 @@ const statusBadgeStyles = {
 };
 ---
 
-<AdminLayout title="Agent Feed | GoldShore Admin">
-  <section class="max-w-6xl mx-auto py-12 px-6 space-y-6">
-    <header>
-      <h1 class="text-3xl gs-heading">Agent Feed</h1>
-      <p class="text-[var(--gs-text-secondary)]">
-        Recent activity from Jules and Codex across workflows.
-      </p>
-    </header>
+<DefaultPageTemplate
+  title="Agent Feed"
+  description="Operational feed for agent activity."
+>
+  <section class="mx-auto max-w-5xl px-4 py-10">
+    <h1 class="text-2xl font-semibold text-white">Agent Feed</h1>
+    <p class="mt-2 text-sm text-slate-300">
+      Recent activity from Jules and Codex across workflows.
+    </p>
 
-    <div class="card overflow-hidden">
+    <div
+      class="mt-6 overflow-hidden rounded-xl border border-white/10 bg-slate-900/60"
+    >
       <table class="min-w-full text-left text-sm">
         <thead
-          class="border-b border-white/10 text-xs uppercase tracking-wide text-[var(--gs-text-tertiary)]"
+          class="border-b border-white/10 text-xs uppercase tracking-wide text-slate-400"
         >
           <tr>
             <th class="px-4 py-3">Source</th>
@@ -79,9 +82,7 @@ const statusBadgeStyles = {
                     {item.source}
                   </span>
                 </td>
-                <td class="px-4 py-3 text-[var(--gs-text-primary)]">
-                  {item.summary}
-                </td>
+                <td class="px-4 py-3 text-slate-100">{item.summary}</td>
                 <td class="px-4 py-3">
                   <span
                     class={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${severityStyles[item.severity]}`}
@@ -96,7 +97,7 @@ const statusBadgeStyles = {
                     {item.status}
                   </span>
                 </td>
-                <td class="px-4 py-3 text-[var(--gs-text-secondary)]">
+                <td class="px-4 py-3 text-slate-300">
                   {new Date(item.timestamp).toLocaleString()}
                 </td>
               </tr>
@@ -106,4 +107,4 @@ const statusBadgeStyles = {
       </table>
     </div>
   </section>
-</AdminLayout>
+</DefaultPageTemplate>
