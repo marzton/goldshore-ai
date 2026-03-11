@@ -1,0 +1,55 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { Card } from '@goldshore/ui';
+
+const logicTimestampFallback = new Date().toISOString();
+---
+<AdminLayout title="Agent Feed" requiredPermission="audit:read">
+  <section class="gs-grid columns-1">
+    <Card>
+      <div class="section-title"><span>◉</span><h3>Agent Logic Feed</h3></div>
+      <p class="gs-helper">
+        Latest logic heartbeat:
+        <span id="logic-timestamp">{logicTimestampFallback}</span>
+      </p>
+      <p class="gs-helper">
+        JavaScript enhances this value with live client updates. Without JavaScript, the server-rendered fallback remains visible.
+      </p>
+    </Card>
+
+    <Card>
+      <div class="section-title"><span>⇄</span><h3>Streaming Integration Hook Points</h3></div>
+      <ul class="gs-helper" style="padding-left: 1rem; list-style: disc; display: grid; gap: 0.25rem;">
+        <li>SSE hook: attach an <code>EventSource</code> to a <code>gs-api</code> endpoint (for example, <code>/admin/agent-feed/stream</code>) and apply event payload timestamps to <code>#logic-timestamp</code>.</li>
+        <li>WebSocket hook: open a socket channel from this page to <code>gs-api</code>/<code>gs-gateway</code> for lower-latency bidirectional feed updates.</li>
+        <li>KV-backed fan-out: persist feed events in Cloudflare KV and have <code>gs-api</code> expose replay + tail semantics for reconnect resilience.</li>
+      </ul>
+    </Card>
+  </section>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const logicTimestampEl = document.getElementById('logic-timestamp');
+      if (!logicTimestampEl) return;
+
+      const updateTimestamp = () => {
+        logicTimestampEl.textContent = new Date().toISOString();
+      };
+
+      updateTimestamp();
+      const intervalId = window.setInterval(updateTimestamp, 1000);
+
+      // Streaming hook points:
+      // 1) SSE: const events = new EventSource('/api/gs-api/agent-feed/stream');
+      //    events.onmessage = (event) => { logicTimestampEl.textContent = JSON.parse(event.data).timestamp; };
+      // 2) WebSocket: const socket = new WebSocket('wss://<gateway-or-api>/agent-feed');
+      //    socket.onmessage = (event) => { logicTimestampEl.textContent = JSON.parse(event.data).timestamp; };
+      // 3) KV-backed replay: call an API that reads recent events from KV on reconnect,
+      //    then continue with SSE/WebSocket tail events.
+
+      window.addEventListener('beforeunload', () => {
+        window.clearInterval(intervalId);
+      });
+    });
+  </script>
+</AdminLayout>
