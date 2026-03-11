@@ -1,6 +1,9 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { Card } from '@goldshore/ui';
+import { getDeploymentGuardState } from '../../lib/deployment-guard';
+
+const guard = getDeploymentGuardState();
 
 const workerBindings = [
   { name: 'GS_ROUTING_API_BASE', type: 'Environment Variable', value: 'api.goldshore.ai', status: 'Bound' },
@@ -58,9 +61,25 @@ const workerBindings = [
       <p class="mb-4 text-sm text-slate-500 dark:text-slate-300">
         Last successful deploy to <span class="font-mono">gateway.goldshore.ai</span> was 4h ago.
       </p>
-      <button type="button" class="rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800">
-        Trigger Production Build
+      <button
+        type="button"
+        class={`rounded-lg px-5 py-2.5 text-sm font-medium text-white ${guard.isLocked ? 'cursor-not-allowed bg-slate-500 opacity-70' : 'bg-blue-700 hover:bg-blue-800'}`}
+        disabled={guard.isLocked}
+        aria-disabled={guard.isLocked ? 'true' : 'false'}
+        title={guard.reason}
+      >
+        {guard.isLocked ? 'Build Locked by Security Guard' : 'Trigger Production Build'}
       </button>
+      <p class={`mt-3 text-xs ${guard.isLocked ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+        {guard.reason}
+      </p>
+      {
+        guard.generatedAt ? (
+          <p class="mt-1 text-xs text-slate-500 dark:text-slate-300">
+            Last audit snapshot: <span class="font-mono">{guard.generatedAt}</span>
+          </p>
+        ) : null
+      }
     </Card>
 
     <div class="rounded-xl border border-slate-700 bg-slate-900 p-6">
