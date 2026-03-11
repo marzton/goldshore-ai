@@ -28,8 +28,9 @@
     "sync:cf": "echo 'Run codex sync script here' && tsx scripts/sync-gateway.ts",
     "repo:clean": "git clean -xfd -e .env -e env.secrets.runtime.json",
     "repo:install": "pnpm install --frozen-lockfile",
-    "repo:health": "node scripts/repo-health.mjs",
-    "audit": "pnpm run repo:health"
+    "repo:health": "node scripts/repo-health.mjs && pnpm run check:logo-paths",
+    "audit": "pnpm run repo:health",
+    "check:logo-paths": "node scripts/check-canonical-logo-paths.mjs"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
