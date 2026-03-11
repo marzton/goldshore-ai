@@ -1,5 +1,7 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+
+const deploymentGuard = Astro.locals.deploymentGuard;
 ---
 <AdminLayout title="Worker Status | GoldShore Admin">
     <section class="max-w-5xl mx-auto py-24 px-6 space-y-6">
@@ -7,6 +9,43 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
         <p class="text-[var(--gs-text-secondary)]">
             Health checks and uptime metrics for each worker will appear here.
         </p>
+
+        <div class="gs-card space-y-4">
+            <div class="flex items-center justify-between gap-4">
+                <h2 class="text-xl font-semibold">Deployment Guard</h2>
+                <span class={`gs-pill ${deploymentGuard?.ready ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-300'}`}>
+                    {deploymentGuard?.ready ? 'Ready to Deploy' : 'Missing Configuration'}
+                </span>
+            </div>
+            <p class="text-sm gs-text-subtle">
+                Quick validation for gateway ↔ API inheritance before reconnecting the GitHub deployment.
+            </p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-sm gs-text-subtle border-b border-[var(--gs-color-border)]">
+                            <th class="pb-2">Config Key</th>
+                            <th class="pb-2">Purpose</th>
+                            <th class="pb-2">Required By</th>
+                            <th class="pb-2">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {(deploymentGuard?.checks ?? []).map((check) => (
+                            <tr class="border-b border-[var(--gs-color-border)]/50">
+                                <td class="py-2 font-mono text-xs">{check.key}</td>
+                                <td class="py-2 text-sm">{check.label}</td>
+                                <td class="py-2 uppercase text-xs gs-text-subtle">{check.requiredBy}</td>
+                                <td class={`py-2 text-sm ${check.present ? 'text-emerald-300' : 'text-amber-300'}`}>
+                                    {check.present ? 'Present' : 'Missing'}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-xs gs-text-subtle">Checked at: {deploymentGuard?.checkedAt ? new Date(deploymentGuard.checkedAt).toLocaleString() : 'N/A'}</p>
+        </div>
 
         <div class="gs-card space-y-4">
             <div class="flex items-center justify-between gap-4">

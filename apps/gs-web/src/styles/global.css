@@ -1,3 +1,17 @@
+/*
+  Application-level global stylesheet.
+  Theme foundation (tokens + base reset + component primitives) is provided by
+  `@goldshore/theme` in `WebLayout.astro` and should remain the single source of truth.
+*/
+
+:root {
+  --gs-app-header-offset: 80px;
+  --gs-app-content-min-height: calc(100dvh - var(--gs-app-header-offset));
+}
+
+/* App shell layout hooks */
+main#main-content {
+  min-height: var(--gs-app-content-min-height);
 /* -----------------------------
    Foundation tokens
 ------------------------------ */
