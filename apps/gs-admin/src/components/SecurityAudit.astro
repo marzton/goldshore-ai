@@ -1,65 +1,91 @@
 ---
-// Static mapping to prevent Tailwind CSS purging
-const severityStyles = {
-  high: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800/40',
-  medium:
-    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800/40',
-  low: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800/40'
+interface AuditItem {
+  id: string;
+  title: string;
+  severity: 'critical' | 'high' | 'medium' | 'low';
+  owner: string;
+  status: 'open' | 'in-progress' | 'mitigated';
+  updatedAt: string;
+}
+
+const { items = [] } = Astro.props as { items?: AuditItem[] };
+
+const severityOrder: Record<AuditItem['severity'], number> = {
+  critical: 0,
+  high: 1,
+  medium: 2,
+  low: 3
 };
 
-const alerts = [
-  {
-    id: 'GH-RS-01',
-    title: 'Unsafe Regex in media.ts',
-    severity: 'high',
-    status: 'Blocking PR #3268',
-    file: 'apps/gs-api/src/routes/media.ts'
-  },
-  {
-    id: 'GH-SC-05',
-    title: 'Insecure Cookie Configuration',
-    severity: 'medium',
-    status: 'Pending Fix',
-    file: 'apps/gs-gateway/src/auth.ts'
-  }
-] as const;
+const sortedItems = [...items].sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
 ---
 
-<div class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm dark:bg-slate-800 dark:border-slate-700">
-  <div class="flex items-center justify-between mb-4">
-    <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center">
-      <svg class="w-5 h-5 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-        <path
-          fill-rule="evenodd"
-          d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-          clip-rule="evenodd"
-        ></path>
-      </svg>
-      CodeQL Security Audit
-    </h3>
-    <span class="text-xs font-medium text-slate-500 underline decoration-dotted cursor-help">Updated just now</span>
+<section class="security-audit" aria-labelledby="security-audit-title">
+  <div class="section-title">
+    <span>🛡️</span>
+    <h3 id="security-audit-title">Security audit</h3>
   </div>
 
-  <div class="space-y-3">
-    {alerts.map((alert) => (
-      <div class={`p-3 border rounded-lg ${severityStyles[alert.severity]}`}>
-        <div class="flex justify-between items-start gap-2">
+  {sortedItems.length ? (
+    <ul class="security-audit-list">
+      {sortedItems.map((item) => (
+        <li class="security-audit-item">
           <div>
-            <span class="text-[10px] font-bold uppercase tracking-wider opacity-70">{alert.id}</span>
-            <p class="text-sm font-semibold mt-0.5">{alert.title}</p>
-            <p class="text-xs mt-1 font-mono opacity-80">{alert.file}</p>
+            <p class="security-title">{item.title}</p>
+            <p class="gs-helper">#{item.id} · {item.owner}</p>
           </div>
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded border border-current uppercase">
-            {alert.severity}
-          </span>
-        </div>
-        <div class="mt-2 flex items-center text-[11px] font-medium">
-          <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          {alert.status}
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
+          <div class="security-meta">
+            <span class={`gs-badge ${item.severity === 'critical' ? 'danger' : item.severity === 'high' ? 'warning' : 'info'}`}>
+              {item.severity}
+            </span>
+            <span class={`gs-badge ${item.status === 'mitigated' ? 'success' : item.status === 'in-progress' ? 'info' : 'warning'}`}>
+              {item.status}
+            </span>
+            <time class="gs-helper" datetime={item.updatedAt}>{new Date(item.updatedAt).toLocaleString()}</time>
+          </div>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p class="gs-helper">No active security findings.</p>
+  )}
+</section>
+
+<style>
+  .security-audit {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .security-audit-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .security-audit-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    border: 1px solid var(--gs-border, #2a2d38);
+    border-radius: 0.7rem;
+    padding: 0.75rem 0.9rem;
+    background: color-mix(in oklab, var(--gs-surface, #111) 88%, white 12%);
+  }
+
+  .security-title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .security-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+</style>
