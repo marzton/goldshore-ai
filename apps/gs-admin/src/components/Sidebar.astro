@@ -19,6 +19,7 @@ const navGroups: NavGroup[] = [
     id: 'platform',
     label: 'Platform',
     links: [
+      { href: '/admin/overview', label: 'Overview' },
       { href: '/appearance/hero', label: 'Hero Configuration' },
       { href: '/admin/system', label: 'API Status' },
       { href: '/admin/agent-feed', label: 'Agent Feed' }
@@ -28,17 +29,47 @@ const navGroups: NavGroup[] = [
     id: 'content',
     label: 'Content',
     links: [
-      { href: '/admin/page-editor', label: 'Home Editor' },
+      { href: '/admin/pages/editor', label: 'Home Editor' },
       { href: '/admin/pages', label: 'Team Profiles' },
-      { href: '/admin/content', label: 'Advisory Services' }
+      { href: '/admin/content', label: 'Advisory Services' },
+      { href: '/admin/content', label: 'Content Studio' },
+      { href: '/admin/pages/editor', label: 'Page Editor' }
     ]
   },
   {
-    id: 'intake',
-    label: 'Intake',
+    id: 'intake-crm',
+    label: 'Intake & CRM',
     links: [
       { href: '/admin/forms', label: 'Briefing Requests', requiredPermission: 'forms:read' },
       { href: '/admin/workers', label: 'CRM Logic' }
+    ]
+  },
+  {
+    id: 'insights',
+    label: 'Insights',
+    links: [
+      { href: '/admin/analytics', label: 'Analytics' },
+      { href: '/admin/monetization', label: 'Monetization' }
+    ]
+  },
+  {
+    id: 'management',
+    label: 'Management',
+    links: [
+      { href: '/admin/pages', label: 'Pages' },
+      { href: '/admin/media', label: 'Media Library', requiredPermission: 'media:read' },
+      { href: '/admin/pii-scans', label: 'PII Scans' },
+      { href: '/admin/workers', label: 'Workers' },
+      { href: '/admin/users', label: 'Users', requiredPermission: 'users:read' }
+    ]
+  },
+  {
+    id: 'system',
+    label: 'System',
+    links: [
+      { href: '/admin/settings', label: 'Settings' },
+      { href: '/admin/system', label: 'System Health' },
+      { href: '/admin/logs', label: 'Logs', requiredPermission: 'audit:read' }
     ]
   }
 ];
