@@ -25,6 +25,14 @@ const navGroups: NavGroup[] = [
     ]
   },
   {
+    id: 'management',
+    label: 'Management',
+    links: [
+      { href: '/admin/media', label: 'Media Library', requiredPermission: 'media:read' },
+      { href: '/admin/pii-scans', label: 'PII Scans' }
+    ]
+  },
+  {
     id: 'content',
     label: 'Content',
     links: [
