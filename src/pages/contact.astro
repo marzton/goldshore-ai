@@ -22,6 +22,16 @@ import Footer from '../components/Footer.astro';
       </p>
       <form class="card" action="/contact/thanks" method="GET">
         <p>
+          <label for="inquiry-type">Inquiry Type</label><br />
+          <select id="inquiry-type" name="inquiry_type" required>
+            <option value="">Select one</option>
+            <option>Client Seeking Advice</option>
+            <option>Advisor Seeking Partnership</option>
+            <option>Firm Partnership</option>
+            <option>Quant Collaboration</option>
+          </select>
+        </p>
+        <p>
           <label for="name">Name</label><br />
           <input id="name" name="name" required />
         </p>
@@ -57,8 +67,30 @@ import Footer from '../components/Footer.astro';
           </select>
         </p>
         <p>
-          <label for="details">Project context</label><br />
-          <textarea id="details" name="details" rows="5" required></textarea>
+          <label for="credentials">Credentials (optional)</label><br />
+          <select id="credentials" name="credentials">
+            <option value="">Select one</option>
+            <option>CFA</option>
+            <option>CFP</option>
+            <option>CAIA</option>
+            <option>CMT</option>
+            <option>Series 65/66</option>
+            <option>Other</option>
+          </select>
+        </p>
+        <p>
+          <label for="details">Strategic Intent</label><br />
+          <small>
+            In 2–4 sentences, describe how you would apply Gold Shore
+            intelligence to your mandates or advisory workflow.
+          </small>
+          <textarea
+            id="details"
+            name="details"
+            rows="5"
+            minlength="50"
+            placeholder="Using liquidity signals to adjust UHNW equity exposure with weekly rebalancing."
+            required></textarea>
         </p>
         <button class="button button-primary" type="submit"
           >Start the Engagement</button
