@@ -37,7 +37,8 @@ const navGroups: NavGroup[] = [
     label: 'Intake',
     links: [
       { href: '/admin/forms', label: 'Briefing Requests', requiredPermission: 'forms:read' },
-      { href: '/admin/workers', label: 'CRM Logic' }
+      { href: '/admin/workers', label: 'CRM Logic' },
+      { href: '/admin/agent-feed', label: 'Agent Feed', requiredPermission: 'audit:read' }
     ]
   }
 ];

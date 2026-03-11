@@ -1,0 +1,117 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { Card } from '@goldshore/ui';
+import SecurityAudit from '../../components/SecurityAudit.astro';
+
+const activeTasks = [
+  {
+    id: 'TASK-934',
+    agent: 'ops-router',
+    stream: 'Customer intake',
+    state: 'running',
+    summary: 'Scoring newly submitted briefing forms for assignment.',
+    startedAt: '2026-03-11T07:48:00.000Z'
+  },
+  {
+    id: 'TASK-928',
+    agent: 'ledger-auditor',
+    stream: 'Monetization checks',
+    state: 'review',
+    summary: 'Reconciling ad partner attribution drift across regions.',
+    startedAt: '2026-03-11T07:23:00.000Z'
+  },
+  {
+    id: 'TASK-917',
+    agent: 'infra-watch',
+    stream: 'Worker reliability',
+    state: 'running',
+    summary: 'Monitoring cold start spikes and queue depth alerts.',
+    startedAt: '2026-03-11T06:50:00.000Z'
+  }
+];
+
+const securityAuditItems = [
+  {
+    id: 'AUD-342',
+    title: 'Rotate stale service-token for media webhook pipeline',
+    severity: 'critical',
+    owner: 'security-bot',
+    status: 'open',
+    updatedAt: '2026-03-11T07:41:00.000Z'
+  },
+  {
+    id: 'AUD-336',
+    title: 'Restrict public metadata endpoint to admin IP range',
+    severity: 'high',
+    owner: 'gateway-policy',
+    status: 'in-progress',
+    updatedAt: '2026-03-11T07:15:00.000Z'
+  },
+  {
+    id: 'AUD-330',
+    title: 'Confirm origin-pull mTLS enforcement on fallback zone',
+    severity: 'medium',
+    owner: 'platform-team',
+    status: 'mitigated',
+    updatedAt: '2026-03-11T05:58:00.000Z'
+  }
+] as const;
+---
+
+<AdminLayout title="Agent Feed">
+  <section class="gs-grid columns-2">
+    <Card>
+      <div class="section-title"><span>⚙️</span><h3>Active task stream</h3></div>
+      <ul class="task-stream" aria-label="Current active tasks">
+        {activeTasks.map((task) => (
+          <li class="task-row">
+            <div>
+              <p class="task-title">{task.stream}</p>
+              <p class="gs-helper">{task.summary}</p>
+              <p class="gs-helper">{task.agent} · {task.id}</p>
+            </div>
+            <div class="task-meta">
+              <span class={`gs-badge ${task.state === 'running' ? 'info' : 'warning'}`}>{task.state}</span>
+              <time class="gs-helper" datetime={task.startedAt}>{new Date(task.startedAt).toLocaleTimeString()}</time>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </Card>
+
+    <Card>
+      <SecurityAudit items={securityAuditItems} />
+    </Card>
+  </section>
+</AdminLayout>
+
+<style>
+  .task-stream {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .task-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    border-radius: 0.7rem;
+    border: 1px solid var(--gs-border, #2a2d38);
+    padding: 0.75rem 0.9rem;
+    background: color-mix(in oklab, var(--gs-surface, #111) 88%, white 12%);
+  }
+
+  .task-title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .task-meta {
+    display: grid;
+    gap: 0.35rem;
+    justify-items: end;
+  }
+</style>
