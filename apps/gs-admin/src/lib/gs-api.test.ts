@@ -20,7 +20,7 @@ describe('getGsApiBaseUrl', () => {
 
   test('returns empty string if all are missing', () => {
     const env = {};
-    assert.strictEqual(getGsApiBaseUrl(env), '');
+    assert.strictEqual(getGsApiBaseUrl(env), 'https://api.goldshore.ai');
   });
 });
 

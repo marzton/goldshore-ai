@@ -35,14 +35,18 @@ export const loadSystemSyncSnapshot = async (kv: KVNamespace) => {
   }
 
   return {
-    ROUTING_TABLE: RoutingTableSchema.parse({}),
-    SERVICE_STATUS: ServiceStatusSchema.parse({
-      maintenance_mode: false,
-      active_services: [],
-      version: 'unknown',
-    }),
-    AI_ORCHESTRATION: AiOrchestrationSchema.parse({}),
-    EMAIL_INBOX_LOGS: EmailInboxLogsSchema.parse([]),
+    ROUTING_TABLE: RoutingTableSchema.safeParse(ROUTING_TABLE).success
+      ? RoutingTableSchema.parse(ROUTING_TABLE)
+      : RoutingTableSchema.parse({}),
+    SERVICE_STATUS: ServiceStatusSchema.safeParse(SERVICE_STATUS).success
+      ? ServiceStatusSchema.parse(SERVICE_STATUS)
+      : ServiceStatusSchema.parse({ maintenance_mode: false, active_services: [], version: 'unknown' }),
+    AI_ORCHESTRATION: AiOrchestrationSchema.safeParse(AI_ORCHESTRATION).success
+      ? AiOrchestrationSchema.parse(AI_ORCHESTRATION)
+      : AiOrchestrationSchema.parse({}),
+    EMAIL_INBOX_LOGS: EmailInboxLogsSchema.safeParse(EMAIL_INBOX_LOGS).success
+      ? EmailInboxLogsSchema.parse(EMAIL_INBOX_LOGS)
+      : EmailInboxLogsSchema.parse([]),
   };
 };
 
