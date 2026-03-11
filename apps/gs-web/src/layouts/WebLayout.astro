@@ -1,5 +1,6 @@
 ---
 import '@goldshore/theme';
+import '../styles/canonical-logo.css';
 import '../styles/brand.css';
 import '../styles/home.css';
 import SiteNav from '../components/SiteNav.astro';
@@ -44,6 +45,8 @@ const pageSchemas = Array.isArray(structuredData)
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/logo/gs-penrose.svg" />
+    <link rel="alternate icon" href="/favicon.svg" />
     <title>{title}</title>
     <script
       type="application/ld+json"
