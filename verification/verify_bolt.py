@@ -7,7 +7,7 @@ def verify_bolt_optimizations(page):
     # 1. Check Favicon
     print("Checking favicon...")
     favicon = page.locator("link[rel='icon']")
-    expect(favicon).to_have_attribute("href", "/logo/gs-penrose.svg?v=2026-penrose-1")
+    expect(favicon).to_have_attribute("href", "/logo/gs-penrose.svg")
     print("✅ Favicon present")
 
     # 2. Check LCP Logo Optimization
