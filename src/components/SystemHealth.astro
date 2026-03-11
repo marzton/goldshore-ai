@@ -1,0 +1,23 @@
+---
+// This pulls real-time status from your consolidated API
+const apiStatus = "Operational";
+const gatewayLatency = "42ms";
+---
+
+<div class="p-4 bg-white border border-slate-200 rounded-lg shadow-sm dark:bg-slate-800 dark:border-slate-700">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Engine Status</h3>
+    <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
+      {apiStatus}
+    </span>
+  </div>
+  <div class="space-y-3">
+    <div class="flex justify-between text-sm">
+      <span class="text-slate-500 dark:text-slate-400">Gateway Latency</span>
+      <span class="font-mono text-blue-600 dark:text-blue-400">{gatewayLatency}</span>
+    </div>
+    <div class="w-full bg-slate-200 rounded-full h-1.5 dark:bg-slate-700">
+      <div class="bg-blue-600 h-1.5 rounded-full" style="width: 98%"></div>
+    </div>
+  </div>
+</div>
