@@ -1,0 +1,45 @@
+name: Deploy Workers & Sync Secrets
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/gs-api/**'
+      - 'apps/gs-gateway/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy API Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: 'apps/gs-api'
+          secrets: |
+            GS_ROUTING_API_BASE
+            AIPROXY_SIGNING_KEY
+            SESSION_KV_ID
+        env:
+          GS_ROUTING_API_BASE: ${{ secrets.GS_ROUTING_API_BASE }}
+          AIPROXY_SIGNING_KEY: ${{ secrets.AIPROXY_SIGNING_KEY }}
+          SESSION_KV_ID: ${{ secrets.SESSION_KV_ID }}
+
+      - name: Deploy Gateway Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: 'apps/gs-gateway'
+          secrets: |
+            AIPROXY_SIGNING_KEY
+        env:
+          AIPROXY_SIGNING_KEY: ${{ secrets.AIPROXY_SIGNING_KEY }}
