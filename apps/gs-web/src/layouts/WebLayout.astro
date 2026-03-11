@@ -13,7 +13,7 @@ interface Props {
 
 const {
   title = 'Gold Shore',
-  description = 'Strategic advisory and intelligence for institutional capital.',
+  description = 'Institutional-grade automation and intelligence.',
   structuredData,
 } = Astro.props;
 
@@ -36,14 +36,33 @@ const pageSchemas = Array.isArray(structuredData)
   : structuredData
     ? [structuredData]
     : [];
+
+const pathname = Astro.url.pathname;
+const isSpanish = pathname === '/es' || pathname.startsWith('/es/');
+const englishPath = isSpanish
+  ? pathname.replace(/^\/es(?=\/|$)/, '') || '/'
+  : pathname;
+const spanishPath = pathname === '/'
+  ? '/es'
+  : isSpanish
+    ? pathname
+    : `/es${pathname}`;
+const canonicalPath = isSpanish ? spanishPath : englishPath;
+const canonicalUrl = new URL(canonicalPath, siteUrl).toString();
+const englishUrl = new URL(englishPath, siteUrl).toString();
+const spanishUrl = new URL(spanishPath, siteUrl).toString();
 ---
 
-<html lang="en">
+<html lang={isSpanish ? 'es' : 'en'}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="en" href={englishUrl} />
+    <link rel="alternate" hreflang="es" href={spanishUrl} />
+    <link rel="alternate" hreflang="x-default" href={englishUrl} />
     <script
       type="application/ld+json"
       set:html={JSON.stringify(organizationSchema)}
@@ -83,7 +102,7 @@ const pageSchemas = Array.isArray(structuredData)
 
     <footer class="gs-footer">
       <div class="gs-container">
-        <p>Gold Shore — Shaping Waves — Steering Capital.</p>
+        <p>Gold Shore — Designed not to manage capital, but to steer it.</p>
         <nav class="gs-footer-grid" aria-label="Footer">
           <section
             class="gs-footer-column"
@@ -133,18 +152,6 @@ const pageSchemas = Array.isArray(structuredData)
 
       initGoldShoreUI();
       initParallax();
-
-      document.querySelectorAll('[data-gs-outbound-label]').forEach((node) => {
-        node.addEventListener('click', () => {
-          const label = node.getAttribute('data-gs-outbound-label');
-          if (!label || typeof window.gtag !== 'function') return;
-          window.gtag('event', 'outbound_link', {
-            event_category: 'engagement',
-            event_label: label,
-            link_text: label,
-          });
-        });
-      });
     </script>
     <script type="module" src={themeRuntimeUrl}></script>
   </body>

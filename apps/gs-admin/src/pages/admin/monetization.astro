@@ -5,7 +5,6 @@ import {
   adPlacements,
   affiliateLinks,
   analyticsProviders,
-  footerLinkSettings,
   pageMonetizationConfigs,
 } from '../../lib/monetization';
 
@@ -127,36 +126,6 @@ const affiliateSlotOptions = ['Primary CTA card', 'CTA footer', 'Sidebar resourc
           ))}
         </tbody>
       </table>
-    </Card>
-
-    <Card>
-      <div class="section-title"><span>🔗</span><h3>Footer Link Controls</h3></div>
-      <p class="gs-helper">
-        Configure institutional footer destinations for Partnership, Media Kit, and Affiliates.
-        These links emit GA4 <code>outbound_link</code> events on the public site.
-      </p>
-      <form class="gs-form-row gs-mt-4">
-        <label>
-          Partnership URL
-          <input class="gs-input" name="partnershipUrl" value={footerLinkSettings.partnershipUrl} />
-        </label>
-        <label>
-          Media Kit URL
-          <input class="gs-input" name="mediaKitUrl" value={footerLinkSettings.mediaKitUrl} />
-        </label>
-        <label>
-          Affiliates URL
-          <input class="gs-input" name="affiliatesUrl" value={footerLinkSettings.affiliatesUrl} />
-        </label>
-        <label>
-          Affiliate Associate ID
-          <input class="gs-input" name="affiliateAssociateId" value={footerLinkSettings.affiliateAssociateId} placeholder="e.g., goldshore-20" />
-        </label>
-        <div class="gs-form-actions">
-          <GSButton type="button" variant="secondary">Validate URLs</GSButton>
-          <GSButton type="submit" variant="primary">Save footer links</GSButton>
-        </div>
-      </form>
     </Card>
 
     <Card>

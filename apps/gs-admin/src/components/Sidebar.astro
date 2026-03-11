@@ -19,25 +19,32 @@ const navGroups: NavGroup[] = [
     id: 'platform',
     label: 'Platform',
     links: [
-      { href: '/appearance/hero', label: 'Hero Configuration' },
-      { href: '/admin/system', label: 'API Status' }
+      { href: '/appearance/hero', label: 'Hero Engine' }
+    ]
+  },
+  {
+    id: 'operations',
+    label: 'Operations',
+    links: [
+      { href: '/admin/agent-feed', label: 'Agent Feed' },
+      { href: '/admin/system', label: 'System Configuration' }
     ]
   },
   {
     id: 'content',
     label: 'Content',
     links: [
-      { href: '/admin/page-editor', label: 'Home Editor' },
-      { href: '/admin/pages', label: 'Team Profiles' },
-      { href: '/admin/content', label: 'Advisory Services' }
+      { href: '/admin/page-editor', label: 'Page Editor' },
+      { href: '/admin/pages', label: 'Pages' },
+      { href: '/admin/content', label: 'Content Studio' }
     ]
   },
   {
     id: 'intake',
     label: 'Intake',
     links: [
-      { href: '/admin/forms', label: 'Briefing Requests', requiredPermission: 'forms:read' },
-      { href: '/admin/workers', label: 'CRM Logic' }
+      { href: '/admin/forms', label: 'Forms Dashboard', requiredPermission: 'forms:read' },
+      { href: '/admin/workers', label: 'Workers Overview' }
     ]
   }
 ];
