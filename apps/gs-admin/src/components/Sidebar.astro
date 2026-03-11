@@ -27,10 +27,18 @@ const navGroups: NavGroup[] = [
     ]
   },
   {
+    id: 'management',
+    label: 'Management',
+    links: [
+      { href: '/admin/media', label: 'Media Library', requiredPermission: 'media:read' },
+      { href: '/admin/pii-scans', label: 'PII Scans' }
+    ]
+  },
+  {
     id: 'content',
     label: 'Content',
     links: [
-      { href: '/admin/page-editor', label: 'Home Editor' },
+      { href: '/admin/pages/editor', label: 'Home Editor' },
       { href: '/admin/pages', label: 'Team Profiles' },
       { href: '/admin/content', label: 'Advisory Services' },
       { href: '/admin/content', label: 'Content Studio' },
