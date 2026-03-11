@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { RoutingTableSchema, ServiceStatusSchema } from '@goldshore/schema';
 import { Env, Variables } from '../types';
 import { parseConfig, resolveServiceStatusWithConfig } from './system.config';
+import { withContractHeaders } from './contract';
 
 const system = new Hono<{ Bindings: Env; Variables: Variables }>();
 
@@ -84,11 +85,16 @@ system.put('/config', async (c) => {
 });
 
 system.get('/version', (c) =>
-  c.json({
-    service: 'gs-api',
-    version: c.env.GIT_SHA ?? 'unknown',
-    deploySha: c.env.GIT_SHA ?? null,
-  }),
+  c.json(
+    withContractHeaders(
+      {
+        service: 'gs-api',
+        version: c.env.API_VERSION ?? 'unknown',
+        deploySha: c.env.DEPLOY_SHA ?? c.env.GIT_SHA ?? null,
+      },
+      c.env.API_VERSION,
+    ),
+  ),
 );
 
 export default system;

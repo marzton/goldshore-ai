@@ -1,0 +1,59 @@
+---
+const severityStyles = {
+  high: "bg-red-50 text-red-700 border-red-200",
+  medium: "bg-amber-50 text-amber-700 border-amber-200",
+  low: "bg-emerald-50 text-emerald-700 border-emerald-200",
+} as const;
+
+const alerts = [
+  {
+    id: "GH-RS-01",
+    title: "Possible server-side request forgery",
+    repository: "apps/gs-agent",
+    severity: "high",
+    summary: "User-supplied URL may be fetched without host allowlist validation.",
+  },
+  {
+    id: "GH-SC-05",
+    title: "Hardcoded secret candidate",
+    repository: "apps/gs-gateway",
+    severity: "medium",
+    summary: "Potential API token pattern detected in environment bootstrap logic.",
+  },
+] as const;
+---
+
+<section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+  <header class="mb-4 flex items-center justify-between gap-2">
+    <div>
+      <h2 class="text-lg font-semibold text-slate-900">Security Audit</h2>
+      <p class="text-sm text-slate-600">Latest CodeQL-like alerts detected across services.</p>
+    </div>
+    <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+      {alerts.length} open alerts
+    </span>
+  </header>
+
+  <div class="space-y-3">
+    {
+      alerts.map((alert) => (
+        <article class="rounded-lg border border-slate-200 bg-slate-50 p-4">
+          <div class="mb-2 flex flex-wrap items-center gap-2">
+            <span class="font-mono text-xs font-semibold text-slate-600">{alert.id}</span>
+            <span
+              class:list={[
+                "rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize",
+                severityStyles[alert.severity],
+              ]}
+            >
+              {alert.severity}
+            </span>
+          </div>
+          <h3 class="text-sm font-semibold text-slate-900">{alert.title}</h3>
+          <p class="mt-1 text-sm text-slate-600">{alert.summary}</p>
+          <p class="mt-2 text-xs text-slate-500">Repository: {alert.repository}</p>
+        </article>
+      ))
+    }
+  </div>
+</section>
