@@ -1,5 +1,6 @@
 import { onRequest as baseMiddleware } from "@goldshore/config/middleware";
 import { defineMiddleware, sequence } from "astro:middleware";
+import { deploymentGuardMiddleware } from "./middleware/deployment-guard";
 import {
   ADMIN_ROLES,
   buildAdminSession,
@@ -105,4 +106,4 @@ const securityMiddleware = defineMiddleware(async (context, next) => {
   return response;
 });
 
-export const onRequest = sequence(baseMiddleware, authMiddleware, securityMiddleware);
+export const onRequest = sequence(baseMiddleware, authMiddleware, deploymentGuardMiddleware, securityMiddleware);
