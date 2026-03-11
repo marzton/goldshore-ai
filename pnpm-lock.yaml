@@ -131,7 +131,7 @@ importers:
         version: link:../../packages/auth
       hono:
         specifier: ^4.12.3
-        version: 4.12.5
+        version: 4.12.4
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20260301.1
@@ -162,7 +162,7 @@ importers:
         version: 2.16.1
       hono:
         specifier: ^4.12.4
-        version: 4.12.5
+        version: 4.12.4
       safe-stable-stringify:
         specifier: ^2.5.0
         version: 2.5.0
@@ -196,10 +196,10 @@ importers:
         version: link:../../packages/utils
       '@hono/zod-validator':
         specifier: ^0.7.6
-        version: 0.7.6(hono@4.12.5)(zod@4.3.6)
+        version: 0.7.6(hono@4.12.4)(zod@4.3.6)
       hono:
         specifier: ^4.12.4
-        version: 4.12.5
+        version: 4.12.4
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -224,7 +224,7 @@ importers:
         version: link:../../packages/auth
       hono:
         specifier: ^4.12.4
-        version: 4.12.5
+        version: 4.12.4
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20260301.1
@@ -246,7 +246,7 @@ importers:
     dependencies:
       hono:
         specifier: ^4.12.4
-        version: 4.12.5
+        version: 4.12.4
       postal-mime:
         specifier: 2.7.3
         version: 2.7.3
@@ -1621,12 +1621,13 @@ packages:
     resolution: {integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==}
     engines: {node: '>=18'}
 
-  corser@2.0.1:
-    resolution: {integrity: sha512-utCYNzRSQIZNPIcGZdQc92UVJYAhtGAteCFg0yRaFm8f0P+CPtyGyHXJcGXnffjCybUCEx3FQ2G7U3/o9eIkVQ==}
-    engines: {node: '>= 0.4.0'}
   copy-anything@4.0.5:
     resolution: {integrity: sha512-7Vv6asjS4gMOuILabD3l739tsaxFQmC+a7pLZm02zyvs8p977bL3zEgq3yDk5rn9B0PbYgIv++jmHcuUab4RhA==}
     engines: {node: '>=18'}
+
+  corser@2.0.1:
+    resolution: {integrity: sha512-utCYNzRSQIZNPIcGZdQc92UVJYAhtGAteCFg0yRaFm8f0P+CPtyGyHXJcGXnffjCybUCEx3FQ2G7U3/o9eIkVQ==}
+    engines: {node: '>= 0.4.0'}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -2018,6 +2019,9 @@ packages:
     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
     engines: {node: '>=0.10.0'}
 
+  event-emitter@0.3.5:
+    resolution: {integrity: sha512-D9rRn9y7kLPnJ+hMq7S/nhvoKwwvVJahBi2BPmx3bvbsEdK3W9ii8cBSGjP+72/LnM4n6fo3+dkCX5FeTQruXA==}
+
   eventemitter3@4.0.7:
     resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
 
@@ -2239,11 +2243,15 @@ packages:
   hastscript@9.0.1:
     resolution: {integrity: sha512-g7df9rMFX/SPi34tyGCyUBREQoKkapwdY/T04Qn9TDWfHhAYt4/I0gMVirzK5wEzeUqIjEB+LXC/ypb7Aqno5w==}
 
+  he@1.2.0:
+    resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
+    hasBin: true
+
   heap@0.2.7:
     resolution: {integrity: sha512-2bsegYkkHO+h/9MGbn6KWcE45cHZgPANo5LXF7EvWdT0yT2EguSVO1nDgU5c8+ZOPwp2vMNa7YFsJhVcDR9Sdg==}
 
-  hono@4.12.5:
-    resolution: {integrity: sha512-3qq+FUBtlTHhtYxbxheZgY8NIFnkkC/MR8u5TTsr7YZ3wixryQ3cCwn3iZbg8p8B88iDBBAYSfZDS75t8MN7Vg==}
+  hono@4.12.4:
+    resolution: {integrity: sha512-ooiZW1Xy8rQ4oELQ++otI2T9DsKpV0M6c6cO6JGx4RTfav9poFFLlet9UMXHZnoM1yG0HWGlQLswBGX3RZmHtg==}
     engines: {node: '>=16.9.0'}
 
   html-encoding-sniffer@3.0.0:
@@ -4162,18 +4170,18 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@hono/node-server@1.19.11(hono@4.12.5)':
+  '@hono/node-server@1.19.11(hono@4.12.4)':
     dependencies:
-      hono: 4.12.5
+      hono: 4.12.4
 
-  '@hono/zod-validator@0.2.2(hono@4.12.5)(zod@3.25.76)':
+  '@hono/zod-validator@0.2.2(hono@4.12.4)(zod@3.25.76)':
     dependencies:
-      hono: 4.12.5
+      hono: 4.12.4
       zod: 3.25.76
 
-  '@hono/zod-validator@0.7.6(hono@4.12.5)(zod@4.3.6)':
+  '@hono/zod-validator@0.7.6(hono@4.12.4)(zod@4.3.6)':
     dependencies:
-      hono: 4.12.5
+      hono: 4.12.4
       zod: 4.3.6
 
   '@humanwhocodes/config-array@0.13.0':
@@ -5187,6 +5195,8 @@ snapshots:
     dependencies:
       is-what: 5.5.0
 
+  corser@2.0.1: {}
+
   cross-spawn@7.0.6:
     dependencies:
       path-key: 3.1.1
@@ -5299,8 +5309,8 @@ snapshots:
   drizzle-kit@0.20.18:
     dependencies:
       '@esbuild-kit/esm-loader': 2.6.5
-      '@hono/node-server': 1.19.11(hono@4.12.5)
-      '@hono/zod-validator': 0.2.2(hono@4.12.5)(zod@3.25.76)
+      '@hono/node-server': 1.19.11(hono@4.12.4)
+      '@hono/zod-validator': 0.2.2(hono@4.12.4)(zod@3.25.76)
       camelcase: 7.0.1
       chalk: 5.6.2
       commander: 9.5.0
@@ -5309,7 +5319,7 @@ snapshots:
       esbuild-register: 3.6.0(esbuild@0.25.12)
       glob: 8.1.0
       hanji: 0.0.5
-      hono: 4.12.5
+      hono: 4.12.4
       json-diff: 0.9.0
       minimatch: 7.4.9
       semver: 7.7.4
@@ -5593,11 +5603,12 @@ snapshots:
 
   esutils@2.0.3: {}
 
-  eventemitter3@4.0.7: {}
   event-emitter@0.3.5:
     dependencies:
       d: 1.0.2
       es5-ext: 0.10.64
+
+  eventemitter3@4.0.7: {}
 
   eventemitter3@5.0.4: {}
 
@@ -5909,6 +5920,8 @@ snapshots:
       space-separated-tokens: 2.0.2
 
   he@1.2.0: {}
+
+  heap@0.2.7: {}
 
   hono@4.12.4: {}
 

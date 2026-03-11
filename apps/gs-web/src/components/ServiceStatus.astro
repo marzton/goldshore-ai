@@ -10,7 +10,7 @@ const { serviceUrl } = Astro.props;
 <div class="service-status-card p-6 rounded-2xl border border-[var(--gs-border-primary)] bg-white shadow-sm">
   <div class="flex items-center justify-between mb-6">
     <h3 class="text-lg font-bold gs-heading">System Vitality</h3>
-    <div id="status-indicator" class="flex items-center gap-2">
+    <div id="status-indicator" class="flex items-center gap-2" aria-live="polite" aria-atomic="true">
       <span class="h-3 w-3 rounded-full bg-gray-300 animate-pulse"></span>
       <span class="text-sm font-medium text-gray-500">Initializing...</span>
     </div>
@@ -35,9 +35,10 @@ const { serviceUrl } = Astro.props;
 
   <button 
     id="trigger-deep-check"
-    class="mt-6 w-full py-2 bg-[var(--gs-bg-secondary)] border border-[var(--gs-border-primary)] rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
+    class="mt-6 w-full py-2 bg-[var(--gs-bg-secondary)] border border-[var(--gs-border-primary)] rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    aria-busy="false"
   >
-    Perform Deep Validation
+    <span class="btn-text">Perform Deep Validation</span>
   </button>
 </div>
 
@@ -46,6 +47,14 @@ const { serviceUrl } = Astro.props;
   const indicator = document.getElementById('status-indicator');
 
   async function checkHealth(type = 'shallow') {
+    const btnText = btn.querySelector('.btn-text');
+    const originalText = btnText.innerText;
+
+    // Set loading state
+    btn.disabled = true;
+    btn.setAttribute('aria-busy', 'true');
+    if (type === 'deep') btnText.innerText = 'Validating...';
+
     try {
       const res = await fetch(`${serviceUrl}?type=${type}`);
       const data = await res.json();
@@ -57,8 +66,13 @@ const { serviceUrl } = Astro.props;
       document.getElementById('api-val').innerText = 'CONNECTED';
       if (data.kv) document.getElementById('kv-val').innerText = data.kv.toUpperCase();
       if (data.db) document.getElementById('db-val').innerText = data.db.toUpperCase();
-    } catch (e) {
+    } catch {
       indicator.innerHTML = `<span class="h-3 w-3 rounded-full bg-red-500"></span><span class="text-sm font-bold uppercase">OFFLINE</span>`;
+    } finally {
+      // Reset state
+      btn.disabled = false;
+      btn.setAttribute('aria-busy', 'false');
+      btnText.innerText = originalText;
     }
   }
 
