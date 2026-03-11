@@ -2,6 +2,12 @@
 
 This file contains instructions for AI agents working in this repository.
 
+## Repository Mapping
+
+- Main Logic: `/apps` (`gs-api`, `gs-gateway`, `gs-agent`)
+- Deployment: Refer to `wrangler.toml` in `/apps/gs-gateway`
+- Legacy Warning: `goldshore-api` is read-only. Source of truth is `/apps/gs-api`.
+
 ## Tagging for Review
 
 To request a review of an error or issue, please use the following tags in your comments or pull request descriptions:
