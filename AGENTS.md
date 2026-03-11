@@ -22,3 +22,10 @@ Please provide as much context as possible when using these tags, including:
 *   Steps to reproduce the error or issue.
 *   Any relevant logs or error messages.
 *   The expected outcome.
+
+## Canonical Logo Paths
+
+- Runtime logo references must use `/logo/gs-penrose.svg`.
+- Absolute logo references must use `https://goldshore.ai/logo/gs-penrose.svg`.
+- Do not add new runtime references to `/assets/brand/*`, `/packages/brand/logo-penrose.svg`, or `/favicon.svg`.
+- Legacy runtime logo files are archived under `archives/logo-legacy/`.
