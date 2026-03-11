@@ -1,0 +1,91 @@
+---
+interface AuditItem {
+  id: string;
+  title: string;
+  severity: 'critical' | 'high' | 'medium' | 'low';
+  owner: string;
+  status: 'open' | 'in-progress' | 'mitigated';
+  updatedAt: string;
+}
+
+const { items = [] } = Astro.props as { items?: AuditItem[] };
+
+const severityOrder: Record<AuditItem['severity'], number> = {
+  critical: 0,
+  high: 1,
+  medium: 2,
+  low: 3
+};
+
+const sortedItems = [...items].sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
+---
+
+<section class="security-audit" aria-labelledby="security-audit-title">
+  <div class="section-title">
+    <span>🛡️</span>
+    <h3 id="security-audit-title">Security audit</h3>
+  </div>
+
+  {sortedItems.length ? (
+    <ul class="security-audit-list">
+      {sortedItems.map((item) => (
+        <li class="security-audit-item">
+          <div>
+            <p class="security-title">{item.title}</p>
+            <p class="gs-helper">#{item.id} · {item.owner}</p>
+          </div>
+          <div class="security-meta">
+            <span class={`gs-badge ${item.severity === 'critical' ? 'danger' : item.severity === 'high' ? 'warning' : 'info'}`}>
+              {item.severity}
+            </span>
+            <span class={`gs-badge ${item.status === 'mitigated' ? 'success' : item.status === 'in-progress' ? 'info' : 'warning'}`}>
+              {item.status}
+            </span>
+            <time class="gs-helper" datetime={item.updatedAt}>{new Date(item.updatedAt).toLocaleString()}</time>
+          </div>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p class="gs-helper">No active security findings.</p>
+  )}
+</section>
+
+<style>
+  .security-audit {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .security-audit-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .security-audit-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    border: 1px solid var(--gs-border, #2a2d38);
+    border-radius: 0.7rem;
+    padding: 0.75rem 0.9rem;
+    background: color-mix(in oklab, var(--gs-surface, #111) 88%, white 12%);
+  }
+
+  .security-title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .security-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+</style>

@@ -1,0 +1,108 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+
+export const prerender = false;
+
+const clientCertHeader = Astro.request.headers.get('cf-client-cert-base64');
+const isAdmin = clientCertHeader !== null;
+
+type LogStatus = 'success' | 'notice' | 'pending';
+
+interface LogRow {
+  time: string;
+  agent: 'Jules' | 'Codex';
+  scope: string;
+  action: string;
+  status: LogStatus;
+}
+
+const logRows: LogRow[] = [
+  {
+    time: '2026-03-11T18:02:11Z',
+    agent: 'Jules',
+    scope: 'apps/gs-api',
+    action: 'Refined routing middleware for service discovery',
+    status: 'success',
+  },
+  {
+    time: '2026-03-11T18:03:27Z',
+    agent: 'Codex',
+    scope: 'apps/gs-gateway',
+    action: 'Updated endpoint map for api.goldshore.ai',
+    status: 'success',
+  },
+  {
+    time: '2026-03-11T18:06:44Z',
+    agent: 'Jules',
+    scope: 'apps/gs-agent',
+    action: 'Skipped deprecated goldshore-api repo per repo map',
+    status: 'notice',
+  },
+  {
+    time: '2026-03-11T18:09:05Z',
+    agent: 'Codex',
+    scope: 'apps/gs-api',
+    action: 'Queued schema migration plan for /users contract',
+    status: 'pending',
+  },
+];
+
+const badgeClassByStatus: Record<LogStatus, string> = {
+  success: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
+  notice: 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300',
+  pending: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
+};
+---
+
+<AdminLayout title="Agent Logs">
+  {
+    isAdmin ? (
+      <>
+        <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+          <h1 class="mb-2 text-2xl font-bold">Agent Logs</h1>
+          <p class="text-sm text-slate-600 dark:text-slate-300">
+            Live operational activity for Jules and Codex across the Goldshore monorepo.
+          </p>
+        </section>
+
+        <section class="mt-6 rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+              <thead class="bg-slate-50 dark:bg-slate-900/30">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Timestamp</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Agent</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Scope</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Action</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-700/80">
+                {
+                  logRows.map((row) => (
+                    <tr>
+                      <td class="whitespace-nowrap px-4 py-3 text-sm text-slate-700 dark:text-slate-200">{row.time}</td>
+                      <td class="px-4 py-3 text-sm font-semibold text-slate-900 dark:text-slate-100">{row.agent}</td>
+                      <td class="px-4 py-3 text-sm text-slate-700 dark:text-slate-200">{row.scope}</td>
+                      <td class="px-4 py-3 text-sm text-slate-700 dark:text-slate-200">{row.action}</td>
+                      <td class="px-4 py-3 text-sm">
+                        <span class={`rounded-full px-2.5 py-1 text-xs font-semibold ${badgeClassByStatus[row.status]}`}>
+                          {row.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </>
+    ) : (
+      <section class="max-w-3xl rounded-lg border border-red-300 bg-red-50 p-6 text-red-800 dark:border-red-700 dark:bg-red-900/30 dark:text-red-100">
+        <h1 class="mb-2 text-2xl font-bold">Access Denied</h1>
+        <p>Secure identity certificate not found for this request.</p>
+      </section>
+    )
+  }
+</AdminLayout>
