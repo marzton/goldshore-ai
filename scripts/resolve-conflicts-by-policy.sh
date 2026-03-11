@@ -15,6 +15,11 @@ echo "$UFILES" >> "$REPORT_DIR/policy.log"
 
 for f in $UFILES; do
   case "$f" in
+    AGENTS.md|*/AGENTS.md)
+      git checkout --ours -- "$f"
+      git add "$f"
+      echo "AGENT_INSTRUCTIONS ours: $f" >> "$REPORT_DIR/policy.log"
+      ;;
     pnpm-lock.yaml|package-lock.json|yarn.lock)
       git checkout --ours -- "$f"
       git add "$f"

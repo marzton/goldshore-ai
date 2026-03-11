@@ -2,3 +2,5 @@
 pnpm-lock.yaml merge=ours
 README.md merge=ours
 CURRENT_MONOREPO_STATE.md merge=ours
+AGENTS.md merge=ours
+**/AGENTS.md merge=ours
