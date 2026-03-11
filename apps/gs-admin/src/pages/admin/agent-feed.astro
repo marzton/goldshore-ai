@@ -1,4 +1,5 @@
 ---
+import SecurityAudit from '../../components/SecurityAudit.astro';
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { Card } from '@goldshore/ui';
 import SecurityAudit from '../../components/SecurityAudit.astro';
@@ -116,109 +117,117 @@ const securityAuditItems = [
   }
 </style>
 
-const feedItems = [
+const activeTasks = [
   {
-    id: 'evt-1',
-    source: 'jules',
-    summary: 'Policy drift detected in deployment workflow.',
-    severity: 'flagged',
-    status: 'open',
-    timestamp: '2026-03-10T14:02:00Z',
+    agent: 'Jules',
+    task: 'Optimizing Cloudflare Routing',
+    status: 'In-Progress',
+    time: '2m ago',
+    color: 'blue'
   },
   {
-    id: 'evt-2',
-    source: 'codex',
-    summary: 'Agent coordination latency recovered after retry.',
-    severity: 'info',
-    status: 'resolved',
-    timestamp: '2026-03-10T13:44:00Z',
+    agent: 'Codex',
+    task: 'Refactoring Sidebar.astro',
+    status: 'Completed',
+    time: '15m ago',
+    color: 'purple'
   },
   {
-    id: 'evt-3',
-    source: 'jules',
-    summary: 'Manual review requested for elevated risk response.',
-    severity: 'review',
-    status: 'investigating',
-    timestamp: '2026-03-10T13:22:00Z',
-  },
-];
+    agent: 'Jules',
+    task: 'Security Audit: media.ts regex',
+    status: 'Flagged',
+    time: '1h ago',
+    color: 'red'
+  }
+] as const;
 
-const sourceStyles = {
-  jules: 'bg-fuchsia-500/15 text-fuchsia-200 border border-fuchsia-400/40',
-  codex: 'bg-cyan-500/15 text-cyan-200 border border-cyan-400/40',
-};
-
-const severityStyles = {
-  flagged: 'bg-red-500/15 text-red-200 border border-red-400/40',
-  review: 'bg-amber-500/15 text-amber-200 border border-amber-400/40',
-  info: 'bg-emerald-500/15 text-emerald-200 border border-emerald-400/40',
-};
-
-const statusBadgeStyles = {
-  open: 'bg-red-500/15 text-red-200 border border-red-400/40',
-  investigating: 'bg-yellow-500/15 text-yellow-200 border border-yellow-400/40',
-  resolved: 'bg-green-500/15 text-green-200 border border-green-400/40',
-};
+const colorClasses = {
+  blue: 'bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400',
+  purple: 'bg-purple-100 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400',
+  red: 'bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400'
+} as const;
 ---
 
-<AdminLayout title="Agent Feed | GoldShore Admin">
-  <section class="max-w-6xl mx-auto py-12 px-6 space-y-6">
-    <header>
-      <h1 class="text-3xl gs-heading">Agent Feed</h1>
-      <p class="text-[var(--gs-text-secondary)]">
-        Recent activity from Jules and Codex across workflows.
-      </p>
-    </header>
-
-    <div class="card overflow-hidden">
-      <table class="min-w-full text-left text-sm">
-        <thead
-          class="border-b border-white/10 text-xs uppercase tracking-wide text-[var(--gs-text-tertiary)]"
-        >
-          <tr>
-            <th class="px-4 py-3">Source</th>
-            <th class="px-4 py-3">Summary</th>
-            <th class="px-4 py-3">Severity</th>
-            <th class="px-4 py-3">Status</th>
-            <th class="px-4 py-3">Timestamp</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            feedItems.map((item) => (
-              <tr class="border-b border-white/5">
-                <td class="px-4 py-3">
-                  <span
-                    class={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${sourceStyles[item.source]}`}
-                  >
-                    {item.source}
-                  </span>
-                </td>
-                <td class="px-4 py-3 text-[var(--gs-text-primary)]">
-                  {item.summary}
-                </td>
-                <td class="px-4 py-3">
-                  <span
-                    class={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${severityStyles[item.severity]}`}
-                  >
-                    {item.severity}
-                  </span>
-                </td>
-                <td class="px-4 py-3">
-                  <span
-                    class={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${statusBadgeStyles[item.status]}`}
-                  >
-                    {item.status}
-                  </span>
-                </td>
-                <td class="px-4 py-3 text-[var(--gs-text-secondary)]">
-                  {new Date(item.timestamp).toLocaleString()}
-                </td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
+<AdminLayout title="Agent Feed">
+  <div class="mb-6 flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Live Agent Activity</h1>
+      <p class="text-sm text-slate-500">Real-time monitoring of Goldshore autonomous units</p>
     </div>
-  </section>
+    <div class="flex items-center px-3 py-1 bg-green-50 dark:bg-green-900/30 rounded-full">
+      <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-ping"></span>
+      <span class="text-xs font-medium text-green-700 dark:text-green-400">Live Stream Active</span>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    {activeTasks.map((task) => (
+      <div class="p-4 bg-white border border-slate-200 rounded-lg shadow-sm dark:bg-slate-800 dark:border-slate-700 flex justify-between items-center transition-all hover:border-blue-400">
+        <div class="flex items-center space-x-4">
+          <div
+            class={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${colorClasses[task.color]}`}
+          >
+            {task.agent[0]}
+          </div>
+          <div>
+            <p class="font-semibold text-slate-900 dark:text-white">{task.task}</p>
+            <p class="text-xs text-slate-500">{task.agent} Unit • {task.time}</p>
+          </div>
+        </div>
+        <span
+          class={`px-3 py-1 rounded-full text-xs font-medium ${
+            task.status === 'Completed'
+              ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300'
+              : task.status === 'Flagged'
+                ? 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
+                : 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300'
+          }`}
+        >
+          {task.status}
+        </span>
+      </div>
+    ))}
+  </div>
+
+  <div class="mt-8">
+    <SecurityAudit />
+  </div>
+
+  <div class="mt-8">
+    <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-3 flex items-center">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+        ></path>
+      </svg>
+      Raw Logic Stream
+    </h3>
+    <div class="bg-slate-950 text-slate-300 p-5 rounded-xl font-mono text-xs h-96 overflow-y-auto border border-slate-800 shadow-2xl">
+      <div class="space-y-1">
+        <p class="text-slate-500">[<span id="logic-timestamp">{new Date().toISOString()}</span>] System initialized.</p>
+        <p><span class="text-blue-400">[Jules]</span> Accessing <span class="text-slate-100">goldshore-ai</span> monorepo context...</p>
+        <p><span class="text-purple-400">[Codex]</span> Context match in <span class="text-yellow-200">AGENTS.md</span>. Validating path <span class="text-slate-100">/apps/gs-api</span>.</p>
+        <p><span class="text-blue-400">[Jules]</span> Initializing VM for <span class="text-blue-300">pull request #3268</span>.</p>
+        <p><span class="text-yellow-400">[System]</span> Syncing variables from <span class="text-slate-100">GS_ROUTING_API_BASE</span>...</p>
+        <p><span class="text-green-400">[Success]</span> Build environment verified. Deploying to <span class="text-slate-100">admin.goldshore.ai</span>.</p>
+        <p class="animate-pulse text-white mt-2">▋</p>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    const timestampNode = document.getElementById('logic-timestamp');
+
+    const updateTimestamp = () => {
+      if (timestampNode) {
+        timestampNode.textContent = new Date().toISOString();
+      }
+    };
+
+    updateTimestamp();
+    setInterval(updateTimestamp, 1000);
+  </script>
 </AdminLayout>
