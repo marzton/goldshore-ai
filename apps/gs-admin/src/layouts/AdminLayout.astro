@@ -12,6 +12,7 @@ interface Props {
 
 const { title = 'GoldShore Admin', requiredPermission, requiredRole } = Astro.props;
 const logoSrc = '/logo/gs-penrose.svg';
+const logoAssetVersion = '20260311';
 
 const session = Astro.locals.adminSession ?? {
   roles: [],
@@ -29,7 +30,7 @@ const isAuthorized = isRoleAllowed && isPermissionAllowed;
     <meta charset="utf-8" />
     <title>{title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="/logo/gs-penrose.svg" type="image/svg+xml" />
+    <link rel="icon" href={`/logo/gs-penrose.svg?v=${logoAssetVersion}`} type="image/svg+xml" />
     <script>
       import { initTheme } from '@goldshore/theme/manager';
       initTheme();

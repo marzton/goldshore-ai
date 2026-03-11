@@ -22,6 +22,7 @@ const {
 const siteUrl = 'https://goldshore.ai';
 const organizationId = `${siteUrl}#organization`;
 const sameAs: string[] = [];
+const logoAssetVersion = '20260311';
 
 const organizationSchema: Record<string, unknown> = {
   '@context': 'https://schema.org',
@@ -45,8 +46,8 @@ const pageSchemas = Array.isArray(structuredData)
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/logo/gs-penrose.svg" />
-    <link rel="alternate icon" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={`/logo/gs-penrose.svg?v=${logoAssetVersion}`} />
+    <link rel="alternate icon" href={`/favicon.svg?v=${logoAssetVersion}`} />
     <title>{title}</title>
     <script
       type="application/ld+json"
