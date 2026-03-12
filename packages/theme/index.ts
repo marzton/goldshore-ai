@@ -126,10 +126,8 @@ function initParallax() {
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
-  const hero = document.querySelector<HTMLElement>("[data-gs-hero]");
   if (!hero) return;
 
-  const layers = hero.querySelectorAll<HTMLElement>("[data-gs-parallax]");
   if (!layers.length) return;
 
   const onMove = (e: PointerEvent) => {
