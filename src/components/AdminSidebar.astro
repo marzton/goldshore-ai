@@ -1,0 +1,41 @@
+---
+const adminBase = (import.meta.env.GS_ROUTING_ADMIN_APP || '').replace(/\/$/, '');
+const route = (path: string) => `${adminBase}${path}`;
+
+const navItems = [
+  { name: 'Dashboard', href: route('/admin') },
+  { name: 'Agent Logs', href: route('/admin/logs') },
+  { name: 'Routing (Gateway)', href: route('/admin/routing') },
+  { name: 'Infrastructure', href: route('/admin/infra') },
+];
+---
+
+<aside
+  class="fixed left-0 top-0 z-20 hidden h-full w-64 flex-shrink-0 flex-col pt-16 font-normal transition-width duration-75 lg:flex"
+  aria-label="Sidebar"
+>
+  <div
+    class="relative flex min-h-0 flex-1 flex-col border-r border-slate-200 bg-white pt-0 dark:border-slate-700 dark:bg-slate-800"
+  >
+    <div class="flex flex-1 flex-col overflow-y-auto pb-4 pt-5">
+      <div
+        class="flex-1 space-y-1 divide-y divide-slate-200 bg-white px-3 dark:divide-slate-700 dark:bg-slate-800"
+      >
+        <ul class="space-y-2 pb-2">
+          {
+            navItems.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="group flex items-center rounded-lg p-2 text-base font-medium hover:bg-slate-100 dark:hover:bg-slate-700"
+                >
+                  <span class="ml-3">{item.name}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</aside>
