@@ -15,42 +15,28 @@ import { offerings } from '../data/site-content';
   <body>
     <Header />
     <main>
-      <section class="hero" id="hero">
-        <canvas id="starfield" aria-hidden="true"></canvas>
-        <div class="hero-glow" aria-hidden="true"></div>
-        <div class="hero-content">
-          <p class="eyebrow">
-            Operational systems, engineered for reliability.
-          </p>
-          <h1>GoldShore.ai</h1>
-          <p>
-            Operational AI infrastructure and observability for mission-critical
-            deployments.
-          </p>
-          <p class="small">
-            We help technical teams design resilient AI-enabled operations with
-            clear instrumentation, ownership models, and deployment controls.
-          </p>
-          <div class="hero-actions">
-            <a class="button button-primary" href="/contact"
-              >{siteConfig.cta.primary}</a
-            >
-            <a class="button button-secondary" href="/contact"
-              >{siteConfig.cta.secondary}</a
-            >
-          </div>
+      <section>
+        <p class="small">Operational systems, engineered for reliability.</p>
+        <h1>GoldShore.ai</h1>
+        <p>
+          Operational AI infrastructure and observability for mission-critical
+          deployments.
+        </p>
+        <p class="small">
+          We help technical teams design resilient AI-enabled operations with
+          clear instrumentation, ownership models, and deployment controls.
+        </p>
+        <div style="display:flex; gap:.75rem; flex-wrap:wrap; margin-top:1rem;">
+          <a class="button button-primary" href="/contact"
+            >{siteConfig.cta.primary}</a
+          >
+          <a class="button button-secondary" href="/contact"
+            >{siteConfig.cta.secondary}</a
+          >
         </div>
-        <a
-          class="scroll-cue"
-          href="#offerings"
-          aria-label="Scroll to core offerings"
-        >
-          <span>Scroll</span>
-          <span class="arrow">↓</span>
-        </a>
       </section>
 
-      <section id="offerings">
+      <section>
         <h2>Core offerings</h2>
         <div class="grid">
           {
@@ -66,233 +52,5 @@ import { offerings } from '../data/site-content';
       </section>
     </main>
     <Footer />
-
-    <script>
-      const hero = document.getElementById('hero');
-      const canvas = document.getElementById('starfield');
-      const ctx = canvas?.getContext('2d');
-
-      if (hero && canvas && ctx) {
-        const stars = [];
-        const shootingStars = [];
-
-        const random = (min, max) => Math.random() * (max - min) + min;
-
-        const resize = () => {
-          canvas.width = hero.clientWidth;
-          canvas.height = hero.clientHeight;
-        };
-
-        const createStars = () => {
-          const starCount = Math.floor((canvas.width * canvas.height) / 8500);
-          stars.length = 0;
-          for (let index = 0; index < starCount; index += 1) {
-            stars.push({
-              x: Math.random() * canvas.width,
-              y: Math.random() * canvas.height,
-              radius: random(0.5, 1.6),
-              alpha: random(0.3, 0.95),
-              twinkle: random(0.002, 0.01),
-            });
-          }
-        };
-
-        const spawnShootingStar = () => {
-          shootingStars.push({
-            x: random(0, canvas.width * 0.7),
-            y: random(-40, canvas.height * 0.45),
-            length: random(130, 230),
-            speed: random(7, 10.5),
-            life: 0,
-            ttl: random(38, 52),
-          });
-        };
-
-        const draw = () => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-          ctx.fillStyle = '#050816';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-          stars.forEach((star) => {
-            star.alpha += star.twinkle;
-            if (star.alpha >= 1 || star.alpha <= 0.2) {
-              star.twinkle *= -1;
-            }
-
-            ctx.beginPath();
-            ctx.fillStyle = `rgba(235, 244, 255, ${star.alpha})`;
-            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-            ctx.fill();
-          });
-
-          if (Math.random() < 0.02 && shootingStars.length < 3) {
-            spawnShootingStar();
-          }
-
-          shootingStars.forEach((shootingStar, index) => {
-            shootingStar.x += shootingStar.speed;
-            shootingStar.y += shootingStar.speed * 0.5;
-            shootingStar.life += 1;
-
-            const opacity = 1 - shootingStar.life / shootingStar.ttl;
-            const gradient = ctx.createLinearGradient(
-              shootingStar.x,
-              shootingStar.y,
-              shootingStar.x - shootingStar.length,
-              shootingStar.y - shootingStar.length * 0.4,
-            );
-            gradient.addColorStop(0, `rgba(166, 220, 255, ${opacity})`);
-            gradient.addColorStop(1, 'rgba(166, 220, 255, 0)');
-
-            ctx.strokeStyle = gradient;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(shootingStar.x, shootingStar.y);
-            ctx.lineTo(
-              shootingStar.x - shootingStar.length,
-              shootingStar.y - shootingStar.length * 0.4,
-            );
-            ctx.stroke();
-
-            if (shootingStar.life > shootingStar.ttl) {
-              shootingStars.splice(index, 1);
-            }
-          });
-
-          window.requestAnimationFrame(draw);
-        };
-
-        resize();
-        createStars();
-        draw();
-
-        window.addEventListener('resize', () => {
-          resize();
-          createStars();
-        });
-
-        const handleFade = () => {
-          const heroHeight = hero.clientHeight;
-          const progress = Math.min(window.scrollY / (heroHeight * 0.75), 1);
-          hero.style.opacity = String(1 - progress);
-          hero.style.transform = `translateY(${progress * 28}px)`;
-        };
-
-        handleFade();
-        window.addEventListener('scroll', handleFade, { passive: true });
-      }
-    </script>
   </body>
 </html>
-
-<style>
-  .hero {
-    position: relative;
-    min-height: calc(100vh - 6rem);
-    border-radius: 1rem;
-    overflow: hidden;
-    isolation: isolate;
-    display: grid;
-    place-items: center;
-    margin-top: 0.5rem;
-    transition:
-      opacity 180ms linear,
-      transform 180ms linear;
-  }
-
-  #starfield,
-  .hero-glow {
-    position: absolute;
-    inset: 0;
-  }
-
-  .hero-glow {
-    background:
-      radial-gradient(
-        circle at 80% 25%,
-        rgba(76, 152, 255, 0.25),
-        transparent 48%
-      ),
-      radial-gradient(
-        circle at 18% 74%,
-        rgba(24, 198, 196, 0.2),
-        transparent 42%
-      );
-    z-index: 0;
-  }
-
-  .hero-content {
-    position: relative;
-    z-index: 1;
-    width: min(42rem, calc(100% - 2.5rem));
-    text-align: center;
-    color: #e8edf7;
-  }
-
-  .hero-content h1 {
-    margin-top: 0.5rem;
-    color: white;
-    font-size: clamp(2.2rem, 4vw, 3.7rem);
-  }
-
-  .hero-content p {
-    margin: 0.75rem 0;
-  }
-
-  .eyebrow {
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-size: 0.78rem;
-    color: rgba(203, 220, 242, 0.95);
-  }
-
-  .hero-content .small {
-    color: rgba(224, 234, 249, 0.9);
-  }
-
-  .hero-actions {
-    display: flex;
-    justify-content: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    margin-top: 1.15rem;
-  }
-
-  .scroll-cue {
-    position: absolute;
-    z-index: 1;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 1.1rem;
-    color: rgba(224, 239, 255, 0.9);
-    text-decoration: none;
-    font-size: 0.83rem;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.1rem;
-  }
-
-  .arrow {
-    animation: bounce 1.4s ease-in-out infinite;
-    font-size: 1.1rem;
-  }
-
-  @keyframes bounce {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-
-    50% {
-      transform: translateY(5px);
-    }
-  }
-
-  @media (max-width: 720px) {
-    .hero {
-      min-height: 82vh;
-    }
-  }
-</style>

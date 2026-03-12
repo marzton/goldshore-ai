@@ -8,7 +8,7 @@ describe('Health API', () => {
     const app = new Hono();
     app.route('/', health);
 
-    const res = await app.request('/', {}, { API_VERSION: 'v1' });
+    const res = await app.request('/');
     assert.strictEqual(res.status, 200);
     const data = await res.json() as { status: string; service: string; schemaVersion: string; apiVersion: string };
     assert.strictEqual(data.status, "ok");
