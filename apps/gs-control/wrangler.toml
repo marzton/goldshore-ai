@@ -1,6 +1,5 @@
 name = "gs-control"
 main = "src/index.ts"
-compatibility_date = "2024-01-01"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
 
@@ -11,6 +10,8 @@ routes = [
 
 [vars]
 ENV = "production"
+CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+SYNC_TARGET_SUBDOMAIN = "api.goldshore.ai"
 
 [[kv_namespaces]]
 binding = "CONTROL_LOGS"
