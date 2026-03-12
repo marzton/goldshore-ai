@@ -1,6 +1,10 @@
 import cloudflare from "@astrojs/cloudflare";
 import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   srcDir: './src',
@@ -23,9 +27,7 @@ export default defineConfig({
     },
     resolve: {
       alias: {
-        // '@goldshore/ui': '../../packages/ui',
-        // '@goldshore/theme': '../../packages/theme',
-        // '@goldshore/auth': '../../packages/auth',
+        "@goldshore/theme": path.resolve(__dirname, "../../packages/theme/src"),
       }
     }
   }
