@@ -1,0 +1,14 @@
+<svg
+  class="gs-logo"
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 128 160"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.8"
+  stroke-linejoin="round"
+  stroke-linecap="square"
+  vector-effect="non-scaling-stroke"
+  shape-rendering="geometricPrecision"
+>
+  <path d="m111.87 92.505-41-72A1 1 0 0 0 70 20H57a1 1 0 0 0-.87.505l-41 72a1 1 0 0 0 0 .99l6.5 11.414a1 1 0 0 0 .87.506h82a1 1 0 0 0 .87-.506l6.5-11.414a1 1 0 0 0 0-.99 M109.28 92H43.72l4.93-8.66H92.3a1 1 0 0 0 .87-1.494L58.72 22h10.698 M63.5 57.265l14.34 25.18H49.16 M17.15 93 57 23.021l32.78 57.564h-10.7l-22.91-40.2a1.04 1.04 0 0 0-1.738 0L22.5 102.392 M103.918 103.415H24.22L57 45.85l5.78 10.15-23.0 40.41A1 1 0 0 0 42 98h61.918Z"/>
+</svg>
