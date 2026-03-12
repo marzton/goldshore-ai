@@ -1,19 +1,4 @@
 ---
-import WebLayout from "../layouts/WebLayout.astro";
----
-
-<WebLayout>
-  <section class="gs-section gs-blueprint-bg">
-    <div class="gs-container">
-      <div class="gs-kicker gs-signal" data-gs-reveal>Forthcoming Surface</div>
-      <h1 class="gs-display" data-gs-reveal>Risk Radar</h1>
-      <p data-gs-reveal>A visualization layer for systemic exposure, volatility pressure, and signal drift.</p>
-
-      <div class="gs-panel gs-hoverlift" style="margin-top:2rem;" data-gs-reveal>
-        <div class="gs-label">Preview Module</div>
-        <h2 class="gs-display" style="margin-top:0.75rem;">Orbital Exposure Map</h2>
-        <p>
-          A panel-based operational view designed to ship with calibrated motion, status tags, and control-room density.
 import WebLayout from '../layouts/WebLayout.astro';
 import Controls from '../components/risk-radar/Controls.astro';
 import OrbitalMap from '../components/risk-radar/OrbitalMap.astro';
@@ -25,89 +10,89 @@ export const prerender = true;
 
 const radarMockData = {
   snapshot: {
-    generatedAt: '2026-03-05T00:00:00Z',
-    uiState: 'ready'
+    generatedAt: "2026-03-05T00:00:00Z",
+    uiState: "ready",
   },
   tiers: [
-    { id: 'T1', label: 'Core', radius: 92 },
-    { id: 'T2', label: 'Critical Surface', radius: 158 },
-    { id: 'T3', label: 'Extended Surface', radius: 224 }
+    { id: "T1", label: "Core", radius: 92 },
+    { id: "T2", label: "Critical Surface", radius: 158 },
+    { id: "T3", label: "Extended Surface", radius: 224 },
   ],
   services: [
     {
-      id: 'CI-01',
-      label: 'Workflow Governance',
-      tier: 'T1',
-      status: 'stable',
-      environment: 'prod',
+      id: "CI-01",
+      label: "Workflow Governance",
+      tier: "T1",
+      status: "stable",
+      environment: "prod",
       pressure: 24,
       drift: 18,
       signal: 76,
-      dependencies: ['OBS-02', 'AUTH-10']
+      dependencies: ["OBS-02", "AUTH-10"],
     },
     {
-      id: 'OBS-02',
-      label: 'Signal Correlator',
-      tier: 'T1',
-      status: 'monitoring',
-      environment: 'staging',
+      id: "OBS-02",
+      label: "Signal Correlator",
+      tier: "T1",
+      status: "monitoring",
+      environment: "staging",
       pressure: 43,
       drift: 51,
       signal: 62,
-      dependencies: ['NET-07']
+      dependencies: ["NET-07"],
     },
     {
-      id: 'SEC-04',
-      label: 'PII Leakage Guard',
-      tier: 'T2',
-      status: 'monitoring',
-      environment: 'prod',
+      id: "SEC-04",
+      label: "PII Leakage Guard",
+      tier: "T2",
+      status: "monitoring",
+      environment: "prod",
       pressure: 58,
       drift: 63,
       signal: 57,
-      dependencies: ['CI-01', 'OPS-09']
+      dependencies: ["CI-01", "OPS-09"],
     },
     {
-      id: 'OPS-09',
-      label: 'Branch Divergence',
-      tier: 'T3',
-      status: 'critical',
-      environment: 'prod',
+      id: "OPS-09",
+      label: "Branch Divergence",
+      tier: "T3",
+      status: "critical",
+      environment: "prod",
       pressure: 82,
       drift: 79,
       signal: 42,
-      dependencies: []
+      dependencies: [],
     },
     {
-      id: 'AUTH-10',
-      label: 'Identity Broker',
-      tier: 'T2',
-      status: 'stable',
-      environment: 'dev',
+      id: "AUTH-10",
+      label: "Identity Broker",
+      tier: "T2",
+      status: "stable",
+      environment: "dev",
       pressure: 21,
       drift: 16,
       signal: 84,
-      dependencies: ['NET-07']
+      dependencies: ["NET-07"],
     },
     {
-      id: 'NET-07',
-      label: 'Gateway Firewall',
-      tier: 'T3',
-      status: 'stable',
-      environment: 'staging',
+      id: "NET-07",
+      label: "Gateway Firewall",
+      tier: "T3",
+      status: "stable",
+      environment: "staging",
       pressure: 26,
       drift: 29,
       signal: 71,
-      dependencies: []
-    }
+      dependencies: [],
+    },
   ],
   legend: {
     status: {
-      stable: 'Contained and operating within policy thresholds.',
-      monitoring: 'Active watch due to elevated drift or telemetry noise.',
-      critical: 'Immediate mitigation required. Breach likelihood elevated.'
-    }
-  }
+      stable: "Contained and operating within policy thresholds.",
+      monitoring: "Active watch due to elevated drift or telemetry noise.",
+      critical: "Immediate mitigation required. Breach likelihood elevated.",
+    },
+  },
 };
 const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
 ---
@@ -124,56 +109,16 @@ const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
 
       <div class="grid grid-cols-1 gap-6 xl:grid-cols-12" id="risk-radar-app" data-radar-data={radarDataEncoded}>
         <aside class="gs-card rounded-3xl border border-[var(--gs-border-primary)] bg-white p-6 xl:col-span-3">
-          <h3 class="mb-4 text-lg font-bold">Controls</h3>
-          <div class="space-y-4 text-sm">
-            <label class="block">
-              <span class="mb-2 block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--gs-text-secondary)]">Tier</span>
-              <select id="filter-tier" class="w-full rounded-xl border border-[var(--gs-border-primary)] bg-[var(--gs-bg-tertiary)] px-3 py-2"></select>
-            </label>
-
-            <label class="block">
-              <span class="mb-2 block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--gs-text-secondary)]">Status</span>
-              <select id="filter-status" class="w-full rounded-xl border border-[var(--gs-border-primary)] bg-[var(--gs-bg-tertiary)] px-3 py-2"></select>
-            </label>
-
-            <label class="block">
-              <span class="mb-2 block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--gs-text-secondary)]">Environment</span>
-              <select id="filter-environment" class="w-full rounded-xl border border-[var(--gs-border-primary)] bg-[var(--gs-bg-tertiary)] px-3 py-2"></select>
-            </label>
-
-            <button id="simulate-event" class="w-full rounded-xl border border-blue-600/40 bg-blue-600/10 px-3 py-2 font-semibold text-blue-700 transition hover:bg-blue-600/20">
-              Simulate Event
-            </button>
-
-            <div class="rounded-xl border border-[var(--gs-border-primary)] bg-[var(--gs-bg-tertiary)] p-3">
-              <p class="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--gs-text-secondary)]">Snapshot</p>
-              <p id="snapshot-state" class="mt-1 font-mono text-sm text-blue-700"></p>
-            </div>
-          </div>
+          <Controls tiers={radarMockData.tiers} services={radarMockData.services} snapshot={radarMockData.snapshot} />
         </aside>
 
         <section class="gs-card relative rounded-3xl border border-[var(--gs-border-primary)] bg-black/95 p-6 text-white xl:col-span-6">
-          <header class="mb-4 flex items-center justify-between">
-            <h3 class="text-lg font-bold">Orbital Map</h3>
-            <span id="visible-count" class="rounded-full border border-blue-500/50 bg-blue-500/20 px-3 py-1 text-xs uppercase tracking-[0.12em] text-blue-200"></span>
-          </header>
-          <svg id="risk-radar-graph" viewBox="0 0 560 560" class="h-[440px] w-full rounded-2xl border border-blue-500/25 bg-slate-950/90" aria-label="Risk radar graph"></svg>
+          <OrbitalMap center={{ x: 280, y: 280 }} tiers={radarMockData.tiers} />
         </section>
 
         <aside class="gs-card rounded-3xl border border-[var(--gs-border-primary)] bg-white p-6 xl:col-span-3">
-          <h3 class="mb-4 text-lg font-bold">Details Panel</h3>
-          <article id="details-panel" class="rounded-xl border border-[var(--gs-border-primary)] bg-[var(--gs-bg-tertiary)] p-4 text-sm">
-            Hover or click a service node to inspect pressure, drift, dependencies, and environment.
-          </article>
-
-          <div class="mt-6 rounded-xl border border-[var(--gs-border-primary)] bg-[var(--gs-bg-tertiary)] p-4 text-sm">
-            <h4 class="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--gs-text-secondary)]">Status Legend</h4>
-            <ul class="space-y-2">
-              {Object.entries(radarMockData.legend.status).map(([key, text]) => (
-                <li><strong class="capitalize">{key}:</strong> {text}</li>
-              ))}
-            </ul>
-          </div>
+          <DetailsPanel />
+          <Legend status={radarMockData.legend.status} />
         </aside>
       </div>
     </div>
@@ -191,13 +136,13 @@ const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
   const visibleCount = document.getElementById('visible-count');
   const snapshotState = document.getElementById('snapshot-state');
 
-  const tierSelect = document.getElementById('filter-tier');
-  const statusSelect = document.getElementById('filter-status');
-  const environmentSelect = document.getElementById('filter-environment');
+  const tierSelect = document.getElementById('filter-tier') as HTMLSelectElement;
+  const statusSelect = document.getElementById('filter-status') as HTMLSelectElement;
+  const environmentSelect = document.getElementById('filter-environment') as HTMLSelectElement;
   const simulateButton = document.getElementById('simulate-event');
 
   const center = { x: 280, y: 280 };
-  const statusColor = {
+  const statusColor: Record<string, string> = {
     stable: '#10b981',
     monitoring: '#f59e0b',
     critical: '#ef4444'
@@ -206,30 +151,27 @@ const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const state = {
-    activeNodeId: null,
-    hoveredNodeId: null,
+    activeNodeId: null as string | null,
+    hoveredNodeId: null as string | null,
     filters: {
       tier: 'all',
       status: 'all',
       environment: 'all'
     },
-    simulatedNodeIds: new Set(),
-    simulationTimeoutId: null
+    simulatedNodeIds: new Set<string>(),
+    simulationTimeoutId: null as number | null
   };
 
   const services = data.services ?? [];
   const tiers = data.tiers ?? [];
-  const baseMetrics = new Map(services.map((service) => [service.id, { pressure: service.pressure, drift: service.drift }]));
+  const baseMetrics = new Map(services.map((service: any) => [service.id, { pressure: service.pressure, drift: service.drift }]));
 
-  const uniqueStatuses = [...new Set(services.map((service) => service.status))];
-  const uniqueEnvironments = [...new Set(services.map((service) => service.environment))];
-
-  const toOptionMarkup = (items) => ['<option value="all">All</option>', ...items.map((item) => `<option value="${item}">${item}</option>`)].join('');
+  const dependencyMap = new Map(services.map((service: any) => [service.id, service]));
 
   const resetSimulation = () => {
     state.simulatedNodeIds.forEach((serviceId) => {
       const service = dependencyMap.get(serviceId);
-      const baseline = baseMetrics.get(serviceId);
+      const baseline = baseMetrics.get(serviceId) as any;
       if (!service || !baseline) {
         return;
       }
@@ -244,30 +186,23 @@ const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
     }
   };
 
-  tierSelect.innerHTML = toOptionMarkup(tiers.map((tier) => tier.id));
-  statusSelect.innerHTML = toOptionMarkup(uniqueStatuses);
-  environmentSelect.innerHTML = toOptionMarkup(uniqueEnvironments);
-  snapshotState.textContent = `${data.snapshot?.uiState ?? 'ready'} • ${data.snapshot?.generatedAt ?? ''}`;
-
-  const dependencyMap = new Map(services.map((service) => [service.id, service]));
-
   const getVisibleServices = () =>
-    services.filter((service) =>
+    services.filter((service: any) =>
       (state.filters.tier === 'all' || service.tier === state.filters.tier) &&
       (state.filters.status === 'all' || service.status === state.filters.status) &&
       (state.filters.environment === 'all' || service.environment === state.filters.environment)
     );
 
-  const computeNodePositions = (visibleServices) => {
-    const byTier = tiers.map((tier) => ({
+  const computeNodePositions = (visibleServices: any[]) => {
+    const byTier = tiers.map((tier: any) => ({
       ...tier,
       nodes: visibleServices.filter((service) => service.tier === tier.id)
     }));
 
     const positions = new Map();
 
-    byTier.forEach((tierGroup) => {
-      tierGroup.nodes.forEach((service, index) => {
+    byTier.forEach((tierGroup: any) => {
+      tierGroup.nodes.forEach((service: any, index: number) => {
         const angle = (Math.PI * 2 * index) / Math.max(tierGroup.nodes.length, 1) - Math.PI / 2;
         positions.set(service.id, {
           service,
@@ -280,7 +215,7 @@ const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
     return positions;
   };
 
-  const formatServiceDetails = (service) => {
+  const formatServiceDetails = (service: any) => {
     const dependencies = service.dependencies.length > 0 ? service.dependencies.join(', ') : 'None';
     const simulated = state.simulatedNodeIds.has(service.id) ? '<p class="mt-2 text-xs font-semibold text-red-600">Simulation spike active</p>' : '';
 
@@ -304,17 +239,18 @@ const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
   };
 
   const render = () => {
+    if (!svg) return;
     const visibleServices = getVisibleServices();
     const positions = computeNodePositions(visibleServices);
-    const visibleIds = new Set(visibleServices.map((service) => service.id));
+    const visibleIds = new Set(visibleServices.map((service: any) => service.id));
 
     if (state.activeNodeId && !visibleIds.has(state.activeNodeId)) {
       state.activeNodeId = null;
     }
 
-    const edges = [];
-    visibleServices.forEach((service) => {
-      service.dependencies.forEach((dependencyId) => {
+    const edges: any[] = [];
+    visibleServices.forEach((service: any) => {
+      service.dependencies.forEach((dependencyId: string) => {
         if (visibleIds.has(dependencyId)) {
           edges.push({ from: service.id, to: dependencyId });
         }
@@ -323,7 +259,7 @@ const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
 
     let markup = '';
 
-    tiers.forEach((tier) => {
+    tiers.forEach((tier: any) => {
       markup += `
         <g>
           <circle cx="${center.x}" cy="${center.y}" r="${tier.radius}" fill="none" stroke="#1d4ed8" stroke-opacity="0.35" stroke-width="1.5" />
@@ -341,7 +277,7 @@ const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
       markup += `<line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" stroke="#60a5fa" stroke-opacity="0.35" stroke-width="1.5"/>`;
     });
 
-    visibleServices.forEach((service) => {
+    visibleServices.forEach((service: any) => {
       const point = positions.get(service.id);
       if (!point) {
         return;
@@ -363,30 +299,31 @@ const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
     });
 
     svg.innerHTML = markup;
-    visibleCount.textContent = `${visibleServices.length} services visible`;
+    if (visibleCount) visibleCount.textContent = `${visibleServices.length} services visible`;
 
     const selectedId = state.hoveredNodeId ?? state.activeNodeId;
     const selectedService = selectedId ? dependencyMap.get(selectedId) : null;
-    detailsPanel.innerHTML = selectedService
-      ? formatServiceDetails(selectedService)
-      : 'Hover or click a service node to inspect pressure, drift, dependencies, and environment.';
-
+    if (detailsPanel) {
+      detailsPanel.innerHTML = selectedService
+        ? formatServiceDetails(selectedService)
+        : 'Hover or click a service node to inspect pressure, drift, dependencies, and environment.';
+    }
   };
 
   const onFilterChange = () => {
     state.filters = {
-      tier: tierSelect.value,
-      status: statusSelect.value,
-      environment: environmentSelect.value
+      tier: tierSelect?.value ?? 'all',
+      status: statusSelect?.value ?? 'all',
+      environment: environmentSelect?.value ?? 'all'
     };
     render();
   };
 
-  tierSelect.addEventListener('change', onFilterChange);
-  statusSelect.addEventListener('change', onFilterChange);
-  environmentSelect.addEventListener('change', onFilterChange);
+  tierSelect?.addEventListener('change', onFilterChange);
+  statusSelect?.addEventListener('change', onFilterChange);
+  environmentSelect?.addEventListener('change', onFilterChange);
 
-  simulateButton.addEventListener('click', () => {
+  simulateButton?.addEventListener('click', () => {
     resetSimulation();
     const visibleServices = getVisibleServices();
     if (visibleServices.length === 0) {
@@ -411,8 +348,9 @@ const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
     }, prefersReducedMotion ? 1200 : 2500);
   });
 
-  svg.addEventListener('mouseover', (event) => {
-    const nodeElement = event.target.closest('.node-group');
+  svg?.addEventListener('mouseover', (event) => {
+    const target = event.target as Element;
+    const nodeElement = target.closest('.node-group');
     if (!nodeElement) {
       return;
     }
@@ -426,8 +364,9 @@ const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
     render();
   });
 
-  svg.addEventListener('mouseout', (event) => {
-    const fromNode = event.target.closest('.node-group');
+  svg?.addEventListener('mouseout', (event) => {
+    const target = event.target as Element;
+    const fromNode = target.closest('.node-group');
     if (!fromNode) {
       return;
     }
@@ -443,8 +382,9 @@ const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
     }
   });
 
-  svg.addEventListener('click', (event) => {
-    const nodeElement = event.target.closest('.node-group');
+  svg?.addEventListener('click', (event) => {
+    const target = event.target as Element;
+    const nodeElement = target.closest('.node-group');
     if (!nodeElement) {
       return;
     }
@@ -458,8 +398,9 @@ const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
     render();
   });
 
-  svg.addEventListener('keydown', (event) => {
-    const nodeElement = event.target.closest('.node-group');
+  svg?.addEventListener('keydown', (event: any) => {
+    const target = event.target as Element;
+    const nodeElement = target.closest('.node-group');
     if (!nodeElement) {
       return;
     }
