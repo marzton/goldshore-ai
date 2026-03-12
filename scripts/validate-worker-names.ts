@@ -68,7 +68,6 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const CANONICAL_WORKERS = ["gs-agent", "gs-api", "gs-control", "gs-gateway", "gs-mail"];
-const APPS_DIR = "apps";
 
 let failed = false;
 
