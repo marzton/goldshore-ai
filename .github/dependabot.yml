@@ -1,0 +1,27 @@
+version: 2
+
+updates:
+  # ─────────────────────────────────────────────
+  # 1. NPM (Monorepo: apps/* + packages/*)
+  # ─────────────────────────────────────────────
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # ensures Dependabot follows workspace links
+    versioning-strategy: increase
+    # optional: limit number of simultaneous PRs
+    open-pull-requests-limit: 10
+    registries: {}
+    allow:
+      # allow updating everything inside workspaces
+      - dependency-type: "all"
+
+  # ─────────────────────────────────────────────
+  # 2. GitHub Actions
+  # ─────────────────────────────────────────────
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5

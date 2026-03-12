@@ -200,3 +200,21 @@ dist
 
 ### Astro ###
 .astro/
+
+### Turborepo ###
+.turbo/
+
+### Merge/backups (scoped artifacts only) ###
+apps/**/*.legacy-*.ts
+apps/**/*.legacy-*.astro
+apps/**/*.legacy-*.mjs
+apps/**/*.legacy-*.toml
+apps/**/*.legacy-*.json
+.github/workflows/*.legacy-*.yml
+
+### Generated worker types ###
+worker-configuration.d.ts
+
+
+# Generated verification screenshots
+verification/*.png

@@ -1,0 +1,367 @@
+---
+import '@goldshore/theme/tokens.css';
+
+// Goldshore Landing Page
+// Aesthetic: Military x Tech, Sports Car, Utility
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Goldshore | Shaping Waves</title>
+
+		<!-- Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+		<style>
+			:root {
+				--header-height: 80px;
+			}
+
+			body {
+				background-color: var(--color-background);
+				color: var(--color-text-primary);
+				font-family: var(--font-family-base);
+				margin: 0;
+				padding: 0;
+				overflow-x: hidden;
+			}
+
+			.mono {
+				font-family: var(--font-family-mono);
+			}
+
+			.container {
+				max-width: var(--container-width-max);
+				margin: 0 auto;
+				padding: 0 var(--space-6);
+			}
+
+			/* HEADER */
+			header {
+				height: var(--header-height);
+				background-color: rgba(20, 20, 20, 0.9);
+				backdrop-filter: blur(10px);
+				border-bottom: 1px solid var(--color-border);
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				z-index: 100;
+				display: flex;
+				align-items: center;
+			}
+
+			.header-content {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				width: 100%;
+			}
+
+			.logo-container {
+				display: flex;
+				align-items: center;
+				gap: var(--space-4);
+			}
+
+			.logo {
+				height: 40px;
+				width: auto;
+			}
+
+			.brand-name {
+				font-family: var(--font-family-mono);
+				font-weight: 700;
+				letter-spacing: -0.05em;
+				text-transform: uppercase;
+				font-size: var(--font-size-lg);
+				color: var(--color-text-primary);
+			}
+
+			.brand-tag {
+				color: var(--color-utility-orange);
+			}
+
+			nav a {
+				color: var(--color-text-secondary);
+				font-size: var(--font-size-sm);
+				text-transform: uppercase;
+				margin-left: var(--space-8);
+				font-weight: 600;
+				letter-spacing: 0.05em;
+				transition: color 0.2s;
+			}
+
+			nav a:hover {
+				color: var(--color-accent);
+			}
+
+			/* HERO */
+			.hero {
+				padding-top: calc(var(--header-height) + var(--space-24));
+				padding-bottom: var(--space-24);
+				min-height: 80vh;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				position: relative;
+				background: radial-gradient(circle at 50% 50%, #222 0%, var(--color-background) 70%);
+			}
+
+			.hero h1 {
+				font-size: 5rem;
+				line-height: 0.9;
+				text-transform: uppercase;
+				font-weight: 800;
+				letter-spacing: -0.02em;
+				margin: 0;
+				color: var(--color-text-primary);
+			}
+
+			.hero h1 span.highlight {
+				color: var(--color-text-secondary); /* Silver */
+				display: block;
+			}
+
+			.hero-sub {
+				margin-top: var(--space-8);
+				font-family: var(--font-family-mono);
+				color: var(--color-utility-orange);
+				text-transform: uppercase;
+				letter-spacing: 0.2em;
+				font-size: var(--font-size-sm);
+				border-left: 2px solid var(--color-utility-orange);
+				padding-left: var(--space-4);
+			}
+
+			/* ACTIONS */
+			.actions {
+				margin-top: var(--space-12);
+				display: flex;
+				gap: var(--space-4);
+			}
+
+			.btn {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				padding: 0 var(--space-8);
+				height: 48px;
+				text-transform: uppercase;
+				font-weight: 700;
+				font-size: var(--font-size-sm);
+				letter-spacing: 0.05em;
+				border: 1px solid transparent;
+				cursor: pointer;
+				transition: all 0.2s;
+				font-family: var(--font-family-mono);
+			}
+
+			.btn-primary {
+				background-color: var(--color-utility-orange);
+				color: #000;
+				box-shadow: 0 0 15px rgba(255, 95, 31, 0.3);
+			}
+
+			.btn-primary:hover {
+				background-color: #fff;
+				box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+			}
+
+			.btn-outline {
+				border-color: var(--color-silver);
+				color: var(--color-silver);
+				background: transparent;
+			}
+
+			.btn-outline:hover {
+				border-color: var(--color-neon-yellow);
+				color: var(--color-neon-yellow);
+			}
+
+			/* WE STEER CAPITAL */
+			.section-capital {
+				background-color: var(--color-matte-grey);
+				border-top: 1px solid var(--color-border);
+				border-bottom: 1px solid var(--color-border);
+				padding: var(--space-24) 0;
+				position: relative;
+				overflow: hidden;
+			}
+
+			/* Grid overlay effect */
+			.grid-bg {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-image:
+					linear-gradient(var(--color-border) 1px, transparent 1px),
+					linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+				background-size: 40px 40px;
+				opacity: 0.1;
+				pointer-events: none;
+			}
+
+			.capital-title {
+				font-size: 3rem;
+				text-transform: uppercase;
+				font-weight: 800;
+				margin-bottom: var(--space-16);
+				display: flex;
+				align-items: center;
+				gap: var(--space-4);
+			}
+
+			.capital-title::before {
+				content: '';
+				display: block;
+				width: 40px;
+				height: 40px;
+				background-color: var(--color-sports-car-green);
+			}
+
+			.features-grid {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 1px;
+				background-color: var(--color-border); /* Creates borders between cells */
+				border: 1px solid var(--color-border);
+			}
+
+			.feature-cell {
+				background-color: var(--color-matte-grey);
+				padding: var(--space-8);
+				transition: background-color 0.2s;
+			}
+
+			.feature-cell:hover {
+				background-color: #333;
+			}
+
+			.feature-icon {
+				color: var(--color-neon-yellow);
+				font-size: var(--font-size-2xl);
+				margin-bottom: var(--space-4);
+				font-family: var(--font-family-mono);
+			}
+
+			.feature-title {
+				font-family: var(--font-family-mono);
+				text-transform: uppercase;
+				color: var(--color-text-primary);
+				margin-bottom: var(--space-2);
+				font-weight: 700;
+			}
+
+			.feature-desc {
+				color: var(--color-text-secondary);
+				font-size: var(--font-size-sm);
+				line-height: 1.5;
+			}
+
+			/* FOOTER */
+			footer {
+				padding: var(--space-16) 0;
+				border-top: 1px solid var(--color-border);
+				background-color: #000;
+			}
+
+			.footer-content {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-end;
+			}
+
+			.footer-legal {
+				font-family: var(--font-family-mono);
+				font-size: var(--font-size-xs);
+				color: var(--color-text-muted);
+			}
+
+		</style>
+	</head>
+	<body>
+		<header>
+			<div class="container header-content">
+				<div class="logo-container">
+					<img src="/favicon.svg" alt="Goldshore Labs" class="logo" />
+					<div class="brand-name">Goldshore <span class="brand-tag">Labs</span></div>
+				</div>
+				<nav class="mono">
+					<a href="#">Platform</a>
+					<a href="#">Research</a>
+					<a href="#">Company</a>
+					<a href="#">Login</a>
+				</nav>
+			</div>
+		</header>
+
+		<main>
+			<section class="hero">
+				<div class="container">
+					<div class="hero-sub">System Status: Operational</div>
+					<h1>
+						Shaping <br />
+						<span class="highlight">Waves</span>
+					</h1>
+
+					<div class="actions">
+						<a href="#" class="btn btn-primary">Initialize Protocol</a>
+						<a href="#" class="btn btn-outline">Read Documentation</a>
+					</div>
+				</div>
+			</section>
+
+			<section class="section-capital">
+				<div class="grid-bg"></div>
+				<div class="container" style="position: relative; z-index: 1;">
+					<h2 class="capital-title">We Steer Capital</h2>
+
+					<div class="features-grid">
+						<div class="feature-cell">
+							<div class="feature-icon">// 01</div>
+							<div class="feature-title">Algorithmic Precision</div>
+							<div class="feature-desc">
+								High-frequency execution modeled on fluid dynamics. Zero latency expectations.
+							</div>
+						</div>
+						<div class="feature-cell">
+							<div class="feature-icon">// 02</div>
+							<div class="feature-title">Military Grade</div>
+							<div class="feature-desc">
+								Infrastructure built to withstand extreme volatility. Security first architecture.
+							</div>
+						</div>
+						<div class="feature-cell">
+							<div class="feature-icon">// 03</div>
+							<div class="feature-title">Global Reach</div>
+							<div class="feature-desc">
+								Connected to major liquidity pools across all timezones. 24/7 operations.
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+
+		<footer>
+			<div class="container footer-content">
+				<div class="logo-container">
+					<img src="/favicon.svg" alt="Goldshore Labs" class="logo" style="height: 30px; opacity: 0.5;" />
+				</div>
+				<div class="footer-legal">
+					&copy; 2024 GOLDSHORE LABS INC. // ALL RIGHTS RESERVED<br />
+					SAN FRANCISCO // TOKYO // LONDON
+				</div>
+			</div>
+		</footer>
+	</body>
+</html>

@@ -1,0 +1,17 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro';
+---
+
+<DocsLayout title="GoldShore Documentation">
+  <h1>Overview</h1>
+  <p>Everything begins with the API.</p>
+
+  <h2 id="api">API Base</h2>
+  <pre>GET {import.meta.env.PUBLIC_API}/system/info</pre>
+
+  <h2 id="gateway">Gateway</h2>
+  <pre>{import.meta.env.PUBLIC_GATEWAY}/api/* → gs-api</pre>
+
+  <h2 id="auth">Auth</h2>
+  <p>Uses Cloudflare Access JWT (aud: goldshore-admin).</p>
+</DocsLayout>

@@ -1,0 +1,24 @@
+name = "gs-gateway"
+main = "src/index.ts"
+compatibility_date = "2025-01-10"
+compatibility_flags = ["nodejs_compat"]
+
+workers_dev = false
+routes = [
+  { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+
+[vars]
+ENV = "production"
+API_ORIGIN = "https://api.goldshore.ai"
+
+[[kv_namespaces]]
+binding = "gs-kv"
+id = "gs_api_kv_prod_001"
+
+[[queues.producers]]
+binding = "JOB_QUEUE"
+queue = "gs-jobs"
+
+[ai]
+binding = "AI"

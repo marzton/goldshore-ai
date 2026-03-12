@@ -1,0 +1,46 @@
+name: Deploy Web (goldshore.ai)
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/web/**"
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+
+jobs:
+  deploy-web:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build web app
+        working-directory: apps/web
+        run: pnpm build
+
+      - name: Deploy to Cloudflare Pages (production)
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: astro-gs-web
+          directory: apps/web/dist
+          branch: main

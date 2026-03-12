@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+
+const { currentSlug } = Astro.props;
+const pages = await getCollection('docs');
+
+// Sort by optional "order" key
+pages.sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999));
+
+function link(slug, title) {
+  const active = currentSlug === slug;
+  const href = slug === 'index' ? '/developer/docs' : `/developer/docs/${slug}`;
+  return `<a href="${href}" class="${active ? 'active' : ''}">${title}</a>`;
+}
+---
+
+<aside class="sidebar">
+  <h3>Documentation</h3>
+
+  {pages.map((p) => (
+    <div class="item">
+      <Fragment set:html={link(p.slug, p.data.title)} />
+    </div>
+  ))}
+</aside>
+
+<style>
+  .sidebar a.active {
+    color: #22d3ee;
+  }
+</style>

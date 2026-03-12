@@ -1,0 +1,96 @@
+---
+import AdminLayout from '@apps/web/src/layouts/BaseLayout.astro';
+import GSButton from '@packages/ui/GSButton.astro';
+
+// Initial UI state
+const initialStatus = { worker: 'Unknown', lastSync: 'N/A' };
+---
+<AdminLayout title="Admin | Operational Overview">
+    <div class="max-w-7xl mx-auto p-8 space-y-8">
+        <h1 class="text-4xl gs-heading" style="color: var(--gs-brand-gold);">Operational Overview</h1>
+        <p class="text-lg" style="color: var(--gs-text-secondary);">Protected access to monitor Workers, Data, and System Health.</p>
+
+        <!-- Status & Bindings -->
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="gs-card space-y-3">
+                <h2 class="text-xl font-semibold">gs-api Status</h2>
+                <p id="api-status" class="text-2xl font-bold" style="color: var(--gs-brand-blue);">{initialStatus.worker}</p>
+                <p class="text-sm" style="color: var(--gs-text-secondary);">Last checked: <span id="last-sync">{initialStatus.lastSync}</span></p>
+                <GSButton href="#" variant="secondary" id="check-api">Check Health</GSButton>
+            </div>
+
+            <div class="gs-card space-y-3">
+                <h2 class="text-xl font-semibold">Active Workers</h2>
+                <p class="text-2xl font-bold" style="color: var(--gs-success);">3/3</p>
+                <p class="text-sm" style="color: var(--gs-text-secondary);">API, Gateway, Control are online.</p>
+                <GSButton href="/admin/workers" variant="secondary">View Bindings</GSButton>
+            </div>
+
+            <div class="gs-card space-y-3">
+                <h2 class="text-xl font-semibold">Git Conflicts</h2>
+                <p id="conflict-count" class="text-2xl font-bold text-red-500">7 Open</p>
+                <p class="text-sm" style="color: var(--gs-text-secondary);">Requires immediate SOP-001 execution.</p>
+                <GSButton href="#" variant="primary" id="run-sop">Execute Git Repair</GSButton>
+            </div>
+        </div>
+
+        <!-- Deployment Actions (Simulated Frontend Controls) -->
+        <div class="gs-card space-y-4">
+            <h2 class="text-2xl font-semibold">Deployment Actions</h2>
+            <p class="text-sm" style="color: var(--gs-text-secondary);">Initiate a controlled preview deployment or production rollback (UI only; backend triggers to be wired later).</p>
+            <div class="flex space-x-4">
+                <GSButton href="#" variant="primary" id="preview-deploy">Run Preview Deploy</GSButton>
+                <GSButton href="#" variant="secondary" id="prod-rollback" class="opacity-50 cursor-not-allowed">Production Rollback</GSButton>
+            </div>
+        </div>
+    </div>
+
+    <script is:inline>
+        // NOTE: All behavior below is currently SIMULATED UI behavior.
+        // Jules: backend endpoints are NOT required to exist yet.
+        document.addEventListener('DOMContentLoaded', () => {
+            const apiStatusEl = document.getElementById('api-status');
+            const lastSyncEl = document.getElementById('last-sync');
+            const checkApiBtn = document.getElementById('check-api');
+
+            const checkApiHealth = async () => {
+                apiStatusEl.textContent = 'Checking...';
+                apiStatusEl.style.color = 'var(--gs-brand-gold)';
+
+                // Simulated delay; later this can be replaced by a real fetch to gs-api /health.
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                const isHealthy = Math.random() > 0.1;
+
+                apiStatusEl.textContent = isHealthy ? 'HEALTHY' : 'DEGRADED';
+                apiStatusEl.style.color = isHealthy ? 'var(--gs-success)' : 'red';
+                lastSyncEl.textContent = new Date().toLocaleTimeString();
+            };
+
+            checkApiBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                checkApiHealth();
+            });
+
+            const runSopBtn = document.getElementById('run-sop');
+            const conflictCountEl = document.getElementById('conflict-count');
+
+            runSopBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                runSopBtn.textContent = 'Running SOP-001...';
+                runSopBtn.disabled = true;
+
+                // Simulate Agent execution time
+                setTimeout(() => {
+                    conflictCountEl.textContent = '0 Resolved';
+                    conflictCountEl.style.color = 'var(--gs-success)';
+                    runSopBtn.textContent = 'Git Repair Complete';
+                    runSopBtn.disabled = false;
+                }, 3000);
+            });
+
+            // Initial check on load
+            checkApiHealth();
+        });
+    </script>
+</AdminLayout>
