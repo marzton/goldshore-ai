@@ -54,3 +54,10 @@
 ## 2026-05-26 - Playwright Clipboard Permissions
 **Learning:** Automated tests involving `navigator.clipboard` will fail in headless environments unless specific permissions (`clipboard-read`, `clipboard-write`) are explicitly granted in the browser context.
 **Action:** When testing copy-to-clipboard functionality, always initialize the Playwright browser context with the necessary permissions.
+
+## 2026-06-05 - Aria-Live InnerHTML Quirk
+**Learning:** When turning a container into an `aria-live="polite"` region, avoid replacing the entire contents via `innerHTML`. Screen readers often miss the text change because the DOM nodes themselves are being destroyed and recreated simultaneously.
+**Action:** To ensure robust screen reader announcements within `aria-live` regions, specifically target child nodes and update their `textContent` and `className` instead of replacing them wholesale.
+## 2025-03-11 - [aria-live in Service Status Indicators]
+**Learning:** Background polling operations, like system vitality health checks, can quietly pass updates onto the DOM that screen readers won't catch unless properly tagged.
+**Action:** When adding automatic system status components (`ServiceStatus.astro`), always wrap the status text container in `aria-live="polite"` and `aria-atomic="true"` so its outcome (e.g., from "Initializing" to "OK") is cleanly announced.

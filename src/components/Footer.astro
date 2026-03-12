@@ -14,6 +14,9 @@ import siteConfig from '../data/site-config.json';
       >{siteConfig.cta.tertiary}</a
     >
   </div>
+  <p class="footer-links">
+    <a href="/partnerships-careers">Partnerships &amp; Careers</a>
+  </p>
   <p>&copy; {today.getFullYear()} GoldShore.ai. All rights reserved.</p>
 </footer>
 <style>
@@ -30,5 +33,14 @@ import siteConfig from '../data/site-config.json';
     justify-content: center;
     flex-wrap: wrap;
     margin-bottom: 1rem;
+  }
+
+  .footer-links {
+    margin: 0.5rem 0;
+  }
+
+  .footer-links a {
+    font-weight: 700;
+    text-decoration: none;
   }
 </style>

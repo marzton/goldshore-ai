@@ -3,8 +3,33 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import siteConfig from '../data/site-config.json';
-import { offerings } from '../data/site-content';
+
+const routingApiBase = import.meta.env.GS_ROUTING_API_BASE?.replace(/\/$/, '');
+const primaryCtaHref = routingApiBase ? `${routingApiBase}/services` : '/services';
+
+const landingCards = [
+  {
+    title: 'Advisory Services',
+    description:
+      'Explore structured advisory tracks for infrastructure resilience, risk governance, and deployment operations.',
+    href: '/services',
+    cta: 'Explore services',
+  },
+  {
+    title: 'Briefing Requests',
+    description:
+      'Submit a briefing request for targeted market and operations intelligence aligned to your mandate.',
+    href: '/admin/forms',
+    cta: 'Open briefing intake',
+  },
+  {
+    title: 'PII Scans',
+    description:
+      'Review privacy posture and data handling risk with rapid detection workflows for sensitive information.',
+    href: '/risk-radar',
+    cta: 'View risk workflows',
+  },
+];
 ---
 
 <!doctype html>
@@ -14,51 +39,37 @@ import { offerings } from '../data/site-content';
   </head>
   <body>
     <Header />
-    <main>
-      <section class="hero" id="hero">
-        <canvas id="starfield" aria-hidden="true"></canvas>
-        <div class="hero-glow" aria-hidden="true"></div>
-        <div class="hero-content">
-          <p class="eyebrow">
-            Operational systems, engineered for reliability.
-          </p>
-          <h1>GoldShore.ai</h1>
-          <p>
-            Operational AI infrastructure and observability for mission-critical
-            deployments.
-          </p>
-          <p class="small">
-            We help technical teams design resilient AI-enabled operations with
-            clear instrumentation, ownership models, and deployment controls.
-          </p>
-          <div class="hero-actions">
-            <a class="button button-primary" href="/contact"
-              >{siteConfig.cta.primary}</a
-            >
-            <a class="button button-secondary" href="/contact"
-              >{siteConfig.cta.secondary}</a
-            >
-          </div>
+    <main class="landing-main">
+      <section class="hero" aria-labelledby="hero-title">
+        <p class="kicker">GoldShore intelligence systems</p>
+        <h1 id="hero-title">Institutional clarity at operational speed.</h1>
+        <p class="lede">
+          A high-performance front door for advisory delivery, briefing intake, and trusted
+          technical guidance.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href={primaryCtaHref}>Find your service path</a>
+          <a class="button button-secondary" href="/contact">Contact the team</a>
         </div>
-        <a
-          class="scroll-cue"
-          href="#offerings"
-          aria-label="Scroll to core offerings"
-        >
-          <span>Scroll</span>
-          <span class="arrow">↓</span>
-        </a>
       </section>
 
-      <section id="offerings">
-        <h2>Core offerings</h2>
+      <section class="search-block" aria-labelledby="search-title">
+        <h2 id="search-title">Global search</h2>
+        <p>Search imported legacy content instantly with Pagefind.</p>
+        <label for="global-search" class="sr-only">Search site content</label>
+        <input id="global-search" type="search" placeholder="Search advisory notes, workflows, and briefings" autocomplete="off" />
+        <div id="search-results" aria-live="polite"></div>
+      </section>
+
+      <section class="content-grid" aria-labelledby="grid-title">
+        <h2 id="grid-title">Core access points</h2>
         <div class="grid">
           {
-            offerings.map((offering) => (
-              <article class="card">
-                <h3>{offering.title}</h3>
-                <p>{offering.summary}</p>
-                <p class="metric">{offering.metric}</p>
+            landingCards.map((card) => (
+              <article class="card card-panel">
+                <h3>{card.title}</h3>
+                <p>{card.description}</p>
+                <a href={card.href}>{card.cta} →</a>
               </article>
             ))
           }
@@ -68,231 +79,168 @@ import { offerings } from '../data/site-content';
     <Footer />
 
     <script>
-      const hero = document.getElementById('hero');
-      const canvas = document.getElementById('starfield');
-      const ctx = canvas?.getContext('2d');
+      const searchInput = document.getElementById('global-search');
+      const searchResults = document.getElementById('search-results');
 
-      if (hero && canvas && ctx) {
-        const stars = [];
-        const shootingStars = [];
+      const renderResults = (results) => {
+        if (!(searchResults instanceof HTMLElement)) return;
 
-        const random = (min, max) => Math.random() * (max - min) + min;
+        if (!results.length) {
+          searchResults.innerHTML = '<p class="search-empty">No results found.</p>';
+          return;
+        }
 
-        const resize = () => {
-          canvas.width = hero.clientWidth;
-          canvas.height = hero.clientHeight;
-        };
+        searchResults.innerHTML = results
+          .slice(0, 6)
+          .map(
+            (result) => `
+              <article class="search-result">
+                <a href="${result.url}">${result.meta.title || result.url}</a>
+                <p>${result.excerpt || ''}</p>
+              </article>
+            `,
+          )
+          .join('');
+      };
 
-        const createStars = () => {
-          const starCount = Math.floor((canvas.width * canvas.height) / 8500);
-          stars.length = 0;
-          for (let index = 0; index < starCount; index += 1) {
-            stars.push({
-              x: Math.random() * canvas.width,
-              y: Math.random() * canvas.height,
-              radius: random(0.5, 1.6),
-              alpha: random(0.3, 0.95),
-              twinkle: random(0.002, 0.01),
-            });
-          }
-        };
+      const bootSearch = async () => {
+        if (!(searchInput instanceof HTMLInputElement) || !(searchResults instanceof HTMLElement)) {
+          return;
+        }
 
-        const spawnShootingStar = () => {
-          shootingStars.push({
-            x: random(0, canvas.width * 0.7),
-            y: random(-40, canvas.height * 0.45),
-            length: random(130, 230),
-            speed: random(7, 10.5),
-            life: 0,
-            ttl: random(38, 52),
-          });
-        };
+        try {
+          const pagefind = await import('/pagefind/pagefind.js');
+          const searchEngine = await pagefind.options({});
 
-        const draw = () => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-          ctx.fillStyle = '#050816';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-          stars.forEach((star) => {
-            star.alpha += star.twinkle;
-            if (star.alpha >= 1 || star.alpha <= 0.2) {
-              star.twinkle *= -1;
+          searchInput.addEventListener('input', async () => {
+            const term = searchInput.value.trim();
+            if (!term) {
+              searchResults.innerHTML = '';
+              return;
             }
 
-            ctx.beginPath();
-            ctx.fillStyle = `rgba(235, 244, 255, ${star.alpha})`;
-            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-            ctx.fill();
+            const search = await searchEngine.search(term);
+            const data = await Promise.all(search.results.map((item) => item.data()));
+            renderResults(data);
           });
+        } catch (error) {
+          searchResults.innerHTML = '<p class="search-empty">Search is temporarily unavailable.</p>';
+        }
+      };
 
-          if (Math.random() < 0.02 && shootingStars.length < 3) {
-            spawnShootingStar();
-          }
-
-          shootingStars.forEach((shootingStar, index) => {
-            shootingStar.x += shootingStar.speed;
-            shootingStar.y += shootingStar.speed * 0.5;
-            shootingStar.life += 1;
-
-            const opacity = 1 - shootingStar.life / shootingStar.ttl;
-            const gradient = ctx.createLinearGradient(
-              shootingStar.x,
-              shootingStar.y,
-              shootingStar.x - shootingStar.length,
-              shootingStar.y - shootingStar.length * 0.4,
-            );
-            gradient.addColorStop(0, `rgba(166, 220, 255, ${opacity})`);
-            gradient.addColorStop(1, 'rgba(166, 220, 255, 0)');
-
-            ctx.strokeStyle = gradient;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(shootingStar.x, shootingStar.y);
-            ctx.lineTo(
-              shootingStar.x - shootingStar.length,
-              shootingStar.y - shootingStar.length * 0.4,
-            );
-            ctx.stroke();
-
-            if (shootingStar.life > shootingStar.ttl) {
-              shootingStars.splice(index, 1);
-            }
-          });
-
-          window.requestAnimationFrame(draw);
-        };
-
-        resize();
-        createStars();
-        draw();
-
-        window.addEventListener('resize', () => {
-          resize();
-          createStars();
-        });
-
-        const handleFade = () => {
-          const heroHeight = hero.clientHeight;
-          const progress = Math.min(window.scrollY / (heroHeight * 0.75), 1);
-          hero.style.opacity = String(1 - progress);
-          hero.style.transform = `translateY(${progress * 28}px)`;
-        };
-
-        handleFade();
-        window.addEventListener('scroll', handleFade, { passive: true });
-      }
+      bootSearch();
     </script>
   </body>
 </html>
 
 <style>
-  .hero {
-    position: relative;
-    min-height: calc(100vh - 6rem);
-    border-radius: 1rem;
-    overflow: hidden;
-    isolation: isolate;
+  .landing-main {
     display: grid;
-    place-items: center;
-    margin-top: 0.5rem;
-    transition:
-      opacity 180ms linear,
-      transform 180ms linear;
+    gap: 2rem;
   }
 
-  #starfield,
-  .hero-glow {
-    position: absolute;
-    inset: 0;
+  .hero,
+  .search-block,
+  .card-panel {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    background: #10141e;
   }
 
-  .hero-glow {
-    background:
-      radial-gradient(
-        circle at 80% 25%,
-        rgba(76, 152, 255, 0.25),
-        transparent 48%
-      ),
-      radial-gradient(
-        circle at 18% 74%,
-        rgba(24, 198, 196, 0.2),
-        transparent 42%
-      );
-    z-index: 0;
+  .hero {
+    padding: clamp(1.5rem, 5vw, 3rem);
+    color: #f9fbff;
   }
 
-  .hero-content {
-    position: relative;
-    z-index: 1;
-    width: min(42rem, calc(100% - 2.5rem));
-    text-align: center;
-    color: #e8edf7;
-  }
-
-  .hero-content h1 {
-    margin-top: 0.5rem;
-    color: white;
-    font-size: clamp(2.2rem, 4vw, 3.7rem);
-  }
-
-  .hero-content p {
-    margin: 0.75rem 0;
-  }
-
-  .eyebrow {
+  .kicker {
+    margin: 0;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
     font-size: 0.78rem;
-    color: rgba(203, 220, 242, 0.95);
+    color: #c8d3e7;
   }
 
-  .hero-content .small {
-    color: rgba(224, 234, 249, 0.9);
+  .hero h1 {
+    margin: 0.4rem 0 0.75rem;
+    font-size: clamp(2rem, 5vw, 3.3rem);
+    line-height: 1.05;
+  }
+
+  .lede {
+    max-width: 48ch;
+    color: #d5dff0;
   }
 
   .hero-actions {
     display: flex;
-    justify-content: center;
-    gap: 0.75rem;
     flex-wrap: wrap;
-    margin-top: 1.15rem;
+    gap: 0.7rem;
+    margin-top: 1.1rem;
   }
 
-  .scroll-cue {
-    position: absolute;
-    z-index: 1;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 1.1rem;
-    color: rgba(224, 239, 255, 0.9);
+  .search-block {
+    padding: 1.25rem;
+  }
+
+  .search-block h2,
+  .content-grid h2 {
+    margin-top: 0;
+  }
+
+  #global-search {
+    width: 100%;
+    margin-top: 0.6rem;
+    margin-bottom: 0.9rem;
+  }
+
+  #search-results {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .search-result {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 0.6rem 0.75rem;
+    background: #0a0d14;
+  }
+
+  .search-result a {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  .search-empty {
+    margin: 0;
+    color: #c8d3e7;
+  }
+
+  .content-grid .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.9rem;
+  }
+
+  .card-panel {
+    padding: 1rem;
+    background: #0c111a;
+  }
+
+  .card-panel a {
+    color: #b7dcff;
     text-decoration: none;
-    font-size: 0.83rem;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.1rem;
+    font-weight: 600;
   }
 
-  .arrow {
-    animation: bounce 1.4s ease-in-out infinite;
-    font-size: 1.1rem;
-  }
-
-  @keyframes bounce {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-
-    50% {
-      transform: translateY(5px);
-    }
-  }
-
-  @media (max-width: 720px) {
-    .hero {
-      min-height: 82vh;
-    }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 </style>
