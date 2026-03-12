@@ -1,0 +1,20 @@
+<table class="gs-table">
+  <slot />
+</table>
+
+<style>
+  .gs-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .gs-table th, .gs-table td {
+    padding: var(--gs-space-3);
+    border-bottom: 1px solid var(--gs-border);
+  }
+  .gs-table th {
+    color: var(--gs-fg-muted);
+    text-align: left;
+    font-weight: 500;
+  }
+</style>

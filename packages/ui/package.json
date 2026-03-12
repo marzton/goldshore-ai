@@ -1,17 +1,16 @@
 {
   "name": "@goldshore/ui",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "main": "index.ts",
-  "scripts": {
-    "build": "echo 'No build script yet'"
-  },
-  "devDependencies": {
-    "astro": "^4.0.0",
-    "typescript": "^5.0.0"
+  "exports": {
+    ".": "./index.ts"
   },
   "peerDependencies": {
+    "astro": "^4.0.0"
+  },
+  "devDependencies": {
     "astro": "^4.0.0"
   }
 }

@@ -1,0 +1,64 @@
+---
+import ApiSidebar from '../../../components/ApiSidebar.astro';
+import ApiEndpoint from '../../../components/ApiEndpoint.astro';
+// Import the data directly
+// @ts-ignore
+import openapi from '../../../data/v1.json';
+
+const { slug } = Astro.params;
+// Handle undefined slug (root /api/) if needed, or just /api/something
+const endpoint = slug || '';
+---
+
+<div class="api-container">
+  <ApiSidebar openapi={openapi} />
+  <main>
+    <ApiEndpoint openapi={openapi} endpoint={endpoint} />
+  </main>
+</div>
+
+<style>
+  .api-container { display: flex; min-height: 100vh; }
+  main { flex: 1; }
+
+const version = 'v1';
+// Assuming /openapi/v1.json as per instructions.
+// If publicDir is ./openapi, then we need apps/web/openapi/openapi/v1.json to exist.
+const openapi = await fetch(new URL(`/openapi/${version}.json`, Astro.url)).then(r => r.json());
+
+const { slug = [] } = Astro.params;
+const endpointId = slug.join('/');
+
+const paths = Object.entries(openapi.paths || {});
+---
+
+<html>
+  <body class="api-body">
+
+    <ApiSidebar version={version} paths={paths} />
+
+    <main class="api-main">
+      {endpointId
+        ? <ApiEndpoint openapi={openapi} endpointId={endpointId} />
+        : <h1>API Reference — {version}</h1>
+      }
+    </main>
+
+  </body>
+</html>
+
+<style>
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    display: flex;
+    background: #020617;
+    color: #f8fafc;
+  }
+  .api-main {
+    flex: 1;
+    padding: 2rem;
+    height: 100vh;
+    overflow-y: auto;
+  }
+</style>

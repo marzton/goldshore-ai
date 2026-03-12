@@ -1,10 +1,10 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
     "module": "ESNext",
     "target": "ESNext",
-    "lib": ["ESNext"],
+    "lib": ["ES2022"],
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,

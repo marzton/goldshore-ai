@@ -1,0 +1,20 @@
+name: Jules Nightly Repo Health
+permissions:
+  contents: read
+  actions: write
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # 3 AM UTC
+
+jobs:
+  heal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run AutoFix on All PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for pr in $(gh pr list --repo $GITHUB_REPOSITORY --json number -q '.[].number'); do
+            gh workflow run jules-auto-fix.yml -f pr=$pr --repo $GITHUB_REPOSITORY
+          done

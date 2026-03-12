@@ -1,0 +1,17 @@
+---
+const { headers, rows } = Astro.props;
+---
+<table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+  <thead>
+    <tr>
+      {headers.map((h: string) => <th>{h}</th>)}
+    </tr>
+  </thead>
+  <tbody>
+    {rows.map((row: any[]) => (
+      <tr>
+        {row.map((cell) => <td>{cell}</td>)}
+      </tr>
+    ))}
+  </tbody>
+</table>

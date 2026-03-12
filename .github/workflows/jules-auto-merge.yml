@@ -1,0 +1,28 @@
+name: Jules AutoMerge
+
+on:
+  pull_request:
+    types: [labeled, synchronize, reopened]
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Auto-Merge if labeled and clean
+        if: contains(github.event.pull_request.labels.*.name, 'automerge')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "PR has 'automerge' label. Checking status..."
+          if gh pr checks ${{ github.event.pull_request.number }} --watch; then
+            echo "All checks passed. Merging PR."
+            gh pr merge ${{ github.event.pull_request.number }} --merge
+          else
+            echo "Some checks failed. Auto-merge aborted."
+            exit 1
+          fi
