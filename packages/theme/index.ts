@@ -134,13 +134,13 @@ function initParallax() {
 
   const onMove = (e: PointerEvent) => {
     const r = hero.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width - 0.5;
-    const py = (e.clientY - r.top) / r.height - 0.5;
+    let px = (e.clientX - r.left) / r.width - 0.5;
+    let py = (e.clientY - r.top) / r.height - 0.5;
     if (!heroRect) updateRect();
     if (!heroRect) return;
 
-    const px = (e.pageX - heroRect.left) / heroRect.width - 0.5;
-    const py = (e.pageY - heroRect.top) / heroRect.height - 0.5;
+    px = (e.pageX - heroRect.left) / heroRect.width - 0.5;
+    py = (e.pageY - heroRect.top) / heroRect.height - 0.5;
 
     layers.forEach((layer) => {
       const depth = Number(layer.getAttribute("data-gs-parallax")) || 1;
