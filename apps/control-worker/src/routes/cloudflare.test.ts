@@ -196,16 +196,28 @@ describe('Cloudflare Routes Middleware', () => {
     assert.strictEqual(auditLogs[0].metadata.message, "Network error");
   });
 
-  it('should fail DNS update with invalid payload', async () => {
+  it('should fail DNS update when content is missing', async () => {
     const response = await createRequest({
       email: 'admin@example.com',
       roles: ['admin'],
-    }, '/dns/records/123', 'PUT', { foo: 'bar' });
+    }, '/dns/records/123', 'PUT', { ttl: 3600 });
 
     assert.strictEqual(response.status, 400);
     const body = await response.json() as any;
-    // Hono Zod Validator usually returns details in the body
     assert.strictEqual(body.success, false);
+  });
+
+  it('should succeed DNS update with content-only payload for compatibility', async () => {
+    global.fetch = mock.fn(async () => {
+      return new Response(JSON.stringify({ success: true, result: {} }), { status: 200 });
+    });
+
+    const response = await createRequest({
+      email: 'admin@example.com',
+      roles: ['admin'],
+    }, '/dns/records/123', 'PUT', { content: '127.0.0.1' });
+
+    assert.strictEqual(response.status, 200);
   });
 
   it('should succeed DNS update with valid payload', async () => {

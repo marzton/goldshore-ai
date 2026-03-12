@@ -7,16 +7,18 @@ import type { ControlEnv } from "../libs/types";
 
 const DEFAULT_ADMIN_ROLES = ["admin", "ops", "owner", "infra"];
 
-const dnsRecordSchema = z.object({
-  type: z.string().min(1),
-  name: z.string().min(1),
-  content: z.string().min(1),
-  ttl: z.number().int().min(1),
-  proxied: z.boolean().optional(),
-  comment: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-  priority: z.number().int().optional(),
-});
+const dnsRecordSchema = z
+  .object({
+    type: z.string().min(1).optional(),
+    name: z.string().min(1).optional(),
+    content: z.string().min(1),
+    ttl: z.number().int().min(1).optional(),
+    proxied: z.boolean().optional(),
+    comment: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    priority: z.number().int().optional(),
+  })
+  .strict();
 
 const getRequiredRoles = (env: ControlEnv) => {
   const configured = env.CONTROL_ADMIN_ROLES?.split(",").map((role) => role.trim()).filter(Boolean);
