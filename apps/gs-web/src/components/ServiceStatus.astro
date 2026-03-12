@@ -10,9 +10,9 @@ const { serviceUrl } = Astro.props;
 <div class="service-status-card p-6 rounded-2xl border border-[var(--gs-border-primary)] bg-white shadow-sm">
   <div class="flex items-center justify-between mb-6">
     <h3 class="text-lg font-bold gs-heading">System Vitality</h3>
-    <div id="status-indicator" class="flex items-center gap-2">
-      <span class="h-3 w-3 rounded-full bg-gray-300 animate-pulse"></span>
-      <span class="text-sm font-medium text-gray-500">Initializing...</span>
+    <div id="status-indicator" class="flex items-center gap-2" aria-live="polite">
+      <span class="status-dot h-3 w-3 rounded-full bg-gray-300 animate-pulse"></span>
+      <span class="status-text text-sm font-medium text-gray-500">Initializing...</span>
     </div>
   </div>
 
@@ -35,30 +35,54 @@ const { serviceUrl } = Astro.props;
 
   <button 
     id="trigger-deep-check"
-    class="mt-6 w-full py-2 bg-[var(--gs-bg-secondary)] border border-[var(--gs-border-primary)] rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
+    class="mt-6 w-full py-2 bg-[var(--gs-bg-secondary)] border border-[var(--gs-border-primary)] rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-70"
   >
-    Perform Deep Validation
+    <span class="btn-text">Perform Deep Validation</span>
+    <svg class="spinner h-4 w-4 animate-spin hidden" viewBox="0 0 24 24" aria-hidden="true">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
   </button>
 </div>
 
 <script define:vars={{ serviceUrl }}>
   const btn = document.getElementById('trigger-deep-check');
+  const btnText = btn.querySelector('.btn-text');
+  const spinner = btn.querySelector('.spinner');
   const indicator = document.getElementById('status-indicator');
+  const dot = indicator.querySelector('.status-dot');
+  const text = indicator.querySelector('.status-text');
 
   async function checkHealth(type = 'shallow') {
+    if (type === 'deep') {
+      btn.disabled = true;
+      btnText.textContent = 'Validating...';
+      spinner.classList.remove('hidden');
+    }
+
     try {
       const res = await fetch(`${serviceUrl}?type=${type}`);
       const data = await res.json();
       
       // Update UI based on response
       const color = data.status === 'ok' ? 'bg-emerald-500' : 'bg-red-500';
-      indicator.innerHTML = `<span class="h-3 w-3 rounded-full ${color}"></span><span class="text-sm font-bold uppercase">${data.status}</span>`;
+      dot.className = `status-dot h-3 w-3 rounded-full ${color}`;
+      text.className = 'status-text text-sm font-bold uppercase';
+      text.textContent = data.status;
       
       document.getElementById('api-val').innerText = 'CONNECTED';
       if (data.kv) document.getElementById('kv-val').innerText = data.kv.toUpperCase();
       if (data.db) document.getElementById('db-val').innerText = data.db.toUpperCase();
-    } catch (e) {
-      indicator.innerHTML = `<span class="h-3 w-3 rounded-full bg-red-500"></span><span class="text-sm font-bold uppercase">OFFLINE</span>`;
+    } catch {
+      dot.className = 'status-dot h-3 w-3 rounded-full bg-red-500';
+      text.className = 'status-text text-sm font-bold uppercase';
+      text.textContent = 'OFFLINE';
+    } finally {
+      if (type === 'deep') {
+        btn.disabled = false;
+        btnText.textContent = 'Perform Deep Validation';
+        spinner.classList.add('hidden');
+      }
     }
   }
 
@@ -66,11 +90,3 @@ const { serviceUrl } = Astro.props;
   // Initial shallow check
   checkHealth();
 </script>
-
-<style>
-  :root {
-    --gs-border-primary: #e5e7eb;
-    --gs-text-secondary: #6b7280;
-    --gs-bg-secondary: #f9fafb;
-  }
-</style>

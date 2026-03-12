@@ -3,7 +3,7 @@ const props = Astro.props;
 ---
 
 <div class="code-block">
-  <button class="copy" aria-label="Copy code">
+  <button class="copy" type="button" aria-label="Copy code">
     <span class="material-symbols-rounded">content_copy</span>
   </button>
   <pre {...props}><slot /></pre>
@@ -33,11 +33,18 @@ const props = Astro.props;
       target.setAttribute('aria-label', 'Copied to clipboard');
       target.classList.add('copied');
 
-      setTimeout(() => {
+      if (target.dataset.timeoutId) {
+        clearTimeout(parseInt(target.dataset.timeoutId, 10));
+      }
+
+      const timeoutId = setTimeout(() => {
         icon.textContent = 'content_copy';
         target.setAttribute('aria-label', 'Copy code');
         target.classList.remove('copied');
+        delete target.dataset.timeoutId;
       }, 2000);
+
+      target.dataset.timeoutId = timeoutId.toString();
     } catch (err) {
       console.warn('Failed to copy code to clipboard:', err);
       // Silent failure is acceptable for non-critical clipboard operations.

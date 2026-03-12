@@ -3,11 +3,10 @@ import assert from 'node:assert';
 import { reconcile } from './workers';
 import type { ControlEnv } from './types';
 
-describe('Workers Lib', () => {
-  const mockEnv = {} as ControlEnv;
-
-  it('should return workers reconciled status', async () => {
-    const result = await reconcile(mockEnv);
+describe('workers lib', () => {
+  it('reconcile should return success status', async () => {
+    const env = {} as ControlEnv;
+    const result = await reconcile(env);
     assert.deepStrictEqual(result, { status: 'workers reconciled', ok: true });
   });
 });
