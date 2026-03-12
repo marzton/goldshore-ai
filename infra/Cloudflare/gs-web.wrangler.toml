@@ -1,60 +1,27 @@
 # wrangler.toml for the goldshore-web Astro Pages app (for Pages Functions)
 
 name = "gs-web" # Base name for Pages project
-compatibility_date = "2024-11-01"
 
 # This file is primarily for configuring bindings for Cloudflare Pages Functions.
 # The actual deployment will be handled by the GitHub Action connecting to the Pages project.
 
 [vars]
+# Shared environment variables can go here.
 
 [env.dev]
-
-[[env.dev.kv_namespaces]]
-binding = "KV"
-id = "a5f6e9c0d1b2473ea4f8c9b0d2e1f3a4"
-preview_id = "a5f6e9c0d1b2473ea4f8c9b0d2e1f3a4"
-
-[[env.dev.kv_namespaces]]
-binding = "HERO_CONFIG_KV"
-id = "9cc2209906a94851b704be57543987a9"
-preview_id = "9cc2209906a94851b704be57543987a9"
-
-[[env.dev.d1_databases]]
-binding = "DB"
-database_name = "goldshore_cms_dev"
-database_id = "2a9d3f8e-1f24-4c7a-9c31-7eb31d4a1f6a"
+# Dev bindings for Pages Functions
+# [[d1_databases]]
+# binding = "D1_DATABASE"
+# database_name = "goldshore_cms_dev"
+# database_id = "..."
+#
+# [[kv_namespaces]]
+# binding = "KV_SITE"
+# id = "..."
+# preview_id = "..."
 
 [env.preview]
-
-[[env.preview.kv_namespaces]]
-binding = "KV"
-id = "c7d9a0e1f2b3456ca8d9e0f1a2b3c4d5"
-preview_id = "c7d9a0e1f2b3456ca8d9e0f1a2b3c4d5"
-
-[[env.preview.kv_namespaces]]
-binding = "HERO_CONFIG_KV"
-id = "9cc2209906a94851b704be57543987a9"
-preview_id = "9cc2209906a94851b704be57543987a9"
-
-[[env.preview.d1_databases]]
-binding = "DB"
-database_name = "goldshore_cms_preview"
-database_id = "6c42d7b0-8f15-4e5d-9b7a-312fd8d5a4bb"
+# Preview bindings for Pages Functions
 
 [env.prod]
-
-[[env.prod.kv_namespaces]]
-binding = "KV"
-id = "f1e2d3c4b5a697887766554433221100"
-preview_id = "f1e2d3c4b5a697887766554433221100"
-
-[[env.prod.kv_namespaces]]
-binding = "HERO_CONFIG_KV"
-id = "9cc2209906a94851b704be57543987a9"
-preview_id = "9cc2209906a94851b704be57543987a9"
-
-[[env.prod.d1_databases]]
-binding = "DB"
-database_name = "goldshore_cms_prod"
-database_id = "a83cb41f-f9de-47e0-84fb-5d50a8a21d2e"
+# Production bindings for Pages Functions

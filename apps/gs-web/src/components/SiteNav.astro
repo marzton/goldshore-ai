@@ -1,178 +1,49 @@
 ---
-const navGroups = [
-  {
-    label: 'Advisory',
-    links: [
-      { href: '/services#regime-risk', label: 'Regime & Risk' },
-      { href: '/services#portfolio-steering', label: 'Portfolio Steering' },
-      { href: '/services#derivatives-strategy', label: 'Derivatives Strategy' },
-    ],
-  },
-  {
-    label: 'Intelligence',
-    links: [
-      { href: '/risk-radar', label: 'Risk Radar' },
-      { href: '/workflows', label: 'Workflows' },
-    ],
-  },
-  {
-    label: 'Company',
-    links: [
-      { href: '/about', label: 'About' },
-      { href: '/team', label: 'Team' },
-    ],
-  },
-] as const;
-
-const pathname = Astro.url.pathname;
-const normalizeHref = (href: string) => href.split('#')[0];
-const isCurrent = (href: string) => {
-  const cleanHref = normalizeHref(href);
-  return pathname === cleanHref || pathname.startsWith(`${cleanHref}/`);
-};
+const links = [
+  { href: "/", label: "Home" },
+  { href: "/workflows", label: "Workflows" },
+  { href: "/services", label: "Services" },
+  { href: "/risk-radar", label: "Risk Radar" },
+  { href: "/developer-hub", label: "Developer Hub" },
+  { href: "/about", label: "About" },
+  { href: "/team", label: "Team" }
+];
 ---
 
 <header class="gs-header">
   <div class="gs-container gs-nav-inner">
     <a class="gs-brand" href="/">
-      <img
-        class="gs-logo"
-        src="/logo/gs-penrose.svg"
-        alt="Gold Shore"
-      />
+      <img class="gs-logo" src="/assets/brand/logo-penrose.svg" alt="Gold Shore" />
       <span class="gs-brand-text">GOLD SHORE</span>
     </a>
 
     <nav class="gs-nav" aria-label="Primary">
-      <div class="gs-nav-links">
-        {
-          navGroups.map((group) => {
-            const groupIsCurrent = group.links.some((link) =>
-              isCurrent(link.href),
-            );
-
-            return (
-              <details class="gs-nav-group" open={groupIsCurrent}>
-                <summary class="gs-nav-group-trigger">{group.label}</summary>
-                <div class="gs-nav-group-panel">
-                  {group.links.map((link) => (
-                    <a
-                      class="gs-nav-link"
-                      href={link.href}
-                      aria-current={isCurrent(link.href) ? 'page' : undefined}
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
-              </details>
-            );
-          })
-        }
-      </div>
-      <div class="gs-nav-actions">
-        <button
-          class="gs-button gs-button-outline"
-          type="button"
-          data-gs-modal-open="admin"
-          aria-haspopup="dialog">Admin</button
-        >
-        <button
-          class="gs-button gs-button-outline"
-          type="button"
-          data-gs-modal-open="subscribe"
-          aria-haspopup="dialog">Subscribe</button
-        >
-        <a class="gs-button gs-button-solid" href="/contact">Request Briefing</a
-        >
-      </div>
+      {links.map(l => <a href={l.href}>{l.label}</a>)}
+      <button class="gs-button gs-button-outline" type="button" data-gs-modal-open="admin" aria-haspopup="dialog">Admin</button>
+      <button class="gs-button gs-button-outline" type="button" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
+      <a class="gs-button gs-button-solid" href="/contact">Request Briefing</a>
     </nav>
 
-    <button
-      class="gs-nav-toggle"
-      type="button"
-      data-gs-nav-toggle
-      aria-expanded="false"
-      aria-controls="gs-mobile-panel"
-      aria-label="Open menu"
-    >
+    <button class="gs-nav-toggle" type="button" data-gs-nav-toggle aria-expanded="false" aria-controls="gs-mobile-panel" aria-label="Open menu">
       <span aria-hidden="true">☰</span>
       <span class="sr-only">Open menu</span>
     </button>
   </div>
 </header>
 
-<div
-  class="gs-mobile-panel"
-  id="gs-mobile-panel"
-  data-gs-mobile-panel
-  aria-hidden="true"
->
+<!-- Mobile overlay panel -->
+<div class="gs-mobile-panel" id="gs-mobile-panel" data-gs-mobile-panel aria-hidden="true">
   <div class="gs-mobile-top">
-    <a class="gs-brand" href="/">
-      <img
-        class="gs-logo"
-        src="/logo/gs-penrose.svg"
-        alt="Gold Shore"
-      />
+    <div class="gs-brand">
+      <img class="gs-logo" src="/assets/brand/logo-penrose.svg" alt="Gold Shore" />
       <span class="gs-brand-text">GOLD SHORE</span>
     </a>
-    <button
-      class="gs-icon-btn gs-mobile-close"
-      data-gs-nav-close
-      aria-label="Close menu">×</button
-    >
+    <button class="gs-icon-btn gs-mobile-close" data-gs-nav-close aria-label="Close menu">×</button>
   </div>
 
   <div class="gs-mobile-panel-inner">
-    <nav class="gs-mobile-links" aria-label="Mobile primary navigation">
-      {
-        navGroups.map((group) => {
-          const groupId = `gs-mobile-group-${group.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
-          const triggerId = `${groupId}-trigger`;
-          const panelId = `${groupId}-panel`;
-          const groupIsCurrent = group.links.some((link) =>
-            isCurrent(link.href),
-          );
-
-          return (
-            <section class="gs-mobile-accordion-section">
-              <button
-                class="gs-mobile-accordion-trigger"
-                type="button"
-                id={triggerId}
-                data-gs-accordion-trigger
-                aria-expanded={groupIsCurrent ? 'true' : 'false'}
-                aria-controls={panelId}
-              >
-                <span>{group.label}</span>
-                <span aria-hidden="true" class="gs-mobile-accordion-icon">
-                  ⌄
-                </span>
-              </button>
-              <div
-                class={`gs-mobile-accordion-panel${groupIsCurrent ? ' is-open' : ''}`}
-                id={panelId}
-                role="region"
-                aria-labelledby={triggerId}
-                aria-hidden={groupIsCurrent ? 'false' : 'true'}
-              >
-                <div class="gs-mobile-accordion-panel-inner">
-                  {group.links.map((link) => (
-                    <a
-                      class="gs-mobile-link-item"
-                      href={link.href}
-                      aria-current={isCurrent(link.href) ? 'page' : undefined}
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </section>
-          );
-        })
-      }
+    <nav class="gs-mobile-links" aria-label="Mobile Primary">
+      {links.map(l => <a class="gs-mobile-link-item" href={l.href}>{l.label}</a>)}
     </nav>
 
     <div class="gs-mobile-actions" aria-label="Mobile actions">
@@ -182,196 +53,31 @@ const isCurrent = (href: string) => {
           class="gs-mobile-link-item gs-mobile-link-trigger"
           type="button"
           data-gs-modal-open="admin"
-          aria-haspopup="dialog">Admin Login</button
+          aria-haspopup="dialog"
         >
+          Admin Login
+        </button>
         <button
           class="gs-mobile-link-item gs-mobile-link-trigger"
           type="button"
           data-gs-modal-open="subscribe"
-          aria-haspopup="dialog">Subscribe</button
+          aria-haspopup="dialog"
         >
+          Subscribe
+        </button>
       </div>
     </div>
   </div>
 </div>
 
-<script>
-  const accordionTriggers = Array.from(
-    document.querySelectorAll<HTMLButtonElement>('[data-gs-accordion-trigger]'),
-  );
-
-  const setAccordionState = (trigger: HTMLButtonElement, expanded: boolean) => {
-    const panelId = trigger.getAttribute('aria-controls');
-    if (!panelId) return;
-
-    const panel = document.getElementById(panelId);
-    if (!panel) return;
-
-    trigger.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-    panel.classList.toggle('is-open', expanded);
-    panel.setAttribute('aria-hidden', expanded ? 'false' : 'true');
-  };
-
-  accordionTriggers.forEach((trigger, index) => {
-    trigger.addEventListener('click', () => {
-      const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
-      setAccordionState(trigger, !isExpanded);
-    });
-
-    trigger.addEventListener('keydown', (event) => {
-      const key = event.key;
-
-      if (key === 'ArrowDown' || key === 'ArrowUp') {
-        event.preventDefault();
-        const direction = key === 'ArrowDown' ? 1 : -1;
-        const nextIndex =
-          (index + direction + accordionTriggers.length) %
-          accordionTriggers.length;
-        accordionTriggers[nextIndex]?.focus();
-      }
-
-      if (key === 'Home') {
-        event.preventDefault();
-        accordionTriggers[0]?.focus();
-      }
-
-      if (key === 'End') {
-        event.preventDefault();
-        accordionTriggers[accordionTriggers.length - 1]?.focus();
-      }
-    });
-  });
-</script>
-
 <style>
-  .gs-nav-links {
-    align-items: center;
-    display: flex;
-    gap: 0.65rem;
-  }
-
-  .gs-nav-group {
-    border: 1px solid var(--gs-border-subtle, rgba(255, 255, 255, 0.16));
-    border-radius: var(--gs-r-md, 0.75rem);
-    min-width: 12rem;
-    overflow: hidden;
-  }
-
-  .gs-nav-group-trigger {
-    align-items: center;
-    cursor: pointer;
-    display: flex;
-    font-size: 0.85rem;
-    font-weight: 600;
-    justify-content: space-between;
-    list-style: none;
-    padding: 0.5rem 0.75rem;
-  }
-
-  .gs-nav-group-trigger::-webkit-details-marker {
-    display: none;
-  }
-
-  .gs-nav-group-trigger::after {
-    content: '⌄';
-    font-size: 0.875rem;
-    transition: transform 200ms ease-in-out;
-  }
-
-  .gs-nav-group[open] .gs-nav-group-trigger::after {
-    transform: rotate(180deg);
-  }
-
-  .gs-nav-group-panel {
-    display: grid;
-    gap: 0.15rem;
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    padding: 0 0.5rem;
-    transition:
-      max-height 200ms ease-in-out,
-      opacity 200ms ease-in-out,
-      padding 200ms ease-in-out;
-  }
-
-  .gs-nav-group[open] .gs-nav-group-panel {
-    max-height: 12rem;
-    opacity: 1;
-    padding: 0 0.5rem 0.5rem;
-  }
-
-  .gs-nav-group-panel .gs-nav-link {
-    display: block;
-    margin: 0;
-    padding: 0.35rem 0.25rem;
-  }
-
-  .gs-mobile-accordion-section {
-    border: 1px solid var(--gs-border-subtle, rgba(255, 255, 255, 0.16));
-    border-radius: var(--gs-r-md, 0.75rem);
-    overflow: hidden;
-  }
-
-  .gs-mobile-accordion-trigger {
-    align-items: center;
-    appearance: none;
-    background: none;
-    border: 0;
-    color: inherit;
-    cursor: pointer;
-    display: flex;
-    font-weight: 600;
-    justify-content: space-between;
-    padding: 0.75rem;
-    text-align: left;
-    width: 100%;
-  }
-
-  .gs-mobile-accordion-icon {
-    transition: transform 200ms ease-in-out;
-  }
-
-  .gs-mobile-accordion-trigger[aria-expanded='true'] .gs-mobile-accordion-icon {
-    transform: rotate(180deg);
-  }
-
-  .gs-mobile-accordion-panel {
-    display: grid;
-    grid-template-rows: 0fr;
-    opacity: 0;
-    transition:
-      grid-template-rows 200ms ease-in-out,
-      opacity 200ms ease-in-out;
-  }
-
-  .gs-mobile-accordion-panel.is-open {
-    grid-template-rows: 1fr;
-    opacity: 1;
-  }
-
-  .gs-mobile-accordion-panel-inner {
-    display: grid;
-    gap: 0.4rem;
-    min-height: 0;
-    padding: 0 0.75rem;
-  }
-
-  .gs-mobile-accordion-panel.is-open .gs-mobile-accordion-panel-inner {
-    padding: 0 0.75rem 0.75rem;
-  }
-
-  .gs-mobile-link-item {
-    margin: 0;
-  }
-
   .gs-mobile-links .gs-mobile-link-trigger {
     appearance: none;
     background: none;
-    border-radius: var(--gs-r-md);
-    border: 1px solid var(--gs-border);
-    color: inherit;
+    border: 0;
+    border-radius: 0;
     cursor: pointer;
+    padding: 0;
     text-align: left;
     width: 100%;
   }
