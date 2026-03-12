@@ -69,6 +69,13 @@ This repository contains *all* applications, shared packages, and infrastructure
 
 ---
 
+# 🧭 Operational Playbooks
+
+- [Merge Conflict Playbook](docs/merge-conflict-playbook.md) — conflict-safe steps for cleaning up PRs and prioritizing merges.
+- [Open PR Inventory Template](docs/pr-inventory-template.md) — table and checklist to capture PR metadata when `gh` or remotes are unavailable.
+
+---
+
 # 🧩 Applications
 
 ## **1. apps/web – Public Website (Astro)**
