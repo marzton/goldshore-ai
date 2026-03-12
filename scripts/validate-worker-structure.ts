@@ -44,17 +44,17 @@ import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 const CANONICAL_WORKERS = ["gs-agent", "gs-api", "gs-control", "gs-gateway", "gs-mail"];
-const APPS_DIR = "apps";
+const CANONICAL_APPS_DIR = "apps";
 
 let failed = false;
 
-if (!existsSync(APPS_DIR)) {
+if (!existsSync(CANONICAL_APPS_DIR)) {
   console.error("apps directory not found");
   process.exit(1);
 }
 
 for (const worker of CANONICAL_WORKERS) {
-  const workerDir = join(APPS_DIR, worker);
+  const workerDir = join(CANONICAL_APPS_DIR, worker);
   const wranglerPath = join(workerDir, "wrangler.toml");
 
   if (!existsSync(workerDir)) {
@@ -72,7 +72,7 @@ for (const worker of CANONICAL_WORKERS) {
   console.log(`✅ ${workerDir} contains wrangler.toml`);
 }
 
-const appsDirs = readdirSync(APPS_DIR, { withFileTypes: true })
+const appsDirs = readdirSync(CANONICAL_APPS_DIR, { withFileTypes: true })
   .filter((entry) => entry.isDirectory() && entry.name.startsWith("gs-"))
   .map((entry) => entry.name)
   .sort();
