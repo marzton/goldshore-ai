@@ -16,7 +16,8 @@
     "@goldshore/integrations": "workspace:*",
     "@goldshore/theme": "workspace:*",
     "@goldshore/ui": "workspace:*",
-    "astro": "^5.17.1"
+    "astro": "^5.18.0",
+    "@goldshore/schema": "workspace:*"
   },
   "devDependencies": {
     "@astrojs/cloudflare": "^12.6.12",
