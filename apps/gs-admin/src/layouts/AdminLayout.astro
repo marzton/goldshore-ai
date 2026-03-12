@@ -11,7 +11,7 @@ interface Props {
 }
 
 const { title = 'GoldShore Admin', requiredPermission, requiredRole } = Astro.props;
-const logoSrc = '/packages/brand/logo-penrose.svg';
+const logoSrc = '/assets/logo.svg';
 
 const session = Astro.locals.adminSession ?? {
   roles: [],
