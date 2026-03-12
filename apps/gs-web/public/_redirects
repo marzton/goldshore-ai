@@ -1,3 +1,31 @@
+# Cloudflare Pages _redirects are evaluated top-to-bottom; first match wins.
+# Keep explicit legacy mappings first.
+
+/about-us /about 301
+/about-us/ /about 301
+
+/developer-hub /developer 301
+/developer-hub/ /developer 301
+
+/system-status /status 301
+/system-status/ /status 301
+
+/privacy-policy /legal/privacy 301
+/privacy-policy/ /legal/privacy 301
+/terms-of-service /legal/terms 301
+/terms-of-service/ /legal/terms 301
+/legal/terms-of-service /legal/terms 301
+/legal/privacy-policy /legal/privacy 301
+
+/blog /insights 301
+/blog/ /insights 301
+/blog/* /insights/:splat 301
+
+# Same-origin proxy rewrites to avoid browser CORS regressions.
+/v1/status https://api.goldshore.ai/status 200
+/v1/status/* https://api.goldshore.ai/status/:splat 200
+
+# Broad catch-all redirects/re-writes must remain at the end.
 # Canonical path normalization
 /developer-hub /developer 301
 
