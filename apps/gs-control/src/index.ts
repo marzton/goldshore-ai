@@ -14,11 +14,11 @@ import { cloudflareRoutes } from "./routes/cloudflare";
 
 const app = new Hono<{ Bindings: any }>();
 
-// 1. Sentinel: Security Headers & CORS
+// Security & CORS (Updated to support your admin domains)
 app.use('*', secureHeaders());
 app.use("*", cors({
     origin: (origin, c) => {
-        const allowed = (c.env.ALLOWED_ORIGINS ?? "https://admin.goldshore.ai").split(",");
+        const allowed = (c.env.ALLOWED_ORIGINS ?? "https://admin.goldshore.ai,https://admin-preview.goldshore.ai,http://localhost:4321").split(",");
         return origin && allowed.map(s => s.trim()).includes(origin) ? origin : undefined;
     },
     allowMethods: ["GET", "POST", "PUT", "OPTIONS"],
@@ -26,7 +26,7 @@ app.use("*", cors({
     credentials: true
 }));
 
-// 2. Auth Guard: Enforce CF Access on sensitive ops
+// Auth Guard
 app.use('*', async (c, next) => {
     if (c.req.path === '/' || c.req.method === "OPTIONS") return await next();
     const claims = await verifyAccessWithClaims(c.req.raw, c.env);
@@ -35,11 +35,11 @@ app.use('*', async (c, next) => {
     await next();
 });
 
-app.get("/", (c) => c.json({ service: "gs-control", ok: true, worker: "ops.goldshore.ai" }));
+app.get("/", (c) => c.json({ service: "gs-control", ok: true }));
 
 /**
  * [SOP] Unified System Sync
- * Validates and pushes configuration to the global GS_CONFIG KV.
+ * Validates and pushes configuration to the global GS_CONFIG KV
  */
 app.post("/system/sync", async (c) => {
     const body = await c.req.json();
@@ -54,7 +54,7 @@ app.post("/system/sync", async (c) => {
         }, 400);
     }
 
-    // Persistent Update to GS_CONFIG KV
+    // 2. Persistent Update to Global Config
     const timestamp = new Date().toISOString();
     await Promise.all([
         c.env.GS_CONFIG.put("ROUTING_TABLE", JSON.stringify(parsedPayload.data.ROUTING_TABLE)),
@@ -70,7 +70,7 @@ app.post("/system/sync", async (c) => {
     return c.json({ success: true, syncedAt: timestamp });
 });
 
-// 3. Infrastructure Automation Routes
+// Existing Automation Routes
 app.post("/dns/apply", async (c) => c.json(await DNS.sync(c.env)));
 app.post("/workers/reconcile", async (c) => c.json(await Workers.reconcile(c.env)));
 app.post("/pages/deploy", async (c) => c.json(await Pages.deploy(c.env)));
@@ -80,10 +80,9 @@ app.route("/cloudflare", cloudflareRoutes);
 
 export default {
     fetch: app.fetch,
-    async scheduled(_controller, env, ctx) {
-        // [SOP] Background Tasks: Rotation and DNS Sync
-        ctx.waitUntil(rotateKeys(env));
-        ctx.waitUntil(syncDNS(env));
-        await env.CONTROL_LOGS.put(`cron_run_${Date.now()}`, "scheduled-tasks-executed");
+    async scheduled(_controller, env, _ctx) {
+        await env.CONTROL_LOGS.put(Date.now().toString(), "cron-scheduled-run");
+        await syncDNS(env);
+        await rotateKeys(env);
     }
 };

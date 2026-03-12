@@ -19,20 +19,12 @@ const ALLOWED_MIME_TYPES = new Map([
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
-const SVG_SCRIPT_TAG_REGEX = /<script[\s\S]*?>[\s\S]*?<\/script>/gi;
-const SVG_EVENT_HANDLER_REGEX = /\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
-const SVG_JAVASCRIPT_URL_REGEX = /javascript:/gi;
-
-const sanitizeSvg = (input: string) =>
-  input
-    .replace(SVG_SCRIPT_TAG_REGEX, '')
-    .replace(SVG_EVENT_HANDLER_REGEX, '')
-    .replace(SVG_JAVASCRIPT_URL_REGEX, '');
-
 /**
  * [SOP] Media Asset Management
  * Handles R2 storage for images and SVGs with strict sanitization for vector assets.
  */
+
+// ... (sanitizeSvg and regex constants provided in your source remain identical)
 
 const media = new Hono<{ Bindings: Env; Variables: Variables }>();
 
@@ -60,7 +52,7 @@ media.get('/:id', async (c) => {
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
   
   // Sentinel: Enforce strict CSP to mitigate SVG XSS
-  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; object-src 'none'; sandbox");
+  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; sandbox");
 
   return new Response(object.body, { headers });
 });

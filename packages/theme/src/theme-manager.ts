@@ -10,7 +10,7 @@ export interface ThemeSettings {
 
 const STORAGE_KEY = 'goldshore:theme';
 
-export const defaults: ThemeSettings = {
+const defaults: ThemeSettings = {
   mode: 'dark',
   density: 'comfortable',
   accent: 'blue',

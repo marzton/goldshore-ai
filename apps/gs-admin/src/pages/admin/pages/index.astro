@@ -85,7 +85,7 @@ const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
         const response = await fetch(`${API_BASE}/pages`, { credentials: 'include' });
         const data = await response.json();
         renderTable(data.pages || []);
-      } catch {
+      } catch (error) {
         container.innerHTML = '<p class="p-4 text-red-300">Failed to load pages.</p>';
       }
     };

@@ -87,42 +87,6 @@
 .gs-footer .gs-nav a[aria-current='page'] { font-weight: 700; color: var(--gs-color-text); }
 .gs-footer strong { display: inline-flex; align-items: center; gap: var(--gs-space-2); }
 
-
-.gs-footer-grid {
-  display: grid;
-  gap: var(--gs-space-5);
-  grid-template-columns: 1fr;
-  margin-top: var(--gs-space-6);
-  text-align: left;
-}
-
-.gs-footer-column {
-  display: grid;
-  gap: var(--gs-space-2);
-}
-
-.gs-footer-column h2 {
-  font-size: 0.9rem;
-  letter-spacing: 0.05em;
-  margin: 0 0 var(--gs-space-1);
-  text-transform: uppercase;
-}
-
-.gs-footer-column a {
-  color: var(--gs-color-subtle);
-  text-decoration: none;
-}
-
-.gs-footer-column a:hover {
-  color: var(--gs-color-text);
-}
-
-@media (min-width: 768px) {
-  .gs-footer-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
 .gs-button {
   display: inline-flex;
   align-items: center;

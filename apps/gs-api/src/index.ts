@@ -12,7 +12,6 @@ import admin from './routes/admin';
 import media from './routes/media';
 import pages from './routes/pages';
 import internal from './routes/internal';
-import { verifySignature } from './lib/auth';
 
 type Env = {
   KV: KVNamespace;
@@ -27,7 +26,6 @@ type Env = {
   // Sentinel: Added support for dynamic team domain
   CLOUDFLARE_TEAM_DOMAIN?: string;
   CONTROL_SYNC_TOKEN?: string;
-  AIPROXY_SIGNING_KEY?: string;
 };
 
 const app = new Hono<{ Bindings: Env; Variables: { accessClaims: AccessTokenPayload | null } }>();
@@ -68,15 +66,6 @@ app.use('*', async (c, next) => {
   if (c.req.path === '/internal/sync-runs' && c.req.method === 'POST') {
     const controlToken = c.req.header('x-control-sync-token');
     if (controlToken && c.env.CONTROL_SYNC_TOKEN && controlToken === c.env.CONTROL_SYNC_TOKEN) {
-      c.set('accessClaims', null);
-      await next();
-      return;
-    }
-  }
-
-  if (c.req.path.startsWith('/internal/')) {
-    const validProxySignature = await verifySignature(c.req.raw, c.env.AIPROXY_SIGNING_KEY ?? '');
-    if (validProxySignature) {
       c.set('accessClaims', null);
       await next();
       return;
