@@ -9,6 +9,9 @@ on:
     branches:
       - "feature/**"
 
+permissions:
+  contents: read
+
 jobs:
   deploy-preview-api:
     runs-on: ubuntu-latest
