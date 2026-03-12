@@ -138,9 +138,15 @@ try {
   workflows.forEach(w => {
     if (w.endsWith('.yml') || w.endsWith('.yaml')) {
       const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
-      const usesLines = content.split('\n').filter(l => l.trim().startsWith('uses:'));
-      usesLines.forEach(line => {
-        const actionPart = line.split('uses:')[1].trim();
+      const usesLines = content
+        .split('\n')
+        .map(line => {
+          const match = line.match(/^\s*(?:-\s*)?uses:\s*(.+)$/);
+          return match ? match[1].trim() : null;
+        })
+        .filter(Boolean);
+
+      usesLines.forEach(actionPart => {
         const action = actionPart.split('@')[0];
         // Allow local paths
         if (action.startsWith('./')) return;
