@@ -1,4 +1,6 @@
 name: Local Reusable Workflow Lint
+permissions:
+  contents: read
 
 on:
   pull_request:
