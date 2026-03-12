@@ -1,15 +1,10 @@
-import type { ServerEnv } from './server-env';
+export function getGsApiBaseUrl(env: any) {
+  return env.API_ORIGIN || 'https://api.goldshore.ai';
+}
 
-const DEFAULT_BASE_URL = 'https://api.goldshore.ai';
-
-export const getGsApiBaseUrl = (env: ServerEnv): string =>
-  env.GS_API_BASE_URL?.trim() || DEFAULT_BASE_URL;
-
-export const buildGsApiHeaders = (request: Request): Record<string, string> => {
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-  const auth = request.headers.get('authorization');
-  if (auth) {
-    headers.authorization = auth;
-  }
-  return headers;
-};
+export function buildGsApiHeaders(request: Request) {
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': request.headers.get('Authorization') || '',
+  };
+}
