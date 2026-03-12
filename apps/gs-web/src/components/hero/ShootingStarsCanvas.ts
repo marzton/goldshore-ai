@@ -54,7 +54,6 @@ export function mountShootingStars(canvas: HTMLCanvasElement) {
       const len = 120 * k;
 
       // tail gradient
-      const gx = s.x - s.vx * 8;
       const grad = ctx.createLinearGradient(s.x, s.y, s.x - len, s.y - len * 0.55);
       grad.addColorStop(0, `rgba(56,189,248,${0.75 * k})`);
       grad.addColorStop(0.5, `rgba(147,197,253,${0.35 * k})`);
