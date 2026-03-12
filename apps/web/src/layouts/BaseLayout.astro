@@ -1,0 +1,30 @@
+---
+import '@packages/theme/tokens.css';
+const { title = "GoldShore Labs" } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+</head>
+<body class="min-h-screen">
+    <header class="w-full sticky top-0 z-10 p-4 border-b" style="background-color: var(--gs-surface); border-color: var(--gs-border);">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/" class="text-2xl gs-heading" style="color: var(--gs-brand-gold);">GoldShore</a>
+            <nav class="flex space-x-6 text-sm">
+                <a href="/about" class="text-[var(--gs-text-secondary)] hover:text-[var(--gs-text-primary)]">About</a>
+                <a href="/app/dashboard" class="text-[var(--gs-text-secondary)] hover:text-[var(--gs-text-primary)]">Portal</a>
+                <a href="/admin/overview" class="text-[var(--gs-text-secondary)] hover:text-[var(--gs-text-primary)]">Admin</a>
+            </nav>
+        </div>
+    </header>
+    <main class="flex-grow">
+        <slot />
+    </main>
+    <footer class="w-full mt-16 p-6 border-t" style="background-color: var(--gs-surface); border-color: var(--gs-border);">
+        <p class="text-center text-xs" style="color: var(--gs-text-secondary);">© 2025 GoldShore Labs. Engineered with precision.</p>
+    </footer>
+</body>
+</html>

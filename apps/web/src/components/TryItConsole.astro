@@ -1,0 +1,39 @@
+---
+const { method, path, openapi } = Astro.props;
+
+const base = import.meta.env.PUBLIC_API || '';
+const url = base + path;
+
+let body = '';
+let response = null;
+
+async function send() {
+  response = await fetch(url, {
+    method: method.toUpperCase(),
+    headers: { 'Content-Type': 'application/json' },
+    body: body || undefined
+  }).then(r => r.json()).catch(e => ({ error: e.message }));
+}
+---
+
+<div class="try-box">
+  <h4>Request</h4>
+  <textarea oninput="body=this.value">{body}</textarea>
+
+  <button onclick="send()">Send</button>
+
+  <h4>Response</h4>
+  <pre>{JSON.stringify(response, null, 2)}</pre>
+</div>
+
+<style>
+  .try-box textarea {
+    width: 100%;
+    height: 140px;
+    background: #020617;
+    color: #e2e8f0;
+    border: 1px solid rgba(148,163,184,0.4);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+  }
+</style>

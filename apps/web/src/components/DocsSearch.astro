@@ -1,0 +1,52 @@
+---
+let q = '';
+let results = [];
+
+// Note: In a real implementation, this would likely be a client-side component or use a framework specific way to handle state.
+// Since this is an Astro component, the script below handles the client-side logic.
+---
+
+<div class="search-box">
+  <input
+    type="search"
+    placeholder="Search docs…"
+    id="docs-search-input"
+  />
+
+  <div id="results">
+    {results.map((r) => (
+      <a href={r.url}>{r.title}</a>
+    ))}
+  </div>
+</div>
+
+<script>
+  const input = document.getElementById('docs-search-input');
+  const resultsDiv = document.getElementById('results');
+
+  async function runSearch(query) {
+    if (!query.trim()) {
+      if(resultsDiv) resultsDiv.innerHTML = '';
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/docs-search?q=' + encodeURIComponent(query));
+      const results = await res.json();
+
+      if (resultsDiv) {
+        resultsDiv.innerHTML = results.map((r) =>
+          `<a href="${r.url}">${r.title}</a>`
+        ).join('');
+      }
+    } catch (e) {
+      console.error("Search failed", e);
+    }
+  }
+
+  if (input) {
+    input.addEventListener('input', (e) => {
+      runSearch((e.target as HTMLInputElement).value);
+    });
+  }
+</script>

@@ -1,0 +1,13 @@
+{
+  "name": "@goldshore/theme",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "index.css",
+  "files": ["*.css"],
+  "exports": {
+    ".": "./index.css",
+    "./tokens": "./tokens.css",
+    "./reset": "./reset.css"
+  }
+}

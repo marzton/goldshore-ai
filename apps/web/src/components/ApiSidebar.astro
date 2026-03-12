@@ -1,0 +1,16 @@
+---
+const { openapi } = Astro.props;
+---
+<aside class="api-sidebar">
+  <h3>{openapi.info.title}</h3>
+  <ul>
+    {Object.keys(openapi.paths).map(path => (
+      <li><a href={`/developer/api${path}`}>{path}</a></li>
+    ))}
+  </ul>
+</aside>
+<style>
+  .api-sidebar { width: 250px; border-right: 1px solid var(--gs-border); padding: 1rem; }
+  ul { list-style: none; padding: 0; }
+  li { margin-bottom: 0.5rem; }
+</style>

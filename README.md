@@ -1,46 +1,375 @@
-# GoldShore Monorepo
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🟦 GoldShore Monorepo
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-This is the official pnpm-based monorepo for the GoldShore organization. It contains all the applications, shared packages, and infrastructure configurations.
+Unified platform for the **GoldShore** ecosystem, built with:
 
-## Structure
+- **Astro** (Web + Admin SSR)
+- **Cloudflare Pages** (Frontend hosting)
+- **Cloudflare Workers** (API + Gateway + Control)
+- **KV, R2, D1, Queues, AI Gateway**
+- **pnpm + Turborepo** (Monorepo orchestration)
 
-The monorepo is organized into the following workspaces:
+This repository contains *all* applications, shared packages, and infrastructure code used in production.
 
-- **`apps/`**: Contains the individual, deployable applications.
-  - `goldshore-web`: The main public-facing Astro website and user portal.
-  - `goldshore-admin`: The Astro-based administration dashboard.
-  - `goldshore-api`: A Hono-based API running on Cloudflare Workers.
-  - `goldshore-agent`: A Cloudflare Worker for background jobs and queue processing.
+---
 
-- **`packages/`**: Contains shared code and configurations used across different applications.
-  - `ui`: Shared UI components, design tokens, and styles.
-  - `config`: Shared configurations for tools like ESLint and TypeScript.
-  - `utils`: Shared TypeScript utility functions.
-  - `auth`: Helpers for Cloudflare Access authentication and authorization.
+# 🚀 Architecture Overview
 
-- **`infra/`**: Contains infrastructure-as-code and deployment configurations.
-  - `cloudflare`: Per-environment `wrangler.toml` files for Cloudflare Workers and Pages Functions bindings.
-  - `github`: GitHub Actions workflows for CI/CD.
+```
+                        ┌──────────────────────────────┐
+                        │     goldshore.ai (Web)       │
+                        │      Cloudflare Pages        │
+                        └──────────────────────────────┘
+                                   │
+                                   ▼
+                   ┌──────────────────────────────────────┐
+                   │ admin.goldshore.ai (Admin Dashboard) │
+                   │     Cloudflare Pages + Access        │
+                   └──────────────────────────────────────┘
+                                   │
+                                   ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│                         Cloudflare Workers Layer                           │
+│────────────────────────────────────────────────────────────────────────────│
+│  gs-api        → Hono API Worker                                           │
+│  gs-gateway    → Router, proxy, auth, queues                               │
+│  gs-control    → Automation, DNS, previews, secret rotation                │
+└───────────────────────────────────────────────────────────────────────────┘
+                 │                 │                   │
+                 ▼                 ▼                   ▼
+       ┌──────────────┐   ┌──────────────┐   ┌────────────────────┐
+       │ KV Storage    │   │ R2 Static     │   │ D1 Database        │
+       └──────────────┘   └──────────────┘   └────────────────────┘
+```
 
-## Getting Started
+---
 
-1.  **Install Tools**: Ensure you have `asdf` or a similar tool installed to manage runtime versions. The required versions of `nodejs` and `pnpm` are specified in the `.tool-versions` file.
-2.  **Install Dependencies**: Run the following command from the root of the monorepo to install all dependencies for all workspaces:
-    ```bash
-    pnpm install
-    ```
+# 📁 Repository Structure
 
-## Core Commands
+```
+/
+├── apps/
+│   ├── web/               # Public website (Astro)
+│   ├── admin/             # Admin dashboard (Astro)
+│   ├── api-worker/        # Hono API (Workers)
+│   └── gateway/           # Router + jobs (Workers)
+│
+├── packages/
+│   ├── ui/                # Shared component library
+│   ├── theme/             # Design tokens + CSS
+│   ├── utils/             # Shared helpers
+│   ├── auth/              # Cloudflare Access JWT utils
+│   └── config/            # TS/ESLint/Prettier configs
+│
+└── infra/
+    ├── cloudflare/        # wrangler.toml templates
+    └── github/            # GitHub Actions CI/CD
+```
 
-All commands should be run from the root of the monorepo.
+---
 
-- **`pnpm dev`**: Starts the development server for all applications in parallel.
-- **`pnpm build`**: Builds all applications for production.
-- **`pnpm preview`**: Previews the production build of all applications.
-- **`pnpm deploy`**: Deploys all applications (this is typically handled by CI/CD).
-- **`pnpm lint`**: Lints the entire codebase.
-- **`pnpm format`**: Formats the entire codebase using Prettier.
+# 🧩 Applications
 
-## Deployment
+## **1. apps/web – Public Website (Astro)**
 
-Deployments are automated via GitHub Actions, defined in the `infra/github/workflows` directory. The workflows will deploy the applications to Cloudflare Pages and Workers based on the branch and environment.
+- Marketing site
+- User portal
+- OAuth/Access session integration
+- Light/dark theme from `packages/theme`
+
+### Public Routes
+
+```
+/
+├── about
+├── pricing
+├── legal/privacy
+├── legal/terms
+└── contact
+```
+
+### Authenticated User Portal
+
+```
+/app
+├── dashboard
+├── profile
+├── logs
+└── settings
+```
+
+---
+
+## **2. apps/admin – Admin Dashboard (Astro)**
+
+Protected by **Cloudflare Access**.
+
+### Admin Sections
+
+```
+/admin
+├── overview
+├── api-logs
+├── workers
+│   ├── status
+│   ├── bindings
+│   └── routes
+├── users
+│   ├── list
+│   ├── sessions
+│   └── permissions
+└── system
+    ├── dns
+    ├── pages
+    ├── storage
+    └── secrets
+```
+
+---
+
+## **3. apps/api-worker – gs-api**
+
+Hono-based API Worker.
+
+```
+Route: https://api.goldshore.ai/*
+```
+
+### Endpoints (currently mounted)
+
+```
+GET   /health/*
+ANY   /user/*
+ANY   /system/*
+```
+
+Source of truth: `apps/api-worker/src/index.ts`.
+
+Bindings:
+
+```
+KV = gs-kv
+R2 = gs-assets
+D1 = gs-db
+AI = AI (AI Gateway)
+```
+
+---
+
+## **4. apps/gateway – gs-gateway**
+
+Request router + queue dispatcher.
+
+```
+Route: https://gw.goldshore.ai/*
+```
+
+Responsibilities:
+
+- Reverse proxy → gs-api
+- Queue ingestion
+- Rate limiting
+- JWT / Access token verification
+- Preflight filtering (IP / SNI policies)
+
+---
+
+## **5. gs-control (optional)**
+
+System worker for automation:
+
+- DNS updates
+- Preview environment creation
+- Worker deployment orchestrator
+- Secret rotation
+- Observability sync
+
+```
+Route: https://ops.goldshore.ai/*
+```
+
+---
+
+# 🎨 Shared Packages
+
+## **packages/theme**
+Design tokens:
+
+- tokens.css
+- Colors / radii / spacing
+- Astro CSS variables
+- Used by both web + admin
+
+## **packages/ui**
+Component library:
+
+- Typography
+- Buttons, Inputs
+- Cards, Tables
+- Navbars, Sidebars
+- Tailwind/Vanilla CSS compatible
+
+## **packages/utils**
+TypeScript utilities:
+
+- fetch wrapper
+- env loader
+- request helpers
+- error handling
+
+## **packages/auth**
+Cloudflare Access helpers:
+
+- JWKS retrieval
+- Audience validation
+- getUser(request)
+
+## **packages/config**
+Monorepo-wide:
+
+- eslint
+- prettier
+- tsconfig base
+
+---
+
+# 🌐 Domains & DNS
+
+| Component      | Domain                     | Hosting            |
+|----------------|-----------------------------|--------------------|
+| Web            | https://goldshore.ai        | Pages              |
+| Admin          | https://admin.goldshore.ai  | Pages + Access     |
+| API Worker     | https://api.goldshore.ai    | Workers            |
+| Gateway Worker | https://gw.goldshore.ai     | Workers            |
+| Control Worker | https://ops.goldshore.ai    | Workers            |
+
+---
+
+# 🛰 API + Gateway Routing
+
+```
+Client → Gateway → API → Storage
+```
+
+Example flow:
+
+```
+GET https://gw.goldshore.ai/content/slug
+   → routes internally to gs-api
+   → fetches content
+   → returns JSON
+```
+
+Control worker routes:
+
+```
+POST /system/sync
+POST /dns/update
+POST /preview/create
+```
+
+---
+
+# 🔧 Cloudflare Bindings
+
+All workers use:
+
+```
+KV:         gs-kv
+R2:         gs-assets
+D1:         gs-db
+AI:         AI Gateway
+Services:   API -> gs-api
+            GATEWAY -> gs-gateway
+Queues:     jobsQueue (optional)
+```
+
+---
+
+# 🔄 CI/CD Workflows (GitHub Actions)
+
+Location:
+
+```
+infra/github/workflows/
+```
+
+Workflows included:
+
+```
+preview-web.yml
+preview-admin.yml
+deploy-api.yml
+deploy-gateway.yml
+deploy-control.yml
+```
+
+Features:
+
+- pnpm install
+- Pinned SHA for all actions
+- Preview deploys for PRs
+- Automatic production deploy on main
+- Cloudflare Pages + Workers deploy
+
+---
+
+# 💻 Local Development
+
+Install dependencies:
+
+```bash
+pnpm install
+```
+
+Run everything:
+
+```bash
+pnpm dev
+```
+
+Run individual app:
+
+```bash
+pnpm --filter @goldshore/web dev
+pnpm --filter @goldshore/admin dev
+pnpm --filter @goldshore/api dev
+```
+
+Build all:
+
+```bash
+pnpm build
+```
+
+---
+
+# 🚀 Deployment Guide
+
+Pages deploy automatically via GitHub Actions.
+
+Workers deploy:
+
+```bash
+pnpm --filter @goldshore/api deploy
+pnpm --filter @goldshore/gateway deploy
+pnpm --filter @goldshore/control deploy
+```
+
+---
+
+# 📌 Versioning Strategy
+
+- `main` → Production
+- `feature/*` → Preview Deployments
+- `release/*` → Staging
+
+---
+
+# 🔐 License
+
+Proprietary © GoldShore Labs
+All rights reserved.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -1,0 +1,105 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Trading">
+  <section class="gs-panel">
+    <h2>Trade Console</h2>
+    <p class="gs-subtext">
+      This console will orchestrate live trading signals, risk limits, and account routing.
+    </p>
+
+    <form class="gs-form">
+      <div>
+        <label>Ticker</label>
+        <input name="ticker" placeholder="TSLA" />
+      </div>
+
+      <div class="gs-form-row">
+        <div>
+          <label>Side</label>
+          <select name="side">
+            <option>BUY</option>
+            <option>SELL</option>
+          </select>
+        </div>
+        <div>
+          <label>Size</label>
+          <input name="size" type="number" min="1" value="1" />
+        </div>
+        <div>
+          <label>Type</label>
+          <select name="type">
+            <option>MARKET</option>
+            <option>LIMIT</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="button">Simulate Order (wire to API later)</button>
+    </form>
+  </section>
+</AdminLayout>
+
+<style>
+  .gs-panel {
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: rgba(15, 23, 42, 0.95);
+  }
+
+  .gs-panel h2 {
+    margin-top: 0;
+    font-size: 1rem;
+  }
+
+  .gs-subtext {
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: #9ca3af;
+  }
+
+  .gs-form {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .gs-form label {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .gs-form input,
+  .gs-form select {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    background: #020617;
+    padding: 0.45rem 0.6rem;
+    color: #e5e7eb;
+    font-size: 0.85rem;
+  }
+
+  .gs-form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+  }
+
+  button {
+    margin-top: 0.5rem;
+    border-radius: 0.6rem;
+    border: none;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.85rem;
+    background: linear-gradient(90deg, #22c55e, #22d3ee);
+    color: #020617;
+    font-weight: 600;
+    cursor: pointer;
+  }
+</style>
