@@ -107,7 +107,7 @@ export default {
     };
 
     const validation = EmailLogSchema.safeParse(newEntry);
-    
+
     // 3. Persistence Logic (Asynchronous)
     if (validation.success) {
       ctx.waitUntil(
