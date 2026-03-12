@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout triggering revision
+      - name: Checkout triggering commit
         run: |
           git init .
           git remote add origin ${{ github.server_url }}/${{ github.repository }}

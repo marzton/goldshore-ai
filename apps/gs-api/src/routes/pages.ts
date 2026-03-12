@@ -1,15 +1,6 @@
 import { Hono } from 'hono';
-import sanitizeHtml from 'sanitize-html';
 import { requirePermission } from '../auth';
 import { Env, Variables } from '../types';
-
-const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
-  allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'h1', 'h2', 'span']),
-  allowedAttributes: {
-    ...sanitizeHtml.defaults.allowedAttributes,
-    img: ['src', 'alt', 'width', 'height']
-  }
-};
 
 type PageRow = {
   id: number;
@@ -86,12 +77,15 @@ pages.post('/', requirePermission('content:write'), async (c) => {
   }
 
   const status = allowedStatuses.has(payload.status ?? '') ? payload.status! : 'draft';
-  const sanitizedBody = sanitizeHtml(payload.body, SANITIZE_OPTIONS);
 
-  const page = await c.env.DB.prepare(
-    'INSERT INTO pages (slug, title, body, status) VALUES (?, ?, ?, ?) RETURNING *'
+  const insertResult = await c.env.DB.prepare(
+    'INSERT INTO pages (slug, title, body, status) VALUES (?, ?, ?, ?)'
   )
-    .bind(payload.slug, payload.title, sanitizedBody, status)
+    .bind(payload.slug, payload.title, payload.body, status)
+    .run();
+
+  const page = await c.env.DB.prepare('SELECT * FROM pages WHERE id = ? LIMIT 1')
+    .bind(insertResult.meta.last_row_id)
     .first<PageRow>();
 
   return c.json(page ? normalizePage(page) : { error: 'Page not found after insert' }, page ? 201 : 500);
@@ -112,12 +106,19 @@ pages.put('/:id', requirePermission('content:write'), async (c) => {
   }
 
   const status = allowedStatuses.has(payload.status ?? '') ? payload.status! : 'draft';
-  const sanitizedBody = sanitizeHtml(payload.body, SANITIZE_OPTIONS);
 
-  const page = await c.env.DB.prepare(
-    'UPDATE pages SET slug = ?, title = ?, body = ?, status = ?, updated_at = datetime(\'now\') WHERE id = ? RETURNING *'
+  const result = await c.env.DB.prepare(
+    'UPDATE pages SET slug = ?, title = ?, body = ?, status = ?, updated_at = datetime(\'now\') WHERE id = ?'
   )
-    .bind(payload.slug, payload.title, sanitizedBody, status, id)
+    .bind(payload.slug, payload.title, payload.body, status, id)
+    .run();
+
+  if (!result.meta.changes) {
+    return c.json({ error: 'Page not found' }, 404);
+  }
+
+  const page = await c.env.DB.prepare('SELECT * FROM pages WHERE id = ? LIMIT 1')
+    .bind(id)
     .first<PageRow>();
 
   return c.json(page ? normalizePage(page) : { error: 'Page not found' }, page ? 200 : 404);
@@ -135,10 +136,18 @@ pages.patch('/:id/status', requirePermission('content:publish'), async (c) => {
     return c.json({ error: 'Invalid status value' }, 400);
   }
 
-  const page = await c.env.DB.prepare(
-    'UPDATE pages SET status = ?, updated_at = datetime(\'now\') WHERE id = ? RETURNING *'
+  const result = await c.env.DB.prepare(
+    'UPDATE pages SET status = ?, updated_at = datetime(\'now\') WHERE id = ?'
   )
     .bind(status, id)
+    .run();
+
+  if (!result.meta.changes) {
+    return c.json({ error: 'Page not found' }, 404);
+  }
+
+  const page = await c.env.DB.prepare('SELECT * FROM pages WHERE id = ? LIMIT 1')
+    .bind(id)
     .first<PageRow>();
 
   return c.json(page ? normalizePage(page) : { error: 'Page not found' }, page ? 200 : 404);

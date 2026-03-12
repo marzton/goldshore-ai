@@ -23,7 +23,7 @@ Last audited: 2026-02-18
 | `.github/workflows/preview-api-worker.yml` | Preview deploy for API worker. | `pull_request` (path-filtered) | Non-blocking |
 | `.github/workflows/preview-control-worker.yml` | Preview deploy for control worker. | `pull_request` (path-filtered) | Non-blocking |
 | `.github/workflows/preview-gateway.yml` | Preview deploy for gateway worker. | `pull_request` (path-filtered) | Non-blocking |
-| `.github/workflows/preview-gs-agent.yml` | Preview deploy for agent worker. | `pull_request` (path-filtered) | Non-blocking |
+| `.github/workflows/preview-agent.yml` | Preview deploy for agent worker. | `pull_request` (path-filtered) | Non-blocking |
 | `.github/workflows/deploy-web.yml` | Legacy production deploy for web app. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-admin.yml` | Legacy production deploy for admin app. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-api-worker.yml` | Legacy production deploy for API worker. | `push` to `main` | Non-blocking |

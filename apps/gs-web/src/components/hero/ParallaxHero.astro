@@ -1,31 +1,25 @@
 ---
-import HeroLogo from './HeroLogo.astro';
+import Logo from '../brand/Logo.astro';
 ---
 
-<section
-  class="hero gs-cinematic-hero"
-  data-hero-root
-  aria-label="Gold Shore hero"
->
+<section class="hero" aria-label="Gold Shore hero">
   <div class="hero-bg" aria-hidden="true">
-    <canvas class="hero-canvas" data-stars></canvas>
-    <canvas class="hero-canvas" data-shooting></canvas>
+    <canvas id="gs-starfield" class="hero-canvas"></canvas>
+    <canvas id="gs-shootingstars" class="hero-canvas"></canvas>
     <div class="hero-vignette"></div>
   </div>
 
   <div class="hero-content">
     <div class="hero-mark">
-      <HeroLogo />
+      <Logo />
     </div>
 
     <h1 class="hero-title">Gold Shore</h1>
-    <p class="hero-subtitle">
-      Designed not to manage capital, but to steer it.
-    </p>
+    <p class="hero-subtitle">Designed not to manage capital, but to steer it.</p>
 
     <div class="hero-actions">
       <a class="btn primary" href="/intake">Start</a>
-      <a class="btn ghost" href="/developer-hub">Developer</a>
+      <a class="btn ghost" href="/developer">Developer</a>
     </div>
   </div>
 </section>

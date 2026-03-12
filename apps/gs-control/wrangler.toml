@@ -10,8 +10,6 @@ routes = [
 
 [vars]
 ENV = "production"
-CONTROL_SYNC_TOKEN = "set-a-shared-secret"
-SYNC_TARGET_SUBDOMAIN = "api.goldshore.ai"
 
 [[kv_namespaces]]
 binding = "CONTROL_LOGS"
