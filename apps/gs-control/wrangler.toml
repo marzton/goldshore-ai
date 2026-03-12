@@ -4,12 +4,50 @@ compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
 
 workers_dev = false
+
+[env.preview]
+name = "gs-control-preview"
+routes = [
+  { pattern = "ops-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+
+[env.preview.vars]
+ENV = "preview"
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
+CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+SYNC_TARGET_SUBDOMAIN = "api-preview.goldshore.ai"
+
+[[env.preview.kv_namespaces]]
+binding = "CONTROL_LOGS"
+id = "gs_control_logs_preview_001"
+
+[[env.preview.r2_buckets]]
+binding = "STATE"
+bucket_name = "gs-control-state-preview"
+
+[[env.preview.services]]
+binding = "API"
+service = "gs-api"
+environment = "preview"
+
+[[env.preview.services]]
+binding = "GATEWAY"
+service = "gs-gateway"
+environment = "preview"
+
+[env.prod]
+name = "gs-control"
 routes = [
   { pattern = "ops.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
 
-[vars]
-ENV = "production"
+[env.prod.vars]
+ENV = "prod"
+NODE_ENV = "prod"
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
+OTEL_SERVICE_NAME = "goldshore-core-prod"
+CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+SYNC_TARGET_SUBDOMAIN = "api.goldshore.ai"
 
 [[kv_namespaces]]
 binding = "CONTROL_LOGS"

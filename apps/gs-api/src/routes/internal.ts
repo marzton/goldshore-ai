@@ -1,10 +1,39 @@
 import { Hono } from 'hono';
-import { 
-  EmailInboxLogsSchema, 
-  ServiceStatusSchema 
+import { loadSystemSyncSnapshot } from './system.config';
+import {
+  EmailInboxLogsSchema,
+  ServiceStatusSchema,
 } from '@goldshore/schema';
 
 const internal = new Hono<{ Bindings: any }>();
+
+const DNS_SYNC_RUN_INDEX_KEY = 'dns_sync_runs_index';
+
+type DnsSyncRun = {
+  runId: string;
+  actor: string;
+  startedAt: string;
+  endedAt: string;
+  success: boolean;
+  driftStatus: 'in_sync' | 'drifted';
+  results: Array<{
+    hostname: string;
+    checkUrl: string;
+    startedAt: string;
+    endedAt: string;
+    statusCode: number | null;
+    success: boolean;
+    driftStatus: 'in_sync' | 'drifted';
+    driftNotes: string[];
+  }>;
+};
+
+const parseDnsSyncRun = (value: unknown): DnsSyncRun | null => {
+  if (!value || typeof value !== 'object') return null;
+  const run = value as DnsSyncRun;
+  if (!run.runId || !Array.isArray(run.results)) return null;
+  return run;
+};
 
 /**
  * [SOP] Internal Status Endpoint
@@ -12,31 +41,60 @@ const internal = new Hono<{ Bindings: any }>();
  */
 internal.get('/inbox-status', async (c) => {
   try {
-    // 1. Concurrent fetch for performance
-    const [rawLogs, rawStatus] = await Promise.all([
-      c.env.KV.get("EMAIL_INBOX_LOGS", "json"),
-      c.env.KV.get("SERVICE_STATUS", "json")
-    ]);
+    const snapshot = await loadSystemSyncSnapshot(c.env.KV);
 
-    // 2. Defensive Validation against your verified schemas
-    const logsResult = EmailInboxLogsSchema.safeParse(rawLogs);
-    const statusResult = ServiceStatusSchema.safeParse(rawStatus);
-
-    // 3. Structured Response
     return c.json({
       success: true,
       timestamp: new Date().toISOString(),
-      // Fallback to empty state if validation fails or data is missing
-      services: statusResult.success ? statusResult.data : { maintenance_mode: false, active_services: [], version: "unknown" },
+      services: snapshot.SERVICE_STATUS,
       inbox: {
-        count: logsResult.success ? logsResult.data.length : 0,
-        recent: logsResult.success ? logsResult.data.slice(0, 5) : []
-      }
+        count: snapshot.EMAIL_INBOX_LOGS.length,
+        recent: snapshot.EMAIL_INBOX_LOGS.slice(0, 5),
+      },
+      routing: {
+        hostCount: Object.keys(snapshot.ROUTING_TABLE).length,
+      },
+      orchestration: {
+        preferredModel: snapshot.AI_ORCHESTRATION.preferred_model,
+        queueConcurrency: snapshot.AI_ORCHESTRATION.queue_concurrency,
+      },
     });
   } catch (error) {
-    console.error("Internal API Error:", error);
-    return c.json({ success: false, error: "Failed to retrieve internal system state" }, 500);
+    console.error('Internal API Error:', error);
+    return c.json({ success: false, error: 'Failed to retrieve internal system state' }, 500);
   }
+});
+
+internal.get('/dns-sync-status', async (c) => {
+  const controlLogs = c.env.CONTROL_LOGS ?? c.env.KV;
+  const [serviceStatusRaw, runIndexRaw] = await Promise.all([
+    c.env.KV.get('SERVICE_STATUS', 'json'),
+    controlLogs.get(DNS_SYNC_RUN_INDEX_KEY, 'json'),
+  ]);
+
+  const statusResult = ServiceStatusSchema.safeParse(serviceStatusRaw);
+  const runKeys = Array.isArray(runIndexRaw) ? runIndexRaw.filter((key): key is string => typeof key === 'string') : [];
+  const runsRaw = await Promise.all(runKeys.slice(0, 20).map((key) => controlLogs.get(key, 'json')));
+  const runs = runsRaw
+    .map(parseDnsSyncRun)
+    .filter((run): run is DnsSyncRun => Boolean(run))
+    .sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
+
+  const latestRun = runs[0] ?? null;
+  const inferredLastSync = statusResult.success ? statusResult.data.last_sync ?? null : null;
+  const verifiedLastSync = latestRun?.endedAt ?? inferredLastSync;
+
+  return c.json({
+    success: true,
+    checkedAt: new Date().toISOString(),
+    latestRun,
+    runs,
+    masterConfigReport: {
+      lastSyncTimestampVerified: verifiedLastSync,
+      syncSource: latestRun ? 'durable' : inferredLastSync ? 'inferred' : 'none',
+      driftStatusComputed: latestRun?.driftStatus ?? 'unknown',
+    },
+  });
 });
 
 export default internal;

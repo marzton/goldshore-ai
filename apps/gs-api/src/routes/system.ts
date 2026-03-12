@@ -1,6 +1,8 @@
 import { Hono } from 'hono';
-import { ServiceStatusSchema } from '@goldshore/schema';
+import { RoutingTableSchema, ServiceStatusSchema } from '@goldshore/schema';
 import { Env, Variables } from '../types';
+import { parseConfig, resolveServiceStatusWithConfig } from './system.config';
+import { withContractHeaders } from './contract';
 
 const system = new Hono<{ Bindings: Env; Variables: Variables }>();
 
@@ -9,23 +11,90 @@ const system = new Hono<{ Bindings: Env; Variables: Variables }>();
  * Provides versioning and active service metadata.
  */
 system.get('/status', async (c) => {
-  const rawStatus = await c.env.KV.get("SERVICE_STATUS", "json");
-  
-  // Defensive validation using shared schema
-  const result = ServiceStatusSchema.safeParse(rawStatus);
-  
+  const { serviceStatus } = await resolveServiceStatusWithConfig(c.env.KV);
+
+  const result = ServiceStatusSchema.safeParse(serviceStatus);
+
   if (!result.success) {
-    return c.json({
-      status: 'degraded',
-      error: 'Invalid service status configuration',
-      version: '2026.03.03'
-    }, 500);
+    return c.json(
+      {
+        status: 'degraded',
+        error: 'Invalid service status configuration',
+        version: '2026.03.03',
+      },
+      500,
+    );
   }
 
   return c.json({
     status: 'operational',
-    ...result.data
+    ...result.data,
   });
 });
+
+system.get('/routing', async (c) => {
+  const table = await c.env.KV.get('ROUTING_TABLE', 'json');
+  const result = RoutingTableSchema.safeParse(table);
+
+  return c.json({
+    success: result.success,
+    data: result.success ? result.data : {},
+  });
+});
+
+system.get('/config', async (c) => {
+  const { serviceStatus, migrationApplied } = await resolveServiceStatusWithConfig(c.env.KV);
+
+  return c.json({
+    config: parseConfig(serviceStatus.api_config),
+    source: {
+      key: 'SERVICE_STATUS.api_config',
+      migrationApplied,
+      legacyKey: 'gs-api:config',
+    },
+  });
+});
+
+system.put('/config', async (c) => {
+  const body = await c.req.json().catch(() => null);
+
+  if (!body || typeof body !== 'object') {
+    return c.json({ error: 'Invalid configuration payload.' }, 400);
+  }
+
+  const { serviceStatus } = await resolveServiceStatusWithConfig(c.env.KV);
+  const nextConfig = parseConfig(body);
+  const nextStatus = {
+    ...serviceStatus,
+    api_config: {
+      ...nextConfig,
+      migratedFromLegacy: serviceStatus.api_config?.migratedFromLegacy ?? false,
+    },
+  };
+
+  await c.env.KV.put('SERVICE_STATUS', JSON.stringify(nextStatus));
+
+  return c.json({
+    config: nextStatus.api_config,
+    source: {
+      key: 'SERVICE_STATUS.api_config',
+      migrationApplied: false,
+      legacyKey: 'gs-api:config',
+    },
+  });
+});
+
+system.get('/version', (c) =>
+  c.json(
+    withContractHeaders(
+      {
+        service: 'gs-api',
+        version: c.env.API_VERSION ?? 'unknown',
+        deploySha: c.env.DEPLOY_SHA ?? c.env.GIT_SHA ?? null,
+      },
+      c.env.API_VERSION,
+    ),
+  ),
+);
 
 export default system;

@@ -1,3 +1,6 @@
+## 2025-03-09 - Code Snippet Copy Accessibility
+**Learning:** The simple `<button onclick="...">Copy</button>` pattern used for code blocks provides no state feedback and leaves screen reader users blind to success/failure. Using event delegation combined with dynamic `aria-label` swaps (e.g., from "Copy code to clipboard" to "Copied to clipboard") and managing `setTimeout` to revert state correctly ensures accessible micro-interactions.
+**Action:** When adding copy mechanisms, always implement a visual and aria-label state change that reverts back using a managed timeout identifier. Ensure buttons have base type="button" and robust DOM selection techniques instead of fragile sibling references.
 # Palette's Journal
 
 ## 2025-12-14 - Polymorphic Button Accessibility
@@ -51,3 +54,6 @@
 ## 2026-05-26 - Playwright Clipboard Permissions
 **Learning:** Automated tests involving `navigator.clipboard` will fail in headless environments unless specific permissions (`clipboard-read`, `clipboard-write`) are explicitly granted in the browser context.
 **Action:** When testing copy-to-clipboard functionality, always initialize the Playwright browser context with the necessary permissions.
+## 2025-03-11 - [aria-live in Service Status Indicators]
+**Learning:** Background polling operations, like system vitality health checks, can quietly pass updates onto the DOM that screen readers won't catch unless properly tagged.
+**Action:** When adding automatic system status components (`ServiceStatus.astro`), always wrap the status text container in `aria-live="polite"` and `aria-atomic="true"` so its outcome (e.g., from "Initializing" to "OK") is cleanly announced.

@@ -1,8 +1,17 @@
 .cinematic-wrapper {
   position: relative;
   min-height: 100vh;
-  background: radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.16), transparent 38%),
-    radial-gradient(circle at 80% 10%, rgba(147, 51, 234, 0.14), transparent 36%),
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(56, 189, 248, 0.16),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 80% 10%,
+      rgba(147, 51, 234, 0.14),
+      transparent 36%
+    ),
     linear-gradient(180deg, #04060f 0%, #050813 100%);
 }
 
@@ -15,10 +24,27 @@
 
 .stars {
   z-index: 0;
-  background-image: radial-gradient(1px 1px at 20px 30px, rgba(255, 255, 255, 0.28), transparent),
-    radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.22), transparent),
-    radial-gradient(1px 1px at 260px 150px, rgba(255, 255, 255, 0.24), transparent),
-    radial-gradient(1px 1px at 320px 40px, rgba(255, 255, 255, 0.19), transparent);
+  background-image:
+    radial-gradient(
+      1px 1px at 20px 30px,
+      rgba(255, 255, 255, 0.28),
+      transparent
+    ),
+    radial-gradient(
+      1px 1px at 130px 80px,
+      rgba(255, 255, 255, 0.22),
+      transparent
+    ),
+    radial-gradient(
+      1px 1px at 260px 150px,
+      rgba(255, 255, 255, 0.24),
+      transparent
+    ),
+    radial-gradient(
+      1px 1px at 320px 40px,
+      rgba(255, 255, 255, 0.19),
+      transparent
+    );
   background-repeat: repeat;
   background-size: 360px 220px;
 }
@@ -51,7 +77,12 @@
 .hero-vignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 35%, rgba(140, 176, 255, 0.16), transparent 46%),
+  background:
+    radial-gradient(
+      circle at 50% 35%,
+      rgba(140, 176, 255, 0.16),
+      transparent 46%
+    ),
     linear-gradient(180deg, rgba(2, 6, 23, 0.18) 0%, rgba(2, 6, 23, 0.78) 100%);
 }
 
@@ -88,3 +119,438 @@
   gap: 0.75rem;
   justify-content: center;
 }
+
+.gs-depth-bg {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(90, 140, 255, 0.12),
+      transparent 60%
+    ),
+    linear-gradient(180deg, #05070d 0%, #060a14 100%);
+}
+
+#pulsar-field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.gs-hero-mark {
+  width: clamp(68px, 10vw, 96px);
+  margin-bottom: 1rem;
+}
+
+.gs-hero-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gs-logo-stroke {
+  stroke-dasharray: 480;
+  stroke-dashoffset: 480;
+  animation:
+    gs-logo-intro 1.1s ease-out forwards,
+    gs-logo-idle 4.4s ease-in-out 1.1s infinite;
+}
+
+.gs-logo-glow {
+  opacity: 0;
+  animation:
+    gs-logo-glow-in 0.9s ease-out 0.15s forwards,
+    gs-logo-pulse 5s ease-in-out 1.1s infinite;
+}
+
+.gs-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(90, 140, 255, 0.3),
+    transparent
+  );
+  position: relative;
+  overflow: hidden;
+}
+
+.gs-divider::after {
+  content: '';
+  position: absolute;
+  inset: -20px 0;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 107, 0, 0.15),
+    transparent
+  );
+  animation: signalSweep 6s ease-in-out infinite;
+}
+
+.gs-panel {
+  background: linear-gradient(180deg, #0b1220, #0a101c);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 2.5rem;
+}
+
+.gs-label {
+  opacity: 0.8;
+}
+
+.gs-stat {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+.gs-signal-btn {
+  border-color: var(--gs-signal-soft);
+}
+
+.gs-signal-btn:hover {
+  box-shadow: 0 0 24px var(--gs-signal-soft);
+}
+
+.gs-hero-anim-paused .gs-logo-stroke,
+.gs-hero-anim-paused .gs-logo-glow {
+  animation-play-state: paused;
+}
+
+
+.gs-signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.gs-status-indicator {
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  border-radius: 999px;
+  background: #94a3b8;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.42);
+  flex-shrink: 0;
+}
+
+.gs-status-indicator.is-operational {
+  background: #34d399;
+  box-shadow: 0 0 0 1px rgba(110, 231, 183, 0.5);
+  animation: gs-status-pulse 2.8s ease-in-out infinite;
+}
+
+
+@keyframes gs-status-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}
+
+@keyframes gs-logo-intro {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes gs-logo-idle {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 6px rgba(95, 145, 255, 0.2));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 12px rgba(255, 139, 51, 0.34));
+  }
+}
+
+@keyframes gs-logo-glow-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes gs-logo-pulse {
+  0%,
+  100% {
+    opacity: 0.65;
+  }
+
+  50% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes signalSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  50%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gs-logo-stroke,
+  .gs-logo-glow,
+  .gs-divider::after,
+  .gs-status-indicator.is-operational {
+    animation: none !important;
+    opacity: 1;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Consolidated homepage styles moved from page-level <style> blocks */
+  .gs-depth-bg {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(90, 140, 255, 0.12), transparent 60%),
+      linear-gradient(180deg, #05070d 0%, #060a14 100%);
+  }
+
+  .gs-css-field,
+  #pulsar-field {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  .gs-css-field {
+    background:
+      radial-gradient(circle at 22% 20%, rgba(90, 140, 255, 0.12), transparent 28%),
+      radial-gradient(circle at 72% 34%, rgba(255, 107, 0, 0.11), transparent 32%),
+      radial-gradient(circle at 58% 72%, rgba(90, 140, 255, 0.1), transparent 34%);
+  }
+
+  .gs-hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 7rem 0 5rem;
+  }
+
+  .gs-hero-title,
+  .gs-hero-sub {
+    max-width: 24ch;
+  }
+
+  .gs-hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+
+  .gs-panel {
+    background: linear-gradient(180deg, #0b1220, #0a101c);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2.5rem;
+    transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .gs-label {
+    opacity: 0.8;
+  }
+  .gs-service-icon {
+    width: 2rem;
+    height: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+
+  .gs-stat {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+  }
+
+  .gs-meta {
+    margin-top: 0.55rem;
+    color: var(--gs-muted);
+    font-size: 0.9rem;
+  }
+
+  .gs-meta a {
+    color: var(--gs-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .gs-edge-light {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gs-edge-light::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(120deg, transparent, rgba(90, 140, 255, 0.35), transparent);
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+
+  .gs-edge-light:hover::before {
+    opacity: 1;
+  }
+
+  .gs-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(90, 140, 255, 0.3), transparent);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gs-divider::after {
+    content: '';
+    position: absolute;
+    inset: -20px 0;
+    background: linear-gradient(120deg, transparent, rgba(255, 107, 0, 0.15), transparent);
+    animation: signalSweep 6s ease-in-out infinite;
+  }
+
+  .gs-signal-btn {
+    border-color: var(--gs-signal-soft);
+  }
+
+  .gs-signal-btn:hover {
+    box-shadow: 0 0 24px var(--gs-signal-soft);
+  }
+
+  .gs-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gs-modal.active {
+    display: flex;
+  }
+
+  .gs-modal-bg {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+  }
+
+  .gs-modal-panel {
+    position: relative;
+    width: min(500px, 90vw);
+    padding: 2rem;
+    border-radius: 20px;
+    background: #0b1220;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 1;
+  }
+
+  .modal-content {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+
+  .modal-content h2 {
+    margin: 0;
+  }
+
+  .modal-helper {
+    margin: 0;
+    color: var(--gs-muted);
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .modal-field {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .modal-label {
+    font-size: 0.85rem;
+    color: var(--gs-text-muted);
+  }
+
+  .modal-input {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    background: rgba(7, 12, 24, 0.95);
+    color: var(--gs-text);
+    padding: 0.7rem 0.85rem;
+  }
+
+  .modal-input:focus-visible {
+    outline: 2px solid rgba(90, 140, 255, 0.8);
+    outline-offset: 1px;
+  }
+
+  .modal-content .gs-button {
+    width: 100%;
+    border: 0;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.75rem;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  @supports (animation-timeline: view()) {
+    .gs-scroll-reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      animation: fadeIn linear forwards;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+  }
+
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes signalSweep {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    50% {
+      transform: translateX(100%);
+    }
+
+    100% {
+      transform: translateX(100%);
+    }
+  }
