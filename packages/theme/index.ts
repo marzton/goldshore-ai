@@ -91,6 +91,41 @@ function initModal() {
     opener = null;
   };
 
+  const onKeydown = (e: KeyboardEvent) => {
+    if (!root.classList.contains('is-open')) return;
+
+    if (e.key === 'Escape') {
+      closeModal();
+      return;
+    }
+
+    if (e.key !== 'Tab' || !panel) return;
+
+    const focusable = getFocusableElements();
+    if (!focusable.length) {
+      e.preventDefault();
+      panel.focus();
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement as HTMLElement | null;
+
+    if (e.shiftKey) {
+      if (active === first || active === panel) {
+        e.preventDefault();
+        last.focus();
+      }
+      return;
+    }
+
+    if (active === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+
   document.addEventListener('click', (e) => {
     const el = e.target as HTMLElement;
     const trigger = el.closest<HTMLElement>('[data-gs-modal-open]');
