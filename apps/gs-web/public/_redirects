@@ -1,0 +1,6 @@
+/developer-hub /developer 301
+/old-home / 301
+/about-us /about 301
+/company /about 301
+/v1/status/* https://api.goldshore.ai/status/:splat 200
+/v1/telemetry/* https://api.goldshore.ai/telemetry/:splat 200
