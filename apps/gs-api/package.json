@@ -14,7 +14,8 @@
     "@goldshore/auth": "workspace:^",
     "hono": "^4.0.0",
     "safe-stable-stringify": "^2.5.0",
-    "@goldshore/utils": "workspace:^"
+    "@goldshore/utils": "workspace:^",
+    "sanitize-html": "^2.17.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241106.0",

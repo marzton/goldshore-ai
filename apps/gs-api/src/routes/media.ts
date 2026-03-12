@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import sanitizeHtml from 'sanitize-html';
 
 type MediaRecord = {
   id: string;
@@ -20,18 +21,64 @@ const ALLOWED_MIME_TYPES = new Map([
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 const sanitizeSvg = (rawSvg: string) => {
-  let sanitized = rawSvg
-    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
-    .replace(/<foreignObject[\s\S]*?>[\s\S]*?<\/foreignObject>/gi, '')
-    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-    .replace(/(href|xlink:href)\s*=\s*("|')\s*javascript:[^\2]*\2/gi, '')
-    .replace(/(href|xlink:href)\s*=\s*javascript:[^\s>]+/gi, '');
+  const sanitizedContent = sanitizeHtml(rawSvg, {
+    allowedTags: [
+      'svg',
+      'g',
+      'path',
+      'rect',
+      'circle',
+      'ellipse',
+      'line',
+      'polyline',
+      'polygon',
+      'text',
+      'tspan',
+      'defs',
+      'clipPath',
+      'mask',
+      'pattern',
+      'linearGradient',
+      'radialGradient',
+      'stop',
+      'title',
+      'desc',
+      'use'
+    ],
+    allowedAttributes: {
+      svg: ['width', 'height', 'viewBox', 'xmlns', 'fill', 'stroke'],
+      g: ['transform', 'fill', 'stroke'],
+      path: ['d', 'fill', 'stroke', 'stroke-width', 'transform'],
+      rect: ['x', 'y', 'width', 'height', 'rx', 'ry', 'fill', 'stroke', 'stroke-width', 'transform'],
+      circle: ['cx', 'cy', 'r', 'fill', 'stroke', 'stroke-width', 'transform'],
+      ellipse: ['cx', 'cy', 'rx', 'ry', 'fill', 'stroke', 'stroke-width', 'transform'],
+      line: ['x1', 'y1', 'x2', 'y2', 'stroke', 'stroke-width', 'transform'],
+      polyline: ['points', 'fill', 'stroke', 'stroke-width', 'transform'],
+      polygon: ['points', 'fill', 'stroke', 'stroke-width', 'transform'],
+      text: ['x', 'y', 'dx', 'dy', 'text-anchor', 'font-family', 'font-size', 'fill', 'transform'],
+      tspan: ['x', 'y', 'dx', 'dy', 'text-anchor', 'font-family', 'font-size', 'fill', 'transform'],
+      clipPath: ['id'],
+      mask: ['id'],
+      pattern: ['id', 'patternUnits', 'width', 'height', 'x', 'y'],
+      linearGradient: ['id', 'x1', 'y1', 'x2', 'y2', 'gradientUnits'],
+      radialGradient: ['id', 'cx', 'cy', 'r', 'fx', 'fy', 'gradientUnits'],
+      stop: ['offset', 'stop-color', 'stop-opacity'],
+      use: ['href', 'x', 'y', 'width', 'height']
+    },
+    allowedSchemes: ['http', 'https', 'data'],
+    allowedSchemesByTag: {
+      use: ['http', 'https', 'data']
+    },
+    // Disallow all event handler attributes and script/foreignObject tags implicitly
+    allowedSchemesAppliedToAttributes: ['href', 'xlink:href']
+  });
 
-  if (!sanitized.trim().startsWith('<svg')) {
-    sanitized = `<svg xmlns=\"http://www.w3.org/2000/svg\">${sanitized}</svg>`;
+  let wrapped = sanitizedContent;
+  if (!wrapped.trim().startsWith('<svg')) {
+    wrapped = `<svg xmlns="http://www.w3.org/2000/svg">${wrapped}</svg>`;
   }
 
-  return sanitized;
+  return wrapped;
 };
 
 const media = new Hono<{ Bindings: { DB: D1Database; ASSETS: R2Bucket } }>();
