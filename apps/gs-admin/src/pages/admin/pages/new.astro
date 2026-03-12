@@ -60,7 +60,7 @@ const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
         }
         const payload = await response.json();
         window.location.href = `/admin/pages/${payload.id}`;
-      } catch {
+      } catch (error) {
         message.textContent = 'Failed to create page.';
       }
     });

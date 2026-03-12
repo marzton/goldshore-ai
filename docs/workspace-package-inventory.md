@@ -24,11 +24,6 @@ This inventory is sourced from:
 | `@goldshore/gs-web` | `apps/gs-web` | none | Public website application, content pages, templates and web UX. |
 | `@goldshore/gs-mail` | `apps/gs-mail` | none | Mail ingestion worker. |
 
-## Architecture note: gs-admin navigation scope
-
-- Navigation improvements for `gs-admin` must stay within the current Astro workspace structure (`apps/gs-admin` + shared workspace packages).
-- Replacing the app with an external admin theme/template is out-of-scope for this track unless it is approved as a separate migration project with its own written plan.
-
 ## Shared packages
 
 | Package | Path | Exports |

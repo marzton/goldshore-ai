@@ -1,15 +1,5 @@
 import { defineCollection, z } from 'astro:content';
 
-const services = defineCollection({
-  type: 'data',
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    icon: z.enum(['radar', 'ops', 'hub']).default('radar'),
-    order: z.number().default(0),
-  }),
-});
-
 export const collections = {
   docs: defineCollection({
     type: 'content',
@@ -18,6 +8,5 @@ export const collections = {
       description: z.string().optional(),
       order: z.number().optional()
     })
-  }),
-  services,
+  })
 };

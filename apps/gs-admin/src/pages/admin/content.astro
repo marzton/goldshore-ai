@@ -132,7 +132,7 @@ const apiBase = import.meta.env.PUBLIC_API ?? '';
     if (!value) return null;
     try {
       return JSON.parse(value);
-    } catch {
+    } catch (error) {
       return null;
     }
   };
@@ -181,7 +181,7 @@ const apiBase = import.meta.env.PUBLIC_API ?? '';
         <span>${item.slug ?? ''}</span>
         <em>${item.status ?? 'draft'}</em>
       `);
-    } catch {
+    } catch (error) {
       setStatus('content-status', 'Unable to load pages', 'error');
     }
   };
@@ -194,7 +194,7 @@ const apiBase = import.meta.env.PUBLIC_API ?? '';
         <span>${item.content_type ?? 'unknown type'}</span>
         <em>${item.r2_key ?? 'metadata only'}</em>
       `);
-    } catch {
+    } catch (error) {
       setStatus('media-status', 'Unable to load assets', 'error');
     }
   };
@@ -207,7 +207,7 @@ const apiBase = import.meta.env.PUBLIC_API ?? '';
         <span>${item.slug ?? ''}</span>
         <em>${item.status ?? 'draft'}</em>
       `);
-    } catch {
+    } catch (error) {
       setStatus('form-status', 'Unable to load forms', 'error');
     }
   };
@@ -249,7 +249,7 @@ const apiBase = import.meta.env.PUBLIC_API ?? '';
       setStatus('content-status', 'Page saved', 'success');
       form.reset();
       await refreshContent();
-    } catch {
+    } catch (error) {
       setStatus('content-status', 'Save failed', 'error');
     }
   });
@@ -267,7 +267,7 @@ const apiBase = import.meta.env.PUBLIC_API ?? '';
       setStatus('media-status', 'Upload complete', 'success');
       form.reset();
       await refreshMedia();
-    } catch {
+    } catch (error) {
       setStatus('media-status', 'Upload failed', 'error');
     }
   });
@@ -303,7 +303,7 @@ const apiBase = import.meta.env.PUBLIC_API ?? '';
       setStatus('form-status', 'Form saved', 'success');
       form.reset();
       await refreshForms();
-    } catch {
+    } catch (error) {
       setStatus('form-status', 'Save failed', 'error');
     }
   });
