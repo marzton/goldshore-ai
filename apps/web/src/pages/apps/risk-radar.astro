@@ -185,7 +185,14 @@ const samples = [
 
 <style>
   :global(body) {
-    background: #070a0f;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(29, 126, 252, 0.18), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(130, 71, 255, 0.16), transparent 45%),
+      #04070d;
+  }
+  :global(main) {
+    position: relative;
+    isolation: isolate;
   }
   .risk-hero {
     position: relative;
@@ -195,17 +202,17 @@ const samples = [
     padding: clamp(3rem, 6vw, 6rem) clamp(1.5rem, 5vw, 5rem);
     max-width: 1300px;
     margin: 0 auto;
-    color: #d7d3c6;
-    border-bottom: 1px solid rgba(211, 205, 187, 0.2);
+    color: #d9e5fb;
+    border-bottom: 1px solid rgba(24, 161, 255, 0.28);
   }
   .risk-hero::before {
     content: '';
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba(116, 128, 140, 0.16) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(116, 128, 140, 0.16) 1px, transparent 1px),
-      linear-gradient(transparent 40%, rgba(186, 180, 162, 0.12) 60%, transparent 80%);
+      linear-gradient(rgba(70, 97, 131, 0.2) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(70, 97, 131, 0.2) 1px, transparent 1px),
+      linear-gradient(transparent 40%, rgba(24, 161, 255, 0.12) 60%, transparent 80%);
     background-size: 48px 48px, 48px 48px, 100% 100%;
     pointer-events: none;
     opacity: 0.6;
@@ -214,7 +221,7 @@ const samples = [
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at top right, rgba(122, 153, 180, 0.25), transparent 55%);
+    background: radial-gradient(circle at top right, rgba(24, 161, 255, 0.24), transparent 55%);
     pointer-events: none;
   }
   .risk-hero__content,
@@ -229,8 +236,9 @@ const samples = [
     text-transform: uppercase;
     letter-spacing: 0.3em;
     font-size: 0.75rem;
-    color: #b7b1a0;
-    border: 1px solid rgba(183, 177, 160, 0.4);
+    color: #83cbff;
+    border: 1px solid rgba(24, 161, 255, 0.45);
+    box-shadow: 0 0 18px rgba(24, 161, 255, 0.14);
     padding: 0.5rem 1rem;
     border-radius: 999px;
     margin-bottom: 1.5rem;
@@ -239,12 +247,13 @@ const samples = [
     font-size: clamp(2.5rem, 4vw, 3.5rem);
     line-height: 1.1;
     margin: 0 0 1.5rem;
-    color: #f5f2e8;
+    color: #f6fbff;
+    text-shadow: 0 8px 26px rgba(31, 130, 255, 0.28);
   }
   .risk-subtitle {
     font-size: 1.1rem;
     line-height: 1.7;
-    color: #b0ad9f;
+    color: #afc7e7;
     margin-bottom: 2rem;
   }
   .risk-hero__stats {
@@ -253,8 +262,9 @@ const samples = [
     gap: 1.25rem;
   }
   .risk-hero__stats div {
-    background: rgba(16, 20, 28, 0.7);
-    border: 1px solid rgba(176, 170, 150, 0.18);
+    background: linear-gradient(155deg, rgba(10, 20, 36, 0.9), rgba(8, 13, 24, 0.95));
+    border: 1px solid rgba(51, 136, 237, 0.28);
+    box-shadow: inset 0 0 26px rgba(20, 80, 151, 0.25);
     padding: 1rem 1.25rem;
     border-radius: 0.75rem;
   }
@@ -263,11 +273,11 @@ const samples = [
     text-transform: uppercase;
     font-size: 0.7rem;
     letter-spacing: 0.2em;
-    color: #807a6c;
+    color: #7eb2e0;
   }
   .risk-hero__stats strong {
     font-size: 1.2rem;
-    color: #f4f1e6;
+    color: #f3f9ff;
   }
   .risk-hero__visual {
     display: flex;
@@ -284,13 +294,13 @@ const samples = [
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.18em;
-    color: #7f7a6b;
+    color: #91b0d2;
   }
   .risk-demo {
     max-width: 1300px;
     margin: 0 auto;
     padding: clamp(3rem, 6vw, 5.5rem) clamp(1.5rem, 5vw, 5rem);
-    color: #d7d3c6;
+    color: #d9e5fb;
   }
   .risk-demo__header {
     display: flex;
@@ -303,7 +313,7 @@ const samples = [
   .risk-demo__header h2 {
     font-size: clamp(2rem, 3vw, 2.6rem);
     margin: 0.5rem 0 1rem;
-    color: #f5f2e8;
+    color: #f6fbff;
   }
   .risk-demo__controls {
     display: grid;
@@ -317,29 +327,29 @@ const samples = [
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: #988f7d;
+    color: #7eb2e0;
   }
   .risk-select select,
   .risk-range input {
-    background: rgba(12, 16, 22, 0.8);
-    border: 1px solid rgba(150, 144, 126, 0.35);
-    color: #f5f2e8;
+    background: rgba(4, 12, 22, 0.9);
+    border: 1px solid rgba(54, 146, 255, 0.34);
+    color: #f6fbff;
     border-radius: 0.75rem;
     padding: 0.65rem 0.75rem;
     font-size: 0.9rem;
   }
-  .risk-range input { accent-color: #b1a57c; }
+  .risk-range input { accent-color: #18a1ff; }
   .risk-demo__grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
   }
   .risk-panel {
-    background: rgba(11, 14, 20, 0.95);
-    border: 1px solid rgba(165, 158, 140, 0.3);
+    background: linear-gradient(160deg, rgba(8, 14, 26, 0.95), rgba(4, 10, 18, 0.98));
+    border: 1px solid rgba(38, 123, 229, 0.34);
     border-radius: 1.5rem;
     padding: 2rem;
-    box-shadow: inset 0 0 60px rgba(18, 24, 34, 0.6);
+    box-shadow: inset 0 0 60px rgba(10, 20, 38, 0.65), 0 20px 40px rgba(0, 0, 0, 0.35);
   }
   .risk-panel__head {
     display: flex;
@@ -350,16 +360,16 @@ const samples = [
   .risk-panel__head h3 {
     margin: 0;
     font-size: 1.1rem;
-    color: #f2efe3;
+    color: #f6fbff;
   }
   .risk-chip {
     padding: 0.4rem 0.75rem;
-    border: 1px solid rgba(168, 160, 138, 0.4);
+    border: 1px solid rgba(56, 140, 242, 0.4);
     border-radius: 999px;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.25em;
-    color: #b7b1a0;
+    color: #9cd7ff;
   }
   .risk-panel__body {
     display: grid;
@@ -375,8 +385,8 @@ const samples = [
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    border: 1px solid rgba(130, 141, 152, 0.35);
-    box-shadow: inset 0 0 30px rgba(62, 88, 112, 0.35);
+    border: 1px solid rgba(24, 161, 255, 0.45);
+    box-shadow: inset 0 0 30px rgba(25, 108, 200, 0.42);
   }
   .risk-indicator__rings::before,
   .risk-indicator__rings::after {
@@ -384,7 +394,7 @@ const samples = [
     position: absolute;
     inset: 18px;
     border-radius: 50%;
-    border: 1px dashed rgba(130, 141, 152, 0.4);
+    border: 1px dashed rgba(24, 161, 255, 0.45);
   }
   .risk-indicator__rings::after { inset: 42px; }
   .risk-indicator__arrow {
@@ -393,11 +403,11 @@ const samples = [
     top: 50%;
     width: 6px;
     height: 70px;
-    background: linear-gradient(to bottom, #e4dfd1, #6c95b8);
+    background: linear-gradient(to bottom, #39b5ff, #18a1ff 40%, #8e5bff);
     transform-origin: 50% 100%;
     transform: translate(-50%, -100%) rotate(var(--direction, 145deg));
     border-radius: 4px;
-    box-shadow: 0 0 12px rgba(114, 159, 196, 0.5);
+    box-shadow: 0 0 16px rgba(24, 161, 255, 0.55);
   }
   .risk-indicator__arrow::after {
     content: '';
@@ -407,7 +417,7 @@ const samples = [
     transform: translateX(-50%);
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
-    border-bottom: 16px solid #e4dfd1;
+    border-bottom: 16px solid #39b5ff;
   }
   .risk-indicator__label {
     position: absolute;
@@ -415,7 +425,7 @@ const samples = [
     left: 50%;
     transform: translateX(-50%);
     font-size: 1rem;
-    color: #f2efe3;
+    color: #f3f9ff;
     text-transform: uppercase;
     letter-spacing: 0.2em;
   }
@@ -427,7 +437,7 @@ const samples = [
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.3em;
-    color: #8b8576;
+    color: #91b0d2;
   }
   .risk-indicator__drift {
     position: absolute;
@@ -435,7 +445,7 @@ const samples = [
     left: 50%;
     transform: translateX(-50%);
     font-size: 0.75rem;
-    color: #97a7b6;
+    color: #9cd7ff;
     letter-spacing: 0.2em;
   }
   .risk-metrics {
@@ -445,8 +455,8 @@ const samples = [
     margin: 0;
   }
   .risk-metrics div {
-    background: rgba(16, 20, 28, 0.9);
-    border: 1px solid rgba(150, 144, 126, 0.2);
+    background: rgba(8, 16, 30, 0.9);
+    border: 1px solid rgba(47, 131, 231, 0.28);
     padding: 0.8rem;
     border-radius: 0.75rem;
   }
@@ -454,12 +464,34 @@ const samples = [
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.25em;
-    color: #8b8576;
+    color: #88acd2;
   }
   .risk-metrics dd {
     margin: 0.5rem 0 0;
     font-size: 1rem;
-    color: #f5f2e8;
+    color: #f6fbff;
+  }
+  .risk-metrics [data-field="pressure"][data-trend='up'],
+  .risk-metrics [data-field="momentum"][data-trend='up'] {
+    color: #44dd90;
+    text-shadow: 0 0 10px rgba(68, 221, 144, 0.32);
+  }
+  .risk-metrics [data-field="pressure"][data-trend='down'],
+  .risk-metrics [data-field="momentum"][data-trend='down'] {
+    color: #ff5d75;
+    text-shadow: 0 0 10px rgba(255, 93, 117, 0.32);
+  }
+  .risk-chip[data-tone='neutral'] {
+    border-color: rgba(142, 91, 255, 0.5);
+    color: #c8a9ff;
+  }
+  .risk-chip[data-tone='up'] {
+    border-color: rgba(68, 221, 144, 0.5);
+    color: #91f0bd;
+  }
+  .risk-chip[data-tone='down'] {
+    border-color: rgba(255, 93, 117, 0.5);
+    color: #ff97a6;
   }
   .risk-panel--radar {
     position: relative;
@@ -469,8 +501,8 @@ const samples = [
     position: relative;
     height: 280px;
     border-radius: 1.5rem;
-    background: radial-gradient(circle at center, rgba(36, 62, 82, 0.5), rgba(12, 16, 22, 0.9) 60%);
-    border: 1px solid rgba(120, 152, 175, 0.3);
+    background: radial-gradient(circle at center, rgba(19, 85, 157, 0.35), rgba(5, 13, 24, 0.95) 60%);
+    border: 1px solid rgba(50, 132, 232, 0.35);
     display: grid;
     place-items: center;
     overflow: hidden;
@@ -478,7 +510,7 @@ const samples = [
   .risk-radar__grid {
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, rgba(103, 138, 161, 0.4) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(24, 161, 255, 0.34) 1px, transparent 1px);
     background-size: 36px 36px;
     opacity: 0.6;
   }
@@ -487,7 +519,7 @@ const samples = [
     width: 240px;
     height: 240px;
     border-radius: 50%;
-    border: 1px solid rgba(134, 165, 188, 0.45);
+    border: 1px solid rgba(24, 161, 255, 0.5);
     animation: radar-pulse 4s infinite ease-in-out;
   }
   .risk-radar__blip {
@@ -495,8 +527,8 @@ const samples = [
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: #d6f0ff;
-    box-shadow: 0 0 20px rgba(130, 190, 240, 0.9);
+    background: #44dd90;
+    box-shadow: 0 0 20px rgba(68, 221, 144, 0.8);
     transform: translate(60px, -40px);
   }
   .risk-radar__legend {
@@ -506,18 +538,18 @@ const samples = [
     display: grid;
     gap: 0.4rem;
     font-size: 0.8rem;
-    color: #b4c6d5;
+    color: #b4cff0;
   }
   .risk-radar__legend strong {
     display: block;
-    color: #f5f2e8;
+    color: #f6fbff;
     letter-spacing: 0.2em;
     text-transform: uppercase;
   }
   .risk-helper {
     margin-top: 1.5rem;
     font-size: 0.9rem;
-    color: #8b8576;
+    color: #88acd2;
   }
   @keyframes radar-pulse {
     0% { transform: scale(0.8); opacity: 0.2; }
@@ -527,6 +559,12 @@ const samples = [
   @media (max-width: 900px) {
     .risk-demo__controls { width: 100%; }
     .risk-indicator { width: 160px; height: 160px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .risk-radar__pulse {
+      animation: none;
+    }
   }
 </style>
 
@@ -579,6 +617,19 @@ const samples = [
         node.textContent = sample[key];
       }
     });
+
+    const pressureNode = document.querySelector('[data-field="pressure"]');
+    const momentumNode = document.querySelector('[data-field="momentum"]');
+    const tickerNode = document.querySelector('.risk-chip[data-field="ticker"]');
+
+    const pressureTrend = sample.pressure.trim().startsWith('-') ? 'down' : 'up';
+    const momentumTrend = /slip|down|drop|fade/i.test(sample.momentum) ? 'down' : 'up';
+    const tone = Number.parseFloat(sample.iv) > 50 ? 'neutral' : pressureTrend;
+
+    pressureNode?.setAttribute('data-trend', pressureTrend);
+    momentumNode?.setAttribute('data-trend', momentumTrend);
+    tickerNode?.setAttribute('data-tone', tone);
+
     indicator?.style.setProperty('--direction', sample.drift.replace('°', '') + 'deg');
     indicator?.setAttribute('data-direction', sample.drift.replace('°', ''));
     if (range) {
