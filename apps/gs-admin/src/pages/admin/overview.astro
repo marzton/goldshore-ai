@@ -2,6 +2,7 @@
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { GSButton } from '@goldshore/ui';
 import scanResults from '../../data/pii-scan-results.json';
+import InboxDashboard from '../../components/InboxDashboard.astro';
 
 // Initial UI state
 const initialStatus = { health: 'Unknown', status: 'Unknown', version: 'Unknown', lastSync: 'N/A' };
@@ -47,6 +48,8 @@ const formattedScanDate = new Date(generatedAt).toLocaleString('en-US', {
                 <GSButton href="/admin/pii-scans" variant="secondary">View PII Results</GSButton>
             </div>
         </div>
+
+        <InboxDashboard />
 
         <div class="grid md:grid-cols-3 gap-6">
             <div class="gs-card space-y-3">

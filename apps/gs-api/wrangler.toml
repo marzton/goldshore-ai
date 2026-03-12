@@ -1,28 +1,33 @@
 name = "gs-api"
 main = "src/index.ts"
-compatibility_date = "2024-01-01"
+compatibility_date = "2025-10-08"
 compatibility_flags = ["nodejs_compat"]
 
-workers_dev = false
-routes = [
-  { pattern = "api.goldshore.ai/*", zone_name = "goldshore.ai" }
-]
-
-[vars]
-ENV = "production"
+# Default / Development Bindings
+[[kv_namespaces]]
+binding = "GS_CONFIG"
+id = "5f13370575784c9dacff522121104cb3"
 
 [[kv_namespaces]]
-binding = "KV"
-id = "gs_api_kv_001"
+binding = "GS_API_DATA"
+id = "9cc2209906a94851b704be57543987a9"
 
-[[r2_buckets]]
-binding = "ASSETS"
-bucket_name = "gs-assets"
+# Production Environment Overrides
+[env.production]
+[[env.production.kv_namespaces]]
+binding = "GS_CONFIG"
+id = "5f13370575784c9dacff522121104cb3"
 
-[[d1_databases]]
-binding = "DB"
-database_name = "goldshore"
-database_id = "gs_db_001"
+[[env.production.kv_namespaces]]
+binding = "GS_API_DATA"
+id = "9cc2209906a94851b704be57543987a9"
 
-[ai]
-binding = "AI"
+# Backward-compatible alias for existing build scripts (`--env prod`)
+[env.prod]
+[[env.prod.kv_namespaces]]
+binding = "GS_CONFIG"
+id = "5f13370575784c9dacff522121104cb3"
+
+[[env.prod.kv_namespaces]]
+binding = "GS_API_DATA"
+id = "9cc2209906a94851b704be57543987a9"

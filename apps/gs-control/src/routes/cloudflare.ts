@@ -154,7 +154,7 @@ cloudflareRoutes.put(
     const actor = getActor(c.get("accessClaims"), c.req.raw);
 
     if (!zoneId) {
-      await logAuditEvent(c.env, {
+      await logAuditEvent(c.env.CONTROL_LOGS, {
         action: "cloudflare:dns:update",
         actor,
         status: "error",
@@ -164,13 +164,24 @@ cloudflareRoutes.put(
     }
 
     if (!recordId) {
-      await logAuditEvent(c.env, {
+      await logAuditEvent(c.env.CONTROL_LOGS, {
         action: "cloudflare:dns:update",
         actor,
         status: "error",
         metadata: { reason: "missing-record-id" }
       });
       return c.json({ error: "Missing DNS record id." }, 400);
+    }
+
+    // Validate recordId to prevent path traversal
+    if (!/^[a-zA-Z0-9]+$/.test(recordId)) {
+      await logAuditEvent(c.env.CONTROL_LOGS, {
+        action: "cloudflare:dns:update",
+        actor,
+        status: "error",
+        metadata: { reason: "invalid-record-id", recordId }
+      });
+      return c.json({ error: "Invalid DNS record id." }, 400);
     }
 
     try {
@@ -184,7 +195,7 @@ cloudflareRoutes.put(
         }
       );
 
-      await logAuditEvent(c.env, {
+      await logAuditEvent(c.env.CONTROL_LOGS, {
         action: "cloudflare:dns:update",
         actor,
         status: result.ok ? "success" : "error",
@@ -193,7 +204,7 @@ cloudflareRoutes.put(
 
       return c.json(result.data, result.status as ContentfulStatusCode);
     } catch (error) {
-      await logAuditEvent(c.env, {
+      await logAuditEvent(c.env.CONTROL_LOGS, {
         action: "cloudflare:dns:update",
         actor,
         status: "error",
@@ -239,7 +250,7 @@ cloudflareRoutes.get("/pages/projects", async (c) => {
       `/accounts/${c.env.CLOUDFLARE_ACCOUNT_ID}/pages/projects`
     );
 
-    await logAuditEvent(c.env, {
+    await logAuditEvent(c.env.CONTROL_LOGS, {
       action: "cloudflare:pages:list",
       actor,
       status: result.ok ? "success" : "error",
@@ -248,7 +259,7 @@ cloudflareRoutes.get("/pages/projects", async (c) => {
 
     return c.json(result.data, result.status as ContentfulStatusCode);
   } catch (error) {
-    await logAuditEvent(c.env, {
+    await logAuditEvent(c.env.CONTROL_LOGS, {
       action: "cloudflare:pages:list",
       actor,
       status: "error",
@@ -266,7 +277,7 @@ cloudflareRoutes.get("/kv/namespaces", async (c) => {
       `/accounts/${c.env.CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces`
     );
 
-    await logAuditEvent(c.env, {
+    await logAuditEvent(c.env.CONTROL_LOGS, {
       action: "cloudflare:kv:list",
       actor,
       status: result.ok ? "success" : "error",
@@ -275,7 +286,7 @@ cloudflareRoutes.get("/kv/namespaces", async (c) => {
 
     return c.json(result.data, result.status as ContentfulStatusCode);
   } catch (error) {
-    await logAuditEvent(c.env, {
+    await logAuditEvent(c.env.CONTROL_LOGS, {
       action: "cloudflare:kv:list",
       actor,
       status: "error",
@@ -293,7 +304,7 @@ cloudflareRoutes.get("/r2/buckets", async (c) => {
       `/accounts/${c.env.CLOUDFLARE_ACCOUNT_ID}/r2/buckets`
     );
 
-    await logAuditEvent(c.env, {
+    await logAuditEvent(c.env.CONTROL_LOGS, {
       action: "cloudflare:r2:list",
       actor,
       status: result.ok ? "success" : "error",
@@ -302,35 +313,8 @@ cloudflareRoutes.get("/r2/buckets", async (c) => {
 
     return c.json(result.data, result.status as ContentfulStatusCode);
   } catch (error) {
-    await logAuditEvent(c.env, {
+    await logAuditEvent(c.env.CONTROL_LOGS, {
       action: "cloudflare:r2:list",
-      actor,
-      status: "error",
-      metadata: { message: formatErrorMessage(error) }
-    });
-    return c.json({ error: "Cloudflare API request failed." }, 502);
-  }
-});
-
-cloudflareRoutes.get("/d1/databases", async (c) => {
-  const actor = getActor(c.get("accessClaims"), c.req.raw);
-  try {
-    const result = await fetchCloudflare(
-      c.env,
-      `/accounts/${c.env.CLOUDFLARE_ACCOUNT_ID}/d1/database`
-    );
-
-    await logAuditEvent(c.env, {
-      action: "cloudflare:d1:list",
-      actor,
-      status: result.ok ? "success" : "error",
-      metadata: { status: result.status }
-    });
-
-    return c.json(result.data, result.status as ContentfulStatusCode);
-  } catch (error) {
-    await logAuditEvent(c.env, {
-      action: "cloudflare:d1:list",
       actor,
       status: "error",
       metadata: { message: formatErrorMessage(error) }

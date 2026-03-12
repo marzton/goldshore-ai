@@ -32,7 +32,7 @@ export const GET: APIRoute = async ({ request }) => {
       title: result.item.title,
       url: `/developer/docs/${result.item.slug}`,
     }))
-    .slice(0, 5);
+    .slice(0, 5); // Limit results to 5 to match the other implementation logic if desired, good practice.
 
   return new Response(JSON.stringify(results), {
     headers: { 'Content-Type': 'application/json' },

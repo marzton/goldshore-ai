@@ -51,4 +51,79 @@ describe('Media Endpoint Security', () => {
     assert.ok(csp.includes("script-src 'none'"), 'CSP should include script-src none');
     assert.ok(csp.includes("object-src 'none'"), 'CSP should include object-src none');
   });
+
+  it('should allow uploading small files', async () => {
+    const app = new Hono();
+
+    const mockDB = {
+      prepare: (query: string) => ({
+        bind: (...args: any[]) => ({
+          run: async () => {},
+        }),
+        run: async () => {},
+      }),
+    };
+
+    const mockAssets = {
+      put: async () => {},
+    };
+
+    app.route('/', media);
+
+    const formData = new FormData();
+    const fileContent = '<svg>small</svg>';
+    const file = new File([fileContent], 'test.svg', { type: 'image/svg+xml' });
+    formData.append('file', file);
+
+    const req = new Request('http://localhost/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const res = await app.fetch(req, {
+      DB: mockDB,
+      ASSETS: mockAssets,
+    });
+
+    assert.strictEqual(res.status, 200);
+    const data = await res.json();
+    assert.strictEqual(data.filename, 'test.svg');
+  });
+
+  it('should reject files larger than 5MB', async () => {
+    const app = new Hono();
+
+    const mockDB = {
+      prepare: (query: string) => ({
+        bind: (...args: any[]) => ({
+          run: async () => {},
+        }),
+        run: async () => {},
+      }),
+    };
+
+    const mockAssets = {
+      put: async () => {},
+    };
+
+    app.route('/', media);
+
+    const formData = new FormData();
+    // Create a large file (> 5MB)
+    const largeContent = new Uint8Array(5 * 1024 * 1024 + 1);
+    const file = new File([largeContent], 'large.png', { type: 'image/png' });
+    formData.append('file', file);
+
+    const req = new Request('http://localhost/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const res = await app.fetch(req, {
+      DB: mockDB,
+      ASSETS: mockAssets,
+    });
+
+    assert.strictEqual(res.status, 413, 'Should return 413 Payload Too Large');
+  });
 });

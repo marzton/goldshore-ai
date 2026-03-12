@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
-import { checkAuth } from './auth';
 import { verifyAccess } from '@goldshore/auth';
 import { STATUS_PAGE_HTML } from './templates/status';
 import { type Env } from './types';
@@ -9,12 +8,34 @@ import { integrationControls } from './middleware/integration';
 
 const app = new Hono<{ Bindings: Env }>();
 
+const ALLOWED_ORIGINS = [
+  'https://goldshore.ai',
+  'https://www.goldshore.ai',
+  'https://admin.goldshore.ai',
+  'https://gw.goldshore.ai',
+  'https://api.goldshore.ai'
+];
+
 // Sentinel: Add security headers to all responses (X-Frame-Options, X-XSS-Protection, etc.)
 app.use('*', secureHeaders());
 
 // Sentinel: Add CORS protection
 app.use('*', cors({
-  origin: '*', // Public gateway
+  origin: (origin, c) => {
+    // Development overrides
+    if (c.env.ENV !== 'production') {
+      if (origin && (origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1'))) {
+        return origin;
+      }
+    }
+
+    // Strict origin check for production (and dev non-localhost)
+    if (ALLOWED_ORIGINS.includes(origin)) {
+      return origin;
+    }
+
+    return null; // Block unknown origins
+  },
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: [
     'Content-Type',
@@ -26,6 +47,7 @@ app.use('*', cors({
   ],
   exposeHeaders: ['Content-Length'],
   maxAge: 600,
+  credentials: true
 }));
 
 // Authentication Middleware
@@ -40,7 +62,6 @@ app.use('*', async (c, next) => {
         console.warn('SECURITY WARNING: CLOUDFLARE_ACCESS_AUDIENCE is not set. Audience verification is disabled.');
     }
 
-    const authorized = await checkAuth(c.req.raw, c.env);
     const authorized = await verifyAccess(c.req.raw, c.env);
     if (!authorized) {
         return c.json({ error: 'Unauthorized' }, 401);

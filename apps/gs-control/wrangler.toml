@@ -10,7 +10,8 @@ routes = [
 
 [vars]
 ENV = "production"
-ALLOWED_ORIGINS = "https://admin.goldshore.ai,https://admin-preview.goldshore.ai,http://localhost:4321"
+CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+SYNC_TARGET_SUBDOMAIN = "api.goldshore.ai"
 
 [[kv_namespaces]]
 binding = "CONTROL_LOGS"

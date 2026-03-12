@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@theme/*": ["packages/theme/*"],
+      "@ui/*": ["packages/ui/*"],
+      "@schema/*": ["packages/schema/*"]
+    }
+  }
+}
