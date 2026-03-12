@@ -57,12 +57,12 @@ const logoSrc = logo.src;
     import { mountStarfield } from "./StarfieldCanvas";
     import { mountShootingStars } from "./ShootingStarsCanvas";
 
-    const root = document.currentScript?.closest(".gs-hero");
-    if (root) {
+    const heroes = document.querySelectorAll(".gs-hero");
+    heroes.forEach((root) => {
       const stars = root.querySelector("[data-stars]");
       const shooting = root.querySelector("[data-shooting]");
       if (stars instanceof HTMLCanvasElement) mountStarfield(stars);
       if (shooting instanceof HTMLCanvasElement) mountShootingStars(shooting);
-    }
+    });
   </script>
 </section>
