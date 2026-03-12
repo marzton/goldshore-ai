@@ -1,5 +1,5 @@
 ---
-// Legacy route: `/apps/risk-radar` is retained only to redirect to canonical `/risk-radar`.
+// This is a pure redirect file to handle legacy paths.
 const target = '/risk-radar';
 ---
 <html lang="en">
@@ -8,13 +8,14 @@ const target = '/risk-radar';
     <meta http-equiv="refresh" content={`0;url=${target}`} />
     <link rel="canonical" href={target} />
     <title>Redirecting to Risk Radar…</title>
-  </head>
-  <body>
-    <p>
-      This route has moved to <a href={target}>{target}</a>.
-    </p>
-    <script is:inline>
-      window.location.replace('/risk-radar');
+    <script is:inline define:vars={{ target }}>
+      window.location.replace(target);
     </script>
+  </head>
+  <body class="bg-gray-50 flex items-center justify-center min-h-screen font-sans">
+    <div class="text-center">
+      <p class="text-gray-500 mb-2">The Risk Radar has been promoted to a canonical route.</p>
+      <p>Redirecting to <a href={target} class="text-blue-600 font-bold underline">{target}</a>...</p>
+    </div>
   </body>
 </html>
