@@ -12,7 +12,9 @@ export function initGoldShoreUI() {
 }
 
 function initNav() {
-  const toggle = document.querySelector<HTMLButtonElement>('[data-gs-nav-toggle]');
+  const toggle = document.querySelector<HTMLButtonElement>(
+    '[data-gs-nav-toggle]',
+  );
   const panel = document.querySelector<HTMLElement>('[data-gs-mobile-panel]');
   if (!toggle || !panel) return;
 
@@ -30,7 +32,11 @@ function initNav() {
 
   panel.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
-    if (t.matches('[data-gs-nav-close]') || t.matches('[data-gs-mobile-panel]') || t.closest('.gs-mobile-link-item')) {
+    if (
+      t.matches('[data-gs-nav-close]') ||
+      t.matches('[data-gs-mobile-panel]') ||
+      t.closest('.gs-mobile-link-item')
+    ) {
       setOpen(false);
     }
   });
@@ -45,7 +51,9 @@ function initModal() {
   if (!root) return;
 
   const backdrop = root.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
-  const closeBtn = root.querySelector<HTMLButtonElement>('[data-gs-modal-close]');
+  const closeBtn = root.querySelector<HTMLButtonElement>(
+    '[data-gs-modal-close]',
+  );
   const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
   const panel = root.querySelector<HTMLElement>('.gs-modal-panel');
 
@@ -129,7 +137,9 @@ function initModal() {
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', onKeydown);
+  window.addEventListener('keydown', (e) =>
+    e.key === 'Escape' ? closeModal() : null,
+  );
 }
 
 function getModalTemplate(variant: string): string {
@@ -152,7 +162,7 @@ function getModalTemplate(variant: string): string {
   }
 
   return `
-    <div class="gs-modal-head">
+      <div class="gs-modal-head">
       <div class="gs-kicker">Signal Brief</div>
       <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Subscribe</h2>
       <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Periodic updates on releases, systems, and operational tooling.</p>
@@ -194,7 +204,9 @@ function initReveal() {
   const rm = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   if (rm) return;
 
-  const els = Array.from(document.querySelectorAll<HTMLElement>('[data-gs-reveal]'));
+  const els = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-gs-reveal]'),
+  );
   if (!els.length) return;
 
   const io = new IntersectionObserver(
@@ -211,6 +223,103 @@ function initReveal() {
 
   els.forEach((el) => io.observe(el));
 }
+
+function initTilt() {
+  const rm = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  if (rm) return;
+
+  const fine = window.matchMedia?.('(pointer: fine)')?.matches;
+  const hover = window.matchMedia?.('(hover: hover)')?.matches;
+  if (!fine || !hover) return;
+
+  const panels = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-gs-tilt]'),
+  );
+  if (!panels.length) return;
+
+  document.documentElement.classList.add('gs-tilt-on');
+
+  const clamp = (n: number, min: number, max: number) =>
+    Math.max(min, Math.min(max, n));
+
+  panels.forEach((el) => {
+    el.classList.add('gs-tilt');
+
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+
+      const ry = (px - 0.5) * 8;
+      const rx = -(py - 0.5) * 6;
+
+      el.style.setProperty('--gs-tilt-x', `${clamp(rx, -8, 8)}deg`);
+      el.style.setProperty('--gs-tilt-y', `${clamp(ry, -10, 10)}deg`);
+      el.style.setProperty('--gs-tilt-glare-x', `${px * 100}%`);
+      el.style.setProperty('--gs-tilt-glare-y', `${py * 100}%`);
+    };
+
+    const onLeave = () => {
+      el.style.setProperty('--gs-tilt-x', '0deg');
+      el.style.setProperty('--gs-tilt-y', '0deg');
+      el.style.setProperty('--gs-tilt-glare-x', '50%');
+      el.style.setProperty('--gs-tilt-glare-y', '35%');
+    };
+
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerleave', onLeave);
+  });
+}
+
+function initScrollHints() {
+  if (typeof CSS !== 'undefined' && typeof CSS.supports === 'function') {
+    const ok = CSS.supports('animation-timeline: view()');
+    if (ok) document.documentElement.classList.add('gs-view-timeline');
+  }
+}
+
+function initHeroPulsar() {
+  const canvas = document.getElementById(
+    'pulsar-field',
+  ) as HTMLCanvasElement | null;
+  const ctx = canvas?.getContext('2d');
+  if (!canvas || !ctx) return;
+
+  const reduceMotion = window.matchMedia?.(
+    '(prefers-reduced-motion: reduce)',
+  )?.matches;
+  if (reduceMotion) return;
+
+  const host = canvas.closest<HTMLElement>('[data-gs-hero]');
+  const particles: Array<{
+    x: number;
+    y: number;
+    r: number;
+    speed: number;
+    opacity: number;
+  }> = [];
+  const PARTICLE_COUNT = 60;
+  let raf = 0;
+  let active = true;
+
+  const resize = () => {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+  };
+
+  const createParticle = () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 3 + 1,
+    speed: Math.random() * 0.3 + 0.05,
+    opacity: Math.random() * 0.6 + 0.2,
+  });
+
+  const seedParticles = () => {
+    particles.length = 0;
+    for (let i = 0; i < PARTICLE_COUNT; i += 1)
+      particles.push(createParticle());
+  };
 
 function initTilt() {
   const rm = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
@@ -262,38 +371,6 @@ function initScrollHints() {
     if (ok) document.documentElement.classList.add('gs-view-timeline');
   }
 }
-
-function initHeroPulsar() {
-  const canvas = document.getElementById('pulsar-field') as HTMLCanvasElement | null;
-  const ctx = canvas?.getContext('2d');
-  if (!canvas || !ctx) return;
-
-  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-  if (reduceMotion) return;
-
-  const host = canvas.closest<HTMLElement>('[data-gs-hero]');
-  const particles: Array<{ x: number; y: number; r: number; speed: number; opacity: number }> = [];
-  const PARTICLE_COUNT = 60;
-  let raf = 0;
-  let active = true;
-
-  const resize = () => {
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
-  };
-
-  const createParticle = () => ({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 3 + 1,
-    speed: Math.random() * 0.3 + 0.05,
-    opacity: Math.random() * 0.6 + 0.2,
-  });
-
-  const seedParticles = () => {
-    particles.length = 0;
-    for (let i = 0; i < PARTICLE_COUNT; i += 1) particles.push(createParticle());
-  };
 
   const loop = () => {
     if (!active) return;
