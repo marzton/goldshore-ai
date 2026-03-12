@@ -1,0 +1,72 @@
+---
+const { openapi, endpoint } = Astro.props;
+const pathItem = openapi.paths['/' + endpoint] || openapi.paths[endpoint];
+---
+<div class="endpoint">
+  <h2>{endpoint}</h2>
+  {pathItem ? (
+    <pre>{JSON.stringify(pathItem, null, 2)}</pre>
+  ) : (
+    <p>Endpoint not found.</p>
+  )}
+</div>
+<style>
+  .endpoint { padding: 2rem; }
+  pre { background: var(--gs-bg-elevated); padding: 1rem; border-radius: var(--gs-radius-md); }
+import ApiSchema from './ApiSchema.astro';
+import TryItConsole from './TryItConsole.astro';
+
+const { openapi, endpointId } = Astro.props;
+
+const methods = ['get','post','put','delete','patch'];
+
+const match = Object.entries(openapi.paths)
+  .find(([p]) => p.replace(/^\//,'') === endpointId);
+
+if (!match) {
+  throw new Error(`Endpoint ${endpointId} not found`);
+}
+
+const [path, ops] = match;
+---
+
+<section class="api-endpoint">
+  <h1>{path}</h1>
+
+  {methods.map((m) => (
+    ops[m] && (
+      <article class="method-block">
+        <h2>{m.toUpperCase()}</h2>
+        <p>{ops[m].description}</p>
+
+        <h3>Parameters</h3>
+        <ApiSchema schema={ops[m].parameters} />
+
+        <h3>Request Body</h3>
+        {ops[m].requestBody && (
+          <ApiSchema schema={ops[m].requestBody.content} />
+        )}
+
+        <h3>Responses</h3>
+        <ApiSchema schema={ops[m].responses} />
+
+        <h3>Try It</h3>
+        <TryItConsole
+          method={m}
+          path={path}
+          openapi={openapi}
+        />
+      </article>
+    )
+  ))}
+</section>
+
+<style>
+  .method-block {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background: rgba(15,23,42,0.8);
+    border: 1px solid rgba(148,163,184,0.3);
+  }
+</style>

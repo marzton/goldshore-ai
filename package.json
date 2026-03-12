@@ -1,21 +1,38 @@
 {
-  "name": "goldshore-monorepo",
-  "version": "1.0.0",
+  "name": "astro-goldshore",
   "private": true,
-  "description": "GoldShore organization monorepo",
+  "packageManager": "pnpm@8.15.5",
   "scripts": {
-    "build": "pnpm -r --if-present build",
-    "dev": "pnpm -r --parallel --filter=\"./apps/*\" dev",
-    "preview": "pnpm -r --filter=\"./apps/*\" preview",
-    "deploy": "pnpm -r --filter=\"./apps/*\" deploy",
-    "lint": "eslint . --ext .ts,.tsx,.astro",
-    "format": "prettier --write ."
+    "dev": "turbo run dev --parallel",
+    "build:openapi": "node scripts/build-openapi.mjs",
+    "build": "pnpm build:openapi && turbo run build",
+    "build:web": "turbo run build --filter=@goldshore/web",
+    "build:admin": "turbo run build --filter=@goldshore/admin",
+    "build:api": "turbo run build --filter=@goldshore/api",
+    "build:gateway": "turbo run build --filter=@goldshore/gateway",
+    "build:control": "turbo run build --filter=@goldshore/control",
+    "lint": "turbo run lint",
+    "test": "turbo run test"
   },
   "devDependencies": {
+    "@astrojs/tailwind": "^6.0.2",
+    "astro": "^5.15.9",
     "eslint": "^8.57.0",
+    "eslint-plugin-astro": "^1.5.0",
     "prettier": "^3.2.5",
     "prettier-plugin-astro": "^0.13.0",
-    "typescript": "^5.4.2"
+    "tailwindcss": "^3",
+    "typescript": "^5.4.2",
+    "yaml": "^2.3.4"
   },
-  "packageManager": "pnpm@8.15.5"
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.6.11",
+    "turbo": "^2.6.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "@astrojs/cloudflare": "latest",
+      "@astrojs/adapter-cloudflare": "latest"
+    }
+  }
 }

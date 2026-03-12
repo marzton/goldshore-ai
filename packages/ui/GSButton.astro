@@ -1,0 +1,12 @@
+---
+const { href, variant = 'primary', class: className, ...attrs } = Astro.props;
+let buttonClass = 'px-6 py-3 font-semibold rounded-lg text-sm transition';
+if (variant === 'primary') {
+    buttonClass += ' gs-button-primary';
+} else if (variant === 'secondary') {
+    buttonClass += ' border border-[var(--gs-brand-blue)] text-[var(--gs-text-primary)] hover:bg-[var(--gs-brand-blue)] hover:text-white';
+}
+---
+<a href={href} class={`${buttonClass} ${className || ''}`} {...attrs}>
+    <slot />
+</a>

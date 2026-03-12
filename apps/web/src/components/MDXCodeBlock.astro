@@ -1,0 +1,40 @@
+---
+const props = Astro.props;
+---
+
+<div class="code-block">
+  <button class="copy" onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText)">Copy</button>
+  <pre {...props}><slot /></pre>
+</div>
+
+<style>
+  .code-block {
+    position: relative;
+    background: #1e1e1e; /* Example dark theme */
+    border-radius: 4px;
+    margin: 1rem 0;
+  }
+  .code-block pre {
+    margin: 0;
+    padding: 1rem;
+    overflow-x: auto;
+    color: #e4e4e7;
+  }
+  .code-block .copy {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .code-block:hover .copy {
+    opacity: 1;
+  }
+</style>
