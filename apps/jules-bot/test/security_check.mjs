@@ -111,5 +111,5 @@ try {
   exitCode = 1;
 } finally {
   serverProcess.kill();
-  process.exit(0); // Always exit 0 to not break the tool chain, rely on logs
+  process.exit(exitCode); // Use exitCode so CI can detect failures
 }
