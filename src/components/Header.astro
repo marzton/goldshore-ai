@@ -7,27 +7,43 @@ import siteConfig from '../data/site-config.json';
 <header>
   <nav>
     <h2><a href="/">{SITE_TITLE}</a></h2>
-    <div class="internal-links">
-      <HeaderLink href="/">Home</HeaderLink>
-      <HeaderLink href="/services">Services</HeaderLink>
-      <HeaderLink href="/about">About</HeaderLink>
-      <HeaderLink href="/team">Team</HeaderLink>
-      <HeaderLink href="/risk-radar">Risk Radar</HeaderLink>
-      <HeaderLink href="/developer-hub">Developer Hub</HeaderLink>
-      <HeaderLink href="/contact">Contact</HeaderLink>
+    <div class="internal-links" aria-label="Primary Site Menu">
+      <details class="menu-group">
+        <summary>Advisory</summary>
+        <div class="submenu">
+          <HeaderLink href="/services#regime-risk">Regime &amp; Risk</HeaderLink>
+          <HeaderLink href="/services#portfolio-steering">Portfolio Steering</HeaderLink>
+          <HeaderLink href="/services#derivatives-strategy">Derivatives Strategy</HeaderLink>
+        </div>
+      </details>
+      <details class="menu-group">
+        <summary>Intelligence</summary>
+        <div class="submenu">
+          <HeaderLink href="/risk-radar">Risk Radar</HeaderLink>
+          <HeaderLink href="/developer-hub">Workflows</HeaderLink>
+        </div>
+      </details>
+      <details class="menu-group">
+        <summary>Company</summary>
+        <div class="submenu">
+          <HeaderLink href="/about">About</HeaderLink>
+          <HeaderLink href="/team">Team</HeaderLink>
+          <HeaderLink href="/partnerships-careers">Partnerships &amp; Careers</HeaderLink>
+        </div>
+      </details>
     </div>
-    <a class="button button-secondary" href="/contact"
-      >{siteConfig.cta.secondary}</a
-    >
+    <a class="button button-secondary" href="/contact">{siteConfig.cta.primary}</a>
   </nav>
 </header>
+
 <style>
   header {
     margin: 0;
     padding: 0 1em;
-    background: rgb(var(--surface));
-    border-bottom: 1px solid rgb(var(--border));
+    background: #050505;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   }
+
   h2 {
     margin: 0;
     font-size: 1.1rem;
@@ -36,8 +52,9 @@ import siteConfig from '../data/site-config.json';
   h2 a,
   h2 a.active {
     text-decoration: none;
-    color: rgb(var(--black));
+    color: #ffffff;
   }
+
   nav {
     display: flex;
     gap: 1rem;
@@ -45,19 +62,140 @@ import siteConfig from '../data/site-config.json';
     justify-content: space-between;
     padding: 0.4rem 0;
   }
+
   .internal-links {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: center;
-    gap: 0.2rem;
+    align-items: center;
+    gap: 0.6rem;
   }
+
+  .menu-group {
+    position: relative;
+  }
+
+  .menu-group summary {
+    list-style: none;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #ffffff;
+    padding: 0.45rem 0.6rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+  }
+
+  .menu-group summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .menu-group[open] summary,
+  .menu-group summary:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .submenu {
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    left: 0;
+    min-width: 13rem;
+    display: grid;
+    gap: 0.12rem;
+    padding: 0.4rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: #050505;
+    z-index: 10;
+  }
+
+  .submenu :global(a) {
+    border-radius: 8px;
+    padding: 0.4rem 0.5rem;
+    text-decoration: none;
+    color: #ffffff;
+  }
+
+  .submenu :global(a:hover) {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
   @media (max-width: 980px) {
     nav {
       flex-direction: column;
       align-items: flex-start;
     }
+
     .internal-links {
       justify-content: flex-start;
+      width: 100%;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .menu-group,
+    .menu-group summary,
+    .submenu {
+      width: 100%;
+    }
+
+    .menu-group {
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: all 200ms ease;
+    }
+
+    .menu-group summary {
+      background: transparent;
+    }
+
+    .submenu {
+      position: static;
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: none;
+      border-radius: 0;
+      transform-origin: top;
+      animation: accordion-slide 200ms ease;
+    }
+  }
+
+  @keyframes accordion-slide {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 </style>
+
+<script>
+  const menuGroups = Array.from(document.querySelectorAll('details.menu-group'));
+
+  const syncBodyScrollLock = () => {
+    const isAnyMenuOpen = menuGroups.some((group) => group.open);
+    document.body.classList.toggle('menu-open', isAnyMenuOpen);
+  };
+
+  menuGroups.forEach((group) => {
+    group.addEventListener('toggle', syncBodyScrollLock);
+  });
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    if (target.closest('.submenu a')) {
+      menuGroups.forEach((group) => {
+        group.open = false;
+      });
+      syncBodyScrollLock();
+    }
+  });
+</script>

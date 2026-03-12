@@ -1,0 +1,45 @@
+---
+import BaseHead from './BaseHead.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'GoldShore.ai Admin' } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} />
+    <style>
+      body {
+        margin: 0;
+        background-color: #050505;
+        color: #ffffff;
+        font-family: system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+      }
+
+      main {
+        width: 100%;
+        max-width: 80ch;
+        margin: 0 auto;
+        padding: 8rem 2rem;
+      }
+
+      :global(body.menu-open) {
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

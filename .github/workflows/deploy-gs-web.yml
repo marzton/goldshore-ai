@@ -16,6 +16,9 @@ on:
 jobs:
   deploy-web:
     runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-gs-web-${{ github.ref }}
+      cancel-in-progress: false
 
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
