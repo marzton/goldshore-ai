@@ -1,89 +1,158 @@
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
-import { join, resolve, basename } from "node:path";
+import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
+import path from "node:path";
+import { join } from "node:path";
 
-const ROOT = process.cwd();
-const APPS_DIR = resolve(ROOT, "apps");
-const CANONICAL_WORKERS = new Set(["gs-agent", "gs-api", "gs-control", "gs-gateway", "gs-mail"]);
+const APPS_DIR = path.resolve(process.cwd(), "apps");
+const WRANGLER_NAME_PATTERN = /^\s*name\s*=\s*["']([^"']+)["']/m;
+const ROUTE_PATTERN = /pattern\s*=\s*["']([^"']+)["']/g;
+const SINGLE_ROUTE_PATTERN = /^\s*route\s*=\s*["']([^"']+)["']/gm;
+const EXPECTED_HOST_OWNERS: Record<string, string> = {
+  "gateway.goldshore.ai": "gs-gateway",
+  "gw.goldshore.ai": "gs-gateway",
+  "agent.goldshore.ai": "gs-gateway",
+};
 
-let failed = false;
-
-if (!existsSync(APPS_DIR)) {
-  console.error("❌ apps directory not found");
-  process.exit(1);
+function getWorkerDirectories(): string[] {
+  return readdirSync(APPS_DIR)
+    .map((entry) => path.join(APPS_DIR, entry))
+    .filter((fullPath) => statSync(fullPath).isDirectory())
+    .filter((fullPath) => existsSync(path.join(fullPath, "wrangler.toml")))
+    .filter((fullPath) => !fullPath.includes(`${path.sep}legacy${path.sep}`));
 }
 
-// 1. Check Canonical Workers Naming
-console.log("Validating canonical worker names...");
-for (const worker of CANONICAL_WORKERS) {
-  const workerDir = join(APPS_DIR, worker);
-  const wranglerPath = join(workerDir, "wrangler.toml");
+function extractHostnames(wranglerRaw: string): string[] {
+  const hostnames = new Set<string>();
 
-  if (!existsSync(workerDir)) {
-      // Structure check handles missing dirs
+  for (const match of wranglerRaw.matchAll(ROUTE_PATTERN)) {
+    const pattern = match[1]?.trim();
+    const hostname = pattern?.split("/")[0]?.toLowerCase();
+    if (hostname) {
+      hostnames.add(hostname);
+    }
+  }
+
+  for (const match of wranglerRaw.matchAll(SINGLE_ROUTE_PATTERN)) {
+    const pattern = match[1]?.trim();
+    const hostname = pattern?.split("/")[0]?.toLowerCase();
+    if (hostname) {
+      hostnames.add(hostname);
+    }
+  }
+
+  return Array.from(hostnames);
+}
+
+export function validateWorkerNames(): string[] {
+  const failures: string[] = [];
+  const names = new Map<string, string>();
+  const hostOwners = new Map<string, string>();
+
+  for (const workerDir of getWorkerDirectories()) {
+    const folderName = path.basename(workerDir);
+    const wranglerPath = path.join(workerDir, "wrangler.toml");
+    const wranglerRaw = readFileSync(wranglerPath, "utf8");
+    const nameMatch = wranglerRaw.match(WRANGLER_NAME_PATTERN);
+
+    if (!nameMatch) {
+      failures.push(`${folderName}: missing top-level name in wrangler.toml`);
       continue;
+    }
+
+    const workerName = nameMatch[1];
+
+    if (folderName !== workerName) {
+      failures.push(
+        `${folderName}: wrangler name "${workerName}" requires folder to be "${workerName}"`,
+      );
+    }
+
+    if (names.has(workerName)) {
+      failures.push(`${folderName}: duplicate wrangler name "${workerName}" also used by ${names.get(workerName)}`);
+    } else {
+      names.set(workerName, folderName);
+    }
+
+    const hostnames = extractHostnames(wranglerRaw);
+    for (const hostname of hostnames) {
+      const existingOwner = hostOwners.get(hostname);
+      if (existingOwner && existingOwner !== workerName) {
+        failures.push(
+          `${folderName}: hostname collision for "${hostname}" between "${existingOwner}" and "${workerName}"`,
+        );
+      } else {
+        hostOwners.set(hostname, workerName);
+      }
+
+      const expectedOwner = EXPECTED_HOST_OWNERS[hostname];
+      if (expectedOwner && expectedOwner !== workerName) {
+        failures.push(
+          `${folderName}: hostname ownership mismatch for "${hostname}" (expected "${expectedOwner}", found "${workerName}")`,
+        );
+      }
+    }
   }
 
-  if (!existsSync(wranglerPath)) {
-    console.error(`❌ Missing wrangler.toml for ${worker}`);
+  for (const [hostname, expectedOwner] of Object.entries(EXPECTED_HOST_OWNERS)) {
+    const owner = hostOwners.get(hostname);
+    if (!owner) {
+      failures.push(`missing hostname route for "${hostname}"; expected owner "${expectedOwner}"`);
+      continue;
+    }
+
+    if (owner !== expectedOwner) {
+      failures.push(
+        `hostname ownership mismatch for "${hostname}" (expected "${expectedOwner}", found "${owner}")`,
+      );
+    }
+  }
+
+  return failures;
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const failures = validateWorkerNames();
+  let failed = false;
+
+  if (failures.length > 0) {
+    console.error("Worker naming validation failed:\n");
+    for (const failure of failures) {
+      console.error(`- ${failure}`);
+    }
     failed = true;
-    continue;
   }
 
-  try {
+  const CANONICAL_WORKERS = ["gs-agent", "gs-api", "gs-control", "gs-gateway", "gs-mail"];
+  const appsDirStr = "apps";
+
+  for (const worker of CANONICAL_WORKERS) {
+    const wranglerPath = join(appsDirStr, worker, "wrangler.toml");
+
+    if (!existsSync(wranglerPath)) {
+      failed = true;
+      console.error(`Missing wrangler.toml for ${worker}: ${wranglerPath}`);
+      continue;
+    }
+
     const content = readFileSync(wranglerPath, "utf8");
     const match = content.match(/^\s*name\s*=\s*["']([^"']+)["']/m);
 
     if (!match) {
-        console.error(`❌ ${worker}: Could not parse 'name' from wrangler.toml`);
-        failed = true;
-        continue;
+      failed = true;
+      console.error(`Could not parse worker name from ${wranglerPath}`);
+      continue;
     }
 
     const configuredName = match[1]?.trim();
     if (configuredName !== worker) {
-        console.error(`❌ ${worker}: name mismatch. Folder: "${worker}", wrangler name: "${configuredName}"`);
-        failed = true;
-    } else {
-        console.log(`✅ ${worker} name matches`);
-    }
-  } catch (e) {
-      console.error(`❌ ${worker}: Error reading wrangler.toml`);
       failed = true;
-  }
-}
-
-// 2. Scan for other workers to ensure consistency
-const allApps = readdirSync(APPS_DIR, { withFileTypes: true });
-for (const entry of allApps) {
-    if (!entry.isDirectory()) continue;
-    const dirName = entry.name;
-    const wranglerPath = join(APPS_DIR, dirName, "wrangler.toml");
-
-    if (existsSync(wranglerPath)) {
-        // We already checked canonicals.
-        if (CANONICAL_WORKERS.has(dirName)) continue;
-
-        try {
-            const content = readFileSync(wranglerPath, "utf8");
-            const match = content.match(/^\s*name\s*=\s*["']([^"']+)["']/m);
-            if (match) {
-                const configuredName = match[1]?.trim();
-                if (configuredName !== dirName) {
-                     console.error(`❌ Non-canonical worker ${dirName}: name mismatch. Folder: "${dirName}", wrangler name: "${configuredName}"`);
-                     failed = true;
-                }
-            }
-        } catch (e) {}
+      console.error(`Worker name mismatch in ${wranglerPath}: expected '${worker}', got '${configuredName}'`);
+      continue;
     }
-}
+  }
 
-if (failed) {
-  console.error("Worker naming validation failed.");
-  process.exit(1);
-} else {
+  if (failed) {
+    process.exit(1);
+  }
+
   console.log("Worker naming validation passed.");
-}
-
-export function validateWorkerNames() {
-    return failed ? ["Validation failed"] : [];
 }

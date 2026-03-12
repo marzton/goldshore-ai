@@ -1,204 +1,53 @@
 ---
-import '@goldshore/theme/styles/tokens.css';
-import { GSButton } from '@goldshore/ui';
 import WebLayout from '../layouts/WebLayout.astro';
-import ParallaxHero from "../components/hero/ParallaxHero.astro";
-import '../styles/home.css';
+import HeroBase from '../components/hero/HeroBase.astro';
+import {
+  DEFAULT_HERO_VARIANT,
+  normalizeHeroVariant,
+} from '../components/hero/hero.config';
 
-export const prerender = true;
-
-const features = [
-  {
-    title: 'Vibe Coding',
-    body: 'Aesthetic-driven development where code flows like fluid dynamics. Provable experience.',
-    icon: 'palette'
-  },
-  {
-    title: 'Cinematic Ops',
-    body: 'Infrastructure monitoring that feels like a sci-fi HUD. Real-time, responsive, and beautiful.',
-    icon: 'monitor_heart'
-  },
-  {
-    title: 'Applied Intelligence',
-    body: 'AI agents that don\'t just work—they perform. Seamless integration into your workflow.',
-    icon: 'psychology'
-  },
-];
-
-const highlights = [
-  { label: 'Global Latency', value: '< 30ms', tone: 'success' },
-  { label: 'System Status', value: 'Normal', tone: 'success' },
-  { label: 'Active Nodes', value: '24/24', tone: 'info' },
-  { label: 'Threat Level', value: 'None', tone: '' },
-];
+const env = Astro.locals.runtime?.env as
+  | { HERO_CONFIG_KV?: { get(key: string): Promise<string | null> } }
+  | undefined;
+const heroVariant = normalizeHeroVariant(
+  await env?.HERO_CONFIG_KV?.get('hero_variant'),
+);
 ---
 
-<WebLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
-  <main class="home">
-    <ParallaxHero title="Shaping Waves with Applied Intelligence" />
+<WebLayout
+  title="Gold Shore — Institutional Infrastructure & Operational Systems"
+  description="Gold Shore builds resilient infrastructure, automation, and operational platforms designed for real-time systems, reliability, and controlled performance."
+>
+  <HeroBase variant={heroVariant ?? DEFAULT_HERO_VARIANT} />
 
-    <div class="cinematic-wrapper">
-    <!-- Performance Section (Secondary Hero) -->
-    <section class="gs-hero home-hero parallax-section" style="padding-top: 0;">
-        <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.08" aria-hidden="true"></div>
-        <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.14" aria-hidden="true"></div>
-        <div class="parallax-layer gs-parallax layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
+  <div class="gs-divider" aria-hidden="true"></div>
 
-        <div class="hero-content reveal">
-            <p class="gs-badge" style="margin-bottom: var(--gs-space-3);">Modern ops for fluid markets</p>
-            <h2>Built for Resiliency</h2>
-            <p>
-                GoldShore builds resilient, automation-first systems for trading, control, and applied intelligence. Each surface ships with observability, safety, and responsive design baked in.
-            </p>
-        </div>
-
-        <div class="gs-card gs-pulse-frame hero-card reveal">
-            <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
-            <div class="gs-grid columns-2">
-                {highlights.map((item) => (
-                <div class="gs-kpi">
-                    <span>{item.label}</span>
-                    <strong>{item.value}</strong>
-                    <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
-                </div>
-                ))}
-            </div>
-            <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features-section blueprint-section parallax-section">
-        <div class="parallax-layer gs-parallax layer-blueprint" data-parallax="0.04" aria-hidden="true"></div>
-        <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.1" aria-hidden="true"></div>
-        <div class="parallax-layer gs-parallax layer-sheen" data-parallax="0.16" aria-hidden="true"></div>
-        <div class="features-grid">
-            {features.map((feature, i) => (
-            <div class="feature-card glass-panel reveal lux-card" style={`transition-delay: ${0.1 + (i * 0.1)}s;`}>
-                <div class="icon-box">
-                <span class="material-symbols-rounded">{feature.icon}</span>
-                </div>
-                <h3>{feature.title}</h3>
-                <p>{feature.body}</p>
-            </div>
-            ))}
-        </div>
-    </section>
+  <section class="gs-section" id="offerings">
+    <div class="gs-container gs-grid-3">
+      <article
+        class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
+        data-gs-reveal
+        data-gs-tilt
+      >
+        <div class="gs-label">Availability</div>
+        <div class="gs-stat">99.995%</div>
+      </article>
+      <article
+        class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
+        data-gs-reveal
+        data-gs-tilt
+      >
+        <div class="gs-label">Deploy Cadence</div>
+        <div class="gs-stat">48/day</div>
+      </article>
+      <article
+        class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
+        data-gs-reveal
+        data-gs-tilt
+      >
+        <div class="gs-label">Signal Integrity</div>
+        <div class="gs-stat">4.8B</div>
+      </article>
     </div>
-  </main>
+  </section>
 </WebLayout>
-
-<style>
-  /* Cinematic Wrapper */
-  .cinematic-wrapper {
-    position: relative;
-    /* Removed min-height: 100vh to let it flow naturally */
-    overflow: hidden;
-  }
-
-  /* Hero Section */
-  .gs-hero {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--gs-space-8);
-    align-items: center;
-    padding: var(--gs-space-12) var(--gs-space-6);
-    max-width: 1280px;
-    margin: 0 auto;
-  }
-
-  @media (max-width: 900px) {
-    .gs-hero { grid-template-columns: 1fr; text-align: center; }
-  }
-
-  h2 {
-    font-size: 3rem;
-    line-height: 1.1;
-    margin-bottom: var(--gs-space-4);
-    background: linear-gradient(to right, #fff, #94a3b8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  /* KPI & Performance Cards */
-  .gs-kpi {
-    background: var(--gs-color-bg-surface);
-    padding: var(--gs-space-3);
-    border-radius: var(--gs-radius-sm);
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  .gs-kpi span { font-size: 0.75rem; text-transform: uppercase; color: var(--gs-color-subtle); letter-spacing: 0.05em; }
-  .gs-kpi strong { font-size: 1.5rem; color: var(--gs-color-text); }
-  .section-title {
-    margin-top: 0;
-    margin-bottom: var(--gs-space-4);
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--gs-color-subtle);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  /* Features */
-  .features-section {
-    position: relative;
-    padding: 4rem 2rem;
-    max-width: 1280px;
-    margin: 0 auto;
-  }
-
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-  }
-
-  .glass-panel {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 2rem;
-    border-radius: 1rem;
-    transition: all 0.3s;
-  }
-
-  .glass-panel:hover {
-    background: rgba(255, 255, 255, 0.05);
-    transform: translateY(-5px);
-    border-color: rgba(34, 211, 238, 0.3);
-  }
-
-  .icon-box {
-    width: 48px;
-    height: 48px;
-    background: rgba(34, 211, 238, 0.1);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #22d3ee;
-    margin-bottom: 1.5rem;
-  }
-
-  .glass-panel h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: #fff;
-  }
-
-  .glass-panel p {
-    color: #94a3b8;
-    line-height: 1.6;
-  }
-</style>
-
-<script>
-  // Ensure parallax init works if it exists
-  // Assuming it's available in the module scope or global
-  // If the previous index.astro had it, we keep it logic-wise if needed.
-  // The ParallaxHero has its own script for canvas.
-</script>
