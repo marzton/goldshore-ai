@@ -8,7 +8,7 @@ user.get("/:id", async (c) => {
   c.header("Sunset", "Wed, 01 Jul 2026 00:00:00 GMT");
   c.header("Link", `</users/${id}>; rel=\"successor-version\"`);
   return c.redirect(`/users/${id}`, 308);
-  return c.json({ user: id, msg: "User endpoint working" });
 });
+
 
 export default user;
