@@ -1,4 +1,22 @@
 :root {
   --gs-color-primary: #22d3ee;
   --gs-color-text: #fff;
+  --gs-text-primary: #fff;
+  --gs-text-secondary: rgba(255, 255, 255, 0.7);
+  --gs-accent-cyan: #22d3ee;
+
+  --gs-header-bg-glass: rgba(3, 3, 5, 0.7);
+  --gs-header-bg-scrolled: rgba(0, 0, 0, 0.95);
+  --gs-header-border-subtle: rgba(255, 255, 255, 0.05);
+  --gs-header-border-accent: rgba(34, 211, 238, 0.15);
+  --gs-header-shadow-scrolled: 0 10px 40px -10px rgba(0, 0, 0, 0.8);
+
+  --gs-logo-glow-soft: rgba(34, 211, 238, 0.3);
+  --gs-logo-glow-strong: rgba(34, 211, 238, 0.6);
+
+  --gs-nav-indicator-bg: var(--gs-accent-cyan);
+  --gs-nav-indicator-shadow: 0 0 8px var(--gs-accent-cyan);
+
+  --gs-mobile-menu-bg: #000;
+  --gs-mobile-menu-border: rgba(255, 255, 255, 0.1);
 }
