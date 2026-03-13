@@ -39,7 +39,21 @@ const logoSrc = '/logo.svg';
     <div class="gs-page-shell">
       <header class="gs-header" data-menu-open="false">
         <a class="gs-logo" href="/" aria-label="GoldShore home">
-          <img src={logoSrc} alt="GoldShore logo" width="27" height="36" fetchpriority="high" />
+          <svg
+            class="gs-logo-mark"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 160 160"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="square"
+            stroke-linejoin="miter"
+            aria-hidden="true"
+          >
+            <path d="M80 20 L30 110 L130 110 Z" />
+            <path d="M80 35 L45 100 L115 100 Z" opacity="0.65" />
+          </svg>
+          <span class="gs-logo-text">Gold Shore</span>
         </a>
         <button class="gs-nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
           <span class="material-symbols-rounded" aria-hidden="true">menu</span>
@@ -168,12 +182,6 @@ const logoSrc = '/logo.svg';
       } else {
         initializeHeaderInteractions();
       }
-      document.addEventListener('click', (e) => {
-        if (header?.getAttribute('data-menu-open') === 'true' && !header.contains(e.target)) {
-          closeMenu();
-        }
-      });
-
       const STAR_COUNT = 16;
 
       const initializeShootingStars = (container) => {
@@ -214,6 +222,21 @@ const logoSrc = '/logo.svg';
       document.addEventListener('astro:page-load', initializeAllShootingStars);
       document.addEventListener('astro:before-swap', cleanupShootingStars);
       document.addEventListener('astro:after-swap', initializeAllShootingStars);
+    </script>
+    <script>
+      import { cleanupUI, initBriefingModal, initStarField, initTilt } from '../scripts/init-ui';
+
+      const initCodexUI = () => {
+        initStarField('hero-stars');
+        initTilt('[data-tilt]');
+        initBriefingModal();
+      };
+
+      document.addEventListener('astro:page-load', initCodexUI);
+      document.addEventListener('astro:before-swap', cleanupUI);
+      if (document.readyState !== 'loading') {
+        initCodexUI();
+      }
     </script>
     <style is:global>
       :root {
@@ -273,18 +296,18 @@ const logoSrc = '/logo.svg';
         margin-right: 1.5rem;
       }
 
-      .gs-logo img {
-        height: 90px; /* 2.5x larger than base ~36px */
-        width: auto;
-        mix-blend-mode: normal;
-        animation: glow-pulse 3s infinite ease-in-out;
+      .gs-logo-mark {
+        width: 32px;
+        height: 32px;
+        color: #d6b65a;
+        filter: drop-shadow(0 0 8px rgba(63, 126, 255, 0.25));
       }
 
-      .gs-logo img {
-        height: 40px;
-        width: auto;
-        /* Ensure logo blends if it has a dark bg */
-        mix-blend-mode: normal;
+      .gs-logo-text {
+        font-size: 1rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-family: 'JetBrains Mono', monospace;
       }
 
       .gs-nav {
