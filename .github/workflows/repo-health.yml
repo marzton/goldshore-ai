@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   audit:
     runs-on: ubuntu-latest
@@ -26,7 +29,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Branch conflict audit
-        run: bash scripts/branch-audit.sh > reports/branch-audit-log.txt
+        run: bash scripts/branch-audit.sh
 
       - name: Missing asset checks
         run: node scripts/file-integrity-check.js
@@ -38,5 +41,5 @@ jobs:
             exit 1
           fi
 
-      - name: Build validation
-        run: pnpm run audit
+      - name: Repo health checks
+        run: pnpm run repo:health
