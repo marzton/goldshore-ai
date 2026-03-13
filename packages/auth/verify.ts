@@ -7,7 +7,7 @@ export async function verifyAccess(req: Request, env: Env) {
   if (!token) return false;
 
   // Validate via Access JWKS
-  const res = await fetch(
+  await fetch(
     "https://goldshore.cloudflareaccess.com/cdn-cgi/access/certs"
   );
 
