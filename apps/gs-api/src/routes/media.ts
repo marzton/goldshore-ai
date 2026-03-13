@@ -24,12 +24,21 @@ const SCRIPT_LIKE_SELF_CLOSING_REGEX = /<(script|iframe|object|embed|link|meta|s
 const EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
 const JAVASCRIPT_URL_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*javascript:[\s\S]*?\1/gi;
 
-const sanitizeSvg = (input: string): string =>
-  input
-    .replace(SCRIPT_LIKE_TAGS_REGEX, '')
-    .replace(SCRIPT_LIKE_SELF_CLOSING_REGEX, '')
-    .replace(EVENT_HANDLER_ATTR_REGEX, '')
-    .replace(JAVASCRIPT_URL_REGEX, '');
+const sanitizeSvg = (input: string): string => {
+  let previous: string;
+  let sanitized = input;
+
+  do {
+    previous = sanitized;
+    sanitized = sanitized
+      .replace(SCRIPT_LIKE_TAGS_REGEX, '')
+      .replace(SCRIPT_LIKE_SELF_CLOSING_REGEX, '')
+      .replace(EVENT_HANDLER_ATTR_REGEX, '')
+      .replace(JAVASCRIPT_URL_REGEX, '');
+  } while (sanitized !== previous);
+
+  return sanitized;
+};
 
 /**
  * [SOP] Media Asset Management
