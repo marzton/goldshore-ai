@@ -101,7 +101,9 @@ try {
 
 
 } catch (e) {
-  console.error(e);
+  const rawErrorMessage = (e && (e.stack || e.message)) ? (e.stack || e.message) : String(e);
+  const sanitizedErrorMessage = rawErrorMessage.replace(/[\r\n]+/g, ' ');
+  console.error(`Unexpected error: ${sanitizedErrorMessage}`);
 } finally {
   serverProcess.kill();
   process.exit(0); // Always exit 0 to not break the tool chain, rely on logs
