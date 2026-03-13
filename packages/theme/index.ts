@@ -81,12 +81,14 @@ function initModal() {
     if (body) body.innerHTML = html;
     root.classList.add('is-open');
     document.documentElement.classList.add('gs-lock');
+    document.addEventListener('keydown', onKeydown);
     requestAnimationFrame(focusDialog);
   };
 
   const closeModal = () => {
     root.classList.remove('is-open');
     document.documentElement.classList.remove('gs-lock');
+    document.removeEventListener('keydown', onKeydown);
     if (opener?.isConnected) opener.focus();
     opener = null;
   };
