@@ -1,4 +1,3 @@
-import baseConfig from "@goldshore/config/astro";
 import { defineConfig } from "astro/config";
 import cloudflare from "@astrojs/cloudflare";
 import tailwind from "@astrojs/tailwind";
