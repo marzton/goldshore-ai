@@ -9,7 +9,7 @@
     "./scaffold": "./src/scaffold/index.astro"
   },
   "dependencies": {
-    "@goldshore/theme": "workspace:*",
-    "@goldshore/ui": "workspace:*"
+    "@goldshore/theme": "workspace:^",
+    "@goldshore/ui": "workspace:^"
   }
 }
