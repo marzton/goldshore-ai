@@ -1,10 +1,20 @@
 ---
-import Hero from '../components/Hero.astro';
 import MarketingLayout from '../layouts/MarketingLayout.astro';
+import Hero from '../components/Hero.astro';
 
 export const prerender = true;
 ---
 
-<MarketingLayout title="Goldshore | Intelligence infrastructure">
-  <Hero />
+<MarketingLayout title="GoldShore | Applied AI Infrastructure" description="GoldShore builds resilient AI systems, operations tooling, and data infrastructure for modern operators.">
+  <div class="home-shell">
+    <Hero />
+  </div>
 </MarketingLayout>
+
+<style>
+  .home-shell {
+    width: min(1100px, 100% - 2rem);
+    margin: 0 auto;
+    padding-bottom: 2rem;
+  }
+</style>
