@@ -11,7 +11,6 @@ type MockKVNamespace = {
 describe('Cloudflare Routes Middleware', () => {
   let mockEnv: any;
   let auditLogs: any[] = [];
-  const originalFetch = global.fetch;
 
   beforeEach(() => {
     auditLogs = [];
