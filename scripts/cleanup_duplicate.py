@@ -65,9 +65,13 @@ def process_nested_folder():
                     if not os.path.exists(target_dir):
                         os.makedirs(target_dir)
 
-                    shutil.move(nested_path, new_target_path)
-                    legacy_files.append(f"{rel_path} -> {new_filename}")
-                    print(f"MOVED (Legacy): {nested_path} -> {new_target_path}")
+                    try:
+                        shutil.move(nested_path, new_target_path)
+                    except Exception as e:
+                        print(f"ERROR (Legacy move failed): {nested_path} -> {new_target_path}: {e}")
+                    else:
+                        legacy_files.append(f"{rel_path} -> {new_filename}")
+                        print(f"MOVED (Legacy): {nested_path} -> {new_target_path}")
 
     # After processing all files, try to remove the NESTED_ROOT directory
     # It might fail if not empty (e.g. ignored dirs left), so we use shutil.rmtree
@@ -79,6 +83,8 @@ def process_nested_folder():
         print(f"Error removing {NESTED_ROOT}: {e}")
 
     # Generate Summary
+    moved_details = "\n".join(['- ' + f for f in moved_files]) if moved_files else "- None"
+    legacy_details = "\n".join(['- ' + f for f in legacy_files]) if legacy_files else "- None"
     summary = f"""
 # Duplicate Cleanup Summary
 - **Unique Files Moved:** {len(moved_files)}
@@ -87,10 +93,10 @@ def process_nested_folder():
 
 ## Details
 ### Moved
-{"\n".join(['- ' + f for f in moved_files])}
+{moved_details}
 
 ### Preserved as Legacy
-{"\n".join(['- ' + f for f in legacy_files])}
+{legacy_details}
     """
 
     with open("cleanup_summary.md", "w") as f:
