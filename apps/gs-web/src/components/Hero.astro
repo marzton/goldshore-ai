@@ -16,6 +16,21 @@ import '../styles/hero-stars.css';
     <div class="hero-cta">
       <a class="primary" href="/developer">Get Started</a>
       <a class="secondary" href="https://admin.goldshore.ai">Admin Login</a>
+
+<section class="hero">
+  <div class="shooting-stars" data-shooting-stars aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <h1 class="hero-title">Intelligence infrastructure for modern operators.</h1>
+
+    <p class="hero-sub">
+      Goldshore unifies AI systems, automation, market intelligence, and operational tooling into a
+      modular control layer.
+    </p>
+
+    <div class="hero-actions">
+      <a href="/request-access" class="btn-primary">Request Access</a>
+      <a href="/architecture" class="btn-secondary">Explore Architecture</a>
     </div>
   </div>
 </section>
@@ -79,3 +94,10 @@ import '../styles/hero-stars.css';
     color: #e2e8f0;
   }
 </style>
+<script>
+  import { spawnShootingStars } from './shooting-stars';
+
+  document.addEventListener('astro:page-load', () => {
+    spawnShootingStars();
+  });
+</script>
