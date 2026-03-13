@@ -16,12 +16,13 @@ on:
 jobs:
   deploy-web:
     runs-on: ubuntu-latest
-    concurrency:
-      group: deploy-gs-web-${{ github.ref }}
-      cancel-in-progress: false
 
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+
+      - name: Verify gs-website routing guardrails
+        run: bash scripts/ci/verify-gs-website-routing.sh
 
       - uses: pnpm/action-setup@v4
         with:

@@ -2,12 +2,6 @@
 
 This file contains instructions for AI agents working in this repository.
 
-## Repository Mapping
-
-- Main Logic: `/apps` (`gs-api`, `gs-gateway`, `gs-agent`)
-- Deployment: Refer to `wrangler.toml` in `/apps/gs-gateway`
-- Legacy Warning: `goldshore-api` is read-only. Source of truth is `/apps/gs-api`.
-
 ## Tagging for Review
 
 To request a review of an error or issue, please use the following tags in your comments or pull request descriptions:
@@ -23,9 +17,29 @@ Please provide as much context as possible when using these tags, including:
 *   Any relevant logs or error messages.
 *   The expected outcome.
 
-## Canonical Logo Paths
+## Consolidated Route Map (gs-website cutover)
 
-- Runtime logo references must use `/logo/gs-penrose.svg`.
-- Absolute logo references must use `https://goldshore.ai/logo/gs-penrose.svg`.
-- Do not add new runtime references to `/assets/brand/*`, `/packages/brand/logo-penrose.svg`, or `/favicon.svg`.
-- Legacy runtime logo files are archived under `archives/logo-legacy/`.
+GoldShore web properties are being consolidated into a single Cloudflare Pages deployment.
+
+* **Canonical Pages project name:** `gs-website`
+* **Legacy projects being sunset:** `goldshore-web`, `gs-web`
+* **Canonical app target for web UI work:** `apps/gs-web`
+
+When reviewing, planning, or proposing fixes:
+
+1. Prefer updates that align legacy paths and content into the unified `gs-website` structure.
+2. Treat the cinematic HUD-style home experience as the landing-page baseline.
+3. Keep shared HUD elements (e.g., system-status pill and terminal-style agent panel) in reusable layout components, not page-specific one-offs.
+4. Preserve existing URL compatibility with redirect/proxy rules (for example via `public/_redirects`), and prefer `200` proxy rewrites for live API/status fetch endpoints to avoid CORS regressions.
+5. Avoid introducing new references to sunset project names unless required for migration notes.
+
+### Migration orientation
+
+Use this mapping as the default north star for content/layout migration discussions:
+
+| Content Type | Legacy Location | Unified Target |
+|---|---|---|
+| Cinematic Hero | Preview branch artifacts | `src/components/Hero.astro` |
+| System HUD | Preview branch artifacts | `src/layouts/HUDLayout.astro` |
+| Markdown Docs | `goldshore-web/docs` (or equivalent) | `src/content/docs/*.md` |
+| Redirect rules | Dashboard/manual rules | `public/_redirects` |

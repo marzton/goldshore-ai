@@ -5,8 +5,7 @@ import {
   RoutingTableSchema,
   ServiceStatusSchema,
   migrateLegacyApiConfig,
-  normalizeApiRuntimeConfig,
-  parseSystemSyncSnapshot,
+  normalizeApiRuntimeConfig
 } from '@goldshore/schema';
 
 export type SystemConfig = ReturnType<typeof normalizeApiRuntimeConfig>;
@@ -23,30 +22,24 @@ export const loadSystemSyncSnapshot = async (kv: KVNamespace) => {
     kv.get('EMAIL_INBOX_LOGS', 'json'),
   ]);
 
-  const parsed = parseSystemSyncSnapshot({
-    ROUTING_TABLE,
-    SERVICE_STATUS,
-    AI_ORCHESTRATION,
-    EMAIL_INBOX_LOGS,
-  });
-
-  if (parsed.success) {
-    return parsed.data;
-  }
+  const parsedRouting = RoutingTableSchema.safeParse(ROUTING_TABLE);
+  const parsedStatus = ServiceStatusSchema.safeParse(SERVICE_STATUS);
+  const parsedOrchestration = AiOrchestrationSchema.safeParse(AI_ORCHESTRATION);
+  const parsedInboxLogs = EmailInboxLogsSchema.safeParse(EMAIL_INBOX_LOGS);
 
   return {
-    ROUTING_TABLE: RoutingTableSchema.safeParse(ROUTING_TABLE).success
-      ? RoutingTableSchema.parse(ROUTING_TABLE)
-      : RoutingTableSchema.parse({}),
-    SERVICE_STATUS: ServiceStatusSchema.safeParse(SERVICE_STATUS).success
-      ? ServiceStatusSchema.parse(SERVICE_STATUS)
-      : ServiceStatusSchema.parse({ maintenance_mode: false, active_services: [], version: 'unknown' }),
-    AI_ORCHESTRATION: AiOrchestrationSchema.safeParse(AI_ORCHESTRATION).success
-      ? AiOrchestrationSchema.parse(AI_ORCHESTRATION)
+    ROUTING_TABLE: parsedRouting.success ? parsedRouting.data : RoutingTableSchema.parse({}),
+    SERVICE_STATUS: parsedStatus.success
+      ? parsedStatus.data
+      : ServiceStatusSchema.parse({
+          maintenance_mode: false,
+          active_services: [],
+          version: 'unknown',
+        }),
+    AI_ORCHESTRATION: parsedOrchestration.success
+      ? parsedOrchestration.data
       : AiOrchestrationSchema.parse({}),
-    EMAIL_INBOX_LOGS: EmailInboxLogsSchema.safeParse(EMAIL_INBOX_LOGS).success
-      ? EmailInboxLogsSchema.parse(EMAIL_INBOX_LOGS)
-      : EmailInboxLogsSchema.parse([]),
+    EMAIL_INBOX_LOGS: parsedInboxLogs.success ? parsedInboxLogs.data : EmailInboxLogsSchema.parse([]),
   };
 };
 

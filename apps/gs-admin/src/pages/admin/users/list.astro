@@ -32,7 +32,7 @@ if (API_BASE && accessToken) {
     } else {
       loadError = `Failed to load users (${response.status}).`;
     }
-  } catch {
+  } catch (error) {
     loadError = 'Unable to reach the admin API.';
   }
 }

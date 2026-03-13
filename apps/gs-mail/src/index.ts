@@ -24,14 +24,14 @@ const readInboxLogs = async (kv: KVNamespace): Promise<EmailLog[]> => {
   }
 
   try {
-    const parsed = JSON.parse(rawLogs);
-    const validated = EmailInboxLogsSchema.safeParse(parsed);
-    if (!validated.success) {
-      console.error('❌ Existing EMAIL_INBOX_LOGS payload failed schema validation:', validated.error);
+    const parsedLogs = JSON.parse(rawLogs);
+    const parseResult = EmailInboxLogsSchema.safeParse(parsedLogs);
+    if (!parseResult.success) {
+      console.error('❌ Existing EMAIL_INBOX_LOGS payload failed schema validation:', parseResult.error);
       return [];
     }
 
-    return validated.data;
+    return parseResult.data;
   } catch (error) {
     console.error('❌ Failed to parse EMAIL_INBOX_LOGS payload:', error);
     return [];
@@ -39,9 +39,37 @@ const readInboxLogs = async (kv: KVNamespace): Promise<EmailLog[]> => {
 };
 
 app.get('/', (c) => c.text('GoldShore Mail Worker'));
-app.get('/health', (c) => c.json({ status: 'ok', service: 'gs-mail', env: c.env.ENV ?? 'production', version: VERSION }));
-app.get('/system/info', (c) => c.json({ service: 'gs-mail', runtime: 'cloudflare-worker', kv_bound: !!c.env.GS_CONFIG }));
+
+app.get('/health', (c) =>
+  c.json({
+    status: 'ok',
+    service: 'gs-mail',
+    env: c.env.ENV ?? 'production',
+    version: VERSION,
+  }),
+);
+
+app.get('/system/info', (c) =>
+  c.json({
+    service: 'gs-mail',
+    runtime: 'cloudflare-worker',
+    kv_bound: !!c.env.GS_CONFIG,
+  }),
+);
+
 app.get('/version', (c) => c.json({ version: VERSION }));
+
+app.post('/webhook', async (c) => {
+  return c.json({ received: true });
+});
+
+app.post('/api/subscribe', async (c) => {
+  return c.json({ status: 'subscribed' });
+});
+
+app.post('/api/contact', async (c) => {
+  return c.json({ status: 'sent' });
+});
 
 export default {
   fetch: app.fetch,

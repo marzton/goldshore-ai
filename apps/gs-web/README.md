@@ -59,19 +59,6 @@ Cloudflare metadata:
   - `PUBLIC_COMMIT_HASH` = `${{ github.sha }}` (full commit SHA used for the build)
 - `/status` renders this metadata plus runtime counts for stylesheet links and scripts, and the layout logo asset path from `meta[name="gs-logo-src"]`.
 
-## Astro runtime configuration ownership
-
-`apps/gs-web/astro.config.mjs` intentionally delegates runtime defaults to the shared config factory in `packages/config/src/astro/base.mjs` via `createAstroConfig(...)`. This shared config is the source of truth for Astro runtime behavior in this app.
-
-Already centrally configured in shared config:
-
-- Cloudflare adapter (`@astrojs/cloudflare`)
-- `output: 'server'`
-
-Do **not** run `astro add cloudflare` while this app uses `createAstroConfig(...)`; that command is only appropriate if we intentionally migrate away from the shared config pattern. If such a migration is needed, include a deliberate before/after `astro.config.mjs` diff in the change set.
-
-Theme runtime initialization should remain anchored in `src/layouts/WebLayout.astro`, where global scripts and shell UI startup (`initGoldShoreUI`, parallax init, and module runtime script injection) are centralized.
-
 ## CSP compatibility
 
 Approved outbound `connect-src` origins for browser runtime network calls in `src`:

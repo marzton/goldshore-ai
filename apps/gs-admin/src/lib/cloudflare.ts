@@ -21,13 +21,7 @@ export type CloudflareMetrics = {
   };
 };
 
-type RuntimeLocals = {
-  runtime?: {
-    env?: Record<string, string | undefined>;
-  };
-};
-
-export function getCloudflareContext(locals: RuntimeLocals) {
+export function getCloudflareContext(locals: any) {
   return locals.runtime?.env || process.env;
 }
 

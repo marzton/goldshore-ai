@@ -57,7 +57,7 @@ const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
         form.body.value = page.body;
         form.status.value = page.status;
         message.textContent = '';
-      } catch {
+      } catch (error) {
         message.textContent = 'Failed to load page.';
       }
     };
@@ -75,7 +75,7 @@ const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
         });
         const payload = await response.json();
         message.textContent = response.ok ? 'Changes saved.' : payload?.error || 'Failed to save.';
-      } catch {
+      } catch (error) {
         message.textContent = 'Failed to save.';
       }
     });

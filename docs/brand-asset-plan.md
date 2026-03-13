@@ -37,9 +37,3 @@ To avoid ambiguity in implementation, choose explicit consumption modes per surf
 3. Gateway worker.
 4. Control worker.
 5. Web/Admin Pages.
-
-## Allowed Runtime Logo Paths
-
-- Canonical relative path: `/logo/gs-penrose.svg`
-- Canonical absolute path: `https://goldshore.ai/logo/gs-penrose.svg`
-- Legacy runtime paths have been removed from active `/public` trees and archived under `archives/logo-legacy/`.

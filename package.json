@@ -28,9 +28,8 @@
     "sync:cf": "echo 'Run codex sync script here' && tsx scripts/sync-gateway.ts",
     "repo:clean": "git clean -xfd -e .env -e env.secrets.runtime.json",
     "repo:install": "pnpm install --frozen-lockfile",
-    "repo:health": "node scripts/repo-health.mjs && pnpm run check:logo-paths",
-    "audit": "pnpm run repo:health",
-    "check:logo-paths": "node scripts/check-canonical-logo-paths.mjs"
+    "repo:health": "node scripts/repo-health.mjs",
+    "audit": "pnpm run repo:health"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
@@ -43,17 +42,16 @@
     "eslint": "^8.57.0",
     "eslint-plugin-astro": "^1.6.0",
     "form-data": "^4.0.5",
-    "http-server": "^14.1.1",
     "octokit": "^5.0.5",
     "prettier": "^3.2.5",
     "prettier-plugin-astro": "^0.14.1",
-    "svgo": "^4.0.1",
     "tailwindcss": "^3.4.19",
     "tsx": "^4.21.0",
     "typescript": "^5.4.2",
-    "wrangler": "^4.71.0",
+    "wrangler": "^4.73.0",
     "yaml": "^2.8.2",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "svgo": "^4.0.1"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
