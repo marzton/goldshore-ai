@@ -3,6 +3,9 @@ name: Lockfile Guard
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   prevent-lockfile-changes:
     runs-on: ubuntu-latest
