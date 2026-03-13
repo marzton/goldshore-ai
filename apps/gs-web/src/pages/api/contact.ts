@@ -261,18 +261,6 @@ const dedupeRecipients = (recipients: MailRecipient[]) => {
   return [...unique.values()];
 };
 
-const recipientsFromEnv = (
-  rawRecipients: string | undefined,
-): MailRecipient[] => {
-  if (!rawRecipients) return [];
-
-  return rawRecipients
-    .split(',')
-    .map((entry) => entry.trim())
-    .filter(Boolean)
-    .map((email) => ({ email }));
-};
-
 const buildSubmissionDigest = (submission: Submission) => {
   const pairs: Array<[string, string]> = [
     ['Submission ID', submission.id],
