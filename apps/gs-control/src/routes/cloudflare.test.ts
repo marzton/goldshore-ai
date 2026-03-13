@@ -253,4 +253,25 @@ describe('Cloudflare Routes Middleware', () => {
     assert.strictEqual(auditLogs[0].status, "error");
     assert.strictEqual(auditLogs[0].metadata.message, "Simulated fetch error");
   });
+
+  it('should handle errors on /workers/status route', async () => {
+    global.fetch = mock.fn(async () => {
+      throw new Error("Simulated fetch error");
+    });
+
+    const response = await createRequest({
+      email: 'admin@example.com',
+      roles: ['admin'],
+    }, '/workers/status', 'GET');
+
+    assert.strictEqual(response.status, 502);
+    const body = await response.json() as any;
+    assert.deepStrictEqual(body, { error: "Cloudflare API request failed." });
+
+    // Check audit log
+    assert.strictEqual(auditLogs.length, 1);
+    assert.strictEqual(auditLogs[0].action, "cloudflare:workers:status");
+    assert.strictEqual(auditLogs[0].status, "error");
+    assert.strictEqual(auditLogs[0].metadata.message, "Simulated fetch error");
+  });
 });
