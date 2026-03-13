@@ -63,7 +63,7 @@ def process_nested_folder():
                     new_target_path = os.path.join(target_dir, new_filename)
 
                     if not os.path.exists(target_dir):
-                         os.makedirs(target_dir)
+                        os.makedirs(target_dir)
 
                     shutil.move(nested_path, new_target_path)
                     legacy_files.append(f"{rel_path} -> {new_filename}")
@@ -87,10 +87,10 @@ def process_nested_folder():
 
 ## Details
 ### Moved
-{chr(10).join(['- ' + f for f in moved_files])}
+{"\n".join(['- ' + f for f in moved_files])}
 
 ### Preserved as Legacy
-{chr(10).join(['- ' + f for f in legacy_files])}
+{"\n".join(['- ' + f for f in legacy_files])}
     """
 
     with open("cleanup_summary.md", "w") as f:
