@@ -10,9 +10,7 @@
 }
 
 @media (max-width: 768px) {
-  .gs-section {
-    padding: var(--gs-section-m) 0;
-  }
+  .gs-section { padding: var(--gs-section-m) 0; }
 }
 
 .gs-section + .gs-section::before {
@@ -22,7 +20,7 @@
   left: var(--gs-pad);
   right: var(--gs-pad);
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(90, 140, 255, 0.28), transparent);
+  background: linear-gradient(90deg, transparent, rgba(90,140,255,0.28), transparent);
   opacity: 0.65;
 }
 
