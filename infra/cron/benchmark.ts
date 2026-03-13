@@ -23,17 +23,31 @@ async function openOpsIssue() {
 }
 
 // Config mock
-const cfg = {
+type CloudflareCheck =
+  | { type: "pages_build_status"; project: string }
+  | { type: "dns_records" }
+  | { type: "worker_health"; script: string };
+
+const cfg: {
   cloudflare: {
-    checks: Array(20).fill({ type: "pages_build_status", project: "gs-web" }),
+    checks: CloudflareCheck[];
+  };
+  github: { org: string };
+  ai_agent: { triage_labels: string[] };
+} = {
+  cloudflare: {
+    checks: Array<CloudflareCheck>(20).fill({
+      type: "pages_build_status",
+      project: "gs-web",
+    }),
   },
   github: { org: "goldshore" },
-  ai_agent: { triage_labels: [] }
+  ai_agent: { triage_labels: [] },
 };
 
 // Original sequential function
 async function checkCloudflareSequential() {
-  for (const check of (cfg.cloudflare.checks as any[])) {
+  for (const check of cfg.cloudflare.checks) {
     if (check.type === "pages_build_status") {
       const status = await getPagesProjectBuildStatus(check.project);
       if (!["success", "completed"].includes(status)) {
@@ -41,11 +55,11 @@ async function checkCloudflareSequential() {
       }
     }
     if (check.type === "dns_records") {
-      const dns = await getDNSRecords();
+      await getDNSRecords();
       // Mock logic
     }
     if (check.type === "worker_health") {
-      const bindings = await getWorkerBindings(check.script);
+      await getWorkerBindings(check.script);
       // Mock logic
     }
   }
@@ -53,7 +67,7 @@ async function checkCloudflareSequential() {
 
 async function checkCloudflareConcurrent() {
   const maxConcurrent = 6;
-  const checks = cfg.cloudflare.checks as any[];
+  const checks: CloudflareCheck[] = cfg.cloudflare.checks;
   const executing = new Set<Promise<void>>();
 
   for (const check of checks) {
@@ -68,10 +82,10 @@ async function checkCloudflareConcurrent() {
           await getDNSRecords();
           // Mock logic
         } else if (check.type === "worker_health") {
-          const bindings = await getWorkerBindings(check.script);
+          await getWorkerBindings(check.script);
           // Mock logic
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error(`Error processing check ${check.type}:`, err);
       }
     });
