@@ -36,6 +36,12 @@ media.get('/', async (c) => {
 });
 
 media.get('/:id', async (c) => {
+  // Basic authentication guard: require a valid Authorization header before serving media assets.
+  const authHeader = c.req.header('Authorization');
+  if (!authHeader || authHeader !== `Bearer ${c.env.MEDIA_ACCESS_TOKEN}`) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
   const id = c.req.param('id');
   const result = await c.env.DB
     .prepare('SELECT object_key, type FROM media_assets WHERE id = ?')
