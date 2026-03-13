@@ -1,5 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
+
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { escapeHtml, isValidEmail, sanitizeInput } from '../../src/utils/security.ts';
 
 test('escapeHtml should escape special characters', () => {
@@ -40,4 +43,18 @@ test('sanitizeInput should handle non-string input gracefully', () => {
   assert.strictEqual(sanitizeInput(null as any), '');
   assert.strictEqual(sanitizeInput(undefined as any), '');
   assert.strictEqual(sanitizeInput(123 as any), '');
+});
+
+
+test('Content-Security-Policy disallows inline scripts', () => {
+  const headersPath = resolve(process.cwd(), 'public/_headers');
+  const headersFile = readFileSync(headersPath, 'utf8');
+  const cspLine = headersFile
+    .split('\n')
+    .map((line) => line.trim())
+    .find((line) => line.startsWith('Content-Security-Policy:'));
+
+  assert.ok(cspLine, 'Expected a Content-Security-Policy header in public/_headers');
+  assert.match(cspLine!, /script-src 'self'(?:;|\s)/);
+  assert.doesNotMatch(cspLine!, /script-src[^;]*'unsafe-inline'/);
 });
