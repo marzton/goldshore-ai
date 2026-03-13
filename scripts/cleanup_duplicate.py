@@ -20,6 +20,7 @@ def process_nested_folder():
     moved_files = []
     deleted_files = []
     legacy_files = []
+    failed_legacy_moves = []
 
     for root, dirs, files in os.walk(NESTED_ROOT, topdown=True):
         # Modify dirs in-place to skip ignored directories
@@ -68,6 +69,8 @@ def process_nested_folder():
                     try:
                         shutil.move(nested_path, new_target_path)
                     except Exception as e:
+                        error_msg = f"{rel_path} -> {new_filename}: {e}"
+                        failed_legacy_moves.append(error_msg)
                         print(f"ERROR (Legacy move failed): {nested_path} -> {new_target_path}: {e}")
                     else:
                         legacy_files.append(f"{rel_path} -> {new_filename}")
@@ -85,11 +88,13 @@ def process_nested_folder():
     # Generate Summary
     moved_details = "\n".join(['- ' + f for f in moved_files]) if moved_files else "- None"
     legacy_details = "\n".join(['- ' + f for f in legacy_files]) if legacy_files else "- None"
+    failed_legacy_details = "\n".join(['- ' + f for f in failed_legacy_moves]) if failed_legacy_moves else "- None"
     summary = f"""
 # Duplicate Cleanup Summary
 - **Unique Files Moved:** {len(moved_files)}
 - **Duplicate Files Deleted:** {len(deleted_files)}
 - **Newer Nested Files Preserved (Legacy):** {len(legacy_files)}
+- **Legacy Moves Failed:** {len(failed_legacy_moves)}
 
 ## Details
 ### Moved
@@ -97,6 +102,9 @@ def process_nested_folder():
 
 ### Preserved as Legacy
 {legacy_details}
+
+### Failed Legacy Moves
+{failed_legacy_details}
     """
 
     with open("cleanup_summary.md", "w") as f:
