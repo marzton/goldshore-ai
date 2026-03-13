@@ -137,9 +137,6 @@ function initModal() {
         last.focus();
       }
       return;
-    }
-
-    if (active === last) {
       e.preventDefault();
       first.focus();
     }
