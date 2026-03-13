@@ -5,7 +5,7 @@ ROOT="${1:-.}"
 REDIRECTS="$ROOT/apps/gs-web/public/_redirects"
 ASTRO_CFG="$ROOT/apps/gs-web/astro.config.mjs"
 API_DOMAIN="${API_DOMAIN:-api.goldshore.ai}"
-API_DOMAIN_REGEX="$(printf '%s' "$API_DOMAIN" | sed 's/[.[\*^$()+?{|]/\\&/g')"
+API_DOMAIN_REGEX="$(printf '%s' "$API_DOMAIN" | sed 's/[.[\*^$()+?{|\\]/\\&/g')"
 
 echo "Verifying GS website routing guardrails..."
 
@@ -32,6 +32,6 @@ done
 #   }
 # If the config structure or formatting changes (multi-line, variables, computed keys, etc.),
 # this regex and script should be updated accordingly.
-rg -nP "([\"'\`])/developer-hub\1[[:space:]]*:[[:space:]]*([\"'\`])/developer\2[[:space:]]*,?" "$ASTRO_CFG" || { echo "ERROR: Missing framework-level alias mapping '/developer-hub' to '/developer' in '$ASTRO_CFG'." >&2; exit 1; }
+rg -nP "['\"\`]/developer-hub['\"\`][[:space:]]*:[[:space:]]*['\"\`]/developer['\"\`][[:space:]]*,?" "$ASTRO_CFG" || { echo "ERROR: Missing framework-level alias mapping '/developer-hub' to '/developer' in '$ASTRO_CFG'." >&2; exit 1; }
 
 echo "✅ gs-website routing guardrails verified."
