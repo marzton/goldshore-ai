@@ -1,4 +1,9 @@
-import { MasterConfigSchema, type MasterConfig } from '../packages/schema/src/system.ts';
+import {
+  AiOrchestrationSchema,
+  RoutingTableSchema,
+  ServiceStatusSchema,
+} from '../packages/schema/src/system.ts';
+import { z } from 'zod';
 
 const DEFAULT_ACCOUNT_ID = 'f77de112d2019e5456a3198a8bb50bd2';
 const DEFAULT_NAMESPACE_ID = '9cc2209906a94851b704be57543987a9';
@@ -12,12 +17,13 @@ const MASTER_CONFIG: MasterConfig = {
     'gateway.goldshore.ai': { role: 'ingress', worker: 'gs-gateway' },
     'agent.goldshore.ai': { role: 'alias', target: 'gateway.goldshore.ai' },
     'api.goldshore.ai': { role: 'backend', worker: 'gs-api' },
+    'agent.internal.goldshore.ai': { role: 'backend', worker: 'gs-agent' },
     'admin.goldshore.ai': { role: 'frontend', project: 'gs-admin-pages' },
     'mail.goldshore.ai': { role: 'mx-only', provider: 'cloudflare-email' },
   },
   SERVICE_STATUS: {
     maintenance_mode: false,
-    active_services: ['gateway', 'api', 'agent', 'admin'],
+    active_services: ['gs-gateway', 'gs-api', 'gs-agent', 'gs-admin'],
   },
   AI_ORCHESTRATION: {
     preferred_model: 'gpt-4-turbo',
@@ -133,13 +139,34 @@ const payload: ConfigPayload = {
   ROUTING_TABLE: {
     api: { role: "backend", worker: "gs-api", priority: 1 },
     gateway: { role: "ingress", worker: "gs-gateway", priority: 1 },
+const SyncLedgerSchema = z
+  .object({
+    last_sync: z.string().datetime(),
+    namespace_id: z.string().min(1),
+    account_id_masked: z.string().min(4),
+    hosts: z.array(z.string().min(1)).min(1),
+    keys_uploaded: z.array(z.string().min(1)).min(1),
+  })
+  .strict();
+
+type ConfigPayload = z.infer<typeof ConfigPayloadSchema>;
+type ConfigKey = keyof ConfigPayload;
+
+type SyncLedger = z.infer<typeof SyncLedgerSchema>;
+
+const MASTER_CONFIG: ConfigPayload = {
+  ROUTING_TABLE: {
+    api: { role: "backend", worker: "gs-api", priority: 1 },
+    gateway: { role: "ingress", worker: "gs-gateway", priority: 1 },
+    agent: { role: "backend", worker: "gs-agent", priority: 1 },
+    "agent.goldshore.ai": { role: "alias", target: "gateway", priority: 1 },
     admin: { role: "frontend", project: "gs-admin", priority: 1 },
     web: { role: "frontend", project: "gs-web", priority: 1 },
     mail: { role: "mx-only", target: "gs-mail", priority: 1 },
   },
   SERVICE_STATUS: {
     maintenance_mode: false,
-    active_services: ["gs-api", "gs-gateway", "gs-mail", "gs-web", "gs-admin"],
+    active_services: ["gs-api", "gs-gateway", "gs-agent", "gs-mail", "gs-web", "gs-admin"],
     version: "2026-03-03",
     last_sync: new Date().toISOString(),
   },
@@ -155,6 +182,14 @@ const payload: ConfigPayload = {
 };
 
 function getRequiredEnv(name: "CLOUDFLARE_API_TOKEN"): string {
+    preferred_model: 'gpt-5-mini',
+    agent_modules: ['operator-assist', 'market-intel'],
+    queue_concurrency: 10,
+    retry_attempts: 2,
+  },
+};
+
+function getRequiredEnv(name: 'CLOUDFLARE_API_TOKEN'): string {
   const value = process.env[name]?.trim();
   if (!value) {
     throw new Error(`Missing required environment variable: ${name}.`);
@@ -174,6 +209,10 @@ function resolveEnvWithFallback(
     );
   }
   return value;
+}
+
+function maskAccountId(accountId: string): string {
+  return accountId.length > 4 ? `${'*'.repeat(accountId.length - 4)}${accountId.slice(-4)}` : accountId;
 }
 
 async function putKvValue(args: {
@@ -227,29 +266,27 @@ async function verifyInboxStatus(): Promise<{ ok: boolean; status?: number; deta
 }
 
 async function main(): Promise<void> {
-  const token = getRequiredEnv("CLOUDFLARE_API_TOKEN");
-  const accountId = resolveEnvWithFallback(
-    "CLOUDFLARE_ACCOUNT_ID",
-    DEFAULT_ACCOUNT_ID,
-    "fallback available via CF_ACCOUNT_ID",
-  );
-  const namespaceId = resolveEnvWithFallback(
-    "GS_KV_NAMESPACE_ID",
-    DEFAULT_NAMESPACE_ID,
-    "fallback available via repository default",
-  );
+  const token = getRequiredEnv('CLOUDFLARE_API_TOKEN');
+  const accountId = resolveEnvWithFallback('CLOUDFLARE_ACCOUNT_ID', DEFAULT_ACCOUNT_ID);
+  const namespaceId = resolveEnvWithFallback('GS_KV_NAMESPACE_ID', DEFAULT_NAMESPACE_ID);
 
-  const validatedPayload = ConfigPayloadSchema.parse(payload);
+  const validatedPayload = ConfigPayloadSchema.parse(MASTER_CONFIG);
+  const configKeys = Object.keys(validatedPayload) as ConfigKey[];
 
-  const keys: ConfigKey[] = ["ROUTING_TABLE", "SERVICE_STATUS", "AI_ORCHESTRATION"];
+  const syncLedger: SyncLedger = SyncLedgerSchema.parse({
+    last_sync: new Date().toISOString(),
+    namespace_id: namespaceId,
+    account_id_masked: maskAccountId(accountId),
+    hosts: Object.keys(validatedPayload.ROUTING_TABLE),
+    keys_uploaded: [...configKeys, 'INFRA_SYNC_LEDGER'],
+  });
 
-  console.log("Starting Cloudflare KV sync...");
-  const maskedAccountId = accountId.length > 4 ? accountId.slice(-4).padStart(accountId.length, "*") : "[redacted]";
-  console.log(`- Account: ${maskedAccountId}`);
+  console.log('Starting Cloudflare KV sync...');
+  console.log(`- Account: ${syncLedger.account_id_masked}`);
   console.log(`- Namespace: ${namespaceId}`);
 
-  const results = await Promise.all(
-    keys.map((key) =>
+  const results = await Promise.all([
+    ...configKeys.map((key) =>
       putKvValue({
         accountId,
         namespaceId,
@@ -258,13 +295,20 @@ async function main(): Promise<void> {
         value: validatedPayload[key],
       }),
     ),
-  );
+    putKvValue({
+      accountId,
+      namespaceId,
+      token,
+      key: 'INFRA_SYNC_LEDGER',
+      value: syncLedger,
+    }),
+  ]);
 
   for (const result of results) {
     if (result.ok) {
       console.log(`✅ ${result.key}: uploaded (HTTP ${result.status})`);
     } else {
-      console.error(`❌ ${result.key}: failed (HTTP ${result.status}) ${result.detail ?? ""}`);
+      console.error(`❌ ${result.key}: failed (HTTP ${result.status}) ${result.detail ?? ''}`);
     }
   }
 
@@ -272,11 +316,12 @@ async function main(): Promise<void> {
   if (verifyResult.ok) {
     console.log(`✅ Verification: /internal/inbox-status passed (HTTP ${verifyResult.status})`);
   } else {
-    console.error(`❌ Verification: /internal/inbox-status failed (${verifyResult.detail ?? "unknown error"})`);
+    console.error(`❌ Verification: /internal/inbox-status failed (${verifyResult.detail ?? 'unknown error'})`);
   }
 
-  const failures = results.filter((result) => !result.ok).length + (verifyResult.ok ? 0 : 1);
-  console.log(`Summary: ${results.length - results.filter((r) => !r.ok).length}/${results.length} KV uploads passed; verification ${verifyResult.ok ? "passed" : "failed"}.`);
+  const uploadFailures = results.filter((result) => !result.ok).length;
+  const failures = uploadFailures + (verifyResult.ok ? 0 : 1);
+  console.log(`Summary: ${results.length - uploadFailures}/${results.length} KV uploads passed; verification ${verifyResult.ok ? 'passed' : 'failed'}.`);
 
   if (failures > 0) {
     process.exitCode = 1;

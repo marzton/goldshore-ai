@@ -17,14 +17,34 @@ const ALLOWED_MIME_TYPES = new Map([
   ['jpeg', 'image/jpeg']
 ]);
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
+// 5MB limit to prevent DoS via large file uploads
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+const SCRIPT_LIKE_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style)[\s\S]*?>[\s\S]*?<\/\1>/gi;
+const SCRIPT_LIKE_SELF_CLOSING_REGEX = /<(script|iframe|object|embed|link|meta|style)\b[^>]*\/?>/gi;
+const EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const JAVASCRIPT_URL_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*javascript:[\s\S]*?\1/gi;
+
+const sanitizeSvg = (input: string): string => {
+  let previous: string;
+  let sanitized = input;
+
+  do {
+    previous = sanitized;
+    sanitized = sanitized
+      .replace(SCRIPT_LIKE_TAGS_REGEX, '')
+      .replace(SCRIPT_LIKE_SELF_CLOSING_REGEX, '')
+      .replace(EVENT_HANDLER_ATTR_REGEX, '')
+      .replace(JAVASCRIPT_URL_REGEX, '');
+  } while (sanitized !== previous);
+
+  return sanitized;
+};
 
 /**
  * [SOP] Media Asset Management
  * Handles R2 storage for images and SVGs with strict sanitization for vector assets.
  */
-
-// ... (sanitizeSvg and regex constants provided in your source remain identical)
 
 const media = new Hono<{ Bindings: Env; Variables: Variables }>();
 
@@ -52,7 +72,7 @@ media.get('/:id', async (c) => {
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
   
   // Sentinel: Enforce strict CSP to mitigate SVG XSS
-  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; sandbox");
+  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; object-src 'none'; sandbox");
 
   return new Response(object.body, { headers });
 });
