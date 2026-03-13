@@ -4,11 +4,13 @@ import '@goldshore/theme/styles/base';
 import '@goldshore/theme/styles/components';
 import '@goldshore/theme/styles/layout';
 import { GSButton } from '@goldshore/ui';
+import SiteFooter from '../components/SiteFooter.astro';
 
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
   { href: '/services', label: 'Services' },
+  { href: '/solutions', label: 'Solutions' },
   { href: '/team', label: 'Team' },
   { href: '/contact?inquiry=strategy-call', label: 'Book Strategy Call' },
   { href: '/contact', label: 'Contact' },
@@ -44,7 +46,7 @@ const logoSrc = '/logo.svg';
           <span class="material-symbols-rounded" aria-hidden="true">menu</span>
           <span class="sr-only">Toggle menu</span>
         </button>
-        <nav class="gs-nav" id="primary-navigation" aria-label="Primary">
+        <nav class="gs-nav" id="primary-navigation" aria-label="Primary" aria-hidden="true">
           {navLinks.map((link) => (
             <a
               href={link.href}
@@ -65,97 +67,154 @@ const logoSrc = '/logo.svg';
         <slot />
       </main>
 
-      <footer class="gs-footer">
-        <div class="gs-section gs-section--padded">
-          <div class="gs-grid columns-2">
-            <div>
-              <div class="gs-logo" style="gap: var(--gs-space-2);">
-                <img src={logoSrc} alt="GoldShore logo" width="24" height="32" loading="lazy" decoding="async" />
-              </div>
-              <p>Applied intelligence, resilient infrastructure, and responsive operations.</p>
-            </div>
-            <div class="gs-grid columns-2" style="gap: var(--gs-space-2);">
-              <div class="gs-nav gs-nav--vertical">
-                <strong><span class="aria-icon aria-icon-orbit" aria-hidden="true"></span>Company</strong>
-                <a href="/about" aria-current={currentPath === '/about' ? 'page' : undefined}>About</a>
-                <a href="/team" aria-current={currentPath === '/team' ? 'page' : undefined}>Team</a>
-                <a href="/services" aria-current={currentPath === '/services' ? 'page' : undefined}>Services</a>
-              </div>
-              <div class="gs-nav gs-nav--vertical-support">
-                <strong><span class="aria-icon aria-icon-signal" aria-hidden="true"></span>Support</strong>
-                <a href="/contact" aria-current={currentPath === '/contact' ? 'page' : undefined}>Contact</a>
-                <a href="/legal/privacy" aria-current={currentPath === '/legal/privacy' ? 'page' : undefined}>Privacy</a>
-                <a href="/legal/terms" aria-current={currentPath === '/legal/terms' ? 'page' : undefined}>Terms</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter currentPath={currentPath} logoSrc={logoSrc} />
     </div>
     <script is:inline>
-      const header = document.querySelector('.gs-header');
-      const toggle = document.querySelector('.gs-nav-toggle');
+      const initializeHeaderInteractions = () => {
+        const header = document.querySelector('.gs-header');
+        const toggle = header?.querySelector('.gs-nav-toggle');
+        const menu = header?.querySelector('#primary-navigation');
 
-      // Scroll handling with requestAnimationFrame
-      let ticking = false;
-      let wasScrolled = false;
-
-      const updateHeader = () => {
-        if (!header) {
-          ticking = false;
+        if (!header || !toggle || !menu || header.dataset.interactionsBound === 'true') {
           return;
         }
 
-        const isScrolled = window.scrollY > 10;
-        if (isScrolled !== wasScrolled) {
-          header.classList.toggle('is-scrolled', isScrolled);
-          wasScrolled = isScrolled;
-        }
-        ticking = false;
+        header.dataset.interactionsBound = 'true';
+
+        // Scroll handling with requestAnimationFrame
+        let ticking = false;
+        let wasScrolled = false;
+        let lastFocusedBeforeOpen = null;
+
+        const getFocusableMenuItems = () => {
+          return Array.from(
+            menu.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+          );
+        };
+
+        const setMenuState = (open) => {
+          header.setAttribute('data-menu-open', String(open));
+          toggle.setAttribute('aria-expanded', String(open));
+          menu.setAttribute('aria-hidden', String(!open));
+        };
+
+        const closeMenu = ({ restoreFocus = true } = {}) => {
+          setMenuState(false);
+          if (restoreFocus && lastFocusedBeforeOpen instanceof HTMLElement) {
+            lastFocusedBeforeOpen.focus();
+          }
+          lastFocusedBeforeOpen = null;
+        };
+
+        const openMenu = () => {
+          lastFocusedBeforeOpen = document.activeElement instanceof HTMLElement ? document.activeElement : toggle;
+          setMenuState(true);
+          const [firstFocusable] = getFocusableMenuItems();
+          (firstFocusable ?? toggle).focus();
+        };
+
+        const updateHeader = () => {
+          const isScrolled = window.scrollY > 10;
+          if (isScrolled !== wasScrolled) {
+            header.classList.toggle('is-scrolled', isScrolled);
+            wasScrolled = isScrolled;
+          }
+          ticking = false;
+        };
+
+        setMenuState(false);
+        updateHeader();
+
+        window.addEventListener('scroll', () => {
+          if (!ticking) {
+            window.requestAnimationFrame(updateHeader);
+            ticking = true;
+          }
+        }, { passive: true });
+
+        toggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isOpen = header.getAttribute('data-menu-open') === 'true';
+          if (isOpen) {
+            closeMenu({ restoreFocus: false });
+          } else {
+            openMenu();
+          }
+        });
+
+        menu.addEventListener('click', (e) => {
+          const routeLink = e.target instanceof Element ? e.target.closest('a[href]') : null;
+          if (routeLink) {
+            closeMenu({ restoreFocus: false });
+          }
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && header.getAttribute('data-menu-open') === 'true') {
+            closeMenu();
+          }
+        });
+
+        document.addEventListener('click', (e) => {
+          if (header.getAttribute('data-menu-open') === 'true' && !header.contains(e.target)) {
+            closeMenu({ restoreFocus: false });
+          }
+        });
       };
 
-      window.addEventListener('scroll', () => {
-        if (!ticking) {
-          window.requestAnimationFrame(updateHeader);
-          ticking = true;
-        }
-      }, { passive: true });
+      document.addEventListener('astro:page-load', initializeHeaderInteractions);
 
-      // Initial check
-      updateHeader();
-
-      // Mobile Menu Handling
-      const closeMenu = () => {
-        if (header && toggle) {
-          header.setAttribute('data-menu-open', 'false');
-          toggle.setAttribute('aria-expanded', 'false');
-        }
-      };
-
-      toggle?.addEventListener('click', (e) => {
-        if (!header) return;
-        e.stopPropagation();
-        const isOpen = header.getAttribute('data-menu-open') === 'true';
-        if (isOpen) {
-          closeMenu();
-        } else {
-          header.setAttribute('data-menu-open', 'true');
-          toggle.setAttribute('aria-expanded', 'true');
-        }
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && header?.getAttribute('data-menu-open') === 'true') {
-          closeMenu();
-          toggle?.focus();
-        }
-      });
-
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeHeaderInteractions, { once: true });
+      } else {
+        initializeHeaderInteractions();
+      }
       document.addEventListener('click', (e) => {
         if (header?.getAttribute('data-menu-open') === 'true' && !header.contains(e.target)) {
           closeMenu();
         }
       });
+
+      const STAR_COUNT = 16;
+
+      const initializeShootingStars = (container) => {
+        if (!(container instanceof HTMLElement)) return;
+
+        const existingStars = container.querySelectorAll('.shooting-star');
+        const isInitialized = container.dataset.starsInitialized === 'true';
+
+        if (isInitialized && existingStars.length > 0) {
+          return;
+        }
+
+        container.replaceChildren();
+
+        for (let i = 0; i < STAR_COUNT; i += 1) {
+          const star = document.createElement('span');
+          star.className = 'shooting-star';
+          container.appendChild(star);
+        }
+
+        container.dataset.starsInitialized = 'true';
+      };
+
+      const initializeAllShootingStars = () => {
+        document.querySelectorAll('.shooting-stars').forEach((container) => {
+          initializeShootingStars(container);
+        });
+      };
+
+      const cleanupShootingStars = () => {
+        document.querySelectorAll('.shooting-stars[data-stars-initialized="true"]').forEach((container) => {
+          container.removeAttribute('data-stars-initialized');
+          container.replaceChildren();
+        });
+      };
+
+      initializeAllShootingStars();
+      document.addEventListener('astro:page-load', initializeAllShootingStars);
+      document.addEventListener('astro:before-swap', cleanupShootingStars);
+      document.addEventListener('astro:after-swap', initializeAllShootingStars);
     </script>
     <style is:global>
       :root {
@@ -178,26 +237,26 @@ const logoSrc = '/logo.svg';
         align-items: center;
         justify-content: space-between;
         padding: 0 2rem;
-        background: rgba(3, 3, 5, 0.7); /* Deep dark tint */
+        background: var(--gs-header-bg-glass);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid var(--gs-header-border-subtle);
         transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
       .gs-header.is-scrolled {
-        background: rgba(0, 0, 0, 0.95);
-        border-bottom-color: rgba(34, 211, 238, 0.15); /* Cyan hint */
-        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.8);
+        background: var(--gs-header-bg-scrolled);
+        border-bottom-color: var(--gs-header-border-accent);
+        box-shadow: var(--gs-header-shadow-scrolled);
       }
 
       @keyframes glow-pulse {
         0%, 100% {
-          filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.3)) brightness(1.2);
+          filter: drop-shadow(0 0 8px var(--gs-logo-glow-soft)) brightness(1.2);
           transform: scale(1);
         }
         50% {
-          filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.6)) brightness(1.4);
+          filter: drop-shadow(0 0 15px var(--gs-logo-glow-strong)) brightness(1.4);
           transform: scale(1.05);
         }
       }
@@ -207,7 +266,7 @@ const logoSrc = '/logo.svg';
         align-items: center;
         gap: 0.75rem;
         text-decoration: none;
-        color: #fff;
+        color: var(--gs-text-primary);
         font-weight: 600;
         font-size: 1.1rem;
         letter-spacing: -0.01em;
@@ -236,7 +295,7 @@ const logoSrc = '/logo.svg';
       }
 
       .gs-nav a {
-        color: rgba(255, 255, 255, 0.7);
+        color: var(--gs-text-secondary);
         text-decoration: none;
         font-size: 0.95rem;
         transition: color 0.2s ease;
@@ -245,7 +304,7 @@ const logoSrc = '/logo.svg';
 
       .gs-nav a:hover,
       .gs-nav a[aria-current="page"] {
-        color: #fff;
+        color: var(--gs-text-primary);
       }
 
       .gs-nav a[aria-current="page"]::after {
@@ -255,8 +314,8 @@ const logoSrc = '/logo.svg';
         left: 0;
         right: 0;
         height: 2px;
-        background: #22d3ee; /* Cyan accent */
-        box-shadow: 0 0 8px #22d3ee;
+        background: var(--gs-nav-indicator-bg);
+        box-shadow: var(--gs-nav-indicator-shadow);
       }
 
       /* Mobile toggle */
@@ -264,7 +323,7 @@ const logoSrc = '/logo.svg';
         display: none; /* Hidden by default on desktop */
         background: none;
         border: none;
-        color: #fff;
+        color: var(--gs-text-primary);
         cursor: pointer;
       }
 
@@ -280,9 +339,9 @@ const logoSrc = '/logo.svg';
           top: 100%;
           left: 0;
           right: 0;
-          background: #000;
+          background: var(--gs-mobile-menu-bg);
           padding: 2rem;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          border-bottom: 1px solid var(--gs-mobile-menu-border);
         }
       }
     </style>
