@@ -1,13 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
+import { execSync, execFileSync } from 'node:child_process';
 
 // --- Configuration Constants ---
 const REPORT_PATH = 'docs/ci/CURRENT_STATE.md';
 const APPS_DIR = 'apps';
 const WORKFLOW_DIR = '.github/workflows';
-const AUTHORITATIVE_CI_SOURCE = 'GitHub Actions status checks on the pull request';
-
 const ALLOWED_APPS = [
   'gs-web', 'gs-admin', 'gs-api', 'gs-mail', 'gs-gateway', 'gs-agent', 'gs-control',
 ];
@@ -46,8 +44,12 @@ const appLevelIssues = [];
 const run = (cmd) => execSync(cmd, { encoding: 'utf8' }).trim();
 const tryRun = (cmd) => { try { return run(cmd); } catch { return null; } };
 const gitRefExists = (ref) => {
-  try { execSync(`git rev-parse --verify ${ref}`, { stdio: 'ignore' }); return true; } 
-  catch { return false; }
+  try {
+    execFileSync('git', ['rev-parse', '--verify', ref], { stdio: 'ignore' });
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 function resolveBaseRef() {
@@ -57,7 +59,18 @@ function resolveBaseRef() {
 }
 
 function getBranchInfo() {
-  const branch = run('git rev-parse --abbrev-ref HEAD');
+  let branch;
+  try {
+    branch = run('git rev-parse --abbrev-ref HEAD');
+  } catch (error) {
+    return {
+      branch: 'UNKNOWN',
+      baseRef: 'main (unavailable)',
+      behind: 0,
+      ahead: 0,
+      divergenceNote: '⚠️ Failed to determine current git branch (git rev-parse --abbrev-ref HEAD). Ensure this script is run inside a git repository. Divergence defaults to 0/0.',
+    };
+  }
   const baseRef = resolveBaseRef();
   if (!baseRef) {
     return {
@@ -80,8 +93,13 @@ function getCiStatus(branch) {
     : tryRun(`gh pr list --head "${branch}" --state open --limit 1 --json number --jq '.[0].number'`);
 
   if (prNumber) {
-    const prData = tryRun(`gh pr view ${prNumber} --json number,url,statusCheckRollup`);
-    if (!prData) return { summary: `⚠️ Unable to fetch checks for PR #${prNumber}.` };
+    const prNumberStr = String(prNumber).trim();
+    if (!/^[0-9]+$/.test(prNumberStr)) {
+      return { summary: '⚠️ Detected PR identifier is not a valid integer; skipping detailed check rollup.' };
+    }
+
+    const prData = tryRun(`gh pr view ${prNumberStr} --json number,url,statusCheckRollup`);
+    if (!prData) return { summary: `⚠️ Unable to fetch checks for PR #${prNumberStr}.` };
 
     const pr = JSON.parse(prData);
     const checks = (pr.statusCheckRollup || []).map(item => ({
@@ -121,7 +139,7 @@ function checkBuild(name, command) {
 }
 
 // --- Report Generation ---
-const { branch, baseRef, behind, ahead, divergenceNote } = getBranchInfo();
+const { branch, behind, ahead, divergenceNote } = getBranchInfo();
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
 
 // Section 1: Governance
