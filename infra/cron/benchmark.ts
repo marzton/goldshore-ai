@@ -41,7 +41,7 @@ async function checkCloudflareSequential() {
       }
     }
     if (check.type === "dns_records") {
-      const dns = await getDNSRecords();
+      await getDNSRecords();
       // Mock logic
     }
     if (check.type === "worker_health") {
