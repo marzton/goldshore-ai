@@ -87,10 +87,10 @@ def process_nested_folder():
 
 ## Details
 ### Moved
-{chr(10).join(['- ' + f for f in moved_files])}
+{"\n".join(['- ' + f for f in moved_files])}
 
 ### Preserved as Legacy
-{chr(10).join(['- ' + f for f in legacy_files])}
+{"\n".join(['- ' + f for f in legacy_files])}
     """
 
     with open("cleanup_summary.md", "w") as f:
