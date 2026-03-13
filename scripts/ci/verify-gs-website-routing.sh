@@ -7,8 +7,8 @@ ASTRO_CFG="$ROOT/apps/gs-web/astro.config.mjs"
 
 echo "Verifying gs-website routing guardrails..."
 
-test -f "$REDIRECTS"
-test -f "$ASTRO_CFG"
+test -f "$REDIRECTS" || { echo "ERROR: Redirects file not found at '$REDIRECTS'." >&2; exit 1; }
+test -f "$ASTRO_CFG" || { echo "ERROR: Astro config file not found at '$ASTRO_CFG'." >&2; exit 1; }
 
 # Legacy path redirects (301)
 rg -n "^/developer-hub[[:space:]]+/developer[[:space:]]+301$" "$REDIRECTS"
@@ -20,7 +20,7 @@ rg -n "^/company[[:space:]]+/about[[:space:]]+301$" "$REDIRECTS"
 rg -n "^/v1/status/\\*[[:space:]]+https://api\\.goldshore\\.ai/status/:splat[[:space:]]+200$" "$REDIRECTS"
 rg -n "^/v1/telemetry/\\*[[:space:]]+https://api\\.goldshore\\.ai/telemetry/:splat[[:space:]]+200$" "$REDIRECTS"
 
-# Framework-level alias retained
-rg -n "'/developer-hub':[[:space:]]*'/developer'" "$ASTRO_CFG"
+# Framework-level alias retained (allow single or double quotes and flexible spacing)
+rg -n "['\"]/developer-hub['\"][[:space:]]*:[[:space:]]*['\"]/developer['\"]" "$ASTRO_CFG"
 
 echo "✅ gs-website routing guardrails verified."
