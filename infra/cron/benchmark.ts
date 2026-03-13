@@ -36,10 +36,10 @@ const cfg: {
   ai_agent: { triage_labels: string[] };
 } = {
   cloudflare: {
-    checks: Array<CloudflareCheck>(20).fill({
+    checks: Array.from({ length: 20 }, () => ({
       type: "pages_build_status",
       project: "gs-web",
-    }),
+    })),
   },
   github: { org: "goldshore" },
   ai_agent: { triage_labels: [] },
@@ -53,12 +53,10 @@ async function checkCloudflareSequential() {
       if (!["success", "completed"].includes(status)) {
         await openOpsIssue();
       }
-    }
-    if (check.type === "dns_records") {
+    } else if (check.type === "dns_records") {
       await getDNSRecords();
       // Mock logic
-    }
-    if (check.type === "worker_health") {
+    } else if (check.type === "worker_health") {
       await getWorkerBindings(check.script);
       // Mock logic
     }
