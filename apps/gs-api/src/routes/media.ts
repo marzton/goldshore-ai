@@ -20,14 +20,6 @@ const ALLOWED_MIME_TYPES = new Map([
 // 5MB limit to prevent DoS via large file uploads
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-const sanitizeSvg = (rawSvg: string) => {
-  let sanitized = rawSvg
-    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
-    .replace(/<foreignObject[\s\S]*?>[\s\S]*?<\/foreignObject>/gi, '')
-    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-    .replace(/(href|xlink:href)\s*=\s*("|')\s*javascript:[^\2]*\2/gi, '')
-    .replace(/(href|xlink:href)\s*=\s*javascript:[^\s>]+/gi, '');
-
 const SCRIPT_LIKE_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style)[\s\S]*?>[\s\S]*?<\/\1>/gi;
 const SCRIPT_LIKE_SELF_CLOSING_REGEX = /<(script|iframe|object|embed|link|meta|style)\b[^>]*\/?>/gi;
 const EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
@@ -47,10 +39,6 @@ const sanitizeSvg = (input: string): string => {
   } while (sanitized !== previous);
 
   return sanitized;
-const sanitizeSvg = (input: string): string => {
-  // Remove all angle brackets to ensure no HTML/SVG tags (including <script>) remain.
-  // This guarantees that script-like content cannot be interpreted as markup.
-  return input.replace(/[<>]/g, '');
 };
 
 /**
@@ -101,10 +89,6 @@ media.post('/upload', async (c) => {
   const contentType = ALLOWED_MIME_TYPES.get(extension);
 
   if (!contentType) return c.json({ error: 'Unsupported file type' }, 400);
-
-  if (file.size > MAX_FILE_SIZE) {
-    return c.json({ error: 'File too large' }, 413);
-  }
 
   let body: ArrayBuffer | Uint8Array;
   let size = file.size;
