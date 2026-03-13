@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { Env, Variables } from '../types';
 
 type MediaRecord = {
   id: string;
@@ -16,25 +17,26 @@ const ALLOWED_MIME_TYPES = new Map([
   ['jpeg', 'image/jpeg']
 ]);
 
-// 5MB limit to prevent DoS via large file uploads
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
-const sanitizeSvg = (rawSvg: string) => {
-  let sanitized = rawSvg
-    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
-    .replace(/<foreignObject[\s\S]*?>[\s\S]*?<\/foreignObject>/gi, '')
-    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-    .replace(/(href|xlink:href)\s*=\s*("|')\s*javascript:[^\2]*\2/gi, '')
-    .replace(/(href|xlink:href)\s*=\s*javascript:[^\s>]+/gi, '');
+const SCRIPT_LIKE_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style)[\s\S]*?>[\s\S]*?<\/\1>/gi;
+const SCRIPT_LIKE_SELF_CLOSING_REGEX = /<(script|iframe|object|embed|link|meta|style)\b[^>]*\/?>/gi;
+const EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const JAVASCRIPT_URL_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*javascript:[\s\S]*?\1/gi;
 
-  if (!sanitized.trim().startsWith('<svg')) {
-    sanitized = `<svg xmlns=\"http://www.w3.org/2000/svg\">${sanitized}</svg>`;
-  }
+const sanitizeSvg = (input: string): string =>
+  input
+    .replace(SCRIPT_LIKE_TAGS_REGEX, '')
+    .replace(SCRIPT_LIKE_SELF_CLOSING_REGEX, '')
+    .replace(EVENT_HANDLER_ATTR_REGEX, '')
+    .replace(JAVASCRIPT_URL_REGEX, '');
 
-  return sanitized;
-};
+/**
+ * [SOP] Media Asset Management
+ * Handles R2 storage for images and SVGs with strict sanitization for vector assets.
+ */
 
-const media = new Hono<{ Bindings: { DB: D1Database; ASSETS: R2Bucket } }>();
+const media = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 media.get('/', async (c) => {
   const { results } = await c.env.DB
@@ -50,20 +52,17 @@ media.get('/:id', async (c) => {
     .bind(id)
     .first<{ object_key: string; type: string }>();
 
-  if (!result) {
-    return c.json({ error: 'Media not found' }, 404);
-  }
+  if (!result) return c.json({ error: 'Media not found' }, 404);
 
   const object = await c.env.ASSETS.get(result.object_key);
-  if (!object) {
-    return c.json({ error: 'Asset missing from storage' }, 404);
-  }
+  if (!object) return c.json({ error: 'Asset missing from storage' }, 404);
 
   const headers = new Headers();
   headers.set('Content-Type', result.type || object.httpMetadata?.contentType || 'application/octet-stream');
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-  // Sentinel: Mitigate SVG XSS risks by disabling scripts
-  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; object-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; sandbox");
+  
+  // Sentinel: Enforce strict CSP to mitigate SVG XSS
+  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; object-src 'none'; sandbox");
 
   return new Response(object.body, { headers });
 });
@@ -72,28 +71,20 @@ media.post('/upload', async (c) => {
   const formData = await c.req.formData();
   const file = formData.get('file');
 
-  if (!(file instanceof File)) {
-    return c.json({ error: 'Missing file upload' }, 400);
-  }
+  if (!(file instanceof File)) return c.json({ error: 'Missing file upload' }, 400);
+  if (file.size > MAX_FILE_SIZE) return c.json({ error: 'File too large' }, 413);
 
   const filename = file.name || 'upload';
   const extension = filename.split('.').pop()?.toLowerCase() ?? '';
   const contentType = ALLOWED_MIME_TYPES.get(extension);
 
-  if (!contentType) {
-    return c.json({ error: 'Unsupported file type' }, 400);
-  }
-
-  if (file.size > MAX_FILE_SIZE) {
-    return c.json({ error: 'File too large' }, 413);
-  }
+  if (!contentType) return c.json({ error: 'Unsupported file type' }, 400);
 
   let body: ArrayBuffer | Uint8Array;
   let size = file.size;
 
   if (contentType === 'image/svg+xml') {
-    const rawSvg = await file.text();
-    const sanitizedSvg = sanitizeSvg(rawSvg);
+    const sanitizedSvg = sanitizeSvg(await file.text());
     const encoded = new TextEncoder().encode(sanitizedSvg);
     body = encoded;
     size = encoded.byteLength;
@@ -102,34 +93,21 @@ media.post('/upload', async (c) => {
   }
 
   const id = crypto.randomUUID();
-  const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, '_');
-  const objectKey = `media/${id}/${safeName}`;
+  const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
 
-  await c.env.ASSETS.put(objectKey, body, {
-    httpMetadata: {
-      contentType
-    }
-  });
+  await c.env.ASSETS.put(objectKey, body, { httpMetadata: { contentType } });
 
   const url = new URL(c.req.url);
   url.pathname = `/media/${id}`;
 
   const createdAt = new Date().toISOString();
-  await c.env.DB
-    .prepare(
+  await c.env.DB.prepare(
       'INSERT INTO media_assets (id, filename, url, size, type, object_key, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
     )
     .bind(id, filename, url.toString(), size, contentType, objectKey, createdAt)
     .run();
 
-  return c.json({
-    id,
-    filename,
-    url: url.toString(),
-    size,
-    type: contentType,
-    created_at: createdAt
-  });
+  return c.json({ id, filename, url: url.toString(), size, type: contentType, created_at: createdAt });
 });
 
 export default media;
