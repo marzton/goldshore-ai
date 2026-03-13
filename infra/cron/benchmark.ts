@@ -88,9 +88,11 @@ async function checkCloudflareConcurrent() {
       }
     });
 
-    executing.add(p);
-    const clean = () => executing.delete(p);
-    p.then(clean).catch(clean);
+    const tracked = p.finally(() => {
+      executing.delete(tracked);
+    });
+
+    executing.add(tracked);
 
     if (executing.size >= maxConcurrent) {
       await Promise.race(executing);
