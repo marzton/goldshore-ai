@@ -1,4 +1,17 @@
 :root {
   --gs-color-primary: #22d3ee;
   --gs-color-text: #fff;
+  --gs-accent-blue: #5882ff;
+
+  /* Effect tokens */
+  --gs-effect-signal-blue-08: color-mix(in srgb, var(--gs-accent-blue) 8%, transparent);
+  --gs-effect-signal-blue-12: color-mix(in srgb, var(--gs-accent-blue) 12%, transparent);
+  --gs-effect-signal-blue-18: color-mix(in srgb, var(--gs-accent-blue) 18%, transparent);
+  --gs-effect-signal-blue-24: color-mix(in srgb, var(--gs-accent-blue) 24%, transparent);
+  --gs-effect-signal-blue-32: color-mix(in srgb, var(--gs-accent-blue) 32%, transparent);
+  --gs-effect-signal-blue-45: color-mix(in srgb, var(--gs-accent-blue) 45%, transparent);
+  --gs-effect-star-core: color-mix(in srgb, white 92%, var(--gs-accent-blue) 8%);
+  --gs-effect-star-glow: var(--gs-effect-signal-blue-24);
+  --gs-effect-sweep-core: var(--gs-effect-signal-blue-32);
+  --gs-effect-sweep-edge: var(--gs-effect-signal-blue-08);
 }
