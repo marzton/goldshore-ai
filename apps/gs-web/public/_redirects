@@ -31,7 +31,6 @@
 
 # Legacy content consolidation
 /old-home / 301
-/about-us /about 301
 /company /about 301
 
 # API and status proxying (CORS-safe for HUD data fetches)
