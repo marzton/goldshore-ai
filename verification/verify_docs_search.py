@@ -87,12 +87,5 @@ def run():
             # And component
             page.locator(".search-box").screenshot(path="verification/docs_search.png")
 
-        except Exception as e:
-            print(f"Verification failed: {e}")
-            page.screenshot(path="verification/error.png")
-
-        finally:
-            browser.close()
-
 if __name__ == "__main__":
     run()
