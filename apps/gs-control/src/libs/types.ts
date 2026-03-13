@@ -10,5 +10,4 @@ export interface ControlEnv {
   CLOUDFLARE_TEAM_DOMAIN?: string;
   CONTROL_ADMIN_ROLES?: string;
   ALLOWED_ORIGINS?: string;
-  DNS_SYNC_TARGETS?: string;
 }

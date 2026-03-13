@@ -1,18 +1,18 @@
-import {
-  initTheme as initializeTheme,
-  loadThemeSettings,
-  setTheme as applyThemeSettings,
-  type ThemeMode,
-} from './theme-manager';
-
-export { initTheme, loadThemeSettings, setTheme } from './theme-manager';
-
+// Placeholder for ThemeManager
 export class ThemeManager {
   static init() {
-    return initializeTheme();
+    // Check for saved theme
+    const savedTheme = localStorage.getItem('goldshore.theme.v1');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
   }
-
-  static setTheme(theme: ThemeMode) {
-    applyThemeSettings({ mode: theme });
-  }
+    static init() {
+        console.log('ThemeManager initialized');
+        // Check for saved theme
+        const savedTheme = localStorage.getItem('goldshore.theme.v1');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+    }
 }

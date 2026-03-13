@@ -6,8 +6,7 @@
     "./astro": "./src/astro/base.mjs",
     "./middleware": "./src/middleware/base.ts",
     "./env": "./src/env/base.d.ts",
-    "./scaffold": "./src/scaffold/index.astro",
-    "./parallax": "./src/components/parallax.ts"
+    "./scaffold": "./src/scaffold/index.astro"
   },
   "dependencies": {
     "@goldshore/theme": "workspace:*",

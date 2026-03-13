@@ -1,14 +1,14 @@
 name: Lockfile Guard
 
 on:
-  workflow_dispatch:
+  pull_request:
 
 jobs:
   prevent-lockfile-changes:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Guard pnpm lockfile
         run: |
