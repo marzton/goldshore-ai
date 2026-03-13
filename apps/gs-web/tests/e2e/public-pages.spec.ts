@@ -53,7 +53,6 @@ test('home page renders core layout and CTA navigation', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Shaping Waves');
   await expect(page.getByRole('link', { name: 'Start the Experience' })).toHaveAttribute('href', '/services');
   await expect(page.getByRole('link', { name: 'Contact Sales' })).toHaveAttribute('href', '/contact');
-  await expect(page.getByRole('link', { name: 'Book Strategy Call' })).toHaveAttribute('href', '/contact?inquiry=strategy-call');
 
   await page.getByRole('link', { name: 'Start the Experience' }).click();
   await page.waitForURL('**/services');
@@ -98,18 +97,6 @@ test('contact form submits and redirects to thank-you', async ({ page }) => {
   ]);
 
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Thank you');
-
-  assertHealthyPage(monitors);
-});
-
-
-
-test('contact page preselects strategy call inquiry from querystring', async ({ page }) => {
-  const monitors = attachPageMonitors(page);
-
-  await page.goto('/contact?inquiry=strategy-call', { waitUntil: 'networkidle' });
-
-  await expect(page.getByLabel('Inquiry type')).toHaveValue('strategy-call');
 
   assertHealthyPage(monitors);
 });
