@@ -70,6 +70,17 @@ function initModal() {
     return false;
   };
 
+  const isAriaHidden = (el: HTMLElement | null): boolean => {
+    let current: HTMLElement | null = el;
+    while (current && current !== panel) {
+      if (current.getAttribute('aria-hidden') === 'true') {
+        return true;
+      }
+      current = current.parentElement;
+      (el) => !el.hasAttribute('disabled') && !isAriaHidden(el),
+    return false;
+  };
+
   const getFocusableElements = () => {
     if (!panel) return [];
 
