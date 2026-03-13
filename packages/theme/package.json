@@ -5,12 +5,21 @@
   "type": "module",
   "exports": {
     ".": "./index.css",
-    "./runtime": "./index.ts",
-    "./manager": {
-      "default": "./src/manager.ts"
-    },
+    "./index.css": "./index.css",
+    "./styles/global.css": "./src/styles/global.css",
+    "./styles/tokens.css": "./styles/tokens.css",
+    "./styles/base.css": "./styles/base.css",
+    "./styles/layout.css": "./styles/layout.css",
+    "./styles/components.css": "./styles/components.css",
+    "./styles/motion.css": "./styles/motion.css",
     "./styles/*": "./styles/*",
-    "./assets/*": "./assets/*",
-    "./styles/global.css": "./src/styles/global.css"
+    "./tokens": "./styles/tokens.css",
+    "./styles/tokens": "./styles/tokens.css",
+    "./styles/base": "./styles/base.css",
+    "./styles/components": "./styles/components.css",
+    "./styles/layout": "./styles/layout.css",
+    "./runtime": "./index.ts",
+    "./manager": "./src/manager.ts",
+    "./assets/logo.svg": "./assets/logo.svg"
   }
 }
