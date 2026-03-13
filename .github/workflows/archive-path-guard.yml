@@ -7,9 +7,11 @@ on:
 
 jobs:
   guard:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Block active references to archived astro-goldshore
         run: |
           if rg -n "astro-goldshore/" . \
