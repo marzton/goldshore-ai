@@ -22,15 +22,19 @@ def run():
 
             print("Testing keyboard interaction...")
             # Focus body first
-        # Use a desktop viewport to ensure layout matches desktop expectations
-        context = browser.new_context(viewport={"width": 1280, "height": 800})
-        page = context.new_page()
+            page.focus("body")
+            # Additional keyboard interaction logic can be added here.
+            # If focus failed, maybe try clicking it to verify it works manually
+            # If focus failed, maybe try clicking it to verify it works manually
+            print("Attempting click focus...")
+            search_input.click()
+            is_focused = search_input.evaluate("el => document.activeElement === el")
+            print(f"Is focused (Click): {is_focused}")
 
-        try:
-            # Navigate to a page that uses DocsLayout
-            # e.g., /developer/docs/intro if it exists, or just /about if not.
-            # But DocsSearch is likely only in DocsLayout.
-            # I'll try /developer/docs/intro based on previous file content.
+            print("Taking screenshot...")
+            page.screenshot(path="verification/docs_search_verification.png")
+            print("Taking screenshot...")
+            page.screenshot(path="verification/docs_search_verification.png")
             # If 404, I'll try to find a valid route.
             url = "http://localhost:4321/developer/docs/intro"
             print(f"Navigating to {url}")
@@ -84,24 +88,3 @@ def run():
             page.screenshot(path="verification/docs_search_full.png")
             # And component
             page.locator(".search-box").screenshot(path="verification/docs_search.png")
-
-        except Exception as e:
-            print(f"Verification failed: {e}")
-                 # If focus failed, maybe try clicking it to verify it works manually
-                 print("Attempting click focus...")
-                 search_input.click()
-                 is_focused = search_input.evaluate("el => document.activeElement === el")
-                 print(f"Is focused (Click): {is_focused}")
-
-            print("Taking screenshot...")
-            page.screenshot(path="verification/docs_search_verification.png")
-
-        except Exception as e:
-            print(f"Verification failed: {e}")
-            page.screenshot(path="verification/error.png")
-
-        finally:
-            browser.close()
-
-if __name__ == "__main__":
-    run()
