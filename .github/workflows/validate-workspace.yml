@@ -30,6 +30,9 @@ jobs:
       - name: Validate worker structure
         run: pnpm validate:structure
 
+      - name: Enforce workspace dependency protocol
+        run: pnpm check:workspace-protocol
+
       - name: Validate worker names
         run: pnpm validate:workers
 
