@@ -71,7 +71,7 @@ async function checkCloudflareConcurrent() {
           const bindings = await getWorkerBindings(check.script);
           // Mock logic
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error(`Error processing check ${check.type}:`, err);
       }
     });
