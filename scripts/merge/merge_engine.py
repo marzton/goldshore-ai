@@ -4,14 +4,6 @@ from datetime import datetime
 from json_merge import deep_merge_json
 from workflow_dedupe import merge_workflows
 
-SKIP_LEGACY_DIRS = {
-    ".git",
-    ".hg",
-    ".svn",
-    "__pycache__",
-}
-
-
 EXCLUDED_DIRS = {".git", ".hg", ".svn", "__pycache__"}
 
 
