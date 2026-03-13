@@ -91,20 +91,12 @@ function initModal() {
       (el) => !el.hasAttribute('disabled') && !isAriaHidden(el),
     );
   };
-    root.setAttribute('role', 'dialog');
-    root.setAttribute('aria-modal', 'true');
-    root.setAttribute('aria-labelledby', MODAL_TITLE_ID);
-    root.setAttribute('aria-describedby', MODAL_DESCRIPTION_ID);
 
   const focusDialog = () => {
     const focusable = getFocusableElements();
     const firstFocusable = focusable[0];
     (firstFocusable ?? panel)?.focus();
   };
-    root.removeAttribute('role');
-    root.removeAttribute('aria-modal');
-    root.removeAttribute('aria-labelledby');
-    root.removeAttribute('aria-describedby');
 
   const openModal = (html: string, trigger: HTMLElement) => {
     opener = trigger;
