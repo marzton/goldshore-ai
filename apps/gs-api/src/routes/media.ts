@@ -21,29 +21,96 @@ const ALLOWED_MIME_TYPES = new Map([
 // 5MB limit to prevent DoS via large file uploads
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-const SCRIPT_LIKE_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style)[\s\S]*?>[\s\S]*?<\/\1>/gi;
-const SCRIPT_LIKE_SELF_CLOSING_REGEX = /<(script|iframe|object|embed|link|meta|style)\b[^>]*\/?>/gi;
-const EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
-const JAVASCRIPT_URL_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*javascript:[\s\S]*?\1/gi;
-
 const sanitizeSvg = (input: string): string =>
-  input
-    .replace(SCRIPT_LIKE_TAGS_REGEX, '')
-    .replace(SCRIPT_LIKE_SELF_CLOSING_REGEX, '')
-    .replace(EVENT_HANDLER_ATTR_REGEX, '')
-    .replace(JAVASCRIPT_URL_REGEX, '');
-
-const SCRIPT_LIKE_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style)[\s\S]*?>[\s\S]*?<\/\1>/gi;
-const SCRIPT_LIKE_SELF_CLOSING_REGEX = /<(script|iframe|object|embed|link|meta|style)\b[^>]*\/?>/gi;
-const EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
-const JAVASCRIPT_URL_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*javascript:[\s\S]*?\1/gi;
-
-const sanitizeSvg = (input: string): string =>
-  input
-    .replace(SCRIPT_LIKE_TAGS_REGEX, '')
-    .replace(SCRIPT_LIKE_SELF_CLOSING_REGEX, '')
-    .replace(EVENT_HANDLER_ATTR_REGEX, '')
-    .replace(JAVASCRIPT_URL_REGEX, '');
+  sanitizeHtml(input, {
+    allowedTags: [
+      'svg',
+      'g',
+      'defs',
+      'style',
+      'path',
+      'circle',
+      'ellipse',
+      'line',
+      'polyline',
+      'polygon',
+      'rect',
+      'text',
+      'tspan',
+      'textPath',
+      'image',
+      'use',
+      'linearGradient',
+      'radialGradient',
+      'stop',
+      'pattern',
+      'clipPath',
+      'mask',
+      'symbol',
+      'marker',
+      'title',
+      'desc'
+    ],
+    allowedAttributes: {
+      '*': [
+        'id',
+        'class',
+        'fill',
+        'stroke',
+        'stroke-width',
+        'stroke-linecap',
+        'stroke-linejoin',
+        'stroke-dasharray',
+        'stroke-dashoffset',
+        'opacity',
+        'transform',
+        'x',
+        'y',
+        'cx',
+        'cy',
+        'r',
+        'rx',
+        'ry',
+        'x1',
+        'y1',
+        'x2',
+        'y2',
+        'd',
+        'width',
+        'height',
+        'viewBox',
+        'preserveAspectRatio',
+        'points',
+        'offset',
+        'stop-color',
+        'stop-opacity',
+        'patternUnits',
+        'patternContentUnits',
+        'maskUnits',
+        'markerWidth',
+        'markerHeight',
+        'refX',
+        'refY'
+      ],
+      svg: ['xmlns', 'xmlns:xlink', 'version'],
+      use: ['xlink:href', 'href'],
+      image: ['xlink:href', 'href']
+    },
+    // Disallow any inline event handlers or script/style elements.
+    allowedSchemes: ['http', 'https', 'data'],
+    allowedSchemesByTag: {
+      // Allow data URLs only for images inside SVG; adjust if you need stricter rules.
+      image: ['http', 'https', 'data'],
+      use: ['http', 'https']
+    },
+    disallowedTagsMode: 'discard',
+    // Remove any attributes starting with "on" and any "javascript:" URLs that might slip through.
+    nonTextTags: ['script', 'style'],
+    transformTags: {
+      script: () => ({ tagName: 'discard', text: '' }),
+      style: () => ({ tagName: 'style', text: '' })
+    }
+  });
 
 /**
  * [SOP] Media Asset Management
