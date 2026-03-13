@@ -82,7 +82,7 @@ def process_nested_folder():
     try:
         shutil.rmtree(NESTED_ROOT)
         print("Cleanup complete.")
-    except Exception as e:
+    except OSError as e:
         print(f"Error removing {NESTED_ROOT}: {e}")
 
     # Generate Summary
