@@ -20,12 +20,20 @@ const ALLOWED_MIME_TYPES = new Map([
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 const sanitizeSvg = (rawSvg: string) => {
-  let sanitized = rawSvg
-    .replace(/<script[\s\S]*?>[\s\S]*?<\s*\/\s*script(?:\s[^>]*)?\s*>/gi, '')
-    .replace(/<foreignObject[\s\S]*?>[\s\S]*?<\/foreignObject>/gi, '')
-    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-    .replace(/(href|xlink:href)\s*=\s*("|')\s*javascript:[^\2]*\2/gi, '')
-    .replace(/(href|xlink:href)\s*=\s*javascript:[^\s>]+/gi, '');
+  let sanitized = rawSvg;
+  let previous: string;
+
+  // Apply sanitization repeatedly until no further changes occur to avoid
+  // multi-character patterns being reintroduced after earlier replacements.
+  do {
+    previous = sanitized;
+    sanitized = sanitized
+      .replace(/<script[\s\S]*?>[\s\S]*?<\s*\/\s*script(?:\s[^>]*)?\s*>/gi, '')
+      .replace(/<foreignObject[\s\S]*?>[\s\S]*?<\/foreignObject>/gi, '')
+      .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+      .replace(/(href|xlink:href)\s*=\s*("|')\s*javascript:[^\2]*\2/gi, '')
+      .replace(/(href|xlink:href)\s*=\s*javascript:[^\s>]+/gi, '');
+  } while (sanitized !== previous);
 
   if (!sanitized.trim().startsWith('<svg')) {
     sanitized = `<svg xmlns=\"http://www.w3.org/2000/svg\">${sanitized}</svg>`;
