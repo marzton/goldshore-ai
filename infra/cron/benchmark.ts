@@ -36,10 +36,10 @@ const cfg: {
   ai_agent: { triage_labels: string[] };
 } = {
   cloudflare: {
-    checks: Array<CloudflareCheck>(20).fill({
+    checks: Array.from({ length: 20 }, () => ({
       type: "pages_build_status",
       project: "gs-web",
-    }),
+    })),
   },
   github: { org: "goldshore" },
   ai_agent: { triage_labels: [] },
