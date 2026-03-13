@@ -29,6 +29,12 @@ const organizationSchema: Record<string, unknown> = {
   name: 'Gold Shore',
   url: siteUrl,
   logo: `${siteUrl}/assets/logo.svg`,
+  description: 'Institutional-grade automation and intelligence systems.',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://goldshore.ai/developer/docs/search?q={search_term_string}',
+    'query-input': 'required name=search_term_string',
+  },
   ...(sameAs.length > 0 ? { sameAs } : {}),
 };
 
@@ -50,19 +56,6 @@ const pageSchemas = Array.isArray(structuredData)
       <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
     ))}
     <slot name="head" />
-    <script type="application/ld+json" set:html={JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Organization',
-      name: 'Gold Shore',
-      url: 'https://goldshore.ai',
-      logo: 'https://goldshore.ai/assets/logo.svg',
-      description: 'Institutional-grade automation and intelligence systems.',
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: 'https://goldshore.ai/developer/docs/search?q={search_term_string}',
-        'query-input': 'required name=search_term_string'
-      }
-    })} />
   </head>
   <body class="gs-theme-root">
     <SiteNav />
