@@ -20,7 +20,7 @@ rg -n "^/company[[:space:]]+/about[[:space:]]+301$" "$REDIRECTS"
 rg -n "^/v1/status/\\*[[:space:]]+https://api\\.goldshore\\.ai/status/:splat[[:space:]]+200$" "$REDIRECTS"
 rg -n "^/v1/telemetry/\\*[[:space:]]+https://api\\.goldshore\\.ai/telemetry/:splat[[:space:]]+200$" "$REDIRECTS"
 
-# Framework-level alias retained
-rg -n "'/developer-hub':[[:space:]]*'/developer'" "$ASTRO_CFG"
+# Framework-level alias retained (allow single or double quotes and flexible spacing)
+rg -n "['\"]/developer-hub['\"][[:space:]]*:[[:space:]]*['\"]/developer['\"]" "$ASTRO_CFG"
 
 echo "✅ gs-website routing guardrails verified."
