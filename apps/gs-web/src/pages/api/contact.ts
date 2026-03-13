@@ -245,22 +245,6 @@ const safeRedirect = (redirectTo: string | null, origin: string) => {
   return new URL(trimmed, origin);
 };
 
-const dedupeRecipients = (recipients: MailRecipient[]) => {
-  const unique = new Map<string, MailRecipient>();
-  recipients.forEach((recipient) => {
-    const email = recipient.email.trim().toLowerCase();
-    if (!email) return;
-    if (!isValidEmail(email)) return;
-    if (!unique.has(email)) {
-      unique.set(email, {
-        email,
-        name: recipient.name?.trim() || undefined,
-      });
-    }
-  });
-  return [...unique.values()];
-};
-
 const recipientsFromEnv = (
   rawRecipients: string | undefined,
 ): MailRecipient[] => {
