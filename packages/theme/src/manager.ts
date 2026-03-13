@@ -9,6 +9,7 @@ export {
   initTheme as initializeTheme,
   loadThemeSettings,
   setTheme as applyThemeSettings,
+  type ThemeMode,
 } from './theme-manager';
 
 export class ThemeManager {
