@@ -1,16 +1,22 @@
-// Placeholder for ThemeManager
+import {
+  initTheme as initializeTheme,
+  setTheme as applyThemeSettings,
+  type ThemeMode,
+} from './theme-manager';
+
+export {
+  initTheme as initializeTheme,
+  loadThemeSettings,
+  setTheme as applyThemeSettings,
+  type ThemeMode,
+} from './theme-manager';
+
 export class ThemeManager {
   static init() {
-    console.log('ThemeManager initialized');
-    // Check for saved theme
-    const savedTheme = localStorage.getItem('goldshore.theme.v1');
-    if (savedTheme) {
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    }
+    return initializeTheme();
   }
 
-  static setTheme(theme: string) {
-    localStorage.setItem('goldshore.theme.v1', theme);
-    document.documentElement.setAttribute('data-theme', theme);
+  static setTheme(theme: ThemeMode) {
+    applyThemeSettings({ mode: theme });
   }
 }
