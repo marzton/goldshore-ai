@@ -13,6 +13,7 @@ CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 binding = "KV"
 id = "9cc2209906a94851b704be57543987a9"
 
+# Keep split namespaces available for migration work while handlers continue using KV.
 [[kv_namespaces]]
 binding = "GS_CONFIG"
 id = "5f13370575784c9dacff522121104cb3"
@@ -23,12 +24,12 @@ id = "9cc2209906a94851b704be57543987a9"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "goldshore-api-db"
-database_id = "goldshore-api-db"
+database_name = "gs-api-db"
+database_id = "gs-api-db"
 
 [[r2_buckets]]
 binding = "ASSETS"
-bucket_name = "goldshore-api-assets"
+bucket_name = "gs-api-assets"
 
 [ai]
 binding = "AI"
@@ -46,6 +47,10 @@ binding = "KV"
 id = "9cc2209906a94851b704be57543987a9"
 
 [[env.production.kv_namespaces]]
+binding = "KV"
+id = "9cc2209906a94851b704be57543987a9"
+
+[[env.production.kv_namespaces]]
 binding = "GS_CONFIG"
 id = "5f13370575784c9dacff522121104cb3"
 
@@ -55,12 +60,12 @@ id = "9cc2209906a94851b704be57543987a9"
 
 [[env.production.d1_databases]]
 binding = "DB"
-database_name = "goldshore-api-db"
-database_id = "goldshore-api-db"
+database_name = "gs-api-db"
+database_id = "gs-api-db"
 
 [[env.production.r2_buckets]]
 binding = "ASSETS"
-bucket_name = "goldshore-api-assets"
+bucket_name = "gs-api-assets"
 
 [env.production.ai]
 binding = "AI"
@@ -78,6 +83,10 @@ binding = "KV"
 id = "9cc2209906a94851b704be57543987a9"
 
 [[env.prod.kv_namespaces]]
+binding = "KV"
+id = "9cc2209906a94851b704be57543987a9"
+
+[[env.prod.kv_namespaces]]
 binding = "GS_CONFIG"
 id = "5f13370575784c9dacff522121104cb3"
 
@@ -87,12 +96,12 @@ id = "9cc2209906a94851b704be57543987a9"
 
 [[env.prod.d1_databases]]
 binding = "DB"
-database_name = "goldshore-api-db"
-database_id = "goldshore-api-db"
+database_name = "gs-api-db"
+database_id = "gs-api-db"
 
 [[env.prod.r2_buckets]]
 binding = "ASSETS"
-bucket_name = "goldshore-api-assets"
+bucket_name = "gs-api-assets"
 
 [env.prod.ai]
 binding = "AI"
