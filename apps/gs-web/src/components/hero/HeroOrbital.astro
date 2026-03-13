@@ -1,17 +1,40 @@
+---
+import HeroLogo from './HeroLogo.astro';
+import statusCheckScriptUrl from '../../scripts/status-check.ts?url';
+
+const runtimeEnv = Astro.locals.runtime?.env as { GS_SYSTEM_STATUS?: string } | undefined;
+const systemStatus = runtimeEnv?.GS_SYSTEM_STATUS ?? 'Operational';
+const isOperational = systemStatus.trim().toLowerCase() === 'operational';
+---
+
 <section class="gs-hero gs-hero-orbital gs-depth-bg" data-gs-hero>
-  <canvas id="pulsar-field" aria-hidden="true"></canvas>
+  <canvas id="pulsar-field" aria-hidden="true" data-parallax="0.03"></canvas>
 
-  <div class="gs-container gs-seq gs-vt gs-hero-content">
-    <div class="gs-i-0 gs-kicker gs-signal">System Status: Operational</div>
+  <div class="gs-container gs-seq gs-vt gs-hero-content" data-parallax="-0.015">
+    <div class="gs-i-0 gs-kicker gs-signal">
+      <span class="gs-status-dot" data-gs-status-dot aria-hidden="true"></span>
+      <span data-gs-system-status>System Status: {systemStatus}</span>
+    </div>
 
-    <h1 class="gs-i-1 gs-display gs-hero-title gs-vt-title">Shaping Waves with Applied Intelligence</h1>
+    <div class="gs-i-1 gs-hero-mark">
+      <HeroLogo />
+    </div>
 
-    <p class="gs-i-2 gs-hero-sub">
+    <h1 class="gs-i-2 gs-display gs-hero-title gs-vt-title">
+      Shaping Waves with Applied Intelligence
+    </h1>
+
+    <p class="gs-i-3 gs-hero-sub">
       Institutional-grade automation, infrastructure, and intelligence systems.
     </p>
 
-    <div class="gs-i-3 gs-hero-actions">
-      <a href="/contact" class="gs-button gs-button-solid gs-edge-scan">Request Briefing</a>
+    <div class="gs-i-4 gs-hero-actions">
+      <a href="/contact" class="gs-button gs-button-solid gs-edge-scan"
+        >Request Briefing</a
+      >
     </div>
   </div>
 </section>
+
+
+<script type="module" src={statusCheckScriptUrl}></script>
