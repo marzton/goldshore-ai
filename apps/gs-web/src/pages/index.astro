@@ -1,6 +1,10 @@
 ---
-import Scaffold from '@goldshore/config/scaffold';
+import Hero from '../components/Hero.astro';
+import MarketingLayout from '../layouts/MarketingLayout.astro';
+
 export const prerender = true;
 ---
 
-<Scaffold />
+<MarketingLayout title="Goldshore | Intelligence infrastructure">
+  <Hero />
+</MarketingLayout>
