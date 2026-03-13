@@ -10,7 +10,7 @@
     "build": "wrangler deploy src/index.ts --dry-run --outdir=dist --env prod"
   },
   "dependencies": {
-    "@goldshore/auth": "workspace:*",
+    "@goldshore/auth": "workspace:^",
     "hono": "^4.0.0"
   },
   "devDependencies": {
