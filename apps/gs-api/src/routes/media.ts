@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { Env, Variables } from '../types';
+import sanitizeHtml from 'sanitize-html';
 
 type MediaRecord = {
   id: string;
@@ -20,9 +21,37 @@ const ALLOWED_MIME_TYPES = new Map([
 // 5MB limit to prevent DoS via large file uploads
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
+const sanitizeSvg = (input: string): string => {
+  return sanitizeHtml(input, {
+    // Rely on sanitize-html to strip scripts, event handlers, and javascript: URLs.
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+      'svg',
+      'g',
+      'defs',
+      'path',
+      'circle',
+      'rect',
+      'line',
+      'polyline',
+      'polygon',
+      'ellipse',
+      'text',
+      'tspan',
+      'use',
+      'symbol',
+      'linearGradient',
+      'radialGradient',
+      'stop',
+      'pattern',
+      'mask',
+      'clipPath'
+    ]),
+    allowedSchemes: ['http', 'https', 'data'],
+    allowedSchemesByTag: {},
+  });
 const SCRIPT_LIKE_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style)[\s\S]*?>[\s\S]*?<\/\1>/gi;
 const SCRIPT_LIKE_SELF_CLOSING_REGEX = /<(script|iframe|object|embed|link|meta|style)\b[^>]*\/?>/gi;
-const EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z0-9_]*\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
 const JAVASCRIPT_URL_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*javascript:[\s\S]*?\1/gi;
 
 const sanitizeSvg = (input: string): string => {
