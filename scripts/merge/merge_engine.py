@@ -15,7 +15,7 @@ SKIP_LEGACY_DIRS = {
 EXCLUDED_DIRS = {".git", ".hg", ".svn", "__pycache__"}
 
 
-EXCLUDED_DIRS = {".git", ".hg", ".svn", "__pycache__"}
+
 
 
 def sha256(path):
