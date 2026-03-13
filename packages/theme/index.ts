@@ -59,6 +59,17 @@ function initModal() {
 
   let opener: HTMLElement | null = null;
 
+  const isAriaHidden = (el: HTMLElement | null): boolean => {
+    let current: HTMLElement | null = el;
+    while (current && current !== panel) {
+      if (current.getAttribute('aria-hidden') === 'true') {
+        return true;
+      }
+      current = current.parentElement;
+    }
+    return false;
+  };
+
   const getFocusableElements = () => {
     if (!panel) return [];
 
@@ -66,7 +77,7 @@ function initModal() {
       'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 
     return Array.from(panel.querySelectorAll<HTMLElement>(selectors)).filter(
-      (el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true',
+      (el) => !el.hasAttribute('disabled') && !isAriaHidden(el),
     );
   };
 
