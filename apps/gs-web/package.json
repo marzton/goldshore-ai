@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "@goldshore/config": "workspace:^",
-    "@goldshore/theme": "workspace:*",
-    "@goldshore/ui": "workspace:*",
+    "@goldshore/theme": "workspace:^",
+    "@goldshore/ui": "workspace:^",
     "astro": "^5.15.9",
     "fuse.js": "^7.1.0"
   },

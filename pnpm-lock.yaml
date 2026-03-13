@@ -74,19 +74,19 @@ importers:
   apps/gs-admin:
     dependencies:
       '@goldshore/auth':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/auth
       '@goldshore/config':
         specifier: workspace:^
         version: link:../../packages/config
       '@goldshore/integrations':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/integrations
       '@goldshore/theme':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/theme
       '@goldshore/ui':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/ui
       astro:
         specifier: ^5.15.9
@@ -108,7 +108,7 @@ importers:
   apps/gs-agent:
     dependencies:
       '@goldshore/auth':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/auth
       hono:
         specifier: ^4.0.0
@@ -158,10 +158,10 @@ importers:
   apps/gs-control:
     dependencies:
       '@goldshore/auth':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/auth
       '@goldshore/utils':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/utils
       '@hono/zod-validator':
         specifier: ^0.7.6
@@ -189,7 +189,7 @@ importers:
   apps/gs-gateway:
     dependencies:
       '@goldshore/auth':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/auth
       hono:
         specifier: ^4.0.0
@@ -236,10 +236,10 @@ importers:
         specifier: workspace:^
         version: link:../../packages/config
       '@goldshore/theme':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/theme
       '@goldshore/ui':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/ui
       astro:
         specifier: ^5.15.9
@@ -277,10 +277,10 @@ importers:
   packages/config:
     dependencies:
       '@goldshore/theme':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../theme
       '@goldshore/ui':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../ui
 
   packages/integrations: {}

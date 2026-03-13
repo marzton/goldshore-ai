@@ -52,13 +52,10 @@ jobs:
 
       - name: Build web app (preview)
         working-directory: apps/gs-web
-      - name: Build web app (preview)
-        working-directory: apps/web
         env:
           PUBLIC_API: https://api-preview.goldshore.ai
           PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
         run: pnpm build
-
       - name: Deploy to Cloudflare Pages (preview)
         uses: cloudflare/pages-action@v1
         with:
@@ -66,4 +63,5 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: preview-web
           directory: apps/gs-web/dist
+          workingDirectory: apps/gs-web
           branch: ${{ github.head_ref || github.ref_name }}
