@@ -39,7 +39,6 @@ const isAllowedOrigin = (origin: string) => {
   return ALLOWED_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin));
 };
 
-
 // Sentinel: Security Middleware
 app.use('*', secureHeaders());
 

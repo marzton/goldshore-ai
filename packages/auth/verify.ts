@@ -5,7 +5,7 @@ export interface Env {
   CLOUDFLARE_TEAM_DOMAIN?: string;
 }
 
-const DEFAULT_TEAM_DOMAIN = 'goldshore.cloudflareaccess.com';
+const DEFAULT_TEAM_DOMAIN = "goldshore.cloudflareaccess.com";
 
 export interface Dependencies {
   createRemoteJWKSet: typeof createRemoteJWKSet;
@@ -14,7 +14,7 @@ export interface Dependencies {
 
 export const deps: Dependencies = {
   createRemoteJWKSet,
-  jwtVerify,
+  jwtVerify
 };
 
 const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
@@ -34,7 +34,7 @@ export type AccessTokenPayload = JWTPayload & {
 };
 
 export async function verifyAccessWithClaimsInternal(req: Request, env: Env, runtimeDeps: Dependencies) {
-  const token = req.headers.get('CF-Access-Jwt-Assertion');
+  const token = req.headers.get("CF-Access-Jwt-Assertion");
   if (!token) return null;
 
   const teamDomain = env.CLOUDFLARE_TEAM_DOMAIN || DEFAULT_TEAM_DOMAIN;
@@ -42,7 +42,7 @@ export async function verifyAccessWithClaimsInternal(req: Request, env: Env, run
 
   try {
     const options: { issuer: string; audience?: string } = {
-      issuer: `https://${teamDomain}`,
+      issuer: `https://${teamDomain}`
     };
 
     if (env.CLOUDFLARE_ACCESS_AUDIENCE) {

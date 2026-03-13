@@ -11,9 +11,6 @@ type Env = {
 };
 
 const ai = new Hono<{ Bindings: Env }>();
-import { applyAnalysisPolicy, getProvider, type AnalysisRequest } from "@goldshore/ai-providers";
-
-const ai = new Hono();
 
 ai.get("/", (c) => c.json({ message: "AI endpoint" }));
 
@@ -21,7 +18,7 @@ ai.post("/analysis", async (c) => {
   let body: AnalysisRequest;
   try {
     body = await c.req.json();
-  } catch (error) {
+  } catch {
     return c.json({ error: "Invalid JSON payload" }, 400);
   }
 
@@ -44,19 +41,16 @@ ai.post("/analysis", async (c) => {
       : c.env.GEMINI_API_KEY;
 
   const startedAt = Date.now();
-
-  // Create a cache key based on the sanitized input
   const inputHash = createHash("sha256")
     .update(safeStableStringify(policyResult.sanitized))
     .digest("hex");
   const cacheKey = `analysis:${inputHash}`;
 
-  // Check cache
-  let providerResponse;
+  let providerResponse: Awaited<ReturnType<typeof provider.analyze>> | null = null;
   let isCached = false;
 
   try {
-    const cached = await c.env.KV.get(cacheKey, "json");
+    const cached = await c.env.KV.get<typeof providerResponse>(cacheKey, "json");
     if (cached) {
       providerResponse = cached;
       isCached = true;
@@ -68,15 +62,12 @@ ai.post("/analysis", async (c) => {
   if (!providerResponse) {
     providerResponse = await provider.analyze(policyResult.sanitized.input, {
       apiKey,
-      fetch,
+      fetch
     });
 
-    // Store in cache (fire and forget via waitUntil)
     try {
       const cacheValue = JSON.stringify(providerResponse);
-      c.executionCtx.waitUntil(
-        c.env.KV.put(cacheKey, cacheValue, { expirationTtl: 86400 })
-      ); // 24 hours
+      c.executionCtx.waitUntil(c.env.KV.put(cacheKey, cacheValue, { expirationTtl: 86400 }));
     } catch (err) {
       console.error("Failed to write to cache:", err);
     }
@@ -91,43 +82,20 @@ ai.post("/analysis", async (c) => {
       metadata: {
         request: policyResult.sanitized,
         response: {
-          provider: providerResponse.provider,
-          // output is sensitive and should not be logged
+          provider: providerResponse.provider
         },
         redactions: policyResult.redactions,
         durationMs,
-        cache: isCached ? "HIT" : "MISS",
-      },
+        cache: isCached ? "HIT" : "MISS"
+      }
     })
   );
 
   const response = c.json({
-  const providerResponse = await provider.analyze(policyResult.sanitized.input, {
-    apiKey,
-    fetch,
-  });
-  const durationMs = Date.now() - startedAt;
-
-  const logEntry = {
-    event: "ai.analysis",
-    timestamp: new Date().toISOString(),
-    request: policyResult.sanitized,
-    response: {
-      provider: providerResponse.provider,
-      output: providerResponse.output,
-    },
-    redactions: policyResult.redactions,
-    durationMs,
-  };
-
-  console.log(JSON.stringify(logEntry));
-
-  return c.json({
     ...providerResponse,
     redactions: policyResult.redactions,
-    durationMs,
+    durationMs
   });
-
   response.headers.set("X-Cache", isCached ? "HIT" : "MISS");
 
   return response;
