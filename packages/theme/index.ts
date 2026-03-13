@@ -201,16 +201,16 @@ function getModalTemplate(variant: string): string {
 
   return `
       <div class="gs-modal-head">
-      <div class="gs-kicker">Signal Brief</div>
-      <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Subscribe</h2>
-      <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Periodic updates on releases, systems, and operational tooling.</p>
-    </div>
-    <form class="gs-form" action="/api/subscribe" method="POST">
-      <label class="gs-label">Email</label>
-      <input class="gs-input" name="email" type="email" autocomplete="email" required />
-      <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Request Access</button>
-      <div class="gs-micro gs-muted">No spam. No public list. Controlled distribution.</div>
-    </form>
+        <div class="gs-kicker">Signal Brief</div>
+        <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Subscribe</h2>
+        <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Periodic updates on releases, systems, and operational tooling.</p>
+      </div>
+      <form class="gs-form" action="/api/subscribe" method="POST">
+        <label class="gs-label">Email</label>
+        <input class="gs-input" name="email" type="email" autocomplete="email" required />
+        <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Request Access</button>
+        <div class="gs-micro gs-muted">No spam. No public list. Controlled distribution.</div>
+      </form>
   `;
 }
 
