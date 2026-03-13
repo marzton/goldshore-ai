@@ -5,7 +5,7 @@ export type ParallaxOptions = {
 };
 
 export const initParallax = (options: ParallaxOptions = {}) => {
-  if (typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') {
+  if (typeof window === 'undefined') {
     return () => undefined;
   }
 
@@ -27,7 +27,7 @@ export const initParallax = (options: ParallaxOptions = {}) => {
     isVisible: false
   }));
 
-  if (layers.length === 0) {
+  if (elements.length === 0) {
     return () => undefined;
   }
 
