@@ -29,6 +29,12 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const media = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 media.get('/', async (c) => {
+  // Require admin authentication to list media assets
+  const adminKey = c.req.header('x-admin-key');
+  if (!adminKey || adminKey !== c.env.ADMIN_API_KEY) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
   const { results } = await c.env.DB
     .prepare('SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT 100')
     .all<MediaRecord>();
@@ -36,6 +42,12 @@ media.get('/', async (c) => {
 });
 
 media.get('/:id', async (c) => {
+  // Basic authentication guard: require a valid Authorization header before serving media assets.
+  const authHeader = c.req.header('Authorization');
+  if (!authHeader || authHeader !== `Bearer ${c.env.MEDIA_ACCESS_TOKEN}`) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
   const id = c.req.param('id');
   const result = await c.env.DB
     .prepare('SELECT object_key, type FROM media_assets WHERE id = ?')
