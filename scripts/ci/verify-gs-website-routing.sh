@@ -32,6 +32,6 @@ done
 #   }
 # If the config structure or formatting changes (multi-line, variables, computed keys, etc.),
 # this regex and script should be updated accordingly.
-rg -nP "([\"'\`])/developer-hub\1[[:space:]]*:[[:space:]]*([\"'\`])/developer\2[[:space:]]*,?" "$ASTRO_CFG" || { echo "ERROR: Missing framework-level alias mapping '/developer-hub' to '/developer' in '$ASTRO_CFG'." >&2; exit 1; }
+rg -nP "['\"\`]/developer-hub['\"\`][[:space:]]*:[[:space:]]*['\"\`]/developer['\"\`][[:space:]]*,?" "$ASTRO_CFG" || { echo "ERROR: Missing framework-level alias mapping '/developer-hub' to '/developer' in '$ASTRO_CFG'." >&2; exit 1; }
 
 echo "✅ gs-website routing guardrails verified."
