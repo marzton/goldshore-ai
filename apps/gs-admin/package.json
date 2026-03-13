@@ -11,11 +11,11 @@
     "test": "echo 'No tests configured for @goldshore/gs-admin'"
   },
   "dependencies": {
-    "@goldshore/auth": "workspace:*",
+    "@goldshore/auth": "workspace:^",
     "@goldshore/config": "workspace:^",
-    "@goldshore/integrations": "workspace:*",
-    "@goldshore/theme": "workspace:*",
-    "@goldshore/ui": "workspace:*",
+    "@goldshore/integrations": "workspace:^",
+    "@goldshore/theme": "workspace:^",
+    "@goldshore/ui": "workspace:^",
     "astro": "^5.15.9"
   },
   "devDependencies": {

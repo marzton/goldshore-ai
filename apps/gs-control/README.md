@@ -3,7 +3,7 @@
 ## Overview
 The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers. It is managed alongside the gateway worker as part of the Edge Workers deployment group.
 
-Cloudflare metadata (from `wrangler.toml`):
+Cloudflare metadata (from `infra/cloudflare/gs-control.wrangler.toml`):
 - Worker name: `gs-control`
 - Route: `ops.goldshore.ai/*`
 - Compatibility date: `2025-01-10`
@@ -28,7 +28,7 @@ These are worker API endpoints implemented in `src/index.ts` and `src/routes/clo
 - `GET /cloudflare/access/policies`
 The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers.
 
-Configuration highlights (from `wrangler.toml`):
+Configuration highlights (from `infra/cloudflare/gs-control.wrangler.toml`):
 - `ENV=production`
 - KV binding: `CONTROL_LOGS`
 - R2 binding: `STATE`

@@ -1,4 +1,4 @@
-import { createRemoteJWKSet, jwtVerify, type JWTPayload } from "jose";
+import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose';
 
 export interface Env {
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
@@ -52,7 +52,7 @@ export async function verifyAccessWithClaimsInternal(req: Request, env: Env, run
     const { payload } = await runtimeDeps.jwtVerify(token, JWKS, options);
     return payload as AccessTokenPayload;
   } catch (e) {
-    console.error("Token verification failed", e);
+    console.error('Token verification failed', e);
     return null;
   }
 }
