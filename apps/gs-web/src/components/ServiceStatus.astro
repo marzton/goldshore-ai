@@ -55,6 +55,10 @@ const { serviceUrl } = Astro.props;
       const color = data.status === 'ok' ? 'bg-emerald-500' : 'bg-red-500';
       indicator.innerHTML = `<span class="h-3 w-3 rounded-full ${color}"></span><span class="text-sm font-bold uppercase">${data.status}</span>`;
       
+      if (data.api !== undefined && data.api !== null) {
+        const apiString = typeof data.api === 'string' ? data.api : String(data.api);
+        document.getElementById('api-val').innerText = apiString.toUpperCase();
+      }
       if (data.kv !== undefined && data.kv !== null) {
         const kvString = typeof data.kv === 'string' ? data.kv : String(data.kv);
         document.getElementById('kv-val').innerText = kvString.toUpperCase();
