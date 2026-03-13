@@ -6,6 +6,12 @@ import path from 'path';
 const WEBHOOK_SECRET = 'test-secret';
 const PORT = 3333;
 
+function sanitizeForLog(value) {
+  const str = String(value);
+  // Remove control characters (including newlines) to prevent log injection
+  return str.replace(/[\x00-\x1F\x7F]+/g, ' ');
+}
+
 const env = {
   ...process.env,
   GITHUB_TOKEN: 'dummy',
@@ -106,7 +112,7 @@ try {
 
 } catch (e) {
   const rawErrorMessage = (e && e.stack) || (e && e.toString && e.toString()) || String(e);
-  const sanitizedErrorMessage = rawErrorMessage.replace(/[\r\n]+/g, ' ');
+  const sanitizedErrorMessage = sanitizeForLog(rawErrorMessage);
   console.error(`Error during security checks: ${sanitizedErrorMessage}`);
   exitCode = 1;
 } finally {
