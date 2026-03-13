@@ -20,6 +20,10 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
+
+      - name: Verify gs-website routing guardrails
+        run: bash scripts/ci/verify-gs-website-routing.sh
+
       - uses: pnpm/action-setup@v4
         with:
           run_install: false
@@ -44,9 +48,6 @@ jobs:
       - name: Build web app
         working-directory: apps/gs-web
         env:
-          PUBLIC_API: https://api.goldshore.ai
-          PUBLIC_GATEWAY: https://gw.goldshore.ai
-          PUBLIC_ENV: production
           PUBLIC_BUILD_TIMESTAMP: ${{ github.run_started_at }}
           PUBLIC_COMMIT_HASH: ${{ github.sha }}
         run: pnpm build
