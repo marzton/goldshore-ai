@@ -145,8 +145,6 @@ function initModal() {
       panel.focus();
       return;
     }
-  document.addEventListener('keydown', onKeydown);
-
 
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
@@ -158,10 +156,13 @@ function initModal() {
         last.focus();
       }
       return;
-      e.preventDefault();
-      first.focus();
     }
+
+    e.preventDefault();
+    first.focus();
   };
+
+  document.addEventListener('keydown', onKeydown);
 
   document.addEventListener('keydown', onKeydown);
 
