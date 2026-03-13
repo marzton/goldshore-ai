@@ -21,34 +21,6 @@ const ALLOWED_MIME_TYPES = new Map([
 // 5MB limit to prevent DoS via large file uploads
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-const sanitizeSvg = (input: string): string => {
-  return sanitizeHtml(input, {
-    // Rely on sanitize-html to strip scripts, event handlers, and javascript: URLs.
-    allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-      'svg',
-      'g',
-      'defs',
-      'path',
-      'circle',
-      'rect',
-      'line',
-      'polyline',
-      'polygon',
-      'ellipse',
-      'text',
-      'tspan',
-      'use',
-      'symbol',
-      'linearGradient',
-      'radialGradient',
-      'stop',
-      'pattern',
-      'mask',
-      'clipPath'
-    ]),
-    allowedSchemes: ['http', 'https', 'data'],
-    allowedSchemesByTag: {},
-  });
 };
 
 /**
