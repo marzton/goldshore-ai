@@ -1,0 +1,1403 @@
+{
+  "generated_at": "2026-03-12T20:05:22Z",
+  "open": [
+    {
+      "number": 3311,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 01 enshox",
+      "base": "main",
+      "updated_at": "2026-03-12T19:59:44Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3304,
+      "title": "Codex/fix infra deployment for renamed gs api directory 2026 03 05",
+      "base": "main",
+      "updated_at": "2026-03-12T19:25:23Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3303,
+      "title": "Fix/control worker dns validation 7280295458721055887",
+      "base": "main",
+      "updated_at": "2026-03-12T19:57:56Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3301,
+      "title": "⚡ Optimize scripts/check-pages-200.ts with batched concurrency",
+      "base": "main",
+      "updated_at": "2026-03-12T18:55:01Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3273,
+      "title": "Unify agent repo guidance and upgrade admin dashboard shell",
+      "base": "main",
+      "updated_at": "2026-03-12T19:00:24Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3268,
+      "title": "Cloudflare",
+      "base": "codex/update-cloudflare-encryption-and-policy-fields-2026-03-05",
+      "updated_at": "2026-03-12T20:02:42Z",
+      "mergeable": true,
+      "mergeable_state": "unstable"
+    },
+    {
+      "number": 3263,
+      "title": "Unify and enforce canonical Penrose logo (gs-penrose.svg) across apps",
+      "base": "main",
+      "updated_at": "2026-03-11T21:33:01Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3214,
+      "title": "Codex/merge branch with main 2026 03 05",
+      "base": "main",
+      "updated_at": "2026-03-09T23:09:00Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3205,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 03 7z9kfz",
+      "base": "main",
+      "updated_at": "2026-03-09T22:48:44Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3141,
+      "title": "Gs-mail ",
+      "base": "codex/rename-apps/mail-worker-to-apps/gs-mail-2026-03-01",
+      "updated_at": "2026-03-12T20:02:43Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3125,
+      "title": "Chore/normalize worker structure 12200848901352815411 main",
+      "base": "main",
+      "updated_at": "2026-03-09T18:07:41Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3122,
+      "title": "Codex/consolidate design tokens and styles 2026 02 11",
+      "base": "main",
+      "updated_at": "2026-03-09T23:03:02Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3121,
+      "title": "Codex/establish naming conventions documentation 2026 02 11",
+      "base": "main",
+      "updated_at": "2026-03-09T21:50:13Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3116,
+      "title": "chore(gs-web): regenerate PR with inline runtime bootstrap wiring",
+      "base": "main",
+      "updated_at": "2026-03-09T22:01:59Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3112,
+      "title": "Chore/normalize worker structure 12200848901352815411",
+      "base": "main",
+      "updated_at": "2026-03-09T19:47:08Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3111,
+      "title": "Main head 2",
+      "base": "main",
+      "updated_at": "2026-03-09T22:49:09Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3110,
+      "title": "Codex/GitHub mention codex/fix high priority bugs from codex revi 2026 03 03",
+      "base": "main",
+      "updated_at": "2026-03-09T23:29:04Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3066,
+      "title": "Codex/GitHub mention chore/working copy 2026 03 09 a9qt3m",
+      "base": "main",
+      "updated_at": "2026-03-09T21:14:50Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3065,
+      "title": "Codex/GitHub mention chore/working copy 2026 03 09 hal88h",
+      "base": "main",
+      "updated_at": "2026-03-09T18:05:37Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3063,
+      "title": "Codex/GitHub mention chore/working copy 2026 03 09",
+      "base": "main",
+      "updated_at": "2026-03-09T14:13:44Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3044,
+      "title": "Codex/fix high priority bugs from codex review 2026 02 20",
+      "base": "main",
+      "updated_at": "2026-03-09T23:53:04Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3043,
+      "title": "Codex/fix high priority bugs from code review 2026 03 01",
+      "base": "main",
+      "updated_at": "2026-03-09T16:54:33Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3029,
+      "title": "fix(theme): remove binary font assets and use non-binary web font import",
+      "base": "main",
+      "updated_at": "2026-03-12T19:56:16Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2713,
+      "title": "Codex/GitHub mention codex generated pull request 2026 03 04",
+      "base": "main",
+      "updated_at": "2026-03-04T23:41:02Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2660,
+      "title": "Codex/resolve branch conflicts 2026 03 04",
+      "base": "main",
+      "updated_at": "2026-03-04T01:59:38Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2659,
+      "title": "Codex/update package.json name and audit labels 2026 02 11",
+      "base": "main",
+      "updated_at": "2026-03-04T01:58:49Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2644,
+      "title": "Codex/fix high priority bugs in pull request #2299 2026 03 03",
+      "base": "main",
+      "updated_at": "2026-03-03T23:31:26Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2588,
+      "title": "Resolve leftover merge conflict artifacts across docs and about page",
+      "base": "main",
+      "updated_at": "2026-03-03T21:46:49Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2587,
+      "title": "Resolve leftover merge conflict artifacts across docs and about page",
+      "base": "main",
+      "updated_at": "2026-03-03T23:22:11Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2586,
+      "title": "Codex/update package.json name and audit labels 2026 02 13 ulwy75",
+      "base": "main",
+      "updated_at": "2026-03-03T21:47:04Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2585,
+      "title": "Codex/update package.json name and audit labels 2026 02 13",
+      "base": "main",
+      "updated_at": "2026-03-04T01:54:36Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2584,
+      "title": "Normalize worker directories to canonical gs-* structure",
+      "base": "main",
+      "updated_at": "2026-03-04T01:54:42Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2581,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 03 yaa4bc",
+      "base": "main",
+      "updated_at": "2026-03-04T01:55:26Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2570,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 03 6f6bzy",
+      "base": "main",
+      "updated_at": "2026-03-04T01:55:38Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2563,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 01 n15zig",
+      "base": "main",
+      "updated_at": "2026-03-04T01:55:46Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2558,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 03",
+      "base": "main",
+      "updated_at": "2026-03-04T01:55:49Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2549,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 01 9wfbgb",
+      "base": "main",
+      "updated_at": "2026-03-03T01:31:17Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2548,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 01 iqnxzz",
+      "base": "main",
+      "updated_at": "2026-03-03T01:29:31Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2547,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 01 h9na57",
+      "base": "main",
+      "updated_at": "2026-03-03T01:31:00Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2539,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 01 uam6uo",
+      "base": "main",
+      "updated_at": "2026-03-03T01:19:07Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2528,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 01 v9hdr1",
+      "base": "main",
+      "updated_at": "2026-03-01T18:20:13Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2504,
+      "title": "Codex/fix high priority issues from codex review 2026 03 01",
+      "base": "main",
+      "updated_at": "2026-03-01T18:18:03Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2487,
+      "title": "Codex/review branch for duplicates and errors 2026 03 01",
+      "base": "main",
+      "updated_at": "2026-03-01T17:48:44Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2486,
+      "title": "docs: add guidance for unrelated PR histories",
+      "base": "main",
+      "updated_at": "2026-03-01T17:47:59Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2485,
+      "title": "Add merge-audit tooling; harden mail/contact flows and update web content/deps",
+      "base": "main",
+      "updated_at": "2026-03-01T17:29:20Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2484,
+      "title": "Codex-generated pull request",
+      "base": "main",
+      "updated_at": "2026-03-04T02:18:59Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2482,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 01 ydtlhj",
+      "base": "main",
+      "updated_at": "2026-03-01T17:09:21Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2424,
+      "title": "Codex/fix high priority issues from codex review 2026 02 19",
+      "base": "main",
+      "updated_at": "2026-03-01T14:39:35Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2416,
+      "title": "Fix conflicts restore manifests 16782105097730596540",
+      "base": "main",
+      "updated_at": "2026-03-01T14:38:06Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2350,
+      "title": "Codex/fix bugs flagged in codex review 2026 03 01",
+      "base": "main",
+      "updated_at": "2026-03-01T13:31:38Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2346,
+      "title": "Codex/fix high priority bugs in pr #2298 2026 03 01",
+      "base": "main",
+      "updated_at": "2026-03-01T13:27:32Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2345,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 01 0kdf5h",
+      "base": "main",
+      "updated_at": "2026-03-01T13:27:19Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2344,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 01",
+      "base": "main",
+      "updated_at": "2026-03-01T13:27:00Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2339,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 01 nl76ly",
+      "base": "main",
+      "updated_at": "2026-03-01T13:22:49Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2338,
+      "title": "Codex/fix high priority bug in stabilization check.mjs 2026 03 01",
+      "base": "main",
+      "updated_at": "2026-03-01T13:22:42Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2337,
+      "title": "Codex/fix high priority bugs from codex review 2026 03 01 wwsonp",
+      "base": "main",
+      "updated_at": "2026-03-01T13:20:48Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2299,
+      "title": "Codex/GitHub mention codex/fix high priority bugs from codex revi 2026 03 01",
+      "base": "main",
+      "updated_at": "2026-03-03T21:12:28Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 2232,
+      "title": "fix(contract): enforce strict theme exports and canonicalize Web runtime & routes",
+      "base": "main",
+      "updated_at": "2026-02-24T20:06:39Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 1954,
+      "title": "Codex/fix high priority issues from codex review 2026 02 20",
+      "base": "main",
+      "updated_at": "2026-02-22T05:51:33Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 1943,
+      "title": "Codex/fix high priority bugs from codex review 2026 02 22",
+      "base": "main",
+      "updated_at": "2026-02-22T05:49:00Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 1904,
+      "title": "Restore gs-control missing modules and remove duplicate root build key",
+      "base": "main",
+      "updated_at": "2026-02-22T00:02:38Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 1871,
+      "title": "Codex/extract workflow data from yaml files 2026 02 18",
+      "base": "main",
+      "updated_at": "2026-02-22T00:00:42Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    }
+  ],
+  "closed_recent": [
+    {
+      "number": 3314,
+      "title": "🧪 [testing improvement] add loadThemeSettings tests and fix existing theme tests",
+      "base": "main",
+      "updated_at": "2026-03-12T20:02:41Z",
+      "merged_at": "2026-03-12T20:02:38Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3313,
+      "title": "🧪 Add test for workers control lib",
+      "base": "main",
+      "updated_at": "2026-03-12T19:56:43Z",
+      "merged_at": "2026-03-12T19:55:04Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3312,
+      "title": "🎨 Palette: Add loading state and ARIA live region to Service Status component",
+      "base": "main",
+      "updated_at": "2026-03-12T19:55:29Z",
+      "merged_at": "2026-03-12T19:54:32Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3310,
+      "title": "Follow-up: restore DNS update compatibility and scaffold imports for PR #3303",
+      "base": "fix/control-worker-dns-validation-7280295458721055887",
+      "updated_at": "2026-03-12T19:50:01Z",
+      "merged_at": "2026-03-12T19:46:29Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3309,
+      "title": "Add gs-control worker with system sync, infra routes, auth guard, and scheduled tasks",
+      "base": "marzton-patch-6",
+      "updated_at": "2026-03-12T19:46:06Z",
+      "merged_at": "2026-03-12T19:43:17Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3308,
+      "title": "🎨 Palette: Improve copy button UX and accessibility",
+      "base": "main",
+      "updated_at": "2026-03-12T19:43:08Z",
+      "merged_at": "2026-03-12T19:43:05Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3307,
+      "title": "Revert \"Add deployment guard checks to admin worker status\"",
+      "base": "main",
+      "updated_at": "2026-03-12T19:04:31Z",
+      "merged_at": "2026-03-12T19:04:29Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3306,
+      "title": "Update Cloudflare  (#3305)",
+      "base": "main",
+      "updated_at": "2026-03-12T18:57:33Z",
+      "merged_at": "2026-03-12T18:57:31Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3305,
+      "title": "Update Cloudflare ",
+      "base": "codex/update-cloudflare-encryption-and-policy-fields-2026-03-05-4x5rcw",
+      "updated_at": "2026-03-12T20:03:05Z",
+      "merged_at": "2026-03-12T18:57:08Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3302,
+      "title": "build(deps): bump devalue from 5.6.3 to 5.6.4 in /archive/astro-goldshore in the npm_and_yarn group across 1 directory",
+      "base": "main",
+      "updated_at": "2026-03-12T18:54:38Z",
+      "merged_at": "2026-03-12T18:54:36Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3300,
+      "title": "Standardize canonical logo path to /logo/gs-penrose.svg, archive legacy assets, and add guard",
+      "base": "main",
+      "updated_at": "2026-03-11T21:04:43Z",
+      "merged_at": "2026-03-11T21:04:25Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3299,
+      "title": "Add HMAC proxy signature verification and CI deploy workflow",
+      "base": "main",
+      "updated_at": "2026-03-11T21:06:21Z",
+      "merged_at": "2026-03-11T21:06:20Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3298,
+      "title": "feat: migrate homepage to content-first Astro Micro landing architecture",
+      "base": "main",
+      "updated_at": "2026-03-11T20:42:14Z",
+      "merged_at": "2026-03-11T20:42:12Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3297,
+      "title": "Add deployment guard checks to admin worker status",
+      "base": "main",
+      "updated_at": "2026-03-11T20:42:41Z",
+      "merged_at": "2026-03-11T20:42:40Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3296,
+      "title": "Add GitHub deploy workflow for Cloudflare Workers and HMAC signature verification helper",
+      "base": "main",
+      "updated_at": "2026-03-11T20:43:10Z",
+      "merged_at": "2026-03-11T20:43:08Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3295,
+      "title": "Adjust Management sidebar: keep media gate, remove media gate from PII scans",
+      "base": "main",
+      "updated_at": "2026-03-11T20:43:35Z",
+      "merged_at": "2026-03-11T20:43:33Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3294,
+      "title": "Update Home Editor sidebar link to existing pages editor route",
+      "base": "main",
+      "updated_at": "2026-03-11T20:44:13Z",
+      "merged_at": "2026-03-11T20:44:11Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3293,
+      "title": "docs: clarify gs-admin navigation architecture scope",
+      "base": "main",
+      "updated_at": "2026-03-11T20:10:02Z",
+      "merged_at": "2026-03-11T20:10:00Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3292,
+      "title": "Refine gs-admin sidebar labels to match route purpose",
+      "base": "main",
+      "updated_at": "2026-03-11T20:10:25Z",
+      "merged_at": "2026-03-11T20:10:23Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3291,
+      "title": "Consolidate global styles and rely on theme package",
+      "base": "main",
+      "updated_at": "2026-03-11T20:11:41Z",
+      "merged_at": "2026-03-11T20:11:39Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3290,
+      "title": "Refactor admin sidebar into collapsible nav groups, add JS/CSS and z-index fixes",
+      "base": "main",
+      "updated_at": "2026-03-11T20:12:39Z",
+      "merged_at": "2026-03-11T20:12:34Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3289,
+      "title": "Introduce services content, i18n homepage, Icon component, and extract page styles to CSS",
+      "base": "main",
+      "updated_at": "2026-03-11T20:13:42Z",
+      "merged_at": "2026-03-11T20:13:04Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3288,
+      "title": "Add Agent Feed and Infrastructure admin pages with Security Audit component and Sidebar links",
+      "base": "main",
+      "updated_at": "2026-03-11T20:44:42Z",
+      "merged_at": "2026-03-11T20:44:41Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3287,
+      "title": "Admin UI: add Agent Feed link, tighten types, and harden media page API handling",
+      "base": "main",
+      "updated_at": "2026-03-11T20:45:52Z",
+      "merged_at": "2026-03-11T20:45:51Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3286,
+      "title": "Canonicalize runtime logo paths and add CI guard",
+      "base": "main",
+      "updated_at": "2026-03-11T21:08:33Z",
+      "merged_at": "2026-03-11T21:08:31Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3285,
+      "title": "Update canonical favicon to versioned gs-penrose asset",
+      "base": "main",
+      "updated_at": "2026-03-11T19:42:51Z",
+      "merged_at": "2026-03-11T19:42:49Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3284,
+      "title": "docs: add logo-fix deployment audit report",
+      "base": "main",
+      "updated_at": "2026-03-11T19:43:15Z",
+      "merged_at": "2026-03-11T19:43:13Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3283,
+      "title": "Add static Tailwind class maps for agent feed badges",
+      "base": "main",
+      "updated_at": "2026-03-11T19:43:44Z",
+      "merged_at": "2026-03-11T19:43:42Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3282,
+      "title": "Add gs-admin Agent Feed page and SecurityAudit component",
+      "base": "main",
+      "updated_at": "2026-03-11T21:09:40Z",
+      "merged_at": "2026-03-11T21:09:23Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3281,
+      "title": "Add Operations links for agent observability in admin sidebar",
+      "base": "main",
+      "updated_at": "2026-03-11T19:45:46Z",
+      "merged_at": "2026-03-11T19:45:44Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3280,
+      "title": "Add SecurityAudit component with static Tailwind severity classes",
+      "base": "main",
+      "updated_at": "2026-03-11T19:46:19Z",
+      "merged_at": "2026-03-11T19:46:18Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3279,
+      "title": "Add admin agent feed page with client-updated logic timestamp",
+      "base": "main",
+      "updated_at": "2026-03-11T19:47:52Z",
+      "merged_at": "2026-03-11T19:47:50Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3278,
+      "title": "Add Agent Feed link to admin sidebar",
+      "base": "main",
+      "updated_at": "2026-03-11T21:10:22Z",
+      "merged_at": "2026-03-11T21:10:20Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3277,
+      "title": "Add Agent Feed page with Security Audit panel in gs-admin",
+      "base": "main",
+      "updated_at": "2026-03-11T19:50:35Z",
+      "merged_at": "2026-03-11T19:50:33Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3276,
+      "title": "Add Admin Agent Feed page to display active agent tasks",
+      "base": "main",
+      "updated_at": "2026-03-11T21:35:00Z",
+      "merged_at": "2026-03-11T21:34:48Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3275,
+      "title": "Build Admin Control Center layout and dashboard route",
+      "base": "main",
+      "updated_at": "2026-03-11T21:13:05Z",
+      "merged_at": "2026-03-11T21:12:45Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3274,
+      "title": "build(deps): bump hono from 4.12.4 to 4.12.7 in the npm_and_yarn group across 1 directory",
+      "base": "main",
+      "updated_at": "2026-03-11T21:13:17Z",
+      "merged_at": "2026-03-11T21:13:15Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3272,
+      "title": "Home (#3267)",
+      "base": "main",
+      "updated_at": "2026-03-11T19:04:53Z",
+      "merged_at": "2026-03-11T19:04:51Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3271,
+      "title": "Add monorepo repository mapping guidance for Jules and Codex",
+      "base": "main",
+      "updated_at": "2026-03-11T19:04:23Z",
+      "merged_at": "2026-03-11T19:04:21Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3270,
+      "title": "🎨 Palette: ServiceStatus UX and A11y enhancements",
+      "base": "main",
+      "updated_at": "2026-03-11T19:05:18Z",
+      "merged_at": "2026-03-11T19:05:16Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3269,
+      "title": "build(deps): bump hono from 4.12.4 to 4.12.7 in /archive/astro-goldshore/astro-goldshore in the npm_and_yarn group across 1 directory",
+      "base": "main",
+      "updated_at": "2026-03-11T19:05:46Z",
+      "merged_at": "2026-03-11T19:05:44Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3267,
+      "title": "Home",
+      "base": "revert-3245-codex/update-home-page-for-advisory-focus-2026-03-10",
+      "updated_at": "2026-03-11T19:04:06Z",
+      "merged_at": "2026-03-11T19:04:05Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3266,
+      "title": "Add API defaults & contract headers, sanitize SVGs, unify mail handler, and normalize test scripts",
+      "base": "main",
+      "updated_at": "2026-03-10T23:48:24Z",
+      "merged_at": "2026-03-10T23:48:23Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3265,
+      "title": "Add services collection, Icon component, Spanish homepage, and SEO/canonical links",
+      "base": "main",
+      "updated_at": "2026-03-10T13:12:48Z",
+      "merged_at": "2026-03-10T13:12:46Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3264,
+      "title": "Revert \"Pivot homepage and service copy to strategic advisory positio…",
+      "base": "main",
+      "updated_at": "2026-03-10T12:28:33Z",
+      "merged_at": null,
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3262,
+      "title": "fix: restore gs-web ui by adopting workspace theme",
+      "base": "main",
+      "updated_at": "2026-03-10T12:13:02Z",
+      "merged_at": "2026-03-10T12:12:58Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3261,
+      "title": "Revert \"Pivot homepage and service copy to strategic advisory positioning\"",
+      "base": "main",
+      "updated_at": "2026-03-10T12:10:18Z",
+      "merged_at": "2026-03-10T12:10:05Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3260,
+      "title": "Refactor DefaultPageTemplate into reusable layout wrapper",
+      "base": "main",
+      "updated_at": "2026-03-10T12:13:53Z",
+      "merged_at": "2026-03-10T12:13:51Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3259,
+      "title": "docs(gs-web): document shared Astro Cloudflare/server config ownership",
+      "base": "main",
+      "updated_at": "2026-03-10T12:14:14Z",
+      "merged_at": "2026-03-10T12:14:11Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3258,
+      "title": "refactor(gs-web): consolidate global styles and scope homepage css",
+      "base": "main",
+      "updated_at": "2026-03-10T12:18:39Z",
+      "merged_at": "2026-03-10T12:18:37Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3257,
+      "title": "Configure gs-web Cloudflare env bindings and regenerate Wrangler types",
+      "base": "main",
+      "updated_at": "2026-03-10T12:29:10Z",
+      "merged_at": "2026-03-10T12:29:06Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3256,
+      "title": "feat(gs-web): add typed i18n service content data",
+      "base": "main",
+      "updated_at": "2026-03-10T12:27:59Z",
+      "merged_at": "2026-03-10T12:27:57Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3255,
+      "title": "Add protected admin route",
+      "base": "main",
+      "updated_at": "2026-03-10T12:15:32Z",
+      "merged_at": "2026-03-10T12:15:29Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3254,
+      "title": "fix(brand): override Penrose logo with final production SVG asset",
+      "base": "main",
+      "updated_at": "2026-03-10T08:58:27Z",
+      "merged_at": "2026-03-10T08:58:24Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3253,
+      "title": "Serve brand logo from public packages path in web/admin",
+      "base": "main",
+      "updated_at": "2026-03-10T12:16:49Z",
+      "merged_at": "2026-03-10T12:16:47Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3252,
+      "title": "Add Strategic Intelligence Sync schema and UI; refactor nav and modal styles",
+      "base": "main",
+      "updated_at": "2026-03-10T08:33:56Z",
+      "merged_at": "2026-03-10T08:33:54Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3251,
+      "title": "Add Partnerships & Careers page, header megamenu, enhanced contact form, and sync modal",
+      "base": "main",
+      "updated_at": "2026-03-10T08:58:52Z",
+      "merged_at": "2026-03-10T08:58:50Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3250,
+      "title": "Update gs-web footer to 4-pillar responsive layout",
+      "base": "main",
+      "updated_at": "2026-03-10T09:08:58Z",
+      "merged_at": "2026-03-10T09:08:56Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3249,
+      "title": "Update homepage modal: heading, briefing copy, investor-type select, and accessibility",
+      "base": "main",
+      "updated_at": "2026-03-10T09:09:22Z",
+      "merged_at": "2026-03-10T09:09:20Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3248,
+      "title": "Standardize modal trigger attribute to `data-gs-modal-open`",
+      "base": "main",
+      "updated_at": "2026-03-10T09:09:44Z",
+      "merged_at": "2026-03-10T09:09:42Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3247,
+      "title": "feat(gs-web): group SiteNav links into desktop disclosures and mobile accordions",
+      "base": "main",
+      "updated_at": "2026-03-10T09:21:59Z",
+      "merged_at": "2026-03-10T09:21:57Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3246,
+      "title": "feat(gs-admin): grouped collapsible sidebar navigation",
+      "base": "main",
+      "updated_at": "2026-03-10T09:21:30Z",
+      "merged_at": "2026-03-10T09:21:28Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3245,
+      "title": "Pivot homepage and service copy to strategic advisory positioning",
+      "base": "main",
+      "updated_at": "2026-03-10T09:34:19Z",
+      "merged_at": "2026-03-10T09:34:16Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3244,
+      "title": "Serve brand logo from public packages path in web/admin",
+      "base": "main",
+      "updated_at": "2026-03-10T08:34:47Z",
+      "merged_at": "2026-03-10T08:33:40Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3243,
+      "title": "chore: sync merged workspace lockfile updates",
+      "base": "main",
+      "updated_at": "2026-03-09T23:52:50Z",
+      "merged_at": "2026-03-09T23:52:49Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3242,
+      "title": "🧪 test: add unit tests for gs-api utilities and harden auth security",
+      "base": "main",
+      "updated_at": "2026-03-09T23:36:26Z",
+      "merged_at": "2026-03-09T23:36:25Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3241,
+      "title": "Add gateway validation workflow, harden web workflow builds, update wrangler configs and stabilization checks",
+      "base": "codex/github-mention-codex/fix-high-priority-bugs-from-codex-revi-2026-03-03",
+      "updated_at": "2026-03-09T23:29:25Z",
+      "merged_at": "2026-03-09T23:29:02Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3240,
+      "title": "Consolidate logo assets, improve sidebar routing logic, and fix repo-health workflow & scripts",
+      "base": "main",
+      "updated_at": "2026-03-09T23:27:49Z",
+      "merged_at": "2026-03-09T23:27:47Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3239,
+      "title": "Add restrained, reduced-motion-safe System Status indicator to HeroOr…",
+      "base": "main",
+      "updated_at": "2026-03-09T23:20:58Z",
+      "merged_at": null,
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3238,
+      "title": "Codex/update cloudflare encryption and policy fields 2026 03 05",
+      "base": "main",
+      "updated_at": "2026-03-09T23:21:26Z",
+      "merged_at": null,
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3237,
+      "title": "build tokens (#3234)",
+      "base": "main",
+      "updated_at": "2026-03-09T23:16:15Z",
+      "merged_at": null,
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3236,
+      "title": "🧪 [testing improvement] Add missing error path test for Cloudflare pages projects route",
+      "base": "main",
+      "updated_at": "2026-03-09T23:16:47Z",
+      "merged_at": "2026-03-09T23:16:45Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3235,
+      "title": "⚡ [performance] Optimize Cloudflare checks to run concurrently",
+      "base": "main",
+      "updated_at": "2026-03-09T23:17:16Z",
+      "merged_at": "2026-03-09T23:17:08Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3234,
+      "title": "build tokens",
+      "base": "codex/update-cloudflare-build-tokens-2026-03-04",
+      "updated_at": "2026-03-10T23:49:12Z",
+      "merged_at": "2026-03-09T23:14:29Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3233,
+      "title": "codex/cf policy ",
+      "base": "codex/update-cloudflare-encryption-and-policy-fields-2026-03-05",
+      "updated_at": "2026-03-09T23:14:17Z",
+      "merged_at": "2026-03-09T23:12:30Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3232,
+      "title": "codex/mobile nav",
+      "base": "codex/update-mobile-navigation-components-2026-03-05-zsehnp",
+      "updated_at": "2026-03-09T23:11:58Z",
+      "merged_at": "2026-03-09T23:11:11Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3231,
+      "title": "codex/update encryption ",
+      "base": "codex/update-cloudflare-encryption-and-policy-fields-2026-03-05",
+      "updated_at": "2026-03-09T23:11:03Z",
+      "merged_at": "2026-03-09T23:10:37Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3230,
+      "title": "Enhance homepage metric card hierarchy with qualifiers and Developer Hub link",
+      "base": "main",
+      "updated_at": "2026-03-09T23:07:53Z",
+      "merged_at": "2026-03-09T23:07:52Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3229,
+      "title": "Add restrained, reduced-motion-safe System Status indicator to HeroOrbital",
+      "base": "main",
+      "updated_at": "2026-03-09T23:08:38Z",
+      "merged_at": "2026-03-09T23:08:37Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3228,
+      "title": "Integration (#3217)",
+      "base": "main",
+      "updated_at": "2026-03-09T23:00:22Z",
+      "merged_at": "2026-03-09T23:00:21Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3227,
+      "title": "Health (#3216)",
+      "base": "main",
+      "updated_at": "2026-03-09T22:59:46Z",
+      "merged_at": "2026-03-09T22:59:42Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3226,
+      "title": "Configuration  (#3215)",
+      "base": "main",
+      "updated_at": "2026-03-09T23:00:53Z",
+      "merged_at": "2026-03-09T23:00:51Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3225,
+      "title": "Policy  (#3221)",
+      "base": "main",
+      "updated_at": "2026-03-09T23:01:47Z",
+      "merged_at": null,
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3224,
+      "title": "Encryption (#3218)",
+      "base": "main",
+      "updated_at": "2026-03-09T23:01:59Z",
+      "merged_at": null,
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3223,
+      "title": "Consolidate theme (#3219)",
+      "base": "main",
+      "updated_at": "2026-03-09T23:02:13Z",
+      "merged_at": null,
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3222,
+      "title": "Mobile (#3220)",
+      "base": "main",
+      "updated_at": "2026-03-09T23:02:40Z",
+      "merged_at": null,
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3221,
+      "title": "Policy ",
+      "base": "codex/update-cloudflare-encryption-and-policy-fields-2026-03-05",
+      "updated_at": "2026-03-09T23:10:28Z",
+      "merged_at": "2026-03-09T22:57:59Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3220,
+      "title": "Mobile",
+      "base": "codex/update-mobile-navigation-components-2026-03-05-zsehnp",
+      "updated_at": "2026-03-09T22:57:54Z",
+      "merged_at": "2026-03-09T22:57:12Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3219,
+      "title": "Consolidate theme",
+      "base": "revert-2913-codex/consolidate-theme-style-exports-2026-03-05",
+      "updated_at": "2026-03-09T22:57:02Z",
+      "merged_at": "2026-03-09T22:56:39Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3218,
+      "title": "Encryption",
+      "base": "codex/update-cloudflare-encryption-and-policy-fields-2026-03-05-4x5rcw",
+      "updated_at": "2026-03-09T22:56:26Z",
+      "merged_at": "2026-03-09T22:55:44Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3217,
+      "title": "Integration",
+      "base": "codex/generate-github-issues-for-platform-integration-2026-03-05",
+      "updated_at": "2026-03-09T22:55:34Z",
+      "merged_at": "2026-03-09T22:54:50Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3216,
+      "title": "Health",
+      "base": "codex/add-health-checks-and-update-urls-2026-03-05",
+      "updated_at": "2026-03-09T22:55:07Z",
+      "merged_at": "2026-03-09T22:55:07Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3215,
+      "title": "Configuration ",
+      "base": "codex/update-wrangler.toml-for-env-configurations-2026-03-05",
+      "updated_at": "2026-03-09T22:58:32Z",
+      "merged_at": "2026-03-09T22:58:32Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3213,
+      "title": "Agent (#3212)",
+      "base": "main",
+      "updated_at": "2026-03-09T22:50:46Z",
+      "merged_at": "2026-03-09T22:50:45Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3212,
+      "title": "Agent",
+      "base": "codex/revise-agent_implementation_guide-for-commands-2026-03-05",
+      "updated_at": "2026-03-09T22:54:09Z",
+      "merged_at": "2026-03-09T22:49:56Z",
+      "mergeable": false,
+      "mergeable_state": "dirty"
+    },
+    {
+      "number": 3211,
+      "title": "Standardize developer hub links and add legacy `/developer` redirect",
+      "base": "main",
+      "updated_at": "2026-03-09T22:44:47Z",
+      "merged_at": "2026-03-09T22:44:46Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3210,
+      "title": "Make 'Request Briefing' the primary CTA in SiteNav",
+      "base": "main",
+      "updated_at": "2026-03-09T22:44:24Z",
+      "merged_at": "2026-03-09T22:44:23Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3209,
+      "title": "Refactor mobile nav panel header to prevent logo/close collisions",
+      "base": "main",
+      "updated_at": "2026-03-09T22:45:17Z",
+      "merged_at": "2026-03-09T22:45:15Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3208,
+      "title": "Update gs-web logo references to canonical public brand asset path",
+      "base": "main",
+      "updated_at": "2026-03-09T22:44:00Z",
+      "merged_at": "2026-03-09T22:43:58Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    },
+    {
+      "number": 3207,
+      "title": "Add system status endpoint and UI, update nav/branding paths and styles",
+      "base": "main",
+      "updated_at": "2026-03-09T22:47:12Z",
+      "merged_at": "2026-03-09T22:47:11Z",
+      "mergeable": null,
+      "mergeable_state": "unknown"
+    }
+  ]
+}

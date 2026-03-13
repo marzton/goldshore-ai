@@ -139,8 +139,8 @@ const API_BASE = import.meta.env.PUBLIC_API;
     }
   </style>
 
-  <script>
-    const apiBase = `${API_BASE}`.replace(/\/$/, '');
+  <script is:inline define:vars={{ apiBase: API_BASE }}>
+    const apiBaseUrl = `${apiBase}`.replace(/\/$/, '');
     const modal = document.getElementById('media-modal');
     const modalGrid = document.getElementById('media-modal-grid');
     const editor = document.getElementById('page-editor-input');
@@ -171,7 +171,12 @@ const API_BASE = import.meta.env.PUBLIC_API;
     const updatePreview = () => {
       if (!(editor instanceof HTMLTextAreaElement) || !preview) return;
       const value = editor.value;
-      preview.innerHTML = value
+
+      const escapeEl = document.createElement('div');
+      escapeEl.textContent = value;
+      const escapedValue = escapeEl.innerHTML;
+
+      preview.innerHTML = escapedValue
         .replace(/\\n/g, '<br />')
         .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>');
     };
@@ -197,7 +202,7 @@ const API_BASE = import.meta.env.PUBLIC_API;
       card.appendChild(metaDiv);
 
       card.addEventListener('click', () => {
-        insertAtCursor(`\\n<img src=\"${item.url}\" alt=\"${item.filename}\" />\\n`);
+        insertAtCursor(`\\n<img src="${item.url}" alt="${item.filename}" />\\n`);
         closeModal();
       });
       return card;
@@ -207,7 +212,7 @@ const API_BASE = import.meta.env.PUBLIC_API;
       if (!modalGrid) return;
       modalGrid.innerHTML = '<div class="gs-helper">Loading media library...</div>';
       try {
-        const response = await fetch(`${apiBase}/media`);
+        const response = await fetch(`${apiBaseUrl}/media`);
         const data = await response.json();
         const items = data.items ?? [];
         if (!items.length) {
