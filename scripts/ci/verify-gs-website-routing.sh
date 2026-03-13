@@ -5,7 +5,7 @@ ROOT="${1:-.}"
 REDIRECTS="$ROOT/apps/gs-web/public/_redirects"
 ASTRO_CFG="$ROOT/apps/gs-web/astro.config.mjs"
 API_DOMAIN="${API_DOMAIN:-api.goldshore.ai}"
-API_DOMAIN_REGEX="$(printf '%s' "$API_DOMAIN" | sed 's/[.[\*^$()+?{|]/\\&/g')"
+API_DOMAIN_REGEX="$(printf '%s' "$API_DOMAIN" | sed 's/[.[\*^$()+?{|\\]/\\&/g')"
 
 echo "Verifying GS website routing guardrails..."
 
