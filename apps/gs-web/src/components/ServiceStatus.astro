@@ -55,8 +55,14 @@ const { serviceUrl } = Astro.props;
       indicator.innerHTML = `<span class="h-3 w-3 rounded-full ${color}"></span><span class="text-sm font-bold uppercase">${data.status}</span>`;
       
       document.getElementById('api-val').innerText = 'CONNECTED';
-      if (data.kv) document.getElementById('kv-val').innerText = data.kv.toUpperCase();
-      if (data.db) document.getElementById('db-val').innerText = data.db.toUpperCase();
+      if (data.kv !== undefined && data.kv !== null) {
+        const kvString = typeof data.kv === 'string' ? data.kv : String(data.kv);
+        document.getElementById('kv-val').innerText = kvString.toUpperCase();
+      }
+      if (data.db !== undefined && data.db !== null) {
+        const dbString = typeof data.db === 'string' ? data.db : String(data.db);
+        document.getElementById('db-val').innerText = dbString.toUpperCase();
+      }
     } catch (e) {
       indicator.innerHTML = `<span class="h-3 w-3 rounded-full bg-red-500"></span><span class="text-sm font-bold uppercase">OFFLINE</span>`;
     }
