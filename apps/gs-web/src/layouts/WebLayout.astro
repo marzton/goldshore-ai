@@ -4,6 +4,7 @@ import '@goldshore/theme/styles/base';
 import '@goldshore/theme/styles/components';
 import '@goldshore/theme/styles/layout';
 import { GSButton } from '@goldshore/ui';
+import SiteFooter from '../components/SiteFooter.astro';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -64,32 +65,7 @@ const logoSrc = '/logo.svg';
         <slot />
       </main>
 
-      <footer class="gs-footer">
-        <div class="gs-section gs-section--padded">
-          <div class="gs-grid columns-2">
-            <div>
-              <div class="gs-logo" style="gap: var(--gs-space-2);">
-                <img src={logoSrc} alt="GoldShore logo" width="24" height="32" loading="lazy" decoding="async" />
-              </div>
-              <p>Applied intelligence, resilient infrastructure, and responsive operations.</p>
-            </div>
-            <div class="gs-grid columns-2" style="gap: var(--gs-space-2);">
-              <div class="gs-nav gs-nav--vertical">
-                <strong><span class="aria-icon aria-icon-orbit" aria-hidden="true"></span>Company</strong>
-                <a href="/about" aria-current={currentPath === '/about' ? 'page' : undefined}>About</a>
-                <a href="/team" aria-current={currentPath === '/team' ? 'page' : undefined}>Team</a>
-                <a href="/services" aria-current={currentPath === '/services' ? 'page' : undefined}>Services</a>
-              </div>
-              <div class="gs-nav gs-nav--vertical-support">
-                <strong><span class="aria-icon aria-icon-signal" aria-hidden="true"></span>Support</strong>
-                <a href="/contact" aria-current={currentPath === '/contact' ? 'page' : undefined}>Contact</a>
-                <a href="/legal/privacy" aria-current={currentPath === '/legal/privacy' ? 'page' : undefined}>Privacy</a>
-                <a href="/legal/terms" aria-current={currentPath === '/legal/terms' ? 'page' : undefined}>Terms</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter currentPath={currentPath} logoSrc={logoSrc} />
     </div>
     <script is:inline>
       const header = document.querySelector('.gs-header');
@@ -177,26 +153,26 @@ const logoSrc = '/logo.svg';
         align-items: center;
         justify-content: space-between;
         padding: 0 2rem;
-        background: rgba(3, 3, 5, 0.7); /* Deep dark tint */
+        background: var(--gs-header-bg-glass);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid var(--gs-header-border-subtle);
         transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
       .gs-header.is-scrolled {
-        background: rgba(0, 0, 0, 0.95);
-        border-bottom-color: rgba(34, 211, 238, 0.15); /* Cyan hint */
-        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.8);
+        background: var(--gs-header-bg-scrolled);
+        border-bottom-color: var(--gs-header-border-accent);
+        box-shadow: var(--gs-header-shadow-scrolled);
       }
 
       @keyframes glow-pulse {
         0%, 100% {
-          filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.3)) brightness(1.2);
+          filter: drop-shadow(0 0 8px var(--gs-logo-glow-soft)) brightness(1.2);
           transform: scale(1);
         }
         50% {
-          filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.6)) brightness(1.4);
+          filter: drop-shadow(0 0 15px var(--gs-logo-glow-strong)) brightness(1.4);
           transform: scale(1.05);
         }
       }
@@ -206,7 +182,7 @@ const logoSrc = '/logo.svg';
         align-items: center;
         gap: 0.75rem;
         text-decoration: none;
-        color: #fff;
+        color: var(--gs-text-primary);
         font-weight: 600;
         font-size: 1.1rem;
         letter-spacing: -0.01em;
@@ -235,7 +211,7 @@ const logoSrc = '/logo.svg';
       }
 
       .gs-nav a {
-        color: rgba(255, 255, 255, 0.7);
+        color: var(--gs-text-secondary);
         text-decoration: none;
         font-size: 0.95rem;
         transition: color 0.2s ease;
@@ -244,7 +220,7 @@ const logoSrc = '/logo.svg';
 
       .gs-nav a:hover,
       .gs-nav a[aria-current="page"] {
-        color: #fff;
+        color: var(--gs-text-primary);
       }
 
       .gs-nav a[aria-current="page"]::after {
@@ -254,8 +230,8 @@ const logoSrc = '/logo.svg';
         left: 0;
         right: 0;
         height: 2px;
-        background: #22d3ee; /* Cyan accent */
-        box-shadow: 0 0 8px #22d3ee;
+        background: var(--gs-nav-indicator-bg);
+        box-shadow: var(--gs-nav-indicator-shadow);
       }
 
       /* Mobile toggle */
@@ -263,7 +239,7 @@ const logoSrc = '/logo.svg';
         display: none; /* Hidden by default on desktop */
         background: none;
         border: none;
-        color: #fff;
+        color: var(--gs-text-primary);
         cursor: pointer;
       }
 
@@ -279,9 +255,9 @@ const logoSrc = '/logo.svg';
           top: 100%;
           left: 0;
           right: 0;
-          background: #000;
+          background: var(--gs-mobile-menu-bg);
           padding: 2rem;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          border-bottom: 1px solid var(--gs-mobile-menu-border);
         }
       }
     </style>
