@@ -79,6 +79,8 @@ def process_nested_folder():
         print(f"Error removing {NESTED_ROOT}: {e}")
 
     # Generate Summary
+    moved_details = "\n".join(['- ' + f for f in moved_files]) if moved_files else "- None"
+    legacy_details = "\n".join(['- ' + f for f in legacy_files]) if legacy_files else "- None"
     summary = f"""
 # Duplicate Cleanup Summary
 - **Unique Files Moved:** {len(moved_files)}
@@ -87,10 +89,10 @@ def process_nested_folder():
 
 ## Details
 ### Moved
-{"\n".join(['- ' + f for f in moved_files])}
+{moved_details}
 
 ### Preserved as Legacy
-{"\n".join(['- ' + f for f in legacy_files])}
+{legacy_details}
     """
 
     with open("cleanup_summary.md", "w") as f:
