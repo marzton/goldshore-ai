@@ -58,6 +58,13 @@ media.get('/:id', async (c) => {
 });
 
 media.post('/upload', async (c) => {
+  // Simple authentication: require a valid bearer token before allowing uploads
+  const authHeader = c.req.header('Authorization') ?? '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+  if (!token || !c.env.API_TOKEN || token !== c.env.API_TOKEN) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
   const formData = await c.req.formData();
   const file = formData.get('file');
 
