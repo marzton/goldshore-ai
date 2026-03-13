@@ -64,6 +64,7 @@ const { serviceUrl } = Astro.props;
         document.getElementById('db-val').innerText = dbString.toUpperCase();
       }
     } catch (e) {
+      console.error('Health check failed:', e);
       indicator.innerHTML = `<span class="h-3 w-3 rounded-full bg-red-500"></span><span class="text-sm font-bold uppercase">OFFLINE</span>`;
     }
   }
