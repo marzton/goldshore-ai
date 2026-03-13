@@ -3,6 +3,7 @@
 @import "@goldshore/theme/styles/components";
 @import "@goldshore/theme/styles/layout";
 @import "./gs-effects.css";
+@import "./hero-stars.css";
 
 :root {
   font-family: var(--gs-font-body);
