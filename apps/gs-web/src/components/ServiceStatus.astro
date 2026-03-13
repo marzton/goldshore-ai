@@ -64,13 +64,6 @@ const { serviceUrl } = Astro.props;
         const dbString = typeof data.db === 'string' ? data.db : String(data.db);
         document.getElementById('db-val').innerText = dbString.toUpperCase();
       }
-        const kvString = typeof data.kv === 'string' ? data.kv : String(data.kv);
-        document.getElementById('kv-val').innerText = kvString.toUpperCase();
-      }
-      if (data.db !== undefined && data.db !== null) {
-        const dbString = typeof data.db === 'string' ? data.db : String(data.db);
-        document.getElementById('db-val').innerText = dbString.toUpperCase();
-      }
     } catch (e) {
       indicator.innerHTML = `<span class="h-3 w-3 rounded-full bg-red-500"></span><span class="text-sm font-bold uppercase">OFFLINE</span>`;
     }
