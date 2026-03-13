@@ -10,7 +10,7 @@
     "test": "tsx src/repro_cors.test.ts"
   },
   "dependencies": {
-    "@goldshore/auth": "workspace:*",
+    "@goldshore/auth": "workspace:^",
     "hono": "^4.0.0"
   },
   "devDependencies": {
