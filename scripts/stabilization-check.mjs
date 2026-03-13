@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
+import { execSync, execFileSync } from 'node:child_process';
 
 // --- Configuration Constants ---
 const REPORT_PATH = 'docs/ci/CURRENT_STATE.md';
@@ -44,8 +44,12 @@ const appLevelIssues = [];
 const run = (cmd) => execSync(cmd, { encoding: 'utf8' }).trim();
 const tryRun = (cmd) => { try { return run(cmd); } catch { return null; } };
 const gitRefExists = (ref) => {
-  try { execSync(`git rev-parse --verify ${ref}`, { stdio: 'ignore' }); return true; } 
-  catch { return false; }
+  try {
+    execFileSync('git', ['rev-parse', '--verify', ref], { stdio: 'ignore' });
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 function resolveBaseRef() {
