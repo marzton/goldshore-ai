@@ -10,6 +10,7 @@ const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
   { href: '/services', label: 'Services' },
+  { href: '/solutions', label: 'Solutions' },
   { href: '/team', label: 'Team' },
   { href: '/contact', label: 'Contact' },
   { href: '/apps/risk-radar', label: 'Risk Radar' }
@@ -44,7 +45,7 @@ const logoSrc = '/logo.svg';
           <span class="material-symbols-rounded" aria-hidden="true">menu</span>
           <span class="sr-only">Toggle menu</span>
         </button>
-        <nav class="gs-nav" id="primary-navigation" aria-label="Primary">
+        <nav class="gs-nav" id="primary-navigation" aria-label="Primary" aria-hidden="true">
           {navLinks.map((link) => (
             <a
               href={link.href}
@@ -68,69 +69,151 @@ const logoSrc = '/logo.svg';
       <SiteFooter currentPath={currentPath} logoSrc={logoSrc} />
     </div>
     <script is:inline>
-      const header = document.querySelector('.gs-header');
-      const toggle = document.querySelector('.gs-nav-toggle');
+      const initializeHeaderInteractions = () => {
+        const header = document.querySelector('.gs-header');
+        const toggle = header?.querySelector('.gs-nav-toggle');
+        const menu = header?.querySelector('#primary-navigation');
 
-      // Scroll handling with requestAnimationFrame
-      let ticking = false;
-      let wasScrolled = false;
-
-      const updateHeader = () => {
-        if (!header) {
-          ticking = false;
+        if (!header || !toggle || !menu || header.dataset.interactionsBound === 'true') {
           return;
         }
 
-        const isScrolled = window.scrollY > 10;
-        if (isScrolled !== wasScrolled) {
-          header.classList.toggle('is-scrolled', isScrolled);
-          wasScrolled = isScrolled;
-        }
-        ticking = false;
+        header.dataset.interactionsBound = 'true';
+
+        // Scroll handling with requestAnimationFrame
+        let ticking = false;
+        let wasScrolled = false;
+        let lastFocusedBeforeOpen = null;
+
+        const getFocusableMenuItems = () => {
+          return Array.from(
+            menu.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+          );
+        };
+
+        const setMenuState = (open) => {
+          header.setAttribute('data-menu-open', String(open));
+          toggle.setAttribute('aria-expanded', String(open));
+          menu.setAttribute('aria-hidden', String(!open));
+        };
+
+        const closeMenu = ({ restoreFocus = true } = {}) => {
+          setMenuState(false);
+          if (restoreFocus && lastFocusedBeforeOpen instanceof HTMLElement) {
+            lastFocusedBeforeOpen.focus();
+          }
+          lastFocusedBeforeOpen = null;
+        };
+
+        const openMenu = () => {
+          lastFocusedBeforeOpen = document.activeElement instanceof HTMLElement ? document.activeElement : toggle;
+          setMenuState(true);
+          const [firstFocusable] = getFocusableMenuItems();
+          (firstFocusable ?? toggle).focus();
+        };
+
+        const updateHeader = () => {
+          const isScrolled = window.scrollY > 10;
+          if (isScrolled !== wasScrolled) {
+            header.classList.toggle('is-scrolled', isScrolled);
+            wasScrolled = isScrolled;
+          }
+          ticking = false;
+        };
+
+        setMenuState(false);
+        updateHeader();
+
+        window.addEventListener('scroll', () => {
+          if (!ticking) {
+            window.requestAnimationFrame(updateHeader);
+            ticking = true;
+          }
+        }, { passive: true });
+
+        toggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isOpen = header.getAttribute('data-menu-open') === 'true';
+          if (isOpen) {
+            closeMenu({ restoreFocus: false });
+          } else {
+            openMenu();
+          }
+        });
+
+        menu.addEventListener('click', (e) => {
+          const routeLink = e.target instanceof Element ? e.target.closest('a[href]') : null;
+          if (routeLink) {
+            closeMenu({ restoreFocus: false });
+          }
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && header.getAttribute('data-menu-open') === 'true') {
+            closeMenu();
+          }
+        });
+
+        document.addEventListener('click', (e) => {
+          if (header.getAttribute('data-menu-open') === 'true' && !header.contains(e.target)) {
+            closeMenu({ restoreFocus: false });
+          }
+        });
       };
 
-      window.addEventListener('scroll', () => {
-        if (!ticking) {
-          window.requestAnimationFrame(updateHeader);
-          ticking = true;
-        }
-      }, { passive: true });
+      document.addEventListener('astro:page-load', initializeHeaderInteractions);
 
-      // Initial check
-      updateHeader();
-
-      // Mobile Menu Handling
-      const closeMenu = () => {
-        if (header && toggle) {
-          header.setAttribute('data-menu-open', 'false');
-          toggle.setAttribute('aria-expanded', 'false');
-        }
-      };
-
-      toggle?.addEventListener('click', (e) => {
-        if (!header) return;
-        e.stopPropagation();
-        const isOpen = header.getAttribute('data-menu-open') === 'true';
-        if (isOpen) {
-          closeMenu();
-        } else {
-          header.setAttribute('data-menu-open', 'true');
-          toggle.setAttribute('aria-expanded', 'true');
-        }
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && header?.getAttribute('data-menu-open') === 'true') {
-          closeMenu();
-          toggle?.focus();
-        }
-      });
-
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeHeaderInteractions, { once: true });
+      } else {
+        initializeHeaderInteractions();
+      }
       document.addEventListener('click', (e) => {
         if (header?.getAttribute('data-menu-open') === 'true' && !header.contains(e.target)) {
           closeMenu();
         }
       });
+
+      const STAR_COUNT = 16;
+
+      const initializeShootingStars = (container) => {
+        if (!(container instanceof HTMLElement)) return;
+
+        const existingStars = container.querySelectorAll('.shooting-star');
+        const isInitialized = container.dataset.starsInitialized === 'true';
+
+        if (isInitialized && existingStars.length > 0) {
+          return;
+        }
+
+        container.replaceChildren();
+
+        for (let i = 0; i < STAR_COUNT; i += 1) {
+          const star = document.createElement('span');
+          star.className = 'shooting-star';
+          container.appendChild(star);
+        }
+
+        container.dataset.starsInitialized = 'true';
+      };
+
+      const initializeAllShootingStars = () => {
+        document.querySelectorAll('.shooting-stars').forEach((container) => {
+          initializeShootingStars(container);
+        });
+      };
+
+      const cleanupShootingStars = () => {
+        document.querySelectorAll('.shooting-stars[data-stars-initialized="true"]').forEach((container) => {
+          container.removeAttribute('data-stars-initialized');
+          container.replaceChildren();
+        });
+      };
+
+      initializeAllShootingStars();
+      document.addEventListener('astro:page-load', initializeAllShootingStars);
+      document.addEventListener('astro:before-swap', cleanupShootingStars);
+      document.addEventListener('astro:after-swap', initializeAllShootingStars);
     </script>
     <style is:global>
       :root {
