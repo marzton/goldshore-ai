@@ -21,19 +21,16 @@
 /blog/ /insights 301
 /blog/* /insights/:splat 301
 
-# Same-origin proxy rewrites to avoid browser CORS regressions.
+# API and status proxying (CORS-safe for HUD data fetches)
 /v1/status https://api.goldshore.ai/status 200
 /v1/status/* https://api.goldshore.ai/status/:splat 200
+/v1/telemetry/* https://api.goldshore.ai/telemetry/:splat 200
 
 # Broad catch-all redirects/re-writes must remain at the end.
 # Canonical path normalization
-/developer-hub /developer 301
 
 # Legacy content consolidation
 /old-home / 301
-/about-us /about 301
 /company /about 301
 
-# API and status proxying (CORS-safe for HUD data fetches)
-/v1/status/* https://api.goldshore.ai/status/:splat 200
-/v1/telemetry/* https://api.goldshore.ai/telemetry/:splat 200
+
