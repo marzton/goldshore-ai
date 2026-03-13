@@ -206,6 +206,9 @@
   .gs-mobile-brand .gs-brand-text {
     font-size: 0.78rem;
     letter-spacing: 0.08em;
+  }
+}
+
 @media (min-width: 861px) {
   .gs-mobile-panel { display: none; }
 }
