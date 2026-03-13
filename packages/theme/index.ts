@@ -59,6 +59,17 @@ function initModal() {
 
   let opener: HTMLElement | null = null;
 
+  const isAriaHidden = (el: HTMLElement | null): boolean => {
+    let current: HTMLElement | null = el;
+    while (current && current !== panel) {
+      if (current.getAttribute('aria-hidden') === 'true') {
+        return true;
+      }
+      current = current.parentElement;
+    }
+    return false;
+  };
+
   const getFocusableElements = () => {
     if (!panel) return [];
 
@@ -66,7 +77,7 @@ function initModal() {
       'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 
     return Array.from(panel.querySelectorAll<HTMLElement>(selectors)).filter(
-      (el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true',
+      (el) => !el.hasAttribute('disabled') && !isAriaHidden(el),
     );
   };
 
@@ -80,12 +91,20 @@ function initModal() {
     opener = trigger;
     if (body) body.innerHTML = html;
     root.classList.add('is-open');
+    root.setAttribute('role', 'dialog');
+    root.setAttribute('aria-modal', 'true');
+    root.setAttribute('aria-labelledby', MODAL_TITLE_ID);
+    root.setAttribute('aria-describedby', MODAL_DESCRIPTION_ID);
     document.documentElement.classList.add('gs-lock');
     requestAnimationFrame(focusDialog);
   };
 
   const closeModal = () => {
     root.classList.remove('is-open');
+    root.removeAttribute('role');
+    root.removeAttribute('aria-modal');
+    root.removeAttribute('aria-labelledby');
+    root.removeAttribute('aria-describedby');
     document.documentElement.classList.remove('gs-lock');
     if (opener?.isConnected) opener.focus();
     opener = null;
@@ -126,6 +145,8 @@ function initModal() {
     }
   };
 
+  document.addEventListener('keydown', onKeydown);
+
   document.addEventListener('click', (e) => {
     const el = e.target as HTMLElement;
     const trigger = el.closest<HTMLElement>('[data-gs-modal-open]');
@@ -137,9 +158,6 @@ function initModal() {
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', (e) =>
-    e.key === 'Escape' ? closeModal() : null,
-  );
 }
 
 function getModalTemplate(variant: string): string {
