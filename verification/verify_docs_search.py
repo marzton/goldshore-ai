@@ -24,13 +24,15 @@ def run():
             # Focus body first
             page.focus("body")
             # Additional keyboard interaction logic can be added here.
-
+            # If focus failed, maybe try clicking it to verify it works manually
             # If focus failed, maybe try clicking it to verify it works manually
             print("Attempting click focus...")
             search_input.click()
             is_focused = search_input.evaluate("el => document.activeElement === el")
             print(f"Is focused (Click): {is_focused}")
 
+            print("Taking screenshot...")
+            page.screenshot(path="verification/docs_search_verification.png")
             print("Taking screenshot...")
             page.screenshot(path="verification/docs_search_verification.png")
             # If 404, I'll try to find a valid route.
@@ -86,13 +88,3 @@ def run():
             page.screenshot(path="verification/docs_search_full.png")
             # And component
             page.locator(".search-box").screenshot(path="verification/docs_search.png")
-
-        except Exception as e:
-            print(f"Verification failed: {e}")
-            page.screenshot(path="verification/error.png")
-
-        finally:
-            browser.close()
-
-if __name__ == "__main__":
-    run()
