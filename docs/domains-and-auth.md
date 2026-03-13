@@ -6,10 +6,10 @@ This document captures the Cloudflare Access applications and policies that prot
 
 ## Access applications and policies
 
-| Access application | Policy name | Domain coverage | Notes |
-| --- | --- | --- | --- |
-| GoldShore Admin | GoldShore-Admin-ZT | `admin.goldshore.ai`, `admin-preview.goldshore.ai`, `*-preview.goldshore.ai` (admin preview branches), `{branch}.goldshore-pages.dev` (admin preview pages) | Admin cockpit is protected by Access with an email allowlist + identity provider requirement. Preview domains should be attached to the same application to match production enforcement. |
-| GoldShore Web (Preview) | GoldShore-Web-Preview | `preview.goldshore.ai`, `*-preview.goldshore.ai` (web preview branches), `{branch}.goldshore-pages.dev` (web preview pages) | Web production (`goldshore.ai`, `www.goldshore.ai`) is public, but preview domains must be gated behind Access. |
+| Access application      | Policy name           | Domain coverage                                                                                                                                             | Notes                                                                                                                                                                                     |
+| ----------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GoldShore Admin         | GoldShore-Admin-ZT    | `admin.goldshore.ai`, `admin-preview.goldshore.ai`, `*-preview.goldshore.ai` (admin preview branches), `{branch}.goldshore-pages.dev` (admin preview pages) | Admin cockpit is protected by Access with an email allowlist + identity provider requirement. Preview domains should be attached to the same application to match production enforcement. |
+| GoldShore Web (Preview) | GoldShore-Web-Preview | `preview.goldshore.ai`, `*-preview.goldshore.ai` (web preview branches), `{branch}.goldshore-pages.dev` (web preview pages)                                 | Web production (`goldshore.ai`, `www.goldshore.ai`) is public, but preview domains must be gated behind Access.                                                                           |
 
 ## Identity providers and session policy alignment
 
@@ -22,6 +22,7 @@ Preview applications should mirror production configuration wherever Access is e
 
 - Cloudflare desired state for Access policy naming and domain ownership lives in `infra/cloudflare/desired-state.yaml`.
 - Pages custom domains for admin and web are documented in `infra/cloudflare/BINDINGS_MAP.md`.
+
 # Domains & Auth (Single Source of Truth)
 
 This document is the canonical reference for GoldShore domains, preview URLs, Cloudflare Access policy coverage, and GitHub App callback endpoints.
@@ -30,7 +31,7 @@ This document is the canonical reference for GoldShore domains, preview URLs, Cl
 
 - `goldshore.ai`
 - `api.goldshore.ai`
-- `gw.goldshore.ai`
+- `gw.goldshore.ai` (canonical gateway hostname; not `gateway.goldshore.ai`)
 - `ops.goldshore.ai`
 
 ## Preview domains
@@ -49,7 +50,7 @@ Cloudflare Access is enforced on internal tooling and protected previews. The ta
 | Admin cockpit | `admin.goldshore.ai`, `admin-preview.goldshore.ai`, `*-preview.goldshore.ai`, `{branch}.goldshore-pages.dev` | Yes (GoldShore-Admin-ZT) | Internal admin dashboard, email allowlist + IdP/OTP. |
 | Control worker | `ops.goldshore.ai` | Yes | Internal ops workflows and automation. |
 | API worker | `api.goldshore.ai` | Optional | Enable for private endpoints only. |
-| Gateway worker | `gw.goldshore.ai` | Optional | Depends on routing/auth design. |
+| Gateway worker | `gw.goldshore.ai` | Optional | Canonical hostname is `gw.goldshore.ai` (not `gateway.goldshore.ai`); depends on routing/auth design. |
 | Mail handler | `mail.goldshore.ai` | No | Cloudflare mail routing cannot authenticate. |
 
 ## GitHub App callback URLs
