@@ -319,6 +319,8 @@ function initHeroPulsar() {
   const PARTICLE_COUNT = 60;
   let raf = 0;
   let active = true;
+  const resizeAbort =
+    typeof AbortController !== 'undefined' ? new AbortController() : null;
 
   const resize = () => {
     canvas.width = canvas.clientWidth;
@@ -384,12 +386,22 @@ function initHeroPulsar() {
     seedParticles();
   };
 
-  window.addEventListener('resize', onResize);
+  if (resizeAbort) {
+    window.addEventListener('resize', onResize, {
+      signal: resizeAbort.signal,
+    });
+  } else {
+    window.addEventListener('resize', onResize);
+  }
 
   if (host && typeof IntersectionObserver !== 'undefined') {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setActive(Boolean(entry?.isIntersecting));
+        const isIntersecting = Boolean(entry?.isIntersecting);
+        setActive(isIntersecting);
+        if (!isIntersecting) {
+          resizeAbort?.abort();
+        }
       },
       { threshold: 0.05 },
     );
