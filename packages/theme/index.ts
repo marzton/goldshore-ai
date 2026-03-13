@@ -367,12 +367,12 @@ function initTilt() {
   });
 }
 
-function initScrollHints() {
-  if (typeof CSS !== 'undefined' && typeof CSS.supports === 'function') {
-    const ok = CSS.supports('animation-timeline: view()');
-    if (ok) document.documentElement.classList.add('gs-view-timeline');
-  }
-}
+
+
+
+
+
+
 
   const loop = () => {
     if (!active) return;
