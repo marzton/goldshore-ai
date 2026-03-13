@@ -1,57 +1,21 @@
 ---
-import WebLayout from '../../layouts/WebLayout.astro';
-
-export const prerender = true;
+// This is a pure redirect file to handle legacy paths.
+const target = '/risk-radar';
 ---
-
-<WebLayout title="Risk Radar | Gold Shore" description="Forthcoming operational threat visualization system.">
-  <section class="gs-section gs-blueprint-bg risk-radar">
-    <div class="gs-container">
-      <h2>Risk Radar</h2>
-      <div class="gs-card">
-        <p>
-          A forthcoming operational visualization system designed to map systemic exposure and signal volatility in
-          real time.
-        </p>
-      </div>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>Redirecting to Risk Radar…</title>
+    <script is:inline define:vars={{ target }}>
+      window.location.replace(target);
+    </script>
+  </head>
+  <body class="bg-gray-50 flex items-center justify-center min-h-screen font-sans">
+    <div class="text-center">
+      <p class="text-gray-500 mb-2">The Risk Radar has been promoted to a canonical route.</p>
+      <p>Redirecting to <a href={target} class="text-blue-600 font-bold underline">{target}</a>...</p>
     </div>
-  </section>
-</WebLayout>
-
-<style>
-  .radar-preview {
-    height: 400px;
-    background: radial-gradient(circle, #0ea5e9 0%, #020617 70%);
-    border-radius: 0;
-    position: relative;
-    overflow: hidden;
-    margin-top: 2rem;
-  }
-
-  .pulse {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 180px;
-    height: 180px;
-    border: 1px solid rgba(186, 230, 253, 0.5);
-    border-radius: 999px;
-    transform: translate(-50%, -50%);
-    animation: pulse 2.2s ease-out infinite;
-  }
-
-  @keyframes pulse {
-    from {
-      opacity: 0.9;
-      transform: translate(-50%, -50%) scale(0.5);
-    }
-    to {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(2.3);
-    }
-  .risk-radar .gs-card {
-    margin-top: 1.5rem;
-    border-radius: 0;
-    background: radial-gradient(circle, #0ea5e9 0%, #020617 70%);
-  }
-</style>
+  </body>
+</html>
