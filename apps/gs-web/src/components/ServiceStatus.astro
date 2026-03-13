@@ -35,6 +35,7 @@ const { serviceUrl } = Astro.props;
 
   <button 
     type="button"
+    type="button"
     id="trigger-deep-check"
     class="mt-6 w-full py-2 bg-[var(--gs-bg-secondary)] border border-[var(--gs-border-primary)] rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
   >
@@ -55,8 +56,14 @@ const { serviceUrl } = Astro.props;
       const color = data.status === 'ok' ? 'bg-emerald-500' : 'bg-red-500';
       indicator.innerHTML = `<span class="h-3 w-3 rounded-full ${color}"></span><span class="text-sm font-bold uppercase">${data.status}</span>`;
       
-      document.getElementById('api-val').innerText = 'CONNECTED';
       if (data.kv !== undefined && data.kv !== null) {
+        const kvString = typeof data.kv === 'string' ? data.kv : String(data.kv);
+        document.getElementById('kv-val').innerText = kvString.toUpperCase();
+      }
+      if (data.db !== undefined && data.db !== null) {
+        const dbString = typeof data.db === 'string' ? data.db : String(data.db);
+        document.getElementById('db-val').innerText = dbString.toUpperCase();
+      }
         const kvString = typeof data.kv === 'string' ? data.kv : String(data.kv);
         document.getElementById('kv-val').innerText = kvString.toUpperCase();
       }
