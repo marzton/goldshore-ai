@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "index.css",
+  "main": "./index.css",
+  "style": "./index.css",
   "files": [
     "*.css",
     "src/styles/*.css",
@@ -12,6 +13,9 @@
   ],
   "exports": {
     ".": "./index.css",
+    "./index.css": "./index.css",
+    "./reset.css": "./reset.css",
+    "./tokens.css": "./tokens.css",
     "./tokens": "./src/styles/tokens.css",
     "./styles/tokens": "./src/styles/tokens.css",
     "./styles/base": "./src/styles/base.css",
