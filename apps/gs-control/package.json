@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev src/index.ts",
-    "deploy": "wrangler deploy",
-    "run-task": "wrangler dev src/index.ts --test-scheduled",
+    "dev": "wrangler dev --config ../../infra/cloudflare/gs-control.wrangler.toml",
+    "deploy": "wrangler deploy --config ../../infra/cloudflare/gs-control.wrangler.toml",
+    "run-task": "wrangler dev --config ../../infra/cloudflare/gs-control.wrangler.toml --test-scheduled",
     "test": "tsx --test src/routes/*.test.ts",
-    "build": "wrangler deploy --dry-run --outdir=dist"
+    "build": "wrangler deploy --config ../../infra/cloudflare/gs-control.wrangler.toml --dry-run --outdir=dist"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:^",
