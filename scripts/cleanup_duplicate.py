@@ -65,9 +65,13 @@ def process_nested_folder():
                     if not os.path.exists(target_dir):
                         os.makedirs(target_dir)
 
-                    shutil.move(nested_path, new_target_path)
-                    legacy_files.append(f"{rel_path} -> {new_filename}")
-                    print(f"MOVED (Legacy): {nested_path} -> {new_target_path}")
+                    try:
+                        shutil.move(nested_path, new_target_path)
+                    except Exception as e:
+                        print(f"ERROR (Legacy move failed): {nested_path} -> {new_target_path}: {e}")
+                    else:
+                        legacy_files.append(f"{rel_path} -> {new_filename}")
+                        print(f"MOVED (Legacy): {nested_path} -> {new_target_path}")
 
     # After processing all files, try to remove the NESTED_ROOT directory
     # It might fail if not empty (e.g. ignored dirs left), so we use shutil.rmtree
