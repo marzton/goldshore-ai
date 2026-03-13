@@ -284,3 +284,16 @@
   }
   .gs-shell { flex-direction: column; }
 }
+
+
+/* Consistent vertical rhythm */
+.gs-section .gs-card + .gs-card {
+  margin-top: 2rem;
+}
+
+/* Improve card spacing on mobile */
+@media (max-width: 768px) {
+  .gs-card {
+    padding: 1.5rem;
+  }
+}
