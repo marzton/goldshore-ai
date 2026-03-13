@@ -12,9 +12,12 @@ EXCLUDED_DIRS = {".git", ".hg", ".svn", "__pycache__"}
 
 def sha256(path):
     h = hashlib.sha256()
-    with open(path, "rb") as f:
-        while chunk := f.read(8192):
-            h.update(chunk)
+    try:
+        with open(path, "rb") as f:
+            while chunk := f.read(8192):
+                h.update(chunk)
+    except OSError as e:
+        raise RuntimeError(f"Failed to compute SHA-256 for '{path}': {e}") from e
     return h.hexdigest()
 
 
