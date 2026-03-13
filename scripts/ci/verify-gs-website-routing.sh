@@ -5,7 +5,7 @@ ROOT="${1:-.}"
 REDIRECTS="$ROOT/apps/gs-web/public/_redirects"
 ASTRO_CFG="$ROOT/apps/gs-web/astro.config.mjs"
 API_DOMAIN="${API_DOMAIN:-api.goldshore.ai}"
-API_DOMAIN_REGEX="${API_DOMAIN//./\\.}"
+API_DOMAIN_REGEX="$(printf '%s' "$API_DOMAIN" | sed 's/[.[\*^$()+?{|]/\\&/g')"
 
 echo "Verifying GS website routing guardrails..."
 
@@ -19,8 +19,10 @@ rg -n "^/about-us[[:space:]]+/about[[:space:]]+301$" "$REDIRECTS" || { echo "ERR
 rg -n "^/company[[:space:]]+/about[[:space:]]+301$" "$REDIRECTS" || { echo "ERROR: Missing legacy redirect: /company -> /about (301) in '$REDIRECTS'." >&2; exit 1; }
 
 # CORS-safe proxy rewrites (200)
-rg -n "^/v1/status/\\*[[:space:]]+https://$API_DOMAIN_REGEX/status/:splat[[:space:]]+200$" "$REDIRECTS" || { echo "ERROR: Missing CORS-safe proxy rewrite for /v1/status/* in '$REDIRECTS'." >&2; exit 1; }
-rg -n "^/v1/telemetry/\\*[[:space:]]+https://$API_DOMAIN_REGEX/telemetry/:splat[[:space:]]+200$" "$REDIRECTS" || { echo "ERROR: Missing CORS-safe proxy rewrite for /v1/telemetry/* in '$REDIRECTS'." >&2; exit 1; }
+for endpoint in status telemetry; do
+  rg -n "^/v1/$endpoint/\\*[[:space:]]+https://$API_DOMAIN_REGEX/$endpoint/:splat[[:space:]]+200$" "$REDIRECTS" \
+    || { echo "ERROR: Missing CORS-safe proxy rewrite for /v1/$endpoint/* in '$REDIRECTS'." >&2; exit 1; }
+done
 
 # Framework-level alias retained.
 # NOTE: This check assumes a simple, single-line string-literal mapping in astro.config.mjs,
