@@ -50,7 +50,7 @@ const url = base + path;
     <div class="response-area hidden rounded-lg border border-slate-700 bg-slate-950">
       <div class="flex items-center justify-between border-b border-slate-700 bg-slate-800/50 px-3 py-2">
         <span class="text-xs tracking-wide text-slate-400 uppercase">Response</span>
-        <button class="copy-btn cursor-pointer bg-transparent text-xs text-slate-400 hover:text-slate-50" aria-label="Copy response">Copy</button>
+        <button type="button" class="copy-btn cursor-pointer bg-transparent text-xs text-slate-400 hover:text-slate-50" aria-label="Copy response">Copy</button>
       </div>
       <pre class="m-0 overflow-x-auto p-3 text-slate-200"><code class="response-code"></code></pre>
     </div>
@@ -151,9 +151,26 @@ const url = base + path;
     if (copyBtn) {
       copyBtn.addEventListener('click', () => {
         navigator.clipboard.writeText(responseCode.textContent);
-        const original = copyBtn.textContent;
+
+        const originalText = copyBtn.dataset.originalText || copyBtn.textContent || 'Copy';
+        if (!copyBtn.dataset.originalText) {
+          copyBtn.dataset.originalText = originalText;
+        }
+
         copyBtn.textContent = 'Copied!';
-        setTimeout(() => copyBtn.textContent = original, 2000);
+        copyBtn.setAttribute('aria-label', 'Copied to clipboard');
+
+        if (copyBtn.dataset.timeoutId) {
+          clearTimeout(parseInt(copyBtn.dataset.timeoutId, 10));
+        }
+
+        const timeoutId = setTimeout(() => {
+          copyBtn.textContent = originalText;
+          copyBtn.setAttribute('aria-label', 'Copy response');
+          delete copyBtn.dataset.timeoutId;
+        }, 2000);
+
+        copyBtn.dataset.timeoutId = timeoutId.toString();
       });
     }
   }
