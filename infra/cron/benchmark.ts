@@ -45,7 +45,7 @@ async function checkCloudflareSequential() {
       // Mock logic
     }
     if (check.type === "worker_health") {
-      const bindings = await getWorkerBindings(check.script);
+      await getWorkerBindings(check.script);
       // Mock logic
     }
   }
