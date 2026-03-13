@@ -41,7 +41,7 @@ async function checkCloudflareSequential() {
       }
     }
     if (check.type === "dns_records") {
-      const dns = await getDNSRecords();
+      await getDNSRecords();
       // Mock logic
     }
     if (check.type === "worker_health") {
@@ -68,7 +68,7 @@ async function checkCloudflareConcurrent() {
           await getDNSRecords();
           // Mock logic
         } else if (check.type === "worker_health") {
-          const bindings = await getWorkerBindings(check.script);
+          await getWorkerBindings(check.script);
           // Mock logic
         }
       } catch (err: any) {
