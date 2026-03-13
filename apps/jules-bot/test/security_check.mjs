@@ -63,6 +63,22 @@ async function sendRequest(payload, signature) {
   });
 }
 
+function sanitizeForLog(value) {
+  let text;
+  if (value && typeof value === 'object' && typeof value.stack === 'string') {
+    text = value.stack;
+  } else if (value && typeof value.toString === 'function') {
+    text = value.toString();
+  } else {
+    text = String(value);
+  }
+  // Remove ASCII control chars and common Unicode line/paragraph separators
+  text = text.replace(/[\x00-\x1F\x7F\u2028\u2029]+/g, ' ');
+  // Normalize runs of whitespace to a single space
+  text = text.replace(/\s+/g, ' ').trim();
+  return text;
+}
+
 let exitCode = 0;
 
 try {
@@ -105,8 +121,7 @@ try {
   }
 
 } catch (e) {
-  const rawErrorMessage = (e && e.stack) || (e && e.toString && e.toString()) || String(e);
-  const sanitizedErrorMessage = rawErrorMessage.replace(/[\x00-\x1F\x7F]+/g, ' ');
+  const sanitizedErrorMessage = sanitizeForLog(e);
   console.error(`Error during security checks: "${sanitizedErrorMessage}"`);
   exitCode = 1;
 } finally {
