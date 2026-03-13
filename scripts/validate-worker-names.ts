@@ -68,12 +68,12 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const CANONICAL_WORKERS = ["gs-agent", "gs-api", "gs-control", "gs-gateway", "gs-mail"];
-const APPS_DIR = "apps";
+const CANONICAL_APPS_DIR = "apps";
 
 let failed = false;
 
 for (const worker of CANONICAL_WORKERS) {
-  const wranglerPath = join(APPS_DIR, worker, "wrangler.toml");
+  const wranglerPath = join(CANONICAL_APPS_DIR, worker, "wrangler.toml");
 
   if (!existsSync(wranglerPath)) {
     failed = true;
