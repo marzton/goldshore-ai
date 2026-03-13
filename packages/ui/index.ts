@@ -6,3 +6,4 @@ export { default as Badge } from './components/Badge.astro';
 export { default as Table } from './components/Table.astro';
 export { default as Tabs } from './components/Tabs.astro';
 export { default as Skeleton } from './components/Skeleton.astro';
+export { default as PenroseLogo } from './components/PenroseLogo.astro';
