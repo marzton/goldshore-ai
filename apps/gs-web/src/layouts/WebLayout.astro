@@ -1,27 +1,102 @@
 ---
-import "@goldshore/theme";
-import { initGoldShoreUI } from "@goldshore/theme/runtime";
-import SiteNav from "../components/SiteNav.astro";
-import GlobalModal from "../components/GlobalModal.astro";
+import '@goldshore/theme';
+import '../styles/brand.css';
+import '../styles/home.css';
+import SiteNav from '../components/SiteNav.astro';
+import GlobalModal from '../components/GlobalModal.astro';
+import themeRuntimeUrl from '../scripts/theme-runtime.ts?url';
+
+interface Props {
+  title?: string;
+  description?: string;
+  structuredData?: Record<string, unknown> | Array<Record<string, unknown>>;
+}
+
+const {
+  title = 'Gold Shore',
+  description = 'Institutional-grade automation and intelligence.',
+  structuredData,
+} = Astro.props;
+
+const siteUrl = 'https://goldshore.ai';
+const organizationId = `${siteUrl}#organization`;
+const sameAs: string[] = [];
+
+const organizationSchema: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': organizationId,
+  name: 'Gold Shore',
+  url: siteUrl,
+  logo: `${siteUrl}/assets/logo.svg`,
+  ...(sameAs.length > 0 ? { sameAs } : {}),
+};
+
+const pageSchemas = Array.isArray(structuredData)
+  ? structuredData
+  : structuredData
+    ? [structuredData]
+    : [];
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)}></script>
+    {pageSchemas.map((schema) => (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
+    ))}
+    <slot name="head" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Gold Shore',
+      url: 'https://goldshore.ai',
+      logo: 'https://goldshore.ai/assets/logo.svg',
+      description: 'Institutional-grade automation and intelligence systems.',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: 'https://goldshore.ai/developer/docs/search?q={search_term_string}',
+        'query-input': 'required name=search_term_string'
+      }
+    })} />
   </head>
-  <body>
+  <body class="gs-theme-root">
     <SiteNav />
+
+    <slot name="hero" />
+
+    <main id="main-content">
+      <slot />
+    </main>
+
     <footer class="gs-footer">
-      <p>Gold Shore — Designed not to manage capital, but to steer it. All rights reserved.</p>
-      <p><a href="/legal/privacy">Privacy Policy</a> | <a href="/legal/terms">Terms of Service</a></p>
+      <div class="gs-container">
+        <p>Gold Shore — Designed not to manage capital, but to steer it.</p>
+        <p>
+          <a href="/status">System Status</a> |
+          <a href="/legal/compliance">Legal &amp; Compliance</a> |
+          <a href="/legal/privacy">Privacy Policy</a> |
+          <a href="/legal/terms">Terms of Service</a>
+        </p>
+        <p class="gs-footer-utility">
+          <a href="https://admin.goldshore.ai" rel="nofollow">Admin Login</a>
+        </p>
+      </div>
     </footer>
 
     <GlobalModal />
 
-    <script is:inline>
-      import { initGoldShoreUI } from "@goldshore/theme/runtime";
+    <script>
+      import { initGoldShoreUI } from '@goldshore/theme/runtime';
+      import { initParallax } from '@goldshore/config/parallax';
+
       initGoldShoreUI();
+      initParallax();
     </script>
+    <script type="module" src={themeRuntimeUrl}></script>
   </body>
 </html>
