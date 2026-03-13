@@ -7,8 +7,8 @@ ASTRO_CFG="$ROOT/apps/gs-web/astro.config.mjs"
 
 echo "Verifying gs-website routing guardrails..."
 
-test -f "$REDIRECTS"
-test -f "$ASTRO_CFG"
+test -f "$REDIRECTS" || { echo "ERROR: Redirects file not found at '$REDIRECTS'." >&2; exit 1; }
+test -f "$ASTRO_CFG" || { echo "ERROR: Astro config file not found at '$ASTRO_CFG'." >&2; exit 1; }
 
 # Legacy path redirects (301)
 rg -n "^/developer-hub[[:space:]]+/developer[[:space:]]+301$" "$REDIRECTS"
