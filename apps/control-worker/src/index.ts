@@ -2,7 +2,6 @@ import { Hono } from "hono";
 import * as DNS from "./libs/dns";
 import * as Workers from "./libs/workers";
 import * as Pages from "./libs/pages";
-import * as Access from "./libs/access";
 
 const app = new Hono();
 
