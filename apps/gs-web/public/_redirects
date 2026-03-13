@@ -35,5 +35,4 @@
 /company /about 301
 
 # API and status proxying (CORS-safe for HUD data fetches)
-/v1/status/* https://api.goldshore.ai/status/:splat 200
 /v1/telemetry/* https://api.goldshore.ai/telemetry/:splat 200
