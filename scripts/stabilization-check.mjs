@@ -6,8 +6,6 @@ import { execSync } from 'node:child_process';
 const REPORT_PATH = 'docs/ci/CURRENT_STATE.md';
 const APPS_DIR = 'apps';
 const WORKFLOW_DIR = '.github/workflows';
-const AUTHORITATIVE_CI_SOURCE = 'GitHub Actions status checks on the pull request';
-
 const ALLOWED_APPS = [
   'gs-web', 'gs-admin', 'gs-api', 'gs-mail', 'gs-gateway', 'gs-agent', 'gs-control',
 ];
@@ -121,7 +119,7 @@ function checkBuild(name, command) {
 }
 
 // --- Report Generation ---
-const { branch, baseRef, behind, ahead, divergenceNote } = getBranchInfo();
+const { branch, behind, ahead, divergenceNote } = getBranchInfo();
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
 
 // Section 1: Governance
