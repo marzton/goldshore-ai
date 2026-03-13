@@ -37,6 +37,10 @@ describe('Cloudflare Routes Middleware', () => {
     global.fetch = originalFetch;
   });
 
+  after(() => {
+    global.fetch = originalFetch;
+  });
+
   // Helper to create a request with specific claims
   const createRequest = async (claims: any, path: string = '/dns/records', method: string = 'GET', body?: any) => {
     const app = new Hono<{ Variables: { accessClaims: any } }>();
