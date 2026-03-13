@@ -1,44 +1,11 @@
-import { defineConfig } from "astro/config";
-import cloudflare from "@astrojs/cloudflare";
-import tailwind from "@astrojs/tailwind";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { createAstroConfig } from '@goldshore/config/astro';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-export default defineConfig({
-  srcDir: './src',
-  outDir: './dist',
-  prefetch: true,
-  adapter: cloudflare(),
-  vite: {
-    ...baseConfig.vite,
-    resolve: {
-      ...baseConfig.vite?.resolve,
-      alias: {
-        ...baseConfig.vite?.resolve?.alias,
-        '@goldshore/theme': path.resolve(__dirname, '../../packages/theme'),
-        '@goldshore/ui': path.resolve(__dirname, '../../packages/ui'),
-  integrations: [
-    tailwind({
-      applyBaseStyles: false,
-      configFile: "../../tailwind.config.mjs"
-    })
-  ],
-  vite: {
-    ssr: {
-      noExternal: [
-        '@goldshore/theme',
-        '@goldshore/ui',
-        '@goldshore/auth'
-      ]
-    },
-    resolve: {
-      alias: {
-        '@goldshore/theme': path.resolve(__dirname, '../../packages/theme/src'),
-        // '@goldshore/ui': '../../packages/ui',
-        // '@goldshore/auth': '../../packages/auth',
-      }
-    }
-  }
+export default createAstroConfig({
+  // Keep framework-level aliases here; migration-era edge rules live in public/_redirects.
+  redirects: {
+    // Keep Astro redirects limited to framework-level aliases for active Astro routes.
+    // Legacy migration/cutover mappings should live in `public/_redirects` (Cloudflare source of truth).
+    '/developer': '/developer-hub',
+    '/apps/risk-radar': '/risk-radar',
+  },
 });
