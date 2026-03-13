@@ -8,5 +8,8 @@
     "dev": "echo 'schema dev'",
     "build": "echo 'schema build'"
   },
+  "dependencies": {
+    "zod": "^4.3.6"
+  },
   "type": "module"
 }
