@@ -40,6 +40,10 @@ const sanitizeSvg = (input: string): string => {
   } while (sanitized !== previous);
 
   return sanitized;
+const sanitizeSvg = (input: string): string => {
+  // Remove all angle brackets to ensure no HTML/SVG tags (including <script>) remain.
+  // This guarantees that script-like content cannot be interpreted as markup.
+  return input.replace(/[<>]/g, '');
 };
 
 /**
