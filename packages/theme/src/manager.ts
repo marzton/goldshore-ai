@@ -1,6 +1,7 @@
 import {
   initTheme as initializeTheme,
   type ThemeMode,
+  applyThemeSettings,
 } from './theme-manager';
 
 export * from './theme-manager';
