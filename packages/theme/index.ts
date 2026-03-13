@@ -80,12 +80,20 @@ function initModal() {
     opener = trigger;
     if (body) body.innerHTML = html;
     root.classList.add('is-open');
+    root.setAttribute('role', 'dialog');
+    root.setAttribute('aria-modal', 'true');
+    root.setAttribute('aria-labelledby', MODAL_TITLE_ID);
+    root.setAttribute('aria-describedby', MODAL_DESCRIPTION_ID);
     document.documentElement.classList.add('gs-lock');
     requestAnimationFrame(focusDialog);
   };
 
   const closeModal = () => {
     root.classList.remove('is-open');
+    root.removeAttribute('role');
+    root.removeAttribute('aria-modal');
+    root.removeAttribute('aria-labelledby');
+    root.removeAttribute('aria-describedby');
     document.documentElement.classList.remove('gs-lock');
     if (opener?.isConnected) opener.focus();
     opener = null;
