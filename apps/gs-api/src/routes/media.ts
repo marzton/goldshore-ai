@@ -21,8 +21,6 @@ const ALLOWED_MIME_TYPES = new Map([
 // 5MB limit to prevent DoS via large file uploads
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-};
-
 /**
  * [SOP] Media Asset Management
  * Handles R2 storage for images and SVGs with strict sanitization for vector assets.
@@ -85,7 +83,7 @@ media.post('/upload', async (c) => {
   }
 
   const id = crypto.randomUUID();
-  const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+  const objectKey = `media/${id}/file.${extension}`;
 
   await c.env.ASSETS.put(objectKey, body, { httpMetadata: { contentType } });
 
