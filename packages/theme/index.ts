@@ -145,8 +145,6 @@ function initModal() {
 
   document.addEventListener('keydown', onKeydown);
 
-  document.addEventListener('keydown', onKeydown);
-
   document.addEventListener('click', (e) => {
     const el = e.target as HTMLElement;
     const trigger = el.closest<HTMLElement>('[data-gs-modal-open]');
