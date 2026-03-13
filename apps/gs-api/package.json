@@ -10,11 +10,11 @@
     "test": "tsx --test src/routes/*.test.ts"
   },
   "dependencies": {
-    "@goldshore/ai-providers": "workspace:^",
-    "@goldshore/auth": "workspace:^",
+    "@goldshore/ai-providers": "workspace:*",
+    "@goldshore/auth": "workspace:*",
     "hono": "^4.0.0",
     "safe-stable-stringify": "^2.5.0",
-    "@goldshore/utils": "workspace:^"
+    "@goldshore/utils": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241106.0",

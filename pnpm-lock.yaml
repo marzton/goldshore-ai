@@ -127,13 +127,13 @@ importers:
   apps/gs-api:
     dependencies:
       '@goldshore/ai-providers':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../packages/ai-providers
       '@goldshore/auth':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../packages/auth
       '@goldshore/utils':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../packages/utils
       hono:
         specifier: ^4.0.0
