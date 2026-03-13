@@ -4,6 +4,10 @@ const legalLinks = [
   { href: '/legal/privacy', label: 'Privacy' },
   { href: '/legal/terms', label: 'Terms' }
 ];
+const {
+  currentPath,
+  logoSrc = '/logo.svg',
+} = Astro.props;
 ---
 
 <footer class="gs-footer">
@@ -11,7 +15,7 @@ const legalLinks = [
     <div class="gs-grid columns-2">
       <div>
         <div class="gs-logo" style="gap: var(--gs-space-2);">
-          <img src="/logo.svg" alt="GoldShore logo" width="24" height="32" loading="lazy" decoding="async" />
+          <img src={logoSrc} alt="GoldShore logo" width="24" height="32" loading="lazy" decoding="async" />
         </div>
         <p>Applied intelligence, resilient infrastructure, and responsive operations.</p>
       </div>
@@ -28,6 +32,8 @@ const legalLinks = [
           {legalLinks.map((link) => (
             <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>{link.label}</a>
           ))}
+          <a href="/legal/privacy" aria-current={currentPath === '/legal/privacy' ? 'page' : undefined}>Privacy</a>
+          <a href="/legal/terms" aria-current={currentPath === '/legal/terms' ? 'page' : undefined}>Terms</a>
         </div>
       </div>
     </div>
