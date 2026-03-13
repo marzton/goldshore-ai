@@ -49,6 +49,35 @@
 .hero {
   position: relative;
   isolation: isolate;
+  z-index: 0;
+}
+
+/* Base gradient/background lives on .hero at z-index: 0 */
+
+.hero .shooting-stars {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+}
+
+.hero::before,
+.hero .shooting-stars,
+.hero::after {
+  pointer-events: none;
   overflow: hidden;
   min-height: 72vh;
   display: flex;
