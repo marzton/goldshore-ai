@@ -43,6 +43,15 @@ export const prerender = true;
         />
       </div>
       <div class="gs-input-group">
+        <label for="inquiry">Inquiry type</label>
+        <select id="inquiry" name="inquiry" autocomplete="off">
+          <option value="general">General inquiry</option>
+          <option value="strategy-call">Strategy call</option>
+          <option value="project-scope">Project scoping</option>
+          <option value="support">Support</option>
+        </select>
+      </div>
+      <div class="gs-input-group">
         <label for="message">Project brief</label>
         <textarea
           id="message"
@@ -86,6 +95,13 @@ export const prerender = true;
       const startedAtField = form.querySelector('[name="formStartedAt"]');
       if (startedAtField instanceof HTMLInputElement) {
         startedAtField.value = String(Date.now());
+      }
+
+      const inquiryField = form.querySelector('[name="inquiry"]');
+      const inquiryParam = new URLSearchParams(window.location.search).get('inquiry');
+      const allowedInquiryTypes = new Set(['general', 'strategy-call', 'project-scope', 'support']);
+      if (inquiryField instanceof HTMLSelectElement && inquiryParam && allowedInquiryTypes.has(inquiryParam)) {
+        inquiryField.value = inquiryParam;
       }
 
       form.addEventListener('submit', async (e) => {
