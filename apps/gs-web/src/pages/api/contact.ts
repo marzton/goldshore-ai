@@ -274,20 +274,19 @@ const recipientsFromEnv = (
     .map((email) => ({ email }));
 };
 
-const resolveNotificationRecipients = (
-  formConfig: FormConfig,
-  env: Env,
-): MailRecipient[] => {
-  const fromConfig = formConfig.recipients
-    .map((recipient) => ({
-      email: recipient.email,
-      name: recipient.name,
-    }))
-    .filter((recipient) => recipient.email);
 
-  const fallback = recipientsFromEnv(env.CONTACT_NOTIFICATION_EMAILS);
-  return dedupeRecipients([...fromConfig, ...fallback]);
-};
+
+
+
+
+
+
+
+
+
+
+
+
 
 const buildSubmissionDigest = (submission: Submission) => {
   const pairs: Array<[string, string]> = [
