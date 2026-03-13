@@ -121,7 +121,7 @@ function checkBuild(name, command) {
 }
 
 // --- Report Generation ---
-const { branch, baseRef, behind, ahead, divergenceNote } = getBranchInfo();
+const { branch, behind, ahead, divergenceNote } = getBranchInfo();
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
 
 // Section 1: Governance
