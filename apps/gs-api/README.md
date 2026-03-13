@@ -45,6 +45,25 @@ pnpm --filter ./apps/gs-api build
 - Preview deploy: `.github/workflows/preview-api-worker.yml`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 
+### Cloudflare Worker Builds troubleshooting
+
+If Cloudflare Worker Builds fails before dependency installation with:
+
+`Failed: The build token selected for this build has been deleted or rolled and cannot be used for this build.`
+
+the issue is in Worker Builds project settings (not this repository code).
+
+Fix in Cloudflare Dashboard:
+
+1. Open **Workers & Pages** → **gs-api** → **Settings** → **Builds**.
+2. Create or select an active Worker Builds token.
+3. Save the updated token in Worker Builds settings.
+4. Re-run the build.
+
+Notes:
+- `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` can still be valid while Worker Builds fails.
+- Rotating/deleting the Worker Builds token immediately invalidates queued and new builds that reference the old token.
+
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 ```bash
 pnpm --filter ./apps/gs-api deploy
