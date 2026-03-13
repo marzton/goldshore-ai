@@ -1,3 +1,46 @@
+:root {
+  --gs-hero-star-core: var(--gs-effect-star-core);
+  --gs-hero-star-glow: var(--gs-effect-star-glow);
+  --gs-hero-star-grid-primary: var(--gs-effect-signal-blue-24);
+  --gs-hero-star-grid-secondary: var(--gs-effect-signal-blue-18);
+  --gs-hero-sweep-core: var(--gs-effect-sweep-core);
+  --gs-hero-sweep-edge: var(--gs-effect-sweep-edge);
+}
+
+.home-hero::after,
+.home-features::after,
+.blueprint-section::after {
+  background-image: linear-gradient(var(--gs-hero-star-grid-primary) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gs-hero-star-grid-secondary) 1px, transparent 1px);
+}
+
+.blueprint-section::after {
+  background-image: linear-gradient(var(--gs-hero-sweep-core) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gs-hero-star-grid-primary) 1px, transparent 1px),
+    linear-gradient(135deg, var(--gs-hero-sweep-edge) 0%, transparent 55%);
+}
+
+.layer-grid {
+  background-image: linear-gradient(var(--gs-hero-star-grid-primary) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gs-hero-star-grid-secondary) 1px, transparent 1px);
+  filter: drop-shadow(0 0 24px var(--gs-hero-star-glow));
+}
+
+.layer-blueprint {
+  background-image: linear-gradient(var(--gs-effect-signal-blue-32) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gs-effect-signal-blue-24) 1px, transparent 1px);
+  filter: drop-shadow(0 0 18px var(--gs-effect-signal-blue-45));
+}
+
+.layer-glow {
+  background: radial-gradient(circle at 40% 30%, var(--gs-hero-star-core), transparent 45%),
+    radial-gradient(circle at 65% 70%, var(--gs-hero-sweep-core), transparent 45%);
+}
+
+.layer-orbit {
+  background: conic-gradient(from 140deg, var(--gs-hero-sweep-edge), transparent 60%, var(--gs-hero-sweep-edge));
+}
+
 .hero-stars__field {
   position: absolute;
   inset: 0;
