@@ -139,11 +139,11 @@ function initModal() {
       return;
     }
 
-    e.preventDefault();
-    first.focus();
+    if (active === last || active === panel) {
+      e.preventDefault();
+      first.focus();
+    }
   };
-
-  document.addEventListener('keydown', onKeydown);
 
   document.addEventListener('keydown', onKeydown);
 
