@@ -53,12 +53,10 @@ async function checkCloudflareSequential() {
       if (!["success", "completed"].includes(status)) {
         await openOpsIssue();
       }
-    }
-    if (check.type === "dns_records") {
+    } else if (check.type === "dns_records") {
       await getDNSRecords();
       // Mock logic
-    }
-    if (check.type === "worker_health") {
+    } else if (check.type === "worker_health") {
       await getWorkerBindings(check.script);
       // Mock logic
     }
