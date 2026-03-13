@@ -13,19 +13,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 0
 
       - name: Setup Node
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        uses: actions/setup-node@54045abd5dcd3b0fee9ca02fa24c57545834c9cc # v4.0.2
         with:
           node-version: 20
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@fe02b34f77f8bc703788d5817da081398fad5dd2 # v4.0.0
-        with:
-          version: 9
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Install Dependencies
         run: pnpm install
@@ -35,9 +33,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Verify report metadata freshness
+        if: always()
+        run: node scripts/verify-current-state-metadata.mjs
+
       - name: Commit Report
         if: always()
-        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4dad1f5186589 # v5.0.0
+        uses: stefanzweifel/git-auto-commit-action@8756aa23fdb17af845c71d603e8b0a996b732448 # v5.0.0
         with:
           commit_message: "chore: update stabilization report"
           file_pattern: "docs/ci/CURRENT_STATE.md"

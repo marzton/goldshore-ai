@@ -2,6 +2,7 @@
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { GSButton } from '@goldshore/ui';
 import scanResults from '../../data/pii-scan-results.json';
+import InboxDashboard from '../../components/InboxDashboard.astro';
 
 // Initial UI state
 const initialStatus = { health: 'Unknown', status: 'Unknown', version: 'Unknown', lastSync: 'N/A' };
@@ -47,6 +48,8 @@ const formattedScanDate = new Date(generatedAt).toLocaleString('en-US', {
                 <GSButton href="/admin/pii-scans" variant="secondary">View PII Results</GSButton>
             </div>
         </div>
+
+        <InboxDashboard />
 
         <div class="grid md:grid-cols-3 gap-6">
             <div class="gs-card space-y-3">
@@ -312,28 +315,6 @@ const formattedScanDate = new Date(generatedAt).toLocaleString('en-US', {
             };
 
             document.getElementById('check-api-health')?.addEventListener('click', (e) => {
-        // NOTE: All behavior below is currently SIMULATED UI behavior.
-        // Jules: backend endpoints are NOT required to exist yet.
-        document.addEventListener('DOMContentLoaded', () => {
-            const apiStatusEl = document.getElementById('api-status');
-            const lastSyncEl = document.getElementById('last-sync');
-            const checkApiBtn = document.getElementById('check-api');
-
-            const checkApiHealth = async () => {
-                apiStatusEl.textContent = 'Checking...';
-                apiStatusEl.style.color = 'var(--gs-accent)';
-
-                // Simulated delay; later this can be replaced by a real fetch to gs-api /health.
-                await new Promise(resolve => setTimeout(resolve, 1500));
-
-                const isHealthy = Math.random() > 0.1;
-
-                apiStatusEl.textContent = isHealthy ? 'HEALTHY' : 'DEGRADED';
-                apiStatusEl.style.color = isHealthy ? 'var(--gs-success)' : 'var(--gs-danger)';
-                lastSyncEl.textContent = new Date().toLocaleTimeString();
-            };
-
-            checkApiBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 checkApiHealth();
             });

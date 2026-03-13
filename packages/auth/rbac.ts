@@ -15,9 +15,7 @@ export const ADMIN_PERMISSIONS = [
   "forms:publish",
   "users:read",
   "users:manage",
-  "audit:read",
-  "system:read",
-  "system:manage"
+  "audit:read"
 ] as const;
 export type AdminPermission = (typeof ADMIN_PERMISSIONS)[number];
 
