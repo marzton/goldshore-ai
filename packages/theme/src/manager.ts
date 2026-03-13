@@ -1,11 +1,10 @@
 import {
   initTheme as initializeTheme,
-  loadThemeSettings,
-  setTheme as applyThemeSettings,
   type ThemeMode,
+  applyThemeSettings,
 } from './theme-manager';
 
-export { initTheme, loadThemeSettings, setTheme } from './theme-manager';
+export * from './theme-manager';
 
 export class ThemeManager {
   static init() {

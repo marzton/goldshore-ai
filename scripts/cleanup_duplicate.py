@@ -1,11 +1,12 @@
 import os
 import shutil
-import time
 from datetime import datetime
 
 NESTED_ROOT = "astro-goldshore"
 ROOT_DIR = "."
 DATE_SUFFIX = datetime.now().strftime("%Y%m%d")
+
+MTIME_EPSILON = 1e-3  # 1 millisecond tolerance for mtime float comparisons
 
 IGNORED_DIRS = {".git", "node_modules", "dist", ".turbo", ".idea", ".vscode"}
 IGNORED_FILES = {"pnpm-lock.yaml", "package-lock.json", "yarn.lock"}
@@ -21,6 +22,7 @@ def process_nested_folder():
     moved_files = []
     deleted_files = []
     legacy_files = []
+    failed_legacy_moves = []
 
     for root, dirs, files in os.walk(NESTED_ROOT, topdown=True):
         # Modify dirs in-place to skip ignored directories
@@ -50,8 +52,8 @@ def process_nested_folder():
                 nested_mtime = get_file_mtime(nested_path)
                 target_mtime = get_file_mtime(target_path)
 
-                # Using a small epsilon for float comparison if needed, but strict is fine
-                if target_mtime >= nested_mtime:
+                # Use a small epsilon for float comparison to avoid precision issues
+                if target_mtime + MTIME_EPSILON >= nested_mtime:
                     # Case 2: Root is newer or same -> DELETE nested
                     os.remove(nested_path)
                     deleted_files.append(rel_path)
@@ -64,11 +66,17 @@ def process_nested_folder():
                     new_target_path = os.path.join(target_dir, new_filename)
 
                     if not os.path.exists(target_dir):
-                         os.makedirs(target_dir)
+                        os.makedirs(target_dir)
 
-                    shutil.move(nested_path, new_target_path)
-                    legacy_files.append(f"{rel_path} -> {new_filename}")
-                    print(f"MOVED (Legacy): {nested_path} -> {new_target_path}")
+                    try:
+                        shutil.move(nested_path, new_target_path)
+                    except (OSError, shutil.Error) as e:
+                        error_msg = f"{rel_path} -> {new_filename}: {e}"
+                        failed_legacy_moves.append(error_msg)
+                        print(f"ERROR (Legacy move failed): {nested_path} -> {new_target_path}: {e}")
+                    else:
+                        legacy_files.append(f"{rel_path} -> {new_filename}")
+                        print(f"MOVED (Legacy): {nested_path} -> {new_target_path}")
 
     # After processing all files, try to remove the NESTED_ROOT directory
     # It might fail if not empty (e.g. ignored dirs left), so we use shutil.rmtree
@@ -76,22 +84,29 @@ def process_nested_folder():
     try:
         shutil.rmtree(NESTED_ROOT)
         print("Cleanup complete.")
-    except Exception as e:
+    except OSError as e:
         print(f"Error removing {NESTED_ROOT}: {e}")
 
     # Generate Summary
+    moved_details = "\n".join(['- ' + f for f in moved_files]) if moved_files else "- None"
+    legacy_details = "\n".join(['- ' + f for f in legacy_files]) if legacy_files else "- None"
+    failed_legacy_details = "\n".join(['- ' + f for f in failed_legacy_moves]) if failed_legacy_moves else "- None"
     summary = f"""
 # Duplicate Cleanup Summary
 - **Unique Files Moved:** {len(moved_files)}
 - **Duplicate Files Deleted:** {len(deleted_files)}
 - **Newer Nested Files Preserved (Legacy):** {len(legacy_files)}
+- **Legacy Moves Failed:** {len(failed_legacy_moves)}
 
 ## Details
 ### Moved
-{chr(10).join(['- ' + f for f in moved_files])}
+{moved_details}
 
 ### Preserved as Legacy
-{chr(10).join(['- ' + f for f in legacy_files])}
+{legacy_details}
+
+### Failed Legacy Moves
+{failed_legacy_details}
     """
 
     with open("cleanup_summary.md", "w") as f:
