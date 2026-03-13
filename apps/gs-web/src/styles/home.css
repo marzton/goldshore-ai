@@ -221,6 +221,42 @@
   animation-play-state: paused;
 }
 
+
+.gs-signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.gs-status-indicator {
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  border-radius: 999px;
+  background: #94a3b8;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.42);
+  flex-shrink: 0;
+}
+
+.gs-status-indicator.is-operational {
+  background: #34d399;
+  box-shadow: 0 0 0 1px rgba(110, 231, 183, 0.5);
+  animation: gs-status-pulse 2.8s ease-in-out infinite;
+}
+
+
+@keyframes gs-status-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}
+
 @keyframes gs-logo-intro {
   to {
     stroke-dashoffset: 0;
@@ -269,7 +305,8 @@
 @media (prefers-reduced-motion: reduce) {
   .gs-logo-stroke,
   .gs-logo-glow,
-  .gs-divider::after {
+  .gs-divider::after,
+  .gs-status-indicator.is-operational {
     animation: none !important;
     opacity: 1;
     stroke-dasharray: none;
