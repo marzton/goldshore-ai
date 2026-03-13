@@ -102,10 +102,6 @@ media.post('/upload', async (c) => {
 
   if (!contentType) return c.json({ error: 'Unsupported file type' }, 400);
 
-  if (file.size > MAX_FILE_SIZE) {
-    return c.json({ error: 'File too large' }, 413);
-  }
-
   let body: ArrayBuffer | Uint8Array;
   let size = file.size;
 
