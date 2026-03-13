@@ -8,8 +8,8 @@ github:
   org: goldshore
   repos:
     - goldshore
-    - goldshore-admin
-    - goldshore-api
+    - gs-admin
+    - gs-api
   branch_protection:
     required_approving_review_count: 1
     dismiss_stale_reviews: true
@@ -21,24 +21,24 @@ cloudflare:
   zone_id_env: CF_ZONE_ID
   checks:
     - type: "pages_build_status"
-      project: "goldshore-web"
+      project: "gs-web"
     - type: "pages_build_status"
-      project: "goldshore-admin"
+      project: "gs-admin"
     - type: "worker_health"
-      script: "goldshore-api"
+      script: "gs-api"
       path: "/health"
     - type: "dns_records"
       required:
-        - name: "goldshore.org"
+        - name: "goldshore.ai"
           type: "CNAME"
-        - name: "api.goldshore.org"
+        - name: "api.goldshore.ai"
           type: "CNAME"
-        - name: "admin.goldshore.org"
+        - name: "admin.goldshore.ai"
           type: "CNAME"
-        - name: "_dmarc.goldshore.org"
+        - name: "_dmarc.goldshore.ai"
           type: "TXT"
           contains: "v=DMARC1; p=reject"
-        - name: "goldshore.org"
+        - name: "goldshore.ai"
           type: "TXT"
           contains: "v=spf1"
 
@@ -55,8 +55,8 @@ rules:
     auto_fix_strategy: "rebase-onto-main"
     open_pr_comment: true
   pages_output_dirs:
-    - repo: "goldshore-admin"
-      path: "apps/admin/dist"
+    - repo: "gs-admin"
+      path: "apps/gs-admin/dist"
   sensitive:
     disallow_plaintext_secrets: true
     required_secrets:

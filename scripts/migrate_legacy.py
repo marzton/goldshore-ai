@@ -3,7 +3,7 @@ import shutil
 from datetime import datetime
 
 SOURCE_REPO = "/tmp/goldshore-github-io"
-DEST_ROOT = "apps/web/legacy"
+DEST_ROOT = "apps/gs-web/legacy"
 ALLOWED_EXTS = {".png", ".jpg", ".jpeg", ".svg", ".webp", ".html", ".md", ".css"}
 IGNORED_DIRS = {".git", "node_modules", "dist", ".turbo", ".idea", ".vscode", "workflows"}
 IGNORED_FILES = {"package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "astro.config.mjs", "tsconfig.json", "wrangler.toml"}

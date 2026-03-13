@@ -2,7 +2,11 @@
   "name": "@goldshore/auth",
   "version": "0.0.1",
   "main": "index.ts",
+  "type": "module",
   "dependencies": {
     "jose": "^6.1.3"
+  },
+  "scripts": {
+    "test": "tsx --test **/*.test.ts"
   }
 }

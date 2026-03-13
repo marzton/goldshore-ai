@@ -82,7 +82,7 @@ Best practice:
 
 ### 2.3 Avoid parallel edits on the same file
 
-If multiple PRs touch the same “hub file” (e.g. `apps/web/src/pages/index.astro`):
+If multiple PRs touch the same “hub file” (e.g. `apps/gs-web/src/pages/index.astro`):
 - Merge one PR first.
 - Rebase the others.
 - Or consolidate into one PR if the work is tightly related.
@@ -151,14 +151,15 @@ Require:
 - Passing `pnpm build`
 - No merge markers (`<<<<<<<` etc.)
 - No leftover debug logs
+- No stray patch artifacts (e.g., `user_patch.diff`)
 - No duplicate workspace roots
 
 ### 4.3 Use CODEOWNERS
 
 Add `CODEOWNERS` so key areas require review:
-- `apps/api-worker/**` → infra reviewer
-- `apps/web/**` → web reviewer
-- `apps/admin/**` → admin reviewer
+- `apps/gs-api/**` → infra reviewer
+- `apps/gs-web/**` → web reviewer
+- `apps/gs-admin/**` → admin reviewer
 - `.github/workflows/**` → ops reviewer
 - `packages/theme/**` → design system reviewer
 
@@ -226,7 +227,7 @@ Disallowed auto-fixes:
 
 Keep stable:
 - Build command: `pnpm install && pnpm --filter @goldshore/web build`
-- Output directory: `apps/web/dist`
+- Output directory: `apps/gs-web/dist`
 - Same pattern for admin.
 
 Do not change build output dir without updating CF Pages settings + docs.
@@ -249,14 +250,20 @@ Use a single canonical naming for bindings across:
 
 If many PRs are blocked or repo drift is severe:
 1. Freeze merges temporarily
-2. Create a “stabilization PR” off main:
+2. Phase A branch bootstrap (`pnpm branch:bootstrap -- <type> <slug>`) now creates `infra/stabilization-backup` before your working branch and logs the exact source ref used.
+   - Source selection order:
+     1. local `main` (if present)
+     2. `origin/HEAD` default branch target
+     3. current checked-out branch
+   - This fallback keeps stabilization automation working in repositories that do not have a local `main` branch.
+3. Create a “stabilization PR” off main/default baseline:
     - remove duplicated roots
     - regenerate lockfile
     - verify build passes
     - fix config drift
-3. Merge stabilization PR
-4. Rebase every PR onto stabilized main
-5. Close obsolete PRs
+4. Merge stabilization PR
+5. Rebase every PR onto stabilized main/default branch
+6. Close obsolete PRs
 
 ---
 
