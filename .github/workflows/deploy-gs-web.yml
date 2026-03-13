@@ -52,4 +52,5 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: gs-web
           directory: apps/gs-web/dist
+          workingDirectory: apps/gs-web
           branch: main
