@@ -1,27 +1,13 @@
 ---
-const { kind = 'primary', size = 'md', href, class: className, ...attrs } = Astro.props;
-const Tag = href ? 'a' : 'button';
-const variantClass = {
-  primary: '',
-  secondary: 'gs-button--secondary',
-  destructive: 'gs-button--destructive',
-  ghost: 'gs-button--ghost',
-}[kind] ?? '';
-const sizeClass = size === 'sm' ? 'gs-button--small' : size === 'lg' ? 'gs-button--large' : '';
----
-
-<Tag class={`gs-button ${variantClass} ${sizeClass} ${className || ''}`.trim()} href={href} {...attrs}>
-  <slot />
-</Tag>
 import GSButton from '../GSButton.astro';
 
-const { kind = 'primary', size = 'md', class: className, ...attrs } = Astro.props;
+const { kind = 'primary', size = 'md', class: className, href, ...attrs } = Astro.props;
 const variant = kind;
 
 const sizeClass = size === 'sm' ? 'gs-button--small' : size === 'lg' ? 'gs-button--large' : '';
 const mergedClass = [sizeClass, className].filter(Boolean).join(' ');
 ---
 
-<GSButton variant={variant} class={mergedClass} {...attrs}>
+<GSButton variant={variant} class={mergedClass} href={href} {...attrs}>
   <slot />
 </GSButton>

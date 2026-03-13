@@ -1,4 +1,4 @@
-name: Deploy Gateway Worker (gw.goldshore.ai)
+name: Deploy GS Gateway Worker (gw.goldshore.ai)
 
 permissions:
   contents: read
@@ -25,13 +25,22 @@ jobs:
         with:
           run_install: false
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Validate workspace contract
+        run: pnpm validate:workspace
+
+      - name: Validate canonical worker structure
+        run: pnpm validate:structure
+
+      - name: Validate canonical worker names
+        run: pnpm validate:names
 
       - name: Deploy Gateway worker (production)
         working-directory: apps/gs-gateway

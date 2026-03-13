@@ -20,3 +20,23 @@ If a Pull Request (PR) shows merge conflicts, the Agent MUST execute a **Forcefu
 | **Error 1101** (Worker Crash) | Missing dependency or unhandled runtime exception (e.g., trying to read KV before initialization). | Must verify asynchronous KV config loading in `apps/gs-api/src/index.(ts|js)`. |
 | **Error 522** (Connection Timeout) | Incorrect DNS CNAME or Pages Build Output path. | Execute `infra/scripts/enforce-dns.sh` to correct CNAMEs and ensure Pages settings are manually fixed to target `apps/gs-web/dist` or `apps/gs-admin/dist`. |
 | **Build Error** (e.g., `wrangler.toml` invalid) | Incorrect placement of `wrangler.toml` in the Pages project. | Ensure `wrangler.toml` only lives at the Worker root (`apps/gs-api/`) and Pages settings are manually configured. |
+
+## 3. Deterministic Conflict Handling for High-Churn Files (SOP-003)
+
+Certain files are updated very frequently and are not a reliable source of semantic review signal during rebases.
+To avoid repeated manual conflict resolution noise, this repo uses `.gitattributes` with `merge=ours` for:
+
+- `pnpm-lock.yaml`
+- `README.md`
+- `CURRENT_MONOREPO_STATE.md`
+
+### Contributor policy
+
+1. During merges/rebases, Git will prefer the current branch version for these files.
+2. If upstream changes to one of these files are needed, re-apply them intentionally in a follow-up commit after synchronization.
+3. For `pnpm-lock.yaml`, regenerate the lockfile (`pnpm install`) when dependency changes require it.
+
+This policy keeps branch synchronization deterministic while still allowing explicit, intentional updates to these files.
+| **Error 1101** (Worker Crash) | Missing dependency or unhandled runtime exception (e.g., trying to read KV before initialization). | Must verify asynchronous KV config loading in `apps/api-worker/src/index.(ts|js)`. |
+| **Error 522** (Connection Timeout) | Incorrect DNS CNAME or Pages Build Output path. | Execute `infra/scripts/enforce-dns.sh` to correct CNAMEs and ensure Pages settings are manually fixed to target `apps/web/dist` or `apps/admin/dist`. |
+| **Build Error** (e.g., `wrangler.toml` invalid) | Incorrect placement of `wrangler.toml` in the Pages project. | Ensure `wrangler.toml` only lives at the Worker root (`apps/api-worker/`) and Pages settings are manually configured. |

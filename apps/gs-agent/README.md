@@ -19,6 +19,12 @@ Codex bot decision:
 ## Configuration
 - The Wrangler configuration lives in `infra/cloudflare/gs-agent.wrangler.toml` and defines queue consumers for `goldshore-jobs`.
 - Local dev exposes the worker via `wrangler dev`.
+- No production routes are configured in the Wrangler config.
+The `gs-agent` worker is a queue-driven background agent. It currently returns a simple response for fetch requests and includes a stubbed queue consumer. The Wrangler configuration lives in `infra/cloudflare/gs-agent.wrangler.toml` and defines queue consumers for `goldshore-jobs`.
+
+## Routes/Endpoints
+- No production routes are configured in `wrangler.toml`.
+- Local dev exposes the worker via `wrangler dev`, returning `Hello from the GoldShore Agent!` from the fetch handler.
 
 ## Local Dev
 ```bash

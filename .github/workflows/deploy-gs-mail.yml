@@ -1,4 +1,4 @@
-name: Deploy Mail Worker (gs-mail)
+name: Deploy GS Mail Worker (gs-mail)
 
 permissions:
   contents: read
@@ -10,19 +10,6 @@ on:
     paths:
       - "apps/gs-mail/**"
       - ".github/workflows/deploy-gs-mail.yml"
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/gs-mail
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -30,22 +17,33 @@ jobs:
 jobs:
   deploy-mail:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+      - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v4
         with:
-          run_install: false
+          version: 9
 
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
 
-      - run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-      - run: wrangler deploy --env prod
+      - name: Validate workspace contract
+        run: pnpm validate:workspace
+
+      - name: Validate canonical worker structure
+        run: pnpm validate:structure
+
+      - name: Validate canonical worker names
+        run: pnpm validate:names
+
+      - name: Deploy
+        working-directory: apps/gs-mail
+        run: pnpm deploy --env prod
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
