@@ -5,6 +5,7 @@ import {
   DEFAULT_HERO_VARIANT,
   normalizeHeroVariant,
 } from '../components/hero/hero.config';
+import wavesScriptUrl from '../scripts/waves.ts?url';
 
 const env = Astro.locals.runtime?.env as
   | { HERO_CONFIG_KV?: { get(key: string): Promise<string | null> } }
@@ -31,6 +32,7 @@ const heroVariant = normalizeHeroVariant(
       >
         <div class="gs-label">Availability</div>
         <div class="gs-stat">99.995%</div>
+        <div class="gs-meta">Service Availability · Last 30 days</div>
       </article>
       <article
         class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
@@ -39,6 +41,7 @@ const heroVariant = normalizeHeroVariant(
       >
         <div class="gs-label">Deploy Cadence</div>
         <div class="gs-stat">48/day</div>
+        <div class="gs-meta">Production deploys · <a href="/developer">Developer Hub</a></div>
       </article>
       <article
         class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
@@ -47,7 +50,212 @@ const heroVariant = normalizeHeroVariant(
       >
         <div class="gs-label">Signal Integrity</div>
         <div class="gs-stat">4.8B</div>
+        <div class="gs-meta">Signals processed · rolling volume</div>
       </article>
     </div>
   </section>
+
+  <div class="gs-modal" id="modal">
+    <div class="gs-modal-bg" data-close-modal></div>
+    <div class="gs-modal-panel" role="dialog" aria-modal="true">
+      <button class="close-btn" data-close-modal aria-label="Close">×</button>
+      <div class="modal-content"></div>
+    </div>
+  </div>
+
+  <script type="module" src={wavesScriptUrl}></script>
+
 </WebLayout>
+
+<style>
+  .gs-depth-bg {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(90, 140, 255, 0.12), transparent 60%),
+      linear-gradient(180deg, #05070d 0%, #060a14 100%);
+  }
+
+  .gs-css-field,
+  #pulsar-field {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  .gs-css-field {
+    background:
+      radial-gradient(circle at 22% 20%, rgba(90, 140, 255, 0.12), transparent 28%),
+      radial-gradient(circle at 72% 34%, rgba(255, 107, 0, 0.11), transparent 32%),
+      radial-gradient(circle at 58% 72%, rgba(90, 140, 255, 0.1), transparent 34%);
+  }
+
+  .gs-hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 7rem 0 5rem;
+  }
+
+  .gs-hero-title,
+  .gs-hero-sub {
+    max-width: 24ch;
+  }
+
+  .gs-hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+
+  .gs-panel {
+    background: linear-gradient(180deg, #0b1220, #0a101c);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2.5rem;
+    transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .gs-label {
+    opacity: 0.8;
+  }
+
+  .gs-stat {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+  }
+
+  .gs-meta {
+    margin-top: 0.55rem;
+    color: var(--gs-muted);
+    font-size: 0.9rem;
+  }
+
+  .gs-meta a {
+    color: var(--gs-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .gs-edge-light {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gs-edge-light::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(120deg, transparent, rgba(90, 140, 255, 0.35), transparent);
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+
+  .gs-edge-light:hover::before {
+    opacity: 1;
+  }
+
+  .gs-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(90, 140, 255, 0.3), transparent);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gs-divider::after {
+    content: '';
+    position: absolute;
+    inset: -20px 0;
+    background: linear-gradient(120deg, transparent, rgba(255, 107, 0, 0.15), transparent);
+    animation: signalSweep 6s ease-in-out infinite;
+  }
+
+  .gs-signal-btn {
+    border-color: var(--gs-signal-soft);
+  }
+
+  .gs-signal-btn:hover {
+    box-shadow: 0 0 24px var(--gs-signal-soft);
+  }
+
+  .gs-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gs-modal.active {
+    display: flex;
+  }
+
+  .gs-modal-bg {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+  }
+
+  .gs-modal-panel {
+    position: relative;
+    width: min(500px, 90vw);
+    padding: 2rem;
+    border-radius: 20px;
+    background: #0b1220;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 1;
+  }
+
+  .modal-content {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.75rem;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  @supports (animation-timeline: view()) {
+    .gs-scroll-reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      animation: fadeIn linear forwards;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+  }
+
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes signalSweep {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    50% {
+      transform: translateX(100%);
+    }
+
+    100% {
+      transform: translateX(100%);
+    }
+  }
+</style>
