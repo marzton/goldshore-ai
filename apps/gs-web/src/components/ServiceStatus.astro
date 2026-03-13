@@ -57,15 +57,24 @@ const { serviceUrl } = Astro.props;
       
       if (data.api !== undefined && data.api !== null) {
         const apiString = typeof data.api === 'string' ? data.api : String(data.api);
-        document.getElementById('api-val').innerText = apiString.toUpperCase();
+        const apiEl = document.getElementById('api-val');
+        if (apiEl) {
+          apiEl.innerText = apiString.toUpperCase();
+        }
       }
       if (data.kv !== undefined && data.kv !== null) {
         const kvString = typeof data.kv === 'string' ? data.kv : String(data.kv);
-        document.getElementById('kv-val').innerText = kvString.toUpperCase();
+        const kvEl = document.getElementById('kv-val');
+        if (kvEl) {
+          kvEl.innerText = kvString.toUpperCase();
+        }
       }
       if (data.db !== undefined && data.db !== null) {
         const dbString = typeof data.db === 'string' ? data.db : String(data.db);
-        document.getElementById('db-val').innerText = dbString.toUpperCase();
+        const dbEl = document.getElementById('db-val');
+        if (dbEl) {
+          dbEl.innerText = dbString.toUpperCase();
+        }
       }
     } catch (e) {
       console.error('Health check failed:', e);
