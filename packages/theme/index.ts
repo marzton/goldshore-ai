@@ -1,6 +1,8 @@
 const MODAL_TITLE_ID = 'gs-modal-title';
 const MODAL_DESCRIPTION_ID = 'gs-modal-description';
 
+const modalListenerControllers = new WeakMap<HTMLElement, AbortController>();
+
 export function initGoldShoreUI() {
   initNav();
   initModal();
@@ -49,6 +51,14 @@ function initNav() {
 function initModal() {
   const root = document.querySelector<HTMLElement>('[data-gs-modal]');
   if (!root) return;
+
+  // Clean up any previously registered listeners for this modal root
+  const existingController = modalListenerControllers.get(root);
+  if (existingController) {
+    existingController.abort();
+  }
+  const modalAbortController = new AbortController();
+  modalListenerControllers.set(root, modalAbortController);
 
   const backdrop = root.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
   const closeBtn = root.querySelector<HTMLButtonElement>(
@@ -145,19 +155,30 @@ function initModal() {
     }
       first.focus();
     }
-  };
-
-  document.addEventListener('click', (e) => {
-    const el = e.target as HTMLElement;
-    const trigger = el.closest<HTMLElement>('[data-gs-modal-open]');
-    if (!trigger) return;
-
-    const variant = trigger.getAttribute('data-gs-modal-open') || 'subscribe';
-    openModal(getModalTemplate(variant), trigger);
+  document.addEventListener('keydown', onKeydown, {
+    signal: modalAbortController.signal,
   });
 
-  backdrop?.addEventListener('click', closeModal);
-  closeBtn?.addEventListener('click', closeModal);
+  document.addEventListener(
+    'click',
+    (e) => {
+      const el = e.target as HTMLElement;
+      const trigger = el.closest<HTMLElement>('[data-gs-modal-open]');
+      if (!trigger) return;
+
+      const variant =
+        trigger.getAttribute('data-gs-modal-open') || 'subscribe';
+      openModal(getModalTemplate(variant), trigger);
+    },
+    { signal: modalAbortController.signal },
+  );
+
+  backdrop?.addEventListener('click', closeModal, {
+    signal: modalAbortController.signal,
+  });
+  closeBtn?.addEventListener('click', closeModal, {
+    signal: modalAbortController.signal,
+  });
 }
 
 function getModalTemplate(variant: string): string {
