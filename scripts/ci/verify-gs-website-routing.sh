@@ -20,7 +20,14 @@ rg -n "^/company[[:space:]]+/about[[:space:]]+301$" "$REDIRECTS" || { echo "ERRO
 rg -n "^/v1/status/\\*[[:space:]]+https://api\\.goldshore\\.ai/status/:splat[[:space:]]+200$" "$REDIRECTS" || { echo "ERROR: Missing CORS-safe proxy rewrite for /v1/status/* in '$REDIRECTS'." >&2; exit 1; }
 rg -n "^/v1/telemetry/\\*[[:space:]]+https://api\\.goldshore\\.ai/telemetry/:splat[[:space:]]+200$" "$REDIRECTS" || { echo "ERROR: Missing CORS-safe proxy rewrite for /v1/telemetry/* in '$REDIRECTS'." >&2; exit 1; }
 
-# Framework-level alias retained (allow single or double quotes and flexible spacing)
+# Framework-level alias retained.
+# NOTE: This check assumes a simple, single-line string-literal mapping in astro.config.mjs,
+# e.g. something like:
+#   aliases: {
+#     '/developer-hub': '/developer',
+#   }
+# If the config structure or formatting changes (multi-line, variables, computed keys, etc.),
+# this regex and script should be updated accordingly.
 rg -n "['\"]/developer-hub['\"][[:space:]]*:[[:space:]]*['\"]/developer['\"]" "$ASTRO_CFG" || { echo "ERROR: Missing framework-level alias mapping '/developer-hub' to '/developer' in '$ASTRO_CFG'." >&2; exit 1; }
 
 echo "✅ gs-website routing guardrails verified."
