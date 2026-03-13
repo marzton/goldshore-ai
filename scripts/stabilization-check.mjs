@@ -78,8 +78,13 @@ function getCiStatus(branch) {
     : tryRun(`gh pr list --head "${branch}" --state open --limit 1 --json number --jq '.[0].number'`);
 
   if (prNumber) {
-    const prData = tryRun(`gh pr view ${prNumber} --json number,url,statusCheckRollup`);
-    if (!prData) return { summary: `⚠️ Unable to fetch checks for PR #${prNumber}.` };
+    const prNumberStr = String(prNumber).trim();
+    if (!/^[0-9]+$/.test(prNumberStr)) {
+      return { summary: '⚠️ Detected PR identifier is not a valid integer; skipping detailed check rollup.' };
+    }
+
+    const prData = tryRun(`gh pr view ${prNumberStr} --json number,url,statusCheckRollup`);
+    if (!prData) return { summary: `⚠️ Unable to fetch checks for PR #${prNumberStr}.` };
 
     const pr = JSON.parse(prData);
     const checks = (pr.statusCheckRollup || []).map(item => ({
