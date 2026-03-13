@@ -55,7 +55,18 @@ function resolveBaseRef() {
 }
 
 function getBranchInfo() {
-  const branch = run('git rev-parse --abbrev-ref HEAD');
+  let branch;
+  try {
+    branch = run('git rev-parse --abbrev-ref HEAD');
+  } catch (error) {
+    return {
+      branch: 'UNKNOWN',
+      baseRef: 'main (unavailable)',
+      behind: 0,
+      ahead: 0,
+      divergenceNote: '⚠️ Failed to determine current git branch (git rev-parse --abbrev-ref HEAD). Ensure this script is run inside a git repository. Divergence defaults to 0/0.',
+    };
+  }
   const baseRef = resolveBaseRef();
   if (!baseRef) {
     return {
