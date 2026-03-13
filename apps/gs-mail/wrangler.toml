@@ -22,8 +22,13 @@ id = "9cc2209906a94851b704be57543987a9"
 ENV = "development"
 
 [env.prod]
-# Empty prod environment for deployment
+name = "gs-mail"
 
-[[kv_namespaces]]
+[[env.prod.kv_namespaces]]
 binding = "GS_CONFIG"
 id = "9cc2209906a94851b704be57543987a9"
+
+[env.prod.vars]
+ENV = "production"
+MAIL_FORWARD_TO = "ops@goldshore.ai"
+
