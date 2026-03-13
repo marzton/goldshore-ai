@@ -68,7 +68,7 @@ def process_nested_folder():
 
                     try:
                         shutil.move(nested_path, new_target_path)
-                    except Exception as e:
+                    except (OSError, shutil.Error) as e:
                         error_msg = f"{rel_path} -> {new_filename}: {e}"
                         failed_legacy_moves.append(error_msg)
                         print(f"ERROR (Legacy move failed): {nested_path} -> {new_target_path}: {e}")
