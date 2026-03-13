@@ -21,7 +21,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 const sanitizeSvg = (rawSvg: string) => {
   let sanitized = rawSvg
-    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+    .replace(/<script[\s\S]*?>[\s\S]*?<\s*\/\s*script(?:\s[^>]*)?\s*>/gi, '')
     .replace(/<foreignObject[\s\S]*?>[\s\S]*?<\/foreignObject>/gi, '')
     .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
     .replace(/(href|xlink:href)\s*=\s*("|')\s*javascript:[^\2]*\2/gi, '')
