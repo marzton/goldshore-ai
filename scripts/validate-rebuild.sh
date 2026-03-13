@@ -1,42 +1,51 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Validation helper for cherry-pick verification.
-# Phase 2 intentionally targets changed packages when possible.
+run_phase() {
+  local label="$1"
+  shift
 
-BASE_REF="${BASE_REF:-origin/main}"
+  echo
+  echo "==> ${label}"
+  "$@"
+}
 
-if ! git rev-parse --verify "$BASE_REF" >/dev/null 2>&1; then
-  if git rev-parse --verify main >/dev/null 2>&1; then
-    BASE_REF="main"
-  else
-    BASE_REF="HEAD~1"
+run_optional_changed_package_builds() {
+  local changed="${CHANGED_PACKAGES:-}"
+  if [[ -z "${changed}" ]]; then
+    return 0
   fi
-fi
 
-echo "[validate-rebuild] Comparing changes against: $BASE_REF"
+  echo
+  echo "==> Optional targeted package builds (CHANGED_PACKAGES=${changed})"
 
-mapfile -t CHANGED_PACKAGES < <(
-  git diff --name-only "$BASE_REF...HEAD" \
-    | awk -F/ '/^packages\/[^/]+\// {print "./packages/"$2}' \
-    | sort -u
-)
-
-echo "[validate-rebuild] Phase 1: detect changed package scope"
-if ((${#CHANGED_PACKAGES[@]} > 0)); then
-  printf '  - %s\n' "${CHANGED_PACKAGES[@]}"
-else
-  echo "  - no package-level changes detected"
-fi
-
-echo "[validate-rebuild] Phase 2: build changed packages (if present)"
-if ((${#CHANGED_PACKAGES[@]} > 0)); then
-  FILTER_ARGS=()
-  for pkg in "${CHANGED_PACKAGES[@]}"; do
-    FILTER_ARGS+=(--filter "$pkg")
+  local package
+  for package in ${changed}; do
+    case "${package}" in
+      apps/gs-api|apps/gs-web|apps/gs-admin)
+        pnpm -C "${package}" build
+        ;;
+      *)
+        echo "Skipping unsupported package path: ${package}" >&2
+        ;;
+    esac
   done
-  pnpm -r "${FILTER_ARGS[@]}" --if-present run build
-else
-  # Fallback: keep command resilient to packages without a build script.
-  pnpm -r --filter "./packages/**" --if-present run build
-fi
+}
+
+run_phase "Phase 1: Workspace sanity" pnpm -w lint
+run_phase "Phase 2: Type checks" pnpm -w typecheck
+run_phase "Phase 3: Unit tests" pnpm -w test
+run_phase "Phase 4: Integration checks" pnpm -w test:integration
+
+# Phase 5 intentionally runs installs and package builds in explicit order so
+# failures are attributable to a single component.
+run_phase "Phase 5.1: Install dependencies" pnpm install
+run_phase "Phase 5.2: Build gs-api" pnpm -C apps/gs-api build
+run_phase "Phase 5.3: Build gs-web" pnpm -C apps/gs-web build
+run_phase "Phase 5.4: Build gs-admin" pnpm -C apps/gs-admin build
+
+run_optional_changed_package_builds
+
+echo
+
+echo "validate-rebuild complete"
