@@ -84,6 +84,7 @@ def run(target, legacy, archive, mode):
 
     legacy = Path(legacy)
     target = Path(target)
+    archive = Path(archive)
 
     mutate = mode == "apply"
 
@@ -96,7 +97,7 @@ def run(target, legacy, archive, mode):
             handle_file(src, dest, report, mode)
 
     if mutate:
-        archive_legacy(legacy, target / archive)
+        archive_legacy(legacy, archive)
 
     Path("reports/merge").mkdir(parents=True, exist_ok=True)
     with open("reports/merge/merge-report.json", "w") as r:
