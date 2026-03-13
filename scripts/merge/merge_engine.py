@@ -4,14 +4,6 @@ from datetime import datetime
 from json_merge import deep_merge_json
 from workflow_dedupe import merge_workflows
 
-SKIP_LEGACY_DIRS = {
-    ".git",
-    ".hg",
-    ".svn",
-    "__pycache__",
-}
-
-
 EXCLUDED_DIRS = {".git", ".hg", ".svn", "__pycache__"}
 
 
@@ -38,7 +30,12 @@ def copy_file(src, dest):
 def archive_legacy(src_root, archive_root):
     if Path(archive_root).exists():
         return
-    shutil.copytree(src_root, archive_root)
+    try:
+        shutil.copytree(src_root, archive_root)
+    except OSError as e:
+        raise RuntimeError(
+            f"Failed to archive legacy directory from '{src_root}' to '{archive_root}': {e}"
+        ) from e
 
 
 def handle_file(src, dest, report, mode):
@@ -84,6 +81,7 @@ def run(target, legacy, archive, mode):
 
     legacy = Path(legacy)
     target = Path(target)
+    archive = Path(archive)
 
     mutate = mode == "apply"
 
@@ -96,7 +94,7 @@ def run(target, legacy, archive, mode):
             handle_file(src, dest, report, mode)
 
     if mutate:
-        archive_legacy(legacy, target / archive)
+        archive_legacy(legacy, archive)
 
     Path("reports/merge").mkdir(parents=True, exist_ok=True)
     with open("reports/merge/merge-report.json", "w") as r:
