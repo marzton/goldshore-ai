@@ -143,6 +143,8 @@ function initModal() {
       e.preventDefault();
       first.focus();
     }
+      first.focus();
+    }
   };
 
   document.addEventListener('click', (e) => {
