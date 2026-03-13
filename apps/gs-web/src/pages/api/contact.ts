@@ -238,47 +238,12 @@ const validateRequiredFields = (submission: Submission, fields: FormField[]) => 
   return missing;
 };
 
-const safeRedirect = (redirectTo: string | null, origin: string) => {
-  if (!redirectTo) return new URL('/thank-you', origin);
-  const trimmed = redirectTo.trim();
-  if (!trimmed.startsWith('/')) return new URL('/thank-you', origin);
-  return new URL(trimmed, origin);
-};
-
-const buildSubmissionDigest = (submission: Submission) => {
-  const pairs: Array<[string, string]> = [
-    ['Submission ID', submission.id],
-    ['Form type', submission.formType],
-    ['Received', submission.receivedAt],
-    ['Name', submission.name],
-    ['Email', submission.email],
-    ['Company', submission.company],
-    ['Role', submission.role],
-    ['Website', submission.website],
-    ['Team size', submission.teamSize],
-    ['Industry', submission.industry],
-    ['Timeline', submission.timeline],
-    ['Budget', submission.budget],
-    ['Goals', submission.goals],
-    ['Message', submission.message],
-    ['IP', submission.ipAddress ?? ''],
-    ['User agent', submission.userAgent ?? ''],
-  ];
-
-  const filtered = pairs.filter(([, value]) => value);
-
-  const text = filtered
-    .map(([label, value]) => `${label}: ${value}`)
-    .join('\n');
-  const html = filtered
-    .map(
-      ([label, value]) =>
-        `<p><strong>${label}:</strong> ${value.replace(/</g, '&lt;')}</p>`,
-    )
-    .join('');
-
-  return { text, html };
-};
+    const safeRedirect = (redirectTo: string | null, origin: string) => {
+      if (!redirectTo) return new URL('/thank-you', origin);
+      const trimmed = redirectTo.trim();
+      if (!trimmed.startsWith('/')) return new URL('/thank-you', origin);
+      return new URL(trimmed, origin);
+    };
 
 // sendMail helper was removed because it was unused and represented dead code.
 
