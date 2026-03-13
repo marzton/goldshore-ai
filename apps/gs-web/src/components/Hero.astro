@@ -1,49 +1,29 @@
-<section class="hero">
-  <h1>AI-powered business infrastructure for modern operators.</h1>
-  <p>APIs, dashboards, automation, and intelligence for finance, operations, and decision systems.</p>
+---
+import '../styles/hero-stars.css';
+---
 
-  <div class="hero-cta">
-    <a class="primary" href="/developer">Get Started</a>
-    <a class="secondary" href="https://admin.goldshore.ai">Admin Login</a>
+<section class="hero">
+  <div class="shooting-stars" data-shooting-stars aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <h1 class="hero-title">Intelligence infrastructure for modern operators.</h1>
+
+    <p class="hero-sub">
+      Goldshore unifies AI systems, automation, market intelligence, and operational tooling into a
+      modular control layer.
+    </p>
+
+    <div class="hero-actions">
+      <a href="/request-access" class="btn-primary">Request Access</a>
+      <a href="/architecture" class="btn-secondary">Explore Architecture</a>
+    </div>
   </div>
 </section>
 
-<style>
-  .hero {
-    padding: 6rem 2rem 5rem;
-    text-align: center;
-  }
-  h1 {
-    font-size: 2.4rem;
-    margin: 0 0 1rem;
-    background: linear-gradient(90deg,#22d3ee,#a855f7);
-    -webkit-background-clip: text;
-    color: transparent;
-  }
-  p {
-    color: #94a3b8;
-    max-width: 580px;
-    margin: 0 auto 1.75rem;
-    font-size: 1.1rem;
-  }
-  .hero-cta {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-  }
-  .primary, .secondary {
-    padding: 0.7rem 1.6rem;
-    border-radius: 0.6rem;
-    text-decoration: none;
-    font-size: 0.95rem;
-  }
-  .primary {
-    background: linear-gradient(90deg,#22c55e,#22d3ee);
-    color: #020617;
-    font-weight: 600;
-  }
-  .secondary {
-    border: 1px solid rgba(148,163,184,0.4);
-    color: #e2e8f0;
-  }
-</style>
+<script>
+  import { spawnShootingStars } from './shooting-stars';
+
+  document.addEventListener('astro:page-load', () => {
+    spawnShootingStars();
+  });
+</script>
