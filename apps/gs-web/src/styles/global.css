@@ -12,6 +12,11 @@ html, body {
   box-sizing: border-box;
 }
 
+/* App shell layout hooks */
+main#main-content {
+  min-height: var(--gs-app-content-min-height);
+}
+
 .gs-header {
   position: fixed;
   top: 0;
