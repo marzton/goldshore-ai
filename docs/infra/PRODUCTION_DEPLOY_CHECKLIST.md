@@ -1,18 +1,22 @@
 # Production Deploy Checklist
 
-**Target:** goldshore.ai / admin.goldshore.ai
+**Target:** `goldshore.ai`
+**Executor:** Jules / Codex
 
-## Pre-Deployment (Build & Dist Verification)
-- [ ] **Build Success:** `pnpm --filter <app> build` completes with exit code 0.
-- [ ] **Dist Verified:** `dist/` directory contains `_astro/` folder.
-- [ ] **CSS Present:** `dist/_astro/*.css` exists and is non-empty.
-- [ ] **JS Present:** `dist/_astro/*.js` exists and is non-empty.
-- [ ] **No Layout Bypass:** All pages use the approved Layout component (`WebLayout` or `AdminLayout`).
+## Pre-Deployment
+- [ ] **Build Success**: `pnpm --filter @goldshore/gs-web build` completes without error.
+- [ ] **Dist Verified**: `dist/` directory contains `_astro/` folder.
+- [ ] **CSS Present**: `dist/_astro/*.css` exists and is non-empty.
+- [ ] **JS Present**: `dist/_astro/*.js` exists.
+- [ ] **Assets**: `logo.svg` (or hashed variant) is present in build output.
 
-## Post-Deployment (Production Edge Verification)
-- [ ] **HTTP 200 OK:** Root URL returns 200 (not 403/404/500).
-- [ ] **No Cloudflare Challenge:** Request does not return "cf-mitigated".
-- [ ] **Assets Load:** CSS and JS bundles load with 200 OK.
-- [ ] **Logo Present:** SVG logo renders correctly (no broken image).
-- [ ] **Console Clean:** No CSP errors or 404s in browser console.
-- [ ] **Visual Sanity:** Hero section, typography, and navigation render as expected.
+## Post-Deployment (Staging/Production)
+- [ ] **HTTP Status**: `curl -I https://goldshore.ai` returns `200 OK`.
+- [ ] **No Cloudflare Challenge**: Response is NOT `403 Forbidden` or `503 Service Temporarily Unavailable` (WAF).
+- [ ] **Asset Loading**: Browser console shows no 404s for `.css` or `.js` files.
+- [ ] **Layout Integrity**:
+    - [ ] Header is dark/translucent (not white).
+    - [ ] Logo is visible.
+    - [ ] Fonts are Inter/Sans-serif (not Serif).
+- [ ] **Interactive Elements**:
+    - [ ] Mobile menu toggles correctly (if testing on mobile/responsive view).
