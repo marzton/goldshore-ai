@@ -1,9 +1,0 @@
-{
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "jsx": "preserve",
-    "types": ["astro/client"],
-    "moduleResolution": "bundler"
-  },
-  "include": ["src/**/*"]
-}

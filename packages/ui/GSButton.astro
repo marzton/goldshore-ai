@@ -1,12 +1,49 @@
 ---
-const { href, variant = 'primary', class: className, ...attrs } = Astro.props;
-let buttonClass = 'px-6 py-3 font-semibold rounded-lg text-sm transition';
-if (variant === 'primary') {
-    buttonClass += ' gs-button-primary';
-} else if (variant === 'secondary') {
-    buttonClass += ' border border-[var(--gs-brand-blue)] text-[var(--gs-text-primary)] hover:bg-[var(--gs-brand-blue)] hover:text-white';
-}
+const {
+  href,
+  variant = 'primary',
+  disabled = false,
+  loading = false,
+  type = 'button',
+  class: className,
+  ...attrs
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+
+const variantClass = {
+  primary: '',
+  secondary: 'gs-button--secondary',
+  destructive: 'gs-button--destructive',
+  ghost: 'gs-button--ghost',
+}[variant] ?? '';
 ---
-<a href={href} class={`${buttonClass} ${className || ''}`} {...attrs}>
-    <slot />
-</a>
+
+<Tag
+  href={!disabled ? href : undefined}
+  type={!href ? type : undefined}
+  class={`gs-button ${variantClass} ${className || ''}`.trim()}
+  disabled={disabled || loading}
+  aria-disabled={disabled || loading}
+  {...attrs}
+>
+  {loading && (
+    <span class="gs-loader" aria-hidden="true"></span>
+  )}
+  <slot />
+</Tag>
+
+<style>
+  .gs-loader {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 999px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: rgba(255,255,255,0.9);
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+</style>
