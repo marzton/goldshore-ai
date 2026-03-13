@@ -106,8 +106,8 @@ try {
 
 } catch (e) {
   const rawErrorMessage = (e && e.stack) || (e && e.toString && e.toString()) || String(e);
-  const sanitizedErrorMessage = rawErrorMessage.replace(/[\r\n]+/g, ' ');
-  console.error(`Error during security checks: ${sanitizedErrorMessage}`);
+  const sanitizedErrorMessage = rawErrorMessage.replace(/[\x00-\x1F\x7F]+/g, ' ');
+  console.error(`Error during security checks: "${sanitizedErrorMessage}"`);
   exitCode = 1;
 } finally {
   serverProcess.kill();
