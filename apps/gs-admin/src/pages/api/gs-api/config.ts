@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-import { normalizeApiRuntimeConfig } from '@goldshore/schema';
 import { requireAdminAccess } from '../../../lib/access';
 import { getGsApiBaseUrl, buildGsApiHeaders } from '../../../lib/gs-api';
 import { getServerEnv } from '../../../lib/server-env';
@@ -24,10 +23,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
   const payload = await response.json().catch(() => null);
 
-  return new Response(JSON.stringify({
-    config: normalizeApiRuntimeConfig(payload?.config),
-    source: payload?.source ?? { key: 'SERVICE_STATUS.api_config' }
-  }), {
+  return new Response(JSON.stringify({ config: payload?.config ?? null }), {
     status: response.status,
     headers: { 'Content-Type': 'application/json' }
   });
@@ -54,10 +50,7 @@ export const PUT: APIRoute = async ({ request, locals }) => {
 
   const payload = await response.json().catch(() => null);
 
-  return new Response(JSON.stringify({
-    config: normalizeApiRuntimeConfig(payload?.config),
-    source: payload?.source ?? { key: 'SERVICE_STATUS.api_config' }
-  }), {
+  return new Response(JSON.stringify({ config: payload?.config ?? null }), {
     status: response.status,
     headers: { 'Content-Type': 'application/json' }
   });

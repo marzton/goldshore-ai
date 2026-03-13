@@ -9,7 +9,7 @@ The following workflow files were corrected to remove YAML and GitHub Actions an
   - Removed an accidental second top-level `jobs:` block.
   - Kept a single lockfile guard job with clear intent.
 
-- `.github/workflows/preview-gs-agent.yml`
+- `.github/workflows/preview-agent.yml`
   - Removed duplicate `uses:` setup-node step duplication.
   - Removed duplicate `run:` key in a single deploy step (invalid YAML mapping).
   - Preserved deploy behavior with the canonical Cloudflare config path.

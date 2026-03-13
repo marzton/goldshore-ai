@@ -4,8 +4,6 @@ export function mountStarfield(canvas: HTMLCanvasElement) {
 
   let raf = 0;
   const DPR = Math.min(window.devicePixelRatio || 1, 2);
-  let w = 0;
-  let h = 0;
 
   const stars = Array.from({ length: 220 }, () => ({
     x: Math.random(),
@@ -16,14 +14,16 @@ export function mountStarfield(canvas: HTMLCanvasElement) {
   }));
 
   function resize() {
-    w = canvas.clientWidth;
-    h = canvas.clientHeight;
+    const { clientWidth: w, clientHeight: h } = canvas;
     canvas.width = Math.floor(w * DPR);
     canvas.height = Math.floor(h * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   }
 
   function tick(t: number) {
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+
     ctx.clearRect(0, 0, w, h);
 
     const g = ctx.createRadialGradient(w * 0.3, h * 0.35, 0, w * 0.3, h * 0.35, Math.max(w, h));

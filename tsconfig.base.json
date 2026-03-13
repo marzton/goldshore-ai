@@ -34,12 +34,6 @@
       ],
       "@goldshore/ai-providers": [
         "packages/ai-providers/index.ts"
-      ],
-      "@goldshore/schema": [
-        "packages/schema/src/index.ts"
-      ],
-      "@goldshore/schema/*": [
-        "packages/schema/src/*"
       ]
     }
   }

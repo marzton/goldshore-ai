@@ -7,4 +7,3 @@ export { default as Panel } from '../components/Panel.astro';
 export { default as Skeleton } from '../components/Skeleton.astro';
 export { default as Table } from '../components/Table.astro';
 export { default as Tabs } from '../components/Tabs.astro';
-export { default as SharedHeader } from '../components/SharedHeader.astro';
