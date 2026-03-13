@@ -1,6 +1,8 @@
 const MODAL_TITLE_ID = 'gs-modal-title';
 const MODAL_DESCRIPTION_ID = 'gs-modal-description';
 
+const modalListenerControllers = new WeakMap<HTMLElement, AbortController>();
+
 export function initGoldShoreUI() {
   initNav();
   initModal();
@@ -21,6 +23,7 @@ function initNav() {
   const setOpen = (open: boolean) => {
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     panel.classList.toggle('is-open', open);
+    panel.setAttribute('aria-hidden', open ? 'false' : 'true');
     document.documentElement.classList.toggle('gs-lock', open);
   };
 
@@ -31,8 +34,13 @@ function initNav() {
 
   panel.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
-    if (t.matches('[data-gs-nav-close]') || t.matches('[data-gs-mobile-panel]'))
+    if (
+      t.matches('[data-gs-nav-close]') ||
+      t.matches('[data-gs-mobile-panel]') ||
+      t.closest('.gs-mobile-link-item')
+    ) {
       setOpen(false);
+    }
   });
 
   window.addEventListener('keydown', (e) => {
@@ -44,6 +52,14 @@ function initModal() {
   const root = document.querySelector<HTMLElement>('[data-gs-modal]');
   if (!root) return;
 
+  // Clean up any previously registered listeners for this modal root
+  const existingController = modalListenerControllers.get(root);
+  if (existingController) {
+    existingController.abort();
+  }
+  const modalAbortController = new AbortController();
+  modalListenerControllers.set(root, modalAbortController);
+
   const backdrop = root.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
   const closeBtn = root.querySelector<HTMLButtonElement>(
     '[data-gs-modal-close]',
@@ -53,6 +69,17 @@ function initModal() {
 
   let opener: HTMLElement | null = null;
 
+  const isAriaHidden = (el: HTMLElement | null): boolean => {
+    let current: HTMLElement | null = el;
+    while (current && current !== panel) {
+      if (current.getAttribute('aria-hidden') === 'true') {
+        return true;
+      }
+      current = current.parentElement;
+    }
+    return false;
+  };
+
   const getFocusableElements = () => {
     if (!panel) return [];
 
@@ -60,7 +87,7 @@ function initModal() {
       'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 
     return Array.from(panel.querySelectorAll<HTMLElement>(selectors)).filter(
-      (el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true',
+      (el) => !el.hasAttribute('disabled') && !isAriaHidden(el),
     );
   };
 
@@ -74,12 +101,20 @@ function initModal() {
     opener = trigger;
     if (body) body.innerHTML = html;
     root.classList.add('is-open');
+    root.setAttribute('role', 'dialog');
+    root.setAttribute('aria-modal', 'true');
+    root.setAttribute('aria-labelledby', MODAL_TITLE_ID);
+    root.setAttribute('aria-describedby', MODAL_DESCRIPTION_ID);
     document.documentElement.classList.add('gs-lock');
     requestAnimationFrame(focusDialog);
   };
 
   const closeModal = () => {
     root.classList.remove('is-open');
+    root.removeAttribute('role');
+    root.removeAttribute('aria-modal');
+    root.removeAttribute('aria-labelledby');
+    root.removeAttribute('aria-describedby');
     document.documentElement.classList.remove('gs-lock');
     if (opener?.isConnected) opener.focus();
     opener = null;
@@ -114,26 +149,36 @@ function initModal() {
       return;
     }
 
-    if (active === last) {
+    if (active === last || active === panel) {
       e.preventDefault();
       first.focus();
     }
-  };
-
-  document.addEventListener('click', (e) => {
-    const el = e.target as HTMLElement;
-    const trigger = el.closest<HTMLElement>('[data-gs-modal-open]');
-    if (!trigger) return;
-
-    const variant = trigger.getAttribute('data-gs-modal-open') || 'subscribe';
-    openModal(getModalTemplate(variant), trigger);
+      first.focus();
+    }
+  document.addEventListener('keydown', onKeydown, {
+    signal: modalAbortController.signal,
   });
 
-  backdrop?.addEventListener('click', closeModal);
-  closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', (e) =>
-    e.key === 'Escape' ? closeModal() : null,
+  document.addEventListener(
+    'click',
+    (e) => {
+      const el = e.target as HTMLElement;
+      const trigger = el.closest<HTMLElement>('[data-gs-modal-open]');
+      if (!trigger) return;
+
+      const variant =
+        trigger.getAttribute('data-gs-modal-open') || 'subscribe';
+      openModal(getModalTemplate(variant), trigger);
+    },
+    { signal: modalAbortController.signal },
   );
+
+  backdrop?.addEventListener('click', closeModal, {
+    signal: modalAbortController.signal,
+  });
+  closeBtn?.addEventListener('click', closeModal, {
+    signal: modalAbortController.signal,
+  });
 }
 
 function getModalTemplate(variant: string): string {
@@ -295,6 +340,8 @@ function initHeroPulsar() {
   const PARTICLE_COUNT = 60;
   let raf = 0;
   let active = true;
+  const resizeAbort =
+    typeof AbortController !== 'undefined' ? new AbortController() : null;
 
   const resize = () => {
     canvas.width = canvas.clientWidth;
@@ -360,12 +407,22 @@ function initHeroPulsar() {
     seedParticles();
   };
 
-  window.addEventListener('resize', onResize);
+  if (resizeAbort) {
+    window.addEventListener('resize', onResize, {
+      signal: resizeAbort.signal,
+    });
+  } else {
+    window.addEventListener('resize', onResize);
+  }
 
   if (host && typeof IntersectionObserver !== 'undefined') {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setActive(Boolean(entry?.isIntersecting));
+        const isIntersecting = Boolean(entry?.isIntersecting);
+        setActive(isIntersecting);
+        if (!isIntersecting) {
+          resizeAbort?.abort();
+        }
       },
       { threshold: 0.05 },
     );
