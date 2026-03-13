@@ -25,11 +25,9 @@ const EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/
 const JAVASCRIPT_URL_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*javascript:[\s\S]*?\1/gi;
 
 const sanitizeSvg = (input: string): string => {
-  let sanitized = input;
   let previous: string;
+  let sanitized = input;
 
-  // Apply sanitization repeatedly until no more changes occur to avoid
-  // multi-character patterns reappearing after earlier replacements.
   do {
     previous = sanitized;
     sanitized = sanitized
