@@ -143,9 +143,9 @@ function initModal() {
       e.preventDefault();
       first.focus();
     }
+      first.focus();
+    }
   };
-
-  document.addEventListener('keydown', onKeydown);
 
   document.addEventListener('click', (e) => {
     const el = e.target as HTMLElement;
