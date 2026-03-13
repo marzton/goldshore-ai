@@ -38,9 +38,6 @@ const ALLOWED_ORIGIN_PATTERNS = [
 const isAllowedOrigin = (origin: string) => {
   return ALLOWED_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin));
 };
-};
-
-const app = new Hono<{ Bindings: Env }>();
 
 // Sentinel: Security Middleware
 app.use('*', secureHeaders());
@@ -52,10 +49,6 @@ app.use('*', cors({
   allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
   exposeHeaders: ['Content-Length'],
   credentials: true,
-  origin: '*',
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
-  exposeHeaders: ['Content-Length'],
   maxAge: 600,
 }));
 
