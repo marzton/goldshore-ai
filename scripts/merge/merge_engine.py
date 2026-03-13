@@ -38,7 +38,12 @@ def copy_file(src, dest):
 def archive_legacy(src_root, archive_root):
     if Path(archive_root).exists():
         return
-    shutil.copytree(src_root, archive_root)
+    try:
+        shutil.copytree(src_root, archive_root)
+    except OSError as e:
+        raise RuntimeError(
+            f"Failed to archive legacy directory from '{src_root}' to '{archive_root}': {e}"
+        ) from e
 
 
 def handle_file(src, dest, report, mode):
