@@ -6,7 +6,6 @@ import { execSync } from 'node:child_process';
 const REPORT_PATH = 'docs/ci/CURRENT_STATE.md';
 const APPS_DIR = 'apps';
 const WORKFLOW_DIR = '.github/workflows';
-
 const ALLOWED_APPS = [
   'gs-web', 'gs-admin', 'gs-api', 'gs-mail', 'gs-gateway', 'gs-agent', 'gs-control',
 ];
