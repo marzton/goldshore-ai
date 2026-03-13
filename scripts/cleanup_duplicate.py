@@ -6,6 +6,8 @@ NESTED_ROOT = "astro-goldshore"
 ROOT_DIR = "."
 DATE_SUFFIX = datetime.now().strftime("%Y%m%d")
 
+MTIME_EPSILON = 1e-3  # 1 millisecond tolerance for mtime float comparisons
+
 IGNORED_DIRS = {".git", "node_modules", "dist", ".turbo", ".idea", ".vscode"}
 IGNORED_FILES = {"pnpm-lock.yaml", "package-lock.json", "yarn.lock"}
 
@@ -50,8 +52,8 @@ def process_nested_folder():
                 nested_mtime = get_file_mtime(nested_path)
                 target_mtime = get_file_mtime(target_path)
 
-                # Using a small epsilon for float comparison if needed, but strict is fine
-                if target_mtime >= nested_mtime:
+                # Use a small epsilon for float comparison to avoid precision issues
+                if target_mtime + MTIME_EPSILON >= nested_mtime:
                     # Case 2: Root is newer or same -> DELETE nested
                     os.remove(nested_path)
                     deleted_files.append(rel_path)
