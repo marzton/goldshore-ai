@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { Env, Variables } from '../types';
+import sanitizeHtml from 'sanitize-html';
 
 type MediaRecord = {
   id: string;
@@ -17,18 +18,47 @@ const ALLOWED_MIME_TYPES = new Map([
   ['jpeg', 'image/jpeg']
 ]);
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
+// 5MB limit to prevent DoS via large file uploads
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+const SCRIPT_LIKE_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style)[\s\S]*?>[\s\S]*?<\/\1>/gi;
+const SCRIPT_LIKE_SELF_CLOSING_REGEX = /<(script|iframe|object|embed|link|meta|style)\b[^>]*\/?>/gi;
+const EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const JAVASCRIPT_URL_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*javascript:[\s\S]*?\1/gi;
+
+const sanitizeSvg = (input: string): string =>
+  input
+    .replace(SCRIPT_LIKE_TAGS_REGEX, '')
+    .replace(SCRIPT_LIKE_SELF_CLOSING_REGEX, '')
+    .replace(EVENT_HANDLER_ATTR_REGEX, '')
+    .replace(JAVASCRIPT_URL_REGEX, '');
+
+const SCRIPT_LIKE_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style)[\s\S]*?>[\s\S]*?<\/\1>/gi;
+const SCRIPT_LIKE_SELF_CLOSING_REGEX = /<(script|iframe|object|embed|link|meta|style)\b[^>]*\/?>/gi;
+const EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const JAVASCRIPT_URL_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*javascript:[\s\S]*?\1/gi;
+
+const sanitizeSvg = (input: string): string =>
+  input
+    .replace(SCRIPT_LIKE_TAGS_REGEX, '')
+    .replace(SCRIPT_LIKE_SELF_CLOSING_REGEX, '')
+    .replace(EVENT_HANDLER_ATTR_REGEX, '')
+    .replace(JAVASCRIPT_URL_REGEX, '');
 
 /**
  * [SOP] Media Asset Management
  * Handles R2 storage for images and SVGs with strict sanitization for vector assets.
  */
 
-// ... (sanitizeSvg and regex constants provided in your source remain identical)
-
 const media = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 media.get('/', async (c) => {
+  // Require admin authentication to list media assets
+  const adminKey = c.req.header('x-admin-key');
+  if (!adminKey || adminKey !== c.env.ADMIN_API_KEY) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
   const { results } = await c.env.DB
     .prepare('SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT 100')
     .all<MediaRecord>();
@@ -36,6 +66,12 @@ media.get('/', async (c) => {
 });
 
 media.get('/:id', async (c) => {
+  // Basic authentication guard: require a valid Authorization header before serving media assets.
+  const authHeader = c.req.header('Authorization');
+  if (!authHeader || authHeader !== `Bearer ${c.env.MEDIA_ACCESS_TOKEN}`) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
   const id = c.req.param('id');
   const result = await c.env.DB
     .prepare('SELECT object_key, type FROM media_assets WHERE id = ?')
@@ -52,12 +88,19 @@ media.get('/:id', async (c) => {
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
   
   // Sentinel: Enforce strict CSP to mitigate SVG XSS
-  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; sandbox");
+  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; object-src 'none'; sandbox");
 
   return new Response(object.body, { headers });
 });
 
 media.post('/upload', async (c) => {
+  // Simple authentication: require a valid bearer token before allowing uploads
+  const authHeader = c.req.header('Authorization') ?? '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+  if (!token || !c.env.API_TOKEN || token !== c.env.API_TOKEN) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
   const formData = await c.req.formData();
   const file = formData.get('file');
 
@@ -83,7 +126,7 @@ media.post('/upload', async (c) => {
   }
 
   const id = crypto.randomUUID();
-  const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+  const objectKey = `media/${id}/file.${extension}`;
 
   await c.env.ASSETS.put(objectKey, body, { httpMetadata: { contentType } });
 

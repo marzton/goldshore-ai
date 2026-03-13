@@ -10,15 +10,30 @@ const required = [
   'apps/gs-admin/public/assets/logo.svg'
 ];
 
+const createTextPlaceholder = (file) => {
+  if (file.endsWith('.svg')) {
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10" fill="#4da3ff"/></svg>\n';
+  }
+
+  if (file.endsWith('.json')) {
+    return JSON.stringify(
+      {
+        name: 'Gold Shore Labs',
+        primary_logo: 'logo-horizontal.svg',
+        icon_logo: 'logo-penrose.svg',
+      },
+      null,
+      2,
+    ) + '\n';
+  }
+
+  return 'placeholder\n';
+};
+
 for (const file of required) {
   if (!fs.existsSync(file)) {
     fs.mkdirSync(path.dirname(file), { recursive: true });
-    const content = file.endsWith('.svg')
-      ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10" fill="#4da3ff"/></svg>\n'
-      : file.endsWith('.json')
-        ? '{}\n'
-        : 'placeholder\n';
-    fs.writeFileSync(file, content);
+    fs.writeFileSync(file, createTextPlaceholder(file));
     console.log('Created missing:', file);
   }
 }
