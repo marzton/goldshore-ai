@@ -1,0 +1,45 @@
+name: Cleanup Workflow Runs
+
+on:
+  pull_request:
+    types:
+      - closed
+  workflow_dispatch:
+    inputs:
+      status_filter:
+        description: "Comma-separated statuses (startup_failure,failure,cancelled,success)"
+        required: false
+        default: "startup_failure,failure,cancelled"
+      workflow_name:
+        description: "Optional exact workflow name to target"
+        required: false
+        default: ""
+      max_runs:
+        description: "Maximum runs per status to inspect"
+        required: false
+        default: "500"
+      dry_run:
+        description: "Log only, do not delete"
+        required: false
+        default: "false"
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cleanup workflow runs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          STATUS_FILTER: ${{ github.event_name == 'workflow_dispatch' && inputs.status_filter || 'startup_failure,failure,cancelled' }}
+          WORKFLOW_FILTER: ${{ github.event_name == 'workflow_dispatch' && inputs.workflow_name || '' }}
+          MAX_RUNS: ${{ github.event_name == 'workflow_dispatch' && inputs.max_runs || '500' }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
+        run: scripts/github/delete-workflow-runs.sh
