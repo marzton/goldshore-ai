@@ -41,3 +41,21 @@ Cloudflare applications (Pages / Workers / KV / R2 / D1 / AI / Queues).
 9. Always output final summary:
    - What changed
    - Any TODOs left for manual steps (e.g. Cloudflare UI-only flows)
+
+
+## 10. Service Token Sync for AI Agents (gs-global-protect)
+
+When Cloudflare Access protects `gs-admin` and related operator endpoints:
+
+1. In Zero Trust → Access → Service Auth, confirm service token `gs-ai-agent-token` exists.
+2. In Access → Applications → `gs-global-protect` → Policies, verify a **Service Auth** policy includes that token.
+3. Ensure CI secrets are set:
+   - `CF_ACCESS_CLIENT_ID`
+   - `CF_ACCESS_CLIENT_SECRET`
+4. Validate with:
+
+```bash
+scripts/jules-sync.sh https://gs-admin.pages.dev/
+```
+
+The command must return an HTTP 2xx status to pass.

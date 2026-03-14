@@ -1,8 +1,29 @@
 // infra/cf/tests.ts
+function accessHeadersFor(url: string): Record<string, string> {
+  const clientId = process.env.CF_ACCESS_CLIENT_ID;
+  const clientSecret = process.env.CF_ACCESS_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) return {};
+
+  const host = new URL(url).hostname;
+  const requiresAccess =
+    host === "admin.goldshore.ai" ||
+    host === "gs-admin.pages.dev" ||
+    host.endsWith(".pages.dev");
+
+  if (!requiresAccess) return {};
+
+  return {
+    "CF-Access-Client-Id": clientId,
+    "CF-Access-Client-Secret": clientSecret,
+  };
+}
+
 export async function smoke(url: string, expectStatus = 200, timeoutMs = 4000) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
-  const res = await fetch(url, { signal: ctrl.signal }).catch(() => null);
+  const headers = accessHeadersFor(url);
+  const res = await fetch(url, { signal: ctrl.signal, headers }).catch(() => null);
   clearTimeout(t);
   if (!res || res.status !== expectStatus) throw new Error(`Smoke fail ${url}: got ${res?.status}`);
 }
