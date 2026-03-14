@@ -8,6 +8,8 @@
 Unified platform for the **GoldShore** ecosystem, built with:
 # 🟦 GoldShore Monorepo (README v2)
 
+[![CodeQL](https://github.com/goldshore/goldshore-ai/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/goldshore/goldshore-ai/actions/workflows/github-code-scanning/codeql)
+
 Unified platform for the **GoldShore** ecosystem, built with **Astro**, **Cloudflare**, and a shared design system. This monorepo ships the public website, admin cockpit, edge workers, and shared packages that power GoldShore in production.
 
 - **Astro** (Web + Admin SSR)
