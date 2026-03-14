@@ -1,109 +1,263 @@
 ---
-import { GSButton } from '@goldshore/ui';
-import MarketingLayout from '../layouts/MarketingLayout.astro';
-import ParallaxHero from '../components/hero/ParallaxHero.astro';
-import '../styles/home.css';
+import WebLayout from '../layouts/WebLayout.astro';
+import HeroBase from '../components/hero/HeroBase.astro';
+import {
+  DEFAULT_HERO_VARIANT,
+  normalizeHeroVariant,
+} from '../components/hero/hero.config';
+import wavesScriptUrl from '../scripts/waves.ts?url';
+
+const env = Astro.locals.runtime?.env as
+  | { HERO_CONFIG_KV?: { get(key: string): Promise<string | null> } }
+  | undefined;
+const heroVariant = normalizeHeroVariant(
+  await env?.HERO_CONFIG_KV?.get('hero_variant'),
+);
 
 export const prerender = true;
-
-const features = [
-  {
-    title: 'Vibe Coding',
-    body: 'Aesthetic-driven development where code flows like fluid dynamics. Provable experience.',
-    icon: 'palette'
-  },
-  {
-    title: 'Cinematic Ops',
-    body: 'Infrastructure monitoring that feels like a sci-fi HUD. Real-time, responsive, and beautiful.',
-    icon: 'monitor_heart'
-  },
-  {
-    title: 'Applied Intelligence',
-    body: "AI agents that don't just work—they perform. Seamless integration into your workflow.",
-    icon: 'psychology'
-  }
-];
-
-const highlights = [
-  { label: 'Global Latency', value: '< 30ms', tone: 'success' },
-  { label: 'System Status', value: 'Normal', tone: 'success' },
-  { label: 'Active Nodes', value: '24/24', tone: 'info' },
-  { label: 'Threat Level', value: 'None', tone: '' }
-];
 ---
 
-<MarketingLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
-  <div class="cinematic-wrapper">
-    <div class="stars-container">
-      <div class="stars"></div>
+<WebLayout
+  title="Gold Shore — Institutional Infrastructure & Operational Systems"
+  description="Gold Shore builds resilient infrastructure, automation, and operational platforms designed for real-time systems, reliability, and controlled performance."
+>
+  <HeroBase variant={heroVariant ?? DEFAULT_HERO_VARIANT} />
+
+  <div class="gs-divider" aria-hidden="true"></div>
+
+  <section class="gs-section" id="offerings">
+    <div class="gs-container gs-grid-3">
+      <article
+        class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
+        data-gs-reveal
+        data-gs-tilt
+      >
+        <div class="gs-label">Availability</div>
+        <div class="gs-stat">99.995%</div>
+        <div class="gs-meta">Service Availability · Last 30 days</div>
+      </article>
+      <article
+        class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
+        data-gs-reveal
+        data-gs-tilt
+      >
+        <div class="gs-label">Deploy Cadence</div>
+        <div class="gs-stat">48/day</div>
+        <div class="gs-meta">Production deploys · <a href="/developer">Developer Hub</a></div>
+      </article>
+      <article
+        class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
+        data-gs-reveal
+        data-gs-tilt
+      >
+        <div class="gs-label">Signal Integrity</div>
+        <div class="gs-stat">4.8B</div>
+        <div class="gs-meta">Signals processed · rolling volume</div>
+      </article>
     </div>
+  </section>
 
-    <ParallaxHero />
+  <div class="gs-modal" id="modal">
+    <div class="gs-modal-bg" data-close-modal></div>
+    <div class="gs-modal-panel" role="dialog" aria-modal="true">
+      <button class="close-btn" data-close-modal aria-label="Close">×</button>
+      <div class="modal-content"></div>
+    </div>
+  </div>
 
-    <section class="gs-hero home-hero parallax-section" style="padding-top: 0;">
-      <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.08" aria-hidden="true"></div>
-      <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.14" aria-hidden="true"></div>
-      <div class="parallax-layer gs-parallax layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
+  <script type="module" src={wavesScriptUrl}></script>
 
-      <div class="gs-card gs-pulse-frame hero-card reveal">
-        <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
-        <div class="gs-grid columns-2">
-          {highlights.map((item) => (
-            <div class="gs-kpi">
-              <span>{item.label}</span>
-              <strong>{item.value}</strong>
-              <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
-            </div>
-          ))}
-        </div>
-        <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
-      </div>
-    </section>
+</WebLayout>
 
-    <section class="features-section blueprint-section parallax-section">
-      <div class="parallax-layer gs-parallax layer-blueprint" data-parallax="0.04" aria-hidden="true"></div>
-      <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.1" aria-hidden="true"></div>
-      <div class="parallax-layer gs-parallax layer-sheen" data-parallax="0.16" aria-hidden="true"></div>
-      <div class="features-grid">
-        {features.map((feature, i) => (
-          <div class="feature-card glass-panel reveal lux-card" style={`transition-delay: ${0.1 + i * 0.1}s;`}>
-            <div class="icon-box">
-              <span class="material-symbols-rounded">{feature.icon}</span>
-            </div>
-            <h3>{feature.title}</h3>
-            <p>{feature.body}</p>
-          </div>
-        ))}
-      </div>
-      <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
-    </section>
+<style>
+  .gs-depth-bg {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(90, 140, 255, 0.12), transparent 60%),
+      linear-gradient(180deg, #05070d 0%, #060a14 100%);
+  }
 
-  <script>
-    import { initParallax } from '../components/parallax';
+  .gs-css-field,
+  #pulsar-field {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
 
-    const cleanupParallax = initParallax({ selector: '.parallax-section [data-parallax]' });
+  .gs-css-field {
+    background:
+      radial-gradient(circle at 22% 20%, rgba(90, 140, 255, 0.12), transparent 28%),
+      radial-gradient(circle at 72% 34%, rgba(255, 107, 0, 0.11), transparent 32%),
+      radial-gradient(circle at 58% 72%, rgba(90, 140, 255, 0.1), transparent 34%);
+  }
 
-    const revealElements = Array.from(document.querySelectorAll('.reveal'));
-    let revealObserver: IntersectionObserver | undefined;
+  .gs-hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 7rem 0 5rem;
+  }
 
-    if (revealElements.length > 0) {
-      revealObserver = new IntersectionObserver((entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            revealObserver?.unobserve(entry.target);
-          }
-        }
-      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
+  .gs-hero-title,
+  .gs-hero-sub {
+    max-width: 24ch;
+  }
 
-      revealElements.forEach((element) => revealObserver?.observe(element));
+  .gs-hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+
+  .gs-panel {
+    background: linear-gradient(180deg, #0b1220, #0a101c);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2.5rem;
+    transition: transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .gs-label {
+    opacity: 0.8;
+  }
+
+  .gs-stat {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+  }
+
+  .gs-meta {
+    margin-top: 0.55rem;
+    color: var(--gs-muted);
+    font-size: 0.9rem;
+  }
+
+  .gs-meta a {
+    color: var(--gs-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .gs-edge-light {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gs-edge-light::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(120deg, transparent, rgba(90, 140, 255, 0.35), transparent);
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+
+  .gs-edge-light:hover::before {
+    opacity: 1;
+  }
+
+  .gs-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(90, 140, 255, 0.3), transparent);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gs-divider::after {
+    content: '';
+    position: absolute;
+    inset: -20px 0;
+    background: linear-gradient(120deg, transparent, rgba(255, 107, 0, 0.15), transparent);
+    animation: signalSweep 6s ease-in-out infinite;
+  }
+
+  .gs-signal-btn {
+    border-color: var(--gs-signal-soft);
+  }
+
+  .gs-signal-btn:hover {
+    box-shadow: 0 0 24px var(--gs-signal-soft);
+  }
+
+  .gs-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gs-modal.active {
+    display: flex;
+  }
+
+  .gs-modal-bg {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+  }
+
+  .gs-modal-panel {
+    position: relative;
+    width: min(500px, 90vw);
+    padding: 2rem;
+    border-radius: 20px;
+    background: #0b1220;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 1;
+  }
+
+  .modal-content {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.75rem;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  @supports (animation-timeline: view()) {
+    .gs-scroll-reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      animation: fadeIn linear forwards;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+  }
+
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes signalSweep {
+    0% {
+      transform: translateX(-100%);
     }
 
-    window.addEventListener('beforeunload', () => {
-      cleanupParallax();
-      revealObserver?.disconnect();
-    });
-  </script>
+    50% {
+      transform: translateX(100%);
+    }
 
-  </div>
-</MarketingLayout>
+    100% {
+      transform: translateX(100%);
+    }
+  }
+</style>
