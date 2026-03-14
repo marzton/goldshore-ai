@@ -20,8 +20,8 @@ const navGroups: NavGroup[] = [
     label: 'Platform',
     links: [
       { href: '/appearance/hero', label: 'Hero Configuration' },
-      { href: '/admin/system', label: 'API Status' }
-    ]
+      { href: '/admin/system', label: 'API Status' },
+    ],
   },
   {
     id: 'content',
@@ -29,105 +29,129 @@ const navGroups: NavGroup[] = [
     links: [
       { href: '/admin/page-editor', label: 'Home Editor' },
       { href: '/admin/pages', label: 'Team Profiles' },
-      { href: '/admin/content', label: 'Advisory Services' }
-    ]
+      { href: '/admin/content', label: 'Advisory Services' },
+    ],
   },
   {
     id: 'intake',
     label: 'Intake',
     links: [
-      { href: '/admin/forms', label: 'Briefing Requests', requiredPermission: 'forms:read' },
-      { href: '/admin/workers', label: 'CRM Logic' }
-    ]
-  }
+      {
+        href: '/admin/forms',
+        label: 'Briefing Requests',
+        requiredPermission: 'forms:read',
+      },
+      { href: '/admin/workers', label: 'CRM Logic' },
+    ],
+  },
 ];
 
 const { logo, permissions = [] } = Astro.props;
+const canonicalLogoPath = '/logo/gs-penrose.svg';
 
 const visibleGroups = navGroups
   .map((group) => ({
     ...group,
     links: group.links.filter((link) =>
-      link.requiredPermission ? permissions.includes(link.requiredPermission) : true
-    )
+      link.requiredPermission
+        ? permissions.includes(link.requiredPermission)
+        : true,
+    ),
   }))
   .filter((group) => group.links.length > 0);
 
 const isActive = (href: string) => {
   const currentPath = Astro.url.pathname;
-  const cleanCurrent = currentPath.endsWith('/') ? currentPath.slice(0, -1) : currentPath;
+  const cleanCurrent = currentPath.endsWith('/')
+    ? currentPath.slice(0, -1)
+    : currentPath;
   const cleanHref = href.endsWith('/') ? href.slice(0, -1) : href;
 
   if (cleanCurrent === cleanHref) return true;
   return cleanCurrent.startsWith(cleanHref + '/');
 };
 
-const isGroupActive = (group: NavGroup) => group.links.some((link) => isActive(link.href));
+const isGroupActive = (group: NavGroup) =>
+  group.links.some((link) => isActive(link.href));
 ---
 
-<aside class="gs-admin-sidebar" id="admin-sidebar" aria-label="Admin navigation">
+<aside
+  class="gs-admin-sidebar"
+  id="admin-sidebar"
+  aria-label="Admin navigation"
+>
   <SharedHeader
     class="sidebar-header"
     href="https://goldshore.ai"
     target="_blank"
     rel="noopener noreferrer"
-    logoSrc={logo?.src || logo || '/logo/gs-penrose.svg'}
+    logoSrc={logo?.src || logo || canonicalLogoPath}
     logoAlt="GoldShore logo"
   >
     <span slot="brand-text">GoldShore</span>
-    <button id="sidebar-close" class="sidebar-close" aria-label="Close menu">✕</button>
+    <button id="sidebar-close" class="sidebar-close" aria-label="Close menu"
+      >✕</button
+    >
   </SharedHeader>
 
   <nav class="gs-sidebar-links" aria-label="Admin sections">
-    {visibleGroups.map((group) => {
-      const groupActive = isGroupActive(group);
-      const panelId = `sidebar-group-panel-${group.id}`;
+    {
+      visibleGroups.map((group) => {
+        const groupActive = isGroupActive(group);
+        const panelId = `sidebar-group-panel-${group.id}`;
 
-      return (
-        <section class={`gs-sidebar-group ${groupActive ? 'is-open is-active' : ''}`}>
-          <h2 class="gs-sidebar-group-title">
-            <button
-              type="button"
-              class="gs-sidebar-group-trigger"
-              data-sidebar-group-trigger
-              data-panel-id={panelId}
-              aria-expanded={groupActive ? 'true' : 'false'}
-              aria-controls={panelId}
-            >
-              <span>{group.label}</span>
-              <span class="gs-sidebar-group-chevron" aria-hidden="true">▾</span>
-            </button>
-          </h2>
-
-          <div
-            id={panelId}
-            class={`gs-sidebar-group-panel ${groupActive ? 'is-open' : ''}`}
-            data-sidebar-group-panel
+        return (
+          <section
+            class={`gs-sidebar-group ${groupActive ? 'is-open is-active' : ''}`}
           >
-            <div class="gs-sidebar-group-panel-inner">
-              {group.links.map((link) => {
-                const linkActive = isActive(link.href);
+            <h2 class="gs-sidebar-group-title">
+              <button
+                type="button"
+                class="gs-sidebar-group-trigger"
+                data-sidebar-group-trigger
+                data-panel-id={panelId}
+                aria-expanded={groupActive ? 'true' : 'false'}
+                aria-controls={panelId}
+              >
+                <span>{group.label}</span>
+                <span class="gs-sidebar-group-chevron" aria-hidden="true">
+                  ▾
+                </span>
+              </button>
+            </h2>
 
-                return (
-                  <a
-                    class={`gs-nav-block ${linkActive ? 'active' : ''}`}
-                    href={link.href}
-                    aria-current={linkActive ? 'page' : undefined}
-                  >
-                    {link.label}
-                  </a>
-                );
-              })}
+            <div
+              id={panelId}
+              class={`gs-sidebar-group-panel ${groupActive ? 'is-open' : ''}`}
+              data-sidebar-group-panel
+            >
+              <div class="gs-sidebar-group-panel-inner">
+                {group.links.map((link) => {
+                  const linkActive = isActive(link.href);
+
+                  return (
+                    <a
+                      class={`gs-nav-block ${linkActive ? 'active' : ''}`}
+                      href={link.href}
+                      aria-current={linkActive ? 'page' : undefined}
+                    >
+                      {link.label}
+                    </a>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </section>
-      );
-    })}
+          </section>
+        );
+      })
+    }
   </nav>
 </aside>
 
 <script>
-  const sidebarGroupTriggers = Array.from(document.querySelectorAll('[data-sidebar-group-trigger]'));
+  const sidebarGroupTriggers = Array.from(
+    document.querySelectorAll('[data-sidebar-group-trigger]'),
+  );
 
   const updateGroupState = (trigger, expand) => {
     const panelId = trigger.getAttribute('data-panel-id');
@@ -241,7 +265,9 @@ const isGroupActive = (group: NavGroup) => group.links.some((link) => isActive(l
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    transition: max-height 0.24s ease, opacity 0.2s ease;
+    transition:
+      max-height 0.24s ease,
+      opacity 0.2s ease;
   }
 
   .gs-sidebar-group-panel.is-open {

@@ -2,20 +2,25 @@
 import WebLayout from '../layouts/WebLayout.astro';
 
 export const prerender = true;
+const canonicalLogoPath = '/logo/gs-penrose.svg';
 ---
 
-<WebLayout title="Media Kit | Gold Shore" description="Brand assets and press information for Gold Shore.">
+<WebLayout
+  title="Media Kit | Gold Shore"
+  description="Brand assets and press information for Gold Shore."
+>
   <section class="gs-section">
     <div class="gs-container gs-panel gs-edge-light gs-edge-scan">
       <h1>Media Kit</h1>
       <p>
-        Access Gold Shore brand assets, company boilerplate, and press contact guidance.
-        For interview requests or partnership media opportunities, email
+        Access Gold Shore brand assets, company boilerplate, and press contact
+        guidance. For interview requests or partnership media opportunities,
+        email
         <a href="mailto:hello@goldshore.ai">hello@goldshore.ai</a>.
       </p>
       <p>
         Download placeholder kit:
-        <a href="/logo/gs-penrose.svg" download>Gold Shore Brand Asset Sample</a>
+        <a href={canonicalLogoPath} download>Gold Shore Brand Asset Sample</a>
       </p>
     </div>
   </section>
