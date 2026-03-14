@@ -1,175 +1,314 @@
 @import './gs-effects.css';
 
-.home-hero,
-.home-features,
-.blueprint-section {
+.cinematic-wrapper {
+  display: grid;
+  gap: clamp(2.2rem, 3vw, 4rem);
+  padding-bottom: var(--gs-space-12);
+}
+
+.parallax-section {
   position: relative;
   overflow: hidden;
-  background: radial-gradient(circle at top left, rgba(88, 130, 255, 0.18), transparent 55%),
-    radial-gradient(circle at 90% 10%, rgba(212, 179, 93, 0.16), transparent 45%),
-    linear-gradient(130deg, rgba(3, 8, 22, 0.95), rgba(8, 13, 28, 0.9) 45%, rgba(4, 6, 16, 0.96));
-  box-shadow: inset 0 0 140px rgba(0, 0, 0, 0.65);
+  border-radius: 0.8rem;
+  border: 1px solid rgba(160, 173, 196, 0.2);
+  box-shadow: 0 18px 35px rgba(2, 8, 23, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
-.home-hero::after,
-.home-features::after,
-.blueprint-section::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(rgba(100, 130, 200, 0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(100, 130, 200, 0.1) 1px, transparent 1px);
-  background-size: 42px 42px;
-  mix-blend-mode: screen;
-  opacity: 0.4;
-  pointer-events: none;
-}
-
-.home-hero::before,
-.home-features::before,
-.blueprint-section::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.12), transparent 60%);
-  opacity: 0.6;
-  animation: gradient-drift 18s ease-in-out infinite;
-  pointer-events: none;
-}
-
+.hero-shell,
 .blueprint-section {
-  background: radial-gradient(circle at 15% 20%, rgba(88, 130, 255, 0.22), transparent 55%),
-    radial-gradient(circle at 80% 10%, rgba(212, 179, 93, 0.25), transparent 50%),
-    linear-gradient(140deg, rgba(4, 8, 20, 0.98), rgba(10, 16, 30, 0.94) 50%, rgba(5, 7, 18, 0.98));
-  box-shadow: inset 0 0 160px rgba(0, 0, 0, 0.72), inset 0 0 60px rgba(26, 39, 74, 0.6);
+  margin: 0 auto;
+  width: min(1200px, calc(100% - 2rem));
+  background: radial-gradient(circle at top left, rgba(49, 86, 179, 0.22), transparent 48%),
+    radial-gradient(circle at 80% 10%, rgba(243, 210, 140, 0.16), transparent 44%),
+    linear-gradient(140deg, #03050c, #060a15 55%, #040812);
 }
 
-.blueprint-section::after {
-  background-image: linear-gradient(rgba(110, 160, 240, 0.16) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(110, 160, 240, 0.12) 1px, transparent 1px),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 55%);
-  background-size: 48px 48px, 48px 48px, 100% 100%;
-  opacity: 0.55;
+.hero-shell {
+  margin-top: calc(var(--gs-header-height) + 1rem);
+  min-height: min(90vh, 780px);
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(1rem, 3vw, 3rem);
+  align-items: center;
+  padding: clamp(1.5rem, 3vw, 3rem);
 }
 
-.parallax-layer {
+.starscape,
+.starfield,
+.shooting-stars {
   position: absolute;
-  inset: -20% -10%;
+  inset: 0;
   pointer-events: none;
-  opacity: 0.55;
 }
 
-.layer-grid {
-  background-image: linear-gradient(rgba(120, 180, 255, 0.22) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(120, 180, 255, 0.18) 1px, transparent 1px);
-  background-size: 120px 120px;
-  filter: drop-shadow(0 0 24px rgba(88, 130, 255, 0.4));
-}
-
-.layer-blueprint {
-  background-image: linear-gradient(rgba(136, 196, 255, 0.3) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(136, 196, 255, 0.2) 1px, transparent 1px);
-  background-size: 140px 140px;
-  opacity: 0.5;
-  filter: drop-shadow(0 0 18px rgba(100, 160, 255, 0.45));
-}
-
-.layer-glow {
-  background: radial-gradient(circle at 40% 30%, rgba(190, 224, 255, 0.36), transparent 45%),
-    radial-gradient(circle at 65% 70%, rgba(212, 179, 93, 0.3), transparent 45%);
-  filter: blur(2px);
-}
-
-.layer-sheen {
-  background: linear-gradient(120deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 45%),
-    linear-gradient(300deg, rgba(186, 150, 78, 0.22) 0%, transparent 55%);
-  mix-blend-mode: screen;
-  opacity: 0.65;
-}
-
-.layer-shadow {
-  background: radial-gradient(circle at 50% 60%, rgba(0, 0, 0, 0.6), transparent 65%);
-  opacity: 0.6;
-}
-
-.layer-orbit {
-  background: conic-gradient(from 140deg, rgba(255, 255, 255, 0.12), transparent 60%, rgba(255, 255, 255, 0.12));
-  mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.9), transparent 70%);
+.starfield {
+  background-image: radial-gradient(2px 2px at 20% 30%, rgba(255, 255, 255, 0.9) 0 60%, transparent 70%),
+    radial-gradient(2px 2px at 70% 20%, rgba(255, 255, 255, 0.8) 0 60%, transparent 70%),
+    radial-gradient(1.8px 1.8px at 30% 80%, rgba(255, 255, 255, 0.8) 0 60%, transparent 70%),
+    radial-gradient(1.6px 1.6px at 85% 70%, rgba(255, 255, 255, 0.75) 0 60%, transparent 70%);
   opacity: 0.5;
 }
 
-.home-hero .hero-content,
-.home-hero .hero-card,
-.blueprint-section .hero-content,
-.blueprint-section .hero-card,
-.blueprint-section .features-grid {
+.shooting-stars::before,
+.shooting-stars::after {
+  content: '';
+  position: absolute;
+  width: 180px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(34, 211, 238, 0));
+  transform: rotate(-28deg);
+  animation: shooting 7s linear infinite;
+}
+
+.shooting-stars::after {
+  animation-delay: 3.2s;
+}
+
+@keyframes shooting {
+  0% {
+    top: 12%;
+    left: -15%;
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  35% {
+    top: 54%;
+    left: 100%;
+    opacity: 0;
+  }
+  100% {
+    top: 54%;
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+.hero-copy,
+.hero-card,
+.section-heading,
+.columns-grid,
+.matrix-box,
+.subscribe-path .panel-card {
   position: relative;
   z-index: 2;
 }
 
-.home-hero h1,
-.blueprint-section h1,
-.blueprint-section h2 {
-  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+.hero-copy h1 {
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: 1.08;
+  margin: 0.75rem 0;
 }
 
-.home-hero .gs-card,
-.home-features .feature-card,
-.blueprint-section .glass-panel,
-.blueprint-section .gs-card {
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.92), rgba(10, 18, 30, 0.88));
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  box-shadow: 0 24px 60px rgba(2, 8, 23, 0.55), inset 0 0 30px rgba(120, 170, 255, 0.08);
-}
-
-.home-features {
-  padding: var(--gs-space-8) 0;
-}
-
-.home-features .feature-card {
-  padding: var(--gs-space-5);
-  border-radius: var(--gs-radius-md);
-  position: relative;
-  z-index: 1;
-}
-
-.lux-card {
-  position: relative;
-  border-radius: 1.25rem;
-  border: 1px solid rgba(180, 200, 255, 0.22);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65), inset 0 0 30px rgba(128, 178, 255, 0.12);
-  overflow: hidden;
-}
-
-.lux-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg, rgba(255, 255, 255, 0.08) 0%, transparent 45%);
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-.lux-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 1px solid rgba(214, 190, 120, 0.35);
-  border-radius: inherit;
-  opacity: 0.45;
-  pointer-events: none;
-}
-
-.home-features .feature-card h3 {
-  background: linear-gradient(90deg, #f8fafc, #cbd5f5);
+.text-gradient {
+  display: block;
+  background: linear-gradient(100deg, #fff, #f4d58d 35%, #22d3ee 80%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+.hero-copy p {
+  max-width: 56ch;
+  color: rgba(226, 232, 240, 0.82);
+}
+
+.vibe-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.76rem;
+  color: #9ee8f7;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #22d3ee;
+  box-shadow: 0 0 0 rgba(34, 211, 238, 0.9);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.7); }
+  100% { box-shadow: 0 0 0 12px rgba(34, 211, 238, 0); }
+}
+
+.cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+}
+
+:global(.glow-button) {
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.35) !important;
+}
+
+.hero-card,
+.panel-card,
+.matrix-box {
+  background: linear-gradient(145deg, rgba(14, 20, 35, 0.94), rgba(7, 11, 22, 0.9));
+  border-radius: 0.7rem;
+  border: 1px solid rgba(164, 177, 200, 0.25);
+  box-shadow: 0 15px 28px rgba(2, 8, 23, 0.45), inset 1px 1px 0 rgba(255, 255, 255, 0.08),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.6);
+  padding: clamp(1rem, 2vw, 1.6rem);
+}
+
+.animated-logo {
+  width: 110px;
+  margin-bottom: 0.8rem;
+}
+
+.logo-path {
+  stroke-dasharray: 180;
+  stroke-dashoffset: 180;
+  animation: logoTrace 3s ease-in-out infinite;
+}
+
+@keyframes logoTrace {
+  0%,
+  20% { stroke-dashoffset: 180; }
+  58%,
+  100% { stroke-dashoffset: 0; }
+}
+
+.kpi-grid,
+.columns-grid {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.kpi-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.kpi-tile {
+  border: 1px solid rgba(169, 184, 210, 0.2);
+  border-radius: 0.55rem;
+  padding: 0.65rem;
+  background: rgba(6, 9, 18, 0.7);
+}
+
+.kpi-tile small,
+.kpi-tile span {
+  display: block;
+  color: rgba(209, 219, 234, 0.75);
+}
+
+.kpi-tile strong {
+  font-size: 1.15rem;
+}
+
+.info-columns,
+.matrix-section,
+.subscribe-path {
+  padding: clamp(1.1rem, 2vw, 2rem);
+}
+
+.columns-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.section-heading h2 {
+  margin-top: 0.4rem;
+}
+
+.matrix-box {
+  --matrix-progress: 0.35;
+  position: relative;
+  isolation: isolate;
+}
+
+.matrix-box::before,
+.matrix-box::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.matrix-box::before {
+  background-image: radial-gradient(circle at 10px 10px, rgba(255, 255, 255, 0.9) 1.3px, transparent 1.6px);
+  background-size: 30px 30px;
+  opacity: calc(0.3 + var(--matrix-progress) * 0.45);
+}
+
+.matrix-box::after {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.24) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.24) 1px, transparent 1px);
+  background-size: 30px 30px;
+  opacity: calc(0.15 + var(--matrix-progress) * 0.6);
+  animation: matrixFade 5s ease-in-out infinite;
+}
+
+.matrix-box:hover::after {
+  opacity: 0.8;
+}
+
+@keyframes matrixFade {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.7; }
+}
+
+.matrix-box ul {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  list-style: none;
+  padding: 0;
+}
+
+.matrix-box li {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(8, 12, 23, 0.74);
+  border-radius: 0.5rem;
+  padding: 0.55rem;
+  font-size: 0.9rem;
+}
+
+.inline-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.8rem;
+  margin: 0.9rem 0;
+}
+
+.inline-form label span {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.82rem;
+}
+
+.inline-form input,
+.inline-form button {
+  border-radius: 0.4rem;
+  min-height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(5, 8, 16, 0.85);
+  color: var(--gs-color-text);
+  padding: 0.6rem 0.7rem;
+}
+
+.inline-form button {
+  align-self: end;
+  background: linear-gradient(140deg, rgba(244, 213, 141, 0.8), rgba(34, 211, 238, 0.72));
+  color: #030712;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transform: translateY(14px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .reveal.is-visible {
@@ -177,34 +316,32 @@
   transform: translateY(0);
 }
 
-@keyframes gradient-drift {
-  0% {
-    transform: translate3d(-2%, -1%, 0);
+@media (max-width: 980px) {
+  .hero-shell {
+    grid-template-columns: 1fr;
   }
-  50% {
-    transform: translate3d(2%, 1%, 0);
-  }
-  100% {
-    transform: translate3d(-2%, -1%, 0);
+
+  .columns-grid,
+  .matrix-box ul {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
-@media (max-width: 900px) {
-  .home-hero,
-  .home-features,
-  .blueprint-section {
-    box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.6);
-  }
-
-  .parallax-layer {
-    inset: -10% -5%;
+@media (max-width: 700px) {
+  .columns-grid,
+  .matrix-box ul,
+  .kpi-grid,
+  .inline-form {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-hero::before,
-  .home-features::before,
-  .blueprint-section::before {
+  .shooting-stars::before,
+  .shooting-stars::after,
+  .pulse-dot,
+  .logo-path,
+  .matrix-box::after {
     animation: none;
   }
 

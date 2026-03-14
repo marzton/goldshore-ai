@@ -2,6 +2,10 @@
 
 This file contains instructions for AI agents working in this repository.
 
+## Commit Description Requirement
+
+At the very top of every commit description, include a clear statement indicating whether the PR branch should be **merged** or **squashed**.
+
 ## Tagging for Review
 
 To request a review of an error or issue, please use the following tags in your comments or pull request descriptions:
