@@ -19,9 +19,9 @@ const links = [
 
     <nav class="gs-nav" aria-label="Primary">
       {links.map(l => <a href={l.href}>{l.label}</a>)}
-      <button class="gs-button gs-button-outline" type="button" data-gs-modal-open="admin" aria-haspopup="dialog">Admin</button>
-      <button class="gs-button gs-button-outline" type="button" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
-      <a class="gs-button gs-button-solid" href="/contact">Request Briefing</a>
+      <button class="gs-button gs-button--ghost" type="button" data-gs-modal-open="admin" aria-haspopup="dialog">Admin</button>
+      <button class="gs-button gs-button--ghost" type="button" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
+      <a class="gs-button" href="/contact">Request Briefing</a>
     </nav>
 
     <button class="gs-nav-toggle" type="button" data-gs-nav-toggle aria-expanded="false" aria-controls="gs-mobile-panel" aria-label="Open menu">
