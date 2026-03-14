@@ -8,7 +8,7 @@ const navLinks = [
   { href: '/services', label: 'Services' },
   { href: '/team', label: 'Team' },
   { href: '/contact', label: 'Contact' },
-  { href: '/apps/risk-radar', label: 'Risk Radar' }
+  { href: '/apps/risk-radar', label: 'Radar' }
 ];
 
 const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.url.pathname } = Astro.props;
@@ -22,7 +22,6 @@ const logoSrc = '/favicon.svg';
     <meta name="description" content={description} />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <!-- Bolt: Preconnect to external origins to speed up resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://unpkg.com" />
@@ -35,6 +34,7 @@ const logoSrc = '/favicon.svg';
       <header class="gs-header" data-menu-open="false">
         <a class="gs-logo" href="/" aria-label="GoldShore home">
           <img class="gs-logo-mark" src={logoSrc} alt="GoldShore logo" width="36" height="36" fetchpriority="high" />
+          <span>GoldShore</span>
         </a>
         <button class="gs-nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
           <span class="material-symbols-rounded" aria-hidden="true">menu</span>
@@ -42,11 +42,7 @@ const logoSrc = '/favicon.svg';
         </button>
         <nav class="gs-nav" id="primary-navigation" aria-label="Primary">
           {navLinks.map((link) => (
-            <a
-              href={link.href}
-              aria-current={currentPath === link.href ? 'page' : undefined}
-              data-astro-prefetch
-            >
+            <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined} data-astro-prefetch>
               {link.label}
             </a>
           ))}
@@ -65,10 +61,12 @@ const logoSrc = '/favicon.svg';
         <div class="gs-section gs-section--padded">
           <div class="gs-grid columns-2">
             <div>
-              <div class="gs-logo" style="gap: var(--gs-space-2);">
+              <div class="gs-logo" style="gap: var(--gs-space-2); margin-bottom: var(--gs-space-2);">
                 <img class="gs-logo-mark" src={logoSrc} alt="GoldShore logo" width="28" height="28" loading="lazy" decoding="async" />
+                <span>GoldShore AI</span>
               </div>
               <p>Applied intelligence, resilient infrastructure, and responsive operations.</p>
+              <p class="gs-helper">GS-Mail intake: <a href="mailto:ops@goldshore.ai">ops@goldshore.ai</a></p>
             </div>
             <div class="gs-grid columns-2" style="gap: var(--gs-space-2);">
               <div class="gs-nav gs-nav--vertical">
@@ -80,6 +78,8 @@ const logoSrc = '/favicon.svg';
               <div class="gs-nav gs-nav--vertical-support">
                 <strong><span class="aria-icon aria-icon-signal" aria-hidden="true"></span>Support</strong>
                 <a href="/contact" aria-current={currentPath === '/contact' ? 'page' : undefined}>Contact</a>
+                <button class="footer-link" type="button" data-open-admin>Admin</button>
+                <button class="footer-link" type="button" data-open-subscribe>Subscribe</button>
                 <a href="/legal/privacy" aria-current={currentPath === '/legal/privacy' ? 'page' : undefined}>Privacy</a>
                 <a href="/legal/terms" aria-current={currentPath === '/legal/terms' ? 'page' : undefined}>Terms</a>
               </div>
@@ -88,11 +88,44 @@ const logoSrc = '/favicon.svg';
         </div>
       </footer>
     </div>
+
+    <dialog class="gs-modal" id="admin-modal">
+      <form method="dialog" class="modal-shell">
+        <button type="submit" class="modal-close" aria-label="Close">×</button>
+      </form>
+      <div class="modal-body">
+        <h2>Admin login</h2>
+        <p>Submit your email to request a temporary pin from the Cloudflare admin access workflow.</p>
+        <form id="admin-pin-form" action="/api/admin-pin" method="post">
+          <label for="admin-email">Email</label>
+          <input id="admin-email" name="email" type="email" required autocomplete="email" placeholder="admin@company.com" />
+          <button type="submit">Request pin</button>
+          <p class="modal-feedback" id="admin-pin-feedback" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </dialog>
+
+    <dialog class="gs-modal" id="subscribe-modal">
+      <form method="dialog" class="modal-shell">
+        <button type="submit" class="modal-close" aria-label="Close">×</button>
+      </form>
+      <div class="modal-body">
+        <h2>Subscribe</h2>
+        <p>Join product and reliability updates. This feeds the same GS-Mail intake as contact flows.</p>
+        <form action="/api/contact" method="post" data-subscribe-form>
+          <input type="hidden" name="formType" value="subscribe" />
+          <input type="hidden" name="redirectTo" value="/thank-you" />
+          <label for="subscribe-email">Email</label>
+          <input id="subscribe-email" name="email" type="email" required autocomplete="email" placeholder="you@company.com" />
+          <button type="submit">Join</button>
+        </form>
+      </div>
+    </dialog>
+
     <script is:inline>
       const header = document.querySelector('.gs-header');
       const toggle = document.querySelector('.gs-nav-toggle');
 
-      // Scroll handling with requestAnimationFrame
       let ticking = false;
       let wasScrolled = false;
 
@@ -116,11 +149,8 @@ const logoSrc = '/favicon.svg';
           ticking = true;
         }
       }, { passive: true });
-
-      // Initial check
       updateHeader();
 
-      // Mobile Menu Handling
       const closeMenu = () => {
         if (header && toggle) {
           header.setAttribute('data-menu-open', 'false');
@@ -152,12 +182,59 @@ const logoSrc = '/favicon.svg';
           closeMenu();
         }
       });
+
+      const adminModal = document.getElementById('admin-modal');
+      const subscribeModal = document.getElementById('subscribe-modal');
+
+      document.querySelector('[data-open-admin]')?.addEventListener('click', () => adminModal?.showModal());
+      document.querySelector('[data-open-subscribe]')?.addEventListener('click', () => subscribeModal?.showModal());
+
+      const adminForm = document.getElementById('admin-pin-form');
+      const feedback = document.getElementById('admin-pin-feedback');
+
+      if (adminForm instanceof HTMLFormElement) {
+        adminForm.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          const submit = adminForm.querySelector('button[type="submit"]');
+          if (!(submit instanceof HTMLButtonElement)) return;
+          submit.disabled = true;
+          submit.textContent = 'Requesting...';
+
+          const response = await fetch(adminForm.action, { method: 'POST', body: new FormData(adminForm) });
+          const message = await response.text();
+          if (feedback) {
+            feedback.textContent = message;
+            feedback.style.color = response.ok ? '#6ee7b7' : '#fca5a5';
+          }
+          submit.disabled = false;
+          submit.textContent = 'Request pin';
+        });
+      }
+
+      document.querySelectorAll('[data-subscribe-form]').forEach((form) => {
+        if (!(form instanceof HTMLFormElement)) return;
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          const submit = form.querySelector('button[type="submit"]');
+          if (!(submit instanceof HTMLButtonElement)) return;
+          submit.disabled = true;
+          submit.textContent = 'Joining...';
+          const response = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+          if (response.ok || response.redirected) {
+            window.location.href = response.url;
+            return;
+          }
+          submit.disabled = false;
+          submit.textContent = 'Join';
+        });
+      });
     </script>
+
     <style is:global>
       :root {
         --gs-header-height: 72px;
       }
-      /* Cinematic Header Overrides */
+
       .gs-header {
         position: fixed;
         top: 0;
@@ -169,16 +246,16 @@ const logoSrc = '/favicon.svg';
         align-items: center;
         justify-content: space-between;
         padding: 0 2rem;
-        background: rgba(3, 3, 5, 0.7); /* Deep dark tint */
+        background: rgba(3, 3, 5, 0.7);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
       .gs-header.is-scrolled {
         background: rgba(0, 0, 0, 0.95);
-        border-bottom-color: rgba(34, 211, 238, 0.15); /* Cyan hint */
+        border-bottom-color: rgba(34, 211, 238, 0.2);
         box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.8);
       }
 
@@ -189,32 +266,36 @@ const logoSrc = '/favicon.svg';
         text-decoration: none;
         color: #fff;
         font-weight: 600;
-        font-size: 1.1rem;
-        letter-spacing: -0.01em;
       }
 
       .gs-logo .gs-logo-mark {
-        height: 40px;
+        height: 32px;
         width: auto;
-        /* Ensure logo blends if it has a dark bg */
-        mix-blend-mode: normal;
       }
 
       .gs-nav {
         display: flex;
-        gap: 2rem;
+        gap: 1.1rem;
         align-items: center;
       }
 
-      .gs-nav a {
-        color: rgba(255, 255, 255, 0.7);
+      .gs-nav a,
+      .footer-link {
+        color: rgba(255, 255, 255, 0.75);
         text-decoration: none;
-        font-size: 0.95rem;
+        font-size: 0.93rem;
         transition: color 0.2s ease;
         position: relative;
+        background: none;
+        border: 0;
+        text-align: left;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
       }
 
       .gs-nav a:hover,
+      .footer-link:hover,
       .gs-nav a[aria-current="page"] {
         color: #fff;
       }
@@ -226,23 +307,88 @@ const logoSrc = '/favicon.svg';
         left: 0;
         right: 0;
         height: 2px;
-        background: #22d3ee; /* Cyan accent */
+        background: #22d3ee;
         box-shadow: 0 0 8px #22d3ee;
       }
 
-      /* Mobile toggle */
       .gs-nav-toggle {
-        display: none; /* Hidden by default on desktop */
+        display: none;
         background: none;
         border: none;
         color: #fff;
         cursor: pointer;
       }
 
-      @media (max-width: 768px) {
-        .gs-header { padding: 0 1rem; }
-        .gs-nav { display: none; } /* Simplified mobile handling for now */
-        .gs-nav-toggle { display: block; }
+      .gs-modal {
+        width: min(420px, calc(100% - 2rem));
+        border: 1px solid rgba(162, 178, 209, 0.32);
+        border-radius: 0.6rem;
+        background: linear-gradient(140deg, rgba(7, 11, 22, 0.97), rgba(9, 15, 27, 0.95));
+        color: #f8fafc;
+        box-shadow: 0 22px 45px rgba(2, 8, 23, 0.6);
+      }
+
+      .gs-modal::backdrop {
+        background: rgba(0, 0, 0, 0.62);
+        backdrop-filter: blur(2px);
+      }
+
+      .modal-shell {
+        display: flex;
+        justify-content: flex-end;
+        margin: 0;
+      }
+
+      .modal-close {
+        border: 0;
+        background: transparent;
+        color: #cbd5e1;
+        font-size: 1.4rem;
+        cursor: pointer;
+      }
+
+      .modal-body {
+        padding: 0 1.2rem 1.2rem;
+      }
+
+      .modal-body form {
+        display: grid;
+        gap: 0.65rem;
+      }
+
+      .modal-body input,
+      .modal-body button {
+        min-height: 42px;
+        border-radius: 0.4rem;
+        border: 1px solid rgba(158, 173, 199, 0.35);
+        background: rgba(5, 9, 20, 0.82);
+        color: inherit;
+        padding: 0.6rem;
+      }
+
+      .modal-body button {
+        background: linear-gradient(140deg, rgba(244, 213, 141, 0.75), rgba(34, 211, 238, 0.72));
+        color: #050810;
+        font-weight: 700;
+      }
+
+      .modal-feedback {
+        min-height: 1.2em;
+        font-size: 0.88rem;
+      }
+
+      @media (max-width: 860px) {
+        .gs-header {
+          padding: 0 1rem;
+        }
+
+        .gs-nav {
+          display: none;
+        }
+
+        .gs-nav-toggle {
+          display: block;
+        }
 
         .gs-header[data-menu-open="true"] .gs-nav {
           display: flex;
@@ -251,9 +397,9 @@ const logoSrc = '/favicon.svg';
           top: 100%;
           left: 0;
           right: 0;
-          background: #000;
-          padding: 2rem;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          background: #020617;
+          padding: 1.2rem;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
       }
     </style>
