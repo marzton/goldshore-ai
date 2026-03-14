@@ -91,6 +91,44 @@ export default {
       to: recipient,
       subject,
       timestamp: new Date().toISOString(),
+    };
+
+    const validation = EmailLogSchema.safeParse(newEntry);
+
+    // 3. Persistence Logic (Asynchronous)
+    if (validation.success) {
+      ctx.waitUntil(
+        (async () => {
+          try {
+            const rawLogs = await env.GS_CONFIG.get('EMAIL_INBOX_LOGS');
+            let currentLogs: Array<typeof validation.data> = [];
+
+            if (rawLogs) {
+              try {
+                const parsedLogs = JSON.parse(rawLogs);
+                const parseResult = EmailInboxLogsSchema.safeParse(parsedLogs);
+                if (parseResult.success) {
+                  currentLogs = parseResult.data;
+                } else {
+                  console.error('❌ Existing EMAIL_INBOX_LOGS payload failed schema validation:', parseResult.error);
+                }
+              } catch (err) {
+                console.error('❌ Failed to parse EMAIL_INBOX_LOGS payload:', err);
+              }
+            }
+
+            // Prepend and truncate to 100 per SOP
+            const updatedLogs = [validation.data, ...currentLogs].slice(0, 100);
+
+            await env.GS_CONFIG.put('EMAIL_INBOX_LOGS', JSON.stringify(updatedLogs));
+            console.info(`✅ Logged email: ${sender} -> ${recipient}`);
+          } catch (err) {
+            console.error('❌ KV Persistence Error:', err);
+          }
+        })()
+      );
+    } else {
+      console.error('🚨 Schema Validation Failed for inbound mail:', validation.error);
     });
 
     if (!parsedEntry.success) {

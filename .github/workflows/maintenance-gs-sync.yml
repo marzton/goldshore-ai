@@ -1,0 +1,40 @@
+name: Maintenance GS Service Sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      endpoint_path:
+        description: "Endpoint path to check on each service"
+        required: false
+        default: "/api/health"
+      base_domain:
+        description: "Base domain for gs services"
+        required: false
+        default: "goldshore.ai"
+      services:
+        description: "Comma-separated services (e.g., gs-web,gs-api)"
+        required: false
+        default: "gs-web,gs-admin,gs-api,gs-gateway,gs-mail,gs-agent,gs-control"
+      timeout_seconds:
+        description: "curl timeout in seconds"
+        required: false
+        default: "20"
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run jules service-token sync checks
+        env:
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+          GS_BASE_DOMAIN: ${{ inputs.base_domain }}
+          GS_SYNC_PATH: ${{ inputs.endpoint_path }}
+          GS_SERVICES: ${{ inputs.services }}
+          GS_SYNC_TIMEOUT_SECONDS: ${{ inputs.timeout_seconds }}
+        run: scripts/jules-sync.sh
