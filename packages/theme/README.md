@@ -55,4 +55,5 @@ visual language across AI tooling, market data dashboards, and ecommerce experie
 - Canonical source for authored styles is `src/styles/*`.
 - Published style entrypoints are exposed via `@goldshore/theme` and `@goldshore/theme/styles/*` exports.
 - `index.css` should only aggregate canonical files from `src/styles/*` (or generated outputs that come from those canonical sources).
+- **Do not edit generated style output directly** (for example files under `styles/`); regenerate or update canonical `src/styles/*` sources instead.
 - Keep all editable styles in `src/styles/*`; avoid adding parallel authored copies outside this tree.
