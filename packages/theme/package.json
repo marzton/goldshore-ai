@@ -6,7 +6,7 @@
   "exports": {
     ".": "./index.css",
     "./index.css": "./index.css",
-    "./styles/global.css": "./src/styles/global.css",
+    "./styles/global.css": "./styles/global.css",
     "./styles/tokens.css": "./styles/tokens.css",
     "./styles/base.css": "./styles/base.css",
     "./styles/layout.css": "./styles/layout.css",
