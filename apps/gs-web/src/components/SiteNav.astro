@@ -25,6 +25,7 @@ const navGroups = [
 ] as const;
 
 const pathname = Astro.url.pathname;
+const canonicalLogoPath = '/logo/gs-penrose.svg';
 const normalizeHref = (href: string) => href.split('#')[0];
 const isCurrent = (href: string) => {
   const cleanHref = normalizeHref(href);
@@ -35,11 +36,7 @@ const isCurrent = (href: string) => {
 <header class="gs-header">
   <div class="gs-container gs-nav-inner">
     <a class="gs-brand" href="/">
-      <img
-        class="gs-logo"
-        src="/logo/gs-penrose.svg"
-        alt="Gold Shore"
-      />
+      <img class="gs-logo" src={canonicalLogoPath} alt="Gold Shore" />
       <span class="gs-brand-text">GOLDSHORE</span>
     </a>
 
@@ -110,11 +107,7 @@ const isCurrent = (href: string) => {
 >
   <div class="gs-mobile-top">
     <a class="gs-brand" href="/">
-      <img
-        class="gs-logo"
-        src="/logo/gs-penrose.svg"
-        alt="Gold Shore"
-      />
+      <img class="gs-logo" src={canonicalLogoPath} alt="Gold Shore" />
       <span class="gs-brand-text">GOLDSHORE</span>
     </a>
     <button

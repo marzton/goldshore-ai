@@ -10,26 +10,34 @@ interface Props {
   requiredRole?: AdminRole;
 }
 
-const { title = 'GoldShore Admin', requiredPermission, requiredRole } = Astro.props;
-const logoSrc = '/logo/gs-penrose.svg';
+const {
+  title = 'GoldShore Admin',
+  requiredPermission,
+  requiredRole,
+} = Astro.props;
+const canonicalLogoPath = '/logo/gs-penrose.svg';
+const logoSrc = canonicalLogoPath;
 
 const session = Astro.locals.adminSession ?? {
   roles: [],
   permissions: [],
-  isAuthenticated: false
+  isAuthenticated: false,
 };
-const isRoleAllowed = requiredRole ? session.roles.includes(requiredRole) : true;
+const isRoleAllowed = requiredRole
+  ? session.roles.includes(requiredRole)
+  : true;
 const isPermissionAllowed = requiredPermission
   ? session.permissions.includes(requiredPermission)
   : true;
 const isAuthorized = isRoleAllowed && isPermissionAllowed;
 ---
+
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>{title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="/logo/gs-penrose.svg" type="image/svg+xml" />
+    <link rel="icon" href={canonicalLogoPath} type="image/svg+xml" />
     <script>
       import { initTheme } from '@goldshore/theme/manager';
       initTheme();
@@ -189,23 +197,35 @@ const isAuthorized = isRoleAllowed && isPermissionAllowed;
       <div class="gs-admin-main">
         <Topbar title={title} session={session} />
         <main id="admin-content" class="gs-admin-content">
-          {isAuthorized ? (
-            <slot />
-          ) : (
-            <section class="max-w-4xl mx-auto py-24 px-6">
-              <h1 class="text-3xl gs-heading mb-4">Access restricted</h1>
-              <p class="text-[var(--gs-text-secondary)] mb-6">
-                Your account does not have permission to view this section. Contact an administrator
-                if you need expanded access.
-              </p>
-              <div class="gs-panel">
-                <div class="section-title"><span>🔒</span><h3>Access summary</h3></div>
-                <p class="gs-helper">Assigned roles: {session.roles.length ? session.roles.join(', ') : 'None'}</p>
-                <p class="gs-helper">Required role: {requiredRole ?? 'None'}</p>
-                <p class="gs-helper">Required permission: {requiredPermission ?? 'None'}</p>
-              </div>
-            </section>
-          )}
+          {
+            isAuthorized ? (
+              <slot />
+            ) : (
+              <section class="max-w-4xl mx-auto py-24 px-6">
+                <h1 class="text-3xl gs-heading mb-4">Access restricted</h1>
+                <p class="text-[var(--gs-text-secondary)] mb-6">
+                  Your account does not have permission to view this section.
+                  Contact an administrator if you need expanded access.
+                </p>
+                <div class="gs-panel">
+                  <div class="section-title">
+                    <span>🔒</span>
+                    <h3>Access summary</h3>
+                  </div>
+                  <p class="gs-helper">
+                    Assigned roles:{' '}
+                    {session.roles.length ? session.roles.join(', ') : 'None'}
+                  </p>
+                  <p class="gs-helper">
+                    Required role: {requiredRole ?? 'None'}
+                  </p>
+                  <p class="gs-helper">
+                    Required permission: {requiredPermission ?? 'None'}
+                  </p>
+                </div>
+              </section>
+            )
+          }
         </main>
       </div>
     </div>
