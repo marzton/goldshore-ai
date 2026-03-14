@@ -70,22 +70,6 @@ app.post("/system/sync", async (c) => {
     return c.json({ success: true, syncedAt: timestamp });
 });
 
-
-app.post('/mail/enqueue', async (c) => {
-    const payload = await c.req.json().catch(() => ({}));
-    const emailData = {
-        to: payload?.to ?? 'user@example.com',
-        subject: payload?.subject ?? 'Gold Shore Labs Update',
-        body: payload?.body ?? 'Your task from Jules is complete!',
-        source: payload?.source ?? 'jules-worker',
-        enqueuedAt: new Date().toISOString()
-    };
-
-    await c.env.MAIL_QUEUE.send(emailData);
-
-    return c.json({ success: true, message: 'Message enqueued successfully!', emailData });
-});
-
 // Existing Automation Routes
 app.post("/dns/apply", async (c) => c.json(await DNS.sync(c.env)));
 app.post("/workers/reconcile", async (c) => c.json(await Workers.reconcile(c.env)));

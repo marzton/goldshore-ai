@@ -21,10 +21,6 @@ id = "gs_control_logs_001"
 binding = "STATE"
 bucket_name = "gs-control-state"
 
-[[queues.producers]]
-binding = "MAIL_QUEUE"
-queue = "goldshore-jobs"
-
 [[services]]
 binding = "API"
 service = "gs-api"
