@@ -1,25 +1,31 @@
 ---
-import Logo from '../brand/Logo.astro';
+import HeroLogo from './HeroLogo.astro';
 ---
 
-<section class="hero" aria-label="Gold Shore hero">
+<section
+  class="hero gs-cinematic-hero"
+  data-hero-root
+  aria-label="Gold Shore hero"
+>
   <div class="hero-bg" aria-hidden="true">
-    <canvas id="gs-starfield" class="hero-canvas"></canvas>
-    <canvas id="gs-shootingstars" class="hero-canvas"></canvas>
+    <canvas class="hero-canvas" data-stars></canvas>
+    <canvas class="hero-canvas" data-shooting></canvas>
     <div class="hero-vignette"></div>
   </div>
 
   <div class="hero-content">
     <div class="hero-mark">
-      <Logo />
+      <HeroLogo />
     </div>
 
     <h1 class="hero-title">Gold Shore</h1>
-    <p class="hero-subtitle">Designed not to manage capital, but to steer it.</p>
+    <p class="hero-subtitle">
+      Designed not to manage capital, but to steer it.
+    </p>
 
     <div class="hero-actions">
       <a class="btn primary" href="/intake">Start</a>
-      <a class="btn ghost" href="/developer">Developer</a>
+      <a class="btn ghost" href="/developer-hub">Developer</a>
     </div>
   </div>
 </section>
@@ -27,17 +33,5 @@ import Logo from '../brand/Logo.astro';
 <script>
   import { mountHero } from './mountHero';
 
-    const heroes = document.querySelectorAll('.gs-cinematic-hero');
-
-    for (const root of heroes) {
-      if (!(root instanceof HTMLElement) || root.dataset.heroInitialized === 'true') continue;
-
-      root.dataset.heroInitialized = 'true';
-
-      const stars = root.querySelector('[data-stars]');
-      const shooting = root.querySelector('[data-shooting]');
-      if (stars instanceof HTMLCanvasElement) mountStarfield(stars);
-      if (shooting instanceof HTMLCanvasElement) mountShootingStars(shooting);
-    }
-  </script>
-</section>
+  mountHero();
+</script>
