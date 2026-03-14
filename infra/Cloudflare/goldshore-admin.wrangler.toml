@@ -1,4 +1,4 @@
-# wrangler.toml for the legacy goldshore-admin Astro Pages app (historical alias for gs-admin)
+# wrangler.toml for the legacy goldshore-admin Astro Pages app (historical alias; canonical project is gs-admin)
 
 name = "goldshore-admin" # Historical Pages project alias; canonical name is gs-admin
 
