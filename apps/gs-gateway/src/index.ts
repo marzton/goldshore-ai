@@ -104,22 +104,6 @@ app.get('/', (c) => {
   return c.html(STATUS_PAGE_HTML);
 });
 
-
-app.post('/queue/email', async (c) => {
-  const payload = await c.req.json().catch(() => ({}));
-  const emailData = {
-    to: payload?.to ?? 'user@example.com',
-    subject: payload?.subject ?? 'Gold Shore Labs Update',
-    body: payload?.body ?? 'Your task is complete!',
-    source: payload?.source ?? 'codex-worker',
-    enqueuedAt: new Date().toISOString()
-  };
-
-  await c.env.MAIL_QUEUE.send(emailData);
-
-  return c.json({ ok: true, message: 'Message enqueued successfully!', emailData });
-});
-
 // Example specific routes
 app.get('/user/login', (c) => c.json({ message: 'Gateway Login Placeholder' }));
 app.post('/v1/chat', (c) => c.json({ message: 'Gateway Chat Placeholder' }));
