@@ -28,6 +28,10 @@ id = "9cc2209906a94851b704be57543987a9"
 binding = "JOB_QUEUE"
 queue = "goldshore-jobs"
 
+[[queues.producers]]
+binding = "MAIL_QUEUE"
+queue = "goldshore-jobs"
+
 [[services]]
 binding = "API"
 service = "gs-api"

@@ -1,4 +1,4 @@
-import type { KVNamespace, Fetcher } from '@cloudflare/workers-types';
+import type { KVNamespace, Fetcher, Queue } from '@cloudflare/workers-types';
 
 export type Env = {
   API: Fetcher;
@@ -8,4 +8,5 @@ export type Env = {
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
   CLOUDFLARE_TEAM_DOMAIN?: string;
   API_ORIGIN?: string;
+  MAIL_QUEUE: Queue<Record<string, unknown>>;
 };
