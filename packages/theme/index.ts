@@ -70,17 +70,6 @@ function initModal() {
     return false;
   };
 
-  const isAriaHidden = (el: HTMLElement | null): boolean => {
-    let current: HTMLElement | null = el;
-    while (current && current !== panel) {
-      if (current.getAttribute('aria-hidden') === 'true') {
-        return true;
-      }
-      current = current.parentElement;
-      (el) => !el.hasAttribute('disabled') && !isAriaHidden(el),
-    return false;
-  };
-
   const getFocusableElements = () => {
     if (!panel) return [];
 
@@ -91,20 +80,12 @@ function initModal() {
       (el) => !el.hasAttribute('disabled') && !isAriaHidden(el),
     );
   };
-    root.setAttribute('role', 'dialog');
-    root.setAttribute('aria-modal', 'true');
-    root.setAttribute('aria-labelledby', MODAL_TITLE_ID);
-    root.setAttribute('aria-describedby', MODAL_DESCRIPTION_ID);
 
   const focusDialog = () => {
     const focusable = getFocusableElements();
     const firstFocusable = focusable[0];
     (firstFocusable ?? panel)?.focus();
   };
-    root.removeAttribute('role');
-    root.removeAttribute('aria-modal');
-    root.removeAttribute('aria-labelledby');
-    root.removeAttribute('aria-describedby');
 
   const openModal = (html: string, trigger: HTMLElement) => {
     opener = trigger;
@@ -145,8 +126,6 @@ function initModal() {
       panel.focus();
       return;
     }
-  document.addEventListener('keydown', onKeydown);
-
 
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
@@ -157,9 +136,11 @@ function initModal() {
         e.preventDefault();
         last.focus();
       }
-      return;
-      e.preventDefault();
-      first.focus();
+    } else {
+      if (active === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
   };
 
