@@ -1,35 +1,52 @@
 # Stabilization Sync Check Report
 
-**Date:** Wed Feb 18 21:00:00 UTC 2026
-**Status:** COMPLETE (With Repairs)
+**Date:** Wed, 25 Feb 2026 20:51:35 GMT
 
 ## 1. Governance Compliance Check
 
-### Violations Detected & Resolved:
-- **Directory Structure:**
-  - Removed `apps/jules-bot` (Violation of Phase 1).
-  - Removed `apps/legacy` (Violation of Phase 1).
-  - Verified `apps/` only contains: `gs-admin`, `gs-agent`, `gs-api`, `gs-control`, `gs-gateway`, `gs-mail`, `gs-web`.
+### ❌ Violations Detected
+- Unpinned CI Actions detected (must use SHA): actions/checkout is unpinned (uses @v4) in archive-path-guard.yml, actions/checkout is unpinned (uses @v4) in canonical-structure-check.yml, actions/setup-node is unpinned (uses @v4) in canonical-structure-check.yml, pnpm/action-setup is unpinned (uses @v4) in deploy-gs-admin.yml, actions/setup-node is unpinned (uses @v6) in deploy-gs-admin.yml, cloudflare/pages-action is unpinned (uses @v1) in deploy-gs-admin.yml, pnpm/action-setup is unpinned (uses @v4) in deploy-gs-api.yml, actions/setup-node is unpinned (uses @v6) in deploy-gs-api.yml, actions/checkout is unpinned (uses @v4) in deploy-gs-mail.yml, pnpm/action-setup is unpinned (uses @v4) in deploy-gs-mail.yml, actions/setup-node is unpinned (uses @v6) in deploy-gs-mail.yml, pnpm/action-setup is unpinned (uses @v4) in deploy-gs-web.yml, actions/setup-node is unpinned (uses @v6) in deploy-gs-web.yml, cloudflare/pages-action is unpinned (uses @v1) in deploy-gs-web.yml, actions/checkout is unpinned (uses @v4) in lockfile-guard.yml, actions/checkout is unpinned (uses @v4) in naming-lint.yml, pnpm/action-setup is unpinned (uses @v4) in naming-lint.yml, actions/setup-node is unpinned (uses @v6) in naming-lint.yml, actions/setup-node is unpinned (uses @v4) in palette-manual.yml, actions/checkout is unpinned (uses @v4) in pii-scan.yml, actions/setup-node is unpinned (uses @v4) in pii-scan.yml, actions/upload-artifact is unpinned (uses @v4) in pii-scan.yml, pnpm/action-setup is unpinned (uses @v4) in preview-gs-admin.yml, actions/setup-node is unpinned (uses @v6) in preview-gs-admin.yml, cloudflare/pages-action is unpinned (uses @v1) in preview-gs-admin.yml, pnpm/action-setup is unpinned (uses @v4) in preview-gs-agent.yml, actions/setup-node is unpinned (uses @v6) in preview-gs-agent.yml, pnpm/action-setup is unpinned (uses @v4) in preview-gs-api.yml, actions/setup-node is unpinned (uses @v6) in preview-gs-api.yml, pnpm/action-setup is unpinned (uses @v4) in preview-gs-gateway.yml, actions/setup-node is unpinned (uses @v6) in preview-gs-gateway.yml, pnpm/action-setup is unpinned (uses @v4) in preview-gs-web.yml, actions/setup-node is unpinned (uses @v6) in preview-gs-web.yml, cloudflare/pages-action is unpinned (uses @v1) in preview-gs-web.yml, actions/checkout is unpinned (uses @v4) in route-collision-check.yml, pnpm/action-setup is unpinned (uses @v4) in route-collision-check.yml, actions/setup-node is unpinned (uses @v6) in route-collision-check.yml, actions/ai-inference is unpinned (uses @v2) in summary.yml, github/codeql-action/upload-sarif is unpinned (uses @v3) in tfsec.yml
 
-- **Root package.json:**
-  - Unified `astro` version to `^5.17.1`.
-  - Verified no duplicate script keys.
+**Action:** Document in `docs/ci/CURRENT_STATE.md`. Do not self-fix. Escalate via comment only.
 
-## 2. Shared Configuration
-- **Updated:** `packages/config/src/astro/base.mjs` now exports `createAstroConfig` with `output: 'server'` and includes `@goldshore/integrations` in `noExternal`.
-- **Adopted:** `apps/gs-web` and `apps/gs-admin` now use the shared `createAstroConfig`.
+## 2. Branch Discipline Check
 
-## 3. CI State Snapshot
+**Current Branch:** jules-14066779869648662756-e5f3d3ef
 
-All core applications are building successfully.
+**Divergence vs origin/main:** Behind: 0, Ahead: 0
+
+✅ No stacked PRs or auto-merge violations detected on open PRs.
+
+## 3. CI State Snapshot (PR Context)
+
+⚠️ gh CLI unavailable; unable to resolve CI status in this environment.
+
+### Local Build Verification
 
 | App | Status | Notes |
 |---|---|---|
-| **gs-web** | ✅ PASS | Removed invalid `client:load` from `ParallaxHero`. Updated `astro` to `^5.17.1`. |
-| **gs-admin** | ✅ PASS | Resolved route collisions by removing `admin/forms.astro` and `systems.astro`. Updated `astro` to `^5.17.1`. |
-| **gs-api** | ✅ PASS | Verified `wrangler.toml` bindings. |
-| **gs-mail** | ✅ PASS | Updated `compatibility_date` to `2024-11-01`. |
+| **gs-web** | ❌ FAIL | Check run logs |
+| **gs-admin** | ✅ PASS | |
+| **gs-api** | ✅ PASS | |
+| **gs-mail** | ✅ PASS | |
 
-## 4. Recommendations
-- Monitor for any new directory violations.
-- Continue to ignore `gs-agent`, `gs-control`, `gs-gateway` workflows until Phase 5.
+## 4. App-Level Repairs Required
+
+Failures detected in: gs-web build failed, gs-admin build failed, gs-api build failed, gs-mail build failed.
+**Guidance:** You may fix these inside `apps/*`. **Do not modify** `.github/`, `infra/`, or root scripts.
+
+## 5. Recommendations
+
+### ❌ Actions Required
+
+- Unpinned CI Actions detected (must use SHA): actions/checkout is unpinned (uses @v4) in archive-path-guard.yml, actions/checkout is unpinned (uses @v4) in canonical-structure-check.yml, actions/setup-node is unpinned (uses @v4) in canonical-structure-check.yml, pnpm/action-setup is unpinned (uses @v4) in deploy-gs-admin.yml, actions/setup-node is unpinned (uses @v6) in deploy-gs-admin.yml, cloudflare/pages-action is unpinned (uses @v1) in deploy-gs-admin.yml, pnpm/action-setup is unpinned (uses @v4) in deploy-gs-api.yml, actions/setup-node is unpinned (uses @v6) in deploy-gs-api.yml, actions/checkout is unpinned (uses @v4) in deploy-gs-mail.yml, pnpm/action-setup is unpinned (uses @v4) in deploy-gs-mail.yml, actions/setup-node is unpinned (uses @v6) in deploy-gs-mail.yml, pnpm/action-setup is unpinned (uses @v4) in deploy-gs-web.yml, actions/setup-node is unpinned (uses @v6) in deploy-gs-web.yml, cloudflare/pages-action is unpinned (uses @v1) in deploy-gs-web.yml, actions/checkout is unpinned (uses @v4) in lockfile-guard.yml, actions/checkout is unpinned (uses @v4) in naming-lint.yml, pnpm/action-setup is unpinned (uses @v4) in naming-lint.yml, actions/setup-node is unpinned (uses @v6) in naming-lint.yml, actions/setup-node is unpinned (uses @v4) in palette-manual.yml, actions/checkout is unpinned (uses @v4) in pii-scan.yml, actions/setup-node is unpinned (uses @v4) in pii-scan.yml, actions/upload-artifact is unpinned (uses @v4) in pii-scan.yml, pnpm/action-setup is unpinned (uses @v4) in preview-gs-admin.yml, actions/setup-node is unpinned (uses @v6) in preview-gs-admin.yml, cloudflare/pages-action is unpinned (uses @v1) in preview-gs-admin.yml, pnpm/action-setup is unpinned (uses @v4) in preview-gs-agent.yml, actions/setup-node is unpinned (uses @v6) in preview-gs-agent.yml, pnpm/action-setup is unpinned (uses @v4) in preview-gs-api.yml, actions/setup-node is unpinned (uses @v6) in preview-gs-api.yml, pnpm/action-setup is unpinned (uses @v4) in preview-gs-gateway.yml, actions/setup-node is unpinned (uses @v6) in preview-gs-gateway.yml, pnpm/action-setup is unpinned (uses @v4) in preview-gs-web.yml, actions/setup-node is unpinned (uses @v6) in preview-gs-web.yml, cloudflare/pages-action is unpinned (uses @v1) in preview-gs-web.yml, actions/checkout is unpinned (uses @v4) in route-collision-check.yml, pnpm/action-setup is unpinned (uses @v4) in route-collision-check.yml, actions/setup-node is unpinned (uses @v6) in route-collision-check.yml, actions/ai-inference is unpinned (uses @v2) in summary.yml, github/codeql-action/upload-sarif is unpinned (uses @v3) in tfsec.yml
+- gs-web build failed
+- gs-admin build failed
+- gs-api build failed
+- gs-mail build failed
+
+**Do not self-fix.** Escalate governance violations.
+**App-level repairs (types, imports) are permitted in `apps/*` only.**
+
+**Stop Condition:**
+If CI is green across all required checks for 48 consecutive hours and no branch divergence >5 commits exists, recommend terminating recurring stabilization sync.

@@ -12,14 +12,18 @@
     "check": "astro check",
     "lint": "eslint .",
     "test": "playwright test",
-    "test:e2e": "playwright test"
+    "test:unit": "node --experimental-strip-types --test tests/unit/**/*.test.ts",
+    "test:e2e": "playwright test",
+    "verify:dist": "node ../../scripts/verify-web-dist.mjs"
   },
   "dependencies": {
     "@goldshore/config": "workspace:^",
     "@goldshore/theme": "workspace:*",
     "@goldshore/ui": "workspace:*",
-    "astro": "^5.17.1",
-    "fuse.js": "^7.1.0"
+    "@goldshore/utils": "workspace:*",
+    "astro": "^5.18.0",
+    "fuse.js": "^7.1.0",
+    "@goldshore/brand": "workspace:*"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
