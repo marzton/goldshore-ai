@@ -2,6 +2,15 @@
 
 This file contains instructions for AI agents working in this repository.
 
+## Commit / PR Description Requirement
+
+At the top of every commit description (and corresponding PR description), include a short line that explicitly states whether the PR branch should be **merged** or **squashed**.
+
+Example format:
+
+* `Merge strategy: merge`
+* `Merge strategy: squash`
+
 ## Tagging for Review
 
 To request a review of an error or issue, please use the following tags in your comments or pull request descriptions:
