@@ -18,7 +18,7 @@ These are worker API endpoints implemented in `src/index.ts` (not HTML pages). T
 - `GET /templates`
 - `GET /user/login`
 - `POST /v1/chat`
-- `*` (proxy passthrough to `gs-api` when no matching route)
+- `/api/*` (proxy passthrough to `gs-api` when no matching route)
 The `gs-gateway` worker is the routing and queue ingress layer for GoldShore, served from the gateway hostname documented in [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md). It handles proxying to the API, rate limiting, and preflight authorization checks.
 
 Configuration highlights (from `wrangler.toml`):
@@ -42,8 +42,8 @@ pnpm --filter ./apps/gs-gateway build
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-gateway.yml`
-- Preview deploy: `.github/workflows/preview-gateway.yml`
+- Production deploy: `.github/workflows/deploy-gs-gateway.yml.disabled` (kept disabled until prod rollout)
+- Preview deploy: `.github/workflows/preview-gs-gateway.yml`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 - Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
@@ -51,3 +51,7 @@ pnpm --filter ./apps/gs-gateway build
 ```bash
 pnpm --filter ./apps/gs-gateway deploy
 ```
+
+
+## Workflow conventions
+Gateway workflows run from the repository root for install/validation, then switch to `working-directory: apps/gs-gateway` only for `wrangler deploy`. Keep this convention for new jobs to avoid root/subdirectory drift in CI behavior.
