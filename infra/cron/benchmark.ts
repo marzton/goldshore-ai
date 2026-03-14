@@ -23,41 +23,29 @@ async function openOpsIssue() {
 }
 
 // Config mock
-type CloudflareCheck =
-  | { type: "pages_build_status"; project: string }
-  | { type: "dns_records" }
-  | { type: "worker_health"; script: string };
-
-const cfg: {
+const cfg = {
   cloudflare: {
-    checks: CloudflareCheck[];
-  };
-  github: { org: string };
-  ai_agent: { triage_labels: string[] };
-} = {
-  cloudflare: {
-    checks: Array.from({ length: 20 }, () => ({
-      type: "pages_build_status",
-      project: "gs-web",
-    })),
+    checks: Array(20).fill({ type: "pages_build_status", project: "gs-web" }),
   },
   github: { org: "goldshore" },
-  ai_agent: { triage_labels: [] },
+  ai_agent: { triage_labels: [] }
 };
 
 // Original sequential function
 async function checkCloudflareSequential() {
-  for (const check of cfg.cloudflare.checks) {
+  for (const check of (cfg.cloudflare.checks as any[])) {
     if (check.type === "pages_build_status") {
       const status = await getPagesProjectBuildStatus(check.project);
       if (!["success", "completed"].includes(status)) {
         await openOpsIssue();
       }
-    } else if (check.type === "dns_records") {
+    }
+    if (check.type === "dns_records") {
       await getDNSRecords();
       // Mock logic
-    } else if (check.type === "worker_health") {
-      await getWorkerBindings(check.script);
+    }
+    if (check.type === "worker_health") {
+      const bindings = await getWorkerBindings(check.script);
       // Mock logic
     }
   }
@@ -65,7 +53,7 @@ async function checkCloudflareSequential() {
 
 async function checkCloudflareConcurrent() {
   const maxConcurrent = 6;
-  const checks: CloudflareCheck[] = cfg.cloudflare.checks;
+  const checks = cfg.cloudflare.checks as any[];
   const executing = new Set<Promise<void>>();
 
   for (const check of checks) {
@@ -83,16 +71,14 @@ async function checkCloudflareConcurrent() {
           await getWorkerBindings(check.script);
           // Mock logic
         }
-      } catch (err: unknown) {
+      } catch (err: any) {
         console.error(`Error processing check ${check.type}:`, err);
       }
     });
 
-    const tracked = p.finally(() => {
-      executing.delete(tracked);
-    });
-
-    executing.add(tracked);
+    executing.add(p);
+    const clean = () => executing.delete(p);
+    p.then(clean).catch(clean);
 
     if (executing.size >= maxConcurrent) {
       await Promise.race(executing);

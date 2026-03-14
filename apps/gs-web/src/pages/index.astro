@@ -13,6 +13,8 @@ const env = Astro.locals.runtime?.env as
 const heroVariant = normalizeHeroVariant(
   await env?.HERO_CONFIG_KV?.get('hero_variant'),
 );
+
+export const prerender = true;
 ---
 
 <WebLayout

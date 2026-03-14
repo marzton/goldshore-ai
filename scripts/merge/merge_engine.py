@@ -4,20 +4,25 @@ from datetime import datetime
 from json_merge import deep_merge_json
 from workflow_dedupe import merge_workflows
 
+SKIP_LEGACY_DIRS = {
+    ".git",
+    ".hg",
+    ".svn",
+    "__pycache__",
+}
+
+
 EXCLUDED_DIRS = {".git", ".hg", ".svn", "__pycache__"}
 
 
-
+EXCLUDED_DIRS = {".git", ".hg", ".svn", "__pycache__"}
 
 
 def sha256(path):
     h = hashlib.sha256()
-    try:
-        with open(path, "rb") as f:
-            while chunk := f.read(8192):
-                h.update(chunk)
-    except OSError as e:
-        raise RuntimeError(f"Failed to compute SHA-256 for '{path}': {e}") from e
+    with open(path, "rb") as f:
+        while chunk := f.read(8192):
+            h.update(chunk)
     return h.hexdigest()
 
 
@@ -33,15 +38,10 @@ def copy_file(src, dest):
 def archive_legacy(src_root, archive_root):
     if Path(archive_root).exists():
         return
-    try:
-        shutil.copytree(src_root, archive_root)
-    except OSError as e:
-        raise RuntimeError(
-            f"Failed to archive legacy directory from '{src_root}' to '{archive_root}': {e}"
-        ) from e
+    shutil.copytree(src_root, archive_root)
 
 
-def handle_file(src, dest, report, mode, target_root):
+def handle_file(src, dest, report, mode):
     if not dest.exists():
         if mode == "apply":
             copy_file(src, dest)
@@ -62,13 +62,7 @@ def handle_file(src, dest, report, mode, target_root):
         report["json_merged"].append(str(dest))
         return
 
-    # Use a Path-based check to ensure the file is under the .github/workflows directory
-    try:
-        rel_to_target = dest.relative_to(target_root)
-    except ValueError:
-        rel_to_target = None
-
-    if rel_to_target is not None and rel_to_target.parts[:2] == (".github", "workflows"):
+    if ".github/workflows" in str(dest):
         if mode == "apply":
             merge_workflows(dest, src)
         report["workflow_merged"].append(str(dest))
@@ -90,7 +84,6 @@ def run(target, legacy, archive, mode):
 
     legacy = Path(legacy)
     target = Path(target)
-    archive = Path(archive)
 
     mutate = mode == "apply"
 
@@ -100,10 +93,10 @@ def run(target, legacy, archive, mode):
             src = Path(root) / f
             rel = src.relative_to(legacy)
             dest = target / rel
-            handle_file(src, dest, report, mode, target)
+            handle_file(src, dest, report, mode)
 
     if mutate:
-        archive_legacy(legacy, archive)
+        archive_legacy(legacy, target / archive)
 
     Path("reports/merge").mkdir(parents=True, exist_ok=True)
     with open("reports/merge/merge-report.json", "w") as r:

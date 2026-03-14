@@ -10,12 +10,12 @@
     "test": "tsx --test src/routes/*.test.ts"
   },
   "dependencies": {
-    "@goldshore/ai-providers": "workspace:*",
-    "@goldshore/auth": "workspace:*",
-    "@goldshore/schema": "workspace:*",
-    "@goldshore/utils": "workspace:*",
+    "@goldshore/ai-providers": "workspace:^",
+    "@goldshore/auth": "workspace:^",
+    "@goldshore/schema": "workspace:^",
+    "@goldshore/utils": "workspace:^",
     "@types/sanitize-html": "^2.16.0",
-    "hono": "^4.12.7",
+    "hono": "^4.12.4",
     "safe-stable-stringify": "^2.5.0",
     "sanitize-html": "^2.17.1"
   },
@@ -23,6 +23,6 @@
     "@cloudflare/workers-types": "^4.20260301.1",
     "tsx": "^4.7.1",
     "typescript": "^5.4.0",
-    "wrangler": "^4.73.0"
+    "wrangler": "^4.71.0"
   }
 }

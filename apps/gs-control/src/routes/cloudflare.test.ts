@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, after, mock } from 'node:test';
+import { describe, it, beforeEach, mock } from 'node:test';
 import assert from 'node:assert';
 import { Hono } from 'hono';
 import { cloudflareRoutes } from './cloudflare.ts';
@@ -31,14 +31,6 @@ describe('Cloudflare Routes Middleware', () => {
     global.fetch = mock.fn(async () => {
       return new Response(JSON.stringify({ error: "Fetch not mocked" }), { status: 500 });
     });
-  });
-
-  after(() => {
-    global.fetch = originalFetch;
-  });
-
-  after(() => {
-    global.fetch = originalFetch;
   });
 
   // Helper to create a request with specific claims
@@ -258,6 +250,27 @@ describe('Cloudflare Routes Middleware', () => {
     // Check audit log
     assert.strictEqual(auditLogs.length, 1);
     assert.strictEqual(auditLogs[0].action, "cloudflare:pages:list");
+    assert.strictEqual(auditLogs[0].status, "error");
+    assert.strictEqual(auditLogs[0].metadata.message, "Simulated fetch error");
+  });
+
+  it('should handle errors on /workers/status route', async () => {
+    global.fetch = mock.fn(async () => {
+      throw new Error("Simulated fetch error");
+    });
+
+    const response = await createRequest({
+      email: 'admin@example.com',
+      roles: ['admin'],
+    }, '/workers/status', 'GET');
+
+    assert.strictEqual(response.status, 502);
+    const body = await response.json() as any;
+    assert.deepStrictEqual(body, { error: "Cloudflare API request failed." });
+
+    // Check audit log
+    assert.strictEqual(auditLogs.length, 1);
+    assert.strictEqual(auditLogs[0].action, "cloudflare:workers:status");
     assert.strictEqual(auditLogs[0].status, "error");
     assert.strictEqual(auditLogs[0].metadata.message, "Simulated fetch error");
   });

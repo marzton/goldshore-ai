@@ -1,6 +1,8 @@
 import { Hono } from 'hono';
 import { loadSystemSyncSnapshot } from './system.config';
-import { ServiceStatusSchema } from '@goldshore/schema';
+import {
+  ServiceStatusSchema,
+} from '@goldshore/schema';
 
 const internal = new Hono<{ Bindings: any }>();
 

@@ -1,107 +1,45 @@
 name = "gs-api"
 main = "src/index.ts"
-compatibility_date = "2025-10-08"
+compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
 
-[vars]
-ENV = "production"
-CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
-CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
+workers_dev = false
 
-# Default / Development Bindings
-[[kv_namespaces]]
-binding = "KV"
-id = "9cc2209906a94851b704be57543987a9"
-
-# Keep split namespaces available for migration work while handlers continue using KV.
-[[kv_namespaces]]
-binding = "GS_CONFIG"
-id = "5f13370575784c9dacff522121104cb3"
-
-[[kv_namespaces]]
-binding = "GS_API_DATA"
-id = "9cc2209906a94851b704be57543987a9"
-
-[[d1_databases]]
-binding = "DB"
-database_name = "gs-api-db"
-database_id = "gs-api-db"
-
-[[r2_buckets]]
-binding = "ASSETS"
-bucket_name = "gs-api-assets"
-
-[ai]
-binding = "AI"
-
-# Production Environment Overrides
-[env.production]
-
-[env.production.vars]
-ENV = "production"
-CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
-CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
-
-[[env.production.kv_namespaces]]
-binding = "KV"
-id = "9cc2209906a94851b704be57543987a9"
-
-[[env.production.kv_namespaces]]
-binding = "KV"
-id = "9cc2209906a94851b704be57543987a9"
-
-[[env.production.kv_namespaces]]
-binding = "GS_CONFIG"
-id = "5f13370575784c9dacff522121104cb3"
-
-[[env.production.kv_namespaces]]
-binding = "GS_API_DATA"
-id = "9cc2209906a94851b704be57543987a9"
-
-[[env.production.d1_databases]]
-binding = "DB"
-database_name = "gs-api-db"
-database_id = "gs-api-db"
-
-[[env.production.r2_buckets]]
-binding = "ASSETS"
-bucket_name = "gs-api-assets"
-
-[env.production.ai]
-binding = "AI"
-
-# Backward-compatible alias for existing build scripts (`--env prod`)
 [env.prod]
+routes = [
+  { pattern = "api.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
 
 [env.prod.vars]
 ENV = "production"
+
+# Sentinel: Audience tag for Cloudflare Access.
+# CRITICAL: This must be set to the specific Application Audience (AUD) tag
+# for the GoldShore API service to prevent token reuse from other apps.
 CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
+
+# Sentinel: Team domain for Cloudflare Access (e.g., goldshore.cloudflareaccess.com).
+# Used to fetch JWKS for token verification.
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
+CONTROL_SYNC_TOKEN = "set-a-shared-secret"
 
 [[env.prod.kv_namespaces]]
 binding = "KV"
-id = "9cc2209906a94851b704be57543987a9"
+id = "gs_api_kv_001"
+
 
 [[env.prod.kv_namespaces]]
-binding = "KV"
-id = "9cc2209906a94851b704be57543987a9"
-
-[[env.prod.kv_namespaces]]
-binding = "GS_CONFIG"
-id = "5f13370575784c9dacff522121104cb3"
-
-[[env.prod.kv_namespaces]]
-binding = "GS_API_DATA"
-id = "9cc2209906a94851b704be57543987a9"
-
-[[env.prod.d1_databases]]
-binding = "DB"
-database_name = "gs-api-db"
-database_id = "gs-api-db"
+binding = "CONTROL_LOGS"
+id = "gs_control_logs_001"
 
 [[env.prod.r2_buckets]]
 binding = "ASSETS"
-bucket_name = "gs-api-assets"
+bucket_name = "gs-assets"
+
+[[env.prod.d1_databases]]
+binding = "DB"
+database_name = "goldshore"
+database_id = "gs_db_001"
 
 [env.prod.ai]
 binding = "AI"

@@ -1,11 +1,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { execSync, execFileSync } from 'node:child_process';
+import { execSync } from 'node:child_process';
 
 // --- Configuration Constants ---
 const REPORT_PATH = 'docs/ci/CURRENT_STATE.md';
 const APPS_DIR = 'apps';
 const WORKFLOW_DIR = '.github/workflows';
+
 const ALLOWED_APPS = [
   'gs-web', 'gs-admin', 'gs-api', 'gs-mail', 'gs-gateway', 'gs-agent', 'gs-control',
 ];
@@ -44,12 +45,8 @@ const appLevelIssues = [];
 const run = (cmd) => execSync(cmd, { encoding: 'utf8' }).trim();
 const tryRun = (cmd) => { try { return run(cmd); } catch { return null; } };
 const gitRefExists = (ref) => {
-  try {
-    execFileSync('git', ['rev-parse', '--verify', ref], { stdio: 'ignore' });
-    return true;
-  } catch {
-    return false;
-  }
+  try { execSync(`git rev-parse --verify ${ref}`, { stdio: 'ignore' }); return true; }
+  catch { return false; }
 };
 
 function resolveBaseRef() {
@@ -59,18 +56,7 @@ function resolveBaseRef() {
 }
 
 function getBranchInfo() {
-  let branch;
-  try {
-    branch = run('git rev-parse --abbrev-ref HEAD');
-  } catch (error) {
-    return {
-      branch: 'UNKNOWN',
-      baseRef: 'main (unavailable)',
-      behind: 0,
-      ahead: 0,
-      divergenceNote: '⚠️ Failed to determine current git branch (git rev-parse --abbrev-ref HEAD). Ensure this script is run inside a git repository. Divergence defaults to 0/0.',
-    };
-  }
+  const branch = run('git rev-parse --abbrev-ref HEAD');
   const baseRef = resolveBaseRef();
   if (!baseRef) {
     return {
@@ -93,13 +79,8 @@ function getCiStatus(branch) {
     : tryRun(`gh pr list --head "${branch}" --state open --limit 1 --json number --jq '.[0].number'`);
 
   if (prNumber) {
-    const prNumberStr = String(prNumber).trim();
-    if (!/^[0-9]+$/.test(prNumberStr)) {
-      return { summary: '⚠️ Detected PR identifier is not a valid integer; skipping detailed check rollup.' };
-    }
-
-    const prData = tryRun(`gh pr view ${prNumberStr} --json number,url,statusCheckRollup`);
-    if (!prData) return { summary: `⚠️ Unable to fetch checks for PR #${prNumberStr}.` };
+    const prData = tryRun(`gh pr view ${prNumber} --json number,url,statusCheckRollup`);
+    if (!prData) return { summary: `⚠️ Unable to fetch checks for PR #${prNumber}.` };
 
     const pr = JSON.parse(prData);
     const checks = (pr.statusCheckRollup || []).map(item => ({
