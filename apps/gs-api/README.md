@@ -77,10 +77,23 @@ Install dependencies:
 pnpm -C apps/gs-api add openai
 ```
 
-Set these environment variables in your local shell, `.env`, or Wrangler secret store before running gateway calls:
+Set these environment variables in your local shell, `.env`, `.dev.vars`, or Wrangler secret store before running gateway calls:
 
 - `CF_AIG_TOKEN` - Cloudflare API token with AI Gateway Read/Edit permissions.
 - `CF_GATEWAY_URL` - `https://gateway.ai.cloudflare.com/v1/f77de112d2019e5456a3198a8bb50bd2/gs-gateway/compat`
+
+You can bootstrap local config with:
+
+```bash
+cp apps/gs-api/.env.example apps/gs-api/.env
+```
+
+For Worker runtime secrets, set:
+
+```bash
+pnpm -C apps/gs-api wrangler secret put CF_AIG_TOKEN
+pnpm -C apps/gs-api wrangler secret put CF_GATEWAY_URL
+```
 
 Run the validation script:
 
@@ -88,4 +101,4 @@ Run the validation script:
 pnpm -C apps/gs-api test:gateway
 ```
 
-The script sends a `Hello world` prompt and prints `x-cf-ai-gateway-id` when Cloudflare returns it.
+The script auto-loads `.env` and `.dev.vars`, sends a `Hello world` prompt, and prints `x-cf-ai-gateway-id` when Cloudflare returns it.
