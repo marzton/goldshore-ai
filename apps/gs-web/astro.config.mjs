@@ -6,6 +6,9 @@ export default createAstroConfig({
     imageService: 'passthrough',
     mode: 'directory'
   }),
+  session: {
+    driver: 'memory'
+  },
   site: 'https://goldshore.ai',
   redirects: {
     '/developer-hub': '/developer',
