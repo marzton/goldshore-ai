@@ -16,3 +16,12 @@ Please provide as much context as possible when using these tags, including:
 *   Steps to reproduce the error or issue.
 *   Any relevant logs or error messages.
 *   The expected outcome.
+
+## Commit / PR Description Header
+
+At the top of every commit description or PR description, include a one-line merge strategy note that clearly states whether the branch should be merged with a standard merge commit or squashed.
+
+Example:
+
+*   `Merge Strategy: Squash`
+*   `Merge Strategy: Merge Commit`
