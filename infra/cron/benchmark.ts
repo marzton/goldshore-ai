@@ -65,7 +65,7 @@ async function checkCloudflareConcurrent() {
             await openOpsIssue();
           }
         } else if (check.type === "dns_records") {
-          const dns = await getDNSRecords();
+          await getDNSRecords();
           // Mock logic
         } else if (check.type === "worker_health") {
           const bindings = await getWorkerBindings(check.script);
