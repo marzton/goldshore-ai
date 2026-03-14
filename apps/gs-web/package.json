@@ -17,13 +17,14 @@
     "verify:dist": "node ../../scripts/verify-web-dist.mjs"
   },
   "dependencies": {
+    "@goldshore/brand": "workspace:*",
     "@goldshore/config": "workspace:^",
     "@goldshore/theme": "workspace:*",
     "@goldshore/ui": "workspace:*",
     "@goldshore/utils": "workspace:*",
     "astro": "^5.18.0",
     "fuse.js": "^7.1.0",
-    "@goldshore/brand": "workspace:*"
+    "vanilla-tilt": "^1.8.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
