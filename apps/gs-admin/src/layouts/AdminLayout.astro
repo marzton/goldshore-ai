@@ -1,10 +1,7 @@
 ---
 import Sidebar from '../components/Sidebar.astro';
 import Topbar from '../components/Topbar.astro';
-import '@goldshore/theme/styles/tokens.css';
-import '@goldshore/theme/styles/base.css';
-import '@goldshore/theme/styles/components.css';
-import '@goldshore/theme/styles/layout.css';
+import '@goldshore/theme';
 import type { AdminPermission, AdminRole } from '@goldshore/auth';
 
 interface Props {
@@ -14,7 +11,7 @@ interface Props {
 }
 
 const { title = 'GoldShore Admin', requiredPermission, requiredRole } = Astro.props;
-const logoSrc = '/assets/logo.svg';
+const logoSrc = '/packages/brand/logo-penrose.svg';
 
 const session = Astro.locals.adminSession ?? {
   roles: [],
@@ -34,7 +31,7 @@ const isAuthorized = isRoleAllowed && isPermissionAllowed;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script>
-      import { initTheme } from '@goldshore/theme/src/theme-manager';
+      import { initTheme } from '@goldshore/theme/manager';
       initTheme();
     </script>
     <script>
@@ -103,7 +100,6 @@ const isAuthorized = isRoleAllowed && isPermissionAllowed;
       });
     </script>
     <style is:global>
-      /* Mobile Sidebar Logic */
       .sidebar-toggle {
         display: none;
         background: none;
@@ -119,7 +115,7 @@ const isAuthorized = isRoleAllowed && isPermissionAllowed;
       .sidebar-close {
         display: none;
         background: none;
-        border: 1px solid rgba(255,255,255,0.1);
+        border: 1px solid var(--gs-color-border);
         color: inherit;
         font-size: 1rem;
         cursor: pointer;
@@ -132,19 +128,12 @@ const isAuthorized = isRoleAllowed && isPermissionAllowed;
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        margin-bottom: 1rem; /* Adjust as needed based on theme */
-      }
-
-      /* Only apply margin if not already handled by theme's sidebar layout */
-      .gs-admin-sidebar .gs-logo {
-        margin-bottom: 0 !important; /* Reset if flex container handles it */
       }
 
       .sidebar-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(0,0,0,0.5);
-        backdrop-filter: blur(2px);
+        background: rgba(0, 0, 0, 0.5);
         z-index: 99;
         opacity: 0;
         pointer-events: none;
@@ -163,15 +152,12 @@ const isAuthorized = isRoleAllowed && isPermissionAllowed;
 
         .gs-admin-sidebar {
           position: fixed;
-          top: 0; bottom: 0; left: 0;
+          inset: 0 auto 0 0;
           width: 280px;
           z-index: 100;
           transform: translateX(-100%);
           transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 5px 0 25px rgba(0,0,0,0.5);
-          background: #050505; /* Deep dark background fallback */
-          border-right: 1px solid rgba(255,255,255,0.1);
-          padding: 1.5rem;
+          box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
           overflow-y: auto;
         }
 
@@ -191,10 +177,6 @@ const isAuthorized = isRoleAllowed && isPermissionAllowed;
           min-height: 100vh;
           display: flex;
           flex-direction: column;
-        }
-
-        .gs-admin-topbar {
-            padding-left: 1rem; /* Ensure space for toggle */
         }
       }
     </style>
