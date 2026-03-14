@@ -1,6 +1,6 @@
-# wrangler.toml for the API Worker
+# wrangler.toml for the API Worker (canonical gs-api service; legacy alias goldshore-api)
 
-name = "gs-api" # Base name, will be suffixed per environment
+name = "gs-api" # Canonical Worker base name; will be suffixed per environment
 main = "../../apps/api-worker/src/index.ts"
 compatibility_date = "2024-03-20"
 tsconfig = "../../apps/api-worker/tsconfig.json"
