@@ -68,3 +68,24 @@ Notes:
 ```bash
 pnpm --filter ./apps/gs-api deploy
 ```
+
+## AI Gateway (gs-gateway) local setup
+
+Install dependencies:
+
+```bash
+pnpm -C apps/gs-api add openai
+```
+
+Set these environment variables in your local shell, `.env`, or Wrangler secret store before running gateway calls:
+
+- `CF_AIG_TOKEN` - Cloudflare API token with AI Gateway Read/Edit permissions.
+- `CF_GATEWAY_URL` - `https://gateway.ai.cloudflare.com/v1/f77de112d2019e5456a3198a8bb50bd2/gs-gateway/compat`
+
+Run the validation script:
+
+```bash
+pnpm -C apps/gs-api test:gateway
+```
+
+The script sends a `Hello world` prompt and prints `x-cf-ai-gateway-id` when Cloudflare returns it.
