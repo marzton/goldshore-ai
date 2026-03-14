@@ -5,8 +5,8 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@astrojs/cloudflare': ^12.6.12
-  '@astrojs/adapter-cloudflare': ^12.6.12
+  '@astrojs/cloudflare': 12.6.12
+  '@astrojs/adapter-cloudflare': 12.6.12
   postal-mime: 2.7.3
   wrangler: ^4.63.0
   typescript: ^5.4.2
@@ -160,6 +160,9 @@ importers:
       hono:
         specifier: ^4.12.4
         version: 4.12.7
+      openai:
+        specifier: ^6.29.0
+        version: 6.29.0(ws@8.18.0)(zod@4.3.6)
       safe-stable-stringify:
         specifier: ^2.5.0
         version: 2.5.0
@@ -2718,6 +2721,18 @@ packages:
 
   oniguruma-to-es@4.3.4:
     resolution: {integrity: sha512-3VhUGN3w2eYxnTzHn+ikMI+fp/96KoRSVK9/kMTcFqj1NRDh2IhQCKvYxDnWePKRXY/AqH+Fuiyb7VHSzBjHfA==}
+
+  openai@6.29.0:
+    resolution: {integrity: sha512-YxoArl2BItucdO89/sN6edksV0x47WUTgkgVfCgX7EuEMhbirENsgYe5oO4LTjBL9PtdKtk2WqND1gSLcTd2yw==}
+    hasBin: true
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.25 || ^4.0
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -6543,6 +6558,11 @@ snapshots:
       oniguruma-parser: 0.12.1
       regex: 6.1.0
       regex-recursion: 6.0.2
+
+  openai@6.29.0(ws@8.18.0)(zod@4.3.6):
+    optionalDependencies:
+      ws: 8.18.0
+      zod: 4.3.6
 
   optionator@0.9.4:
     dependencies:
