@@ -16,10 +16,10 @@ name = "gs-api-dev"
 
 [env.preview]
 name = "gs-api-preview"
-# route = { pattern = "api-preview.goldshore.org/*", custom_domain = true }
+# route = { pattern = "api-preview.goldshore.ai/*", custom_domain = true }
 # Bindings for the preview environment go here.
 
 [env.prod]
 name = "gs-api-prod"
-# route = { pattern = "api.goldshore.org/*", custom_domain = true }
+# route = { pattern = "api.goldshore.ai/*", custom_domain = true }
 # Bindings for the production environment go here.
