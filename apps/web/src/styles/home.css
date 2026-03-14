@@ -317,8 +317,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .shooting::before,
-  .shooting::after,
+  .shooting-stars::before,
+  .shooting-stars::after,
+  .pulse-dot,
+  .logo-path,
   .matrix-box::after {
     animation: none;
   }
