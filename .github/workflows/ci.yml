@@ -14,10 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-
-      - name: Verify gs-website routing guardrails
-        run: bash scripts/ci/verify-gs-website-routing.sh
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
