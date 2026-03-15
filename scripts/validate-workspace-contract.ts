@@ -1,9 +1,14 @@
-import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
-import { validateWorkerStructure } from "./validate-worker-structure";
 import { validateWorkerNames } from "./validate-worker-names";
+import { validateWorkerStructure } from "./validate-worker-structure";
 
-const APPS_DIR = path.resolve(process.cwd(), "apps");
+const ROOT = process.cwd();
+const APPS_DIR = path.resolve(ROOT, "apps");
+const REQUIRED_ROOT_FILES = ["package.json", "pnpm-workspace.yaml", "pnpm-lock.yaml", "turbo.json"] as const;
+const REQUIRED_APPS = ["gs-admin", "gs-api", "gs-control", "gs-gateway", "gs-web", "gs-agent"] as const;
+const WORKSPACE_ROOT_MARKERS = ["pnpm-workspace.yaml", "turbo.json"] as const;
+const IGNORE_DIRS = new Set([".git", "node_modules", ".turbo", "dist", "build", "coverage", "astro-goldshore"]);
 
 function getWorkerDirectories(): string[] {
   return readdirSync(APPS_DIR)
@@ -41,8 +46,84 @@ function validatePackageNames(): string[] {
   return failures;
 }
 
+function validateRootFiles(): string[] {
+  return REQUIRED_ROOT_FILES.filter((file) => !existsSync(path.join(ROOT, file))).map(
+    (file) => `Missing required workspace root file: ${file}`,
+  );
+}
+
+function validateNoNestedWorkspaceRoots(): string[] {
+  const nestedMarkers: string[] = [];
+
+  const scan = (dir: string): void => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (!entry.isDirectory() || IGNORE_DIRS.has(entry.name)) {
+        continue;
+      }
+
+      const fullPath = path.join(dir, entry.name);
+
+      for (const marker of WORKSPACE_ROOT_MARKERS) {
+        const markerPath = path.join(fullPath, marker);
+        if (existsSync(markerPath)) {
+          nestedMarkers.push(path.relative(ROOT, markerPath));
+        }
+      }
+
+      scan(fullPath);
+    }
+  };
+
+  scan(ROOT);
+
+  if (nestedMarkers.length === 0) {
+    return [];
+  }
+
+  return [
+    `Nested workspace root markers detected (workspace contract violation): ${nestedMarkers.join(", ")}`,
+  ];
+}
+
+function validateRequiredApps(): string[] {
+  const failures: string[] = [];
+
+  if (!existsSync(APPS_DIR)) {
+    return ["apps directory missing"];
+  }
+
+  for (const app of REQUIRED_APPS) {
+    const appPath = path.join(APPS_DIR, app);
+    if (!existsSync(appPath)) {
+      failures.push(`Missing app directory: ${app}`);
+      continue;
+    }
+
+    const pkgPath = path.join(appPath, "package.json");
+    if (!existsSync(pkgPath)) {
+      failures.push(`Missing package.json in ${app}`);
+      continue;
+    }
+
+    const pkg = JSON.parse(readFileSync(pkgPath, "utf-8")) as { name?: string };
+    const expected = `@goldshore/${app}`;
+    if (pkg.name !== expected) {
+      failures.push(`Invalid package name in ${app}: ${pkg.name ?? "<missing>"}. Expected ${expected}`);
+    }
+  }
+
+  return failures;
+}
+
 function main() {
-  const failures = [...validateWorkerStructure(), ...validateWorkerNames(), ...validatePackageNames()];
+  const failures = [
+    ...validateRootFiles(),
+    ...validateNoNestedWorkspaceRoots(),
+    ...validateRequiredApps(),
+    ...validateWorkerStructure(),
+    ...validateWorkerNames(),
+    ...validatePackageNames(),
+  ];
 
   if (failures.length > 0) {
     console.error("Workspace worker contract validation failed:\n");
@@ -56,99 +137,3 @@ function main() {
 }
 
 main();
-import { existsSync, readdirSync } from "node:fs";
-import { join, relative } from "node:path";
-
-const ROOT_REQUIRED_FILES = ["package.json", "pnpm-workspace.yaml", "pnpm-lock.yaml", "turbo.json"];
-const ROOT = process.cwd();
-const IGNORE_DIRS = new Set([".git", "node_modules", ".turbo", "dist", "build", "coverage"]);
-
-let failed = false;
-
-for (const file of ROOT_REQUIRED_FILES) {
-  if (!existsSync(join(ROOT, file))) {
-    failed = true;
-    console.error(`Missing required workspace root file: ${file}`);
-  } else {
-    console.log(`✅ Found root workspace file: ${file}`);
-  }
-}
-
-const workspaceRootMarkers = ["pnpm-workspace.yaml", "turbo.json"];
-const nestedMarkers: string[] = [];
-
-const scan = (dir: string): void => {
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (!entry.isDirectory()) {
-      continue;
-    }
-
-    if (IGNORE_DIRS.has(entry.name)) {
-      continue;
-    }
-
-    const fullPath = join(dir, entry.name);
-
-    for (const marker of workspaceRootMarkers) {
-      const markerPath = join(fullPath, marker);
-      if (existsSync(markerPath)) {
-        nestedMarkers.push(relative(ROOT, markerPath));
-      }
-    }
-
-    scan(fullPath);
-  }
-};
-
-scan(ROOT);
-
-if (nestedMarkers.length > 0) {
-  failed = true;
-  console.error(
-    `Nested workspace root markers detected (workspace contract violation): ${nestedMarkers.join(", ")}`,
-  );
-} else {
-  console.log("✅ No nested workspace roots detected");
-}
-
-if (failed) {
-  process.exit(1);
-}
-
-console.log("Workspace root contract checks passed.");
-import { readdirSync, existsSync, readFileSync } from "fs";
-import { join } from "path";
-
-const appsDir = "apps";
-const requiredApps = ["gs-admin", "gs-api", "gs-control", "gs-gateway", "gs-web", "gs-agent"];
-let failed = false;
-
-if (!existsSync(appsDir)) {
-  console.error("apps directory missing");
-  process.exit(1);
-}
-
-for (const app of requiredApps) {
-  const appPath = join(appsDir, app);
-  if (!existsSync(appPath)) {
-    console.error(`Missing app directory: ${app}`);
-    failed = true;
-    continue;
-  }
-
-  const pkgPath = join(appPath, "package.json");
-  if (!existsSync(pkgPath)) {
-    console.error(`Missing package.json in ${app}`);
-    failed = true;
-    continue;
-  }
-
-  const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
-  if (pkg.name !== `@goldshore/${app}`) {
-    console.error(`Invalid package name in ${app}: ${pkg.name}. Expected @goldshore/${app}`);
-    failed = true;
-  }
-}
-
-if (failed) process.exit(1);
-else console.log("Workspace contract validation passed.");

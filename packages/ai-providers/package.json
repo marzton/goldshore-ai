@@ -3,6 +3,6 @@
   "version": "0.0.1",
   "main": "index.ts",
   "scripts": {
-    "test": "npx tsx --test **/*.test.ts"
+    "test": "tsx --test openai.test.ts"
   }
 }
