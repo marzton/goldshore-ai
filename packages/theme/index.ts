@@ -18,12 +18,6 @@ function initNav() {
   const panel = document.querySelector<HTMLElement>('[data-gs-mobile-panel]');
   if (!toggle || !panel) return;
 
-  const setFoldExpanded = (wrapper: HTMLElement, expanded: boolean) => {
-    const trigger = wrapper.querySelector<HTMLButtonElement>('[data-gs-nav-fold-trigger]');
-    wrapper.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-    trigger?.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-  };
-
   const setOpen = (open: boolean) => {
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     panel.classList.toggle('is-open', open);
@@ -38,30 +32,12 @@ function initNav() {
 
   panel.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
-
-    const foldTrigger = t.closest<HTMLElement>('[data-gs-nav-fold-trigger]');
-    if (foldTrigger) {
-      const wrapper = foldTrigger.closest<HTMLElement>('[data-gs-nav-fold]');
-      if (wrapper) {
-        const expanded = wrapper.getAttribute('aria-expanded') === 'true';
-        setFoldExpanded(wrapper, !expanded);
-      }
-      return;
-    }
-
-    if (t.matches('[data-gs-nav-close]') || t.matches('[data-gs-mobile-panel]') || t.closest('.nav-fold-link')) {
+    if (
+      t.matches('[data-gs-nav-close]') ||
+      t.matches('[data-gs-mobile-panel]') ||
+      t.closest('.gs-mobile-link-item')
+    ) {
       setOpen(false);
-    }
-  });
-
-  panel.addEventListener('keydown', (e) => {
-    const target = e.target as HTMLElement;
-    if ((e.key === 'Enter' || e.key === ' ') && target.matches('[data-gs-nav-fold-trigger]')) {
-      e.preventDefault();
-      const wrapper = target.closest<HTMLElement>('[data-gs-nav-fold]');
-      if (!wrapper) return;
-      const expanded = wrapper.getAttribute('aria-expanded') === 'true';
-      setFoldExpanded(wrapper, !expanded);
     }
   });
 
@@ -83,6 +59,17 @@ function initModal() {
 
   let opener: HTMLElement | null = null;
 
+  const isAriaHidden = (el: HTMLElement | null): boolean => {
+    let current: HTMLElement | null = el;
+    while (current && current !== panel) {
+      if (current.getAttribute('aria-hidden') === 'true') {
+        return true;
+      }
+      current = current.parentElement;
+    }
+    return false;
+  };
+
   const getFocusableElements = () => {
     if (!panel) return [];
 
@@ -90,9 +77,7 @@ function initModal() {
       'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
 
     return Array.from(panel.querySelectorAll<HTMLElement>(selectors)).filter(
-      (el) =>
-        !el.hasAttribute('disabled') &&
-        el.getAttribute('aria-hidden') !== 'true',
+      (el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true',
     );
   };
 
@@ -143,12 +128,11 @@ function initModal() {
         e.preventDefault();
         last.focus();
       }
-      return;
-    }
-
-    if (active === last) {
-      e.preventDefault();
-      first.focus();
+    } else {
+      if (active === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
   };
 
@@ -163,7 +147,9 @@ function initModal() {
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', onKeydown);
+  window.addEventListener('keydown', (e) =>
+    e.key === 'Escape' ? closeModal() : null,
+  );
 }
 
 function getModalTemplate(variant: string): string {
@@ -186,23 +172,16 @@ function getModalTemplate(variant: string): string {
   }
 
   return `
-    <div class="gs-modal-head">
-      <div class="gs-kicker">Strategic Intelligence Sync</div>
-      <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Access High-Fidelity Signals</h2>
-      <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Join our weekly briefing on liquidity shifts, macro regime transitions, and institutional risk management.</p>
+      <div class="gs-modal-head">
+      <div class="gs-kicker">Signal Brief</div>
+      <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Subscribe</h2>
+      <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Periodic updates on releases, systems, and operational tooling.</p>
     </div>
     <form class="gs-form" action="/api/subscribe" method="POST">
-      <label class="gs-label">Professional Email</label>
+      <label class="gs-label">Email</label>
       <input class="gs-input" name="email" type="email" autocomplete="email" required />
-      <label class="gs-label">Investor Type</label>
-      <select class="gs-input" name="investorType" required>
-        <option value="institutional">Institutional</option>
-        <option value="family-office">Family Office</option>
-        <option value="uhnw">UHNW</option>
-        <option value="quantitative-lead">Quantitative Lead</option>
-      </select>
-      <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Synchronize</button>
-      <div class="gs-micro gs-muted">No spam. No public list. Institutional distribution only.</div>
+      <button class="gs-button gs-button-solid gs-edge-scan" type="submit">Request Access</button>
+      <div class="gs-micro gs-muted">No spam. No public list. Controlled distribution.</div>
     </form>
   `;
 }
