@@ -85,7 +85,7 @@ export default {
       return;
     }
 
-    const parsedEntry = EmailLogSchema.safeParse({
+    const newEntry = {
       id: crypto.randomUUID(),
       from: sender,
       to: recipient,
@@ -101,7 +101,7 @@ export default {
         (async () => {
           try {
             const rawLogs = await env.GS_CONFIG.get('EMAIL_INBOX_LOGS');
-            let currentLogs: Array<typeof validation.data> = [];
+            let currentLogs: EmailLog[] = [];
 
             if (rawLogs) {
               try {

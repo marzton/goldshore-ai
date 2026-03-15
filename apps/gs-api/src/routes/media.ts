@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { Env, Variables } from '../types';
+import sanitizeHtml from 'sanitize-html';
 
 type MediaRecord = {
   id: string;
@@ -19,17 +20,64 @@ const ALLOWED_MIME_TYPES = new Map([
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
-const SCRIPT_LIKE_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style)[\s\S]*?>[\s\S]*?<\/\1>/gi;
-const SCRIPT_LIKE_SELF_CLOSING_REGEX = /<(script|iframe|object|embed|link|meta|style)\b[^>]*\/?>/gi;
-const EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
-const JAVASCRIPT_URL_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*javascript:[\s\S]*?\1/gi;
-
 const sanitizeSvg = (input: string): string =>
-  input
-    .replace(SCRIPT_LIKE_TAGS_REGEX, '')
-    .replace(SCRIPT_LIKE_SELF_CLOSING_REGEX, '')
-    .replace(EVENT_HANDLER_ATTR_REGEX, '')
-    .replace(JAVASCRIPT_URL_REGEX, '');
+  sanitizeHtml(input, {
+    allowedTags: [
+      'svg',
+      'g',
+      'path',
+      'circle',
+      'ellipse',
+      'line',
+      'polyline',
+      'polygon',
+      'rect',
+      'text',
+      'tspan',
+      'defs',
+      'linearGradient',
+      'radialGradient',
+      'stop',
+      'pattern',
+      'clipPath',
+      'mask',
+      'use',
+      'symbol',
+      'view',
+      'title',
+      'desc'
+    ],
+    allowedAttributes: {
+      svg: ['width', 'height', 'viewBox', 'xmlns'],
+      '*': [
+        'id',
+        'class',
+        'x',
+        'y',
+        'cx',
+        'cy',
+        'r',
+        'rx',
+        'ry',
+        'd',
+        'x1',
+        'y1',
+        'x2',
+        'y2',
+        'points',
+        'transform',
+        'fill',
+        'stroke',
+        'stroke-width',
+        'opacity'
+      ]
+    },
+    allowedSchemes: ['http', 'https'],
+    allowedSchemesByTag: {
+      use: ['http', 'https']
+    },
+    allowProtocolRelative: false
+  });
 
 /**
  * [SOP] Media Asset Management
@@ -39,9 +87,34 @@ const sanitizeSvg = (input: string): string =>
 const media = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 media.get('/', async (c) => {
+  const query = c.req.query();
+  const rawLimit = query.limit;
+  const rawOffset = query.offset;
+
+  let limit = 100;
+  let offset = 0;
+
+  if (typeof rawLimit === 'string') {
+    const parsed = parseInt(rawLimit, 10);
+    if (!Number.isNaN(parsed) && parsed > 0 && parsed <= 500) {
+      limit = parsed;
+    }
+  }
+
+  if (typeof rawOffset === 'string') {
+    const parsed = parseInt(rawOffset, 10);
+    if (!Number.isNaN(parsed) && parsed >= 0) {
+      offset = parsed;
+    }
+  }
+
   const { results } = await c.env.DB
-    .prepare('SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT 100')
+    .prepare(
+      'SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT ? OFFSET ?'
+    )
+    .bind(limit, offset)
     .all<MediaRecord>();
+
   return c.json({ items: results ?? [] });
 });
 
@@ -93,7 +166,7 @@ media.post('/upload', async (c) => {
   }
 
   const id = crypto.randomUUID();
-  const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+  const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_').replace(/\.+/g, '.')}`;
 
   await c.env.ASSETS.put(objectKey, body, { httpMetadata: { contentType } });
 
