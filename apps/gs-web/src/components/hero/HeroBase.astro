@@ -2,6 +2,7 @@
 import HeroOrbital from './HeroOrbital.astro';
 import HeroDefense from './HeroDefense.astro';
 import HeroMinimal from './HeroMinimal.astro';
+import HeroCanonical from './HeroCanonical.astro';
 import type { HeroVariant } from './hero.config';
 
 const { variant } = Astro.props as { variant: HeroVariant };
@@ -10,6 +11,7 @@ const map = {
   orbital: HeroOrbital,
   defense: HeroDefense,
   minimal: HeroMinimal,
+  canonical: HeroCanonical,
 };
 
 const Selected = map[variant] ?? HeroOrbital;
