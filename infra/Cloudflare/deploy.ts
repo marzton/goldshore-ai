@@ -15,6 +15,17 @@ async function countTodayDeploys(deployments: any[]) {
   return deployments.filter((d: any) => (d.created_on || d.created_at || "").startsWith(today)).length;
 }
 
+function pagesCheckUrl(p: any): string {
+  if (typeof p.public_url === "string" && p.public_url.length > 0) {
+    return p.public_url;
+  }
+
+  // Backward-compatible fallback for environments that have not yet set public_url.
+  if (p.name === "gs-web") return "https://goldshore.ai/";
+  if (p.name === "gs-admin") return "https://admin.goldshore.ai/";
+  return `https://${p.name}.goldshore.ai/`;
+}
+
 async function deployPages(p: any) {
   const changed = changedPaths();
   if (p.skip_if_paths_only && pathsMatchOnly(changed, p.skip_if_paths_only)) {
@@ -29,8 +40,10 @@ async function deployPages(p: any) {
     return;
   }
 
+  const url = pagesCheckUrl(p);
+
   if (p.require_checks?.includes("smoke")) {
-    await smoke(`https://${p.name}.goldshore.org/`, 200).catch(()=>{});
+    await smoke(url, 200).catch(()=>{});
   }
 
   const status = await latestPagesStatus(p.name);
@@ -52,10 +65,10 @@ async function deployPages(p: any) {
   }
 
   if (p.require_checks?.includes("smoke")) {
-    await smoke(`https://${p.name}.goldshore.org/`, 200, 8000);
+    await smoke(url, 200, 8000);
   }
   if (p.require_checks?.includes("lighthouse")) {
-    await lighthouse(`https://${p.name}.goldshore.org/`, 0.8);
+    await lighthouse(url, 0.8);
   }
   console.log(`[pages:${p.name}] Deploy OK.`);
 }
@@ -85,7 +98,7 @@ async function deployWorker(w: any) {
   await cf.workers.deploy(w.script, fd);
 
   if (w.require_checks?.includes("smoke")) {
-    await smoke("https://api.goldshore.org/health", 200, 8000);
+    await smoke("https://api.goldshore.ai/health", 200, 8000);
   }
 
   console.log(`[worker:${w.script}] Deploy OK.`);
@@ -109,6 +122,8 @@ function redactSensitive(err: unknown): string {
     process.env.CF_API_TOKEN,
     process.env.CF_ACCOUNT_ID,
     process.env.CF_ZONE_ID,
+    process.env.CF_ACCESS_CLIENT_ID,
+    process.env.CF_ACCESS_CLIENT_SECRET,
   ].filter(Boolean) as string[]; // remove undefined/null
   let str = (err instanceof Error) ? (err.stack || err.message) : String(err);
   for (const value of SENSITIVE) {

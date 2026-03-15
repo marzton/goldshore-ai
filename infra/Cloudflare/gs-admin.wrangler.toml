@@ -1,4 +1,4 @@
-# wrangler.toml for the goldshore-admin Astro Pages app (for Pages Functions)
+# wrangler.toml for the gs-admin Astro Pages app (for Pages Functions; formerly goldshore-admin)
 
 name = "gs-admin" # Base name for Pages project
 
