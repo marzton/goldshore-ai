@@ -3,6 +3,7 @@ import Sidebar from '../components/Sidebar.astro';
 import Topbar from '../components/Topbar.astro';
 import '@goldshore/theme';
 import type { AdminPermission, AdminRole } from '@goldshore/auth';
+import { canonicalLogoPath } from '../lib/canonicalLogoPath';
 
 interface Props {
   title?: string;
@@ -15,7 +16,6 @@ const {
   requiredPermission,
   requiredRole,
 } = Astro.props;
-const canonicalLogoPath = '/logo/gs-penrose.svg';
 const logoSrc = canonicalLogoPath;
 
 const session = Astro.locals.adminSession ?? {

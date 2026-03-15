@@ -1,5 +1,6 @@
 ---
 import { SharedHeader } from '@goldshore/ui';
+import { canonicalLogoPath } from '../lib/canonicalLogoPath';
 import type { AdminPermission } from '@goldshore/auth';
 
 interface NavLink {
@@ -47,7 +48,6 @@ const navGroups: NavGroup[] = [
 ];
 
 const { logo, permissions = [] } = Astro.props;
-const canonicalLogoPath = '/logo/gs-penrose.svg';
 
 const visibleGroups = navGroups
   .map((group) => ({

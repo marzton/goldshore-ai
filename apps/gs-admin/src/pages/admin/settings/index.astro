@@ -1,29 +1,22 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import { Card, GSButton } from '@goldshore/ui';
-
-const domains = [
-  'goldshore.ai → gs-web (Cloudflare Pages)',
-  'admin.goldshore.ai → gs-admin',
-  'api.goldshore.ai → gs-api',
-  'gw.goldshore.ai → gs-gateway',
-  'ops.goldshore.ai → gs-control',
-  'Mail routing → gs-mail worker'
-];
+import { moduleDomainMappings as domains } from '../../../lib/goldshoreModules';
 ---
+
 <AdminLayout title="Settings">
   <section class="gs-grid columns-2">
     <Card>
       <div class="section-title"><span>🌐</span><h3>Domain & DNS</h3></div>
       <ul>
-        {domains.map((domain) => (
-          <li>{domain}</li>
-        ))}
+        {domains.map((domain) => <li>{domain}</li>)}
       </ul>
     </Card>
     <Card>
       <div class="section-title"><span>🛡</span><h3>Access & Identity</h3></div>
-      <p class="gs-helper">Cloudflare Access policies for admin, workers, and developer endpoints.</p>
+      <p class="gs-helper">
+        Cloudflare Access policies for admin, workers, and developer endpoints.
+      </p>
       <ul>
         <li>Admin locked behind Access and OTP.</li>
         <li>Workers restricted with Access JWT audience.</li>
@@ -61,9 +54,16 @@ const domains = [
           </select>
         </div>
       </form>
-      <div class="gs-helper">Changes persist locally and apply instantly across admin pages.</div>
+      <div class="gs-helper">
+        Changes persist locally and apply instantly across admin pages.
+      </div>
       <div class="gs-form-actions">
-        <GSButton id="reset-theme" type="button" variant="secondary" class="gs-button--small">Reset to defaults</GSButton>
+        <GSButton
+          id="reset-theme"
+          type="button"
+          variant="secondary"
+          class="gs-button--small">Reset to defaults</GSButton
+        >
       </div>
     </Card>
 
