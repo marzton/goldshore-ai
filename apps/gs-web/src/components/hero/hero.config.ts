@@ -1,6 +1,10 @@
 export type HeroVariant = 'orbital' | 'defense' | 'minimal' | 'canonical';
 
 export const HERO_VARIANTS: Record<HeroVariant, { label: string; description: string }> = {
+  canonical: {
+    label: 'Canonical Direction',
+    description: 'The "Shaping Waves" authoritative design direction.',
+  },
   orbital: {
     label: 'Orbital Control',
     description: 'Deep-space institutional hero with CSS particle field.',

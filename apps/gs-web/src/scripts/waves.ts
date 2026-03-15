@@ -92,26 +92,6 @@ const initModal = () => {
   const modal = document.getElementById('modal');
   const content = modal?.querySelector('.modal-content');
 
-  const createLabeledField = (
-    id: string,
-    labelText: string,
-    control: HTMLInputElement | HTMLSelectElement,
-  ) => {
-    const field = document.createElement('div');
-    field.className = 'modal-field';
-
-    const label = document.createElement('label');
-    label.className = 'modal-label';
-    label.htmlFor = id;
-    label.textContent = labelText;
-
-    control.id = id;
-    control.className = 'modal-input';
-
-    field.append(label, control);
-    return field;
-  };
-
   const renderModal = (type: string) => {
     if (!content) {
       return;
@@ -119,58 +99,36 @@ const initModal = () => {
 
     const wrapper = document.createElement('div');
     const heading = document.createElement('h2');
-    heading.id = 'modal-title';
-    heading.textContent = type === 'admin' ? 'Admin Login' : 'Access High-Fidelity Signals.';
+    heading.textContent = type === 'admin' ? 'Admin Login' : 'Subscribe';
     wrapper.append(heading);
-
-    const supportText = document.createElement('p');
-    supportText.id = 'modal-description';
-    supportText.className = 'modal-helper';
-    supportText.textContent =
-      type === 'admin'
-        ? 'Enter admin credentials to continue.'
-        : 'Get weekly institutional briefings with market structure insights and signal updates.';
-    wrapper.append(supportText);
 
     const email = document.createElement('input');
     email.type = 'email';
-    email.name = 'email';
-    email.placeholder = 'name@firm.com';
-    email.autocomplete = 'email';
-    wrapper.append(createLabeledField('modal-email', 'Email', email));
+    email.placeholder = 'Email';
+    wrapper.append(email);
 
     if (type === 'admin') {
       const password = document.createElement('input');
       password.type = 'password';
       password.placeholder = 'Password';
-      wrapper.append(createLabeledField('modal-password', 'Password', password));
-    } else {
-      const investorType = document.createElement('select');
-      investorType.name = 'investorType';
-      investorType.innerHTML = [
-        '<option value="Institutional">Institutional</option>',
-        '<option value="Family Office">Family Office</option>',
-        '<option value="High-Net-Worth">High-Net-Worth</option>',
-        '<option value="Individual">Individual</option>',
-      ].join('');
-      wrapper.append(createLabeledField('modal-investor-type', 'Investor Type', investorType));
+      wrapper.append(password);
     }
 
     const actionButton = document.createElement('button');
-    actionButton.className = 'gs-button gs-button--primary';
-    actionButton.textContent = type === 'admin' ? 'Login' : 'Join the Briefing';
+    actionButton.className = 'gs-btn gs-btn-primary';
+    actionButton.textContent = type === 'admin' ? 'Login' : 'Request Access';
     wrapper.append(actionButton);
 
     content.replaceChildren(wrapper);
   };
 
-  document.querySelectorAll<HTMLElement>('[data-gs-modal-open]').forEach((button) => {
+  document.querySelectorAll<HTMLElement>('[data-modal]').forEach((button) => {
     button.addEventListener('click', () => {
       if (!modal || !content) {
         return;
       }
 
-      const type = button.dataset.gsModalOpen ?? 'subscribe';
+      const type = button.dataset.modal ?? 'subscribe';
       renderModal(type);
       modal.classList.add('active');
     });

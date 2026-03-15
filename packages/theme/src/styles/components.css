@@ -11,12 +11,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--gs-space-4) var(--gs-space-6);
+  padding: var(--gs-space-3) var(--gs-space-6);
   --gs-header-opacity: 0;
-  background: rgba(12, 18, 32, var(--gs-header-opacity));
-  border-bottom: 1px solid color-mix(in srgb, var(--gs-color-border) 70%, transparent);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  background: rgba(2, 4, 8, var(--gs-header-opacity));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -66,10 +66,10 @@
 .gs-nav {
   display: flex;
   align-items: center;
-  gap: var(--gs-space-4);
+  gap: var(--gs-space-6);
 }
 
-.gs-nav a { color: var(--gs-color-subtle); font-weight: 600; }
+.gs-nav a { color: var(--gs-color-subtle); font-weight: 500; font-size: 0.95rem; }
 .gs-nav a[aria-current='page'], .gs-nav a:hover { color: var(--gs-color-text); }
 .gs-nav .material-symbols-rounded { font-size: 1.1rem; }
 
@@ -86,42 +86,6 @@
 .gs-footer .gs-nav a { font-weight: 500; }
 .gs-footer .gs-nav a[aria-current='page'] { font-weight: 700; color: var(--gs-color-text); }
 .gs-footer strong { display: inline-flex; align-items: center; gap: var(--gs-space-2); }
-
-
-.gs-footer-grid {
-  display: grid;
-  gap: var(--gs-space-5);
-  grid-template-columns: 1fr;
-  margin-top: var(--gs-space-6);
-  text-align: left;
-}
-
-.gs-footer-column {
-  display: grid;
-  gap: var(--gs-space-2);
-}
-
-.gs-footer-column h2 {
-  font-size: 0.9rem;
-  letter-spacing: 0.05em;
-  margin: 0 0 var(--gs-space-1);
-  text-transform: uppercase;
-}
-
-.gs-footer-column a {
-  color: var(--gs-color-subtle);
-  text-decoration: none;
-}
-
-.gs-footer-column a:hover {
-  color: var(--gs-color-text);
-}
-
-@media (min-width: 768px) {
-  .gs-footer-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
 
 .gs-button {
   display: inline-flex;
@@ -153,7 +117,18 @@
 .gs-button--secondary:hover { border-color: var(--gs-accent); color: var(--gs-accent); }
 
 .gs-button--destructive { background: var(--gs-danger); color: #fff; }
-.gs-button--ghost { background: transparent; color: var(--gs-color-subtle); }
+.gs-button--ghost {
+  background: transparent;
+  color: var(--gs-color-subtle);
+  border-color: transparent;
+  font-weight: 500;
+}
+.gs-button--ghost:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--gs-color-text);
+  transform: none;
+  box-shadow: none;
+}
 
 .gs-card, .gs-panel {
   background: var(--gs-color-surface);
