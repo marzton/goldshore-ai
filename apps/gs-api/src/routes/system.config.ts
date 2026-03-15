@@ -7,12 +7,29 @@ import {
   migrateLegacyApiConfig,
   normalizeApiRuntimeConfig
 } from '@goldshore/schema';
+import { z } from 'zod';
 
 export type SystemConfig = ReturnType<typeof normalizeApiRuntimeConfig>;
 
 export const DEFAULT_CONFIG = ApiRuntimeConfigSchema.parse({});
 
 export const parseConfig = (input: unknown): SystemConfig => normalizeApiRuntimeConfig(input);
+
+const DEFAULT_SYSTEM_SNAPSHOT = {
+  ROUTING_TABLE: RoutingTableSchema.parse({}),
+  SERVICE_STATUS: ServiceStatusSchema.parse({
+    maintenance_mode: false,
+    active_services: [],
+    version: 'unknown',
+  }),
+  AI_ORCHESTRATION: AiOrchestrationSchema.parse({}),
+  EMAIL_INBOX_LOGS: EmailInboxLogsSchema.parse([]),
+};
+
+const parseWithFallback = <T>(schema: z.ZodType<T>, input: unknown, fallback: T): T => {
+  const result = schema.safeParse(input);
+  return result.success ? result.data : fallback;
+};
 
 export const loadSystemSyncSnapshot = async (kv: KVNamespace) => {
   const [ROUTING_TABLE, SERVICE_STATUS, AI_ORCHESTRATION, EMAIL_INBOX_LOGS] = await Promise.all([
@@ -22,24 +39,11 @@ export const loadSystemSyncSnapshot = async (kv: KVNamespace) => {
     kv.get('EMAIL_INBOX_LOGS', 'json'),
   ]);
 
-  const parsedRouting = RoutingTableSchema.safeParse(ROUTING_TABLE);
-  const parsedStatus = ServiceStatusSchema.safeParse(SERVICE_STATUS);
-  const parsedOrchestration = AiOrchestrationSchema.safeParse(AI_ORCHESTRATION);
-  const parsedInboxLogs = EmailInboxLogsSchema.safeParse(EMAIL_INBOX_LOGS);
-
   return {
-    ROUTING_TABLE: parsedRouting.success ? parsedRouting.data : RoutingTableSchema.parse({}),
-    SERVICE_STATUS: parsedStatus.success
-      ? parsedStatus.data
-      : ServiceStatusSchema.parse({
-          maintenance_mode: false,
-          active_services: [],
-          version: 'unknown',
-        }),
-    AI_ORCHESTRATION: parsedOrchestration.success
-      ? parsedOrchestration.data
-      : AiOrchestrationSchema.parse({}),
-    EMAIL_INBOX_LOGS: parsedInboxLogs.success ? parsedInboxLogs.data : EmailInboxLogsSchema.parse([]),
+    ROUTING_TABLE: parseWithFallback(RoutingTableSchema, ROUTING_TABLE, DEFAULT_SYSTEM_SNAPSHOT.ROUTING_TABLE),
+    SERVICE_STATUS: parseWithFallback(ServiceStatusSchema, SERVICE_STATUS, DEFAULT_SYSTEM_SNAPSHOT.SERVICE_STATUS),
+    AI_ORCHESTRATION: parseWithFallback(AiOrchestrationSchema, AI_ORCHESTRATION, DEFAULT_SYSTEM_SNAPSHOT.AI_ORCHESTRATION),
+    EMAIL_INBOX_LOGS: parseWithFallback(EmailInboxLogsSchema, EMAIL_INBOX_LOGS, DEFAULT_SYSTEM_SNAPSHOT.EMAIL_INBOX_LOGS),
   };
 };
 
