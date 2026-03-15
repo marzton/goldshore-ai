@@ -9,7 +9,7 @@
     "preview": "astro preview",
     "lint": "eslint .",
     "test": "npm run test:unit",
-    "test:unit": "node --test tests/unit/*.test.ts"
+    "test:unit": "node --experimental-strip-types --test tests/unit/*.test.ts"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
