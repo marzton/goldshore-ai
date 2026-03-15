@@ -85,7 +85,7 @@ export default {
       return;
     }
 
-    const parsedEntry = EmailLogSchema.safeParse({
+    const newEntry = {
       id: crypto.randomUUID(),
       from: sender,
       to: recipient,
