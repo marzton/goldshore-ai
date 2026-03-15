@@ -77,7 +77,7 @@ const sanitizeSvg = (input: string): string =>
         'opacity'
       ]
     },
-    allowedSchemes: ['http', 'https', 'data'],
+    allowedSchemes: ['http', 'https'],
     allowedSchemesByTag: {
       use: ['http', 'https']
     },
