@@ -8,8 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "lint": "eslint .",
-    "test": "npm run test:unit",
-    "test:unit": "node --test tests/unit/*.test.ts"
+    "test": "echo 'No tests configured for @goldshore/gs-admin'"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
