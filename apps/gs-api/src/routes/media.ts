@@ -146,7 +146,7 @@ media.post('/upload', async (c) => {
   }
 
   const id = crypto.randomUUID();
-  const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+  const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_').replace(/\.+/g, '.')}`;
 
   await c.env.ASSETS.put(objectKey, body, { httpMetadata: { contentType } });
 
