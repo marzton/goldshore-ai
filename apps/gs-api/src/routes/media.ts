@@ -54,64 +54,6 @@ const isUploadFileLike = (value: unknown): value is UploadFileLike => {
     typeof candidate.arrayBuffer === 'function'
   );
 };
-const sanitizeSvg = (input: string): string =>
-  sanitizeHtml(input, {
-    allowedTags: [
-      'svg',
-      'g',
-      'path',
-      'circle',
-      'ellipse',
-      'line',
-      'polyline',
-      'polygon',
-      'rect',
-      'text',
-      'tspan',
-      'defs',
-      'linearGradient',
-      'radialGradient',
-      'stop',
-      'pattern',
-      'clipPath',
-      'mask',
-      'use',
-      'symbol',
-      'view',
-      'title',
-      'desc'
-    ],
-    allowedAttributes: {
-      svg: ['width', 'height', 'viewBox', 'xmlns'],
-      '*': [
-        'id',
-        'class',
-        'x',
-        'y',
-        'cx',
-        'cy',
-        'r',
-        'rx',
-        'ry',
-        'd',
-        'x1',
-        'y1',
-        'x2',
-        'y2',
-        'points',
-        'transform',
-        'fill',
-        'stroke',
-        'stroke-width',
-        'opacity'
-      ]
-    },
-    allowedSchemes: ['http', 'https'],
-    allowedSchemesByTag: {
-      use: ['http', 'https']
-    },
-    allowProtocolRelative: false
-  });
 
 /**
  * [SOP] Media Asset Management
