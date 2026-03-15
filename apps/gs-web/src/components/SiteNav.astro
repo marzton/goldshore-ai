@@ -1,12 +1,12 @@
 ---
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/workflows", label: "Workflows" },
-  { href: "/services", label: "Services" },
-  { href: "/risk-radar", label: "Risk Radar" },
-  { href: "/developer-hub", label: "Developer Hub" },
-  { href: "/about", label: "About" },
-  { href: "/team", label: "Team" }
+  { href: '/', label: 'Home' },
+  { href: '/workflows', label: 'Workflows' },
+  { href: '/services', label: 'Services' },
+  { href: '/risk-radar', label: 'Risk Radar' },
+  { href: '/developer-hub', label: 'Developer' },
+  { href: '/about', label: 'About' },
+  { href: '/team', label: 'Team' },
 ];
 ---
 
@@ -19,12 +19,26 @@ const links = [
 
     <nav class="gs-nav" aria-label="Primary">
       {links.map(l => <a href={l.href}>{l.label}</a>)}
-      <button class="gs-button gs-button-outline" type="button" data-gs-modal-open="admin" aria-haspopup="dialog">Admin</button>
-      <button class="gs-button gs-button-outline" type="button" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
+      <button class="gs-button gs-button--ghost" type="button" data-gs-modal-open="admin" aria-haspopup="dialog">Admin</button>
+      <button class="gs-button gs-button--ghost" type="button" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
+      <a class="gs-button" href="/contact">Request Briefing</a>
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
       <a class="gs-button gs-button-solid" href="/contact">Request Briefing</a>
     </nav>
 
-    <button class="gs-nav-toggle" type="button" data-gs-nav-toggle aria-expanded="false" aria-controls="gs-mobile-panel" aria-label="Open menu">
+    <div class="gs-nav-utility" aria-label="Utility">
+      <button class="gs-nav-utility-link" type="button" data-gs-modal-open="admin" aria-haspopup="dialog">Admin</button>
+      <button class="gs-nav-utility-link" type="button" data-gs-modal-open="subscribe" aria-haspopup="dialog">Subscribe</button>
+    </div>
+
+    <button
+      class="gs-nav-toggle"
+      type="button"
+      data-gs-nav-toggle
+      aria-expanded="false"
+      aria-controls="gs-mobile-panel"
+      aria-label="Open menu"
+    >
       <span aria-hidden="true">☰</span>
       <span class="sr-only">Open menu</span>
     </button>
@@ -37,13 +51,13 @@ const links = [
     <div class="gs-brand">
       <img class="gs-logo" src="/assets/brand/logo-penrose.svg" alt="Gold Shore" />
       <span class="gs-brand-text">GOLD SHORE</span>
-    </a>
+    </div>
     <button class="gs-icon-btn gs-mobile-close" data-gs-nav-close aria-label="Close menu">×</button>
   </div>
 
   <div class="gs-mobile-panel-inner">
     <nav class="gs-mobile-links" aria-label="Mobile Primary">
-      {links.map(l => <a class="gs-mobile-link-item" href={l.href}>{l.label}</a>)}
+      {links.map((l) => <a class="gs-mobile-link-item" href={l.href}>{l.label}</a>)}
     </nav>
 
     <div class="gs-mobile-actions" aria-label="Mobile actions">
@@ -71,6 +85,29 @@ const links = [
 </div>
 
 <style>
+  .gs-nav-utility {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-left: 0.6rem;
+  }
+
+  .gs-nav-utility-link {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--gs-muted, rgba(224, 232, 248, 0.82));
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+    padding: 0.2rem;
+  }
+
+  .gs-nav-utility-link:hover {
+    color: var(--gs-text, #fff);
+  }
+
   .gs-mobile-links .gs-mobile-link-trigger {
     appearance: none;
     background: none;
@@ -97,5 +134,11 @@ const links = [
     display: grid;
     gap: 0.75rem;
     padding-top: 0.75rem;
+  }
+
+  @media (max-width: 1200px) {
+    .gs-nav-utility {
+      display: none;
+    }
   }
 </style>

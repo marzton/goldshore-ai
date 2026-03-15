@@ -14,7 +14,7 @@ on:
       - ready_for_review
     paths:
       - "apps/gs-agent/**"
-      - "infra/cloudflare/gs-agent.wrangler.toml"
+      - "infra/Cloudflare/gs-agent.wrangler.toml"
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -29,9 +29,8 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: pnpm/action-setup@v4
-        with:
-          run_install: false
+      - name: Install pnpm
+        run: npm install -g pnpm@9
 
       - uses: actions/setup-node@v6
         with:
@@ -53,8 +52,8 @@ jobs:
       - name: Deploy GS agent worker (preview)
         working-directory: apps/gs-agent
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: pnpm exec wrangler deploy --env preview --config ../../infra/cloudflare/gs-agent.wrangler.toml
+        run: pnpm exec wrangler deploy --env preview --config ../../infra/Cloudflare/gs-agent.wrangler.toml
 
 # // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43
