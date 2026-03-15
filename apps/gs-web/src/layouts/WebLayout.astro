@@ -6,6 +6,7 @@ import '../styles/home.css';
 import SiteNav from '../components/SiteNav.astro';
 import GlobalModal from '../components/GlobalModal.astro';
 import themeRuntimeUrl from '../scripts/theme-runtime.ts?url';
+import { canonicalLogoPath } from '../lib/canonicalLogoPath';
 
 interface Props {
   title?: string;
@@ -22,7 +23,6 @@ const {
 const siteUrl = 'https://goldshore.ai';
 const organizationId = `${siteUrl}#organization`;
 const sameAs: string[] = [];
-const canonicalLogoPath = '/logo/gs-penrose.svg';
 
 const organizationSchema: Record<string, unknown> = {
   '@context': 'https://schema.org',

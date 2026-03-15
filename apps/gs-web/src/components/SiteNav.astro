@@ -1,4 +1,5 @@
 ---
+import { canonicalLogoPath } from '../lib/canonicalLogoPath';
 const navGroups = [
   {
     label: 'Advisory',
@@ -25,7 +26,6 @@ const navGroups = [
 ] as const;
 
 const pathname = Astro.url.pathname;
-const canonicalLogoPath = '/logo/gs-penrose.svg';
 const normalizeHref = (href: string) => href.split('#')[0];
 const isCurrent = (href: string) => {
   const cleanHref = normalizeHref(href);
