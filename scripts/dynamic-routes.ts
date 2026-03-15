@@ -78,13 +78,12 @@ const buildOpenApiRoutes = async (source: Extract<DynamicRouteSource, { type: 'o
 };
 
 export const loadDynamicRoutes = async () => {
-  const routes: string[] = [];
-  for (const source of dynamicRouteSources) {
+  const routePromises = dynamicRouteSources.map(async (source) => {
     if (source.type === 'content') {
-      routes.push(...(await buildContentRoutes(source)));
-      continue;
+      return buildContentRoutes(source);
     }
-    routes.push(...(await buildOpenApiRoutes(source)));
-  }
-  return routes;
+    return buildOpenApiRoutes(source);
+  });
+  const results = await Promise.all(routePromises);
+  return results.flat();
 };

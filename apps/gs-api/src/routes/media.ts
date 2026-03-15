@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { Env, Variables } from '../types';
+import sanitizeHtml from 'sanitize-html';
 
 type MediaRecord = {
   id: string;
@@ -53,6 +54,64 @@ const isUploadFileLike = (value: unknown): value is UploadFileLike => {
     typeof candidate.arrayBuffer === 'function'
   );
 };
+const sanitizeSvg = (input: string): string =>
+  sanitizeHtml(input, {
+    allowedTags: [
+      'svg',
+      'g',
+      'path',
+      'circle',
+      'ellipse',
+      'line',
+      'polyline',
+      'polygon',
+      'rect',
+      'text',
+      'tspan',
+      'defs',
+      'linearGradient',
+      'radialGradient',
+      'stop',
+      'pattern',
+      'clipPath',
+      'mask',
+      'use',
+      'symbol',
+      'view',
+      'title',
+      'desc'
+    ],
+    allowedAttributes: {
+      svg: ['width', 'height', 'viewBox', 'xmlns'],
+      '*': [
+        'id',
+        'class',
+        'x',
+        'y',
+        'cx',
+        'cy',
+        'r',
+        'rx',
+        'ry',
+        'd',
+        'x1',
+        'y1',
+        'x2',
+        'y2',
+        'points',
+        'transform',
+        'fill',
+        'stroke',
+        'stroke-width',
+        'opacity'
+      ]
+    },
+    allowedSchemes: ['http', 'https'],
+    allowedSchemesByTag: {
+      use: ['http', 'https']
+    },
+    allowProtocolRelative: false
+  });
 
 /**
  * [SOP] Media Asset Management
@@ -62,9 +121,34 @@ const isUploadFileLike = (value: unknown): value is UploadFileLike => {
 const media = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 media.get('/', async (c) => {
+  const query = c.req.query();
+  const rawLimit = query.limit;
+  const rawOffset = query.offset;
+
+  let limit = 100;
+  let offset = 0;
+
+  if (typeof rawLimit === 'string') {
+    const parsed = parseInt(rawLimit, 10);
+    if (!Number.isNaN(parsed) && parsed > 0 && parsed <= 500) {
+      limit = parsed;
+    }
+  }
+
+  if (typeof rawOffset === 'string') {
+    const parsed = parseInt(rawOffset, 10);
+    if (!Number.isNaN(parsed) && parsed >= 0) {
+      offset = parsed;
+    }
+  }
+
   const { results } = await c.env.DB
-    .prepare('SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT 100')
+    .prepare(
+      'SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT ? OFFSET ?'
+    )
+    .bind(limit, offset)
     .all<MediaRecord>();
+
   return c.json({ items: results ?? [] });
 });
 
@@ -116,7 +200,7 @@ media.post('/upload', async (c) => {
   }
 
   const id = crypto.randomUUID();
-  const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+  const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_').replace(/\.+/g, '.')}`;
 
   await c.env.ASSETS.put(objectKey, body, { httpMetadata: { contentType } });
 
