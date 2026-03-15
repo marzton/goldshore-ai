@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { Env, Variables } from '../types';
+import sanitizeHtml from 'sanitize-html';
 
 type MediaRecord = {
   id: string;
@@ -25,11 +26,63 @@ const EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/
 const JAVASCRIPT_URL_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*javascript:[\s\S]*?\1/gi;
 
 const sanitizeSvg = (input: string): string =>
-  input
-    .replace(SCRIPT_LIKE_TAGS_REGEX, '')
-    .replace(SCRIPT_LIKE_SELF_CLOSING_REGEX, '')
-    .replace(EVENT_HANDLER_ATTR_REGEX, '')
-    .replace(JAVASCRIPT_URL_REGEX, '');
+  sanitizeHtml(input, {
+    allowedTags: [
+      'svg',
+      'g',
+      'path',
+      'circle',
+      'ellipse',
+      'line',
+      'polyline',
+      'polygon',
+      'rect',
+      'text',
+      'tspan',
+      'defs',
+      'linearGradient',
+      'radialGradient',
+      'stop',
+      'pattern',
+      'clipPath',
+      'mask',
+      'use',
+      'symbol',
+      'view',
+      'title',
+      'desc'
+    ],
+    allowedAttributes: {
+      svg: ['width', 'height', 'viewBox', 'xmlns'],
+      '*': [
+        'id',
+        'class',
+        'x',
+        'y',
+        'cx',
+        'cy',
+        'r',
+        'rx',
+        'ry',
+        'd',
+        'x1',
+        'y1',
+        'x2',
+        'y2',
+        'points',
+        'transform',
+        'fill',
+        'stroke',
+        'stroke-width',
+        'opacity'
+      ]
+    },
+    allowedSchemes: ['http', 'https', 'data'],
+    allowedSchemesByTag: {
+      use: ['http', 'https']
+    },
+    allowProtocolRelative: false
+  });
 
 /**
  * [SOP] Media Asset Management
