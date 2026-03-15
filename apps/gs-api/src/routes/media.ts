@@ -92,9 +92,34 @@ const sanitizeSvg = (input: string): string =>
 const media = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 media.get('/', async (c) => {
+  const query = c.req.query();
+  const rawLimit = query.limit;
+  const rawOffset = query.offset;
+
+  let limit = 100;
+  let offset = 0;
+
+  if (typeof rawLimit === 'string') {
+    const parsed = parseInt(rawLimit, 10);
+    if (!Number.isNaN(parsed) && parsed > 0 && parsed <= 500) {
+      limit = parsed;
+    }
+  }
+
+  if (typeof rawOffset === 'string') {
+    const parsed = parseInt(rawOffset, 10);
+    if (!Number.isNaN(parsed) && parsed >= 0) {
+      offset = parsed;
+    }
+  }
+
   const { results } = await c.env.DB
-    .prepare('SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT 100')
+    .prepare(
+      'SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT ? OFFSET ?'
+    )
+    .bind(limit, offset)
     .all<MediaRecord>();
+
   return c.json({ items: results ?? [] });
 });
 
