@@ -18,7 +18,7 @@ export function getAIClient() {
     throw new Error('CF_AIG_TOKEN is required to initialize the AI client.');
   }
 
-function readGatewayConfig() {
+export function readGatewayConfig() {
   const baseURL = process.env.CF_GATEWAY_URL;
   const apiKey = process.env.CF_AIG_TOKEN;
 
