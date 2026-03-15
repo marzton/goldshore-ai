@@ -25,7 +25,7 @@ async function openOpsIssue() {
 // Config mock
 const cfg = {
   cloudflare: {
-    checks: Array(20).fill({ type: "pages_build_status", project: "gs-web" }),
+    checks: Array.from({ length: 20 }, () => ({ type: "pages_build_status", project: "gs-web" })),
   },
   github: { org: "goldshore" },
   ai_agent: { triage_labels: [] }
@@ -52,7 +52,9 @@ async function checkCloudflareSequential() {
 }
 
 async function checkCloudflareConcurrent() {
-  const maxConcurrent = 6;
+  // Limit concurrent checks to avoid overwhelming external services during the benchmark.
+  const MAX_CONCURRENT_CHECKS = 6;
+  const maxConcurrent = MAX_CONCURRENT_CHECKS;
   const checks = cfg.cloudflare.checks as any[];
   const executing = new Set<Promise<void>>();
 
