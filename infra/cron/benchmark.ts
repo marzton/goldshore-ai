@@ -25,7 +25,7 @@ async function openOpsIssue() {
 // Config mock
 const cfg = {
   cloudflare: {
-    checks: Array(20).fill({ type: "pages_build_status", project: "gs-web" }),
+    checks: Array.from({ length: 20 }, () => ({ type: "pages_build_status", project: "gs-web" })),
   },
   github: { org: "goldshore" },
   ai_agent: { triage_labels: [] }
