@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, mock } from 'node:test';
+import { describe, it, beforeEach, after, mock } from 'node:test';
 import assert from 'node:assert';
 import { Hono } from 'hono';
 import { cloudflareRoutes } from './cloudflare.ts';
@@ -31,6 +31,10 @@ describe('Cloudflare Routes Middleware', () => {
     global.fetch = mock.fn(async () => {
       return new Response(JSON.stringify({ error: "Fetch not mocked" }), { status: 500 });
     });
+  });
+
+  after(() => {
+    global.fetch = originalFetch;
   });
 
   // Helper to create a request with specific claims
