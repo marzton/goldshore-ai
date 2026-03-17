@@ -2,11 +2,7 @@ import { Hono } from "hono";
 import { secureHeaders } from "hono/secure-headers";
 import { cors } from "hono/cors";
 import { verifyAccessWithClaims } from "@goldshore/auth";
-import { 
-    RoutingTableSchema, 
-    ServiceStatusSchema, 
-    AiOrchestrationSchema 
-} from "@goldshore/schema";
+import { parseSystemSyncWritePayload } from "@goldshore/schema";
 
 import * as DNS from "./libs/dns";
 import * as Workers from "./libs/workers";
@@ -49,29 +45,21 @@ app.post("/system/sync", async (c) => {
     const body = await c.req.json();
     
     // 1. Schema Validation
-    const results = {
-        routing: RoutingTableSchema.safeParse(body.ROUTING_TABLE),
-        status: ServiceStatusSchema.safeParse(body.SERVICE_STATUS),
-        ai: AiOrchestrationSchema.safeParse(body.AI_ORCHESTRATION)
-    };
+    const parsedPayload = parseSystemSyncWritePayload(body);
 
-    if (!results.routing.success || !results.status.success || !results.ai.success) {
-        return c.json({ 
-            error: "Validation Failed", 
-            details: {
-                routing: results.routing.error,
-                status: results.status.error,
-                ai: results.ai.error
-            } 
+    if (!parsedPayload.success) {
+        return c.json({
+            error: "Validation Failed",
+            details: parsedPayload.error.format()
         }, 400);
     }
 
     // 2. Persistent Update to Global Config
     const timestamp = new Date().toISOString();
     await Promise.all([
-        c.env.GS_CONFIG.put("ROUTING_TABLE", JSON.stringify(results.routing.data)),
-        c.env.GS_CONFIG.put("SERVICE_STATUS", JSON.stringify(results.status.data)),
-        c.env.GS_CONFIG.put("AI_ORCHESTRATION", JSON.stringify(results.ai.data)),
+        c.env.GS_CONFIG.put("ROUTING_TABLE", JSON.stringify(parsedPayload.data.ROUTING_TABLE)),
+        c.env.GS_CONFIG.put("SERVICE_STATUS", JSON.stringify(parsedPayload.data.SERVICE_STATUS)),
+        c.env.GS_CONFIG.put("AI_ORCHESTRATION", JSON.stringify(parsedPayload.data.AI_ORCHESTRATION)),
         // Audit log in CONTROL_LOGS
         c.env.CONTROL_LOGS.put(`sync_${Date.now()}`, JSON.stringify({
             user: c.get('accessClaims')?.email,
