@@ -14,8 +14,7 @@
     "skipLibCheck": true
   },
   "include": [
-    "src",
-    "../../packages/schema/src"
+    "src"
   ],
   "exclude": [
     "src/**/*.test.ts"
