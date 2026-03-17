@@ -23,6 +23,8 @@ ENV = "development"
 
 [env.prod]
 name = "gs-mail"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
 
 [[env.prod.kv_namespaces]]
 binding = "GS_CONFIG"
