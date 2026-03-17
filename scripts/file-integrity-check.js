@@ -33,7 +33,15 @@ const createTextPlaceholder = (file) => {
 for (const file of required) {
   if (!fs.existsSync(file)) {
     fs.mkdirSync(path.dirname(file), { recursive: true });
-    fs.writeFileSync(file, createTextPlaceholder(file));
-    console.log('Created missing:', file);
+    try {
+      // Use flag: 'wx' to prevent TOCTOU (fail if file already exists)
+      fs.writeFileSync(file, createTextPlaceholder(file), { flag: 'wx' });
+      console.log('Created missing:', file);
+    } catch (err) {
+      if (err.code !== 'EEXIST') {
+        throw err;
+      }
+      // If it exists now, someone else created it, which is fine
+    }
   }
 }
