@@ -139,4 +139,9 @@ export class TOSAdapter implements BrokerAdapter {
     if (t.includes("CASH")) return "CASH";
     return "MARGIN";
   }
+export class TOSAdapter {
+  id = "tos";
+  name = "thinkorswim";
+
+  // TODO: implement adapter specific APIs
 }
