@@ -33,7 +33,7 @@ jobs:
           failing="$(echo "$commits_json" | jq -r '
             .[]
             | select((.commit.verification.verified // false) != true)
-            | select(.commit.author.name != "jules-bot")
+            | select(.commit.author.name != "jules-bot" and .commit.author.name != "google-labs-jules[bot]")
             | "\(.sha) :: verified=\(.commit.verification.verified // false) :: reason=\(.commit.verification.reason // "unknown")"
           ')"
 
