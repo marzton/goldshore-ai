@@ -99,6 +99,7 @@
 /* Mobile panel */
 .gs-mobile-panel {
   --gs-mobile-safe-top: env(safe-area-inset-top, 0px);
+  --gs-mobile-safe-bottom: env(safe-area-inset-bottom, 0px);
   --gs-mobile-header-height: 72px;
   --gs-mobile-header-padding-top: calc(max(var(--gs-mobile-safe-top), 10px) + 8px);
   --gs-mobile-header-padding-x: var(--gs-pad);
@@ -106,8 +107,10 @@
   --gs-mobile-panel-content-offset: calc(var(--gs-mobile-header-height) * 0.35);
   position: fixed;
   inset: 0;
-  background: rgba(5, 7, 13, 0.94);
-  backdrop-filter: blur(18px);
+  background:
+    radial-gradient(circle at 80% -10%, rgba(90, 140, 255, 0.18), transparent 48%),
+    linear-gradient(180deg, rgba(6, 10, 18, 0.97), rgba(4, 8, 14, 0.98));
+  backdrop-filter: blur(18px) saturate(120%);
   transform: translateY(-100%);
   transition: transform var(--gs-mid) var(--gs-ease);
   z-index: 60;
@@ -118,7 +121,7 @@
 .gs-mobile-panel.is-open { transform: translateY(0); }
 
 .gs-mobile-panel-inner {
-  padding: var(--gs-mobile-panel-content-offset) var(--gs-pad) 24px var(--gs-pad);
+  padding: var(--gs-mobile-panel-content-offset) var(--gs-pad) calc(24px + var(--gs-mobile-safe-bottom)) var(--gs-pad);
 }
 
 .gs-mobile-links {
@@ -133,9 +136,28 @@
   display: inline-flex;
   align-items: center;
   padding: 1rem 1.05rem;
-  border: 1px solid var(--gs-border);
+  border: 1px solid color-mix(in srgb, var(--gs-border-strong) 82%, transparent);
   border-radius: var(--gs-r-md);
-  background: rgba(10, 16, 28, 0.55);
+  background: linear-gradient(180deg, rgba(12, 20, 34, 0.88), rgba(9, 15, 26, 0.8));
+  box-shadow: 0 6px 18px rgba(3, 8, 18, 0.32);
+  transition: border-color var(--gs-mid) var(--gs-ease), box-shadow var(--gs-mid) var(--gs-ease), transform var(--gs-mid) var(--gs-ease);
+}
+
+.gs-mobile-links a:hover,
+.gs-mobile-links button:hover,
+.gs-mobile-link-item:hover,
+.gs-mobile-links a:focus-visible,
+.gs-mobile-links button:focus-visible,
+.gs-mobile-link-item:focus-visible {
+  border-color: color-mix(in srgb, var(--gs-accent) 58%, white 16%);
+  box-shadow: 0 10px 24px rgba(8, 22, 45, 0.42);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.gs-mobile-links button {
+  width: 100%;
+  justify-content: center;
 }
 
 .gs-mobile-links button {
@@ -206,6 +228,21 @@
   .gs-mobile-brand .gs-brand-text {
     font-size: 0.78rem;
     letter-spacing: 0.08em;
+  }
+}
+
+@media (max-width: 480px) {
+  .gs-mobile-panel-inner {
+    padding-left: max(var(--gs-pad), 1rem);
+    padding-right: max(var(--gs-pad), 1rem);
+  }
+
+  .gs-mobile-link-item {
+    font-size: 0.98rem;
+  }
+
+  .gs-mobile-actions > .gs-button {
+    min-height: 50px;
   }
 }
 

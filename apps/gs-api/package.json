@@ -7,7 +7,8 @@
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy --env prod",
     "build": "wrangler deploy --env prod --dry-run --outdir=dist",
-    "test": "tsx --test src/routes/*.test.ts"
+    "test": "tsx --test src/routes/*.test.ts",
+    "test:gateway": "node test-gateway.js"
   },
   "dependencies": {
     "@goldshore/ai-providers": "workspace:*",
@@ -16,6 +17,7 @@
     "@goldshore/utils": "workspace:*",
     "@types/sanitize-html": "^2.16.0",
     "hono": "^4.12.4",
+    "openai": "^6.29.0",
     "safe-stable-stringify": "^2.5.0",
     "sanitize-html": "^2.17.1"
   },
