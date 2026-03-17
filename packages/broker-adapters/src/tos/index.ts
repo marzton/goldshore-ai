@@ -1,5 +1,5 @@
-import { Account, Position, OptionGreeks } from "@goldshore/core-schema";
-import { BrokerAdapter } from "../index.ts";
+import { Account, Position, AccountType } from "@goldshore/core-schema";
+import { BrokerAdapter } from "../index.js";
 
 /**
  * Schwab API Interface Definitions
@@ -82,7 +82,7 @@ export class TOSAdapter implements BrokerAdapter {
       const accountId = raw.hashValue;
 
       return {
-        id: accountId as any, // Stable ID for tracking across syncs
+        id: accountId as any,
         broker: "tos",
         brokerAccountId: raw.hashValue,
         name: acc.nickname || `TOS Account ${acc.accountId.slice(-4)}`,
@@ -93,7 +93,7 @@ export class TOSAdapter implements BrokerAdapter {
         isCloseOnly: false,
         isPdtTracked: false,
         isIraRestricted: false,
-        createdAt: new Date(),
+        // createdAt and updatedAt should be handled by the repository/DB layer
         updatedAt: new Date(),
       } as Account;
     });
@@ -120,10 +120,11 @@ export class TOSAdapter implements BrokerAdapter {
       return {
         id: posId as any,
         accountId: accountId as any,
-        instrumentId: null as any,
+        instrumentId: null as any, // Expected to be linked by symbol during sync
         quantity: quantity.toString(),
         averageOpenPrice: (p.averagePrice || 0).toString(),
-        markPrice: quantity !== 0 ? (p.marketValue / Math.abs(quantity)).toString() : "0",
+        // markPrice calculation ensures it's always positive even for short positions
+        markPrice: quantity !== 0 ? (Math.abs(p.marketValue) / Math.abs(quantity)).toString() : "0",
         marketValue: (p.marketValue || 0).toString(),
         dayPnl: (p.currentDayProfitLoss || 0).toString(),
         unrealizedPnl: (p.marketValue - (p.averagePrice * quantity)).toString(),
@@ -133,7 +134,7 @@ export class TOSAdapter implements BrokerAdapter {
     });
   }
 
-  private mapAccountType(type: string): "INDIVIDUAL" | "IRA" | "ROTH_IRA" | "CASH" | "MARGIN" {
+  private mapAccountType(type: string): AccountType {
     const t = type?.toUpperCase() || "";
     if (t.includes("INDIVIDUAL")) return "INDIVIDUAL";
     if (t.includes("ROTH")) return "ROTH_IRA";

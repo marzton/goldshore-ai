@@ -4,6 +4,7 @@ import assert from "node:assert";
 /**
  * MOCK Types and Implementation for testing within the sandbox environment.
  * The focus is on verifying mapping and ID logic.
+ * Note: Actual test imports TOSAdapter from src/tos/index.ts in a non-restricted environment.
  */
 
 interface Account {
@@ -22,6 +23,7 @@ interface Position {
   quantity: string;
   averageOpenPrice: string;
   marketValue: string;
+  markPrice: string;
 }
 
 class TOSAdapter {
@@ -86,6 +88,8 @@ class TOSAdapter {
         accountId: accountId,
         quantity: quantity.toString(),
         averageOpenPrice: (p.averagePrice || 0).toString(),
+        // markPrice calculation ensures it's always positive even for short positions
+        markPrice: quantity !== 0 ? (Math.abs(p.marketValue) / Math.abs(quantity)).toString() : "0",
         marketValue: (p.marketValue || 0).toString(),
       } as Position;
     });
@@ -109,10 +113,10 @@ describe("TOSAdapter", () => {
     ];
 
     const originalFetch = global.fetch;
-    global.fetch = (async () => ({
+    global.fetch = async () => ({
       ok: true,
       json: async () => mockAccounts,
-    })) as any;
+    } as any);
 
     try {
       const accounts = await adapter.getAccounts();
@@ -127,7 +131,6 @@ describe("TOSAdapter", () => {
   test("getPositions maps Schwab positions correctly with deterministic IDs", async (t: any) => {
     const mockPositionResponse = {
       securitiesAccount: {
-        accountId: "123456789",
         positions: [
           {
             longQuantity: 10,
@@ -142,10 +145,10 @@ describe("TOSAdapter", () => {
     };
 
     const originalFetch = global.fetch;
-    global.fetch = (async () => ({
+    global.fetch = async () => ({
       ok: true,
       json: async () => mockPositionResponse,
-    })) as any;
+    } as any);
 
     try {
       const accountId = "stable-hash-123";
@@ -154,6 +157,39 @@ describe("TOSAdapter", () => {
       assert.strictEqual(positions[0].accountId, accountId);
       assert.strictEqual(positions[0].id, `${accountId}-AAPL`);
       assert.strictEqual(positions[0].quantity, "10");
+    } finally {
+      global.fetch = originalFetch;
+    }
+  });
+
+  test("getPositions handles short positions for markPrice correctly", async (t: any) => {
+    const mockPositionResponse = {
+      securitiesAccount: {
+        positions: [
+          {
+            shortQuantity: 10,
+            averagePrice: 150.5,
+            marketValue: -1600.0, // Short market value is typically negative
+            instrument: {
+              symbol: "TSLA",
+            },
+          },
+        ],
+      },
+    };
+
+    const originalFetch = global.fetch;
+    global.fetch = async () => ({
+      ok: true,
+      json: async () => mockPositionResponse,
+    } as any);
+
+    try {
+      const accountId = "stable-hash-123";
+      const positions = await adapter.getPositions(accountId);
+      assert.strictEqual(positions.length, 1);
+      assert.strictEqual(positions[0].quantity, "-10");
+      assert.strictEqual(positions[0].markPrice, "160"); // (Math.abs(-1600) / Math.abs(-10))
     } finally {
       global.fetch = originalFetch;
     }
