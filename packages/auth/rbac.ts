@@ -15,7 +15,8 @@ export const ADMIN_PERMISSIONS = [
   "forms:publish",
   "users:read",
   "users:manage",
-  "audit:read"
+  "audit:read",
+  "ai:analyze"
 ] as const;
 export type AdminPermission = (typeof ADMIN_PERMISSIONS)[number];
 
@@ -27,7 +28,8 @@ export const ROLE_PERMISSIONS: Record<AdminRole, AdminPermission[]> = {
     "media:read",
     "media:write",
     "forms:read",
-    "forms:write"
+    "forms:write",
+    "ai:analyze"
   ],
   viewer: ["content:read", "media:read", "forms:read"]
 };
