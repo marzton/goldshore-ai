@@ -2,10 +2,10 @@ name = "gs-gateway"
 main = "src/index.ts"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
+tsconfig = "tsconfig.json"
 
 workers_dev = false
 
-# Canonical gateway hostname is gw.goldshore.ai.
 routes = [
   { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" },
@@ -15,13 +15,11 @@ routes = [
 [vars]
 ENV = "production"
 API_ORIGIN = "https://api.goldshore.ai"
-# These should be filled from your Access Dashboard
 CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b"
 CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
 
 [[kv_namespaces]]
 binding = "GATEWAY_KV"
-# Updated to use your actual production namespace ID
 id = "9cc2209906a94851b704be57543987a9"
 
 [[queues.producers]]
@@ -40,11 +38,6 @@ binding = "AI"
 enabled = true
 
 [env.prod]
-name = "gs-gateway"
-compatibility_date = "2024-11-01"
-compatibility_flags = ["nodejs_compat"]
-
-# Canonical gateway hostname is gw.goldshore.ai.
 routes = [
   { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" },
@@ -54,13 +47,11 @@ routes = [
 [env.prod.vars]
 ENV = "production"
 API_ORIGIN = "https://api.goldshore.ai"
-# These should be filled from your Access Dashboard
 CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b"
 CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
 
 [[env.prod.kv_namespaces]]
 binding = "GATEWAY_KV"
-# Updated to use your actual production namespace ID
 id = "9cc2209906a94851b704be57543987a9"
 
 [[env.prod.queues.producers]]
