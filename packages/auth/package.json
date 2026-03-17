@@ -3,6 +3,14 @@
   "version": "0.0.1",
   "main": "index.ts",
   "type": "module",
+  "types": "index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "import": "./index.ts",
+      "default": "./index.ts"
+    }
+  },
   "dependencies": {
     "jose": "^6.1.3"
   },
