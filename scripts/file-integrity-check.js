@@ -31,7 +31,7 @@ const createTextPlaceholder = (file) => {
 };
 
 for (const file of required) {
-  if (!fs.existsSync(file)) {
+  try {
     fs.mkdirSync(path.dirname(file), { recursive: true });
     try {
       // Use flag: 'wx' to prevent TOCTOU (fail if file already exists)
