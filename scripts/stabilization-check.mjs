@@ -93,7 +93,31 @@ function getCiStatus(branch) {
     const state = hasFailed ? '❌ FAIL' : checks.every(c => c.status === 'COMPLETED') ? '✅ PASS' : '🟡 PENDING';
     return { summary: `${state} PR #${pr.number} checks. [Link](${pr.url})`, checks };
   }
-  return { summary: '⚠️ No active PR found for this branch; skipping detailed check rollup.' };
+
+  const runsRaw = tryRun(`gh run list --branch "${branch}" --limit 10 --json workflowName,displayTitle,status,conclusion,url`);
+  if (!runsRaw) {
+    return { summary: '⚠️ No active PR found and unable to fetch recent workflow runs for this branch.' };
+  }
+
+  const runs = JSON.parse(runsRaw);
+  if (!runs.length) {
+    return { summary: `⚠️ No active PR found and no recent workflow runs detected for branch '${branch}'.` };
+  }
+
+  const hasFailed = runs.some(r => ['failure', 'timed_out', 'cancelled', 'action_required', 'startup_failure'].includes((r.conclusion || '').toLowerCase()));
+  const hasPending = runs.some(r => (r.status || '').toLowerCase() !== 'completed');
+  const state = hasFailed ? '❌ FAIL' : hasPending ? '🟡 PENDING' : '✅ PASS';
+  const checks = runs.map(r => ({
+    name: r.workflowName || r.displayTitle,
+    status: (r.status || '').toUpperCase(),
+    conclusion: (r.conclusion || '').toUpperCase() || 'N/A',
+    url: r.url,
+  }));
+
+  return {
+    summary: `${state} Recent workflow runs for branch '${branch}' (${runs.length} checked).`,
+    checks,
+  };
 }
 
 function checkBranchDiscipline() {
