@@ -12,32 +12,68 @@ routes = [
   { pattern = "gateway.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
 
-[vars]
+[env.prod.vars]
 ENV = "production"
 API_ORIGIN = "https://api.goldshore.ai"
 CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b"
 CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
 
-[[kv_namespaces]]
+[[env.prod.kv_namespaces]]
 binding = "GATEWAY_KV"
 id = "9cc2209906a94851b704be57543987a9"
 
-[[queues.producers]]
+[[env.prod.queues.producers]]
 binding = "JOB_QUEUE"
 queue = "goldshore-jobs"
 
-[[services]]
+[[env.prod.services]]
 binding = "API"
 service = "gs-api"
 environment = "prod"
 
-[ai]
+[env.prod.ai]
 binding = "AI"
 
-[observability]
+[env.prod.observability]
 enabled = true
 
 [env.prod]
+routes = [
+  { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "gateway.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+
+[env.prod.vars]
+ENV = "production"
+API_ORIGIN = "https://api.goldshore.ai"
+CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b"
+CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
+
+[[env.prod.kv_namespaces]]
+binding = "GATEWAY_KV"
+id = "9cc2209906a94851b704be57543987a9"
+
+[[env.prod.queues.producers]]
+binding = "JOB_QUEUE"
+queue = "goldshore-jobs"
+
+[[env.prod.services]]
+binding = "API"
+service = "gs-api"
+environment = "prod"
+
+[env.prod.ai]
+binding = "AI"
+
+[env.prod.observability]
+enabled = true
+
+[env.prod]
+name = "gs-gateway"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
 routes = [
   { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" },
