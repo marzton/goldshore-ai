@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
-    "hono": "^4.12.4"
+    "hono": "^4.12.4",
+    "zod": "^3.23.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260301.1",
