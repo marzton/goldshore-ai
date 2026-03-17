@@ -1,8 +1,40 @@
 import { Account, Position } from "@goldshore/core-schema";
 import { BrokerAdapter } from "../index.js";
 
+export interface RobinhoodAccount {
+  account_number: string;
+  url: string;
+  type: string;
+  base_currency: string;
+  margin_balances?: {
+    day_trade_buying_power: string;
+    cash_available_for_withdrawal: string;
+  };
+}
+
+export interface RobinhoodPosition {
+  account: string;
+  instrument: string;
+  quantity: string;
+  average_buy_price: string;
+  updated_at: string;
+}
+
+export interface RobinhoodInstrument {
+  id: string;
+  symbol: string;
+  name: string;
+  type: string;
+}
+
+export interface RobinhoodPaginatedResponse<T> {
+  results: T[];
+  next: string | null;
+}
+
 /**
- * RobinhoodAdapter implements the BrokerAdapter interface for Robinhood.
+ * RobinhoodAdapter implements the BrokerAdapter interface for the Robinhood broker.
+ * Note: This uses unofficial/private API endpoints which may change.
  */
 export class RobinhoodAdapter implements BrokerAdapter {
   id = "robinhood";
@@ -154,7 +186,7 @@ export class RobinhoodAdapter implements BrokerAdapter {
     // Resolve instruments and map to canonical schema
     const positions = await Promise.all(
       results.map(async (pos) => {
-        const symbol = await this.resolveInstrument(pos.instrument);
+        await this.resolveInstrument(pos.instrument);
         const instrumentUuid = this.extractUuidFromUrl(pos.instrument);
 
         return {

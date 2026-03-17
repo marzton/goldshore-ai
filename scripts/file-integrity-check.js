@@ -31,6 +31,10 @@ const createTextPlaceholder = (file) => {
 };
 
 for (const file of required) {
+  const dir = path.dirname(file);
+  // mkdirSync with recursive: true is safe and doesn't throw if exists
+  fs.mkdirSync(dir, { recursive: true });
+
   try {
     fs.mkdirSync(path.dirname(file), { recursive: true });
     try {
@@ -43,5 +47,6 @@ for (const file of required) {
       }
       // If it exists now, someone else created it, which is fine
     }
+    // EEXIST means the file already exists, which is the desired state.
   }
 }
