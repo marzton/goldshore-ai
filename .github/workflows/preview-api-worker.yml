@@ -1,5 +1,8 @@
 name: Preview API Worker
 
+permissions:
+  contents: read
+
 on:
   pull_request:
     paths:
