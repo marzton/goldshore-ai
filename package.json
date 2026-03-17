@@ -47,6 +47,7 @@
     "octokit": "^5.0.5",
     "prettier": "^3.2.5",
     "prettier-plugin-astro": "^0.14.1",
+    "svgo": "^4.0.1",
     "tailwindcss": "^3.4.19",
     "tsx": "^4.21.0",
     "typescript": "^5.4.2",
@@ -57,6 +58,7 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
+    "p-limit": "^7.3.0",
     "turbo": "^2.8.12"
   },
   "pnpm": {
