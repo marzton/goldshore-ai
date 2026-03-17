@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert';
-import { TOSAdapter } from './index.js';
+import { TOSAdapter } from './index.ts';
 
 describe('TOSAdapter', () => {
   const adapter = new TOSAdapter();

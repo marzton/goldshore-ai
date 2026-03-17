@@ -1,5 +1,5 @@
 import { Account, Position } from "@goldshore/core-schema";
-import { BrokerAdapter } from "../index.js";
+import { BrokerAdapter } from "../index.ts";
 
 export class RobinhoodAdapter implements BrokerAdapter {
   id = "robinhood";
