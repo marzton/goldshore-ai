@@ -17,10 +17,6 @@ export const HERO_VARIANTS: Record<HeroVariant, { label: string; description: st
     label: 'Minimal Authority',
     description: 'Typography-first, no background motion.',
   },
-  canonical: {
-    label: 'Shaping Waves Canonical',
-    description: 'Canonical hero with cinematic terminal preview panel.',
-  },
 };
 
 export const DEFAULT_HERO_VARIANT: HeroVariant = 'canonical';
