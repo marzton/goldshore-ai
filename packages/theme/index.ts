@@ -59,17 +59,6 @@ function initModal() {
 
   let opener: HTMLElement | null = null;
 
-  const isAriaHidden = (el: HTMLElement | null): boolean => {
-    let current: HTMLElement | null = el;
-    while (current && current !== panel) {
-      if (current.getAttribute('aria-hidden') === 'true') {
-        return true;
-      }
-      current = current.parentElement;
-    }
-    return false;
-  };
-
   const getFocusableElements = () => {
     if (!panel) return [];
 
@@ -92,12 +81,14 @@ function initModal() {
     if (body) body.innerHTML = html;
     root.classList.add('is-open');
     document.documentElement.classList.add('gs-lock');
+    document.addEventListener('keydown', onKeydown);
     requestAnimationFrame(focusDialog);
   };
 
   const closeModal = () => {
     root.classList.remove('is-open');
     document.documentElement.classList.remove('gs-lock');
+    document.removeEventListener('keydown', onKeydown);
     if (opener?.isConnected) opener.focus();
     opener = null;
   };
