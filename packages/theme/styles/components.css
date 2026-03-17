@@ -226,6 +226,21 @@
   }
 }
 
+@media (max-width: 480px) {
+  .gs-mobile-panel-inner {
+    padding-left: max(var(--gs-pad), 1rem);
+    padding-right: max(var(--gs-pad), 1rem);
+  }
+
+  .gs-mobile-link-item {
+    font-size: 0.98rem;
+  }
+
+  .gs-mobile-actions > .gs-button {
+    min-height: 50px;
+  }
+}
+
 @media (min-width: 861px) {
   .gs-mobile-panel { display: none; }
 }
