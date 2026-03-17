@@ -20,8 +20,8 @@ Preview applications should mirror production configuration wherever Access is e
 
 ## Source-of-truth references
 
-- Cloudflare desired state for Access policy naming and domain ownership lives in `infra/cloudflare/desired-state.yaml`.
-- Pages custom domains for admin and web are documented in `infra/cloudflare/BINDINGS_MAP.md`.
+- Cloudflare desired state for Access policy naming and domain ownership lives in `infra/Cloudflare/desired-state.yaml`.
+- Pages custom domains for admin and web are documented in `infra/Cloudflare/BINDINGS_MAP.md`.
 
 # Domains & Auth (Single Source of Truth)
 
@@ -66,3 +66,9 @@ When adding preview callback URLs in GitHub App settings, ensure the same hostna
 
 - Included in the Cloudflare Access application allowlist when Access is enforced for previews.
 - Routed through any edge proxy rules so the callback path (`/auth/github/callback`) resolves to the expected worker/service.
+
+### Cloudflare Access OIDC callback (GitHub IdP)
+
+- `https://goldshore.cloudflareaccess.com/cdn-cgi/access/sso/oidc/1eae8b45326b57d6fd150609e9d155d724013960fd0b994de2d56f07d3f0ce5f`
+
+Use this exact callback URL in the GitHub OAuth app configuration used by Cloudflare Access. If this endpoint changes, update both the GitHub OAuth app and Cloudflare Access IdP configuration together to avoid login failures.
