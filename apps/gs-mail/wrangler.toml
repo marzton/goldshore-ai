@@ -13,6 +13,9 @@ ENV = "production"
 # Standardized forwarding address per SOP
 MAIL_FORWARD_TO = "ops@goldshore.ai"
 
+[observability]
+enabled = true
+
 [env.dev]
 name = "gs-mail-dev"
 [[env.dev.kv_namespaces]]
@@ -23,6 +26,9 @@ ENV = "development"
 
 [env.prod]
 name = "gs-mail"
+routes = [
+  { pattern = "mail.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
 
 [[env.prod.kv_namespaces]]
 binding = "GS_CONFIG"
@@ -32,3 +38,5 @@ id = "9cc2209906a94851b704be57543987a9"
 ENV = "production"
 MAIL_FORWARD_TO = "ops@goldshore.ai"
 
+[env.prod.observability]
+enabled = true
