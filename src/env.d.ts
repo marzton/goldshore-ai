@@ -2,6 +2,6 @@ type Runtime = import("@astrojs/cloudflare").Runtime<Env>;
 
 declare namespace App {
   interface Locals extends Runtime {
-    _debug?: boolean;
+    [key: string]: unknown;
   }
 }
