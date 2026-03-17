@@ -11,16 +11,10 @@
     "moduleResolution": "Bundler",
     "target": "ESNext",
     "strict": true,
-    "skipLibCheck": true,
-    "paths": {
-      "@goldshore/schema": [
-        "../../packages/schema/src/index.ts"
-      ]
-    }
+    "skipLibCheck": true
   },
   "include": [
-    "src",
-    "../../packages/schema/src"
+    "src"
   ],
   "exclude": [
     "src/**/*.test.ts"

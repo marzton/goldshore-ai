@@ -1,6 +1,6 @@
 name = "gs-agent"
 main = "src/index.ts"
-compatibility_date = "2024-11-01"
+compatibility_date = "2025-01-10"
 compatibility_flags = ["nodejs_compat"]
 tsconfig = "tsconfig.json"
 
