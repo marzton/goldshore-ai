@@ -19,6 +19,32 @@ const dnsRecordSchema = z.object({
   priority: z.number().int().optional(),
 }).strip();
 
+const dnsQuerySchema = z.object({
+  match: z.enum(["any", "all"]).optional(),
+  name: z.string().optional(),
+  "name.contains": z.string().optional(),
+  "name.endswith": z.string().optional(),
+  "name.startswith": z.string().optional(),
+  order: z.enum(["type", "name", "content", "ttl", "proxied"]).optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  per_page: z.coerce.number().int().min(1).max(100).optional(),
+  proxied: z
+    .enum(["true", "false"])
+    .transform((v) => v === "true")
+    .optional(),
+  search: z.string().optional(),
+  type: z.string().optional(),
+  tag: z.string().optional(),
+  "tag.contains": z.string().optional(),
+  "tag.endswith": z.string().optional(),
+  "tag.startswith": z.string().optional(),
+  direction: z.enum(["asc", "desc"]).optional(),
+}).strip();
+
+const accessPolicyQuerySchema = z.object({
+  appId: z.string().regex(/^[a-zA-Z0-9-]+$/),
+}).strip();
+
 const getRequiredRoles = (env: ControlEnv) => {
   const configured = env.CONTROL_ADMIN_ROLES?.split(",").map((role) => role.trim()).filter(Boolean);
   return configured && configured.length > 0 ? configured : DEFAULT_ADMIN_ROLES;
@@ -106,7 +132,7 @@ cloudflareRoutes.use("*", async (c, next) => {
   await next();
 });
 
-cloudflareRoutes.get("/dns/records", async (c) => {
+cloudflareRoutes.get("/dns/records", zValidator("query", dnsQuerySchema), async (c) => {
   const zoneId = c.env.CLOUDFLARE_ZONE_ID;
   const actor = getActor(c.get("accessClaims"), c.req.raw);
   if (!zoneId) {
@@ -119,11 +145,19 @@ cloudflareRoutes.get("/dns/records", async (c) => {
     return c.json({ error: "Missing Cloudflare zone id." }, 400);
   }
 
-  const query = new URL(c.req.url).searchParams.toString();
   try {
+    const validatedQuery = c.req.valid("query");
+    const searchParams = new URLSearchParams();
+    for (const [key, value] of Object.entries(validatedQuery)) {
+      if (value !== undefined) {
+        searchParams.append(key, String(value));
+      }
+    }
+    const queryString = searchParams.toString();
+
     const result = await fetchCloudflare(
       c.env,
-      `/zones/${zoneId}/dns_records${query ? `?${query}` : ""}`
+      `/zones/${zoneId}/dns_records${queryString ? `?${queryString}` : ""}`
     );
 
     await logAuditEvent(c.env.CONTROL_LOGS, {
@@ -323,18 +357,9 @@ cloudflareRoutes.get("/r2/buckets", async (c) => {
   }
 });
 
-cloudflareRoutes.get("/access/policies", async (c) => {
+cloudflareRoutes.get("/access/policies", zValidator("query", accessPolicyQuerySchema), async (c) => {
   const actor = getActor(c.get("accessClaims"), c.req.raw);
-  const appId = c.req.query("appId");
-  if (!appId) {
-    await logAuditEvent(c.env.CONTROL_LOGS, {
-      action: "cloudflare:access:policies",
-      actor,
-      status: "error",
-      metadata: { reason: "missing-app-id" }
-    });
-    return c.json({ error: "Missing access app id." }, 400);
-  }
+  const { appId } = c.req.valid("query");
 
   try {
     const result = await fetchCloudflare(
