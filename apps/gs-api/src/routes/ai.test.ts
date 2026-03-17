@@ -122,19 +122,6 @@ describe('AI Analysis Endpoint Caching', () => {
 
     assert.strictEqual(res1.status, 403);
 
-    // Case 2: Claims present but missing the required permission (viewer role)
-    const res2 = await app.request('/analysis', {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: { 'Content-Type': 'application/json' },
-    }, {
-      KV: { get: async () => null, put: async () => {} },
-      OPENAI_API_KEY: 'test-key',
-    }, {
-      waitUntil: async () => {},
-      passThroughOnException: () => {},
-    } as any);
-
     // We need to set accessClaims in Variables. app.request third argument is Env, fourth is executionCtx.
     // Hono's app.request doesn't easily let us set Variables directly.
     // However, the requirePermission middleware gets it from c.get('accessClaims').
