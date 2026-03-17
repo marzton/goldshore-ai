@@ -5,6 +5,7 @@ import {
   DEFAULT_HERO_VARIANT,
   normalizeHeroVariant,
 } from '../components/hero/hero.config';
+import wavesScriptUrl from '../scripts/waves.ts?url';
 
 const env = Astro.locals.runtime?.env as
   | { HERO_CONFIG_KV?: { get(key: string): Promise<string | null> } }
@@ -124,6 +125,32 @@ export const prerender = true;
           Signal fusion that turns data density into execution-ready
           recommendations.
         </p>
+      <article
+        class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
+        data-gs-reveal
+        data-gs-tilt
+      >
+        <div class="gs-label">Availability</div>
+        <div class="gs-stat">99.995%</div>
+        <div class="gs-meta">Service Availability · Last 30 days</div>
+      </article>
+      <article
+        class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
+        data-gs-reveal
+        data-gs-tilt
+      >
+        <div class="gs-label">Deploy Cadence</div>
+        <div class="gs-stat">48/day</div>
+        <div class="gs-meta">Production deploys · <a href="/developer">Developer Hub</a></div>
+      </article>
+      <article
+        class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
+        data-gs-reveal
+        data-gs-tilt
+      >
+        <div class="gs-label">Signal Integrity</div>
+        <div class="gs-stat">4.8B</div>
+        <div class="gs-meta">Signals processed · rolling volume</div>
       </article>
     </div>
   </section>
@@ -183,6 +210,62 @@ export const prerender = true;
       </div>
       <div class="content-preview">
         <div class="grid-field small-grid"></div>
+
+  <section class="gs-section">
+    <div class="content-row reverse">
+      <div class="content-text">
+        <span class="section-tag">Risk Radar</span>
+        <h2>Identify threats before they emerge.</h2>
+        <p>
+          Our Risk Radar leverages applied intelligence to scan billions of
+          signals across your network, identifying anomalies and potential
+          security breaches in milliseconds.
+        </p>
+        <div class="radar-stats">
+          <div class="radar-stat">
+            <strong>12ms</strong>
+            <span>Mean Response Time</span>
+          </div>
+          <div class="radar-stat">
+            <strong>100%</strong>
+            <span>Threat Coverage</span>
+          </div>
+        </div>
+      </div>
+      <div class="content-preview">
+        <div class="grid-field small-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gs-section metrics-surface" id="performance">
+    <div class="gs-container">
+      <div class="section-header">
+        <span class="eyebrow">Operational Metrics</span>
+        <h2 class="serif-display">Performance at a glance</h2>
+      </div>
+
+      <div class="gs-grid-3">
+        <article class="metric-card is-loading" data-metric-card>
+          <div class="metric-label">System Availability</div>
+          <div class="metric-value">99.995%</div>
+          <div class="metric-trend">Institutional Standard · Last 30 days</div>
+        </article>
+
+        <article class="metric-card is-loading" data-metric-card>
+          <div class="metric-label">Deployment Frequency</div>
+          <div class="metric-value">48/day</div>
+          <div class="metric-trend">
+            <a href="/developer-hub"
+              >Continuous Integration · verified in Developer Hub</a>
+          </div>
+        </article>
+
+        <article class="metric-card is-loading" data-metric-card>
+          <div class="metric-label">Signal Throughput</div>
+          <div class="metric-value">4.8B</div>
+          <div class="metric-trend">Signals processed data points / day</div>
+        </article>
       </div>
     </div>
   </section>
@@ -244,6 +327,36 @@ export const prerender = true;
 
   document.addEventListener('astro:page-load', revealMetrics);
 </script>
+  <section class="gs-section footer-cta" id="contact">
+    <div class="gs-container">
+      <div class="cta-panel">
+        <h2 class="serif-display">Advance your operational baseline.</h2>
+        <div class="cta-actions">
+          <a href="/experience" class="btn primary btn-large"
+            >Request Briefing</a
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+</WebLayout>
+
+<script>
+  const revealMetrics = () => {
+    window.setTimeout(() => {
+      document.querySelectorAll('[data-metric-card]').forEach((card) => {
+        card.classList.remove('is-loading');
+      });
+    }, 550);
+  };
+
+  document.addEventListener('astro:page-load', revealMetrics);
+</script>
+  </div>
+
+  <script type="module" src={wavesScriptUrl}></script>
+
+</WebLayout>
 
 <style>
   .gs-section {
@@ -309,6 +422,23 @@ export const prerender = true;
       transparent 0
     );
     background-size: 20px 20px;
+  }
+
+  .visual-orb {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(
+      circle at center,
+      rgba(59, 130, 246, 0.1),
+      transparent 70%
+    );
+    filter: blur(40px);
+  }
+
   }
 
   .visual-orb {
@@ -436,6 +566,20 @@ export const prerender = true;
 
   .panel-content {
     flex: 1;
+  .gs-meta {
+    margin-top: 0.55rem;
+    color: var(--gs-muted);
+    font-size: 0.9rem;
+  }
+
+  .gs-meta a {
+    color: var(--gs-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .panel-content {
+    flex: 1;
     position: relative;
     padding: 2rem;
   }
@@ -501,6 +645,14 @@ export const prerender = true;
     letter-spacing: 0.15em;
     color: #3b82f6;
     margin-bottom: 1rem;
+  }
+
+  .gs-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
   }
 
   .gs-grid-3 {
