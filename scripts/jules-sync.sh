@@ -38,7 +38,7 @@ for SERVICE_RAW in "${SERVICES[@]}"; do
 done
 
 if [ "$failures" -gt 0 ]; then
-  echo "Completed with ${failures} failing service check(s)."
+  echo "Failed: ${failures} service check(s) did not pass."
   exit 1
 fi
 

@@ -11,6 +11,13 @@ type MediaRecord = {
   created_at: string;
 };
 
+type UploadFileLike = {
+  name: string;
+  size: number;
+  text: () => Promise<string>;
+  arrayBuffer: () => Promise<ArrayBuffer>;
+};
+
 const ALLOWED_MIME_TYPES = new Map([
   ['svg', 'image/svg+xml'],
   ['png', 'image/png'],
@@ -20,11 +27,19 @@ const ALLOWED_MIME_TYPES = new Map([
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
-const SCRIPT_LIKE_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style)[\s\S]*?>[\s\S]*?<\/\1>/gi;
-const SCRIPT_LIKE_SELF_CLOSING_REGEX = /<(script|iframe|object|embed|link|meta|style)\b[^>]*\/?>/gi;
-const EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
-const JAVASCRIPT_URL_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*javascript:[\s\S]*?\1/gi;
+const isUploadFileLike = (value: unknown): value is UploadFileLike => {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
 
+  const candidate = value as Partial<UploadFileLike>;
+  return (
+    typeof candidate.name === 'string' &&
+    typeof candidate.size === 'number' &&
+    typeof candidate.text === 'function' &&
+    typeof candidate.arrayBuffer === 'function'
+  );
+};
 const sanitizeSvg = (input: string): string =>
   sanitizeHtml(input, {
     allowedTags: [
@@ -77,7 +92,7 @@ const sanitizeSvg = (input: string): string =>
         'opacity'
       ]
     },
-    allowedSchemes: ['http', 'https', 'data'],
+    allowedSchemes: ['http', 'https'],
     allowedSchemesByTag: {
       use: ['http', 'https']
     },
@@ -92,9 +107,34 @@ const sanitizeSvg = (input: string): string =>
 const media = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 media.get('/', async (c) => {
+  const query = c.req.query();
+  const rawLimit = query.limit;
+  const rawOffset = query.offset;
+
+  let limit = 100;
+  let offset = 0;
+
+  if (typeof rawLimit === 'string') {
+    const parsed = parseInt(rawLimit, 10);
+    if (!Number.isNaN(parsed) && parsed > 0 && parsed <= 500) {
+      limit = parsed;
+    }
+  }
+
+  if (typeof rawOffset === 'string') {
+    const parsed = parseInt(rawOffset, 10);
+    if (!Number.isNaN(parsed) && parsed >= 0) {
+      offset = parsed;
+    }
+  }
+
   const { results } = await c.env.DB
-    .prepare('SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT 100')
+    .prepare(
+      'SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT ? OFFSET ?'
+    )
+    .bind(limit, offset)
     .all<MediaRecord>();
+
   return c.json({ items: results ?? [] });
 });
 
@@ -113,7 +153,7 @@ media.get('/:id', async (c) => {
   const headers = new Headers();
   headers.set('Content-Type', result.type || object.httpMetadata?.contentType || 'application/octet-stream');
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-  
+
   // Sentinel: Enforce strict CSP to mitigate SVG XSS
   headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; object-src 'none'; sandbox");
 
@@ -124,7 +164,7 @@ media.post('/upload', async (c) => {
   const formData = await c.req.formData();
   const file = formData.get('file');
 
-  if (!(file instanceof File)) return c.json({ error: 'Missing file upload' }, 400);
+  if (!isUploadFileLike(file)) return c.json({ error: 'Missing file upload' }, 400);
   if (file.size > MAX_FILE_SIZE) return c.json({ error: 'File too large' }, 413);
 
   const filename = file.name || 'upload';
@@ -146,7 +186,7 @@ media.post('/upload', async (c) => {
   }
 
   const id = crypto.randomUUID();
-  const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+  const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_').replace(/\.+/g, '.')}`;
 
   await c.env.ASSETS.put(objectKey, body, { httpMetadata: { contentType } });
 

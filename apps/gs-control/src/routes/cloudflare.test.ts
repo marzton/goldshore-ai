@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, mock } from 'node:test';
+import { describe, it, beforeEach, after, mock } from 'node:test';
 import assert from 'node:assert';
 import { Hono } from 'hono';
 import { cloudflareRoutes } from './cloudflare.ts';
@@ -31,6 +31,10 @@ describe('Cloudflare Routes Middleware', () => {
     global.fetch = mock.fn(async () => {
       return new Response(JSON.stringify({ error: "Fetch not mocked" }), { status: 500 });
     });
+  });
+
+  after(() => {
+    global.fetch = originalFetch;
   });
 
   // Helper to create a request with specific claims
@@ -208,6 +212,39 @@ describe('Cloudflare Routes Middleware', () => {
     assert.strictEqual(body.success, false);
   });
 
+
+  it('should allow DNS update payloads with extra Cloudflare-managed fields', async () => {
+    let forwardedBody: any;
+    global.fetch = mock.fn(async (_input, init) => {
+      forwardedBody = init?.body;
+      return new Response(JSON.stringify({ success: true, result: {} }), { status: 200 });
+    });
+
+    const payload = {
+      type: 'A',
+      name: 'example.com',
+      content: '1.2.3.4',
+      ttl: 3600,
+      id: 'record-id',
+      zone_id: 'zone-id',
+      created_on: '2024-01-01T00:00:00.000000Z'
+    };
+
+    const response = await createRequest({
+      email: 'admin@example.com',
+      roles: ['admin'],
+    }, '/dns/records/123', 'PUT', payload);
+
+    assert.strictEqual(response.status, 200);
+    assert.ok(forwardedBody);
+    assert.deepStrictEqual(JSON.parse(forwardedBody as string), {
+      type: 'A',
+      name: 'example.com',
+      content: '1.2.3.4',
+      ttl: 3600
+    });
+  });
+
   it('should succeed DNS update with valid payload', async () => {
     global.fetch = mock.fn(async () => {
       return new Response(JSON.stringify({ success: true, result: {} }), { status: 200 });
@@ -231,6 +268,42 @@ describe('Cloudflare Routes Middleware', () => {
     const log = auditLogs.find(l => l.action === 'cloudflare:dns:update');
     assert.ok(log);
     assert.strictEqual(log.status, 'success');
+  });
+
+  it('should ignore extra Cloudflare-managed fields during DNS update', async () => {
+    const fetchMock = mock.fn(async () => {
+      return new Response(JSON.stringify({ success: true, result: {} }), { status: 200 });
+    });
+    global.fetch = fetchMock;
+
+    const payload = {
+      id: 'record-id',
+      zone_id: 'zone-id',
+      created_on: '2026-01-01T00:00:00Z',
+      type: 'A',
+      name: 'example.com',
+      content: '1.2.3.4',
+      ttl: 3600,
+      proxied: true
+    };
+
+    const response = await createRequest({
+      email: 'admin@example.com',
+      roles: ['admin'],
+    }, '/dns/records/123', 'PUT', payload);
+
+    assert.strictEqual(response.status, 200);
+    assert.strictEqual(fetchMock.mock.calls.length, 1);
+
+    const [, requestInit] = fetchMock.mock.calls[0].arguments as [string, RequestInit];
+    const requestBody = JSON.parse(requestInit.body as string);
+    assert.deepStrictEqual(requestBody, {
+      type: 'A',
+      name: 'example.com',
+      content: '1.2.3.4',
+      ttl: 3600,
+      proxied: true
+    });
   });
 
   it('should handle errors on /pages/projects route', async () => {
