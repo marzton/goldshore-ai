@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference types="astro/client" />
 
 // Type definitions for environment variables
@@ -16,16 +15,13 @@ interface ImportMeta {
 
 // Global Cloudflare Env types
 interface KVNamespace {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    put(key: string, value: string | ReadableStream | ArrayBuffer, options?: any): Promise<void>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    get(key: string, options?: any): Promise<string | null>;
+    put(key: string, value: string | ReadableStream | ArrayBuffer, options?: unknown): Promise<void>;
+    get(key: string, options?: unknown): Promise<string | null>;
     // Add other methods as needed
 }
 
 interface D1Database {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    prepare(query: string): any;
+    prepare(query: string): unknown;
     // Add other methods as needed
 }
 
