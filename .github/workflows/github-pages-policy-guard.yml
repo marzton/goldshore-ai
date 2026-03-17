@@ -1,0 +1,31 @@
+name: github-pages-policy-guard
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Block unsupported GitHub Pages actions
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          forbidden='actions/(configure-pages|upload-pages-artifact|deploy-pages|jekyll-build-pages)@'
+
+          if rg -n "$forbidden" .github/workflows; then
+            echo ""
+            echo "Detected unsupported GitHub Pages Actions in workflow files."
+            echo "This repository must use Cloudflare Pages workflows, not GitHub Pages Actions."
+            echo ""
+            echo "If 'pages build and deployment' is failing, disable GitHub Pages in repository settings"
+            echo "(Settings -> Pages -> Build and deployment) or switch to Deploy from a branch."
+            exit 1
+          fi
+
+          echo "No forbidden GitHub Pages actions found."
