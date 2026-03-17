@@ -29,6 +29,18 @@ const isOperational = systemStatus.trim().toLowerCase() === 'operational';
       <HeroLogo />
     </div>
 
+  <canvas id="pulsar-field" aria-hidden="true" data-parallax="0.03"></canvas>
+
+  <div class="gs-container gs-seq gs-vt gs-hero-content" data-parallax="-0.015">
+    <div class="gs-i-0 gs-kicker gs-signal">
+      <span class="gs-status-dot" data-gs-status-dot aria-hidden="true"></span>
+      <span data-gs-system-status>System Status: {systemStatus}</span>
+    </div>
+
+    <div class="gs-i-1 gs-hero-mark">
+      <HeroLogo />
+    </div>
+
     <h1 class="gs-i-2 gs-display gs-hero-title gs-vt-title">
       Shaping Waves with Applied Intelligence
     </h1>
@@ -55,6 +67,33 @@ const isOperational = systemStatus.trim().toLowerCase() === 'operational';
         <h2>Ops Surface</h2>
         <p>Control-plane visibility for incidents, workflows, and system health.</p>
       </article>
+    </p>
+
+    <div class="gs-i-4 gs-hero-actions">
+      <a href="/workflows" class="gs-button gs-button-solid gs-edge-scan">Start the Experience</a>
+      <a href="/contact" class="gs-button gs-button-outline">Contact Sales</a>
+    </div>
+
+    <div class="gs-i-5 gs-hero-preview" aria-label="Platform surface preview">
+      <article class="gs-hero-preview-card">
+        <h2>GoldShore Agent</h2>
+        <p>Signal triage and response routing with operator-grade guardrails.</p>
+      </article>
+      <article class="gs-hero-preview-card">
+        <h2>Deployment Pulse</h2>
+        <p>Continuous checks across gs-web, gs-admin, and runtime workers.</p>
+      </article>
+      <article class="gs-hero-preview-card">
+        <h2>Ops Surface</h2>
+        <p>Control-plane visibility for incidents, workflows, and system health.</p>
+      </article>
+      Institutional-grade automation, infrastructure, and intelligence systems.
+    </p>
+
+    <div class="gs-i-4 gs-hero-actions">
+      <a href="/contact" class="gs-button gs-button-solid gs-edge-scan"
+        >Request Briefing</a
+      >
     </div>
   </div>
 </section>
