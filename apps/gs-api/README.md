@@ -45,7 +45,60 @@ pnpm --filter ./apps/gs-api build
 - Preview deploy: `.github/workflows/preview-api-worker.yml`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 
+### Cloudflare Worker Builds troubleshooting
+
+If Cloudflare Worker Builds fails before dependency installation with:
+
+`Failed: The build token selected for this build has been deleted or rolled and cannot be used for this build.`
+
+the issue is in Worker Builds project settings (not this repository code).
+
+Fix in Cloudflare Dashboard:
+
+1. Open **Workers & Pages** → **gs-api** → **Settings** → **Builds**.
+2. Create or select an active Worker Builds token.
+3. Save the updated token in Worker Builds settings.
+4. Re-run the build.
+
+Notes:
+- `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` can still be valid while Worker Builds fails.
+- Rotating/deleting the Worker Builds token immediately invalidates queued and new builds that reference the old token.
+
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 ```bash
 pnpm --filter ./apps/gs-api deploy
 ```
+
+## AI Gateway (gs-gateway) local setup
+
+Install dependencies:
+
+```bash
+pnpm -C apps/gs-api add openai
+```
+
+Set these environment variables in your local shell, `.env`, `.dev.vars`, or Wrangler secret store before running gateway calls:
+
+- `CF_AIG_TOKEN` - Cloudflare API token with AI Gateway Read/Edit permissions.
+- `CF_GATEWAY_URL` - `https://gateway.ai.cloudflare.com/v1/f77de112d2019e5456a3198a8bb50bd2/gs-gateway/compat`
+
+You can bootstrap local config with:
+
+```bash
+cp apps/gs-api/.env.example apps/gs-api/.env
+```
+
+For Worker runtime secrets, set:
+
+```bash
+pnpm -C apps/gs-api wrangler secret put CF_AIG_TOKEN
+pnpm -C apps/gs-api wrangler secret put CF_GATEWAY_URL
+```
+
+Run the validation script:
+
+```bash
+pnpm -C apps/gs-api test:gateway
+```
+
+The script auto-loads `.env` and `.dev.vars`, sends a `Hello world` prompt, and prints `x-cf-ai-gateway-id` when Cloudflare returns it.

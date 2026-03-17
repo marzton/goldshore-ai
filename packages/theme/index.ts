@@ -1,3 +1,6 @@
+const MODAL_TITLE_ID = 'gs-modal-title';
+const MODAL_DESCRIPTION_ID = 'gs-modal-description';
+
 export function initGoldShoreUI() {
   initNav();
   initModal();
@@ -5,16 +8,20 @@ export function initGoldShoreUI() {
   initReveal();
   initTilt();
   initScrollHints();
+  initHeroPulsar();
 }
 
 function initNav() {
-  const toggle = document.querySelector<HTMLButtonElement>('[data-gs-nav-toggle]');
+  const toggle = document.querySelector<HTMLButtonElement>(
+    '[data-gs-nav-toggle]',
+  );
   const panel = document.querySelector<HTMLElement>('[data-gs-mobile-panel]');
   if (!toggle || !panel) return;
 
   const setOpen = (open: boolean) => {
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     panel.classList.toggle('is-open', open);
+    panel.setAttribute('aria-hidden', open ? 'false' : 'true');
     document.documentElement.classList.toggle('gs-lock', open);
   };
 
@@ -25,7 +32,13 @@ function initNav() {
 
   panel.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
-    if (t.matches('[data-gs-nav-close]') || t.matches('[data-gs-mobile-panel]')) setOpen(false);
+    if (
+      t.matches('[data-gs-nav-close]') ||
+      t.matches('[data-gs-mobile-panel]') ||
+      t.closest('.gs-mobile-link-item')
+    ) {
+      setOpen(false);
+    }
   });
 
   window.addEventListener('keydown', (e) => {
@@ -38,18 +51,80 @@ function initModal() {
   if (!root) return;
 
   const backdrop = root.querySelector<HTMLElement>('[data-gs-modal-backdrop]');
-  const closeBtn = root.querySelector<HTMLButtonElement>('[data-gs-modal-close]');
+  const closeBtn = root.querySelector<HTMLButtonElement>(
+    '[data-gs-modal-close]',
+  );
   const body = root.querySelector<HTMLElement>('[data-gs-modal-body]');
+  const panel = root.querySelector<HTMLElement>('.gs-modal-panel');
 
-  const openModal = (html: string) => {
+  let opener: HTMLElement | null = null;
+
+  const getFocusableElements = () => {
+    if (!panel) return [];
+
+    const selectors =
+      'a[href], area[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"]), [contenteditable="true"]';
+
+    return Array.from(panel.querySelectorAll<HTMLElement>(selectors)).filter(
+      (el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true',
+    );
+  };
+
+  const focusDialog = () => {
+    const focusable = getFocusableElements();
+    const firstFocusable = focusable[0];
+    (firstFocusable ?? panel)?.focus();
+  };
+
+  const openModal = (html: string, trigger: HTMLElement) => {
+    opener = trigger;
     if (body) body.innerHTML = html;
     root.classList.add('is-open');
     document.documentElement.classList.add('gs-lock');
+    document.addEventListener('keydown', onKeydown);
+    requestAnimationFrame(focusDialog);
   };
 
   const closeModal = () => {
     root.classList.remove('is-open');
     document.documentElement.classList.remove('gs-lock');
+    document.removeEventListener('keydown', onKeydown);
+    if (opener?.isConnected) opener.focus();
+    opener = null;
+  };
+
+  const onKeydown = (e: KeyboardEvent) => {
+    if (!root.classList.contains('is-open')) return;
+
+    if (e.key === 'Escape') {
+      closeModal();
+      return;
+    }
+
+    if (e.key !== 'Tab' || !panel) return;
+
+    const focusable = getFocusableElements();
+    if (!focusable.length) {
+      e.preventDefault();
+      panel.focus();
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement as HTMLElement | null;
+
+    if (e.shiftKey) {
+      if (active === first || active === panel) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
   };
 
   document.addEventListener('click', (e) => {
@@ -58,12 +133,14 @@ function initModal() {
     if (!trigger) return;
 
     const variant = trigger.getAttribute('data-gs-modal-open') || 'subscribe';
-    openModal(getModalTemplate(variant));
+    openModal(getModalTemplate(variant), trigger);
   });
 
   backdrop?.addEventListener('click', closeModal);
   closeBtn?.addEventListener('click', closeModal);
-  window.addEventListener('keydown', (e) => (e.key === 'Escape' ? closeModal() : null));
+  window.addEventListener('keydown', (e) =>
+    e.key === 'Escape' ? closeModal() : null,
+  );
 }
 
 function getModalTemplate(variant: string): string {
@@ -71,8 +148,8 @@ function getModalTemplate(variant: string): string {
     return `
       <div class="gs-modal-head">
         <div class="gs-kicker gs-signal">Secure Access</div>
-        <h2 class="gs-modal-title gs-display">Admin Login</h2>
-        <p class="gs-muted">Restricted. Authentication required.</p>
+        <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Admin Login</h2>
+        <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Restricted. Authentication required.</p>
       </div>
       <form class="gs-form" action="https://admin.goldshore.ai/login" method="POST">
         <label class="gs-label">Email</label>
@@ -86,10 +163,10 @@ function getModalTemplate(variant: string): string {
   }
 
   return `
-    <div class="gs-modal-head">
+      <div class="gs-modal-head">
       <div class="gs-kicker">Signal Brief</div>
-      <h2 class="gs-modal-title gs-display">Subscribe</h2>
-      <p class="gs-muted">Periodic updates on releases, systems, and operational tooling.</p>
+      <h2 class="gs-modal-title gs-display" id="${MODAL_TITLE_ID}">Subscribe</h2>
+      <p class="gs-muted" id="${MODAL_DESCRIPTION_ID}">Periodic updates on releases, systems, and operational tooling.</p>
     </div>
     <form class="gs-form" action="/api/subscribe" method="POST">
       <label class="gs-label">Email</label>
@@ -128,7 +205,9 @@ function initReveal() {
   const rm = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   if (rm) return;
 
-  const els = Array.from(document.querySelectorAll<HTMLElement>('[data-gs-reveal]'));
+  const els = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-gs-reveal]'),
+  );
   if (!els.length) return;
 
   const io = new IntersectionObserver(
@@ -154,12 +233,15 @@ function initTilt() {
   const hover = window.matchMedia?.('(hover: hover)')?.matches;
   if (!fine || !hover) return;
 
-  const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-gs-tilt]'));
+  const panels = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-gs-tilt]'),
+  );
   if (!panels.length) return;
 
   document.documentElement.classList.add('gs-tilt-on');
 
-  const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
+  const clamp = (n: number, min: number, max: number) =>
+    Math.max(min, Math.min(max, n));
 
   panels.forEach((el) => {
     el.classList.add('gs-tilt');
@@ -194,5 +276,106 @@ function initScrollHints() {
   if (typeof CSS !== 'undefined' && typeof CSS.supports === 'function') {
     const ok = CSS.supports('animation-timeline: view()');
     if (ok) document.documentElement.classList.add('gs-view-timeline');
+  }
+}
+
+function initHeroPulsar() {
+  const canvas = document.getElementById(
+    'pulsar-field',
+  ) as HTMLCanvasElement | null;
+  const ctx = canvas?.getContext('2d');
+  if (!canvas || !ctx) return;
+
+  const reduceMotion = window.matchMedia?.(
+    '(prefers-reduced-motion: reduce)',
+  )?.matches;
+  if (reduceMotion) return;
+
+  const host = canvas.closest<HTMLElement>('[data-gs-hero]');
+  const particles: Array<{
+    x: number;
+    y: number;
+    r: number;
+    speed: number;
+    opacity: number;
+  }> = [];
+  const PARTICLE_COUNT = 60;
+  let raf = 0;
+  let active = true;
+
+  const resize = () => {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+  };
+
+  const createParticle = () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 3 + 1,
+    speed: Math.random() * 0.3 + 0.05,
+    opacity: Math.random() * 0.6 + 0.2,
+  });
+
+  const seedParticles = () => {
+    particles.length = 0;
+    for (let i = 0; i < PARTICLE_COUNT; i += 1)
+      particles.push(createParticle());
+  };
+
+  const loop = () => {
+    if (!active) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach((particle) => {
+      particle.y -= particle.speed;
+      if (particle.y < 0) particle.y = canvas.height;
+
+      const gradient = ctx.createRadialGradient(
+        particle.x,
+        particle.y,
+        0,
+        particle.x,
+        particle.y,
+        particle.r * 6,
+      );
+      gradient.addColorStop(0, `rgba(90,140,255,${particle.opacity})`);
+      gradient.addColorStop(1, 'transparent');
+
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(particle.x, particle.y, particle.r * 6, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    raf = requestAnimationFrame(loop);
+  };
+
+  const setActive = (next: boolean) => {
+    if (active === next) return;
+    active = next;
+    host?.classList.toggle('gs-hero-anim-paused', !active);
+    if (active) raf = requestAnimationFrame(loop);
+    else cancelAnimationFrame(raf);
+  };
+
+  resize();
+  seedParticles();
+  raf = requestAnimationFrame(loop);
+
+  const onResize = () => {
+    resize();
+    seedParticles();
+  };
+
+  window.addEventListener('resize', onResize);
+
+  if (host && typeof IntersectionObserver !== 'undefined') {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setActive(Boolean(entry?.isIntersecting));
+      },
+      { threshold: 0.05 },
+    );
+    observer.observe(host);
   }
 }

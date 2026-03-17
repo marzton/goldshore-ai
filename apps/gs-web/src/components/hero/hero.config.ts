@@ -1,6 +1,14 @@
-export type HeroVariant = 'orbital' | 'defense' | 'minimal';
+export type HeroVariant = 'orbital' | 'defense' | 'minimal' | 'canonical';
 
-export const HERO_VARIANTS: Record<HeroVariant, { label: string; description: string }> = {
+export const HERO_VARIANTS: Record<
+  HeroVariant,
+  { label: string; description: string }
+> = {
+  canonical: {
+    label: 'Shaping Waves Canonical',
+    description:
+      'Canonical hero with cinematic status and strong CTA hierarchy.',
+  },
   orbital: {
     label: 'Orbital Control',
     description: 'Deep-space institutional hero with CSS particle field.',
@@ -15,9 +23,11 @@ export const HERO_VARIANTS: Record<HeroVariant, { label: string; description: st
   },
 };
 
-export const DEFAULT_HERO_VARIANT: HeroVariant = 'orbital';
+export const DEFAULT_HERO_VARIANT: HeroVariant = 'canonical';
 
-export const normalizeHeroVariant = (value: string | null | undefined): HeroVariant => {
+export const normalizeHeroVariant = (
+  value: string | null | undefined,
+): HeroVariant => {
   if (value && value in HERO_VARIANTS) {
     return value as HeroVariant;
   }
