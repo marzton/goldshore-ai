@@ -10,70 +10,36 @@ import HeroLogo from './HeroLogo.astro';
   <div class="hero-bg" aria-hidden="true">
     <canvas class="hero-canvas" data-stars></canvas>
     <canvas class="hero-canvas" data-shooting></canvas>
+    <img
+      class="hero-wave-overlay"
+      src="/assets/starfield.svg"
+      alt="Abstract telemetry wave field representing live operational signals"
+      loading="lazy"
+      decoding="async"
+    />
     <div class="hero-grid-field"></div>
     <div class="hero-vignette"></div>
   </div>
 
   <div class="hero-container">
-    <div class="hero-top-nav">
-      <div class="system-status">
-        <span class="status-dot"></span>
-        <span class="status-text">SYSTEM STATUS: OPERATIONAL</span>
-      </div>
+    <div class="system-status" aria-live="polite">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span class="status-text">System Status: Operational</span>
     </div>
 
-    <div class="hero-content">
-      <div class="hero-watermark">
-        <HeroLogo />
-      </div>
-
-      <h1 class="hero-headline">
-        Shaping Waves with <br />
-        Applied Intelligence
-      </h1>
-
-      <p class="hero-supporting">
-        Institutional-grade automation, infrastructure, and intelligence systems for real-time operations.
-      </p>
-
-      <div class="hero-actions">
-        <a class="btn primary btn-large" href="/experience">Start the Experience</a>
-        <a class="btn ghost btn-large" href="/sales">Contact Sales</a>
-      </div>
+    <div class="hero-watermark" aria-hidden="true">
+      <HeroLogo />
     </div>
 
-    <div class="hero-panel-preview">
-      <div class="preview-panel">
-        <div class="panel-header">
-          <div class="panel-dots">
-            <span></span><span></span><span></span>
-          </div>
-          <div class="panel-title">GoldShore Agent / Deployment Pulse</div>
-        </div>
-        <div class="panel-body">
-          <div class="terminal-line">
-            <span class="prompt">></span>
-            <span class="command">gs-agent --status</span>
-          </div>
-          <div class="terminal-output">
-            NODE_01: ONLINE | LATENCY: 12ms | THROUGHPUT: 4.8B signals/sec
-          </div>
-          <div class="terminal-line">
-            <span class="prompt">></span>
-            <span class="command">gs-deploy --pulse --all</span>
-          </div>
-          <div class="terminal-grid">
-            <div class="grid-item active"></div>
-            <div class="grid-item active"></div>
-            <div class="grid-item active"></div>
-            <div class="grid-item active"></div>
-            <div class="grid-item pulse"></div>
-            <div class="grid-item active"></div>
-            <div class="grid-item active"></div>
-            <div class="grid-item active"></div>
-          </div>
-        </div>
-      </div>
+    <h1 class="hero-headline">Shaping Waves with Applied Intelligence</h1>
+    <p class="hero-supporting">
+      Institutional-grade automation, infrastructure, and intelligence systems
+      for real-time operations.
+    </p>
+
+    <div class="hero-actions">
+      <a class="btn primary" href="/contact">Request Briefing</a>
+      <a class="btn ghost" href="/services">Explore Services</a>
     </div>
   </div>
 </section>
@@ -81,257 +47,128 @@ import HeroLogo from './HeroLogo.astro';
 <style>
   .gs-canonical-hero {
     position: relative;
-    min-height: 100vh;
+    min-height: 92vh;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     overflow: hidden;
     background: #020408;
-    color: #f1f5f9;
+    color: #fff;
   }
 
-  .hero-bg {
+  .hero-bg,
+  .hero-canvas,
+  .hero-wave-overlay,
+  .hero-grid-field,
+  .hero-vignette {
     position: absolute;
     inset: 0;
-    z-index: 0;
   }
 
-  .hero-canvas {
-    position: absolute;
-    inset: 0;
+  .hero-wave-overlay {
     width: 100%;
     height: 100%;
+    object-fit: cover;
+    opacity: 0.14;
+    mix-blend-mode: screen;
   }
 
   .hero-grid-field {
-    position: absolute;
-    inset: 0;
     background-image:
       linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     background-size: 40px 40px;
-    background-position: center center;
     mask-image: radial-gradient(circle at center, black, transparent 80%);
   }
 
   .hero-vignette {
-    position: absolute;
-    inset: 0;
     background: radial-gradient(circle at center, transparent 20%, #020408 90%);
   }
 
   .hero-container {
     position: relative;
     z-index: 1;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     text-align: center;
-  }
-
-  .hero-top-nav {
-    margin-bottom: 4rem;
+    max-width: 860px;
+    padding: 2rem;
   }
 
   .system-status {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 100px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    color: rgba(255, 255, 255, 0.6);
+    gap: 0.65rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 0.5rem 0.9rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
 
   .status-dot {
-    width: 6px;
-    height: 6px;
-    background: #10b981;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    box-shadow: 0 0 10px #10b981;
-    animation: status-pulse 2s infinite;
-  }
-
-  @keyframes status-pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.4; }
-    100% { opacity: 1; }
-  }
-
-  .hero-content {
-    margin-bottom: 6rem;
+    background: #22c55e;
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.65);
+    animation: status-pulse 2s ease-in-out infinite;
   }
 
   .hero-watermark {
-    opacity: 0.15;
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 2rem;
-    filter: grayscale(1);
+    opacity: 0.35;
+    width: 64px;
+    margin: 0 auto 1.25rem;
   }
 
   .hero-headline {
-    font-family: "Ibarra Real Nova", serif;
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    color: #fff;
+    font-size: clamp(2.4rem, 8vw, 4.6rem);
     line-height: 1.1;
-    font-weight: 400;
-    margin-bottom: 1.5rem;
-    letter-spacing: -0.02em;
+    margin: 0;
+    font-weight: 500;
   }
 
   .hero-supporting {
-    font-size: 1.25rem;
-    color: rgba(255, 255, 255, 0.6);
-    max-width: 60ch;
-    margin: 0 auto 3rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.125rem;
+    max-width: 58ch;
+    margin: 1.2rem auto 0;
   }
 
   .hero-actions {
     display: flex;
-    gap: 1rem;
     justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-top: 1.8rem;
   }
 
   .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s;
+    border-radius: 10px;
+    padding: 0.9rem 1.35rem;
     text-decoration: none;
-    font-size: 0.95rem;
-  }
-
-  .btn-large {
-    padding: 1rem 2rem;
-    font-size: 1rem;
+    font-weight: 600;
   }
 
   .btn.primary {
-    background: #f1f5f9;
+    background: #fff;
     color: #020408;
   }
 
-  .btn.primary:hover {
-    background: #ffffff;
-    transform: translateY(-1px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  }
-
   .btn.ghost {
-    background: transparent;
-    color: #f1f5f9;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.24);
   }
 
-  .btn.ghost:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-
-  .hero-panel-preview {
-    width: 100%;
-    max-width: 800px;
-    perspective: 1000px;
-  }
-
-  .preview-panel {
-    background: rgba(10, 15, 30, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    overflow: hidden;
-    backdrop-filter: blur(20px);
-    transform: rotateX(5deg);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-    text-align: left;
-  }
-
-  .panel-header {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 0.75rem 1rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  .panel-dots {
-    display: flex;
-    gap: 0.4rem;
-  }
-
-  .panel-dots span {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .panel-title {
-    font-family: ui-monospace, monospace;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: rgba(255, 255, 255, 0.4);
-  }
-
-  .panel-body {
-    padding: 1.5rem;
-    font-family: ui-monospace, monospace;
-    font-size: 0.85rem;
-  }
-
-  .terminal-line {
-    display: flex;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .prompt { color: #3b82f6; }
-  .command { color: #f1f5f9; }
-  .terminal-output {
-    color: rgba(255, 255, 255, 0.4);
-    margin-bottom: 1.5rem;
-    padding-left: 1.5rem;
-  }
-
-  .terminal-grid {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 0.5rem;
-    margin-top: 1rem;
-  }
-
-  .grid-item {
-    aspect-ratio: 1;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 2px;
-  }
-
-  .grid-item.active {
-    background: rgba(59, 130, 246, 0.3);
-  }
-
-  .grid-item.pulse {
-    background: #3b82f6;
-    box-shadow: 0 0 15px #3b82f6;
-    animation: status-pulse 1s infinite;
+  @keyframes status-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.65);
+    }
+    50% {
+      box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+    }
   }
 </style>
-
-<script>
-  import { mountHero } from './mountHero';
-
-  mountHero();
-</script>

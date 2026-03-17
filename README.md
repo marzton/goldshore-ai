@@ -287,12 +287,28 @@ Route: https://api.goldshore.ai/*
 
 ```
 GET   /health
+GET   /health?type=deep
+
+GET   /user/:id
+
+GET   /system/status
+GET   /system/routing
+GET   /system/config
+PUT   /system/config
+GET   /system/version
+```
+
+### Planned endpoints (not currently mounted)
+
+```text
 GET   /version
 POST  /auth/login
 GET   /auth/session
 GET   /content/:slug
 POST  /queue/task
 ```
+
+Route-mounting source of truth: `apps/api-worker/src/index.ts` (current repo path: `apps/gs-api/src/index.ts`).
 
 Bindings:
 

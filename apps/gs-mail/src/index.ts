@@ -3,7 +3,7 @@ import {
   EmailInboxLogsSchema,
   EmailLogSchema,
   type EmailLog,
-} from '../../../packages/schema/src/system';
+} from '@goldshore/schema';
 
 interface Env {
   GS_CONFIG: KVNamespace;
@@ -100,25 +100,9 @@ export default {
       ctx.waitUntil(
         (async () => {
           try {
-            const rawLogs = await env.GS_CONFIG.get('EMAIL_INBOX_LOGS');
-            let currentLogs: EmailLog[] = [];
-
-            if (rawLogs) {
-              try {
-                const parsedLogs = JSON.parse(rawLogs);
-                const parseResult = EmailInboxLogsSchema.safeParse(parsedLogs);
-                if (parseResult.success) {
-                  currentLogs = parseResult.data;
-                } else {
-                  console.error('❌ Existing EMAIL_INBOX_LOGS payload failed schema validation:', parseResult.error);
-                }
-              } catch (err) {
-                console.error('❌ Failed to parse EMAIL_INBOX_LOGS payload:', err);
-              }
-            }
-
+            const existingLogs = await readInboxLogs(env.GS_CONFIG);
             // Prepend and truncate to 100 per SOP
-            const updatedLogs = [validation.data, ...currentLogs].slice(0, 100);
+            const updatedLogs = [validation.data, ...existingLogs].slice(0, 100);
 
             await env.GS_CONFIG.put('EMAIL_INBOX_LOGS', JSON.stringify(updatedLogs));
             console.info(`✅ Logged email: ${sender} -> ${recipient}`);
@@ -129,25 +113,7 @@ export default {
       );
     } else {
       console.error('🚨 Schema Validation Failed for inbound mail:', validation.error);
-    });
-
-    if (!parsedEntry.success) {
-      console.error('🚨 Schema validation failed for inbound mail:', parsedEntry.error);
-      return;
     }
-
-    ctx.waitUntil(
-      (async () => {
-        try {
-          const existingLogs = await readInboxLogs(env.GS_CONFIG);
-          const updatedLogs = [parsedEntry.data, ...existingLogs].slice(0, 100);
-          await env.GS_CONFIG.put('EMAIL_INBOX_LOGS', JSON.stringify(updatedLogs));
-          console.info(`✅ Logged email: ${sender} -> ${recipient}`);
-        } catch (error) {
-          console.error('❌ KV persistence error:', error);
-        }
-      })(),
-    );
 
     const forwardTo = (env.MAIL_FORWARD_TO || env.FORWARD_TO)?.trim();
     if (forwardTo && isEmailLike(forwardTo)) {

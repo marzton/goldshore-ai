@@ -11,6 +11,13 @@ type MediaRecord = {
   created_at: string;
 };
 
+type UploadFileLike = {
+  name: string;
+  size: number;
+  text: () => Promise<string>;
+  arrayBuffer: () => Promise<ArrayBuffer>;
+};
+
 const ALLOWED_MIME_TYPES = new Map([
   ['svg', 'image/svg+xml'],
   ['png', 'image/png'],
@@ -20,6 +27,19 @@ const ALLOWED_MIME_TYPES = new Map([
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
+const isUploadFileLike = (value: unknown): value is UploadFileLike => {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const candidate = value as Partial<UploadFileLike>;
+  return (
+    typeof candidate.name === 'string' &&
+    typeof candidate.size === 'number' &&
+    typeof candidate.text === 'function' &&
+    typeof candidate.arrayBuffer === 'function'
+  );
+};
 const sanitizeSvg = (input: string): string =>
   sanitizeHtml(input, {
     allowedTags: [
@@ -133,7 +153,7 @@ media.get('/:id', async (c) => {
   const headers = new Headers();
   headers.set('Content-Type', result.type || object.httpMetadata?.contentType || 'application/octet-stream');
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-  
+
   // Sentinel: Enforce strict CSP to mitigate SVG XSS
   headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; object-src 'none'; sandbox");
 
@@ -144,7 +164,7 @@ media.post('/upload', async (c) => {
   const formData = await c.req.formData();
   const file = formData.get('file');
 
-  if (!(file instanceof File)) return c.json({ error: 'Missing file upload' }, 400);
+  if (!isUploadFileLike(file)) return c.json({ error: 'Missing file upload' }, 400);
   if (file.size > MAX_FILE_SIZE) return c.json({ error: 'File too large' }, 413);
 
   const filename = file.name || 'upload';
