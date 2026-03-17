@@ -123,7 +123,7 @@ describe('AI Analysis Endpoint Caching', () => {
     assert.strictEqual(res1.status, 403);
 
     // Case 2: Claims present but missing the required permission (viewer role)
-    const res2 = await app.request('/analysis', {
+    await app.request('/analysis', {
       method: 'POST',
       body: JSON.stringify(requestBody),
       headers: { 'Content-Type': 'application/json' },
