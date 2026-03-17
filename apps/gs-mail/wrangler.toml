@@ -2,6 +2,7 @@ name = "gs-mail"
 main = "src/index.ts"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
+tsconfig = "tsconfig.json"
 
 [[kv_namespaces]]
 binding = "GS_CONFIG"
@@ -10,6 +11,9 @@ id = "9cc2209906a94851b704be57543987a9"
 [vars]
 ENV = "production"
 MAIL_FORWARD_TO = "ops@goldshore.ai"
+
+[observability]
+enabled = true
 
 [env.dev]
 name = "gs-mail-dev"
@@ -20,8 +24,9 @@ id = "9cc2209906a94851b704be57543987a9"
 ENV = "development"
 
 [env.prod]
-name = "gs-mail"
-compatibility_date = "2024-11-01"
+routes = [
+  { pattern = "mail.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
 
 [[env.prod.kv_namespaces]]
 binding = "GS_CONFIG"
@@ -30,3 +35,6 @@ id = "9cc2209906a94851b704be57543987a9"
 [env.prod.vars]
 ENV = "production"
 MAIL_FORWARD_TO = "ops@goldshore.ai"
+
+[env.prod.observability]
+enabled = true
