@@ -34,7 +34,7 @@ jobs:
         run: pnpm check:workspace-protocol
 
       - name: Validate worker names
-        run: pnpm validate:workers
+        run: pnpm validate:names
 
       - name: Validate workspace worker contract
         run: pnpm validate:workspace
