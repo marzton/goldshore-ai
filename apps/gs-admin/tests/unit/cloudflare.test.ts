@@ -22,7 +22,7 @@ test('getCloudflareMetrics should return valid metrics structure', async () => {
   assert.ok(metrics.charts);
   assert.ok(Object.keys(metrics.charts).length > 0);
 
-  for (const [, chart] of Object.entries(metrics.charts)) {
+  for (const chart of Object.values(metrics.charts)) {
     assert.strictEqual(typeof chart.title, 'string');
     assert.strictEqual(typeof chart.description, 'string');
     assert.strictEqual(typeof chart.summary, 'string');
