@@ -104,14 +104,14 @@ The following diagram is defined in [`docs/architecture/diagram.mmd`](./docs/arc
 
 ```mermaid
 flowchart TB
-  web[goldshore.ai (Web)\nCloudflare Pages]
-  admin[admin.goldshore.ai (Admin)\nCloudflare Pages + Access]
+  web["goldshore.ai (Web)<br/>Cloudflare Pages"]
+  admin["admin.goldshore.ai (Admin)<br/>Cloudflare Pages + Access"]
 
   subgraph workers[Cloudflare Workers Layer]
-    api[gs-api\nHono API Worker]
-    gateway[gs-gateway\nRouter, proxy, auth, queues]
-    agent[gs-agent\nAutonomous AI Agent Service]
-    control[gs-control\nAutomation, DNS, previews]
+    api["gs-api<br/>Hono API Worker"]
+    gateway["gs-gateway<br/>Router, proxy, auth, queues"]
+    agent["gs-agent<br/>Autonomous AI Agent Service"]
+    control["gs-control<br/>Automation, DNS, previews"]
   end
 
   web --> admin
