@@ -237,6 +237,42 @@ describe('Cloudflare Routes Middleware', () => {
     assert.strictEqual(log.status, 'success');
   });
 
+  it('should ignore extra Cloudflare-managed fields during DNS update', async () => {
+    const fetchMock = mock.fn(async () => {
+      return new Response(JSON.stringify({ success: true, result: {} }), { status: 200 });
+    });
+    global.fetch = fetchMock;
+
+    const payload = {
+      id: 'record-id',
+      zone_id: 'zone-id',
+      created_on: '2026-01-01T00:00:00Z',
+      type: 'A',
+      name: 'example.com',
+      content: '1.2.3.4',
+      ttl: 3600,
+      proxied: true
+    };
+
+    const response = await createRequest({
+      email: 'admin@example.com',
+      roles: ['admin'],
+    }, '/dns/records/123', 'PUT', payload);
+
+    assert.strictEqual(response.status, 200);
+    assert.strictEqual(fetchMock.mock.calls.length, 1);
+
+    const [, requestInit] = fetchMock.mock.calls[0].arguments as [string, RequestInit];
+    const requestBody = JSON.parse(requestInit.body as string);
+    assert.deepStrictEqual(requestBody, {
+      type: 'A',
+      name: 'example.com',
+      content: '1.2.3.4',
+      ttl: 3600,
+      proxied: true
+    });
+  });
+
   it('should handle errors on /pages/projects route', async () => {
     global.fetch = mock.fn(async () => {
       throw new Error("Simulated fetch error");
