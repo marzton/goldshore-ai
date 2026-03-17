@@ -12,9 +12,10 @@
     "target": "ESNext",
     "strict": true,
     "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
     "paths": {
       "@goldshore/schema": [
-        "../../packages/schema/src/system.ts"
+        "../../packages/schema/src/index.ts"
       ]
     }
   },
