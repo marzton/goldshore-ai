@@ -9,29 +9,31 @@ const DOCS_DIR = resolve(__dirname, '../src/content/docs');
 const OUTPUT_FILE = resolve(__dirname, '../src/search-index.json');
 
 async function getDocs() {
-  const files = [];
-
   async function scan(dir) {
     try {
       const entries = await readdir(dir, { withFileTypes: true });
-      for (const entry of entries) {
-        const fullPath = join(dir, entry.name);
-        if (entry.isDirectory()) {
-          await scan(fullPath);
-        } else if (entry.isFile() && /\.(md|mdx)$/.test(entry.name)) {
-          files.push(fullPath);
-        }
-      }
+      const results = await Promise.all(
+        entries.map(async (entry) => {
+          const fullPath = join(dir, entry.name);
+          if (entry.isDirectory()) {
+            return scan(fullPath);
+          } else if (entry.isFile() && /\.(md|mdx)$/.test(entry.name)) {
+            return [fullPath];
+          }
+          return [];
+        })
+      );
+      return results.flat();
     } catch (err) {
       if (err.code === 'ENOENT') {
         console.warn(`Directory not found: ${dir}`);
-        return;
+        return [];
       }
       throw err;
     }
   }
 
-  await scan(DOCS_DIR);
+  const files = await scan(DOCS_DIR);
 
   const docs = await Promise.all(files.map(async (file) => {
     const content = await readFile(file, 'utf-8');
