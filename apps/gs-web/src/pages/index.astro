@@ -28,14 +28,17 @@ export const prerender = true;
         <div class="narrative-content">
           <h2 class="serif-display">Built for Resiliency</h2>
           <p class="cinematic-lead">
-            We operate at the intersection of extreme scale and absolute precision.
-            Our systems are designed to absorb volatility, not just react to it.
+            We operate at the intersection of extreme scale and absolute
+            precision. Our systems are designed to absorb volatility, not just
+            react to it.
           </p>
           <div class="narrative-body">
             <p>
-              In a world of increasing complexity, clarity is the ultimate competitive advantage.
-              Gold Shore provides the foundational layers for the next generation of institutional
-              intelligence, ensuring that your most critical operations remain robust under any conditions.
+              In a world of increasing complexity, clarity is the ultimate
+              competitive advantage. Gold Shore provides the foundational layers
+              for the next generation of institutional intelligence, ensuring
+              that your most critical operations remain robust under any
+              conditions.
             </p>
           </div>
         </div>
@@ -52,7 +55,9 @@ export const prerender = true;
   <section class="gs-section">
     <div class="gs-container gs-panel gs-edge-light gs-edge-scan">
       <div class="gs-label">Built for Resiliency</div>
-      <h2>Shaping waves with composable systems and disciplined guardrails.</h2>
+      <h2 class="high-contrast-heading">
+        Shaping waves with composable systems and disciplined guardrails.
+      </h2>
       <p>
         Gold Shore combines high-fidelity telemetry, operator workflows, and
         institutional governance to preserve clarity under pressure.
@@ -62,7 +67,9 @@ export const prerender = true;
 
   <section class="gs-section" id="offerings">
     <div class="gs-container">
-      <div class="gs-label" style="margin-bottom: 0.75rem;">Performance at a glance</div>
+      <div class="gs-label" style="margin-bottom: 0.75rem;">
+        Performance at a glance
+      </div>
       <div class="gs-grid-3">
         <article
           class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
@@ -99,24 +106,37 @@ export const prerender = true;
     <div class="gs-container gs-grid-3">
       <article class="gs-panel gs-edge-light gs-edge-scan">
         <h3>Vibe Coding</h3>
-        <p>Rapid experimentation paths that still pass institutional control checks.</p>
+        <p>
+          Rapid experimentation paths that still pass institutional control
+          checks.
+        </p>
       </article>
       <article class="gs-panel gs-edge-light gs-edge-scan">
         <h3>Cinematic Ops</h3>
-        <p>Operator interfaces with clear escalation context and human override points.</p>
+        <p>
+          Operator interfaces with clear escalation context and human override
+          points.
+        </p>
       </article>
       <article class="gs-panel gs-edge-light gs-edge-scan">
         <h3>Applied Intelligence</h3>
-        <p>Signal fusion that turns data density into execution-ready recommendations.</p>
+        <p>
+          Signal fusion that turns data density into execution-ready
+          recommendations.
+        </p>
       </article>
+    </div>
+  </section>
+
   <section class="gs-section bordered-top">
     <div class="content-row">
       <div class="content-text">
         <span class="section-tag">Deployment Intelligence</span>
         <h2>Orchestrate with absolute precision.</h2>
         <p>
-          GoldShore's deployment engine provides granular control over global infrastructure.
-          Manage multi-region rollouts, automated rollbacks, and real-time health monitoring from a single, unified interface.
+          GoldShore's deployment engine provides granular control over global
+          infrastructure. Manage multi-region rollouts, automated rollbacks, and
+          real-time health monitoring from a single, unified interface.
         </p>
         <ul class="feature-list">
           <li>Immutable infrastructure as code</li>
@@ -146,8 +166,9 @@ export const prerender = true;
         <span class="section-tag">Risk Radar</span>
         <h2>Identify threats before they emerge.</h2>
         <p>
-          Our Risk Radar leverages applied intelligence to scan billions of signals across your network,
-          identifying anomalies and potential security breaches in milliseconds.
+          Our Risk Radar leverages applied intelligence to scan billions of
+          signals across your network, identifying anomalies and potential
+          security breaches in milliseconds.
         </p>
         <div class="radar-stats">
           <div class="radar-stat">
@@ -174,22 +195,25 @@ export const prerender = true;
       </div>
 
       <div class="gs-grid-3">
-        <article class="metric-card">
+        <article class="metric-card is-loading" data-metric-card>
           <div class="metric-label">System Availability</div>
           <div class="metric-value">99.995%</div>
-          <div class="metric-trend">Institutional Standard</div>
+          <div class="metric-trend">Institutional Standard · Last 30 days</div>
         </article>
 
-        <article class="metric-card">
+        <article class="metric-card is-loading" data-metric-card>
           <div class="metric-label">Deployment Frequency</div>
           <div class="metric-value">48/day</div>
-          <div class="metric-trend">Continuous Integration</div>
+          <div class="metric-trend">
+            <a href="/developer-hub"
+              >Continuous Integration · verified in Developer Hub</a>
+          </div>
         </article>
 
-        <article class="metric-card">
+        <article class="metric-card is-loading" data-metric-card>
           <div class="metric-label">Signal Throughput</div>
           <div class="metric-value">4.8B</div>
-          <div class="metric-trend">Signals Processed / Day</div>
+          <div class="metric-trend">Signals processed data points / day</div>
         </article>
       </div>
     </div>
@@ -200,13 +224,26 @@ export const prerender = true;
       <div class="cta-panel">
         <h2 class="serif-display">Advance your operational baseline.</h2>
         <div class="cta-actions">
-          <a href="/experience" class="btn primary btn-large">Request Briefing</a>
+          <a href="/experience" class="btn primary btn-large"
+            >Request Briefing</a
+          >
         </div>
       </div>
     </div>
   </section>
-
 </WebLayout>
+
+<script>
+  const revealMetrics = () => {
+    window.setTimeout(() => {
+      document.querySelectorAll('[data-metric-card]').forEach((card) => {
+        card.classList.remove('is-loading');
+      });
+    }, 550);
+  };
+
+  document.addEventListener('astro:page-load', revealMetrics);
+</script>
 
 <style>
   .gs-section {
@@ -222,11 +259,16 @@ export const prerender = true;
   }
 
   .serif-display {
-    font-family: "Ibarra Real Nova", serif;
+    font-family: 'Ibarra Real Nova', serif;
     font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 400;
     margin-bottom: 1.5rem;
     color: #f1f5f9;
+  }
+
+  .high-contrast-heading {
+    color: #ffffff;
+    font-weight: 600;
   }
 
   .cinematic-lead {
@@ -261,7 +303,11 @@ export const prerender = true;
   .visual-grid {
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0);
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 0
+    );
     background-size: 20px 20px;
   }
 
@@ -272,7 +318,11 @@ export const prerender = true;
     transform: translate(-50%, -50%);
     width: 60%;
     height: 60%;
-    background: radial-gradient(circle at center, rgba(59, 130, 246, 0.1), transparent 70%);
+    background: radial-gradient(
+      circle at center,
+      rgba(59, 130, 246, 0.1),
+      transparent 70%
+    );
     filter: blur(40px);
   }
 
@@ -311,7 +361,7 @@ export const prerender = true;
     font-size: 2.8rem;
     margin-bottom: 1.5rem;
     line-height: 1.1;
-    font-family: "Ibarra Real Nova", serif;
+    font-family: 'Ibarra Real Nova', serif;
   }
 
   .feature-list {
@@ -392,22 +442,45 @@ export const prerender = true;
 
   .pulse-line {
     height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gs-accent), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--gs-accent),
+      transparent
+    );
     margin-bottom: 2rem;
     opacity: 0.3;
     animation: slide 3s infinite linear;
   }
 
-  @keyframes slide {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(100%); }
+  @keyframes metric-loading {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
   }
 
-  .delay-1 { animation-delay: 1s; }
-  .delay-2 { animation-delay: 2s; }
+  @keyframes slide {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  .delay-1 {
+    animation-delay: 1s;
+  }
+  .delay-2 {
+    animation-delay: 2s;
+  }
 
   @media (max-width: 900px) {
-    .content-row, .content-row.reverse {
+    .content-row,
+    .content-row.reverse {
       grid-template-columns: 1fr;
       gap: 2rem;
     }
@@ -442,6 +515,29 @@ export const prerender = true;
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 16px;
     transition: all 0.3s;
+  }
+
+  .metric-card.is-loading {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .metric-card.is-loading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.08),
+      transparent
+    );
+    animation: metric-loading 1.2s linear infinite;
+  }
+
+  .metric-trend a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration-color: rgba(255, 255, 255, 0.35);
   }
 
   .metric-card:hover {

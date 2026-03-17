@@ -15,10 +15,7 @@ function generateKey(prefix: string, length: number): string {
 
 export async function rotateKeys(env: ControlEnv) {
   const timestamp = new Date().toISOString();
-  console.info({
-    event: "rotation_started",
-    timestamp
-  });
+  console.log(`[${timestamp}] Starting scheduled API key rotation...`);
 
   const auditLog: {
     action: string;
@@ -42,18 +39,11 @@ export async function rotateKeys(env: ControlEnv) {
       // 3. Archive the rotation event
       await env.CONTROL_LOGS.put(`secrets:${config.name}:history:${timestamp}`, newKey);
 
-      console.info({
-        event: "key_rotated",
-        name: config.name
-      });
+      console.log(`Successfully rotated key: ${config.name}`);
       auditLog.results.push({ name: config.name, status: "success" });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error({
-        event: "rotation_failed",
-        name: config.name,
-        error: errorMessage
-      });
+      console.error(`Failed to rotate key for ${config.name}:`, errorMessage);
       auditLog.results.push({
         name: config.name,
         status: "error",
@@ -66,9 +56,5 @@ export async function rotateKeys(env: ControlEnv) {
   const auditKey = `audit:rotation:${timestamp}`;
   await env.CONTROL_LOGS.put(auditKey, JSON.stringify(auditLog));
 
-  console.info({
-    event: "rotation_complete",
-    timestamp,
-    auditKey
-  });
+  console.log(`[${timestamp}] Key rotation complete. Audit log stored at: ${auditKey}`);
 }
