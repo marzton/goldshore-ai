@@ -20,9 +20,8 @@ Preview applications should mirror production configuration wherever Access is e
 
 ## Source-of-truth references
 
-- Cloudflare desired state for Access policy naming and domain ownership lives in `infra/cloudflare/desired-state.yaml`.
-- Pages custom domains for admin and web are documented in `infra/cloudflare/BINDINGS_MAP.md`.
-- Canonical preview/prod hostnames are documented in `docs/infra/HOSTNAME_REFERENCE.md`.
+- Cloudflare desired state for Access policy naming and domain ownership lives in `infra/Cloudflare/desired-state.yaml`.
+- Pages custom domains for admin and web are documented in `infra/Cloudflare/BINDINGS_MAP.md`.
 
 # Domains & Auth (Single Source of Truth)
 
@@ -51,7 +50,7 @@ Cloudflare Access is enforced on internal tooling and protected previews. The ta
 | Admin cockpit | `admin.goldshore.ai`, `admin-preview.goldshore.ai`, `*-preview.goldshore.ai`, `{branch}.goldshore-pages.dev` | Yes (GoldShore-Admin-ZT) | Internal admin dashboard, email allowlist + IdP/OTP. |
 | Control worker | `ops.goldshore.ai` | Yes | Internal ops workflows and automation. |
 | API worker | `api.goldshore.ai` | Optional | Enable for private endpoints only. |
-| Gateway worker | `gw.goldshore.ai`, `gw-preview.goldshore.ai` | Optional | Canonical hostnames are `gw.goldshore.ai` (prod) and `gw-preview.goldshore.ai` (preview); legacy aliases `gateway.goldshore.ai` / `gateway-preview.goldshore.ai` may remain routed for compatibility. |
+| Gateway worker | `gw.goldshore.ai` | Optional | Canonical hostname is `gw.goldshore.ai` (not `gateway.goldshore.ai`); depends on routing/auth design. |
 | Mail handler | `mail.goldshore.ai` | No | Cloudflare mail routing cannot authenticate. |
 
 ## GitHub App callback URLs
@@ -67,3 +66,9 @@ When adding preview callback URLs in GitHub App settings, ensure the same hostna
 
 - Included in the Cloudflare Access application allowlist when Access is enforced for previews.
 - Routed through any edge proxy rules so the callback path (`/auth/github/callback`) resolves to the expected worker/service.
+
+### Cloudflare Access OIDC callback (GitHub IdP)
+
+- `https://goldshore.cloudflareaccess.com/cdn-cgi/access/sso/oidc/1eae8b45326b57d6fd150609e9d155d724013960fd0b994de2d56f07d3f0ce5f`
+
+Use this exact callback URL in the GitHub OAuth app configuration used by Cloudflare Access. If this endpoint changes, update both the GitHub OAuth app and Cloudflare Access IdP configuration together to avoid login failures.

@@ -12,9 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-      - uses: pnpm/action-setup@v4
-        with:
-          run_install: false
+      - name: Install pnpm
+        run: npm install -g pnpm@9
 
       - uses: actions/setup-node@v6
         with:
@@ -24,12 +23,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Verify sync script is defined
-        run: node -e "const scripts = require('./package.json').scripts ?? {}; if (!scripts['sync:infra']) { throw new Error('Missing package.json script: sync:infra'); }"
-
       - name: Run system sync
-        run: pnpm run sync:infra
+        run: pnpm sync:infra
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           GS_KV_NAMESPACE_ID: ${{ secrets.GS_KV_NAMESPACE_ID }}

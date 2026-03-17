@@ -1,5 +1,3 @@
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 # 🟦 GoldShore Monorepo
 
 > Looking for the updated documentation? See [README-v2.md](./README-v2.md).
@@ -7,6 +5,8 @@
 
 Unified platform for the **GoldShore** ecosystem, built with:
 # 🟦 GoldShore Monorepo (README v2)
+
+[![CodeQL](https://github.com/goldshore/goldshore-ai/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/goldshore/goldshore-ai/actions/workflows/github-code-scanning/codeql)
 
 Unified platform for the **GoldShore** ecosystem, built with **Astro**, **Cloudflare**, and a shared design system. This monorepo ships the public website, admin cockpit, edge workers, and shared packages that power GoldShore in production.
 
@@ -94,6 +94,7 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 - [Testing](#testing)
 - [Deployment](#deployment)
 - [Versioning Strategy](#versioning-strategy)
+- [Contributor Note: Merge Strategy for Top-Level Docs](#contributor-note-merge-strategy-for-top-level-docs)
 - [License](#license)
 
 ## Vibe Coding & Human-in-the-Loop
@@ -286,12 +287,28 @@ Route: https://api.goldshore.ai/*
 
 ```
 GET   /health
+GET   /health?type=deep
+
+GET   /user/:id
+
+GET   /system/status
+GET   /system/routing
+GET   /system/config
+PUT   /system/config
+GET   /system/version
+```
+
+### Planned endpoints (not currently mounted)
+
+```text
 GET   /version
 POST  /auth/login
 GET   /auth/session
 GET   /content/:slug
 POST  /queue/task
 ```
+
+Route-mounting source of truth: `apps/api-worker/src/index.ts` (current repo path: `apps/gs-api/src/index.ts`).
 
 Bindings:
 
@@ -462,497 +479,38 @@ TypeScript utilities:
 - error handling
 
 ### `packages/auth`
+[![CodeQL](https://github.com/goldshore/goldshore-ai/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/goldshore/goldshore-ai/actions/workflows/github-code-scanning/codeql)
 
-Cloudflare Access helpers:
+Unified platform for the **GoldShore** ecosystem, built with **Astro**, **Cloudflare**, and shared UI/theme packages.
 
-- JWKS retrieval
-- Audience validation
-- getUser(request)
+> Looking for the full operational handbook? See [README-v2.md](./README-v2.md).
 
-## **packages/config**
-- `getUser(request)`
+## Quick links
 
-### `packages/config`
+- Architecture + repo state: [`CURRENT_MONOREPO_STATE.md`](./CURRENT_MONOREPO_STATE.md)
+- Domains + auth policies: [`docs/domains-and-auth.md`](./docs/domains-and-auth.md)
+- Branch and release operations: [`docs/ops/mergeable-branches.md`](./docs/ops/mergeable-branches.md)
+- Contributor standards: [`docs/contributing.md`](./docs/contributing.md)
 
-Monorepo-wide:
+## Core apps
 
-- eslint
-- prettier
-- tsconfig base
+- `apps/gs-web` — Public website (Astro + Cloudflare Pages)
+- `apps/gs-admin` — Admin cockpit (Astro + Cloudflare Pages)
+- `apps/gs-api` — API worker (Hono + Cloudflare Workers)
+- `apps/gs-gateway` — Gateway/edge routing worker
+- `apps/gs-agent` — Background agent worker
+- `apps/gs-control` — Infra automation worker
+- `apps/gs-mail` — Mail worker
 
----
-
-# 🌐 Domains & DNS
-
-| Component      | Domain                     | Hosting        |
-| -------------- | -------------------------- | -------------- |
-| Web            | https://goldshore.ai       | Pages          |
-| Admin          | https://admin.goldshore.ai | Pages + Access |
-| API Worker     | https://api.goldshore.ai   | Workers        |
-| Gateway Worker | https://gw.goldshore.ai    | Workers        |
-| Control Worker | https://ops.goldshore.ai   | Workers        |
-
----
-
-# 🛰 API + Gateway Routing
-## Domains & DNS
-
-| Component      | Domain                     | Hosting            |
-|----------------|----------------------------|--------------------|
-| Web            | https://goldshore.ai       | Pages              |
-| Admin          | https://admin.goldshore.ai | Pages + Access     |
-| API Worker     | https://api.goldshore.ai   | Workers            |
-| Gateway Worker | https://gw.goldshore.ai    | Workers            |
-| Control Worker | https://ops.goldshore.ai   | Workers            |
-
-## API + Gateway Routing
-
-```
-Client → Gateway → API → Storage
-```
-
-Example flow:
-
-```
-GET https://gw.goldshore.ai/content/slug
-   → routes internally to gs-api
-   → fetches content
-   → returns JSON
-```
-
-Control worker routes:
-
-```
-POST /system/sync
-POST /dns/update
-POST /preview/create
-```
-
----
-
-# 🔧 Cloudflare Bindings
-
-All workers use:
-
-```
-KV:         gs-kv
-R2:         gs-assets
-D1:         gs-db
-AI:         AI Gateway
-Services:   API -> gs-api
-            GATEWAY -> gs-gateway
-Queues:     jobsQueue (optional)
-```
-
----
-
-# 🔄 CI/CD Workflows (GitHub Actions)
-
-Location:
-
-```
-infra/github/workflows/
-```
-
-Workflows include:
-
-```
-preview-web.yml
-preview-admin.yml
-deploy-api.yml
-deploy-gateway.yml
-deploy-control.yml
-```
-
-Features:
-
-- pnpm install
-- Pinned SHA for all actions
-- Preview deploys for PRs
-- Automatic production deploy on main
-- Cloudflare Pages + Workers deploy
-
----
-
-# 💻 Local Development
-
-Install dependencies:
+## Development
 
 ```bash
 pnpm install
-```
-
-### Audit Environment Parity
-
-1. `pnpm run secret:audit`
-
-```bash
-pnpm run secret:audit
-```
-
-### Sync Missing Secrets (Interactive)
-
-2. `pnpm run secret:sync`
-
-```bash
-pnpm run secret:sync
-```
-
-3. `pnpm run secret:sync:worker -- apps/gs-api`
-
-```bash
-pnpm run secret:sync:worker -- apps/gs-api
-```
-
-Run everything:
-Run all workspace apps in parallel:
-
-```bash
 pnpm dev
-```
-
-Run individual apps by package name:
-
-```bash
-pnpm --filter @goldshore/web dev
-pnpm --filter @goldshore/admin dev
-pnpm --filter @goldshore/api-worker dev
-```
-
-Run individual apps:
-Run individual apps by workspace path (monorepo-friendly):
-
-```bash
-pnpm --filter ./apps/web dev
-pnpm --filter ./apps/admin dev
-pnpm --filter ./apps/api-worker dev
-pnpm --filter ./apps/gateway dev
-pnpm --filter ./apps/gs-agent dev
-```
-
-Build everything:
-
-```bash
 pnpm build
-```
-
-### Audit Environment Parity
-
-Use this to verify secrets and environment variables are in sync across environments.
-
-```bash
-pnpm run secret:audit
-```
-
-### Sync Missing Secrets (Interactive)
-
-Use these to interactively sync missing environment variables/secrets.
-
-```bash
-pnpm run secret:sync
-```
-
-```bash
-pnpm run secret:sync:worker -- apps/gs-api
-```
-
-# 🚀 Deployment Guide
-
-## Testing
-
-Playwright tests live in:
-
-```
-apps/admin/tests
-apps/web/tests
-```
-
-Run tests:
-
-```bash
 pnpm test
 ```
 
-## Deployment
-
-Pages deploy automatically via GitHub Actions.
-
-Deploy Workers by package name:
-
-```bash
-pnpm --filter @goldshore/api-worker deploy
-pnpm --filter @goldshore/gateway deploy
-pnpm --filter @goldshore/control-worker deploy
-```
-
-Deploy Workers by workspace path (monorepo-friendly):
-
-Additional worker deploy targets:
-
-```bash
-pnpm --filter ./apps/api-worker deploy
-pnpm --filter ./apps/gateway deploy
-pnpm --filter ./apps/control-worker deploy
-pnpm --filter ./apps/gs-agent deploy
-```
-
----
-
-# 📌 Versioning Strategy
-
-
-
-- `main` → Production
-- `feature/*` → Preview Deployments
-- `release/*` → Staging
-
----
-
-# 🔐 License
-
-Proprietary © GoldShore Labs
-All rights reserved.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-GoldShore Brand Variants
-
-<table>
-<tr>
-<td><img src="/mnt/data/C9A20845-9F2A-4364-B1B7-64747F47E94E.jpeg" width="350"></td>
-<td><img src="/mnt/data/3204BCE0-00A7-41B8-A4F8-7046FAF6D3A4.jpeg" width="350"></td>
-</tr>
-<tr>
-<td><img src="/mnt/data/887BDDB7-1D8C-4D45-87C8-AD9FB19CA682.png" width="350"></td>
-<td><img src="/mnt/data/AA06F6B1-D0F0-40F8-B427-ADF5A9CE9390.png" width="350"></td>
-</tr>
-<tr>
-<td><img src="/mnt/data/EE7C529E-3427-4A4B-81CE-E71CC52F4B10.png" width="350"></td>
-<td><img src="/mnt/data/2C7B9641-99BA-461B-82F2-699B82C6150F.png" width="350"></td>
-</tr>
-</table>
-
----
-
-🧭 Monorepo Structure
-
-astro-goldshore/
-│
-├── apps/
-│ ├── web/ → Public website (Astro + CF Pages)
-│ ├── admin/ → Admin Cockpit (Astro SSR)
-│ ├── api-worker/ → Hono API Worker
-│ ├── gateway/ → Edge gateway router
-│ └── control-worker/ → Infra automation (DNS, bindings)
-│
-├── packages/
-│ ├── ui/ → GoldShore UI component library
-│ ├── theme/ → Tokens, CSS vars, theming engine
-│ ├── config/ → Shared TS, ESLint, Prettier configs
-│ └── utils/ → Shared helpers
-│
-└── infra/
-├── cloudflare/ → wrangler.toml, DNS maps, bindings
-└── github/ → Workflows for CI/CD
-
----
-
-🔥 Apps Overview
-
-🌐 apps/gs-web — GoldShore Public Website
-• Astro SSR
-• Powered by the GoldShore UI Kit
-• Deploys via Cloudflare Pages
-• Theming powered by packages/theme
-• Pulls dynamic content from API + Gateway
-
-Hero Example
-
----
-
-🛠 apps/gs-admin — GoldShore Admin Cockpit
-
-This is your hyper-modern operational dashboard.
-
-<table>
-<tr>
-<td><img src="/mnt/data/2C7B9641-99BA-461B-82F2-699B82C6150F.png" width="350"></td>
-<td><img src="/mnt/data/9FED57B5-F91A-419D-B41F-E9E76DCF32A6.png" width="350"></td>
-</tr>
-</table>
-
-Features
-• Realtime visitors
-• Task manager
-• Ad engine metrics
-• Trading analytics
-• Widgets API
-• Inter-app control center
-• API/Gateway integration
-
----
-
-🧩 packages/ui — GoldShore UI Component Kit
-• 100% framework-agnostic components
-• Works in Astro, Workers, Hono frontends
-• Shared design system
-• Includes:
-
-<Button>
-<Card>
-<StatsBox>
-<CockpitGauge>
-<WidgetPane>
-<MetricCard>
-<GlowPanel>
-<ThemeToggle>
-
----
-
-🎨 packages/theme — Tokens & Dynamic Themes
-
-Every app uses the same token set:
-
-tokens.css
-└── Colors
-└── Radii
-└── Typography
-└── Effects (glow, blur, depth)
-└── Shadows
-└── Spacing
-└── Grid
-
-Supports:
-• Light mode
-• Dark mode
-• Neon mode
-• Penrose mode (GoldShore default)
-• System override
-
----
-
-⚙️ apps/gs-api — Main API (Hono)
-• Edge-native API
-• Zod schemas
-• Hono router
-• Cookie/session utilities
-• Cloudflare bindings
-• Responds to the admin + web apps
-• Preconfigured OpenAPI generation
-
----
-
-🚏 apps/gs-gateway — Routing & AI Gateway
-
-Handles:
-• URL-based routing
-• Load balancing
-• Service binding switching
-• AI Gateway proxy
-• Authorization pre-checks
-
----
-
-🛰 apps/gs-control — Infra Automation
-
-Can automatically:
-• Create DNS records
-• Attach KV / R2 / D1 bindings
-• Create preview domains
-• Sync environment variables
-• Repair worker routes
-• Enforce idempotent deployment rules
-
-This replaces Terraform (optional).
-
----
-
-🚀 Development Workflow
-
-Install dependencies:
-
-pnpm install
-
-Run everything:
-
-pnpm dev
-
-Run only the admin app:
-
-pnpm --filter ./apps/gs-admin dev
-
-Run the web app:
-
-pnpm --filter ./apps/gs-web dev
-
-Run API worker:
-
-pnpm --filter ./apps/gs-api dev
-
-Build all:
-
-pnpm build
-
----
-
-🧪 Testing
-
-Playwright tests live in:
-
-apps/gs-admin/tests
-apps/gs-web/tests
-
-Run:
-
-pnpm test
-
----
-
-🌩 Deployment (Cloudflare)
-
-Deploy is handled by GitHub Actions:
-
-infra/github/workflows/deploy.yml
-
-CI/CD steps: 1. Install dependencies 2. Build workspaces with Turbo 3. Deploy:
-• web → Cloudflare Pages
-• admin → Cloudflare Pages
-• api-worker → Workers
-• gateway → Workers
-• control-worker → Workers
-
-Preview branches automatically deploy to:
-
-{branch}.goldshore-pages.dev
-api-preview.goldshore.ai
-gw-preview.goldshore.ai
-admin-preview.goldshore.ai
-
----
-
-🏁 Closing Preview
-
----
-
-✅ README is Ready
-
-If you want:
-
-✔ A version with a table of contents
-✔ A version with architecture diagrams
-✔ A version with installation badges + shields.io
-✔ A split README per app
-✔ Auto-generated Markdown with relative paths for GitHub
-
-Just tell me:
-
-“Generate README v2”,
-or
-“Generate per-app READMEs”,
-or
-“Generate architecture diagram”.
-
-I can produce all variants.
 ## License
 
-Proprietary © GoldShore Labs
-All rights reserved.
+Proprietary © GoldShore Labs. All rights reserved.

@@ -1,158 +1,83 @@
 name = "gs-api"
 main = "src/index.ts"
-compatibility_date = "2025-10-08"
+compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
+
 workers_dev = false
 
-# --- PRODUCTION (Top Level) ---
-[vars]
-ENV = "production"
-API_ORIGIN = "https://api.goldshore.ai"
-NODE_ENV = "production"
-OTEL_SERVICE_NAME = "goldshore-core-prod"
-CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
-CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
-CONTROL_SYNC_TOKEN = "set-a-shared-secret"
-
-[[d1_databases]]
-binding = "DB"
-database_name = "goldshore"
-database_id = "33b71eca-4987-4a0c-8721-c1c777b8b6a3"
-
-[[kv_namespaces]]
-binding = "KV"
-id = "9cc2209906a94851b704be57543987a9"
-
-[[r2_buckets]]
-binding = "Assets"
-bucket_name = "gs-assets"
-
-[[services]]
-binding = "GATEWAY"
-service = "gs-gateway"
-environment = "prod"
-
-[[services]]
-binding = "MAIL"
-service = "gs-mail"
-environment = "prod"
-
-[[services]]
-binding = "ADMIN"
-service = "gs-admin"
-environment = "prod"
-
-[[queues.consumers]]
-queue = "goldshore-jobs"
-
-[ai]
-binding = "AI"
-
-# --- PREVIEW (Non-Production) ---
-[env.preview]
-name = "gs-api-preview"
-routes = [
-  { pattern = "api-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
-]
-vars = { ENV = "preview", API_ORIGIN = "https://api-preview.goldshore.ai", NODE_ENV = "preview", OTEL_SERVICE_NAME = "goldshore-core-preview", CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE", CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com", CONTROL_SYNC_TOKEN = "set-a-shared-secret" }
-
-[[env.preview.d1_databases]]
-binding = "DB"
-database_name = "goldshore"
-database_id = "33b71eca-4987-4a0c-8721-c1c777b8b6a3"
-
-[[env.preview.kv_namespaces]]
-binding = "KV"
-id = "9cc2209906a94851b704be57543987a9"
-
-[[env.preview.r2_buckets]]
-binding = "Assets"
-bucket_name = "gs-assets-preview"
-
-[[env.preview.services]]
-binding = "GATEWAY"
-service = "gs-gateway"
-environment = "preview"
-
-[[env.preview.services]]
-binding = "MAIL"
-service = "gs-mail"
-environment = "preview"
-
-[[env.preview.services]]
-binding = "ADMIN"
-service = "gs-admin"
-environment = "preview"
-
-[[env.preview.queues.consumers]]
-queue = "goldshore-jobs"
-
-[env.preview.ai]
-binding = "AI"
-
-# Maintain explicit prod environment for CI commands that deploy with --env prod.
 [env.prod]
-name = "gs-api"
 routes = [
   { pattern = "api.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
-vars = { ENV = "production", API_ORIGIN = "https://api.goldshore.ai", NODE_ENV = "production", OTEL_SERVICE_NAME = "goldshore-core-prod", CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE", CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com", CONTROL_SYNC_TOKEN = "set-a-shared-secret" }
+
+[env.prod.vars]
+ENV = "production"
+
+# Sentinel: Audience tag for Cloudflare Access.
+# CRITICAL: This must be set to the specific Application Audience (AUD) tag
+# for the GoldShore API service to prevent token reuse from other apps.
+CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
+
+# Sentinel: Team domain for Cloudflare Access (e.g., goldshore.cloudflareaccess.com).
+# Used to fetch JWKS for token verification.
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
+CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+
+[[env.prod.kv_namespaces]]
+binding = "KV"
+id = "gs_api_kv_001"
+
+
+[[env.prod.kv_namespaces]]
+binding = "CONTROL_LOGS"
+id = "gs_control_logs_001"
+
+[[env.prod.r2_buckets]]
+binding = "ASSETS"
+bucket_name = "gs-assets"
 
 [[env.prod.d1_databases]]
 binding = "DB"
 database_name = "goldshore"
-database_id = "33b71eca-4987-4a0c-8721-c1c777b8b6a3"
-
-[[env.prod.kv_namespaces]]
-binding = "KV"
-id = "9cc2209906a94851b704be57543987a9"
-
-[[env.prod.r2_buckets]]
-binding = "Assets"
-bucket_name = "gs-assets"
-
-[[env.prod.services]]
-binding = "GATEWAY"
-service = "gs-gateway"
-environment = "prod"
-
-[[env.prod.services]]
-binding = "MAIL"
-service = "gs-mail"
-environment = "prod"
-
-[[env.prod.services]]
-binding = "ADMIN"
-service = "gs-admin"
-environment = "prod"
-
-[[env.prod.queues.consumers]]
-queue = "goldshore-jobs"
+database_id = "gs_db_001"
 
 [env.prod.ai]
 binding = "AI"
 
-[env.preview]
-name = "gs-api-preview"
+[env.production]
+routes = [
+  { pattern = "api.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
 
-[env.preview.vars]
-ENV = "preview"
+[env.production.vars]
+ENV = "production"
+
+# Sentinel: Audience tag for Cloudflare Access.
+# CRITICAL: This must be set to the specific Application Audience (AUD) tag
+# for the GoldShore API service to prevent token reuse from other apps.
 CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
+
+# Sentinel: Team domain for Cloudflare Access (e.g., goldshore.cloudflareaccess.com).
+# Used to fetch JWKS for token verification.
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 CONTROL_SYNC_TOKEN = "set-a-shared-secret"
 
-[[env.preview.kv_namespaces]]
+[[env.production.kv_namespaces]]
 binding = "KV"
-id = "9cc2209906a94851b704be57543987a9"
+id = "gs_api_kv_001"
 
-[[env.preview.r2_buckets]]
+[[env.production.kv_namespaces]]
+binding = "CONTROL_LOGS"
+id = "gs_control_logs_001"
+
+[[env.production.r2_buckets]]
 binding = "ASSETS"
-bucket_name = "goldshore-api"
+bucket_name = "gs-assets"
 
-[[env.preview.d1_databases]]
+[[env.production.d1_databases]]
 binding = "DB"
 database_name = "goldshore"
-database_id = "2b7cb4cd-f9b3-4107-9f03-ae76e99f0c14"
+database_id = "gs_db_001"
 
-[env.preview.ai]
+[env.production.ai]
 binding = "AI"

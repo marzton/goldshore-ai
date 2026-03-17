@@ -72,7 +72,7 @@ The backend API service.
 
 - **Directory:** `apps/gs-api`
 - **Package Name:** `gs-api`
-- **Wrangler:** `wrangler.toml` (locally defined) or `infra/Cloudflare/goldshore-api.wrangler.toml`.
+- **Wrangler:** `wrangler.toml` (locally defined) or `infra/Cloudflare/gs-api.wrangler.toml`.
 - **Deployment:** CI workflow (`deploy-api-worker.yml`).
 - **Bindings:** likely similar to gateway (KV, D1, etc.).
 - **Purpose:** Core business logic and data access layer.

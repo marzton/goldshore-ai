@@ -32,48 +32,16 @@ cloudflare:
         content: "gs-api.goldshore-account.workers.dev"
         proxied: true
 
-      # E. Control Worker
-      - name: "control"
+      # E. Mail Worker
+      - name: "mail"
         type: CNAME
-        content: "gs-control.goldshore-account.workers.dev"
-        proxied: true
-      - name: "ops"
-        type: CNAME
-        content: "gs-control.goldshore-account.workers.dev"
+        content: "gs-mail.goldshore-account.workers.dev"
         proxied: true
 
-      # Gateway Preview
-      - name: "gateway-preview"
-        type: CNAME
-        content: "gs-gateway.goldshore-account.workers.dev"
-        proxied: true
-
-      # R2 Assets
-      - name: "assets"
-        type: CNAME
-        content: "public.goldshore.ai"
-        proxied: true
+      # F. Control Worker (Internal only - no public DNS)
 
   access:
     policies:
-      - name: "GoldShore-Control-ZT"
-        domain: "control.goldshore.ai"
-        action: "allow"
-        rules:
-          include:
-            - email_domain: "goldshore.ai"
-          require:
-            - identity_provider: "github"
-
-      - name: "GoldShore-Ops-ZT"
-        domain: "ops.goldshore.ai"
-        action: "allow"
-        rules:
-          include:
-            - email_domain: "goldshore.ai"
-          require:
-            - identity_provider: "github"
-
       - name: "GoldShore-Admin-ZT"
         domain: "admin.goldshore.ai"
         action: "allow"
@@ -147,7 +115,8 @@ cloudflare:
 
       - name: "gs-control"
         script_path: "apps/gs-control/dist/index.js"
-        # No public routes
+        routes:
+          - pattern: "ops.goldshore.ai/*"
         bindings:
           services:
             - binding: "API"
@@ -155,6 +124,14 @@ cloudflare:
               environment: "production"
           env_vars:
             CONTROL_SERVICE: "true"
+
+      - name: "gs-mail"
+        script_path: "apps/gs-mail/dist/index.js"
+        routes:
+          - pattern: "mail.goldshore.ai/*"
+        bindings:
+          env_vars:
+            MAIL_SERVICE: "true"
 
   email:
     routing:

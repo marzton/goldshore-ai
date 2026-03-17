@@ -5,9 +5,25 @@ import { verifyAccess } from '@goldshore/auth';
 import { STATUS_PAGE_HTML } from './templates/status';
 import { type Env } from './types';
 import { integrationControls } from './middleware/integration';
-import type { GoldShoreTask } from '@goldshore/schema';
 
 const app = new Hono<{ Bindings: Env }>();
+
+const TRACE_HEADER = 'X-Correlation-Id';
+
+const getCorrelationId = (request: Request): string => {
+  return request.headers.get(TRACE_HEADER) ?? crypto.randomUUID();
+};
+
+const withCorrelationId = (response: Response, correlationId: string): Response => {
+  const headers = new Headers(response.headers);
+  headers.set(TRACE_HEADER, correlationId);
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers
+  });
+};
 
 const ALLOWED_ORIGINS = [
   'https://goldshore.ai',
@@ -106,43 +122,40 @@ app.get('/', (c) => {
 });
 
 // Example specific routes
-app.get('/test/handshake', async (c) => {
-  const testPayload: GoldShoreTask = {
-    id: crypto.randomUUID(),
-    source: 'Codex-Gateway',
-    action: 'validate-connection',
-    payload: {
-      route: '/test/handshake',
-      timestamp: Date.now()
-    },
-    priority: 1
-  };
-
-  await c.env.JOBS_QUEUE.send(testPayload);
-  console.log('[queue] Dispatched handshake task', testPayload.id);
-
-  return c.json({ status: 'Message Dispatched', payload: testPayload });
-});
-
 app.get('/user/login', (c) => c.json({ message: 'Gateway Login Placeholder' }));
 app.post('/v1/chat', (c) => c.json({ message: 'Gateway Chat Placeholder' }));
 
-// Forwarding fallback
-app.all('*', async (c) => {
-    // If we have an API binding, use it (recommended for Service Bindings)
-    if (c.env.API) {
-        return c.env.API.fetch(c.req.raw);
-    }
+// Forward requests intentionally scoped to /api/*.
+app.all('/api/*', async (c) => {
+    const correlationId = getCorrelationId(c.req.raw);
 
-    // Fallback logic for environments without Service Bindings
-    if (c.env.API_ORIGIN) {
-        const url = new URL(c.req.url);
-        const targetUrl = new URL(url.pathname + url.search, c.env.API_ORIGIN);
-        return fetch(targetUrl.toString(), c.req.raw);
-    }
+    try {
+        // If we have an API binding, use it (recommended for Service Bindings)
+        if (c.env.API) {
+            const response = await c.env.API.fetch(c.req.raw);
+            return withCorrelationId(response, correlationId);
+        }
 
-    // Fallback to fetch if no binding (e.g. local dev without binding simulation)
-    return c.text('Upstream API not configured', 500);
+        // Fallback logic for environments without Service Bindings
+        if (c.env.API_ORIGIN) {
+            const url = new URL(c.req.url);
+            const targetUrl = new URL(url.pathname + url.search, c.env.API_ORIGIN);
+            const response = await fetch(targetUrl.toString(), c.req.raw);
+            return withCorrelationId(response, correlationId);
+        }
+
+        console.error(`[gateway] upstream API not configured; trace=${correlationId}`);
+        return c.json({ error: 'Upstream API not configured', traceId: correlationId }, 500, {
+          [TRACE_HEADER]: correlationId
+        });
+    } catch (error) {
+        console.error(`[gateway] upstream request failed; trace=${correlationId}`, error);
+        return c.json({ error: 'Upstream request failed', traceId: correlationId }, 502, {
+          [TRACE_HEADER]: correlationId
+        });
+    }
 });
+
+app.all('*', (c) => c.json({ error: 'Not found' }, 404));
 
 export default app;

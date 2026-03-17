@@ -1,0 +1,29 @@
+:root {
+  --gs-bg-primary: #020408;
+  --gs-bg-secondary: #0a0c12;
+  --gs-bg-surface: #0e121a;
+
+  --gs-accent-blue: #3b82f6;
+  --gs-accent-gold: #eab308;
+
+  --gs-text-primary: #f1f5f9;
+  --gs-text-muted: #94a3b8;
+
+  --gs-border-subtle: rgba(255, 255, 255, 0.08);
+
+  --gs-radius-lg: 20px;
+  --gs-radius-md: 12px;
+
+  --gs-section-spacing: 6rem;
+  --gs-content-width: 1100px;
+
+  /* Compatibility aliases */
+  --gs-color-bg: var(--gs-bg-primary);
+  --gs-color-surface: var(--gs-bg-secondary);
+  --gs-color-muted-surface: var(--gs-bg-surface);
+  --gs-color-text: var(--gs-text-primary);
+  --gs-color-subtle: var(--gs-text-muted);
+  --gs-color-border: var(--gs-border-subtle);
+  --gs-accent: var(--gs-accent-blue);
+  --gs-accent-strong: var(--gs-accent-gold);
+}

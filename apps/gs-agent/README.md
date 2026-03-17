@@ -34,8 +34,8 @@ pnpm --filter ./apps/gs-agent build
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-gs-agent.yml.disabled`
-- Preview deploy: `.github/workflows/preview-gs-agent.yml`
+- Production deploy: `.github/workflows/deploy-agent.yml`
+- Preview deploy: `.github/workflows/preview-agent.yml`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 
 <!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->

@@ -8,20 +8,23 @@
     "build": "astro build",
     "preview": "astro preview",
     "lint": "eslint .",
-    "test": "node --experimental-strip-types --test src/**/*.test.ts"
+    "test": "npm run test:unit",
+    "test:unit": "node --experimental-strip-types --test tests/unit/*.test.ts"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
     "@goldshore/config": "workspace:^",
     "@goldshore/integrations": "workspace:*",
+    "@goldshore/schema": "workspace:*",
     "@goldshore/theme": "workspace:*",
     "@goldshore/ui": "workspace:*",
-    "astro": "^5.18.0",
-    "@goldshore/schema": "workspace:*"
+    "astro": "^5.18.0"
   },
   "devDependencies": {
     "@astrojs/cloudflare": "^12.6.12",
+    "@astrojs/tailwind": "^6.0.2",
     "@types/node": "^25.3.3",
+    "tailwindcss": "^3.4.17",
     "tsx": "^4.21.0",
     "typescript": "^5.4.2"
   }

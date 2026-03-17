@@ -6,7 +6,6 @@ import { execSync } from 'node:child_process';
 const REPORT_PATH = 'docs/ci/CURRENT_STATE.md';
 const APPS_DIR = 'apps';
 const WORKFLOW_DIR = '.github/workflows';
-const AUTHORITATIVE_CI_SOURCE = 'GitHub Actions status checks on the pull request';
 
 const ALLOWED_APPS = [
   'gs-web', 'gs-admin', 'gs-api', 'gs-mail', 'gs-gateway', 'gs-agent', 'gs-control',
@@ -46,7 +45,7 @@ const appLevelIssues = [];
 const run = (cmd) => execSync(cmd, { encoding: 'utf8' }).trim();
 const tryRun = (cmd) => { try { return run(cmd); } catch { return null; } };
 const gitRefExists = (ref) => {
-  try { execSync(`git rev-parse --verify ${ref}`, { stdio: 'ignore' }); return true; } 
+  try { execSync(`git rev-parse --verify ${ref}`, { stdio: 'ignore' }); return true; }
   catch { return false; }
 };
 
@@ -94,7 +93,28 @@ function getCiStatus(branch) {
     const state = hasFailed ? '❌ FAIL' : checks.every(c => c.status === 'COMPLETED') ? '✅ PASS' : '🟡 PENDING';
     return { summary: `${state} PR #${pr.number} checks. [Link](${pr.url})`, checks };
   }
-  return { summary: '⚠️ No active PR found for this branch; skipping detailed check rollup.' };
+
+  const headSha = tryRun('git rev-parse HEAD');
+  if (!headSha) return { summary: '⚠️ No active PR found and HEAD SHA unavailable for CI lookup.' };
+
+  const commitData = tryRun(`gh api repos/:owner/:repo/commits/${headSha}/check-runs`);
+  if (!commitData) {
+    return { summary: '⚠️ No active PR found; unable to fetch commit check runs for this branch.' };
+  }
+
+  const commitRuns = (JSON.parse(commitData).check_runs || []).map((r) => ({
+    name: r.name,
+    status: r.status,
+    conclusion: r.conclusion || (r.status === 'completed' ? 'success' : 'pending'),
+  }));
+
+  const hasFailed = commitRuns.some((c) => ['failure', 'timed_out', 'cancelled'].includes(String(c.conclusion).toLowerCase()));
+  const allCompleted = commitRuns.length > 0 && commitRuns.every((c) => String(c.status).toLowerCase() === 'completed');
+  const state = hasFailed ? '❌ FAIL' : allCompleted ? '✅ PASS' : '🟡 PENDING';
+  return {
+    summary: `${state} No active PR found; reporting commit checks for [${headSha.slice(0, 7)}](https://github.com/goldshore/goldshore-ai/commit/${headSha}).`,
+    checks: commitRuns,
+  };
 }
 
 function checkBranchDiscipline() {
@@ -121,7 +141,7 @@ function checkBuild(name, command) {
 }
 
 // --- Report Generation ---
-const { branch, baseRef, behind, ahead, divergenceNote } = getBranchInfo();
+const { branch, behind, ahead, divergenceNote } = getBranchInfo();
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
 
 // Section 1: Governance
@@ -157,7 +177,7 @@ if (governanceViolations.length) {
 }
 
 // Section 2: Branch Discipline
-report += `## 2. Branch Discipline Check\n\n**Current Branch:** ${branch}\n**Divergence vs ${baseRef}:** Behind: ${behind}, Ahead: ${ahead}\n\n`;
+report += `## 2. Branch Discipline Check\n\n**Branch:** ${branch} | **Divergence:** -${behind} / +${ahead}\n\n`;
 if (divergenceNote) report += `${divergenceNote}\n\n`;
 const branchViolations = checkBranchDiscipline();
 branchViolations.forEach(v => report += `- ${v}\n`);

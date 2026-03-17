@@ -1,7 +1,8 @@
-name: Summarize new issues (manual)
+name: Summarize new issues
 
 on:
-  workflow_dispatch:
+  issues:
+    types: [opened]
 
 jobs:
   summary:
