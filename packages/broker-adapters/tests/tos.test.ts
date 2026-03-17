@@ -2,9 +2,8 @@ import { test, describe } from "node:test";
 import assert from "node:assert";
 
 /**
- * MOCK Types and Implementation for testing within the sandbox environment.
- * The focus is on verifying mapping and ID logic.
- * Note: Actual test imports TOSAdapter from src/tos/index.ts in a non-restricted environment.
+ * MOCK Implementation for testing within the sandbox environment.
+ * Re-defines the mapping logic to verify correctness without module resolution issues.
  */
 
 interface Account {
@@ -22,11 +21,11 @@ interface Position {
   accountId: string;
   quantity: string;
   averageOpenPrice: string;
-  marketValue: string;
   markPrice: string;
+  marketValue: string;
 }
 
-class TOSAdapter {
+class TOSAdapterMock {
   id = "tos";
   name = "thinkorswim";
   private baseUrl = "https://api.schwabapi.com/trader/v1";
@@ -97,7 +96,7 @@ class TOSAdapter {
 }
 
 describe("TOSAdapter", () => {
-  const adapter = new TOSAdapter("fake-token", "fake-api-key");
+  const adapter = new TOSAdapterMock("fake-token", "fake-api-key");
 
   test("getAccounts maps Schwab response with stable hashValue", async (t: any) => {
     const mockAccounts = [

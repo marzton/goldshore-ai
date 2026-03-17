@@ -93,7 +93,6 @@ export class TOSAdapter implements BrokerAdapter {
         isCloseOnly: false,
         isPdtTracked: false,
         isIraRestricted: false,
-        // createdAt and updatedAt should be handled by the repository/DB layer
         updatedAt: new Date(),
       } as Account;
     });
@@ -114,16 +113,14 @@ export class TOSAdapter implements BrokerAdapter {
     return acc.positions.map((p) => {
       const quantity = p.longQuantity || (p.shortQuantity ? -p.shortQuantity : 0);
       const symbol = p.instrument.symbol;
-      // Deterministic ID for tracking same position across syncs
       const posId = `${accountId}-${symbol}`;
 
       return {
         id: posId as any,
         accountId: accountId as any,
-        instrumentId: null as any, // Expected to be linked by symbol during sync
+        instrumentId: null as any, // Linked during core sync
         quantity: quantity.toString(),
         averageOpenPrice: (p.averagePrice || 0).toString(),
-        // markPrice calculation ensures it's always positive even for short positions
         markPrice: quantity !== 0 ? (Math.abs(p.marketValue) / Math.abs(quantity)).toString() : "0",
         marketValue: (p.marketValue || 0).toString(),
         dayPnl: (p.currentDayProfitLoss || 0).toString(),
