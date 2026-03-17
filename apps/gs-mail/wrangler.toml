@@ -17,7 +17,6 @@ MAIL_FORWARD_TO = "ops@goldshore.ai"
 enabled = true
 
 [env.dev]
-name = "gs-mail-dev"
 [[env.dev.kv_namespaces]]
 binding = "GS_CONFIG"
 id = "9cc2209906a94851b704be57543987a9"
@@ -25,7 +24,6 @@ id = "9cc2209906a94851b704be57543987a9"
 ENV = "development"
 
 [env.prod]
-name = "gs-mail"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
 
@@ -38,4 +36,19 @@ ENV = "production"
 MAIL_FORWARD_TO = "ops@goldshore.ai"
 
 [env.prod.observability]
+enabled = true
+
+[env.production]
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[env.production.kv_namespaces]]
+binding = "GS_CONFIG"
+id = "9cc2209906a94851b704be57543987a9"
+
+[env.production.vars]
+ENV = "production"
+MAIL_FORWARD_TO = "ops@goldshore.ai"
+
+[env.production.observability]
 enabled = true
