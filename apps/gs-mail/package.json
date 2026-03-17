@@ -14,7 +14,8 @@
   "dependencies": {
     "hono": "^4.12.4",
     "postal-mime": "^2.7.3",
-    "zod": "^3.23.0"
+    "zod": "^3.23.0",
+    "@goldshore/schema": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260301.1",
