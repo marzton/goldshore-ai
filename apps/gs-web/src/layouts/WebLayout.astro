@@ -45,6 +45,8 @@ const pageSchemas = Array.isArray(structuredData)
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <link rel="icon" href="/logo/gs-penrose.svg" type="image/svg+xml" />
+    <link rel="icon" href="/logo/gs-penrose.png" type="image/png" />
     <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)}></script>
     {pageSchemas.map((schema) => (
       <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
@@ -75,6 +77,7 @@ const pageSchemas = Array.isArray(structuredData)
 
     <footer class="gs-footer">
       <div class="gs-container">
+        <img src="/logo/gs-penrose.svg" class="footer-logo" alt="GoldShore logo" />
         <p>Gold Shore — Designed not to manage capital, but to steer it.</p>
         <p>
           <a href="/status">System Status</a> |
