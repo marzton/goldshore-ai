@@ -1,5 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
+
+/**
+ * Note: Explicit .ts extension is required for the experimental-strip-types
+ * Node.js test runner as configured in this project's package.json.
+ */
 import { getServerEnv } from '../../src/lib/server-env.ts';
 
 test('getServerEnv returns locals.runtime.env when it exists', () => {
