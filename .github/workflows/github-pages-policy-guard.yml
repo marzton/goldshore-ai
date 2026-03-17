@@ -1,5 +1,8 @@
 name: github-pages-policy-guard
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main]
