@@ -35,5 +35,10 @@ for (const file of required) {
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, createTextPlaceholder(file));
     console.log('Created missing:', file);
+  } catch (err) {
+    if (err.code !== 'EEXIST') {
+      throw err;
+    }
+    // If it already exists, skip it
   }
 }
