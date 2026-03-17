@@ -151,7 +151,6 @@ export class RobinhoodAdapter implements BrokerAdapter {
     // Resolve instruments and map to canonical schema
     const positions = await Promise.all(
       results.map(async (pos) => {
-        const symbol = await this.resolveInstrument(pos.instrument);
         const instrumentUuid = this.extractUuidFromUrl(pos.instrument);
 
         return {
