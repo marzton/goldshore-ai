@@ -63,6 +63,32 @@ export async function rotateKeys(env: ControlEnv) {
       });
     }
   }
+  auditLog.results = await Promise.all(
+    ROTATION_CONFIG.map(async (config) => {
+      try {
+        // 1. Generate new key
+        const newKey = generateKey(config.prefix, config.length);
+
+        // 2. Store new key as active and archive the rotation event in parallel
+        // In a real system, this would update a secure store or service configuration
+        await Promise.all([
+          env.CONTROL_LOGS.put(`secrets:${config.name}:active`, newKey),
+          env.CONTROL_LOGS.put(`secrets:${config.name}:history:${timestamp}`, newKey)
+        ]);
+
+        console.log(`Successfully rotated key: ${config.name}`);
+        return { name: config.name, status: "success" as const };
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.error(`Failed to rotate key for ${config.name}:`, errorMessage);
+        return {
+          name: config.name,
+          status: "error" as const,
+          error: errorMessage
+        };
+      }
+    })
+  );
 
   // 4. Log the full audit trail
   const auditKey = `audit:rotation:${timestamp}`;
