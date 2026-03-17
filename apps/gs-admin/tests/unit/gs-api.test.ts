@@ -1,5 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
+// Note: The .ts extension is required here for the native Node.js test runner
+// when using --experimental-strip-types, as it does not perform automatic
+// extension resolution for ESM imports.
 import { getGsApiBaseUrl, buildGsApiHeaders } from '../../src/lib/gs-api.ts';
 
 test('getGsApiBaseUrl returns API_ORIGIN from env if present', () => {
