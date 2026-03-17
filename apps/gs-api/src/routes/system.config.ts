@@ -44,24 +44,6 @@ export const loadSystemSyncSnapshot = async (kv: KVNamespace) => {
     SERVICE_STATUS: parseWithFallback(ServiceStatusSchema, SERVICE_STATUS, DEFAULT_SYSTEM_SNAPSHOT.SERVICE_STATUS),
     AI_ORCHESTRATION: parseWithFallback(AiOrchestrationSchema, AI_ORCHESTRATION, DEFAULT_SYSTEM_SNAPSHOT.AI_ORCHESTRATION),
     EMAIL_INBOX_LOGS: parseWithFallback(EmailInboxLogsSchema, EMAIL_INBOX_LOGS, DEFAULT_SYSTEM_SNAPSHOT.EMAIL_INBOX_LOGS),
-  const parsedRouting = RoutingTableSchema.safeParse(ROUTING_TABLE);
-  const parsedStatus = ServiceStatusSchema.safeParse(SERVICE_STATUS);
-  const parsedOrchestration = AiOrchestrationSchema.safeParse(AI_ORCHESTRATION);
-  const parsedInboxLogs = EmailInboxLogsSchema.safeParse(EMAIL_INBOX_LOGS);
-
-  return {
-    ROUTING_TABLE: parsedRouting.success ? parsedRouting.data : RoutingTableSchema.parse({}),
-    SERVICE_STATUS: parsedStatus.success
-      ? parsedStatus.data
-      : ServiceStatusSchema.parse({
-          maintenance_mode: false,
-          active_services: [],
-          version: 'unknown',
-        }),
-    AI_ORCHESTRATION: parsedOrchestration.success
-      ? parsedOrchestration.data
-      : AiOrchestrationSchema.parse({}),
-    EMAIL_INBOX_LOGS: parsedInboxLogs.success ? parsedInboxLogs.data : EmailInboxLogsSchema.parse([]),
   };
 };
 
