@@ -1,40 +1,21 @@
 ---
-import WebLayout from '../../layouts/WebLayout.astro';
-
-export const prerender = true;
+// Legacy developer landing route retained as an alias.
+const target = '/developer-hub';
 ---
-
-<WebLayout title="Developer Access | Gold Shore" description="Structured developer access for integration and extension.">
-  <section class="gs-section gs-blueprint-bg">
-    <div class="gs-container">
-      <h1 class="gs-display" data-gs-reveal>Developer Access</h1>
-      <p data-gs-reveal>
-        Gold Shore provides structured developer access for integration, extension, and controlled operational testing.
-      </p>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>Redirecting to Developer Hub…</title>
+    <script is:inline define:vars={{ target }}>
+      window.location.replace(target);
+    </script>
+  </head>
+  <body class="bg-gray-50 flex items-center justify-center min-h-screen font-sans">
+    <div class="text-center">
+      <p class="text-gray-500 mb-2">The Developer page has moved to a canonical route.</p>
+      <p>Redirecting to <a href={target} class="text-blue-600 font-bold underline">{target}</a>...</p>
     </div>
-  </section>
-
-  <section class="gs-section">
-    <div class="gs-container">
-      <h2 class="gs-display" data-gs-reveal>Stack</h2>
-      <ul data-gs-reveal>
-        <li>Astro 5.x</li>
-        <li>Cloudflare Workers runtime</li>
-        <li>TypeScript 5.x</li>
-        <li>Wrangler 4.x</li>
-        <li>Edge-deployed static hybrid surfaces</li>
-        <li>Hash-based merge validation engine</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="gs-section">
-    <div class="gs-container">
-      <h2 class="gs-display" data-gs-reveal>Access Model</h2>
-      <p data-gs-reveal>
-        Developers may request API access, SDK previews, admin surface testing, and documentation endpoint access.
-      </p>
-      <p data-gs-reveal>All access is governed through tokenized validation and environment controls.</p>
-    </div>
-  </section>
-</WebLayout>
+  </body>
+</html>

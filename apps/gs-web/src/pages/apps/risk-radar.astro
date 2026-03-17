@@ -1,0 +1,21 @@
+---
+// This is a pure redirect file to handle legacy paths.
+const target = '/risk-radar';
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>Redirecting to Risk Radar…</title>
+    <script is:inline define:vars={{ target }}>
+      window.location.replace(target);
+    </script>
+  </head>
+  <body class="bg-gray-50 flex items-center justify-center min-h-screen font-sans">
+    <div class="text-center">
+      <p class="text-gray-500 mb-2">The Risk Radar has been promoted to a canonical route.</p>
+      <p>Redirecting to <a href={target} class="text-blue-600 font-bold underline">{target}</a>...</p>
+    </div>
+  </body>
+</html>
