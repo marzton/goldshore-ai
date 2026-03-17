@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
       "@goldshore/ui": [
