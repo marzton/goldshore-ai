@@ -2,12 +2,9 @@ name = "gs-gateway"
 main = "src/index.ts"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
+tsconfig = "tsconfig.json"
 
 workers_dev = false
-
-[env.prod]
-name = "gs-gateway"
-compatibility_date = "2024-11-01"
 
 routes = [
   { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
@@ -41,7 +38,6 @@ binding = "AI"
 enabled = true
 
 [env.prod]
-name = "gs-gateway"
 routes = [
   { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" },

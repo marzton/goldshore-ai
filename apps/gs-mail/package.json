@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev src/index.ts",
-    "deploy": "wrangler deploy",
+    "deploy": "wrangler deploy --env prod",
     "build": "wrangler deploy --env prod --dry-run --outdir=dist",
     "lint": "eslint src/**",
     "typecheck": "tsc --noEmit",
@@ -15,7 +15,8 @@
     "@goldshore/schema": "workspace:*",
     "hono": "^4.12.4",
     "postal-mime": "^2.7.3",
-    "zod": "^3.23.0"
+    "zod": "^4.3.6",
+    "@goldshore/schema": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260301.1",
