@@ -160,11 +160,6 @@
   justify-content: center;
 }
 
-.gs-mobile-links button {
-  width: 100%;
-  justify-content: center;
-}
-
 .gs-mobile-top {
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--gs-mobile-close-hit);
