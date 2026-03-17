@@ -59,17 +59,6 @@ function initModal() {
 
   let opener: HTMLElement | null = null;
 
-  const isAriaHidden = (el: HTMLElement | null): boolean => {
-    let current: HTMLElement | null = el;
-    while (current && current !== panel) {
-      if (current.getAttribute('aria-hidden') === 'true') {
-        return true;
-      }
-      current = current.parentElement;
-    }
-    return false;
-  };
-
   const getFocusableElements = () => {
     if (!panel) return [];
 
