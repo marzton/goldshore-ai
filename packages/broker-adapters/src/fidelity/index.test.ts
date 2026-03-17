@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert';
-import { FidelityAdapter } from './index.ts';
+import { FidelityAdapter } from './index.js';
 
 describe('FidelityAdapter', () => {
   const adapter = new FidelityAdapter();

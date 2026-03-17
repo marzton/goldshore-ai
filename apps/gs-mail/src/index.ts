@@ -3,7 +3,7 @@ import {
   EmailInboxLogsSchema,
   EmailLogSchema,
   type EmailLog,
-} from '../../../packages/schema/src/index.ts';
+} from '@goldshore/schema';
 
 interface Env {
   GS_CONFIG: KVNamespace;

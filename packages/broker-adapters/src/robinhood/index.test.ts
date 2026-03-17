@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert';
-import { RobinhoodAdapter } from './index.ts';
+import { RobinhoodAdapter } from './index.js';
 
 describe('RobinhoodAdapter', () => {
   const adapter = new RobinhoodAdapter();
