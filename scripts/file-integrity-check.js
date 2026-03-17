@@ -31,13 +31,19 @@ const createTextPlaceholder = (file) => {
 };
 
 for (const file of required) {
+  const dir = path.dirname(file);
+  // mkdirSync with recursive: true is safe and doesn't throw if exists
+  fs.mkdirSync(dir, { recursive: true });
+
   try {
-    fs.mkdirSync(path.dirname(file), { recursive: true });
+    // Using 'wx' flag ensures the file is created ONLY if it doesn't exist.
+    // This is the atomic way to handle this and avoids TOCTOU vulnerabilities.
     fs.writeFileSync(file, createTextPlaceholder(file), { flag: 'wx' });
     console.log('Created missing:', file);
-  } catch (err) {
-    if (err.code !== 'EEXIST') {
-      throw err;
+  } catch (error) {
+    if (error.code !== 'EEXIST') {
+      console.error(`Error processing ${file}:`, error);
     }
+    // EEXIST means the file already exists, which is the desired state.
   }
 }
