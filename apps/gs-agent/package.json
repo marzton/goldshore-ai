@@ -8,7 +8,7 @@
     "dev": "wrangler dev src/index.ts --config ../../infra/Cloudflare/gs-agent.wrangler.toml",
     "deploy": "wrangler deploy --minify src/index.ts --config ../../infra/Cloudflare/gs-agent.wrangler.toml",
     "deploy:preview": "wrangler deploy --env preview --config ../../infra/Cloudflare/gs-agent.wrangler.toml",
-    "build": "wrangler deploy src/index.ts --dry-run --outdir=dist --config ../../infra/Cloudflare/gs-agent.wrangler.toml"
+    "build": "wrangler deploy src/index.ts --dry-run --outdir=dist --config ../../infra/Cloudflare/gs-agent.wrangler.toml --env prod"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
