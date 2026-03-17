@@ -6,7 +6,6 @@ tsconfig = "tsconfig.json"
 
 workers_dev = false
 
-# Canonical gateway hostname is gw.goldshore.ai.
 routes = [
   { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" },
