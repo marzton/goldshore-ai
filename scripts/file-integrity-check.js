@@ -34,12 +34,6 @@ for (const file of required) {
   if (!fs.existsSync(file)) {
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, createTextPlaceholder(file));
-  // Use try-catch with 'wx' flag to create file only if it doesn't exist, preventing TOCTOU race condition
-  try {
-    if (!fs.existsSync(path.dirname(file))) {
-      fs.mkdirSync(path.dirname(file), { recursive: true });
-    }
-    fs.writeFileSync(file, createTextPlaceholder(file), { flag: 'wx' });
     console.log('Created missing:', file);
   } catch (err) {
     if (err.code !== 'EEXIST') {
