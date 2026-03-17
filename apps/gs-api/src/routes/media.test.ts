@@ -114,7 +114,7 @@ describe('Media Endpoint Security', () => {
 
     const formData = new FormData();
     const file = new File([
-      '<svg><script>alert(1)</script><rect onclick="evil()" width="10"/></svg>',
+      '<svg><script>alert(1)</script><foreignObject>bad</foreignObject><rect onclick="evil()" width="10" href=javascript:alert(2)/></svg>',
     ], 'dirty.svg', { type: 'image/svg+xml' });
     formData.append('file', file);
 
@@ -132,6 +132,8 @@ describe('Media Endpoint Security', () => {
     const decoded = new TextDecoder().decode(storedBody as Uint8Array);
     assert.ok(!decoded.includes('<script>'));
     assert.ok(!decoded.includes('onclick='));
+    assert.ok(!decoded.includes('foreignObject'));
+    assert.ok(!decoded.includes('javascript:'));
   });
 
   it('should reject files larger than 5MB', async () => {
