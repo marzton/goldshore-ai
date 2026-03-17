@@ -1,5 +1,5 @@
 import { Account, Position, OptionGreeks } from "@goldshore/core-schema";
-import { BrokerAdapter } from "../index.js";
+import { BrokerAdapter } from "../index.ts";
 
 /**
  * Schwab API Interface Definitions
@@ -30,13 +30,6 @@ interface SchwabPosition {
     strikePrice?: number;
     expirationDate?: string;
   };
-  // Option specific
-  delta?: number;
-  gamma?: number;
-  theta?: number;
-  vega?: number;
-  rho?: number;
-  impliedVolatility?: number;
 }
 
 interface SchwabAccountDetails {
@@ -65,7 +58,7 @@ export class TOSAdapter implements BrokerAdapter {
     const response = await fetch(`${this.baseUrl}${path}`, {
       headers: {
         Authorization: `Bearer ${this.accessToken}`,
-        "Schwab-Client-Id": this.apiKey, // Corrected header based on common Schwab API docs
+        "Schwab-Client-Id": this.apiKey,
         "Accept": "application/json",
       },
     });
@@ -86,10 +79,10 @@ export class TOSAdapter implements BrokerAdapter {
 
     return rawAccounts.map(raw => {
       const acc = raw.securitiesAccount;
-      const accountId = raw.hashValue; // Stable ID
+      const accountId = raw.hashValue;
 
       return {
-        id: accountId as any, // In a real scenario, this matches the DB UUID or is mapped via a lookup
+        id: accountId as any, // Stable ID for tracking across syncs
         broker: "tos",
         brokerAccountId: raw.hashValue,
         name: acc.nickname || `TOS Account ${acc.accountId.slice(-4)}`,
@@ -120,28 +113,21 @@ export class TOSAdapter implements BrokerAdapter {
 
     return acc.positions.map((p) => {
       const quantity = p.longQuantity || (p.shortQuantity ? -p.shortQuantity : 0);
-      const posId = crypto.randomUUID(); // Position instances are typically transient in this context
-
-      const greeks: OptionGreeks | null = p.instrument.assetType === "OPTION" ? {
-        delta: p.delta,
-        gamma: p.gamma,
-        theta: p.theta,
-        vega: p.vega,
-        rho: p.rho,
-        impliedVolatility: p.impliedVolatility
-      } : null;
+      const symbol = p.instrument.symbol;
+      // Deterministic ID for tracking same position across syncs
+      const posId = `${accountId}-${symbol}`;
 
       return {
         id: posId as any,
-        accountId: accountId as any, // Link back to the stable Account ID (hashValue)
-        instrumentId: null as any, // This would be looked up in the DB by symbol/type
+        accountId: accountId as any,
+        instrumentId: null as any,
         quantity: quantity.toString(),
         averageOpenPrice: (p.averagePrice || 0).toString(),
         markPrice: quantity !== 0 ? (p.marketValue / Math.abs(quantity)).toString() : "0",
         marketValue: (p.marketValue || 0).toString(),
         dayPnl: (p.currentDayProfitLoss || 0).toString(),
         unrealizedPnl: (p.marketValue - (p.averagePrice * quantity)).toString(),
-        greeks: greeks as any,
+        greeks: null,
         updatedAt: new Date(),
       } as Position;
     });
