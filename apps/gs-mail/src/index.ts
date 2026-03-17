@@ -3,7 +3,7 @@ import {
   EmailInboxLogsSchema,
   EmailLogSchema,
   type EmailLog,
-} from '../../../packages/schema/src/system';
+} from '@goldshore/schema';
 
 interface Env {
   GS_CONFIG: KVNamespace;
@@ -24,16 +24,16 @@ const readInboxLogs = async (kv: KVNamespace): Promise<EmailLog[]> => {
   }
 
   try {
-    const parsed = JSON.parse(rawLogs);
-    const validated = EmailInboxLogsSchema.safeParse(parsed);
-    if (!validated.success) {
-      console.warn('Invalid EMAIL_INBOX_LOGS shape detected. Resetting mailbox log.');
+    const parsedLogs = JSON.parse(rawLogs);
+    const parseResult = EmailInboxLogsSchema.safeParse(parsedLogs);
+    if (!parseResult.success) {
+      console.error('❌ Existing EMAIL_INBOX_LOGS payload failed schema validation:', parseResult.error);
       return [];
     }
 
-    return validated.data;
+    return parseResult.data;
   } catch (error) {
-    console.warn('Unable to parse EMAIL_INBOX_LOGS. Resetting mailbox log.', error);
+    console.error('❌ Failed to parse EMAIL_INBOX_LOGS payload:', error);
     return [];
   }
 };
@@ -57,7 +57,20 @@ app.get('/system/info', (c) =>
   }),
 );
 
-// Persistence present; code hygiene risk due to merge duplication has been removed in this unified handler.
+app.get('/version', (c) => c.json({ version: VERSION }));
+
+app.post('/webhook', async (c) => {
+  return c.json({ received: true });
+});
+
+app.post('/api/subscribe', async (c) => {
+  return c.json({ status: 'subscribed' });
+});
+
+app.post('/api/contact', async (c) => {
+  return c.json({ status: 'sent' });
+});
+
 export default {
   fetch: app.fetch,
 
@@ -72,31 +85,35 @@ export default {
       return;
     }
 
-    const parsedEntry = EmailLogSchema.safeParse({
+    const newEntry = {
       id: crypto.randomUUID(),
       from: sender,
       to: recipient,
       subject,
       timestamp: new Date().toISOString(),
-    });
+    };
 
-    if (!parsedEntry.success) {
-      console.error('🚨 Schema validation failed for inbound mail:', parsedEntry.error);
-      return;
+    const validation = EmailLogSchema.safeParse(newEntry);
+
+    // 3. Persistence Logic (Asynchronous)
+    if (validation.success) {
+      ctx.waitUntil(
+        (async () => {
+          try {
+            const existingLogs = await readInboxLogs(env.GS_CONFIG);
+            // Prepend and truncate to 100 per SOP
+            const updatedLogs = [validation.data, ...existingLogs].slice(0, 100);
+
+            await env.GS_CONFIG.put('EMAIL_INBOX_LOGS', JSON.stringify(updatedLogs));
+            console.info(`✅ Logged email: ${sender} -> ${recipient}`);
+          } catch (err) {
+            console.error('❌ KV Persistence Error:', err);
+          }
+        })()
+      );
+    } else {
+      console.error('🚨 Schema Validation Failed for inbound mail:', validation.error);
     }
-
-    ctx.waitUntil(
-      (async () => {
-        try {
-          const existingLogs = await readInboxLogs(env.GS_CONFIG);
-          const updatedLogs = [parsedEntry.data, ...existingLogs].slice(0, 100);
-          await env.GS_CONFIG.put('EMAIL_INBOX_LOGS', JSON.stringify(updatedLogs));
-          console.info(`✅ Logged email: ${sender} -> ${recipient}`);
-        } catch (error) {
-          console.error('❌ KV persistence error:', error);
-        }
-      })(),
-    );
 
     const forwardTo = (env.MAIL_FORWARD_TO || env.FORWARD_TO)?.trim();
     if (forwardTo && isEmailLike(forwardTo)) {
