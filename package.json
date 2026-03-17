@@ -29,7 +29,9 @@
     "repo:clean": "git clean -xfd -e .env -e env.secrets.runtime.json",
     "repo:install": "pnpm install --frozen-lockfile",
     "repo:health": "node scripts/repo-health.mjs",
-    "audit": "pnpm run repo:health"
+    "audit": "pnpm run repo:health",
+    "build:api": "turbo run build --filter=@goldshore/api",
+    "build:control": "turbo run build --filter=@goldshore/control"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
@@ -59,8 +61,8 @@
   },
   "pnpm": {
     "overrides": {
-      "@astrojs/cloudflare": "latest",
-      "@astrojs/adapter-cloudflare": "latest",
+      "@astrojs/cloudflare": "12.6.12",
+      "@astrojs/adapter-cloudflare": "12.6.12",
       "postal-mime": "2.7.3",
       "wrangler": "^4.63.0",
       "typescript": "^5.4.2",

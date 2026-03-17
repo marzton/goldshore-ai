@@ -17,7 +17,7 @@ const dnsRecordSchema = z.object({
   comment: z.string().optional(),
   tags: z.array(z.string()).optional(),
   priority: z.number().int().optional(),
-});
+}).strip();
 
 const getRequiredRoles = (env: ControlEnv) => {
   const configured = env.CONTROL_ADMIN_ROLES?.split(",").map((role) => role.trim()).filter(Boolean);

@@ -79,7 +79,7 @@ const pageSchemas = Array.isArray(structuredData)
         <p>
           <a href="/status">System Status</a> |
           <a href="/legal/compliance">Legal &amp; Compliance</a> |
-          <a href="/legal/privacy">Privacy Policy</a> | 
+          <a href="/legal/privacy">Privacy Policy</a> |
           <a href="/legal/terms">Terms of Service</a>
         </p>
         <p class="gs-footer-utility">
@@ -96,6 +96,17 @@ const pageSchemas = Array.isArray(structuredData)
 
       initGoldShoreUI();
       initParallax();
+    </script>
+    <script type="module">
+      import { initStarField, initTilt, cleanupUI } from '/src/scripts/init-ui.ts';
+
+      function init() {
+        initStarField('hero-stars');
+        initTilt('[data-tilt]');
+      }
+
+      document.addEventListener('astro:page-load', init);
+      document.addEventListener('astro:before-swap', cleanupUI);
     </script>
     <script type="module" src={themeRuntimeUrl}></script>
   </body>

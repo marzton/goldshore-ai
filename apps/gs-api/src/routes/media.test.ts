@@ -1,4 +1,4 @@
-import { describe, it, mock, afterEach } from 'node:test';
+import { describe, it, afterEach } from 'node:test';
 import assert from 'node:assert';
 import { Hono } from 'hono';
 import media from './media';

@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { loadSystemSyncSnapshot } from './system.config';
 import {
-  EmailInboxLogsSchema,
   ServiceStatusSchema,
 } from '@goldshore/schema';
 
