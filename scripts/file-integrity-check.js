@@ -36,13 +36,16 @@ for (const file of required) {
   fs.mkdirSync(dir, { recursive: true });
 
   try {
-    // Using 'wx' flag ensures the file is created ONLY if it doesn't exist.
-    // This is the atomic way to handle this and avoids TOCTOU vulnerabilities.
-    fs.writeFileSync(file, createTextPlaceholder(file), { flag: 'wx' });
-    console.log('Created missing:', file);
-  } catch (error) {
-    if (error.code !== 'EEXIST') {
-      console.error(`Error processing ${file}:`, error);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    try {
+      // Use flag: 'wx' to prevent TOCTOU (fail if file already exists)
+      fs.writeFileSync(file, createTextPlaceholder(file), { flag: 'wx' });
+      console.log('Created missing:', file);
+    } catch (err) {
+      if (err.code !== 'EEXIST') {
+        throw err;
+      }
+      // If it exists now, someone else created it, which is fine
     }
     // EEXIST means the file already exists, which is the desired state.
   }

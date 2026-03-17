@@ -73,6 +73,7 @@ enabled = true
 name = "gs-gateway"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
+
 routes = [
   { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" },
