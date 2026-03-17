@@ -1,190 +1,617 @@
 ---
 import WebLayout from '../layouts/WebLayout.astro';
+import HeroBase from '../components/hero/HeroBase.astro';
+import {
+  DEFAULT_HERO_VARIANT,
+  normalizeHeroVariant,
+} from '../components/hero/hero.config';
+
+const env = Astro.locals.runtime?.env as
+  | { HERO_CONFIG_KV?: { get(key: string): Promise<string | null> } }
+  | undefined;
+const heroVariant = normalizeHeroVariant(
+  await env?.HERO_CONFIG_KV?.get('hero_variant'),
+);
 
 export const prerender = true;
 ---
 
-<WebLayout title="Gold Shore | Designed to Steer Capital" description="Designed not to manage capital, but to steer it.">
-  <section class="gs-hero gs-blueprint-bg" data-gs-hero>
-    <canvas class="gs-webgl-field" data-gs-webgl aria-hidden="true"></canvas>
-    <div class="gs-css-field" aria-hidden="true"></div>
-    <div class="gs-stars-deep" aria-hidden="true"></div>
-    <div class="gs-stars" aria-hidden="true"></div>
-    <div class="gs-grid-overlay" aria-hidden="true"></div>
-    <canvas class="gs-shooting-canvas" data-gs-shooting aria-hidden="true"></canvas>
-    <div class="gs-vignette" aria-hidden="true"></div>
+<WebLayout
+  title="Gold Shore — Institutional Infrastructure & Operational Systems"
+  description="Gold Shore builds resilient infrastructure, automation, and operational platforms designed for real-time systems, reliability, and controlled performance."
+>
+  <HeroBase variant={heroVariant ?? DEFAULT_HERO_VARIANT} />
 
-    <div class="gs-hero-parallax" data-gs-parallax="1.2" aria-hidden="true"></div>
-
-    <div class="gs-container gs-hero-content gs-seq gs-vt">
-      <div class="gs-status-pill gs-i-0" data-gs-reveal>
-        <span class="gs-status-dot"></span>
-        SYSTEM OPERATIONAL
-      </div>
-
-      <div class="gs-watermark" aria-hidden="true"></div>
-
-      <h1 class="gs-hero-title gs-display gs-i-1" data-gs-reveal>Shaping Waves with Applied Intelligence</h1>
-      <p class="gs-i-2" data-gs-reveal>
-        GoldShore isn’t just code. It’s a provable experience. We build resilient, cinematic systems where automation
-        meets art.
-      </p>
-
-      <div class="gs-hero-actions gs-i-3" data-gs-reveal>
-        <a class="gs-button gs-button-solid" href="/intake">Start the Experience</a>
-        <a class="gs-button gs-button-outline" href="/contact">Contact Sales</a>
-      </div>
-
-      <div class="gs-signal-divider" aria-hidden="true"></div>
-
-      <div class="gs-preview-grid">
-        <div class="gs-panel gs-hoverlift" data-gs-reveal>
-          <div class="gs-label">GoldShore Agent</div>
-          <div class="gs-panel-stat">Active</div>
-          <div class="gs-micro gs-muted">Autonomous operational node</div>
+  <section class="gs-section dark-narrative" id="philosophy">
+    <div class="gs-container">
+      <div class="narrative-grid">
+        <div class="narrative-content">
+          <h2 class="serif-display">Built for Resiliency</h2>
+          <p class="cinematic-lead">
+            We operate at the intersection of extreme scale and absolute
+            precision. Our systems are designed to absorb volatility, not just
+            react to it.
+          </p>
+          <div class="narrative-body">
+            <p>
+              In a world of increasing complexity, clarity is the ultimate
+              competitive advantage. Gold Shore provides the foundational layers
+              for the next generation of institutional intelligence, ensuring
+              that your most critical operations remain robust under any
+              conditions.
+            </p>
+          </div>
         </div>
-        <div class="gs-panel gs-hoverlift" data-gs-reveal>
-          <div class="gs-label">Deployment Pulse</div>
-          <div class="gs-panel-stat">Stable</div>
-          <div class="gs-micro gs-muted">Continuous promotion cycle</div>
-        </div>
-        <div class="gs-panel gs-hoverlift" data-gs-reveal>
-          <div class="gs-label">Ops Surface</div>
-          <div class="gs-panel-stat">Nominal</div>
-          <div class="gs-micro gs-muted">Real-time intelligence layer</div>
+        <div class="narrative-visual">
+          <div class="visual-panel">
+            <div class="visual-grid"></div>
+            <div class="visual-orb"></div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="gs-angle-divider"></div>
-
   <section class="gs-section">
+    <div class="gs-container gs-panel gs-edge-light gs-edge-scan">
+      <div class="gs-label">Built for Resiliency</div>
+      <h2 class="high-contrast-heading">
+        Shaping waves with composable systems and disciplined guardrails.
+      </h2>
+      <p>
+        Gold Shore combines high-fidelity telemetry, operator workflows, and
+        institutional governance to preserve clarity under pressure.
+      </p>
+    </div>
+  </section>
+
+  <section class="gs-section" id="offerings">
     <div class="gs-container">
-      <h2 class="gs-display" data-gs-reveal>Institutional Infrastructure</h2>
-      <p data-gs-reveal>
-        Modern systems do not fail because of lack of ambition — they fail because of uncontrolled complexity.
-      </p>
-      <p data-gs-reveal>
-        Gold Shore architects resilient platforms engineered for deterministic deployment pipelines, high-availability
-        surface management, controlled access hierarchies, observability-first operations, and real-time signal
-        ingestion with enrichment.
-      </p>
-      <p data-gs-reveal>We design systems that remain stable under volatility, load, and regulatory pressure.</p>
+      <div class="gs-label" style="margin-bottom: 0.75rem;">
+        Performance at a glance
+      </div>
+      <div class="gs-grid-3">
+        <article
+          class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
+          data-gs-reveal
+          data-gs-tilt
+        >
+          <div class="gs-label">Availability</div>
+          <div class="gs-stat">99.995%</div>
+          <div class="gs-meta">Service Availability · Last 30 days</div>
+        </article>
+        <article
+          class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
+          data-gs-reveal
+          data-gs-tilt
+        >
+          <div class="gs-label">Decision Latency</div>
+          <div class="gs-stat">34ms</div>
+          <div class="gs-meta">Policy-to-action median · rolling window</div>
+        </article>
+        <article
+          class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
+          data-gs-reveal
+          data-gs-tilt
+        >
+          <div class="gs-label">Signal Integrity</div>
+          <div class="gs-stat">4.8B</div>
+          <div class="gs-meta">Signals processed · rolling volume</div>
+        </article>
+      </div>
     </div>
   </section>
 
   <section class="gs-section">
+    <div class="gs-container gs-grid-3">
+      <article class="gs-panel gs-edge-light gs-edge-scan">
+        <h3>Vibe Coding</h3>
+        <p>
+          Rapid experimentation paths that still pass institutional control
+          checks.
+        </p>
+      </article>
+      <article class="gs-panel gs-edge-light gs-edge-scan">
+        <h3>Cinematic Ops</h3>
+        <p>
+          Operator interfaces with clear escalation context and human override
+          points.
+        </p>
+      </article>
+      <article class="gs-panel gs-edge-light gs-edge-scan">
+        <h3>Applied Intelligence</h3>
+        <p>
+          Signal fusion that turns data density into execution-ready
+          recommendations.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="gs-section bordered-top">
+    <div class="content-row">
+      <div class="content-text">
+        <span class="section-tag">Deployment Intelligence</span>
+        <h2>Orchestrate with absolute precision.</h2>
+        <p>
+          GoldShore's deployment engine provides granular control over global
+          infrastructure. Manage multi-region rollouts, automated rollbacks, and
+          real-time health monitoring from a single, unified interface.
+        </p>
+        <ul class="feature-list">
+          <li>Immutable infrastructure as code</li>
+          <li>Canary and Blue/Green strategies</li>
+          <li>Automated vulnerability scanning</li>
+        </ul>
+      </div>
+      <div class="content-preview">
+        <div class="glass-panel">
+          <div class="panel-header">
+            <span class="panel-dot"></span>
+            <span class="panel-title">GS_OPS_SURFACE</span>
+          </div>
+          <div class="panel-content">
+            <div class="pulse-line"></div>
+            <div class="pulse-line delay-1"></div>
+            <div class="pulse-line delay-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gs-section">
+    <div class="content-row reverse">
+      <div class="content-text">
+        <span class="section-tag">Risk Radar</span>
+        <h2>Identify threats before they emerge.</h2>
+        <p>
+          Our Risk Radar leverages applied intelligence to scan billions of
+          signals across your network, identifying anomalies and potential
+          security breaches in milliseconds.
+        </p>
+        <div class="radar-stats">
+          <div class="radar-stat">
+            <strong>12ms</strong>
+            <span>Mean Response Time</span>
+          </div>
+          <div class="radar-stat">
+            <strong>100%</strong>
+            <span>Threat Coverage</span>
+          </div>
+        </div>
+      </div>
+      <div class="content-preview">
+        <div class="grid-field small-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gs-section metrics-surface" id="performance">
     <div class="gs-container">
-      <h2 class="gs-display" data-gs-reveal>Operating Model</h2>
-      <p data-gs-reveal>
-        We operate with infrastructure-as-code discipline, typed service boundaries, controlled blast-radius
-        deployments, and observability pipelines spanning metrics, tracing, and structured logs.
-      </p>
-      <p data-gs-reveal>
-        Multi-environment promotion governance is enforced at every layer. Gold Shore is built for operators — not
-        spectators.
-      </p>
+      <div class="section-header">
+        <span class="eyebrow">Operational Metrics</span>
+        <h2 class="serif-display">Performance at a glance</h2>
+      </div>
+
+      <div class="gs-grid-3">
+        <article class="metric-card is-loading" data-metric-card>
+          <div class="metric-label">System Availability</div>
+          <div class="metric-value">99.995%</div>
+          <div class="metric-trend">Institutional Standard · Last 30 days</div>
+        </article>
+
+        <article class="metric-card is-loading" data-metric-card>
+          <div class="metric-label">Deployment Frequency</div>
+          <div class="metric-value">48/day</div>
+          <div class="metric-trend">
+            <a href="/developer-hub"
+              >Continuous Integration · verified in Developer Hub</a>
+          </div>
+        </article>
+
+        <article class="metric-card is-loading" data-metric-card>
+          <div class="metric-label">Signal Throughput</div>
+          <div class="metric-value">4.8B</div>
+          <div class="metric-trend">Signals processed data points / day</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="gs-section footer-cta" id="contact">
+    <div class="gs-container">
+      <div class="cta-panel">
+        <h2 class="serif-display">Advance your operational baseline.</h2>
+        <div class="cta-actions">
+          <a href="/experience" class="btn primary btn-large"
+            >Request Briefing</a
+          >
+        </div>
+      </div>
     </div>
   </section>
 </WebLayout>
 
 <script>
-  import { mountShootingStars } from '../components/hero/ShootingStarsCanvas';
+  const revealMetrics = () => {
+    window.setTimeout(() => {
+      document.querySelectorAll('[data-metric-card]').forEach((card) => {
+        card.classList.remove('is-loading');
+      });
+    }, 550);
+  };
 
-  const shootingCanvas = document.querySelector('[data-gs-shooting]');
-  if (shootingCanvas instanceof HTMLCanvasElement) {
-    mountShootingStars(shootingCanvas);
-  }
+  document.addEventListener('astro:page-load', revealMetrics);
 </script>
 
 <style>
-  .gs-shooting-canvas {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
+  .gs-section {
+    padding: 8rem 0;
+    position: relative;
+    background: #020408;
   }
 
-  .gs-hero-parallax {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 2;
-    background: radial-gradient(circle at 20% 30%, rgba(90, 140, 255, 0.08), transparent 55%);
-    mix-blend-mode: screen;
+  .gs-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
   }
 
-  /* Status Pill */
-  .gs-status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 0.75rem;
-    background: rgba(10, 16, 28, 0.45);
-    border: 1px solid var(--gs-border);
-    border-radius: 100px;
-    font-size: 0.7rem;
+  .serif-display {
+    font-family: 'Ibarra Real Nova', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+    color: #f1f5f9;
+  }
+
+  .high-contrast-heading {
+    color: #ffffff;
     font-weight: 600;
-    letter-spacing: 0.08em;
-    color: var(--gs-muted);
+  }
+
+  .cinematic-lead {
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.4;
     margin-bottom: 2rem;
   }
 
-  .gs-status-dot {
-    width: 6px;
-    height: 6px;
-    background: #22c55e;
-    border-radius: 50%;
-    box-shadow: 0 0 8px #22c55e;
+  .narrative-body {
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.6;
+    max-width: 50ch;
   }
 
-  /* Watermark */
-  .gs-watermark {
+  .narrative-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .visual-panel {
+    aspect-ratio: 1;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .visual-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 0
+    );
+    background-size: 20px 20px;
+  }
+
+  .visual-orb {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 60%;
     height: 60%;
-    background-image: url("/assets/penrose.svg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    opacity: 0.03;
-    pointer-events: none;
-    z-index: -1;
-    filter: grayscale(1) invert(1);
+    background: radial-gradient(
+      circle at center,
+      rgba(59, 130, 246, 0.1),
+      transparent 70%
+    );
+    filter: blur(40px);
   }
 
-  /* Preview Grid */
-  .gs-preview-grid {
-    margin-top: 3.5rem;
+  .bordered-top {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 6rem;
+  }
+
+  .content-row {
     display: grid;
-    gap: 1.25rem;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    margin-bottom: 6rem;
   }
 
-  .gs-panel-stat {
-    font-size: 2.2rem;
-    font-weight: 700;
-    margin-top: 0.4rem;
-    color: var(--gs-text);
+  .content-row.reverse {
+    grid-template-columns: 1fr 1.2fr;
   }
 
-  /* Typography Overrides */
-  .gs-hero-title {
-    font-family: "Fraunces", serif;
+  .content-row.reverse .content-text {
+    order: 2;
+  }
+
+  .section-tag {
+    color: var(--gs-accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .content-text h2 {
+    font-size: 2.8rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+    font-family: 'Ibarra Real Nova', serif;
+  }
+
+  .feature-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 2rem;
+  }
+
+  .feature-list li {
+    padding-left: 1.5rem;
+    position: relative;
+    margin-bottom: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .feature-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--gs-accent);
+  }
+
+  .radar-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2.5rem;
+  }
+
+  .radar-stat strong {
+    display: block;
+    font-size: 1.5rem;
+    color: #f1f5f9;
+  }
+
+  .radar-stat span {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-header {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .panel-dot {
+    width: 8px;
+    height: 8px;
+    background: #444;
+    border-radius: 50%;
+  }
+
+  .panel-title {
+    font-size: 0.7rem;
+    font-family: monospace;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .panel-content {
+    flex: 1;
+    position: relative;
+    padding: 2rem;
+  }
+
+  .pulse-line {
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--gs-accent),
+      transparent
+    );
+    margin-bottom: 2rem;
+    opacity: 0.3;
+    animation: slide 3s infinite linear;
+  }
+
+  @keyframes metric-loading {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes slide {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  .delay-1 {
+    animation-delay: 1s;
+  }
+  .delay-2 {
+    animation-delay: 2s;
+  }
+
+  @media (max-width: 900px) {
+    .content-row,
+    .content-row.reverse {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .content-row.reverse .content-text {
+      order: 0;
+    }
+  }
+
+  .section-header {
+    margin-bottom: 4rem;
+  }
+
+  .eyebrow {
+    display: block;
+    text-transform: uppercase;
+    font-family: ui-monospace, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    color: #3b82f6;
+    margin-bottom: 1rem;
+  }
+
+  .gs-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .metric-card {
+    padding: 3rem 2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    transition: all 0.3s;
+  }
+
+  .metric-card.is-loading {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .metric-card.is-loading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.08),
+      transparent
+    );
+    animation: metric-loading 1.2s linear infinite;
+  }
+
+  .metric-trend a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .metric-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-5px);
+  }
+
+  .metric-label {
+    font-family: ui-monospace, monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 1rem;
+  }
+
+  .metric-value {
+    font-size: 3rem;
     font-weight: 500;
-    line-height: 1;
-    letter-spacing: -0.02em;
+    color: #f1f5f9;
+    margin-bottom: 0.5rem;
   }
 
-  /* Restrained Glow */
-  .gs-hero.gs-blueprint-bg {
-    background: radial-gradient(circle at 50% 0%, rgba(90, 140, 255, 0.08), transparent 50%),
-      linear-gradient(180deg, var(--gs-bg-0) 0%, var(--gs-bg-1) 100%);
+  .metric-trend {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .cta-panel {
+    text-align: center;
+    padding: 6rem 2rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 32px;
+  }
+
+  .cta-actions {
+    margin-top: 3rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+
+  .btn-large {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+
+  .btn.primary {
+    background: #f1f5f9;
+    color: #020408;
+  }
+
+  .btn.primary:hover {
+    background: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    .narrative-grid {
+      grid-template-columns: 1fr;
+    }
+    .gs-grid-3 {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
