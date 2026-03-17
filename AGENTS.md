@@ -11,6 +11,10 @@ Example format:
 * `Merge strategy: merge`
 * `Merge strategy: squash`
 
+## Build Configuration
+
+All API services and workers must use the `gs-control` build token for Cloudflare Worker Builds. When updating build settings in the Cloudflare Dashboard, ensure that the token used corresponds to the `gs-control` service.
+
 ## Tagging for Review
 
 To request a review of an error or issue, please use the following tags in your comments or pull request descriptions:
