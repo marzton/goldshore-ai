@@ -4,13 +4,14 @@ import { applyAnalysisPolicy, getProvider, type AnalysisRequest } from "@goldsho
 import { AiOrchestrationSchema } from "@goldshore/schema";
 import safeStableStringify from "safe-stable-stringify";
 import { logAuditEvent } from "@goldshore/utils";
+import { requirePermission } from "../auth";
 import { Env, Variables } from '../types';
 
 const ai = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 ai.get("/", (c) => c.json({ service: "gs-ai", status: "operational" }));
 
-ai.post("/analysis", async (c) => {
+ai.post("/analysis", requirePermission("ai:analyze"), async (c) => {
   // 1. Load System Orchestration Config
   const rawConfig = await c.env.KV.get("AI_ORCHESTRATION", "json");
   const configResult = AiOrchestrationSchema.safeParse(rawConfig);
