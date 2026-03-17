@@ -13,9 +13,6 @@
   "dependencies": {
     "@goldshore/core-schema": "workspace:*"
   },
-  "scripts": {
-    "test": "tsx --test src/*.test.ts"
-  },
   "devDependencies": {
     "typescript": "^5.4.2"
   }

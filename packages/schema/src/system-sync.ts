@@ -5,7 +5,7 @@ import {
   EmailInboxLogsSchema,
   RoutingTableSchema,
   ServiceStatusSchema,
-} from './system.ts';
+} from './system';
 
 export const SystemSyncContractSchema = z.object({
   ROUTING_TABLE: RoutingTableSchema,
