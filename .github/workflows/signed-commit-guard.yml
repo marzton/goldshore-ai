@@ -34,6 +34,7 @@ jobs:
             .[]
             | select((.commit.verification.verified // false) != true)
             | select(.commit.author.name != "jules-bot")
+            | select(.commit.author.name != "google-labs-jules[bot]")
             | "\(.sha) :: verified=\(.commit.verification.verified // false) :: reason=\(.commit.verification.reason // "unknown")"
           ')"
 
