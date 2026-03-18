@@ -38,3 +38,19 @@ MAIL_FORWARD_TO = "ops@goldshore.ai"
 
 [env.prod.observability]
 enabled = true
+
+[env.production]
+routes = [
+  { pattern = "mail.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+
+[[env.production.kv_namespaces]]
+binding = "GS_CONFIG"
+id = "9cc2209906a94851b704be57543987a9"
+
+[env.production.vars]
+ENV = "production"
+MAIL_FORWARD_TO = "ops@goldshore.ai"
+
+[env.production.observability]
+enabled = true
