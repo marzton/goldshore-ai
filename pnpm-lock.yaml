@@ -281,6 +281,9 @@ importers:
 
   apps/gs-web:
     dependencies:
+      '@goldshore/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@goldshore/brand':
         specifier: workspace:*
         version: link:../../packages/brand
@@ -324,6 +327,8 @@ importers:
       typescript:
         specifier: ^5.4.2
         version: 5.9.3
+
+  apps/web: {}
 
   packages/ai-providers: {}
 
