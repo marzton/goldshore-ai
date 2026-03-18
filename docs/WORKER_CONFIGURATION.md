@@ -14,7 +14,7 @@ The email routing and processing worker.
 - **Compatibility Date:** `2024-03-20`
 - **Main Entry:** `src/index.ts`
 - **Purpose:** Handles email routing logic, possibly integrated with Cloudflare Email Routing or third-party providers (e.g., MailChannels).
-- **Status:** Repaired with inbound routing logic. Supports sender blocking, recipient allowlists, and forwarding to `MAIL_FORWARD_TO`.
+- **Status:** Repaired with inbound routing logic. Supports sender blocking via `MAIL_BLOCKED_SENDERS`, optional recipient allowlists via `MAIL_ALLOWED_RECIPIENTS`, and fail-closed forwarding to `MAIL_FORWARD_TO`.
 
 ## 2. gs-agent (`apps/gs-agent`)
 
