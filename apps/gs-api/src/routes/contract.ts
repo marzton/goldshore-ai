@@ -9,3 +9,6 @@ export const withContractHeaders = <T>(
   schemaVersion: API_SCHEMA_VERSION,
   apiVersion: runtimeVersion ?? 'v1'
 });
+
+export const getRuntimeVersion = (env: { API_VERSION?: string; GIT_SHA?: string }) =>
+  env.API_VERSION ?? env.GIT_SHA ?? 'v1';

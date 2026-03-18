@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { requirePermission } from '../auth';
 import { Env, Variables } from '../types';
 import sanitizeHtml from 'sanitize-html';
 
@@ -62,7 +63,7 @@ const isUploadFileLike = (value: unknown): value is UploadFileLike => {
 
 const media = new Hono<{ Bindings: Env; Variables: Variables }>();
 
-media.get('/', async (c) => {
+media.get('/', requirePermission('media:read'), async (c) => {
   const query = c.req.query();
   const rawLimit = query.limit;
   const rawOffset = query.offset;
@@ -94,7 +95,7 @@ media.get('/', async (c) => {
   return c.json({ items: results ?? [] });
 });
 
-media.get('/:id', async (c) => {
+media.get('/:id', requirePermission('media:read'), async (c) => {
   const id = c.req.param('id');
   const result = await c.env.DB
     .prepare('SELECT object_key, type FROM media_assets WHERE id = ?')
@@ -116,7 +117,7 @@ media.get('/:id', async (c) => {
   return new Response(object.body, { headers });
 });
 
-media.post('/upload', async (c) => {
+media.post('/upload', requirePermission('media:write'), async (c) => {
   const formData = await c.req.formData();
   const file = formData.get('file');
 
