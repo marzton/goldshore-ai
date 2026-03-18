@@ -24,14 +24,18 @@ describe("TOSAdapter", () => {
         ok: true,
         json: async () => ({
           securitiesAccount: {
+            accountId: "12345",
+            type: "CASH",
             positions: [
               {
-                instrument: { symbol: "AAPL" },
+                instrument: { symbol: "AAPL", assetType: "EQUITY" },
                 longQuantity: 10,
+                shortQuantity: 0,
                 averagePrice: 150
               },
               {
-                instrument: { symbol: "SPY" },
+                instrument: { symbol: "SPY", assetType: "EQUITY" },
+                longQuantity: 0,
                 shortQuantity: 5,
                 averagePrice: 400
               }
@@ -53,7 +57,7 @@ describe("TOSAdapter", () => {
               orderLegCollection: [
                   {
                       instruction: "BUY",
-                      instrument: { symbol: "MSFT" }
+                      instrument: { symbol: "MSFT", assetType: "EQUITY" }
                   }
               ]
             }
