@@ -10,7 +10,8 @@ routes = [
 
 [vars]
 ENV = "production"
-CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+# CONTROL_SYNC_TOKEN is managed via Cloudflare Secret.
+CONTROL_SYNC_TOKEN = "SECRET_MANAGED"
 SYNC_TARGET_SUBDOMAIN = "api.goldshore.ai"
 
 [[kv_namespaces]]
@@ -30,5 +31,35 @@ binding = "API"
 service = "gs-api"
 
 [[services]]
+binding = "GATEWAY"
+service = "gs-gateway"
+
+[env.prod]
+routes = [
+  { pattern = "ops.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+
+[env.prod.vars]
+ENV = "production"
+CONTROL_SYNC_TOKEN = ""
+SYNC_TARGET_SUBDOMAIN = "api.goldshore.ai"
+
+[[env.prod.kv_namespaces]]
+binding = "CONTROL_LOGS"
+id = "gs_control_logs_001"
+
+[[env.prod.kv_namespaces]]
+binding = "GS_CONFIG"
+id = "9cc2209906a94851b704be57543987a9"
+
+[[env.prod.r2_buckets]]
+binding = "STATE"
+bucket_name = "gs-control-state"
+
+[[env.prod.services]]
+binding = "API"
+service = "gs-api"
+
+[[env.prod.services]]
 binding = "GATEWAY"
 service = "gs-gateway"

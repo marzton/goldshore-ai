@@ -245,6 +245,23 @@ describe('Cloudflare Routes Middleware', () => {
     });
   });
 
+  it('should accept content-only DNS updates for admin compatibility', async () => {
+    let forwardedBody: string | undefined;
+    global.fetch = mock.fn(async (_input, init) => {
+      forwardedBody = init?.body as string | undefined;
+      return new Response(JSON.stringify({ success: true, result: {} }), { status: 200 });
+    });
+
+    const response = await createRequest({
+      email: 'admin@example.com',
+      roles: ['admin'],
+    }, '/dns/records/123', 'PUT', { content: '127.0.0.1' });
+
+    assert.strictEqual(response.status, 200);
+    assert.ok(forwardedBody);
+    assert.deepStrictEqual(JSON.parse(forwardedBody as string), { content: '127.0.0.1' });
+  });
+
   it('should succeed DNS update with valid payload', async () => {
     global.fetch = mock.fn(async () => {
       return new Response(JSON.stringify({ success: true, result: {} }), { status: 200 });

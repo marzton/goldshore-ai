@@ -8,10 +8,10 @@ import { extractRoles, getRequiredRoles, isAuthorizedRole } from "../libs/adminA
 import { logAuditEvent } from "@goldshore/utils";
 
 const dnsRecordSchema = z.object({
-  type: z.string().min(1),
-  name: z.string().min(1),
+  type: z.string().min(1).optional(),
+  name: z.string().min(1).optional(),
   content: z.string().min(1),
-  ttl: z.number().int().min(1),
+  ttl: z.number().int().min(1).optional(),
   proxied: z.boolean().optional(),
   comment: z.string().optional(),
   tags: z.array(z.string()).optional(),
