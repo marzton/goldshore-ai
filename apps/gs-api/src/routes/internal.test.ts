@@ -3,10 +3,25 @@ import assert from 'node:assert';
 import { Hono } from 'hono';
 import internal from './internal.ts';
 
+const createApp = (claims: any) => {
+  const app = new Hono<{ Variables: { accessClaims: any } }>();
+  app.use('*', async (c, next) => {
+    c.set('accessClaims', claims);
+    await next();
+  });
+  app.route('/internal', internal);
+  return app;
+};
+
 describe('internal inbox status', () => {
+  it('requires system:read permission', async () => {
+    const app = createApp({ roles: ['viewer'] });
+    const res = await app.request('/internal/inbox-status', {}, { KV: { get: async () => null } } as any);
+    assert.strictEqual(res.status, 403);
+  });
+
   it('returns inbox summary and service status', async () => {
-    const app = new Hono();
-    app.route('/internal', internal);
+    const app = createApp({ roles: ['admin'] });
 
     const kv = {
       get: async (key: string, type?: string) => {
@@ -33,8 +48,7 @@ describe('internal inbox status', () => {
   });
 
   it('returns dns sync telemetry and MASTER_CONFIG report fields', async () => {
-    const app = new Hono();
-    app.route('/internal', internal);
+    const app = createApp({ roles: ['admin'] });
 
     const run = {
       runId: 'run-1',
