@@ -11,6 +11,7 @@ interface Env {
   MAIL_FORWARD_TO?: string;
   FORWARD_TO?: string;
   MAIL_BLOCKED_SENDERS?: string;
+  MAIL_ALLOWED_RECIPIENTS?: string;
 }
 
 const VERSION = '2026.03.03-mail-inbox-log';
@@ -77,11 +78,17 @@ export default {
   async email(message: ForwardableEmailMessage, env: Env, ctx: ExecutionContext): Promise<void> {
     const sender = message.from;
     const recipient = message.to;
-    const subject = message.headers.get('subject') || 'No Subject';
+    const subject = (message.headers.get('subject') || 'No Subject').slice(0, 50);
 
-    const blocked = env.MAIL_BLOCKED_SENDERS?.split(',').map((item) => item.trim()) || [];
+    const blocked = env.MAIL_BLOCKED_SENDERS?.split(',').map((item) => item.trim()).filter(Boolean) || [];
     if (blocked.includes(sender)) {
       message.setReject(`Sender ${sender} is blocked.`);
+      return;
+    }
+
+    const allowed = env.MAIL_ALLOWED_RECIPIENTS?.split(',').map((item) => item.trim()).filter(Boolean) || [];
+    if (allowed.length > 0 && !allowed.includes(recipient)) {
+      message.setReject('Recipient not allowed.');
       return;
     }
 
@@ -121,6 +128,8 @@ export default {
       return;
     }
 
-    console.warn('⚠️ Forwarding skipped: target missing or invalid.');
+    const errorMsg = 'Forwarding target missing or invalid.';
+    console.warn(`⚠️ ${errorMsg}`);
+    message.setReject(errorMsg);
   },
 };
