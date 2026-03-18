@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { verifyAccessWithClaims } from '@goldshore/auth';
 
 const allowedStatuses = new Set(['new', 'read', 'archived']);
 
@@ -33,10 +34,20 @@ const buildCsv = (rows: Record<string, unknown>[]) => {
   return [header, ...body].join('\n');
 };
 
+const isAdmin = (payload: any) => {
+  const roles = payload.roles || payload.role || [];
+  return Array.isArray(roles) ? roles.includes('admin') : roles === 'admin';
+};
+
 export const GET: APIRoute = async ({ request, locals }) => {
-  const env = locals.runtime?.env as Env | undefined;
+  const env = locals.runtime?.env as any;
   if (!env?.DB) {
     return new Response('Storage unavailable.', { status: 503 });
+  }
+
+  const access = await verifyAccessWithClaims(request, env);
+  if (!access || !isAdmin(access)) {
+    return new Response('Unauthorized', { status: 401 });
   }
 
   const url = new URL(request.url);
@@ -88,9 +99,14 @@ export const GET: APIRoute = async ({ request, locals }) => {
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  const env = locals.runtime?.env as Env | undefined;
+  const env = locals.runtime?.env as any;
   if (!env?.DB) {
     return new Response('Storage unavailable.', { status: 503 });
+  }
+
+  const access = await verifyAccessWithClaims(request, env);
+  if (!access || !isAdmin(access)) {
+    return new Response('Unauthorized', { status: 401 });
   }
 
   const contentType = request.headers.get('content-type') || '';
