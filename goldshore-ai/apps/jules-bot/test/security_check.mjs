@@ -106,7 +106,7 @@ try {
 
 } catch (e) {
   const errorMessage = (e && e.message) ? e.message : String(e);
-  const safeMessage = errorMessage.replace(/[\x00-\x1F\x7F]+/g, ' ');
+  const safeMessage = errorMessage.replace(/[\x00-\x1F\x7F\u2028\u2029]+/g, ' ');
   console.error('Error during security check:', safeMessage);
   exitCode = 1;
 } finally {
