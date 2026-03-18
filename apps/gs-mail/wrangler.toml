@@ -1,17 +1,19 @@
 name = "gs-mail"
 main = "src/index.ts"
-compatibility_date = "2026-03-03" # Updated to current standards
+compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
+tsconfig = "tsconfig.json"
 
-# This binding is CRITICAL for the EMAIL_INBOX_LOGS persistence logic
 [[kv_namespaces]]
 binding = "GS_CONFIG"
 id = "9cc2209906a94851b704be57543987a9"
 
 [vars]
 ENV = "production"
-# Standardized forwarding address per SOP
 MAIL_FORWARD_TO = "ops@goldshore.ai"
+
+[observability]
+enabled = true
 
 [env.dev]
 name = "gs-mail-dev"
@@ -22,7 +24,9 @@ id = "9cc2209906a94851b704be57543987a9"
 ENV = "development"
 
 [env.prod]
-name = "gs-mail"
+routes = [
+  { pattern = "mail.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
 
 [[env.prod.kv_namespaces]]
 binding = "GS_CONFIG"
@@ -31,4 +35,3 @@ id = "9cc2209906a94851b704be57543987a9"
 [env.prod.vars]
 ENV = "production"
 MAIL_FORWARD_TO = "ops@goldshore.ai"
-
