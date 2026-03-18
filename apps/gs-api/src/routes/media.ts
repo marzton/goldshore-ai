@@ -23,13 +23,26 @@ const ALLOWED_MIME_TYPES = new Map([
   ['svg', 'image/svg+xml'],
   ['png', 'image/png'],
   ['jpg', 'image/jpeg'],
-  ['jpeg', 'image/jpeg']
+  ['jpeg', 'image/jpeg'],
 ]);
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
+const DANGEROUS_SVG_PATTERNS = [
+  /<\s*script/gi,
+  /\son[a-z0-9_-]+\s*=/gi,
+  /javascript\s*:/gi,
+  /data\s*:\s*text\/html/gi,
+];
+
+const stripDangerousSvgContent = (input: string): string =>
+  DANGEROUS_SVG_PATTERNS.reduce(
+    (value, pattern) => value.replace(pattern, ''),
+    input,
+  );
+
 const sanitizeSvg = (input: string): string => {
-  return sanitizeHtml(input, {
+  return sanitizeHtml(stripDangerousSvgContent(input), {
     // Allow common SVG container and shape elements; adjust if needed.
     allowedTags: [
       'svg',
@@ -52,30 +65,60 @@ const sanitizeSvg = (input: string): string => {
       'tspan',
       'textPath',
       'image',
-      'use'
+      'use',
     ],
     // Explicitly control which attributes are allowed on which tags.
     allowedAttributes: {
       svg: ['width', 'height', 'viewBox', 'xmlns', 'fill', 'stroke'],
       g: ['transform', 'fill', 'stroke'],
       path: ['d', 'fill', 'stroke', 'transform'],
-      rect: ['x', 'y', 'width', 'height', 'rx', 'ry', 'fill', 'stroke', 'transform'],
+      rect: [
+        'x',
+        'y',
+        'width',
+        'height',
+        'rx',
+        'ry',
+        'fill',
+        'stroke',
+        'transform',
+      ],
       circle: ['cx', 'cy', 'r', 'fill', 'stroke', 'transform'],
       ellipse: ['cx', 'cy', 'rx', 'ry', 'fill', 'stroke', 'transform'],
       line: ['x1', 'y1', 'x2', 'y2', 'stroke', 'transform'],
       polyline: ['points', 'fill', 'stroke', 'transform'],
       polygon: ['points', 'fill', 'stroke', 'transform'],
-      text: ['x', 'y', 'dx', 'dy', 'textLength', 'lengthAdjust', 'fill', 'stroke', 'transform'],
-      tspan: ['x', 'y', 'dx', 'dy', 'textLength', 'lengthAdjust', 'fill', 'stroke', 'transform'],
+      text: [
+        'x',
+        'y',
+        'dx',
+        'dy',
+        'textLength',
+        'lengthAdjust',
+        'fill',
+        'stroke',
+        'transform',
+      ],
+      tspan: [
+        'x',
+        'y',
+        'dx',
+        'dy',
+        'textLength',
+        'lengthAdjust',
+        'fill',
+        'stroke',
+        'transform',
+      ],
       textPath: ['href', 'startOffset', 'method', 'spacing'],
       image: ['href', 'x', 'y', 'width', 'height', 'preserveAspectRatio'],
-      use: ['href', 'x', 'y', 'width', 'height', 'transform']
+      use: ['href', 'x', 'y', 'width', 'height', 'transform'],
     },
     // Disallow javascript: and data:text/html schemes explicitly.
-    allowedSchemes: ['http', 'https', 'data'],
+    allowedSchemes: ['http', 'https'],
     allowedSchemesByTag: {
-      image: ['http', 'https', 'data'],
-      use: ['http', 'https']
+      image: ['http', 'https'],
+      use: ['http', 'https'],
     },
     allowedSchemesAppliedToAttributes: ['href', 'xlink:href', 'src'],
     // By not listing any "on*" attributes in allowedAttributes, all event
@@ -126,10 +169,9 @@ media.get('/', requirePermission('media:read'), async (c) => {
     }
   }
 
-  const { results } = await c.env.DB
-    .prepare(
-      'SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT ? OFFSET ?'
-    )
+  const { results } = await c.env.DB.prepare(
+    'SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT ? OFFSET ?',
+  )
     .bind(limit, offset)
     .all<MediaRecord>();
 
@@ -138,8 +180,9 @@ media.get('/', requirePermission('media:read'), async (c) => {
 
 media.get('/:id', requirePermission('media:read'), async (c) => {
   const id = c.req.param('id');
-  const result = await c.env.DB
-    .prepare('SELECT object_key, type FROM media_assets WHERE id = ?')
+  const result = await c.env.DB.prepare(
+    'SELECT object_key, type FROM media_assets WHERE id = ?',
+  )
     .bind(id)
     .first<{ object_key: string; type: string }>();
 
@@ -149,11 +192,19 @@ media.get('/:id', requirePermission('media:read'), async (c) => {
   if (!object) return c.json({ error: 'Asset missing from storage' }, 404);
 
   const headers = new Headers();
-  headers.set('Content-Type', result.type || object.httpMetadata?.contentType || 'application/octet-stream');
+  headers.set(
+    'Content-Type',
+    result.type ||
+      object.httpMetadata?.contentType ||
+      'application/octet-stream',
+  );
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
 
   // Sentinel: Enforce strict CSP to mitigate SVG XSS
-  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; object-src 'none'; sandbox");
+  headers.set(
+    'Content-Security-Policy',
+    "default-src 'none'; script-src 'none'; object-src 'none'; sandbox",
+  );
 
   return new Response(object.body, { headers });
 });
@@ -162,8 +213,10 @@ media.post('/upload', requirePermission('media:write'), async (c) => {
   const formData = await c.req.formData();
   const file = formData.get('file');
 
-  if (!isUploadFileLike(file)) return c.json({ error: 'Missing file upload' }, 400);
-  if (file.size > MAX_FILE_SIZE) return c.json({ error: 'File too large' }, 413);
+  if (!isUploadFileLike(file))
+    return c.json({ error: 'Missing file upload' }, 400);
+  if (file.size > MAX_FILE_SIZE)
+    return c.json({ error: 'File too large' }, 413);
 
   const filename = file.name || 'upload';
   const extension = filename.split('.').pop()?.toLowerCase() ?? '';
@@ -193,12 +246,19 @@ media.post('/upload', requirePermission('media:write'), async (c) => {
 
   const createdAt = new Date().toISOString();
   await c.env.DB.prepare(
-      'INSERT INTO media_assets (id, filename, url, size, type, object_key, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
-    )
+    'INSERT INTO media_assets (id, filename, url, size, type, object_key, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+  )
     .bind(id, filename, url.toString(), size, contentType, objectKey, createdAt)
     .run();
 
-  return c.json({ id, filename, url: url.toString(), size, type: contentType, created_at: createdAt });
+  return c.json({
+    id,
+    filename,
+    url: url.toString(),
+    size,
+    type: contentType,
+    created_at: createdAt,
+  });
 });
 
 export default media;
