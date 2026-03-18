@@ -32,7 +32,7 @@ export class TOSAdapter implements BrokerAdapter {
       baseCurrency: "USD",
       isMarginEnabled: acc.securitiesAccount.type === "MARGIN",
       updatedAt: new Date(),
-    } as any as Account));
+    } as Account));
   }
 
   async getPositions(accountId: string): Promise<Position[]> {
