@@ -4,13 +4,16 @@ import WebLayout from '../layouts/WebLayout.astro';
 export const prerender = true;
 ---
 
-<WebLayout title="Contact | Gold Shore" description="Start a guided engagement intake.">
+<WebLayout
+  title="Contact | Gold Shore"
+  description="Start a guided engagement intake."
+>
   <section class="gs-section">
     <div class="gs-container">
       <h1>Contact</h1>
       <p>
-        Start with the guided intake to receive a tailored service recommendation
-        and week-one engagement outline.
+        Start with the guided intake to receive a tailored service
+        recommendation and week-one engagement outline.
       </p>
 
       <form
@@ -51,6 +54,17 @@ export const prerender = true;
           aria-describedby="email-help"
         />
 
+        <label for="inquiry">Inquiry type</label>
+        <p id="inquiry-help" class="field-help">
+          Choose the path that best matches the engagement you want to start.
+        </p>
+        <select id="inquiry" name="inquiry" aria-describedby="inquiry-help">
+          <option value="general">General inquiry</option>
+          <option value="strategy-call">Strategy call</option>
+          <option value="project-scope">Project scoping</option>
+          <option value="support">Support</option>
+        </select>
+
         <label for="brief">Project Brief</label>
         <p id="brief-help" class="field-help">
           Share a short summary of your goals, timeline, and budget.
@@ -80,14 +94,22 @@ export const prerender = true;
       <div class="grid gap-4 md:grid-cols-2" style="margin: 1rem 0;">
         <article class="gs-card">
           <h2>Guided intake</h2>
-          <p>Best for active projects that need architecture, security, or operational support.</p>
-          <a class="gs-button gs-button-solid" href="/intake">Launch intake wizard</a>
+          <p>
+            Best for active projects that need architecture, security, or
+            operational support.
+          </p>
+          <a class="gs-button gs-button-solid" href="/intake"
+            >Launch intake wizard</a
+          >
         </article>
 
         <article class="gs-card">
           <h2>General inquiry</h2>
           <p>For media, partnerships, or lightweight requests.</p>
-          <a class="gs-button gs-button-outline" href="mailto:hello@goldshore.ai">Email hello@goldshore.ai</a>
+          <a
+            class="gs-button gs-button-outline"
+            href="mailto:hello@goldshore.ai">Email hello@goldshore.ai</a
+          >
         </article>
       </div>
     </div>
@@ -120,6 +142,25 @@ export const prerender = true;
 
   if (!(submitText instanceof HTMLElement)) {
     throw new Error('Contact submit text element not found.');
+  }
+
+  const inquiryField = document.querySelector('#inquiry');
+  const inquiryParam = new URLSearchParams(window.location.search).get(
+    'inquiry',
+  );
+  const allowedInquiryTypes = new Set([
+    'general',
+    'strategy-call',
+    'project-scope',
+    'support',
+  ]);
+
+  if (
+    inquiryField instanceof HTMLSelectElement &&
+    inquiryParam &&
+    allowedInquiryTypes.has(inquiryParam)
+  ) {
+    inquiryField.value = inquiryParam;
   }
 
   form.addEventListener('submit', async (event) => {
