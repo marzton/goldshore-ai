@@ -50,23 +50,6 @@ binding = "AGENT"
 service = "gs-agent"
 environment = "prod"
 
-[env.preview.ai]
-binding = "AI"
-
-[env.preview.observability]
-enabled = true
-
-[env.prod]
-name = "gs-gateway"
-
-[[env.prod.kv_namespaces]]
-binding = "GATEWAY_KV"
-id = "9cc2209906a94851b704be57543987a9"
-
-[[env.prod.queues.producers]]
-binding = "JOB_QUEUE"
-queue = "goldshore-jobs"
-
 [[env.prod.services]]
 binding = "API"
 service = "gs-api"
@@ -110,4 +93,10 @@ environment = "prod"
 binding = "AI"
 
 [env.production.observability]
+enabled = true
+
+[env.preview.ai]
+binding = "AI"
+
+[env.preview.observability]
 enabled = true

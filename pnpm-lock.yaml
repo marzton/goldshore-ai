@@ -282,6 +282,7 @@ importers:
   apps/gs-web:
     dependencies:
       '@goldshore/auth':
+        specifier: workspace:*
         specifier: workspace:^
         version: link:../../packages/auth
       '@goldshore/brand':
