@@ -1,5 +1,8 @@
 name: Lockfile Guard
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
 
