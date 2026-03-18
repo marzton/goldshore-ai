@@ -351,11 +351,6 @@ export const prerender = true;
 
   document.addEventListener('astro:page-load', revealMetrics);
 </script>
-  </div>
-
-  <script type="module" src={wavesScriptUrl}></script>
-
-</WebLayout>
 
 <style>
   .gs-section {
@@ -630,23 +625,8 @@ export const prerender = true;
   }
 
   .metric-card.is-loading {
-  }
-
-  .visual-orb {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60%;
-    height: 60%;
-    background: radial-gradient(
-      circle at center,
-      rgba(59, 130, 246, 0.1),
-      transparent 70%
-    );
-    filter: blur(40px);
-  }
-
+    position: relative;
+    overflow: hidden;
   }
 
   .visual-orb {
@@ -856,8 +836,6 @@ export const prerender = true;
     color: rgba(255, 255, 255, 0.4);
   }
 
-  .panel-content {
-    flex: 1;
   .gs-meta {
     margin-top: 0.55rem;
     color: var(--gs-muted);
@@ -868,12 +846,6 @@ export const prerender = true;
     color: var(--gs-text);
     text-decoration: underline;
     text-underline-offset: 3px;
-  }
-
-  .panel-content {
-    flex: 1;
-    position: relative;
-    padding: 2rem;
   }
 
   .pulse-line {
@@ -944,112 +916,6 @@ export const prerender = true;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
   }
-
-  }
-
-  .gs-grid-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-  }
-
-  .metric-card {
-    padding: 3rem 2rem;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    transition: all 0.3s;
-  }
-
-  .metric-card.is-loading {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .metric-card.is-loading::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.08),
-      transparent
-    );
-    animation: metric-loading 1.2s linear infinite;
-  }
-
-  .metric-trend a {
-    color: rgba(255, 255, 255, 0.8);
-    text-decoration-color: rgba(255, 255, 255, 0.35);
-  }
-
-  .metric-card:hover {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.1);
-    transform: translateY(-5px);
-  }
-
-  .metric-label {
-    font-family: ui-monospace, monospace;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.4);
-    margin-bottom: 1rem;
-  }
-
-  .metric-value {
-    font-size: 3rem;
-    font-weight: 500;
-    color: #f1f5f9;
-    margin-bottom: 0.5rem;
-  }
-
-  .metric-trend {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.3);
-  }
-
-  .cta-panel {
-    text-align: center;
-    padding: 6rem 2rem;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 32px;
-  }
-
-  .cta-actions {
-    margin-top: 3rem;
-  }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s;
-    text-decoration: none;
-    font-size: 0.95rem;
-  }
-
-  .btn-large {
-    padding: 1rem 2rem;
-    font-size: 1rem;
-  }
-
-  .btn.primary {
-    background: #f1f5f9;
-    color: #020408;
-  }
-
-  .btn.primary:hover {
-    background: #ffffff;
-    transform: translateY(-1px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  }
-
   @media (max-width: 768px) {
     .narrative-grid {
       grid-template-columns: 1fr;
