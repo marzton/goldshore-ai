@@ -163,7 +163,7 @@ workflows.filter(w => !KNOWN_WORKFLOWS.includes(w)).forEach(w => governanceViola
 // Deep scan workflows for unpinned/unauthorized actions
 workflows.filter(w => w.endsWith('.yml')).forEach(w => {
   const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
-  const actionMatches = content.matchAll(/uses:\s*([\w\-\/]+)@([\w\.]+)/g);
+  const actionMatches = content.matchAll(/uses:\s*([\w\-\/]+)@([^\s]+)/g);
   for (const match of actionMatches) {
     const [, action, version] = match;
     if (!ALLOWED_ACTIONS.includes(action)) governanceViolations.push(`Unauthorized Action: ${action} in ${w}`);
