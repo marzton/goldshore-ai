@@ -2,6 +2,7 @@ import { FidelityAdapter } from "./index.ts";
 import { describe, it } from "node:test";
 import assert from "node:assert";
 
+// Mock fetch for testing
 const mockFetch = async (url: string) => {
   if (url.endsWith("/accounts")) {
     return new Response(JSON.stringify({

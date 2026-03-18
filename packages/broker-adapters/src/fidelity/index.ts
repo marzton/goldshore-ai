@@ -8,15 +8,6 @@ export interface FidelityConfig {
   fetchFn?: typeof fetch;
 }
 
-import { Account, Position } from "@goldshore/core-schema";
-import { BrokerAdapter } from "../index.js";
-
-/**
- * FidelityAdapter implements the BrokerAdapter interface for Fidelity Investments.
- *
- * Note: This is currently a structural implementation with mock data,
- * intended to be replaced with actual API calls to Fidelity's brokerage services.
- */
 export class FidelityAdapter implements BrokerAdapter {
   id = "fidelity";
   name = "fidelity";
