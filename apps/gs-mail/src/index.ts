@@ -85,19 +85,17 @@ export default {
   async email(message: ForwardableEmailMessage, env: Env, ctx: ExecutionContext): Promise<void> {
     const sender = message.from;
     const recipient = message.to;
-    const subject = message.headers.get('subject') || 'No Subject';
-    const normalizedSender = normalizeEmail(sender);
-    const normalizedRecipient = normalizeEmail(recipient);
+    const subject = (message.headers.get('subject') || 'No Subject').slice(0, 50);
 
-    const blocked = parseEmailList(env.MAIL_BLOCKED_SENDERS);
-    if (blocked.includes(normalizedSender)) {
+    const blocked = env.MAIL_BLOCKED_SENDERS?.split(',').map((item) => item.trim()).filter(Boolean) || [];
+    if (blocked.includes(sender)) {
       message.setReject(`Sender ${sender} is blocked.`);
       return;
     }
 
-    const allowedRecipients = parseEmailList(env.MAIL_ALLOWED_RECIPIENTS);
-    if (allowedRecipients.length > 0 && !allowedRecipients.includes(normalizedRecipient)) {
-      message.setReject(`Recipient ${recipient} is not allowlisted.`);
+    const allowed = env.MAIL_ALLOWED_RECIPIENTS?.split(',').map((item) => item.trim()).filter(Boolean) || [];
+    if (allowed.length > 0 && !allowed.includes(recipient)) {
+      message.setReject('Recipient not allowed.');
       return;
     }
 
@@ -143,11 +141,8 @@ export default {
       return;
     }
 
-    try {
-      await message.forward(forwardTo);
-    } catch (error) {
-      console.error('❌ Forwarding failed:', error);
-      message.setReject('Mail forwarding failed.');
-    }
+    const errorMsg = 'Forwarding target missing or invalid.';
+    console.warn(`⚠️ ${errorMsg}`);
+    message.setReject(errorMsg);
   },
 };
