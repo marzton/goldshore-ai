@@ -4,9 +4,8 @@ import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
 import type { AccessTokenPayload } from "@goldshore/auth";
 import type { ControlEnv } from "../libs/types";
+import { extractRoles, getRequiredRoles, isAuthorizedRole } from "../libs/adminAuth";
 import { logAuditEvent } from "@goldshore/utils";
-
-const DEFAULT_ADMIN_ROLES = ["admin", "ops", "owner", "infra"];
 
 const dnsRecordSchema = z.object({
   type: z.string().min(1),
@@ -44,33 +43,6 @@ const dnsQuerySchema = z.object({
 const accessPolicyQuerySchema = z.object({
   appId: z.string().regex(/^[a-zA-Z0-9-]+$/),
 }).strip();
-
-const getRequiredRoles = (env: ControlEnv) => {
-  const configured = env.CONTROL_ADMIN_ROLES?.split(",").map((role) => role.trim()).filter(Boolean);
-  return configured && configured.length > 0 ? configured : DEFAULT_ADMIN_ROLES;
-};
-
-const extractRoles = (claims: AccessTokenPayload) => {
-  const roles = new Set<string>();
-  const candidates = [claims.roles, claims.role, claims.groups];
-  for (const candidate of candidates) {
-    if (Array.isArray(candidate)) {
-      candidate.forEach((value) => roles.add(value));
-    } else if (typeof candidate === "string") {
-      roles.add(candidate);
-    }
-  }
-  return Array.from(roles).map((role) => role.toLowerCase());
-};
-
-const isAuthorizedRole = (claims: AccessTokenPayload, requiredRoles: string[]) => {
-  const roles = extractRoles(claims);
-  if (roles.length === 0) {
-    return false;
-  }
-  const required = requiredRoles.map((role) => role.toLowerCase());
-  return roles.some((role) => required.includes(role));
-};
 
 const getActor = (claims: AccessTokenPayload, request: Request) => {
   return (
