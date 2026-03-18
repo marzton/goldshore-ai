@@ -1,4 +1,4 @@
-import { Account, Position } from "@goldshore/core-schema";
+import type { Account, Position, Order } from "@goldshore/core-schema";
 
 export interface BrokerAdapter {
   id: string;
@@ -6,6 +6,7 @@ export interface BrokerAdapter {
 
   getAccounts(): Promise<Account[]>;
   getPositions(accountId: string): Promise<Position[]>;
+  getOrders(accountId: string): Promise<Order[]>;
   // ... future execution and stream hooks
 }
 

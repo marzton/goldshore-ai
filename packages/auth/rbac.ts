@@ -78,3 +78,9 @@ export const hasAdminPermission = (
   permissions: AdminPermission[],
   required: AdminPermission
 ) => permissions.includes(required);
+
+export const isAdmin = (claims: AccessTokenPayload | null) => {
+  if (!claims) return false;
+  const roles = extractAccessRoles(claims);
+  return roles.includes("admin");
+};

@@ -4,11 +4,14 @@
   "private": true,
   "type": "module",
   "main": "./src/index.ts",
+  "scripts": {
+    "test": "tsx --test src/**/*.test.ts"
+  },
   "exports": {
     ".": "./src/index.ts",
-    "./tos": "./src/tos/index.ts",
-    "./fidelity": "./src/fidelity/index.ts",
-    "./robinhood": "./src/robinhood/index.ts"
+    "./tos": "./src/tos/index.js",
+    "./fidelity": "./src/fidelity/index.js",
+    "./robinhood": "./src/robinhood/index.js"
   },
   "dependencies": {
     "@goldshore/core-schema": "workspace:*"
