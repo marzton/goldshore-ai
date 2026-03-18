@@ -23,8 +23,11 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Build and Deploy ${{ inputs.service_name }}
+        env:
+          SERVICE_NAME: ${{ inputs.service_name }}
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo "Deploying ${{ inputs.service_name }} to ${{ inputs.environment }}..."
+          echo "Deploying $SERVICE_NAME to $DEPLOY_ENVIRONMENT..."
           # Insert your standard pnpm build / docker push / cloud deploy commands here
 
 
