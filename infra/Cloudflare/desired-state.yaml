@@ -89,13 +89,13 @@ cloudflare:
         bindings:
           kv:
             - name: "KV"
-              namespace: "goldshore-api-kv"
+              namespace: "goldshore-api-kv" # Historical resource name; gs-api canonical service prefix
           d1:
             - name: "DB"
-              database_name: "goldshore-api-db"
+              database_name: "goldshore-api-db" # Historical resource name; gs-api canonical service prefix
           r2:
             - name: "ASSETS"
-              bucket_name: "goldshore-api-assets"
+              bucket_name: "goldshore-api-assets" # Historical resource name; gs-api canonical service prefix
           ai:
             - name: "AI"
               gateway: "goldshore-ai-gateway"
