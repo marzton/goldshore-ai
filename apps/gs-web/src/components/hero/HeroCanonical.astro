@@ -8,16 +8,17 @@ import HeroLogo from './HeroLogo.astro';
   aria-label="Gold Shore hero"
 >
   <div class="hero-bg" aria-hidden="true">
-    <canvas class="hero-canvas" data-stars></canvas>
-    <canvas class="hero-canvas" data-shooting></canvas>
+    <canvas class="hero-canvas gs-parallax" data-stars data-parallax="0.03"></canvas>
+    <canvas class="hero-canvas gs-parallax" data-shooting data-parallax="0.05"></canvas>
     <img
-      class="hero-wave-overlay"
+      class="hero-wave-overlay gs-parallax"
       src="/assets/starfield.svg"
       alt="Abstract telemetry wave field representing live operational signals"
       loading="lazy"
       decoding="async"
+      data-parallax="0.02"
     />
-    <div class="hero-grid-field"></div>
+    <div class="hero-grid-field gs-parallax" data-parallax="0.01"></div>
     <div class="hero-vignette"></div>
   </div>
 
