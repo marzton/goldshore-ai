@@ -5,8 +5,8 @@
   "main": "./index.ts",
   "exports": {
     ".": "./index.ts",
-    "./http.ts": "./http.ts",
-    "./index.ts": "./index.ts"
+    "./http.js": "./http.ts",
+    "./index.js": "./index.ts"
   },
   "scripts": {
     "test": "tsx --test admin.test.ts"

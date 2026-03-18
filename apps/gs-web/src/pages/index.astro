@@ -52,7 +52,7 @@ export const prerender = true;
   <section class="gs-section" id="offerings">
     <div class="gs-container">
       <div class="gs-label" style="margin-bottom: 0.75rem;">
-        Performance at a glance
+        Core Offerings
       </div>
       <div class="gs-grid-3">
         <article
@@ -86,13 +86,14 @@ export const prerender = true;
     </div>
   </section>
 
+
   <section class="gs-section bordered-top">
     <div class="content-row">
       <div class="content-text">
         <span class="section-tag">Deployment Intelligence</span>
         <h2>Orchestrate with absolute precision.</h2>
         <p>
-          GoldShore's deployment engine provides granular control over global
+          Gold Shore's deployment engine provides granular control over global
           infrastructure. Manage multi-region rollouts, automated rollbacks, and
           real-time health monitoring from a single, unified interface.
         </p>
@@ -119,28 +120,30 @@ export const prerender = true;
   </section>
 
   <section class="gs-section">
-    <div class="content-row reverse">
-      <div class="content-text">
-        <span class="section-tag">Risk Radar</span>
-        <h2>Identify threats before they emerge.</h2>
-        <p>
-          Our Risk Radar leverages applied intelligence to scan billions of
-          signals across your network, identifying anomalies and potential
-          security breaches in milliseconds.
-        </p>
-        <div class="radar-stats">
-          <div class="radar-stat">
-            <strong>12ms</strong>
-            <span>Mean Response Time</span>
-          </div>
-          <div class="radar-stat">
-            <strong>100%</strong>
-            <span>Threat Coverage</span>
+    <div class="gs-container">
+      <div class="content-row reverse">
+        <div class="content-text">
+          <span class="section-tag">Risk Radar</span>
+          <h2>Identify threats before they emerge.</h2>
+          <p>
+            Our Risk Radar leverages applied intelligence to scan billions of
+            signals across your network, identifying anomalies and potential
+            security breaches in milliseconds.
+          </p>
+          <div class="radar-stats">
+            <div class="radar-stat">
+              <strong>12ms</strong>
+              <span>Mean Response Time</span>
+            </div>
+            <div class="radar-stat">
+              <strong>100%</strong>
+              <span>Threat Coverage</span>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="content-preview">
-        <div class="grid-field small-grid"></div>
+        <div class="content-preview">
+          <div class="grid-field small-grid"></div>
+        </div>
       </div>
     </div>
   </section>
@@ -163,15 +166,16 @@ export const prerender = true;
           <div class="metric-label">Deployment Frequency</div>
           <div class="metric-value">48/day</div>
           <div class="metric-trend">
-            <a href="/developer-hub"
-              >Continuous Integration · verified in Developer Hub</a>
+            <a href="/developer-hub">
+              Continuous Integration · verified in Developer Hub
+            </a>
           </div>
         </article>
 
         <article class="metric-card is-loading" data-metric-card>
           <div class="metric-label">Signal Throughput</div>
           <div class="metric-value">4.8B</div>
-          <div class="metric-trend">Signals processed data points / day</div>
+          <div class="metric-trend">Signals processed / day</div>
         </article>
       </div>
     </div>
@@ -189,19 +193,18 @@ export const prerender = true;
       </div>
     </div>
   </section>
-</WebLayout>
 
-<script>
-  const revealMetrics = () => {
-    window.setTimeout(() => {
-      document.querySelectorAll('[data-metric-card]').forEach((card) => {
-        card.classList.remove('is-loading');
-      });
-    }, 550);
-  };
+  <script>
+    const revealMetrics = () => {
+      window.setTimeout(() => {
+        document.querySelectorAll('[data-metric-card]').forEach((card) => {
+          card.classList.remove('is-loading');
+        });
+      }, 550);
+    };
 
-  document.addEventListener('astro:page-load', revealMetrics);
-</script>
+    document.addEventListener('astro:page-load', revealMetrics);
+  </script>
 
 <style>
   .gs-section {
@@ -306,7 +309,7 @@ export const prerender = true;
   }
 
   .section-tag {
-    color: var(--gs-accent);
+    color: var(--gs-accent, #3b82f6);
     font-size: 0.85rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -333,13 +336,14 @@ export const prerender = true;
     position: relative;
     margin-bottom: 0.75rem;
     color: rgba(255, 255, 255, 0.6);
+    overflow: hidden;
   }
 
   .feature-list li::before {
     content: '→';
     position: absolute;
     left: 0;
-    color: var(--gs-accent);
+    color: var(--gs-accent, #3b82f6);
   }
 
   .radar-stats {
@@ -403,7 +407,7 @@ export const prerender = true;
     background: linear-gradient(
       90deg,
       transparent,
-      var(--gs-accent),
+      var(--gs-accent, #3b82f6),
       transparent
     );
     margin-bottom: 2rem;
@@ -473,9 +477,6 @@ export const prerender = true;
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 16px;
     transition: all 0.3s;
-  }
-
-  .metric-card.is-loading {
     position: relative;
     overflow: hidden;
   }
@@ -573,3 +574,4 @@ export const prerender = true;
     }
   }
 </style>
+</WebLayout>

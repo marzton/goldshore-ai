@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { requirePermission } from '../auth';
 import { Env, Variables } from '../types';
 import sanitizeHtml from 'sanitize-html';
 
@@ -22,10 +23,24 @@ const ALLOWED_MIME_TYPES = new Map([
   ['svg', 'image/svg+xml'],
   ['png', 'image/png'],
   ['jpg', 'image/jpeg'],
-  ['jpeg', 'image/jpeg']
+  ['jpeg', 'image/jpeg'],
 ]);
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
+
+const SVG_DANGEROUS_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)[\s\S]*?>[\s\S]*?<\/\1>/gi;
+const SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)\b[^>]*\/?>/gi;
+const SVG_EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*(?:javascript:|data:text\/html)[\s\S]*?\1/gi;
+const SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*(?:javascript:|data:text\/html)[^\s>]*/gi;
+
+const sanitizeSvg = (input: string): string =>
+  input
+    .replace(SVG_DANGEROUS_TAGS_REGEX, '')
+    .replace(SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX, '')
+    .replace(SVG_EVENT_HANDLER_ATTR_REGEX, '')
+    .replace(SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX, '')
+    .replace(SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX, '');
 
 const isUploadFileLike = (value: unknown): value is UploadFileLike => {
   if (!value || typeof value !== 'object') {
@@ -40,64 +55,6 @@ const isUploadFileLike = (value: unknown): value is UploadFileLike => {
     typeof candidate.arrayBuffer === 'function'
   );
 };
-const sanitizeSvg = (input: string): string =>
-  sanitizeHtml(input, {
-    allowedTags: [
-      'svg',
-      'g',
-      'path',
-      'circle',
-      'ellipse',
-      'line',
-      'polyline',
-      'polygon',
-      'rect',
-      'text',
-      'tspan',
-      'defs',
-      'linearGradient',
-      'radialGradient',
-      'stop',
-      'pattern',
-      'clipPath',
-      'mask',
-      'use',
-      'symbol',
-      'view',
-      'title',
-      'desc'
-    ],
-    allowedAttributes: {
-      svg: ['width', 'height', 'viewBox', 'xmlns'],
-      '*': [
-        'id',
-        'class',
-        'x',
-        'y',
-        'cx',
-        'cy',
-        'r',
-        'rx',
-        'ry',
-        'd',
-        'x1',
-        'y1',
-        'x2',
-        'y2',
-        'points',
-        'transform',
-        'fill',
-        'stroke',
-        'stroke-width',
-        'opacity'
-      ]
-    },
-    allowedSchemes: ['http', 'https'],
-    allowedSchemesByTag: {
-      use: ['http', 'https']
-    },
-    allowProtocolRelative: false
-  });
 
 /**
  * [SOP] Media Asset Management
@@ -106,7 +63,7 @@ const sanitizeSvg = (input: string): string =>
 
 const media = new Hono<{ Bindings: Env; Variables: Variables }>();
 
-media.get('/', async (c) => {
+media.get('/', requirePermission('media:read'), async (c) => {
   const query = c.req.query();
   const rawLimit = query.limit;
   const rawOffset = query.offset;
@@ -128,20 +85,20 @@ media.get('/', async (c) => {
     }
   }
 
-  const { results } = await c.env.DB
-    .prepare(
-      'SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT ? OFFSET ?'
-    )
+  const { results } = await c.env.DB.prepare(
+    'SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT ? OFFSET ?',
+  )
     .bind(limit, offset)
     .all<MediaRecord>();
 
   return c.json({ items: results ?? [] });
 });
 
-media.get('/:id', async (c) => {
+media.get('/:id', requirePermission('media:read'), async (c) => {
   const id = c.req.param('id');
-  const result = await c.env.DB
-    .prepare('SELECT object_key, type FROM media_assets WHERE id = ?')
+  const result = await c.env.DB.prepare(
+    'SELECT object_key, type FROM media_assets WHERE id = ?',
+  )
     .bind(id)
     .first<{ object_key: string; type: string }>();
 
@@ -151,7 +108,12 @@ media.get('/:id', async (c) => {
   if (!object) return c.json({ error: 'Asset missing from storage' }, 404);
 
   const headers = new Headers();
-  headers.set('Content-Type', result.type || object.httpMetadata?.contentType || 'application/octet-stream');
+  headers.set(
+    'Content-Type',
+    result.type ||
+      object.httpMetadata?.contentType ||
+      'application/octet-stream',
+  );
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
 
   // Sentinel: Enforce strict CSP to mitigate SVG XSS
@@ -160,7 +122,7 @@ media.get('/:id', async (c) => {
   return new Response(object.body, { headers });
 });
 
-media.post('/upload', async (c) => {
+media.post('/upload', requirePermission('media:write'), async (c) => {
   const formData = await c.req.formData();
   const file = formData.get('file');
 
@@ -195,12 +157,19 @@ media.post('/upload', async (c) => {
 
   const createdAt = new Date().toISOString();
   await c.env.DB.prepare(
-      'INSERT INTO media_assets (id, filename, url, size, type, object_key, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
-    )
+    'INSERT INTO media_assets (id, filename, url, size, type, object_key, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+  )
     .bind(id, filename, url.toString(), size, contentType, objectKey, createdAt)
     .run();
 
-  return c.json({ id, filename, url: url.toString(), size, type: contentType, created_at: createdAt });
+  return c.json({
+    id,
+    filename,
+    url: url.toString(),
+    size,
+    type: contentType,
+    created_at: createdAt,
+  });
 });
 
 export default media;

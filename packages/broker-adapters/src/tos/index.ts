@@ -16,7 +16,7 @@ export class TOSAdapter implements BrokerAdapter {
         : undefined,
       headers: {
         "Authorization": config?.accessToken ? `Bearer ${config.accessToken}` : undefined,
-      } as any
+      } as Record<string, string | undefined>
     });
   }
 
@@ -42,40 +42,34 @@ export class TOSAdapter implements BrokerAdapter {
   async getPositions(accountId: string): Promise<Position[]> {
     const response = await this.client.get(`/accounts/${accountId}?fields=positions`);
     if (response.status !== 200) return [];
-    const raw = await response.json();
-    const result = TosAccountSchema.safeParse(raw);
-    if (!result.success) return [];
-
-    const positions = result.data.securitiesAccount.positions || [];
-    return positions.map((p) => {
+    const data = await response.json() as any;
+    const positions = data.securitiesAccount.positions || [];
+    return positions.map((p: any): Position => {
       const quantity = p.longQuantity || -p.shortQuantity || 0;
-      return {
+      const position: Position = {
         id: `${accountId}-${p.instrument.symbol}`,
         accountId: accountId,
         quantity: quantity.toString(),
         averageOpenPrice: p.averagePrice.toString(),
         updatedAt: new Date(),
-      } as Position;
+      };
+      return position;
     });
   }
 
   async getOrders(accountId: string): Promise<Order[]> {
     const response = await this.client.get(`/accounts/${accountId}/orders`);
     if (response.status !== 200) return [];
-    const raw = await response.json();
-    const result = TosOrdersResponseSchema.safeParse(raw);
-    if (!result.success) return [];
-
-    return result.data.map((o) => ({
+    const data = await response.json() as any[];
+    return data.map((o: any) => ({
       id: o.orderId.toString(),
       accountId: accountId,
       brokerOrderId: o.orderId.toString(),
-      status: o.status as any,
-      symbol: o.orderLegCollection[0]?.instrument?.symbol || "UNKNOWN",
-      side: o.orderLegCollection[0]?.instruction as any,
+      status: o.status,
+      symbol: o.orderLegCollection[0].instrument.symbol,
+      side: o.orderLegCollection[0].instruction,
       quantity: o.quantity.toString(),
       submittedAt: new Date(o.enteredTime),
-      updatedAt: new Date(),
     } as Order));
   }
 }

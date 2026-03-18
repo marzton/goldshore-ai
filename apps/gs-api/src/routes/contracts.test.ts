@@ -21,8 +21,12 @@ describe('API contract/versioning', () => {
     assert.strictEqual(typeof data.version, 'string');
   });
 
-  it('system/version returns metadata', async () => {
-    const app = new Hono();
+  it('system/version returns contract metadata', async () => {
+    const app = new Hono<{ Variables: { accessClaims: any } }>();
+    app.use('*', async (c, next) => {
+      c.set('accessClaims', { roles: ['admin'], email: 'admin@example.com' });
+      await next();
+    });
     app.route('/system', system);
 
     const res = await app.request('/system/version', {}, { GIT_SHA: 'abc123' } as any);
@@ -35,7 +39,11 @@ describe('API contract/versioning', () => {
   });
 
   it('legacy /user/:id endpoint redirects to /users/:id', async () => {
-    const app = new Hono();
+    const app = new Hono<{ Variables: { accessClaims: any } }>();
+    app.use('*', async (c, next) => {
+      c.set('accessClaims', { roles: ['admin'], email: 'admin@example.com' });
+      await next();
+    });
     app.route('/user', user);
 
     const res = await app.request('/user/42', { redirect: 'manual' });

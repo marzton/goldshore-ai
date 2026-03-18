@@ -1,42 +1,53 @@
 name = "gs-gateway"
 main = "src/index.ts"
-compatibility_date = "2025-01-10"
+compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
+tsconfig = "tsconfig.json"
 
 workers_dev = false
 
-# Canonical gateway hostname is gw.goldshore.ai.
+# Default routes (Top-level)
 routes = [
   { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" },
   { pattern = "gateway.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
 
-[vars]
+[env.production]
+routes = [
+  { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "gateway.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+
+[env.production.vars]
 ENV = "production"
 API_ORIGIN = "https://api.goldshore.ai"
-# These should be filled from your Access Dashboard
 CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b"
 CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
 
-[[kv_namespaces]]
+[[env.production.kv_namespaces]]
 binding = "GATEWAY_KV"
-# Updated to use your actual production namespace ID
 id = "9cc2209906a94851b704be57543987a9"
 
-[[queues.producers]]
+[[env.production.queues.producers]]
 binding = "JOB_QUEUE"
 queue = "goldshore-jobs"
 
-[[services]]
+[[env.production.services]]
+binding = "AGENT"
+service = "gs-agent"
+environment = "prod"
+
+[[env.production.services]]
 binding = "API"
 service = "gs-api"
 environment = "prod"
 
-[ai]
+[env.production.ai]
 binding = "AI"
 
-[observability]
+[env.production.observability]
 enabled = true
 
 [env.prod]
