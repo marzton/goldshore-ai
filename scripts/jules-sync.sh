@@ -1,45 +1,44 @@
 #!/usr/bin/env bash
-# scripts/jules-sync.sh - Authenticated sync for gs-* services
-
 set -euo pipefail
 
-# These values should come from GitHub Actions Secrets
-CLIENT_ID="${CF_ACCESS_CLIENT_ID:?CF_ACCESS_CLIENT_ID is required}"
-CLIENT_SECRET="${CF_ACCESS_CLIENT_SECRET:?CF_ACCESS_CLIENT_SECRET is required}"
+TARGET_URL="${1:-https://gs-admin.pages.dev/}"
+CLIENT_ID="${CF_ACCESS_CLIENT_ID:-}"
+CLIENT_SECRET="${CF_ACCESS_CLIENT_SECRET:-}"
 
-BASE_DOMAIN="${GS_BASE_DOMAIN:-goldshore.ai}"
-ENDPOINT_PATH="${GS_SYNC_PATH:-/api/health}"
-CURL_TIMEOUT="${GS_SYNC_TIMEOUT_SECONDS:-20}"
-
-# Comma-separated override is supported via GS_SERVICES.
-DEFAULT_SERVICES="gs-web,gs-admin,gs-api,gs-gateway,gs-mail,gs-agent,gs-control"
-SERVICES_CSV="${GS_SERVICES:-$DEFAULT_SERVICES}"
-IFS=',' read -r -a SERVICES <<< "$SERVICES_CSV"
-
-failures=0
-
-for SERVICE_RAW in "${SERVICES[@]}"; do
-  SERVICE="$(echo "$SERVICE_RAW" | xargs)"
-  [ -n "$SERVICE" ] || continue
-
-  URL="https://${SERVICE}.${BASE_DOMAIN}${ENDPOINT_PATH}"
-  echo "🤖 Jules syncing ${SERVICE}..."
-
-  if curl --silent --show-error --fail \
-    --max-time "${CURL_TIMEOUT}" \
-    --request GET "${URL}" \
-    --header "CF-Access-Client-Id: ${CLIENT_ID}" \
-    --header "CF-Access-Client-Secret: ${CLIENT_SECRET}" >/dev/null; then
-    echo "✅ ${SERVICE} sync check passed"
-  else
-    echo "❌ ${SERVICE} sync check failed (${URL})"
-    failures=$((failures + 1))
-  fi
-done
-
-if [ "$failures" -gt 0 ]; then
-  echo "Failed: ${failures} service check(s) did not pass."
+if [[ -z "$CLIENT_ID" || -z "$CLIENT_SECRET" ]]; then
+  echo "Missing CF_ACCESS_CLIENT_ID or CF_ACCESS_CLIENT_SECRET" >&2
   exit 1
 fi
 
-echo "✅ All gs-* services synced via Service Token."
+host=$(python - "$TARGET_URL" <<'PY'
+import sys
+from urllib.parse import urlparse
+print(urlparse(sys.argv[1]).hostname or "")
+PY
+)
+
+case "$host" in
+  gs-admin.pages.dev|admin.goldshore.ai) ;;
+  *)
+    echo "Refusing to send service-token headers to untrusted host: ${host:-<none>}" >&2
+    exit 1
+    ;;
+esac
+
+echo "Testing Cloudflare Access service-token auth against: $TARGET_URL"
+
+curl -sS -o /tmp/jules-sync-response.txt -D /tmp/jules-sync-headers.txt \
+  -H "CF-Access-Client-Id: $CLIENT_ID" \
+  -H "CF-Access-Client-Secret: $CLIENT_SECRET" \
+  "$TARGET_URL"
+
+status=$(awk 'toupper($1) ~ /^HTTP\// {code=$2} END {print code}' /tmp/jules-sync-headers.txt)
+
+echo "HTTP status: ${status:-unknown}"
+if [[ "${status:-}" =~ ^2[0-9][0-9]$ ]]; then
+  echo "Service token auth passed."
+else
+  echo "Service token auth failed. Response headers:" >&2
+  cat /tmp/jules-sync-headers.txt >&2
+  exit 1
+fi
