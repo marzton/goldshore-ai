@@ -167,7 +167,7 @@ workflows.filter(w => w.endsWith('.yml')).forEach(w => {
   for (const match of actionMatches) {
     const [_, action, version] = match;
     if (!ALLOWED_ACTIONS.includes(action)) governanceViolations.push(`Unauthorized Action: ${action} in ${w}`);
-    if (!/^[0-9a-f]{40}$/.test(version)) governanceViolations.push(`Unpinned Action: ${action}@${version} in ${w} (use SHA)`);
+    if (!/^[0-9a-fA-F]{40}$/.test(version)) governanceViolations.push(`Unpinned Action: ${action}@${version} in ${w} (use SHA)`);
   }
 });
 
