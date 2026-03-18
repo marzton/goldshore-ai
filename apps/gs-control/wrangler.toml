@@ -10,7 +10,8 @@ routes = [
 
 [vars]
 ENV = "production"
-CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+# CONTROL_SYNC_TOKEN is managed via Cloudflare Secret.
+CONTROL_SYNC_TOKEN = "SECRET_MANAGED"
 SYNC_TARGET_SUBDOMAIN = "api.goldshore.ai"
 
 [[kv_namespaces]]
