@@ -58,7 +58,7 @@
   justify-content: center;
   isolation: isolate;
   text-align: center;
-  color: #e5eefc;
+  color: var(--gs-hero-text-primary);
 }
 
 .hero-bg {
@@ -80,10 +80,14 @@
   background:
     radial-gradient(
       circle at 50% 35%,
-      rgba(140, 176, 255, 0.16),
+      var(--gs-hero-vignette-core),
       transparent 46%
     ),
-    linear-gradient(180deg, rgba(2, 6, 23, 0.18) 0%, rgba(2, 6, 23, 0.78) 100%);
+    linear-gradient(
+      180deg,
+      var(--gs-hero-vignette-fade-start) 0%,
+      var(--gs-hero-vignette-fade-end) 100%
+    );
 }
 
 .hero-content {
@@ -96,7 +100,7 @@
 .hero-mark {
   width: 92px;
   margin: 0 auto 1.25rem;
-  color: #f6cf7a;
+  color: var(--gs-hero-mark);
 }
 
 .gs-logo-mark {
@@ -111,7 +115,7 @@
 
 .hero-subtitle {
   margin: 0 0 1.5rem;
-  color: #bfccdf;
+  color: var(--gs-hero-text-secondary);
 }
 
 .hero-actions {
@@ -126,7 +130,7 @@
   background:
     radial-gradient(
       circle at 50% 0%,
-      rgba(90, 140, 255, 0.12),
+      var(--gs-hero-depth-glow),
       transparent 60%
     ),
     linear-gradient(180deg, #05070d 0%, #060a14 100%);
@@ -171,7 +175,7 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(90, 140, 255, 0.3),
+    var(--gs-divider-signal),
     transparent
   );
   position: relative;
@@ -185,7 +189,7 @@
   background: linear-gradient(
     120deg,
     transparent,
-    rgba(255, 107, 0, 0.15),
+    var(--gs-divider-sweep),
     transparent
   );
   animation: signalSweep 6s ease-in-out infinite;
@@ -193,7 +197,7 @@
 
 .gs-panel {
   background: linear-gradient(180deg, #0b1220, #0a101c);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--gs-panel-border-subtle);
   border-radius: 20px;
   padding: 2.5rem;
 }
@@ -221,7 +225,6 @@
   animation-play-state: paused;
 }
 
-
 .gs-signal {
   display: inline-flex;
   align-items: center;
@@ -242,7 +245,6 @@
   box-shadow: 0 0 0 1px rgba(110, 231, 183, 0.5);
   animation: gs-status-pulse 2.8s ease-in-out infinite;
 }
-
 
 @keyframes gs-status-pulse {
   0%,
