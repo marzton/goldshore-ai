@@ -65,6 +65,6 @@ export class TOSAdapter implements BrokerAdapter {
       side: o.orderLegCollection[0].instruction,
       quantity: o.quantity.toString(),
       submittedAt: new Date(o.enteredTime),
-    } as any as Order));
+    } as Order));
   }
 }
