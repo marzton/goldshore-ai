@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { join, resolve, basename, sep } from "node:path";
+import { join, resolve } from "node:path";
 
 const ROOT = process.cwd();
 const APPS_DIR = resolve(ROOT, "apps");
