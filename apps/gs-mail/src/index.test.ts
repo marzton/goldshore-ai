@@ -95,7 +95,11 @@ describe('gs-mail email handler persistence', () => {
     const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
     const message = new MockMessage('next@goldshore.ai', 'inbox@goldshore.ai', 'Newest');
 
-    await worker.email(message as unknown as ForwardableEmailMessage, { GS_CONFIG: kv as unknown as KVNamespace }, ctx);
+    await worker.email(
+      message as unknown as ForwardableEmailMessage,
+      { GS_CONFIG: kv as unknown as KVNamespace, MAIL_FORWARD_TO: 'ops@goldshore.ai' },
+      ctx,
+    );
     await Promise.all(waits);
 
     const payload = JSON.parse(kv.puts[0].value);
@@ -113,12 +117,54 @@ describe('gs-mail email handler persistence', () => {
     const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
     const message = new MockMessage('safe@goldshore.ai', 'inbox@goldshore.ai', 'Recover');
 
-    await worker.email(message as unknown as ForwardableEmailMessage, { GS_CONFIG: kv as unknown as KVNamespace }, ctx);
+    await worker.email(
+      message as unknown as ForwardableEmailMessage,
+      { GS_CONFIG: kv as unknown as KVNamespace, MAIL_FORWARD_TO: 'ops@goldshore.ai' },
+      ctx,
+    );
     await Promise.all(waits);
 
     const payload = JSON.parse(kv.puts[0].value);
     assert.equal(payload.length, 1);
     assert.equal(payload[0].id, '33333333-3333-4333-8333-333333333333');
     assert.ok(parseErrorSpy.mock.calls.some((call) => String(call.arguments[0]).includes('Failed to parse EMAIL_INBOX_LOGS payload')));
+  });
+
+  it('rejects mail when forwarding is not configured', async () => {
+    mock.method(globalThis.crypto, 'randomUUID', () => '44444444-4444-4444-8444-444444444444');
+
+    const kv = new MockKV(null);
+    const waits: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
+    const message = new MockMessage('sender@goldshore.ai', 'inbox@goldshore.ai', 'Missing route');
+
+    await worker.email(message as unknown as ForwardableEmailMessage, { GS_CONFIG: kv as unknown as KVNamespace }, ctx);
+    await Promise.all(waits);
+
+    assert.equal(message.rejection, 'Mail forwarding is not configured.');
+    assert.equal(message.forwardedTo.length, 0);
+    assert.equal(kv.puts.length, 1);
+  });
+
+  it('rejects recipients outside the allowlist', async () => {
+    const kv = new MockKV(null);
+    const waits: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
+    const message = new MockMessage('sender@goldshore.ai', 'other@goldshore.ai', 'Blocked recipient');
+
+    await worker.email(
+      message as unknown as ForwardableEmailMessage,
+      {
+        GS_CONFIG: kv as unknown as KVNamespace,
+        MAIL_FORWARD_TO: 'ops@goldshore.ai',
+        MAIL_ALLOWED_RECIPIENTS: 'inbox@goldshore.ai, support@goldshore.ai',
+      },
+      ctx,
+    );
+    await Promise.all(waits);
+
+    assert.equal(message.rejection, 'Recipient other@goldshore.ai is not allowlisted.');
+    assert.equal(message.forwardedTo.length, 0);
+    assert.equal(kv.puts.length, 0);
   });
 });
