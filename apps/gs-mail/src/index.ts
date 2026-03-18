@@ -121,44 +121,38 @@ export default {
       return;
     }
 
-    const newEntry = {
+    const parsedEntry = EmailLogSchema.safeParse({
       id: crypto.randomUUID(),
       from: sender,
       to: recipient,
       subject,
       timestamp: new Date().toISOString(),
-    };
+    });
 
-    const validation = EmailLogSchema.safeParse(newEntry);
-
-    // 3. Persistence Logic (Asynchronous)
-    if (validation.success) {
-      ctx.waitUntil(
-        (async () => {
-          try {
-            const existingLogs = await readInboxLogs(env.GS_CONFIG);
-            // Prepend and truncate to 100 per SOP
-            const updatedLogs = [validation.data, ...existingLogs].slice(
-              0,
-              100,
-            );
-
-            await env.GS_CONFIG.put(
-              'EMAIL_INBOX_LOGS',
-              JSON.stringify(updatedLogs),
-            );
-            console.info(`✅ Logged email: ${sender} -> ${recipient}`);
-          } catch (err) {
-            console.error('❌ KV Persistence Error:', err);
-          }
-        })(),
-      );
-    } else {
+    if (!parsedEntry.success) {
       console.error(
-        '🚨 Schema Validation Failed for inbound mail:',
-        validation.error,
+        '🚨 Schema validation failed for inbound mail:',
+        parsedEntry.error,
       );
+      return;
     }
+
+    ctx.waitUntil(
+      (async () => {
+        try {
+          const existingLogs = await readInboxLogs(env.GS_CONFIG);
+          const updatedLogs = [parsedEntry.data, ...existingLogs].slice(0, 100);
+
+          await env.GS_CONFIG.put(
+            'EMAIL_INBOX_LOGS',
+            JSON.stringify(updatedLogs),
+          );
+          console.info(`✅ Logged email: ${sender} -> ${recipient}`);
+        } catch (error) {
+          console.error('❌ KV persistence error:', error);
+        }
+      })(),
+    );
 
     const forwardTo = (env.MAIL_FORWARD_TO || env.FORWARD_TO)?.trim();
     if (!forwardTo) {
