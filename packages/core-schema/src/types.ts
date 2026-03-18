@@ -7,7 +7,7 @@ import {
   orders,
   fills,
   taxLots,
-} from "./db";
+} from "./db.js";
 
 // -- Canonical Type Exports (Drizzle Inferred) --
 

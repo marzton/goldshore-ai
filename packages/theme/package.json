@@ -20,6 +20,7 @@
     "./styles/layout": "./styles/layout.css",
     "./runtime": "./index.ts",
     "./manager": "./src/manager.ts",
+    "./components/Logo.astro": "./src/components/Logo.astro",
     "./assets/logo.svg": "./assets/logo.svg"
   }
 }

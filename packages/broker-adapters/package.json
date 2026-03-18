@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "main": "./src/index.ts",
+  "scripts": {
+    "test": "tsx --test src/**/*.test.ts"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./tos": "./src/tos/index.ts",
@@ -11,7 +14,8 @@
     "./robinhood": "./src/robinhood/index.ts"
   },
   "dependencies": {
-    "@goldshore/core-schema": "workspace:*"
+    "@goldshore/core-schema": "workspace:*",
+    "@goldshore/integrations": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.4.2"

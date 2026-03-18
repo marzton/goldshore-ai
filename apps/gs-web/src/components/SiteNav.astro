@@ -1,4 +1,6 @@
 ---
+import Logo from '@goldshore/theme/components/Logo.astro';
+
 const links = [
   { href: '/', label: 'Home' },
   { href: '/workflows', label: 'Workflows' },
@@ -13,11 +15,7 @@ const links = [
 <header class="gs-header">
   <div class="gs-container gs-nav-inner">
     <a class="gs-brand" href="/">
-      <img
-        class="gs-logo"
-        src="/assets/brand/logo-penrose.svg"
-        alt="Gold Shore logo"
-      />
+      <Logo />
       <span class="gs-brand-text">GOLD SHORE</span>
     </a>
 
@@ -59,11 +57,7 @@ const links = [
 >
   <div class="gs-mobile-top">
     <a class="gs-brand" href="/">
-      <img
-        class="gs-logo"
-        src="/assets/brand/logo-penrose.svg"
-        alt="Gold Shore logo"
-      />
+      <Logo />
       <span class="gs-brand-text">GOLD SHORE</span>
     </a>
     <button
