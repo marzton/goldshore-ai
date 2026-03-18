@@ -32,7 +32,13 @@ cloudflare:
         content: "gs-api.goldshore-account.workers.dev"
         proxied: true
 
-      # E. Control Worker (Internal only - no public DNS)
+      # E. Mail Worker
+      - name: "mail"
+        type: CNAME
+        content: "gs-mail.goldshore-account.workers.dev"
+        proxied: true
+
+      # F. Control Worker (Internal only - no public DNS)
 
   access:
     policies:
@@ -109,7 +115,8 @@ cloudflare:
 
       - name: "gs-control"
         script_path: "apps/gs-control/dist/index.js"
-        # No public routes
+        routes:
+          - pattern: "ops.goldshore.ai/*"
         bindings:
           services:
             - binding: "API"
@@ -117,6 +124,15 @@ cloudflare:
               environment: "production"
           env_vars:
             CONTROL_SERVICE: "true"
+
+      - name: "gs-mail"
+        script_path: "apps/gs-mail/dist/index.js"
+        routes:
+          - pattern: "mail.goldshore.ai/*"
+        bindings:
+          env_vars:
+            MAIL_SERVICE: "true"
+            MAIL_ALLOWED_RECIPIENTS: "ops@goldshore.ai,inbox@goldshore.ai"
 
   email:
     routing:

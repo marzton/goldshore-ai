@@ -1,5 +1,7 @@
 import { Hono } from 'hono';
+import { requirePermission } from '../auth';
 import { Env, Variables } from '../types';
+import sanitizeHtml from 'sanitize-html';
 
 type MediaRecord = {
   id: string;
@@ -21,7 +23,7 @@ const ALLOWED_MIME_TYPES = new Map([
   ['svg', 'image/svg+xml'],
   ['png', 'image/png'],
   ['jpg', 'image/jpeg'],
-  ['jpeg', 'image/jpeg']
+  ['jpeg', 'image/jpeg'],
 ]);
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
@@ -61,17 +63,42 @@ const isUploadFileLike = (value: unknown): value is UploadFileLike => {
 
 const media = new Hono<{ Bindings: Env; Variables: Variables }>();
 
-media.get('/', async (c) => {
-  const { results } = await c.env.DB
-    .prepare('SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT 100')
+media.get('/', requirePermission('media:read'), async (c) => {
+  const query = c.req.query();
+  const rawLimit = query.limit;
+  const rawOffset = query.offset;
+
+  let limit = 100;
+  let offset = 0;
+
+  if (typeof rawLimit === 'string') {
+    const parsed = parseInt(rawLimit, 10);
+    if (!Number.isNaN(parsed) && parsed > 0 && parsed <= 500) {
+      limit = parsed;
+    }
+  }
+
+  if (typeof rawOffset === 'string') {
+    const parsed = parseInt(rawOffset, 10);
+    if (!Number.isNaN(parsed) && parsed >= 0) {
+      offset = parsed;
+    }
+  }
+
+  const { results } = await c.env.DB.prepare(
+    'SELECT id, filename, url, size, type, created_at FROM media_assets ORDER BY created_at DESC LIMIT ? OFFSET ?',
+  )
+    .bind(limit, offset)
     .all<MediaRecord>();
+
   return c.json({ items: results ?? [] });
 });
 
-media.get('/:id', async (c) => {
+media.get('/:id', requirePermission('media:read'), async (c) => {
   const id = c.req.param('id');
-  const result = await c.env.DB
-    .prepare('SELECT object_key, type FROM media_assets WHERE id = ?')
+  const result = await c.env.DB.prepare(
+    'SELECT object_key, type FROM media_assets WHERE id = ?',
+  )
     .bind(id)
     .first<{ object_key: string; type: string }>();
 
@@ -81,7 +108,12 @@ media.get('/:id', async (c) => {
   if (!object) return c.json({ error: 'Asset missing from storage' }, 404);
 
   const headers = new Headers();
-  headers.set('Content-Type', result.type || object.httpMetadata?.contentType || 'application/octet-stream');
+  headers.set(
+    'Content-Type',
+    result.type ||
+      object.httpMetadata?.contentType ||
+      'application/octet-stream',
+  );
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
 
   // Sentinel: Enforce strict CSP to mitigate SVG XSS
@@ -90,7 +122,7 @@ media.get('/:id', async (c) => {
   return new Response(object.body, { headers });
 });
 
-media.post('/upload', async (c) => {
+media.post('/upload', requirePermission('media:write'), async (c) => {
   const formData = await c.req.formData();
   const file = formData.get('file');
 
@@ -116,7 +148,7 @@ media.post('/upload', async (c) => {
   }
 
   const id = crypto.randomUUID();
-  const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+  const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_').replace(/\.+/g, '.')}`;
 
   await c.env.ASSETS.put(objectKey, body, { httpMetadata: { contentType } });
 
@@ -125,12 +157,19 @@ media.post('/upload', async (c) => {
 
   const createdAt = new Date().toISOString();
   await c.env.DB.prepare(
-      'INSERT INTO media_assets (id, filename, url, size, type, object_key, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
-    )
+    'INSERT INTO media_assets (id, filename, url, size, type, object_key, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+  )
     .bind(id, filename, url.toString(), size, contentType, objectKey, createdAt)
     .run();
 
-  return c.json({ id, filename, url: url.toString(), size, type: contentType, created_at: createdAt });
+  return c.json({
+    id,
+    filename,
+    url: url.toString(),
+    size,
+    type: contentType,
+    created_at: createdAt,
+  });
 });
 
 export default media;

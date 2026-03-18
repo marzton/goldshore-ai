@@ -28,7 +28,7 @@ const organizationSchema: Record<string, unknown> = {
   '@id': organizationId,
   name: 'Gold Shore',
   url: siteUrl,
-  logo: `${siteUrl}/assets/brand/logo-penrose.svg`,
+  logo: `${siteUrl}/logo/gs-penrose.svg`,
   ...(sameAs.length > 0 ? { sameAs } : {}),
 };
 
@@ -45,6 +45,8 @@ const pageSchemas = Array.isArray(structuredData)
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <link rel="icon" href="/logo/gs-penrose.svg" type="image/svg+xml" />
+    <link rel="icon" href="/logo/gs-penrose.png" type="image/png" />
     <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)}></script>
     {pageSchemas.map((schema) => (
       <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
@@ -55,7 +57,7 @@ const pageSchemas = Array.isArray(structuredData)
       '@type': 'Organization',
       name: 'Gold Shore',
       url: 'https://goldshore.ai',
-      logo: 'https://goldshore.ai/assets/brand/logo-penrose.svg',
+      logo: 'https://goldshore.ai/logo/gs-penrose.svg',
       description: 'Institutional-grade automation and intelligence systems.',
       potentialAction: {
         '@type': 'SearchAction',
@@ -75,6 +77,7 @@ const pageSchemas = Array.isArray(structuredData)
 
     <footer class="gs-footer">
       <div class="gs-container">
+        <img src="/logo/gs-penrose.svg" class="footer-logo" alt="GoldShore logo" />
         <p>Gold Shore — Designed not to manage capital, but to steer it.</p>
         <p>
           <a href="/status">System Status</a> |
@@ -92,10 +95,21 @@ const pageSchemas = Array.isArray(structuredData)
 
     <script>
       import { initGoldShoreUI } from '@goldshore/theme/runtime';
-      import { initParallax } from '@goldshore/config/parallax';
+      import { initParallax } from '../components/parallax';
 
       initGoldShoreUI();
       initParallax();
+    </script>
+    <script type="module">
+      import { initStarField, initTilt, cleanupUI } from '/src/scripts/init-ui.ts';
+
+      function init() {
+        initStarField('hero-stars');
+        initTilt('[data-tilt]');
+      }
+
+      document.addEventListener('astro:page-load', init);
+      document.addEventListener('astro:before-swap', cleanupUI);
     </script>
     <script type="module" src={themeRuntimeUrl}></script>
   </body>

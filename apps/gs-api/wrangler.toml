@@ -16,12 +16,15 @@ ENV = "production"
 # Sentinel: Audience tag for Cloudflare Access.
 # CRITICAL: This must be set to the specific Application Audience (AUD) tag
 # for the GoldShore API service to prevent token reuse from other apps.
-CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
+# Use 'wrangler secret put CLOUDFLARE_ACCESS_AUDIENCE --env prod' to set the actual value.
+CLOUDFLARE_ACCESS_AUDIENCE = ""
 
 # Sentinel: Team domain for Cloudflare Access (e.g., goldshore.cloudflareaccess.com).
 # Used to fetch JWKS for token verification.
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
-CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+
+# Use 'wrangler secret put CONTROL_SYNC_TOKEN --env prod' to set the actual value.
+CONTROL_SYNC_TOKEN = ""
 
 [[env.prod.kv_namespaces]]
 binding = "KV"
@@ -42,4 +45,45 @@ database_name = "goldshore"
 database_id = "gs_db_001"
 
 [env.prod.ai]
+binding = "AI"
+
+[env.production]
+routes = [
+  { pattern = "api.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+
+[env.production.vars]
+ENV = "production"
+
+# Sentinel: Audience tag for Cloudflare Access.
+# CRITICAL: This must be set to the specific Application Audience (AUD) tag
+# for the GoldShore API service to prevent token reuse from other apps.
+# Use 'wrangler secret put CLOUDFLARE_ACCESS_AUDIENCE --env production' to set the actual value.
+CLOUDFLARE_ACCESS_AUDIENCE = ""
+
+# Sentinel: Team domain for Cloudflare Access (e.g., goldshore.cloudflareaccess.com).
+# Used to fetch JWKS for token verification.
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
+
+# Use 'wrangler secret put CONTROL_SYNC_TOKEN --env production' to set the actual value.
+CONTROL_SYNC_TOKEN = ""
+
+[[env.production.kv_namespaces]]
+binding = "KV"
+id = "gs_api_kv_001"
+
+[[env.production.kv_namespaces]]
+binding = "CONTROL_LOGS"
+id = "gs_control_logs_001"
+
+[[env.production.r2_buckets]]
+binding = "ASSETS"
+bucket_name = "gs-assets"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "goldshore"
+database_id = "gs_db_001"
+
+[env.production.ai]
 binding = "AI"

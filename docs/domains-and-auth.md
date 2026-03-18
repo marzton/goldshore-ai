@@ -20,8 +20,8 @@ Preview applications should mirror production configuration wherever Access is e
 
 ## Source-of-truth references
 
-- Cloudflare desired state for Access policy naming and domain ownership lives in `infra/cloudflare/desired-state.yaml`.
-- Pages custom domains for admin and web are documented in `infra/cloudflare/BINDINGS_MAP.md`.
+- Cloudflare desired state for Access policy naming and domain ownership lives in `infra/Cloudflare/desired-state.yaml`.
+- Pages custom domains for admin and web are documented in `infra/Cloudflare/BINDINGS_MAP.md`.
 
 # Domains & Auth (Single Source of Truth)
 
@@ -53,6 +53,15 @@ Cloudflare Access is enforced on internal tooling and protected previews. The ta
 | Gateway worker | `gw.goldshore.ai` | Optional | Canonical hostname is `gw.goldshore.ai` (not `gateway.goldshore.ai`); depends on routing/auth design. |
 | Mail handler | `mail.goldshore.ai` | No | Cloudflare mail routing cannot authenticate. |
 
+### Mail handler configuration
+
+The `gs-mail` worker supports:
+- **Sender blocking**: via `MAIL_BLOCKED_SENDERS` (comma-separated list).
+- **Recipient allowlisting**: via `MAIL_ALLOWED_RECIPIENTS` (comma-separated list). If this variable is set, only emails addressed to these recipients will be processed and forwarded; all others will be rejected.
+- **Forwarding**: to a single target defined in `MAIL_FORWARD_TO`.
+
+Note: If `/health` and `/version` endpoints are used for automated monitoring, they must be explicitly exempted from Cloudflare Managed Challenges or WAF rules to avoid 403 errors during non-interactive probing.
+
 ## GitHub App callback URLs
 
 - Production: `https://ops.goldshore.ai/auth/github/callback`
@@ -66,3 +75,9 @@ When adding preview callback URLs in GitHub App settings, ensure the same hostna
 
 - Included in the Cloudflare Access application allowlist when Access is enforced for previews.
 - Routed through any edge proxy rules so the callback path (`/auth/github/callback`) resolves to the expected worker/service.
+
+### Cloudflare Access OIDC callback (GitHub IdP)
+
+- `https://goldshore.cloudflareaccess.com/cdn-cgi/access/sso/oidc/1eae8b45326b57d6fd150609e9d155d724013960fd0b994de2d56f07d3f0ce5f`
+
+Use this exact callback URL in the GitHub OAuth app configuration used by Cloudflare Access. If this endpoint changes, update both the GitHub OAuth app and Cloudflare Access IdP configuration together to avoid login failures.

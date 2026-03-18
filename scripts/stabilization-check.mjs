@@ -6,7 +6,6 @@ import { execSync } from 'node:child_process';
 const REPORT_PATH = 'docs/ci/CURRENT_STATE.md';
 const APPS_DIR = 'apps';
 const WORKFLOW_DIR = '.github/workflows';
-const AUTHORITATIVE_CI_SOURCE = 'GitHub Actions status checks on the pull request';
 
 const ALLOWED_APPS = [
   'gs-web', 'gs-admin', 'gs-api', 'gs-mail', 'gs-gateway', 'gs-agent', 'gs-control',
@@ -46,7 +45,7 @@ const appLevelIssues = [];
 const run = (cmd) => execSync(cmd, { encoding: 'utf8' }).trim();
 const tryRun = (cmd) => { try { return run(cmd); } catch { return null; } };
 const gitRefExists = (ref) => {
-  try { execSync(`git rev-parse --verify ${ref}`, { stdio: 'ignore' }); return true; } 
+  try { execSync(`git rev-parse --verify ${ref}`, { stdio: 'ignore' }); return true; }
   catch { return false; }
 };
 
@@ -94,7 +93,31 @@ function getCiStatus(branch) {
     const state = hasFailed ? '❌ FAIL' : checks.every(c => c.status === 'COMPLETED') ? '✅ PASS' : '🟡 PENDING';
     return { summary: `${state} PR #${pr.number} checks. [Link](${pr.url})`, checks };
   }
-  return { summary: '⚠️ No active PR found for this branch; skipping detailed check rollup.' };
+
+  const runsRaw = tryRun(`gh run list --branch "${branch}" --limit 10 --json workflowName,displayTitle,status,conclusion,url`);
+  if (!runsRaw) {
+    return { summary: '⚠️ No active PR found and unable to fetch recent workflow runs for this branch.' };
+  }
+
+  const runs = JSON.parse(runsRaw);
+  if (!runs.length) {
+    return { summary: `⚠️ No active PR found and no recent workflow runs detected for branch '${branch}'.` };
+  }
+
+  const hasFailed = runs.some(r => ['failure', 'timed_out', 'cancelled', 'action_required', 'startup_failure'].includes((r.conclusion || '').toLowerCase()));
+  const hasPending = runs.some(r => (r.status || '').toLowerCase() !== 'completed');
+  const state = hasFailed ? '❌ FAIL' : hasPending ? '🟡 PENDING' : '✅ PASS';
+  const checks = runs.map(r => ({
+    name: r.workflowName || r.displayTitle,
+    status: (r.status || '').toUpperCase(),
+    conclusion: (r.conclusion || '').toUpperCase() || 'N/A',
+    url: r.url,
+  }));
+
+  return {
+    summary: `${state} Recent workflow runs for branch '${branch}' (${runs.length} checked).`,
+    checks,
+  };
 }
 
 function checkBranchDiscipline() {
@@ -121,7 +144,7 @@ function checkBuild(name, command) {
 }
 
 // --- Report Generation ---
-const { branch, baseRef, behind, ahead, divergenceNote } = getBranchInfo();
+const { branch, behind, ahead, divergenceNote } = getBranchInfo();
 let report = `# Stabilization Sync Check Report\n\n**Date:** ${new Date().toUTCString()}\n\n`;
 
 // Section 1: Governance
@@ -140,11 +163,11 @@ workflows.filter(w => !KNOWN_WORKFLOWS.includes(w)).forEach(w => governanceViola
 // Deep scan workflows for unpinned/unauthorized actions
 workflows.filter(w => w.endsWith('.yml')).forEach(w => {
   const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
-  const actionMatches = content.matchAll(/uses:\s*([\w\-\/]+)@([\w\.]+)/g);
+  const actionMatches = content.matchAll(/uses:\s*([\w\-\/]+)@([^\s]+)/g);
   for (const match of actionMatches) {
-    const [_, action, version] = match;
+    const [, action, version] = match;
     if (!ALLOWED_ACTIONS.includes(action)) governanceViolations.push(`Unauthorized Action: ${action} in ${w}`);
-    if (!/^[0-9a-f]{40}$/.test(version)) governanceViolations.push(`Unpinned Action: ${action}@${version} in ${w} (use SHA)`);
+    if (!/^[0-9a-fA-F]{40}$/.test(version)) governanceViolations.push(`Unpinned Action: ${action}@${version} in ${w} (use SHA)`);
   }
 });
 

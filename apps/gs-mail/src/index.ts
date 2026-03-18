@@ -3,7 +3,7 @@ import {
   EmailInboxLogsSchema,
   EmailLogSchema,
   type EmailLog,
-} from '../../../packages/schema/src/system';
+} from '@goldshore/schema';
 
 interface Env {
   GS_CONFIG: KVNamespace;
@@ -11,11 +11,29 @@ interface Env {
   MAIL_FORWARD_TO?: string;
   FORWARD_TO?: string;
   MAIL_BLOCKED_SENDERS?: string;
+  MAIL_ALLOWED_RECIPIENTS?: string;
 }
 
 const VERSION = '2026.03.03-mail-inbox-log';
 const app = new Hono<{ Bindings: Env }>();
-const isEmailLike = (value: string) => /.+@.+\..+/.test(value);
+const isEmailLike = (value: string) => {
+  const normalized = normalizeEmail(value);
+  const atIndex = normalized.indexOf('@');
+  const lastDotIndex = normalized.lastIndexOf('.');
+
+  return (
+    atIndex > 0 &&
+    lastDotIndex > atIndex + 1 &&
+    lastDotIndex < normalized.length - 1
+  );
+};
+const normalizeEmail = (value: string) => value.trim().toLowerCase();
+const parseEmailList = (value?: string) =>
+  (value ?? '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .map(normalizeEmail);
 
 const readInboxLogs = async (kv: KVNamespace): Promise<EmailLog[]> => {
   const rawLogs = await kv.get('EMAIL_INBOX_LOGS', 'text');
@@ -27,7 +45,10 @@ const readInboxLogs = async (kv: KVNamespace): Promise<EmailLog[]> => {
     const parsedLogs = JSON.parse(rawLogs);
     const parseResult = EmailInboxLogsSchema.safeParse(parsedLogs);
     if (!parseResult.success) {
-      console.error('❌ Existing EMAIL_INBOX_LOGS payload failed schema validation:', parseResult.error);
+      console.error(
+        '❌ Existing EMAIL_INBOX_LOGS payload failed schema validation:',
+        parseResult.error,
+      );
       return [];
     }
 
@@ -74,49 +95,85 @@ app.post('/api/contact', async (c) => {
 export default {
   fetch: app.fetch,
 
-  async email(message: ForwardableEmailMessage, env: Env, ctx: ExecutionContext): Promise<void> {
+  async email(
+    message: ForwardableEmailMessage,
+    env: Env,
+    ctx: ExecutionContext,
+  ): Promise<void> {
     const sender = message.from;
     const recipient = message.to;
-    const subject = message.headers.get('subject') || 'No Subject';
+    const subject = (message.headers.get('subject') || 'No Subject').slice(
+      0,
+      50,
+    );
 
-    const blocked = env.MAIL_BLOCKED_SENDERS?.split(',').map((item) => item.trim()) || [];
-    if (blocked.includes(sender)) {
+    const normalizedSender = normalizeEmail(sender);
+    const normalizedRecipient = normalizeEmail(recipient);
+    const blocked = parseEmailList(env.MAIL_BLOCKED_SENDERS);
+    if (blocked.includes(normalizedSender)) {
       message.setReject(`Sender ${sender} is blocked.`);
       return;
     }
 
-    const parsedEntry = EmailLogSchema.safeParse({
+    const allowed = parseEmailList(env.MAIL_ALLOWED_RECIPIENTS);
+    if (allowed.length > 0 && !allowed.includes(normalizedRecipient)) {
+      message.setReject(`Recipient ${recipient} is not allowlisted.`);
+      return;
+    }
+
+    const newEntry = {
       id: crypto.randomUUID(),
       from: sender,
       to: recipient,
       subject,
       timestamp: new Date().toISOString(),
-    });
+    };
 
-    if (!parsedEntry.success) {
-      console.error('🚨 Schema validation failed for inbound mail:', parsedEntry.error);
-      return;
+    const validation = EmailLogSchema.safeParse(newEntry);
+
+    // 3. Persistence Logic (Asynchronous)
+    if (validation.success) {
+      ctx.waitUntil(
+        (async () => {
+          try {
+            const existingLogs = await readInboxLogs(env.GS_CONFIG);
+            // Prepend and truncate to 100 per SOP
+            const updatedLogs = [validation.data, ...existingLogs].slice(
+              0,
+              100,
+            );
+
+            await env.GS_CONFIG.put(
+              'EMAIL_INBOX_LOGS',
+              JSON.stringify(updatedLogs),
+            );
+            console.info(`✅ Logged email: ${sender} -> ${recipient}`);
+          } catch (err) {
+            console.error('❌ KV Persistence Error:', err);
+          }
+        })(),
+      );
+    } else {
+      console.error(
+        '🚨 Schema Validation Failed for inbound mail:',
+        validation.error,
+      );
     }
-
-    ctx.waitUntil(
-      (async () => {
-        try {
-          const existingLogs = await readInboxLogs(env.GS_CONFIG);
-          const updatedLogs = [parsedEntry.data, ...existingLogs].slice(0, 100);
-          await env.GS_CONFIG.put('EMAIL_INBOX_LOGS', JSON.stringify(updatedLogs));
-          console.info(`✅ Logged email: ${sender} -> ${recipient}`);
-        } catch (error) {
-          console.error('❌ KV persistence error:', error);
-        }
-      })(),
-    );
 
     const forwardTo = (env.MAIL_FORWARD_TO || env.FORWARD_TO)?.trim();
-    if (forwardTo && isEmailLike(forwardTo)) {
-      await message.forward(forwardTo);
+    if (!forwardTo) {
+      console.error('❌ Forwarding rejected: target missing.');
+      message.setReject('Mail forwarding is not configured.');
       return;
     }
 
-    console.warn('⚠️ Forwarding skipped: target missing or invalid.');
+    if (!isEmailLike(forwardTo)) {
+      const errorMsg = 'Forwarding target missing or invalid.';
+      console.warn(`⚠️ ${errorMsg}`);
+      message.setReject(errorMsg);
+      return;
+    }
+
+    await message.forward(normalizeEmail(forwardTo));
   },
 };

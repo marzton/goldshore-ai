@@ -14,7 +14,7 @@ The email routing and processing worker.
 - **Compatibility Date:** `2024-03-20`
 - **Main Entry:** `src/index.ts`
 - **Purpose:** Handles email routing logic, possibly integrated with Cloudflare Email Routing or third-party providers (e.g., MailChannels).
-- **Status:** Repaired with inbound routing logic. Supports sender blocking, recipient allowlists, and forwarding to `MAIL_FORWARD_TO`.
+- **Status:** Repaired with inbound routing logic. Supports sender blocking via `MAIL_BLOCKED_SENDERS`, optional recipient allowlists via `MAIL_ALLOWED_RECIPIENTS`, and fail-closed forwarding to `MAIL_FORWARD_TO`.
 
 ## 2. gs-agent (`apps/gs-agent`)
 
@@ -22,7 +22,7 @@ The AI agent service.
 
 - **Directory:** `apps/gs-agent`
 - **Package Name:** `@goldshore/agent`
-- **Wrangler:** `infra/cloudflare/gs-agent.wrangler.toml` (external config)
+- **Wrangler:** `infra/Cloudflare/gs-agent.wrangler.toml` (external config)
 - **Deployment:** CI workflow (`deploy-agent.yml`).
 - **Bindings:**
   - `AI`: Cloudflare Workers AI binding.
@@ -72,7 +72,7 @@ The backend API service.
 
 - **Directory:** `apps/gs-api`
 - **Package Name:** `gs-api`
-- **Wrangler:** `wrangler.toml` (locally defined) or `infra/cloudflare/goldshore-api.wrangler.toml`.
+- **Wrangler:** `wrangler.toml` (locally defined) or `infra/Cloudflare/gs-api.wrangler.toml`.
 - **Deployment:** CI workflow (`deploy-api-worker.yml`).
 - **Bindings:** likely similar to gateway (KV, D1, etc.).
 - **Purpose:** Core business logic and data access layer.
