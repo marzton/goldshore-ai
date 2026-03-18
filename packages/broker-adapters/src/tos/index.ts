@@ -40,15 +40,16 @@ export class TOSAdapter implements BrokerAdapter {
     if (response.status !== 200) return [];
     const data = await response.json() as any;
     const positions = data.securitiesAccount.positions || [];
-    return positions.map((p: any) => {
+    return positions.map((p: any): Position => {
       const quantity = p.longQuantity || -p.shortQuantity || 0;
-      return {
+      const position: Position = {
         id: `${accountId}-${p.instrument.symbol}`,
         accountId: accountId,
         quantity: quantity.toString(),
         averageOpenPrice: p.averagePrice.toString(),
         updatedAt: new Date(),
-      } as any as Position;
+      };
+      return position;
     });
   }
 
