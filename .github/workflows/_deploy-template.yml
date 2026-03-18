@@ -1,0 +1,31 @@
+#Based on the current structure of the goldshore-ai repository, here is a draft of a Reusable Workflow and a Caller Workflow to replace the 12 individual deployment files.
+#1. The Reusable Template
+#Create this file at .github/workflows/_deploy-template.yml. It handles the core logic for any service.
+name: Reusable Service Deploy
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string # e.g., 'production' or 'preview'
+    secrets:
+      DEPLOY_TOKEN:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build and Deploy ${{ inputs.service_name }}
+        run: |
+          echo "Deploying ${{ inputs.service_name }} to ${{ inputs.environment }}..."
+          # Insert your standard pnpm build / docker push / cloud deploy commands here
+
+
+
