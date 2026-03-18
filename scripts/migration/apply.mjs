@@ -75,6 +75,7 @@ for (const line of map) {
       sha256_before: sFrom,
       sha256_after: sha(legacy),
     });
+    // category 'E': GitHub workflow / environment files requiring conservative merge handling
     if (category === 'E' && to.endsWith('.yml')) {
       // conservative merge: keep dest, append comment with source pointer
       const add = `\n# Legacy candidate retained at ${legacy}\n`;
