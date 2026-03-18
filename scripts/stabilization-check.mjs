@@ -94,26 +94,29 @@ function getCiStatus(branch) {
     return { summary: `${state} PR #${pr.number} checks. [Link](${pr.url})`, checks };
   }
 
-  const headSha = tryRun('git rev-parse HEAD');
-  if (!headSha) return { summary: '⚠️ No active PR found and HEAD SHA unavailable for CI lookup.' };
-
-  const commitData = tryRun(`gh api repos/:owner/:repo/commits/${headSha}/check-runs`);
-  if (!commitData) {
-    return { summary: '⚠️ No active PR found; unable to fetch commit check runs for this branch.' };
+  const runsRaw = tryRun(`gh run list --branch "${branch}" --limit 10 --json workflowName,displayTitle,status,conclusion,url`);
+  if (!runsRaw) {
+    return { summary: '⚠️ No active PR found and unable to fetch recent workflow runs for this branch.' };
   }
 
-  const commitRuns = (JSON.parse(commitData).check_runs || []).map((r) => ({
-    name: r.name,
-    status: r.status,
-    conclusion: r.conclusion || (r.status === 'completed' ? 'success' : 'pending'),
+  const runs = JSON.parse(runsRaw);
+  if (!runs.length) {
+    return { summary: `⚠️ No active PR found and no recent workflow runs detected for branch '${branch}'.` };
+  }
+
+  const hasFailed = runs.some(r => ['failure', 'timed_out', 'cancelled', 'action_required', 'startup_failure'].includes((r.conclusion || '').toLowerCase()));
+  const hasPending = runs.some(r => (r.status || '').toLowerCase() !== 'completed');
+  const state = hasFailed ? '❌ FAIL' : hasPending ? '🟡 PENDING' : '✅ PASS';
+  const checks = runs.map(r => ({
+    name: r.workflowName || r.displayTitle,
+    status: (r.status || '').toUpperCase(),
+    conclusion: (r.conclusion || '').toUpperCase() || 'N/A',
+    url: r.url,
   }));
 
-  const hasFailed = commitRuns.some((c) => ['failure', 'timed_out', 'cancelled'].includes(String(c.conclusion).toLowerCase()));
-  const allCompleted = commitRuns.length > 0 && commitRuns.every((c) => String(c.status).toLowerCase() === 'completed');
-  const state = hasFailed ? '❌ FAIL' : allCompleted ? '✅ PASS' : '🟡 PENDING';
   return {
-    summary: `${state} No active PR found; reporting commit checks for [${headSha.slice(0, 7)}](https://github.com/goldshore/goldshore-ai/commit/${headSha}).`,
-    checks: commitRuns,
+    summary: `${state} Recent workflow runs for branch '${branch}' (${runs.length} checked).`,
+    checks,
   };
 }
 
