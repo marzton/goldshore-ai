@@ -119,23 +119,25 @@ export const prerender = true;
   </section>
 
   <section class="gs-section">
-    <div class="content-row reverse">
-      <div class="content-text">
-        <span class="section-tag">Risk Radar</span>
-        <h2>Identify threats before they emerge.</h2>
-        <p>
-          Our Risk Radar leverages applied intelligence to scan billions of
-          signals across your network, identifying anomalies and potential
-          security breaches in milliseconds.
-        </p>
-        <div class="radar-stats">
-          <div class="radar-stat">
-            <strong>12ms</strong>
-            <span>Mean Response Time</span>
-          </div>
-          <div class="radar-stat">
-            <strong>100%</strong>
-            <span>Threat Coverage</span>
+    <div class="gs-container">
+      <div class="content-row reverse">
+        <div class="content-text">
+          <span class="section-tag">Risk Radar</span>
+          <h2>Identify threats before they emerge.</h2>
+          <p>
+            Our Risk Radar leverages applied intelligence to scan billions of
+            signals across your network, identifying anomalies and potential
+            security breaches in milliseconds.
+          </p>
+          <div class="radar-stats">
+            <div class="radar-stat">
+              <strong>12ms</strong>
+              <span>Mean Response Time</span>
+            </div>
+            <div class="radar-stat">
+              <strong>100%</strong>
+              <span>Threat Coverage</span>
+            </div>
           </div>
         </div>
       </div>
@@ -189,7 +191,6 @@ export const prerender = true;
       </div>
     </div>
   </section>
-</WebLayout>
 
 <script>
   const revealMetrics = () => {
@@ -306,7 +307,7 @@ export const prerender = true;
   }
 
   .section-tag {
-    color: var(--gs-accent);
+    color: var(--gs-accent, #3b82f6);
     font-size: 0.85rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -331,15 +332,14 @@ export const prerender = true;
   .feature-list li {
     padding-left: 1.5rem;
     position: relative;
-    margin-bottom: 0.75rem;
-    color: rgba(255, 255, 255, 0.6);
+    overflow: hidden;
   }
 
   .feature-list li::before {
     content: '→';
     position: absolute;
     left: 0;
-    color: var(--gs-accent);
+    color: var(--gs-accent, #3b82f6);
   }
 
   .radar-stats {
@@ -403,7 +403,7 @@ export const prerender = true;
     background: linear-gradient(
       90deg,
       transparent,
-      var(--gs-accent),
+      var(--gs-accent, #3b82f6),
       transparent
     );
     margin-bottom: 2rem;
@@ -473,9 +473,6 @@ export const prerender = true;
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 16px;
     transition: all 0.3s;
-  }
-
-  .metric-card.is-loading {
     position: relative;
     overflow: hidden;
   }
@@ -564,17 +561,6 @@ export const prerender = true;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   }
 
-  .gs-meta {
-    margin-top: 0.55rem;
-    color: var(--gs-muted);
-    font-size: 0.9rem;
-  }
-
-  .gs-meta a {
-    color: var(--gs-text);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
   @media (max-width: 768px) {
     .narrative-grid {
       grid-template-columns: 1fr;
@@ -584,3 +570,4 @@ export const prerender = true;
     }
   }
 </style>
+</WebLayout>
