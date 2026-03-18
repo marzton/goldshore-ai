@@ -91,6 +91,11 @@ export default {
       to: recipient,
       subject,
       timestamp: new Date().toISOString(),
+    });
+
+    if (!parsedEntry.success) {
+      console.error('🚨 Schema validation failed for inbound mail:', parsedEntry.error);
+      return;
     };
 
     const validation = EmailLogSchema.safeParse(newEntry);
