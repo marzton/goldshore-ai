@@ -9,6 +9,7 @@ import { integrationControls } from './middleware/integration';
 const app = new Hono<{ Bindings: Env }>();
 
 const TRACE_HEADER = 'X-Correlation-Id';
+const AGENT_HOSTNAME = 'agent.goldshore.ai';
 
 const getCorrelationId = (request: Request): string => {
   return request.headers.get(TRACE_HEADER) ?? crypto.randomUUID();
@@ -23,6 +24,10 @@ const withCorrelationId = (response: Response, correlationId: string): Response 
     statusText: response.statusText,
     headers
   });
+};
+
+const isAgentHostnameRequest = (request: Request): boolean => {
+  return new URL(request.url).hostname === AGENT_HOSTNAME;
 };
 
 const ALLOWED_ORIGINS = [
@@ -88,6 +93,30 @@ app.use('*', async (c, next) => {
 
 // Integration controls: data classification, secrets access, and audit trail enforcement
 app.use('*', integrationControls);
+
+app.use('*', async (c, next) => {
+  if (!isAgentHostnameRequest(c.req.raw)) {
+    await next();
+    return;
+  }
+
+  const correlationId = getCorrelationId(c.req.raw);
+
+  if (!c.env.AGENT) {
+    console.error(`[gateway] downstream agent not configured; trace=${correlationId}`);
+    return c.json({ error: 'Downstream agent not configured', traceId: correlationId }, 503, {
+      [TRACE_HEADER]: correlationId
+    });
+  }
+
+  const downstreamRequest = new Request(c.req.raw, {
+    headers: new Headers(c.req.raw.headers)
+  });
+  downstreamRequest.headers.set(TRACE_HEADER, correlationId);
+
+  const response = await c.env.AGENT.fetch(downstreamRequest);
+  return withCorrelationId(response, correlationId);
+});
 
 app.get('/health', (c) => c.json({ status: 'ok', service: 'gs-gateway' }));
 app.get('/templates', (c) =>

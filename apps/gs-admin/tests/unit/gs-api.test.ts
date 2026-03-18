@@ -28,9 +28,21 @@ test('buildGsApiHeaders includes Authorization header if present in request', ()
   assert.strictEqual(headers['Authorization'], 'Bearer test-token');
 });
 
-test('buildGsApiHeaders includes empty Authorization header if missing in request', () => {
+test('buildGsApiHeaders forwards Cloudflare Access JWT when present', () => {
+  const request = new Request('https://example.com', {
+    headers: {
+      'CF-Access-Jwt-Assertion': 'cf-jwt-token'
+    }
+  });
+  const headers = buildGsApiHeaders(request);
+  assert.strictEqual(headers['Content-Type'], 'application/json');
+  assert.strictEqual(headers['CF-Access-Jwt-Assertion'], 'cf-jwt-token');
+});
+
+test('buildGsApiHeaders omits auth headers if missing in request', () => {
   const request = new Request('https://example.com');
   const headers = buildGsApiHeaders(request);
   assert.strictEqual(headers['Content-Type'], 'application/json');
-  assert.strictEqual(headers['Authorization'], '');
+  assert.strictEqual('Authorization' in headers, false);
+  assert.strictEqual('CF-Access-Jwt-Assertion' in headers, false);
 });

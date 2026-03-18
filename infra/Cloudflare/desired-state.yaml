@@ -132,6 +132,7 @@ cloudflare:
         bindings:
           env_vars:
             MAIL_SERVICE: "true"
+            MAIL_ALLOWED_RECIPIENTS: "ops@goldshore.ai,inbox@goldshore.ai"
 
   email:
     routing:

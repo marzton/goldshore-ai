@@ -30,7 +30,7 @@ async function deployPages(p: any) {
   }
 
   if (p.require_checks?.includes("smoke")) {
-    await smoke(`https://${p.name}.goldshore.org/`, 200).catch(()=>{});
+    await smoke(`https://${p.name}.goldshore.ai/`, 200).catch(()=>{});
   }
 
   const status = await latestPagesStatus(p.name);
@@ -52,10 +52,10 @@ async function deployPages(p: any) {
   }
 
   if (p.require_checks?.includes("smoke")) {
-    await smoke(`https://${p.name}.goldshore.org/`, 200, 8000);
+    await smoke(`https://${p.name}.goldshore.ai/`, 200, 8000);
   }
   if (p.require_checks?.includes("lighthouse")) {
-    await lighthouse(`https://${p.name}.goldshore.org/`, 0.8);
+    await lighthouse(`https://${p.name}.goldshore.ai/`, 0.8);
   }
   console.log(`[pages:${p.name}] Deploy OK.`);
 }
@@ -85,7 +85,7 @@ async function deployWorker(w: any) {
   await cf.workers.deploy(w.script, fd);
 
   if (w.require_checks?.includes("smoke")) {
-    await smoke("https://api.goldshore.org/health", 200, 8000);
+    await smoke("https://api.goldshore.ai/health", 200, 8000);
   }
 
   console.log(`[worker:${w.script}] Deploy OK.`);

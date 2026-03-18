@@ -17,6 +17,8 @@
     "verify:dist": "node ../../scripts/verify-web-dist.mjs"
   },
   "dependencies": {
+    "@goldshore/auth": "workspace:*",
+    "@goldshore/auth": "workspace:^",
     "@goldshore/brand": "workspace:*",
     "@goldshore/config": "workspace:^",
     "@goldshore/theme": "workspace:*",

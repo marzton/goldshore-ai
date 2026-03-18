@@ -1,22 +1,108 @@
-import { test, describe } from 'node:test';
-import assert from 'node:assert';
-import { TOSAdapter } from './index.js';
+import { test, describe } from "node:test";
+import assert from "node:assert";
+import { TOSAdapter } from "./index.ts";
 
-describe('TOSAdapter', () => {
-  const adapter = new TOSAdapter();
+describe("TOSAdapter", () => {
+  const mockFetch = async (url: string) => {
+    if (url.endsWith("/accounts")) {
+      return {
+        status: 200,
+        ok: true,
+        json: async () => [
+          {
+            securitiesAccount: {
+              accountId: "12345",
+              type: "CASH"
+            }
+          }
+        ]
+      };
+    }
+    if (url.includes("/accounts/12345?fields=positions")) {
+      return {
+        status: 200,
+        ok: true,
+        json: async () => ({
+          securitiesAccount: {
+            positions: [
+              {
+                instrument: { symbol: "AAPL" },
+                longQuantity: 10,
+                averagePrice: 150
+              },
+              {
+                instrument: { symbol: "SPY" },
+                shortQuantity: 5,
+                averagePrice: 400
+              }
+            ]
+          }
+        })
+      };
+    }
+    if (url.includes("/accounts/12345/orders")) {
+        return {
+          status: 200,
+          ok: true,
+          json: async () => [
+            {
+              orderId: 999,
+              status: "FILLED",
+              quantity: 1,
+              enteredTime: "2026-03-18T10:00:00Z",
+              orderLegCollection: [
+                  {
+                      instruction: "BUY",
+                      instrument: { symbol: "MSFT" }
+                  }
+              ]
+            }
+          ]
+        };
+      }
+    return { status: 404, ok: false };
+  };
 
-  test('should have correct id and name', () => {
-    assert.strictEqual(adapter.id, 'tos');
-    assert.strictEqual(adapter.name, 'thinkorswim');
+  const adapter = new TOSAdapter({
+    apiKey: "test-key",
+    accessToken: "test-token",
+    baseUrl: "https://api.tdameritrade.com/v1"
   });
 
-  test('should implement getAccounts', async () => {
+  // Inject mock fetch into the client
+  (adapter as any).client = {
+      get: async (path: string) => {
+          const res = await mockFetch("https://api.tdameritrade.com/v1" + path);
+          return res;
+      }
+  };
+
+  test("has correct metadata", () => {
+    assert.strictEqual(adapter.id, "tos");
+    assert.strictEqual(adapter.name, "thinkorswim");
+  });
+
+  test("getAccounts returns mapped accounts", async () => {
     const accounts = await adapter.getAccounts();
-    assert.ok(Array.isArray(accounts));
+    assert.strictEqual(accounts.length, 1);
+    assert.strictEqual(accounts[0].id, "12345");
+    assert.strictEqual(accounts[0].broker, "tos");
   });
 
-  test('should implement getPositions', async () => {
-    const positions = await adapter.getPositions('test-account');
-    assert.ok(Array.isArray(positions));
+  test("getPositions returns mapped positions with correct signs", async () => {
+    const positions = await adapter.getPositions("12345");
+    assert.strictEqual(positions.length, 2);
+    assert.strictEqual(positions[0].id, "12345-AAPL");
+    assert.strictEqual(positions[0].quantity, "10");
+    assert.strictEqual(positions[1].id, "12345-SPY");
+    assert.strictEqual(positions[1].quantity, "-5");
+  });
+
+  test("getOrders returns mapped orders", async () => {
+    const orders = await adapter.getOrders("12345");
+    assert.strictEqual(orders.length, 1);
+    assert.strictEqual(orders[0].id, "999");
+    assert.strictEqual(orders[0].symbol, "MSFT");
+    assert.strictEqual(orders[0].side, "BUY");
   });
 });

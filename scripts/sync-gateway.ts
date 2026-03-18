@@ -32,7 +32,7 @@ const MASTER_CONFIG: MasterConfig = {
     'web': { role: 'frontend', project: 'gs-web', priority: 1 },
     'mail': { role: 'mx-only', target: 'gs-mail', priority: 1 },
     // Hostname-level keys
-    'gateway.goldshore.ai': { role: 'ingress', worker: 'gs-gateway', priority: 1 },
+    'gw.goldshore.ai': { role: 'ingress', worker: 'gs-gateway', priority: 1 },
     'agent.goldshore.ai': { role: 'alias', target: 'gateway', priority: 1 },
     'api.goldshore.ai': { role: 'backend', worker: 'gs-api', priority: 1 },
     'agent.internal.goldshore.ai': { role: 'backend', worker: 'gs-agent', priority: 1 },
