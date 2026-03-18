@@ -17,6 +17,13 @@ interface Env {
 const VERSION = '2026.03.03-mail-inbox-log';
 const app = new Hono<{ Bindings: Env }>();
 const isEmailLike = (value: string) => /.+@.+\..+/.test(value);
+const normalizeEmail = (value: string) => value.trim().toLowerCase();
+const parseEmailList = (value?: string) =>
+  (value ?? '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .map(normalizeEmail);
 
 const readInboxLogs = async (kv: KVNamespace): Promise<EmailLog[]> => {
   const rawLogs = await kv.get('EMAIL_INBOX_LOGS', 'text');
@@ -98,6 +105,11 @@ export default {
       to: recipient,
       subject,
       timestamp: new Date().toISOString(),
+    });
+
+    if (!parsedEntry.success) {
+      console.error('🚨 Schema validation failed for inbound mail:', parsedEntry.error);
+      return;
     };
 
     const validation = EmailLogSchema.safeParse(newEntry);
@@ -123,8 +135,9 @@ export default {
     }
 
     const forwardTo = (env.MAIL_FORWARD_TO || env.FORWARD_TO)?.trim();
-    if (forwardTo && isEmailLike(forwardTo)) {
-      await message.forward(forwardTo);
+    if (!forwardTo || !isEmailLike(forwardTo)) {
+      console.error('❌ Forwarding rejected: target missing or invalid.');
+      message.setReject('Mail forwarding is not configured.');
       return;
     }
 

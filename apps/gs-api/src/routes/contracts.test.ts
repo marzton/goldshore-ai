@@ -22,7 +22,11 @@ describe('API contract/versioning', () => {
   });
 
   it('system/version returns contract metadata', async () => {
-    const app = new Hono();
+    const app = new Hono<{ Variables: { accessClaims: any } }>();
+    app.use('*', async (c, next) => {
+      c.set('accessClaims', { roles: ['admin'], email: 'admin@example.com' });
+      await next();
+    });
     app.route('/system', system);
 
     const kv = {
@@ -41,7 +45,11 @@ describe('API contract/versioning', () => {
   });
 
   it('legacy /user/:id endpoint redirects to /users/:id', async () => {
-    const app = new Hono();
+    const app = new Hono<{ Variables: { accessClaims: any } }>();
+    app.use('*', async (c, next) => {
+      c.set('accessClaims', { roles: ['admin'], email: 'admin@example.com' });
+      await next();
+    });
     app.route('/user', user);
 
     const res = await app.request('/user/42', { redirect: 'manual' });

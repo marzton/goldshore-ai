@@ -34,12 +34,12 @@ binding = "JOB_QUEUE"
 queue = "goldshore-jobs"
 
 [[env.prod.services]]
-binding = "API"
-service = "gs-api"
+binding = "AGENT"
+service = "gs-agent"
 environment = "prod"
 
-[env.prod.ai]
+[env.preview.ai]
 binding = "AI"
 
-[env.prod.observability]
+[env.preview.observability]
 enabled = true

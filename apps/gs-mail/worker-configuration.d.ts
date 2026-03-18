@@ -8,15 +8,22 @@ declare namespace Cloudflare {
 	interface DevEnv {
 		GS_CONFIG: KVNamespace;
 		ENV: "development";
+		MAIL_ALLOWED_RECIPIENTS?: string;
+		MAIL_BLOCKED_SENDERS?: string;
+		MAIL_FORWARD_TO?: string;
 	}
 	interface ProdEnv {
 		GS_CONFIG: KVNamespace;
 		ENV: "production";
+		MAIL_ALLOWED_RECIPIENTS?: string;
+		MAIL_BLOCKED_SENDERS?: string;
 		MAIL_FORWARD_TO: "ops@goldshore.ai";
 	}
 	interface Env {
 		GS_CONFIG: KVNamespace;
 		ENV: "development" | "production";
+		MAIL_ALLOWED_RECIPIENTS?: string;
+		MAIL_BLOCKED_SENDERS?: string;
 		MAIL_FORWARD_TO?: "ops@goldshore.ai";
 	}
 }
