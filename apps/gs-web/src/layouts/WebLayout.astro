@@ -104,8 +104,9 @@ const pageSchemas = Array.isArray(structuredData)
       import { initStarField, initTilt, cleanupUI } from '/src/scripts/init-ui.ts';
 
       function init() {
+        cleanupUI();
         initStarField('hero-stars');
-        initTilt('[data-tilt]');
+        initTilt('[data-gs-tilt]');
       }
 
       document.addEventListener('astro:page-load', init);
