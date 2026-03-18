@@ -16,12 +16,15 @@ ENV = "production"
 # Sentinel: Audience tag for Cloudflare Access.
 # CRITICAL: This must be set to the specific Application Audience (AUD) tag
 # for the GoldShore API service to prevent token reuse from other apps.
-CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
+# Use 'wrangler secret put CLOUDFLARE_ACCESS_AUDIENCE --env prod' to set the actual value.
+CLOUDFLARE_ACCESS_AUDIENCE = ""
 
 # Sentinel: Team domain for Cloudflare Access (e.g., goldshore.cloudflareaccess.com).
 # Used to fetch JWKS for token verification.
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
-CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+
+# Use 'wrangler secret put CONTROL_SYNC_TOKEN --env prod' to set the actual value.
+CONTROL_SYNC_TOKEN = ""
 
 [[env.prod.kv_namespaces]]
 binding = "KV"
@@ -55,12 +58,15 @@ ENV = "production"
 # Sentinel: Audience tag for Cloudflare Access.
 # CRITICAL: This must be set to the specific Application Audience (AUD) tag
 # for the GoldShore API service to prevent token reuse from other apps.
-CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
+# Use 'wrangler secret put CLOUDFLARE_ACCESS_AUDIENCE --env production' to set the actual value.
+CLOUDFLARE_ACCESS_AUDIENCE = ""
 
 # Sentinel: Team domain for Cloudflare Access (e.g., goldshore.cloudflareaccess.com).
 # Used to fetch JWKS for token verification.
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
-CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+
+# Use 'wrangler secret put CONTROL_SYNC_TOKEN --env production' to set the actual value.
+CONTROL_SYNC_TOKEN = ""
 
 [[env.production.kv_namespaces]]
 binding = "KV"
