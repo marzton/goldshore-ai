@@ -20,13 +20,7 @@ function log(o) {
 fs.writeFileSync(manifest, '');
 
 for (const line of map) {
-  const parts = line.split('\t');
-  if (parts.length < 3) {
-    // Skip malformed mapping lines that do not have the expected shape.
-    // Such lines cannot be safely processed because `category` would be undefined.
-    continue;
-  }
-  const [from, to, category] = parts;
+  const [from, to, category] = line.split('\t');
   if (!fs.existsSync(from)) continue;
   fs.mkdirSync(path.dirname(to), { recursive: true });
   const bytes = fs.statSync(from).size;
@@ -81,7 +75,6 @@ for (const line of map) {
       sha256_before: sFrom,
       sha256_after: sha(legacy),
     });
-    // category 'E': GitHub workflow / environment files requiring conservative merge handling
     if (category === 'E' && to.endsWith('.yml')) {
       // conservative merge: keep dest, append comment with source pointer
       const add = `\n# Legacy candidate retained at ${legacy}\n`;
