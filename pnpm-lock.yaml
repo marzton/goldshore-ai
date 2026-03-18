@@ -328,6 +328,8 @@ importers:
         specifier: ^5.4.2
         version: 5.9.3
 
+  apps/web: {}
+
   packages/ai-providers: {}
 
   packages/auth:
@@ -347,6 +349,9 @@ importers:
       '@goldshore/core-schema':
         specifier: workspace:*
         version: link:../core-schema
+      '@goldshore/integrations':
+        specifier: workspace:*
+        version: link:../integrations
     devDependencies:
       tsx:
         specifier: ^4.21.0
