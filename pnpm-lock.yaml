@@ -250,6 +250,9 @@ importers:
 
   apps/gs-mail:
     dependencies:
+      '@goldshore/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
       hono:
         specifier: ^4.12.4
         version: 4.12.7
@@ -335,6 +338,9 @@ importers:
       '@goldshore/core-schema':
         specifier: workspace:*
         version: link:../core-schema
+      '@goldshore/integrations':
+        specifier: workspace:*
+        version: link:../integrations
     devDependencies:
       typescript:
         specifier: ^5.4.2
