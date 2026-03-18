@@ -165,7 +165,7 @@ workflows.filter(w => w.endsWith('.yml')).forEach(w => {
   const content = fs.readFileSync(path.join(WORKFLOW_DIR, w), 'utf8');
   const actionMatches = content.matchAll(/uses:\s*([\w\-\/]+)@([\w\.]+)/g);
   for (const match of actionMatches) {
-    const [_, action, version] = match;
+    const [, action, version] = match;
     if (!ALLOWED_ACTIONS.includes(action)) governanceViolations.push(`Unauthorized Action: ${action} in ${w}`);
     if (!/^[0-9a-fA-F]{40}$/.test(version)) governanceViolations.push(`Unpinned Action: ${action}@${version} in ${w} (use SHA)`);
   }
