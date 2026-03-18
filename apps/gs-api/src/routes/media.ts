@@ -28,27 +28,59 @@ const ALLOWED_MIME_TYPES = new Map([
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
-const SVG_DANGEROUS_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)[\s\S]*?>[\s\S]*?<\/\1>/gi;
-const SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)\b[^>]*\/?>/gi;
-const SVG_EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
-const SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*(?:javascript:|data:text\/html)[\s\S]*?\1/gi;
-const SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*(?:javascript:|data:text\/html)[^\s>]*/gi;
-
 const sanitizeSvg = (input: string): string => {
-  let previous: string;
-  let sanitized = input;
-
-  do {
-    previous = sanitized;
-    sanitized = previous
-      .replace(SVG_DANGEROUS_TAGS_REGEX, '')
-      .replace(SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX, '')
-      .replace(SVG_EVENT_HANDLER_ATTR_REGEX, '')
-      .replace(SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX, '')
-      .replace(SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX, '');
-  } while (sanitized !== previous);
-
-  return sanitized;
+  return sanitizeHtml(input, {
+    // Allow common SVG container and shape elements; adjust if needed.
+    allowedTags: [
+      'svg',
+      'g',
+      'defs',
+      'clipPath',
+      'mask',
+      'pattern',
+      'linearGradient',
+      'radialGradient',
+      'stop',
+      'path',
+      'rect',
+      'circle',
+      'ellipse',
+      'line',
+      'polyline',
+      'polygon',
+      'text',
+      'tspan',
+      'textPath',
+      'image',
+      'use'
+    ],
+    // Explicitly control which attributes are allowed on which tags.
+    allowedAttributes: {
+      svg: ['width', 'height', 'viewBox', 'xmlns', 'fill', 'stroke'],
+      g: ['transform', 'fill', 'stroke'],
+      path: ['d', 'fill', 'stroke', 'transform'],
+      rect: ['x', 'y', 'width', 'height', 'rx', 'ry', 'fill', 'stroke', 'transform'],
+      circle: ['cx', 'cy', 'r', 'fill', 'stroke', 'transform'],
+      ellipse: ['cx', 'cy', 'rx', 'ry', 'fill', 'stroke', 'transform'],
+      line: ['x1', 'y1', 'x2', 'y2', 'stroke', 'transform'],
+      polyline: ['points', 'fill', 'stroke', 'transform'],
+      polygon: ['points', 'fill', 'stroke', 'transform'],
+      text: ['x', 'y', 'dx', 'dy', 'textLength', 'lengthAdjust', 'fill', 'stroke', 'transform'],
+      tspan: ['x', 'y', 'dx', 'dy', 'textLength', 'lengthAdjust', 'fill', 'stroke', 'transform'],
+      textPath: ['href', 'startOffset', 'method', 'spacing'],
+      image: ['href', 'x', 'y', 'width', 'height', 'preserveAspectRatio'],
+      use: ['href', 'x', 'y', 'width', 'height', 'transform']
+    },
+    // Disallow javascript: and data:text/html schemes explicitly.
+    allowedSchemes: ['http', 'https', 'data'],
+    allowedSchemesByTag: {
+      image: ['http', 'https', 'data'],
+      use: ['http', 'https']
+    },
+    allowedSchemesAppliedToAttributes: ['href', 'xlink:href', 'src'],
+    // By not listing any "on*" attributes in allowedAttributes, all event
+    // handler attributes are stripped by sanitize-html.
+  });
 };
 
 const isUploadFileLike = (value: unknown): value is UploadFileLike => {
