@@ -6,6 +6,7 @@ tsconfig = "tsconfig.json"
 
 [vars]
 ENV = "production"
+CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
 
 [ai]
 binding = "AI"
@@ -30,6 +31,7 @@ compatibility_date = "2024-11-01"
 
 [env.prod.vars]
 ENV = "production"
+CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
 
 [env.prod.ai]
 binding = "AI"
