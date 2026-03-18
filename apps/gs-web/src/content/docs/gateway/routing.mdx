@@ -12,11 +12,10 @@ to downstream services (including `gs-agent`) when needed.
 
 ## Routing Rules
 
-Routes are defined in the gateway configuration and matched against the incoming request path.
+Routes are defined in the gateway configuration and matched against the incoming request path. `gw.goldshore.ai` is the canonical public hostname; `gateway.goldshore.ai` should not be reintroduced as an active route.
 
 | Hostname | Entrypoint | Downstream |
 |------|---------|---------|
-| `gateway.goldshore.ai` | `gs-gateway` | `gs-api`, `gs-agent`, internal handlers |
 | `agent.goldshore.ai` | `gs-gateway` (alias ingress) | `gs-agent` |
 | `gw.goldshore.ai` | `gs-gateway` | `gs-api`, `gs-agent`, internal handlers |
 

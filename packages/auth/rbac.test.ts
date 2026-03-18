@@ -91,7 +91,7 @@ describe('RBAC Helpers', () => {
       assert.ok(result.includes('content:write'));
       assert.ok(result.includes('content:read'));
       assert.ok(result.includes('ai:analyze'));
-      assert.strictEqual(result.length, 7);
+      assert.strictEqual(result.length, 8);
     });
 
     test('admin role has all permissions', () => {

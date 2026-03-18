@@ -7,6 +7,8 @@ export const ADMIN_PERMISSIONS = [
   "content:read",
   "content:write",
   "content:publish",
+  "system:read",
+  "system:write",
   "media:read",
   "media:write",
   "media:delete",
@@ -25,6 +27,7 @@ export const ROLE_PERMISSIONS: Record<AdminRole, AdminPermission[]> = {
   editor: [
     "content:read",
     "content:write",
+    "system:read",
     "media:read",
     "media:write",
     "forms:read",
@@ -80,3 +83,9 @@ export const hasAdminPermission = (
   permissions: AdminPermission[],
   required: AdminPermission
 ) => permissions.includes(required);
+
+export const isAdmin = (claims: AccessTokenPayload | null) => {
+  if (!claims) return false;
+  const roles = extractAccessRoles(claims);
+  return roles.includes("admin");
+};

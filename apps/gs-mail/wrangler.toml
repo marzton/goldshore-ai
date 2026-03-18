@@ -11,6 +11,7 @@ id = "9cc2209906a94851b704be57543987a9"
 [vars]
 ENV = "production"
 MAIL_FORWARD_TO = "ops@goldshore.ai"
+MAIL_ALLOWED_RECIPIENTS = "ops@goldshore.ai,inbox@goldshore.ai"
 
 [observability]
 enabled = true
@@ -22,6 +23,7 @@ binding = "GS_CONFIG"
 id = "9cc2209906a94851b704be57543987a9"
 [env.dev.vars]
 ENV = "development"
+MAIL_ALLOWED_RECIPIENTS = "ops@goldshore.ai,inbox@goldshore.ai"
 
 [env.prod]
 routes = [
@@ -54,3 +56,4 @@ MAIL_FORWARD_TO = "ops@goldshore.ai"
 
 [env.production.observability]
 enabled = true
+MAIL_ALLOWED_RECIPIENTS = "ops@goldshore.ai,inbox@goldshore.ai"

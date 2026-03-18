@@ -18,6 +18,10 @@ SYNC_TARGET_SUBDOMAIN = "api.goldshore.ai"
 binding = "CONTROL_LOGS"
 id = "gs_control_logs_001"
 
+[[kv_namespaces]]
+binding = "GS_CONFIG"
+id = "9cc2209906a94851b704be57543987a9"
+
 [[r2_buckets]]
 binding = "STATE"
 bucket_name = "gs-control-state"

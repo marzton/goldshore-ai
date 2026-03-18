@@ -38,7 +38,7 @@ const links = [
     <div class="gs-brand">
       <img class="gs-logo" src="/logo/gs-penrose.svg" alt="Gold Shore" />
       <span class="gs-brand-text">GOLD SHORE</span>
-    </a>
+    </div>
     <button class="gs-icon-btn gs-mobile-close" data-gs-nav-close aria-label="Close menu">×</button>
   </div>
 
@@ -132,6 +132,13 @@ const links = [
     .gs-nav-utility {
       display: none;
     }
+  }
+
+  .gs-mobile-actions-secondary {
+    border-top: 1px solid var(--gs-border-subtle, rgba(255, 255, 255, 0.16));
+    display: grid;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
   }
 
   @media (max-width: 900px) {

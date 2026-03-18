@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { verifyAccessWithClaims, buildAdminSession } from '@goldshore/auth';
+import { verifyAccessWithClaims } from '@goldshore/auth';
 
 const allowedStatuses = new Set(['new', 'read', 'archived']);
 
@@ -50,6 +51,10 @@ function checkCsrf(request: Request) {
   }
   return true;
 }
+const isAdmin = (payload: any) => {
+  const roles = payload.roles || payload.role || [];
+  return Array.isArray(roles) ? roles.includes('admin') : roles === 'admin';
+};
 
 export const GET: APIRoute = async ({ request, locals }) => {
   const env = locals.runtime?.env as any;
