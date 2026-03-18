@@ -28,7 +28,10 @@ describe('Media Endpoint Security', () => {
     const mockDB = {
       prepare: (query: string) => ({
         bind: (...args: any[]) => ({
-          first: async () => ({ object_key: 'media/123/file.svg', type: 'image/svg+xml' }),
+          first: async () => ({
+            object_key: 'media/123/file.svg',
+            type: 'image/svg+xml',
+          }),
           all: async () => ({ results: [] }),
           run: async () => {},
         }),
@@ -40,30 +43,47 @@ describe('Media Endpoint Security', () => {
     const mockAssets = {
       get: async (key: string) => ({
         body: 'SVG CONTENT',
-        httpMetadata: { contentType: 'image/svg+xml' }
+        httpMetadata: { contentType: 'image/svg+xml' },
       }),
       put: async () => {},
     };
-    const res = await app.request('/123', {
-      method: 'GET',
-    }, {
-      DB: mockDB,
-      ASSETS: mockAssets,
-    });
+    const res = await app.request(
+      '/123',
+      {
+        method: 'GET',
+      },
+      {
+        DB: mockDB,
+        ASSETS: mockAssets,
+      },
+    );
 
     assert.strictEqual(res.status, 200);
     const csp = res.headers.get('Content-Security-Policy');
     assert.ok(csp, 'Content-Security-Policy header should be present');
-    assert.ok(csp.includes("default-src 'none'"), 'CSP should include default-src none');
-    assert.ok(csp.includes("script-src 'none'"), 'CSP should include script-src none');
-    assert.ok(csp.includes("object-src 'none'"), 'CSP should include object-src none');
+    assert.ok(
+      csp.includes("default-src 'none'"),
+      'CSP should include default-src none',
+    );
+    assert.ok(
+      csp.includes("script-src 'none'"),
+      'CSP should include script-src none',
+    );
+    assert.ok(
+      csp.includes("object-src 'none'"),
+      'CSP should include object-src none',
+    );
   });
 
   it('requires media:read permission to list media', async () => {
     const app = createApp({ roles: ['unknown'] });
     const res = await app.request('/', {}, {
       KV: { put: async () => {} },
-      DB: { prepare: () => ({ bind: () => ({ all: async () => ({ results: [] }) }) }) },
+      DB: {
+        prepare: () => ({
+          bind: () => ({ all: async () => ({ results: [] }) }),
+        }),
+      },
     } as any);
 
     assert.strictEqual(res.status, 403);
@@ -103,11 +123,10 @@ describe('Media Endpoint Security', () => {
     const data = await res.json();
     assert.strictEqual(data.filename, 'test.svg');
   });
-
-
+  
 
   it('sanitizes svg uploads before storing', async () => {
-    const app = createApp({ roles: ['editor'] });
+    const app = new Hono();
 
     const mockDB = {
       prepare: (_query: string) => ({
@@ -123,6 +142,9 @@ describe('Media Endpoint Security', () => {
         storedBody = body;
       },
     };
+
+    app.route('/', media);
+
     const formData = new FormData();
     const file = new File([
       '<svg><script>alert(1)</script><foreignObject>bad</foreignObject><rect onclick="evil()" width="10" href=javascript:alert(2)/></svg>',
