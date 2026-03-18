@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { verifyAccessWithClaims, buildAdminSession } from '@goldshore/auth';
 import { verifyAccessWithClaims } from '@goldshore/auth';
 
 const allowedStatuses = new Set(['new', 'read', 'archived']);

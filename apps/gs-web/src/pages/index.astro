@@ -86,6 +86,32 @@ export const prerender = true;
     </div>
   </section>
 
+  <section class="gs-section">
+    <div class="gs-container gs-grid-3">
+      <article class="gs-panel gs-edge-light gs-edge-scan">
+        <h3>Vibe Coding</h3>
+        <p>
+          Rapid experimentation paths that still pass institutional control
+          checks.
+        </p>
+      </article>
+      <article class="gs-panel gs-edge-light gs-edge-scan">
+        <h3>Cinematic Ops</h3>
+        <p>
+          Operator interfaces with clear escalation context and human override
+          points.
+        </p>
+      </article>
+      <article class="gs-panel gs-edge-light gs-edge-scan">
+        <h3>Applied Intelligence</h3>
+        <p>
+          Signal fusion that turns data density into execution-ready
+          recommendations.
+        </p>
+      </article>
+    </div>
+  </section>
+
   <section class="gs-section bordered-top">
     <div class="gs-container">
       <div class="content-row">
@@ -142,9 +168,9 @@ export const prerender = true;
             </div>
           </div>
         </div>
-      </div>
-      <div class="content-preview">
-        <div class="grid-field small-grid"></div>
+        <div class="content-preview">
+          <div class="grid-field small-grid"></div>
+        </div>
       </div>
     </div>
   </section>
@@ -168,6 +194,8 @@ export const prerender = true;
           <div class="metric-value">48/day</div>
           <div class="metric-trend">
             <a href="/developer-hub"
+              >Continuous Integration · verified in Developer Hub</a
+            >
               >Continuous Integration · verified in Developer Hub</a>
           </div>
         </article>
@@ -194,6 +222,17 @@ export const prerender = true;
     </div>
   </section>
 
+  <script>
+    const revealMetrics = () => {
+      window.setTimeout(() => {
+        document.querySelectorAll('[data-metric-card]').forEach((card) => {
+          card.classList.remove('is-loading');
+        });
+      }, 550);
+    };
+
+    document.addEventListener('astro:page-load', revealMetrics);
+  </script>
 <script>
   const revealMetrics = () => {
     window.setTimeout(() => {
@@ -334,6 +373,8 @@ export const prerender = true;
   .feature-list li {
     padding-left: 1.5rem;
     position: relative;
+    margin-bottom: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
     overflow: hidden;
   }
 
