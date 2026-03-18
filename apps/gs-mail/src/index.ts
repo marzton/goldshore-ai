@@ -11,11 +11,19 @@ interface Env {
   MAIL_FORWARD_TO?: string;
   FORWARD_TO?: string;
   MAIL_BLOCKED_SENDERS?: string;
+  MAIL_ALLOWED_RECIPIENTS?: string;
 }
 
 const VERSION = '2026.03.03-mail-inbox-log';
 const app = new Hono<{ Bindings: Env }>();
 const isEmailLike = (value: string) => /.+@.+\..+/.test(value);
+const normalizeEmail = (value: string) => value.trim().toLowerCase();
+const parseEmailList = (value?: string) =>
+  (value ?? '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .map(normalizeEmail);
 
 const readInboxLogs = async (kv: KVNamespace): Promise<EmailLog[]> => {
   const rawLogs = await kv.get('EMAIL_INBOX_LOGS', 'text');
@@ -78,10 +86,18 @@ export default {
     const sender = message.from;
     const recipient = message.to;
     const subject = message.headers.get('subject') || 'No Subject';
+    const normalizedSender = normalizeEmail(sender);
+    const normalizedRecipient = normalizeEmail(recipient);
 
-    const blocked = env.MAIL_BLOCKED_SENDERS?.split(',').map((item) => item.trim()) || [];
-    if (blocked.includes(sender)) {
+    const blocked = parseEmailList(env.MAIL_BLOCKED_SENDERS);
+    if (blocked.includes(normalizedSender)) {
       message.setReject(`Sender ${sender} is blocked.`);
+      return;
+    }
+
+    const allowedRecipients = parseEmailList(env.MAIL_ALLOWED_RECIPIENTS);
+    if (allowedRecipients.length > 0 && !allowedRecipients.includes(normalizedRecipient)) {
+      message.setReject(`Recipient ${recipient} is not allowlisted.`);
       return;
     }
 
@@ -91,6 +107,11 @@ export default {
       to: recipient,
       subject,
       timestamp: new Date().toISOString(),
+    });
+
+    if (!parsedEntry.success) {
+      console.error('🚨 Schema validation failed for inbound mail:', parsedEntry.error);
+      return;
     };
 
     const validation = EmailLogSchema.safeParse(newEntry);
@@ -116,11 +137,17 @@ export default {
     }
 
     const forwardTo = (env.MAIL_FORWARD_TO || env.FORWARD_TO)?.trim();
-    if (forwardTo && isEmailLike(forwardTo)) {
-      await message.forward(forwardTo);
+    if (!forwardTo || !isEmailLike(forwardTo)) {
+      console.error('❌ Forwarding rejected: target missing or invalid.');
+      message.setReject('Mail forwarding is not configured.');
       return;
     }
 
-    console.warn('⚠️ Forwarding skipped: target missing or invalid.');
+    try {
+      await message.forward(forwardTo);
+    } catch (error) {
+      console.error('❌ Forwarding failed:', error);
+      message.setReject('Mail forwarding failed.');
+    }
   },
 };
