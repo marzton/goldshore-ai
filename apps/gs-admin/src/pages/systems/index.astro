@@ -18,6 +18,10 @@ const checks = [
 ];
 ---
 <AdminLayout title="Systems">
+  <div class="gs-banner warning gs-mb-6">
+    <p><strong>DEMO MODE:</strong> System status and checks are currently using mock data and are not authoritative.</p>
+  </div>
+
   <section class="gs-grid columns-3">
     {services.map((svc) => (
       <Card>
