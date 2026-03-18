@@ -14,7 +14,7 @@ const links = [
 <header class="gs-header">
   <div class="gs-container gs-nav-inner">
     <a class="gs-brand" href="/">
-      <img class="gs-logo" src="/assets/brand/logo-penrose.svg" alt="Gold Shore" />
+      <img class="gs-logo" src="/logo/gs-penrose.svg" alt="Gold Shore" />
       <span class="gs-brand-text">GOLD SHORE</span>
     </a>
 
@@ -36,9 +36,9 @@ const links = [
 <div class="gs-mobile-panel" id="gs-mobile-panel" data-gs-mobile-panel aria-hidden="true">
   <div class="gs-mobile-top">
     <div class="gs-brand">
-      <img class="gs-logo" src="/assets/brand/logo-penrose.svg" alt="Gold Shore" />
+      <img class="gs-logo" src="/logo/gs-penrose.svg" alt="Gold Shore" />
       <span class="gs-brand-text">GOLD SHORE</span>
-    </a>
+    </div>
     <button class="gs-icon-btn gs-mobile-close" data-gs-nav-close aria-label="Close menu">×</button>
   </div>
 
@@ -134,6 +134,13 @@ const links = [
     }
   }
 
+  .gs-mobile-actions-secondary {
+    border-top: 1px solid var(--gs-border-subtle, rgba(255, 255, 255, 0.16));
+    display: grid;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+  }
+
   @media (max-width: 900px) {
     .gs-mobile-panel {
       padding: max(1rem, env(safe-area-inset-top)) 1rem 1.5rem;
@@ -147,10 +154,5 @@ const links = [
       display: grid;
       gap: 0.85rem;
     }
-  .gs-mobile-actions-secondary {
-    border-top: 1px solid var(--gs-border-subtle, rgba(255, 255, 255, 0.16));
-    display: grid;
-    gap: 0.75rem;
-    padding-top: 0.75rem;
   }
 </style>

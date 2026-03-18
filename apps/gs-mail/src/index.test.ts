@@ -95,7 +95,11 @@ describe('gs-mail email handler persistence', () => {
     const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
     const message = new MockMessage('next@goldshore.ai', 'inbox@goldshore.ai', 'Newest');
 
-    await worker.email(message as unknown as ForwardableEmailMessage, { GS_CONFIG: kv as unknown as KVNamespace }, ctx);
+    await worker.email(
+      message as unknown as ForwardableEmailMessage,
+      { GS_CONFIG: kv as unknown as KVNamespace, MAIL_FORWARD_TO: 'ops@goldshore.ai' },
+      ctx,
+    );
     await Promise.all(waits);
 
     const payload = JSON.parse(kv.puts[0].value);
@@ -113,12 +117,190 @@ describe('gs-mail email handler persistence', () => {
     const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
     const message = new MockMessage('safe@goldshore.ai', 'inbox@goldshore.ai', 'Recover');
 
-    await worker.email(message as unknown as ForwardableEmailMessage, { GS_CONFIG: kv as unknown as KVNamespace }, ctx);
+    await worker.email(
+      message as unknown as ForwardableEmailMessage,
+      { GS_CONFIG: kv as unknown as KVNamespace, MAIL_FORWARD_TO: 'ops@goldshore.ai' },
+      ctx,
+    );
     await Promise.all(waits);
 
     const payload = JSON.parse(kv.puts[0].value);
     assert.equal(payload.length, 1);
     assert.equal(payload[0].id, '33333333-3333-4333-8333-333333333333');
     assert.ok(parseErrorSpy.mock.calls.some((call) => String(call.arguments[0]).includes('Failed to parse EMAIL_INBOX_LOGS payload')));
+  });
+
+  it('rejects mail when forwarding is not configured', async () => {
+    mock.method(globalThis.crypto, 'randomUUID', () => '44444444-4444-4444-8444-444444444444');
+
+    const kv = new MockKV(null);
+    const waits: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
+    const message = new MockMessage('sender@goldshore.ai', 'inbox@goldshore.ai', 'Missing route');
+
+    await worker.email(message as unknown as ForwardableEmailMessage, { GS_CONFIG: kv as unknown as KVNamespace }, ctx);
+    await Promise.all(waits);
+
+    assert.equal(message.rejection, 'Mail forwarding is not configured.');
+    assert.equal(message.forwardedTo.length, 0);
+    assert.equal(kv.puts.length, 1);
+  });
+
+  it('rejects recipients outside the allowlist', async () => {
+    const kv = new MockKV(null);
+    const waits: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
+    const message = new MockMessage('sender@goldshore.ai', 'other@goldshore.ai', 'Blocked recipient');
+
+    await worker.email(
+      message as unknown as ForwardableEmailMessage,
+      {
+        GS_CONFIG: kv as unknown as KVNamespace,
+        MAIL_FORWARD_TO: 'ops@goldshore.ai',
+        MAIL_ALLOWED_RECIPIENTS: 'inbox@goldshore.ai, support@goldshore.ai',
+      },
+      ctx,
+    );
+    await Promise.all(waits);
+
+    assert.equal(message.rejection, 'Recipient other@goldshore.ai is not allowlisted.');
+    assert.equal(message.forwardedTo.length, 0);
+    assert.equal(kv.puts.length, 0);
+  });
+});
+
+describe('gs-mail email handler security & error cases', () => {
+  it('calls setReject when forwarding target is missing or invalid', async () => {
+    const kv = new MockKV(null);
+    const waits: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
+    const message = new MockMessage('sender@goldshore.ai', 'inbox@goldshore.ai', 'No target');
+
+    await worker.email(message as unknown as ForwardableEmailMessage, { GS_CONFIG: kv as unknown as KVNamespace }, ctx);
+    await Promise.all(waits);
+
+    assert.equal(message.rejection, 'Forwarding target missing or invalid.');
+    assert.equal(message.forwardedTo.length, 0);
+  });
+
+  it('rejects email if recipient is not in MAIL_ALLOWED_RECIPIENTS', async () => {
+    const kv = new MockKV(null);
+    const waits: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
+    const message = new MockMessage('sender@goldshore.ai', 'notallowed@goldshore.ai', 'Go away');
+
+    const env = {
+      GS_CONFIG: kv as unknown as KVNamespace,
+      MAIL_FORWARD_TO: 'ops@goldshore.ai',
+      MAIL_ALLOWED_RECIPIENTS: 'inbox@goldshore.ai,ops@goldshore.ai',
+    };
+
+    await worker.email(message as unknown as ForwardableEmailMessage, env, ctx);
+    await Promise.all(waits);
+
+    assert.equal(message.rejection, 'Recipient not allowed.');
+    assert.equal(message.forwardedTo.length, 0);
+  });
+
+  it('allows email if recipient is in MAIL_ALLOWED_RECIPIENTS', async () => {
+    const kv = new MockKV(null);
+    const waits: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
+    const message = new MockMessage('sender@goldshore.ai', 'inbox@goldshore.ai', 'Hello');
+
+    const env = {
+      GS_CONFIG: kv as unknown as KVNamespace,
+      MAIL_FORWARD_TO: 'ops@goldshore.ai',
+      MAIL_ALLOWED_RECIPIENTS: 'inbox@goldshore.ai,ops@goldshore.ai',
+    };
+
+    await worker.email(message as unknown as ForwardableEmailMessage, env, ctx);
+    await Promise.all(waits);
+
+    assert.equal(message.rejection, undefined);
+    assert.equal(message.forwardedTo[0], 'ops@goldshore.ai');
+  });
+
+  it('truncates subject to 50 characters in KV logs', async () => {
+    const longSubject = 'A'.repeat(100);
+    const kv = new MockKV(null);
+    const waits: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
+    const message = new MockMessage('sender@goldshore.ai', 'inbox@goldshore.ai', longSubject);
+
+    await worker.email(message as unknown as ForwardableEmailMessage, { GS_CONFIG: kv as unknown as KVNamespace, MAIL_FORWARD_TO: 'ops@goldshore.ai' }, ctx);
+    await Promise.all(waits);
+
+    const payload = JSON.parse(kv.puts[0].value);
+    assert.equal(payload[0].subject.length, 50);
+    assert.equal(payload[0].subject, 'A'.repeat(50));
+  });
+});
+
+describe('gs-mail email handler security & error cases', () => {
+  it('calls setReject when forwarding target is missing or invalid', async () => {
+    const kv = new MockKV(null);
+    const waits: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
+    const message = new MockMessage('sender@goldshore.ai', 'inbox@goldshore.ai', 'No target');
+
+    await worker.email(message as unknown as ForwardableEmailMessage, { GS_CONFIG: kv as unknown as KVNamespace }, ctx);
+    await Promise.all(waits);
+
+    assert.equal(message.rejection, 'Forwarding target missing or invalid.');
+    assert.equal(message.forwardedTo.length, 0);
+  });
+
+  it('rejects email if recipient is not in MAIL_ALLOWED_RECIPIENTS', async () => {
+    const kv = new MockKV(null);
+    const waits: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
+    const message = new MockMessage('sender@goldshore.ai', 'notallowed@goldshore.ai', 'Go away');
+
+    const env = {
+      GS_CONFIG: kv as unknown as KVNamespace,
+      MAIL_FORWARD_TO: 'ops@goldshore.ai',
+      MAIL_ALLOWED_RECIPIENTS: 'inbox@goldshore.ai,ops@goldshore.ai',
+    };
+
+    await worker.email(message as unknown as ForwardableEmailMessage, env, ctx);
+    await Promise.all(waits);
+
+    assert.equal(message.rejection, 'Recipient not allowed.');
+    assert.equal(message.forwardedTo.length, 0);
+  });
+
+  it('allows email if recipient is in MAIL_ALLOWED_RECIPIENTS', async () => {
+    const kv = new MockKV(null);
+    const waits: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
+    const message = new MockMessage('sender@goldshore.ai', 'inbox@goldshore.ai', 'Hello');
+
+    const env = {
+      GS_CONFIG: kv as unknown as KVNamespace,
+      MAIL_FORWARD_TO: 'ops@goldshore.ai',
+      MAIL_ALLOWED_RECIPIENTS: 'inbox@goldshore.ai,ops@goldshore.ai',
+    };
+
+    await worker.email(message as unknown as ForwardableEmailMessage, env, ctx);
+    await Promise.all(waits);
+
+    assert.equal(message.rejection, undefined);
+    assert.equal(message.forwardedTo[0], 'ops@goldshore.ai');
+  });
+
+  it('truncates subject to 50 characters in KV logs', async () => {
+    const longSubject = 'A'.repeat(100);
+    const kv = new MockKV(null);
+    const waits: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as ExecutionContext;
+    const message = new MockMessage('sender@goldshore.ai', 'inbox@goldshore.ai', longSubject);
+
+    await worker.email(message as unknown as ForwardableEmailMessage, { GS_CONFIG: kv as unknown as KVNamespace, MAIL_FORWARD_TO: 'ops@goldshore.ai' }, ctx);
+    await Promise.all(waits);
+
+    const payload = JSON.parse(kv.puts[0].value);
+    assert.equal(payload[0].subject.length, 50);
+    assert.equal(payload[0].subject, 'A'.repeat(50));
   });
 });
