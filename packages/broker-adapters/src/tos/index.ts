@@ -15,7 +15,7 @@ export class TOSAdapter implements BrokerAdapter {
         : undefined,
       headers: {
         "Authorization": config?.accessToken ? `Bearer ${config.accessToken}` : undefined,
-      } as any
+      } as Record<string, string | undefined>
     });
   }
 
