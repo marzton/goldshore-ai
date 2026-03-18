@@ -31,4 +31,3 @@ id = "9cc2209906a94851b704be57543987a9"
 [env.prod.vars]
 ENV = "production"
 MAIL_FORWARD_TO = "ops@goldshore.ai"
-

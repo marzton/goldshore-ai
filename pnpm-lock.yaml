@@ -335,6 +335,9 @@ importers:
       '@goldshore/core-schema':
         specifier: workspace:*
         version: link:../core-schema
+      '@goldshore/integrations':
+        specifier: workspace:*
+        version: link:../integrations
     devDependencies:
       typescript:
         specifier: ^5.4.2
