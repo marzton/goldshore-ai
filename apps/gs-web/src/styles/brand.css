@@ -31,3 +31,47 @@
     stroke-dashoffset: 0;
   }
 }
+
+
+.gs-header {
+  position: sticky;
+  top: 0;
+  background: rgba(10, 12, 18, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 1000;
+}
+
+.gs-logo {
+  width: 28px;
+  height: auto;
+  color: #0e3a52;
+  display: block;
+  transition: 0.3s ease;
+}
+
+.gs-logo,
+.gs-logo path {
+  stroke: #0e3a52 !important;
+  fill: none !important;
+}
+
+.gs-logo:hover {
+  stroke: #1c7ed6;
+  filter: drop-shadow(0 0 6px rgba(28, 126, 214, 0.6));
+}
+
+.gs-logo:hover path {
+  stroke: #1c7ed6 !important;
+}
+
+.gs-footer {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0;
+}
+
+.footer-logo {
+  width: 34px;
+  opacity: 0.6;
+}
