@@ -53,6 +53,15 @@ Cloudflare Access is enforced on internal tooling and protected previews. The ta
 | Gateway worker | `gw.goldshore.ai` | Optional | Canonical hostname is `gw.goldshore.ai` (not `gateway.goldshore.ai`); depends on routing/auth design. |
 | Mail handler | `mail.goldshore.ai` | No | Cloudflare mail routing cannot authenticate. |
 
+### Mail handler configuration
+
+The `gs-mail` worker supports:
+- **Sender blocking**: via `MAIL_BLOCKED_SENDERS` (comma-separated list).
+- **Recipient allowlisting**: via `MAIL_ALLOWED_RECIPIENTS` (comma-separated list). If this variable is set, only emails addressed to these recipients will be processed and forwarded; all others will be rejected.
+- **Forwarding**: to a single target defined in `MAIL_FORWARD_TO`.
+
+Note: If `/health` and `/version` endpoints are used for automated monitoring, they must be explicitly exempted from Cloudflare Managed Challenges or WAF rules to avoid 403 errors during non-interactive probing.
+
 ## GitHub App callback URLs
 
 - Production: `https://ops.goldshore.ai/auth/github/callback`

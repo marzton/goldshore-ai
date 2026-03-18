@@ -27,6 +27,20 @@ const ALLOWED_MIME_TYPES = new Map([
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
+const SVG_DANGEROUS_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)[\s\S]*?>[\s\S]*?<\/\1>/gi;
+const SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)\b[^>]*\/?>/gi;
+const SVG_EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*(?:javascript:|data:text\/html)[\s\S]*?\1/gi;
+const SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*(?:javascript:|data:text\/html)[^\s>]*/gi;
+
+const sanitizeSvg = (input: string): string =>
+  input
+    .replace(SVG_DANGEROUS_TAGS_REGEX, '')
+    .replace(SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX, '')
+    .replace(SVG_EVENT_HANDLER_ATTR_REGEX, '')
+    .replace(SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX, '')
+    .replace(SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX, '');
+
 const isUploadFileLike = (value: unknown): value is UploadFileLike => {
   if (!value || typeof value !== 'object') {
     return false;
@@ -40,64 +54,6 @@ const isUploadFileLike = (value: unknown): value is UploadFileLike => {
     typeof candidate.arrayBuffer === 'function'
   );
 };
-const sanitizeSvg = (input: string): string =>
-  sanitizeHtml(input, {
-    allowedTags: [
-      'svg',
-      'g',
-      'path',
-      'circle',
-      'ellipse',
-      'line',
-      'polyline',
-      'polygon',
-      'rect',
-      'text',
-      'tspan',
-      'defs',
-      'linearGradient',
-      'radialGradient',
-      'stop',
-      'pattern',
-      'clipPath',
-      'mask',
-      'use',
-      'symbol',
-      'view',
-      'title',
-      'desc'
-    ],
-    allowedAttributes: {
-      svg: ['width', 'height', 'viewBox', 'xmlns'],
-      '*': [
-        'id',
-        'class',
-        'x',
-        'y',
-        'cx',
-        'cy',
-        'r',
-        'rx',
-        'ry',
-        'd',
-        'x1',
-        'y1',
-        'x2',
-        'y2',
-        'points',
-        'transform',
-        'fill',
-        'stroke',
-        'stroke-width',
-        'opacity'
-      ]
-    },
-    allowedSchemes: ['http', 'https'],
-    allowedSchemesByTag: {
-      use: ['http', 'https']
-    },
-    allowProtocolRelative: false
-  });
 
 /**
  * [SOP] Media Asset Management
