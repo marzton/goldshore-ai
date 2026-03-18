@@ -1,6 +1,7 @@
 import type { Account, Position, Order } from "@goldshore/core-schema";
-import type { BrokerAdapter } from "../index.js";
-import { createHttpClient, type HttpClient } from "../../../integrations/http.ts";
+import type { BrokerAdapter } from "../index.ts";
+import { createHttpClient, type HttpClient } from "@goldshore/integrations/http.ts";
+import { TosAccountsResponseSchema, TosAccountSchema, TosOrdersResponseSchema } from "./schema.ts";
 
 export class TOSAdapter implements BrokerAdapter {
   id = "tos";
@@ -22,13 +23,16 @@ export class TOSAdapter implements BrokerAdapter {
   async getAccounts(): Promise<Account[]> {
     const response = await this.client.get("/accounts");
     if (response.status !== 200) return [];
-    const data = await response.json() as any[];
-    return data.map(acc => ({
+    const raw = await response.json();
+    const result = TosAccountsResponseSchema.safeParse(raw);
+    if (!result.success) return [];
+
+    return result.data.map(acc => ({
       id: acc.securitiesAccount.accountId,
-      broker: "tos",
+      broker: "tos" as const,
       brokerAccountId: acc.securitiesAccount.accountId,
       name: acc.securitiesAccount.accountId,
-      type: acc.securitiesAccount.type,
+      type: acc.securitiesAccount.type as any,
       baseCurrency: "USD",
       isMarginEnabled: acc.securitiesAccount.type === "MARGIN",
       updatedAt: new Date(),

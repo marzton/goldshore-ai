@@ -99,6 +99,29 @@ const pageSchemas = Array.isArray(structuredData)
 
       initGoldShoreUI();
       initParallax();
+
+      // Mobile nav toggle logic
+      document.addEventListener('astro:page-load', () => {
+        const toggle = document.querySelector('[data-gs-nav-toggle]');
+        const close = document.querySelector('[data-gs-nav-close]');
+        const panel = document.querySelector('[data-gs-mobile-panel]');
+
+        if (toggle && panel) {
+          toggle.addEventListener('click', () => {
+            document.body.classList.add('nav-open');
+            panel.setAttribute('aria-hidden', 'false');
+            toggle.setAttribute('aria-expanded', 'true');
+          });
+        }
+
+        if (close && panel) {
+          close.addEventListener('click', () => {
+            document.body.classList.remove('nav-open');
+            panel.setAttribute('aria-hidden', 'true');
+            if (toggle) toggle.setAttribute('aria-expanded', 'false');
+          });
+        }
+      });
     </script>
     <script type="module">
       import { initStarField, initTilt, cleanupUI } from '/src/scripts/init-ui.ts';

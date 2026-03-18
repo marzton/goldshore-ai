@@ -1,4 +1,6 @@
 ---
+import Logo from '@goldshore/theme/components/Logo.astro';
+
 const links = [
   { href: "/", label: "Home" },
   { href: "/workflows", label: "Workflows" },
@@ -14,7 +16,7 @@ const links = [
 <header class="gs-header">
   <div class="gs-container gs-nav-inner">
     <a class="gs-brand" href="/">
-      <img class="gs-logo" src="/logo/gs-penrose.svg" alt="Gold Shore" />
+      <Logo />
       <span class="gs-brand-text">GOLD SHORE</span>
     </a>
 
@@ -35,8 +37,8 @@ const links = [
 <!-- Mobile overlay panel -->
 <div class="gs-mobile-panel" id="gs-mobile-panel" data-gs-mobile-panel aria-hidden="true">
   <div class="gs-mobile-top">
-    <div class="gs-brand">
-      <img class="gs-logo" src="/logo/gs-penrose.svg" alt="Gold Shore" />
+    <a class="gs-brand" href="/">
+      <Logo />
       <span class="gs-brand-text">GOLD SHORE</span>
     </div>
     <button class="gs-icon-btn gs-mobile-close" data-gs-nav-close aria-label="Close menu">×</button>
