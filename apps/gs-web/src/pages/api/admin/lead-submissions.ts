@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { verifyAccessWithClaims, isAdmin } from '@goldshore/auth';
+import { verifyAccessWithClaims } from '@goldshore/auth';
 
 const allowedStatuses = new Set(['new', 'read', 'archived']);
 
@@ -32,6 +32,11 @@ const buildCsv = (rows: Record<string, unknown>[]) => {
   const header = columns.map(escapeCsvValue).join(',');
   const body = rows.map((row) => columns.map((col) => escapeCsvValue(row[col])).join(','));
   return [header, ...body].join('\n');
+};
+
+const isAdmin = (payload: any) => {
+  const roles = payload.roles || payload.role || [];
+  return Array.isArray(roles) ? roles.includes('admin') : roles === 'admin';
 };
 
 export const GET: APIRoute = async ({ request, locals }) => {

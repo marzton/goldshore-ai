@@ -10,6 +10,6 @@ export interface BrokerAdapter {
   // ... future execution and stream hooks
 }
 
-export * from "./tos/index.js";
-export * from "./fidelity/index.js";
-export * from "./robinhood/index.js";
+export * from "./tos/index.ts";
+export * from "./fidelity/index.ts";
+export * from "./robinhood/index.ts";
