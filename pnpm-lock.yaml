@@ -283,6 +283,7 @@ importers:
     dependencies:
       '@goldshore/auth':
         specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/auth
       '@goldshore/brand':
         specifier: workspace:*

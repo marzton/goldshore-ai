@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { verifyAccessWithClaims, buildAdminSession } from '@goldshore/auth';
 import { verifyAccessWithClaims } from '@goldshore/auth';
 
 const allowedStatuses = new Set(['new', 'read', 'archived']);
@@ -34,6 +35,22 @@ const buildCsv = (rows: Record<string, unknown>[]) => {
   return [header, ...body].join('\n');
 };
 
+async function checkAccess(request: Request, env: any) {
+  const claims = await verifyAccessWithClaims(request, env);
+  if (!claims) return null;
+  const session = buildAdminSession(claims);
+  if (!session.permissions.includes('forms:read')) return null;
+  return session;
+}
+
+function checkCsrf(request: Request) {
+  const origin = request.headers.get('origin');
+  const host = request.headers.get('host');
+  if (origin && host && !origin.includes(host)) {
+    return false;
+  }
+  return true;
+}
 const isAdmin = (payload: any) => {
   const roles = payload.roles || payload.role || [];
   return Array.isArray(roles) ? roles.includes('admin') : roles === 'admin';
@@ -45,8 +62,8 @@ export const GET: APIRoute = async ({ request, locals }) => {
     return new Response('Storage unavailable.', { status: 503 });
   }
 
-  const access = await verifyAccessWithClaims(request, env);
-  if (!access || !isAdmin(access)) {
+  const session = await checkAccess(request, env);
+  if (!session) {
     return new Response('Unauthorized', { status: 401 });
   }
 
@@ -104,8 +121,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response('Storage unavailable.', { status: 503 });
   }
 
-  const access = await verifyAccessWithClaims(request, env);
-  if (!access || !isAdmin(access)) {
+  if (!checkCsrf(request)) {
+    return new Response('Forbidden: CSRF check failed', { status: 403 });
+  }
+
+  const session = await checkAccess(request, env);
+  if (!session || !session.permissions.includes('forms:write')) {
     return new Response('Unauthorized', { status: 401 });
   }
 

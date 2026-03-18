@@ -10,7 +10,8 @@ routes = [
 
 [vars]
 ENV = "production"
-CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+# Use 'wrangler secret put CONTROL_SYNC_TOKEN' to set the actual value.
+CONTROL_SYNC_TOKEN = ""
 SYNC_TARGET_SUBDOMAIN = "api.goldshore.ai"
 
 [[kv_namespaces]]
