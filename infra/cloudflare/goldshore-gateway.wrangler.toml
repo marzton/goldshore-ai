@@ -1,0 +1,47 @@
+# Wrangler config for the Goldshore API gateway worker.
+
+name = "goldshore-gateway"
+main = "../../apps/gs-gateway/src/index.ts"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+tsconfig = "../../apps/gs-gateway/tsconfig.json"
+
+[vars]
+SERVICE_DOMAIN = "gateway"
+
+[env.dev]
+name = "goldshore-gateway-dev"
+workers_dev = true
+[env.dev.vars]
+APP_ENV = "dev"
+API_ORIGIN = "https://api-dev.goldshore.ai"
+
+[env.preview]
+name = "goldshore-gateway-preview"
+workers_dev = false
+routes = [
+  { pattern = "gw-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+[env.preview.vars]
+APP_ENV = "preview"
+API_ORIGIN = "https://api-preview.goldshore.ai"
+
+[env.staging]
+name = "goldshore-gateway-staging"
+workers_dev = false
+routes = [
+  { pattern = "gw-staging.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+[env.staging.vars]
+APP_ENV = "staging"
+API_ORIGIN = "https://api-staging.goldshore.ai"
+
+[env.prod]
+name = "goldshore-gateway-prod"
+workers_dev = false
+routes = [
+  { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+[env.prod.vars]
+APP_ENV = "prod"
+API_ORIGIN = "https://api.goldshore.ai"

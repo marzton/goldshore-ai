@@ -1,82 +1,100 @@
 # Worker Configuration Guide
 
-This document details the configuration for all Cloudflare Workers and Pages projects in the GoldShore monorepo.
+This document is the source of truth for Goldshore Worker naming, routes, and deployment flow.
 
-## 1. gs-mail (`apps/mail-worker`)
+## 1) Inventory from infra config
 
-The email routing and processing worker.
+| Domain | Wrangler config | Default env names | Preview route | Staging route | Production route |
+| --- | --- | --- | --- | --- | --- |
+| API | `infra/cloudflare/goldshore-api.wrangler.toml` | `goldshore-api-<env>` | `api-preview.goldshore.ai/*` | `api-staging.goldshore.ai/*` | `api.goldshore.ai/*` |
+| Gateway | `infra/cloudflare/goldshore-gateway.wrangler.toml` | `goldshore-gateway-<env>` | `gw-preview.goldshore.ai/*` | `gw-staging.goldshore.ai/*` | `gw.goldshore.ai/*` |
+| Control | `infra/cloudflare/goldshore-control.wrangler.toml` | `goldshore-control-<env>` | `ops-preview.goldshore.ai/*` | `ops-staging.goldshore.ai/*` | `ops.goldshore.ai/*` |
+| Agent | `infra/cloudflare/gs-agent.wrangler.toml` | `goldshore-agent-<env>` | workers.dev only | workers.dev only | workers.dev only |
 
-- **Directory:** `apps/mail-worker`
-- **Package Name:** `gs-mail`
-- **Wrangler:** `wrangler.toml` (locally defined)
-- **Deployment:** Manual via Wrangler or CI.
-- **Bindings:** None currently required.
-- **Compatibility Date:** `2024-03-20`
-- **Main Entry:** `src/index.ts`
-- **Purpose:** Handles email routing logic, possibly integrated with Cloudflare Email Routing or third-party providers (e.g., MailChannels).
-- **Status:** Repaired with inbound routing logic. Supports sender blocking, recipient allowlists, and forwarding to `MAIL_FORWARD_TO`.
+Related infra state is also reflected in:
 
-## 2. gs-agent (`apps/gs-agent`)
+- `infra/cf/config.yaml` for CI-level deploy targets and naming constraints.
+- `infra/cloudflare/desired-state.yaml` for target DNS and service naming.
 
-The AI agent service.
+## 2) Naming and config standards
 
-- **Directory:** `apps/gs-agent`
-- **Package Name:** `@goldshore/agent`
-- **Wrangler:** `infra/cloudflare/gs-agent.wrangler.toml` (external config)
-- **Deployment:** CI workflow (`deploy-agent.yml`).
-- **Bindings:**
-  - `AI`: Cloudflare Workers AI binding.
-  - `Queues`: Consumes `goldshore-jobs` queue.
-- **Compatibility Date:** `2024-03-20`
-- **Main Entry:** `src/index.ts`
-- **Purpose:** Handles AI inference tasks, job processing from queues, and agent interactions.
+### Worker names
 
-## 3. gs-gateway (`apps/gateway`)
+All deployed worker names must follow:
 
-The API gateway and router.
+```text
+goldshore-<domain>-<env>
+```
 
-- **Directory:** `apps/gateway`
-- **Package Name:** `@goldshore/gateway`
-- **Wrangler:** `wrangler.toml` (locally defined)
-- **Deployment:** CI workflow (`deploy-gateway.yml`).
-- **Bindings:**
-  - `KV Namespaces`: `gs-kv` (production), `GATEWAY_KV` (local/dev).
-  - `Queues`: Produces to `gs-jobs`.
-  - `Services`: `API` (points to `gs-api`).
-  - `AI`: Cloudflare Workers AI binding.
-  - `Vars`: `ENV` ("production"), `API_ORIGIN` ("https://api.goldshore.ai").
-- **Compatibility Date:** inferred from project settings or `wrangler.toml`.
-- **Main Entry:** `src/index.ts` (implied).
-- **Purpose:** Primary entry point for API traffic, routing requests to `gs-api` or handling them directly (e.g., cached responses).
+Allowed env values: `dev`, `preview`, `staging`, `prod`.
 
-## 4. gs-control (`apps/control-worker`)
+### Route patterns
 
-The operational control plane worker.
+Public routes must follow:
 
-- **Directory:** `apps/control-worker`
-- **Package Name:** `@goldshore/control`
-- **Wrangler:** `wrangler.toml` (locally defined)
-- **Deployment:** CI workflow (`deploy-control-worker.yml`).
-- **Bindings:**
-  - `KV Namespaces`: `CONTROL_LOGS`.
-  - `R2 Buckets`: `STATE`.
-  - `Services`: `API`, `GATEWAY`.
-  - `Vars`: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` (secrets).
-- **Compatibility Date:** inferred.
-- **Main Entry:** `src/index.ts`
-- **Purpose:** Internal tool for managing Cloudflare resources, viewing logs, and performing administrative actions via Hono API.
+```text
+<subdomain>.goldshore.ai/*
+```
 
-## 5. gs-api (`apps/api-worker`)
+With environment suffixes:
 
-The backend API service.
+- Preview: `<subdomain>-preview.goldshore.ai/*`
+- Staging: `<subdomain>-staging.goldshore.ai/*`
+- Production: `<subdomain>.goldshore.ai/*`
 
-- **Directory:** `apps/api-worker`
-- **Package Name:** `gs-api`
-- **Wrangler:** `wrangler.toml` (locally defined) or `infra/cloudflare/goldshore-api.wrangler.toml`.
-- **Deployment:** CI workflow (`deploy-api-worker.yml`).
-- **Bindings:** likely similar to gateway (KV, D1, etc.).
-- **Purpose:** Core business logic and data access layer.
+### Secrets and runtime env vars
 
-## Deprecated
+GitHub deployment workflows use only:
 
-- `apps/goldshore-agent`: Removed. Legacy shim for `gs-agent`.
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
+Every worker env should define:
+
+- `APP_ENV` (`dev|preview|staging|prod`)
+- `SERVICE_DOMAIN` (worker domain key, such as `api`, `gateway`, `control`, `agent`)
+
+## 3) Workflow mapping
+
+Each worker has exactly:
+
+- one deployment workflow (`deploy-*.yml`) for `staging` + `main` pushes (mapped to `staging` and `prod` envs)
+- one preview workflow (`preview-*.yml`) for PR preview deploys (`--env preview`)
+
+Deploy/preview workflow pairs:
+
+- API: `deploy-api-worker.yml` + `preview-api-worker.yml`
+- Gateway: `deploy-gateway.yml` + `preview-gateway.yml`
+- Control: `deploy-control-worker.yml` + `preview-control-worker.yml`
+- Agent: `deploy-agent.yml` + `preview-agent.yml`
+
+## 4) Promotion flow (preview → staging → prod)
+
+1. **Preview**
+   - Open PR and apply `preview` label (or move PR to ready-for-review).
+   - Preview workflow deploys `--env preview`.
+   - Validate behavior on preview hostname.
+
+2. **Staging**
+   - Merge PR into `staging` branch.
+   - Deploy workflow runs on `push` to `staging` and deploys `--env staging`.
+   - Run smoke checks against `*-staging.goldshore.ai` domains.
+
+3. **Production**
+   - Promote staging changes into `main`.
+   - Deploy workflow runs on `push` to `main` and deploys `--env prod`.
+   - Confirm production health and rollback readiness.
+
+## 5) Validation
+
+Run this before merging worker config/workflow changes:
+
+```bash
+pnpm validate:workers
+```
+
+The validator checks:
+
+- workflows reference Wrangler configs under `infra/cloudflare/*.wrangler.toml`
+- deploy env values exist in the selected Wrangler file
+- env-specific worker names match `goldshore-<domain>-<env>`
