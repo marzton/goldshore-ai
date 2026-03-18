@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "main": "./src/index.ts",
+  "scripts": {
+    "test": "node --experimental-strip-types --test src/**/*.test.ts"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./tos": "./src/tos/index.ts",
