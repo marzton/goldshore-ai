@@ -3,8 +3,6 @@ main = "src/index.ts"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
 
-tsconfig = "tsconfig.json"
-
 # This binding is CRITICAL for the EMAIL_INBOX_LOGS persistence logic
 [[kv_namespaces]]
 binding = "GS_CONFIG"
