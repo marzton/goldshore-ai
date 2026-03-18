@@ -309,7 +309,7 @@ const buildSubmissionDigest = (submission: Submission) => {
   return { text, html };
 };
 
-const sendMail = async (
+export const sendMail = async (
   env: Env,
   to: MailRecipient[],
   subject: string,
