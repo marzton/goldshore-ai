@@ -1,5 +1,4 @@
 ---
-import { ThemeManager } from '@goldshore/theme/manager';
 import Sidebar from '../components/Sidebar.astro';
 import Topbar from '../components/Topbar.astro';
 
@@ -9,21 +8,16 @@ interface Props {
 
 import '@goldshore/theme';
 import logo from '../assets/logo.svg';
-import Sidebar from '../components/Sidebar.astro';
-import Topbar from '../components/Topbar.astro';
 
 const { title = 'GoldShore Admin' } = Astro.props;
 ---
+
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>{title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <script>
-      import { ThemeManager } from '@goldshore/theme/manager';
-      ThemeManager.init();
-    </script>
   </head>
   <body>
     <a href="#admin-content" class="skip-link">Skip to content</a>
