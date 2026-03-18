@@ -1,0 +1,49 @@
+#2. The Caller Workflow
+#Create this file at .github/workflows/deploy-services.yml. This replaces deploy-admin.yml, deploy-gateway.yml, and the others.
+name: Infrastructure Deployment
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # This logic determines which service changed to avoid unnecessary builds
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      admin: ${{ steps.filter.outputs.admin }}
+      gateway: ${{ steps.filter.outputs.gateway }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            admin: 'services/admin/**'
+            gateway: 'services/gateway/**'
+
+  deploy-admin:
+    needs: changes
+    if: needs.changes.outputs.admin == 'true'
+    uses: ./.github/workflows/_deploy-template.yml
+    with:
+      service_name: 'admin'
+      environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+    secrets:
+      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+
+  deploy-gateway:
+    needs: changes
+    if: needs.changes.outputs.gateway == 'true'
+    uses: ./.github/workflows/_deploy-template.yml
+    with:
+      service_name: 'gateway'
+      environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+    secrets:
+      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+
+Key Improvements:
+ * Centralized Logic: If you need to update your Node.js version or deployment CLI, you only change it in the template, not in 12 different files.
+ * Path Filtering: By adding a paths-filter, the gateway will only deploy if code in services/gateway actually changes.
+ * Dynamic Environments: The logic automatically switches between preview and production based on the branch, merging your "preview" and "deploy" workflows into one.
