@@ -104,7 +104,7 @@ p {
 }
 
 .blueprint-bg {
-  background: radial-gradient(circle at 50% 40%, #0f172a 0%, #05060a 70%), url('/blueprint-grid.svg');
+  background: radial-gradient(circle at 50% 40%, #0f172a 0%, #05060a 70%), url('/assets/blueprint-grid.svg');
 }
 
 @media (max-width: 768px) {
@@ -285,4 +285,3 @@ h2 {
 
 .gs-pt-4 { padding-top: 4rem; }
 .gs-pb-4 { padding-bottom: 4rem; }
-
