@@ -1,13 +1,10 @@
 ---
 const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
-import logo from "../../assets/logo.svg";
-const logoSrc = logo.src;
 ---
 
-<section class="gs-hero" aria-label="Hero">
+<section class="gs-hero gs-hero-reactive" aria-label="Hero" data-reactive-hero>
   <div class="gs-hero-bg" aria-hidden="true">
-    <canvas class="gs-stars" data-stars></canvas>
-    <canvas class="gs-shooting" data-shooting></canvas>
+    <canvas class="gs-wave-field" data-wave-bg></canvas>
     <div class="gs-grid"></div>
     <div class="gs-vignette"></div>
   </div>
@@ -15,8 +12,28 @@ const logoSrc = logo.src;
   <div class="gs-hero-inner">
     <div class="gs-hero-left">
       <div class="gs-pill"><span class="dot"></span> SYSTEM OPERATIONAL</div>
-      <div class="hero-logo-wrapper" style="margin-bottom: 1rem;">
-         <img src={logoSrc} alt="" width="60" height="60" style="opacity: 0.9;" />
+      <div class="hero-logo-wrapper">
+        <svg
+          class="gs-logo-reactive"
+          data-reactive-logo
+          viewBox="0 0 128 160"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linejoin="round"
+          stroke-linecap="square"
+          vector-effect="non-scaling-stroke"
+          shape-rendering="geometricPrecision"
+          role="img"
+          aria-label="GoldShore Penrose mark"
+        >
+          <path
+            class="gs-logo-path"
+            d="M64 20 L17 93 H103 L64 20 M64 20 L103 93 M64 20 L17 93 M64 58 L49 83 H79 L64 58"
+          />
+          <path class="gs-logo-seam" d="M64 58 L49 83" />
+        </svg>
       </div>
       <h1>{title}</h1>
       <p class="sub">
@@ -45,8 +62,8 @@ const logoSrc = logo.src;
           </div>
           <div class="terminal" aria-hidden="true">
             <div>&gt; Initializing cinematic protocols…</div>
-            <div>&gt; Optimizing user experience…</div>
-            <div>&gt; Done.</div>
+            <div>&gt; Synchronizing wave field…</div>
+            <div>&gt; Signal resonance stable.</div>
           </div>
         </div>
       </div>
@@ -54,15 +71,25 @@ const logoSrc = logo.src;
   </div>
 
   <script>
-    import { mountStarfield } from "./StarfieldCanvas";
-    import { mountShootingStars } from "./ShootingStarsCanvas";
+    import { mountHero } from "./mountHero";
 
-    const heroes = document.querySelectorAll(".gs-hero");
-    heroes.forEach((root) => {
-      const stars = root.querySelector("[data-stars]");
-      const shooting = root.querySelector("[data-shooting]");
-      if (stars instanceof HTMLCanvasElement) mountStarfield(stars);
-      if (shooting instanceof HTMLCanvasElement) mountShootingStars(shooting);
+    let cleanup;
+
+    const boot = () => {
+      cleanup?.();
+      cleanup = mountHero(document);
+    };
+
+    if (document.readyState !== "loading") {
+      boot();
+    } else {
+      document.addEventListener("DOMContentLoaded", boot, { once: true });
+    }
+
+    document.addEventListener("astro:page-load", boot);
+    document.addEventListener("astro:before-swap", () => {
+      cleanup?.();
+      cleanup = undefined;
     });
   </script>
 </section>
