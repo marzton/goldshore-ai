@@ -1,26 +1,40 @@
 ---
 const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
-import logo from "../../assets/logo.svg";
-const logoSrc = logo.src;
 ---
 
-<section class="gs-hero" aria-label="Hero">
-  <div class="gs-hero-bg" aria-hidden="true">
-    <canvas class="gs-stars" data-stars></canvas>
-    <canvas class="gs-shooting" data-shooting></canvas>
-    <div class="gs-grid"></div>
-    <div class="gs-vignette"></div>
+<section class="gs-hero gs-hero--reactive" data-reactive-hero aria-label="Hero">
+  <canvas class="gs-wave-bg" data-wave-bg aria-hidden="true"></canvas>
+  <div class="gs-grid" aria-hidden="true"></div>
+  <div class="gs-vignette" aria-hidden="true"></div>
+
+  <div class="hero-mark-wrap" aria-hidden="true">
+    <svg
+      class="gs-logo-reactive"
+      viewBox="0 0 128 160"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linejoin="round"
+      stroke-linecap="square"
+      vector-effect="non-scaling-stroke"
+      shape-rendering="geometricPrecision"
+    >
+      <path
+        class="gs-logo-path"
+        d="M64 20 L17 93 H103 L64 20 M64 20 L103 93 M64 20 L17 93 M64 58 L49 83 H79 L64 58"
+      />
+      <path class="gs-logo-seam" d="M64 58 L49 83 H79" />
+    </svg>
   </div>
 
   <div class="gs-hero-inner">
-    <div class="gs-hero-left">
+    <div class="gs-hero-left hero-content">
       <div class="gs-pill"><span class="dot"></span> SYSTEM OPERATIONAL</div>
-      <div class="hero-logo-wrapper" style="margin-bottom: 1rem;">
-         <img src={logoSrc} alt="" width="60" height="60" style="opacity: 0.9;" />
-      </div>
       <h1>{title}</h1>
       <p class="sub">
-        GoldShore isn’t just code. It’s a provable experience. We build resilient, cinematic systems where automation meets art.
+        GoldShore shapes resilient systems with applied intelligence, responsive operations,
+        and disciplined control surfaces that move like instruments—not ornaments.
       </p>
 
       <div class="actions">
@@ -29,24 +43,25 @@ const logoSrc = logo.src;
       </div>
     </div>
 
-    <div class="gs-hero-right">
-      <div class="panel">
+    <div class="gs-hero-right hero-content">
+      <div class="panel" data-tilt>
         <div class="panel-top">
           <div class="lights"><span></span><span></span><span></span></div>
-          <div class="panel-title">GoldShore Agent</div>
+          <div class="panel-title">GoldShore Control Surface</div>
         </div>
         <div class="panel-body">
           <div class="kv">
             <div><span>STATUS</span><b class="ok">ACTIVE</b></div>
-            <div><span>MODE</span><b class="mode">VIBE_CODING</b></div>
+            <div><span>MODE</span><b class="mode">SYSTEM_RESONANCE</b></div>
+            <div><span>FIELD</span><b>WAVE_SYNC</b></div>
           </div>
           <div class="bars" aria-hidden="true">
             <i></i><i></i><i></i><i></i><i></i>
           </div>
           <div class="terminal" aria-hidden="true">
-            <div>&gt; Initializing cinematic protocols…</div>
-            <div>&gt; Optimizing user experience…</div>
-            <div>&gt; Done.</div>
+            <div>&gt; Sampling wave energy near hero mark…</div>
+            <div>&gt; Penrose glow aligned to local field amplitude.</div>
+            <div>&gt; Resonance stable within instrument limits.</div>
           </div>
         </div>
       </div>
@@ -54,15 +69,313 @@ const logoSrc = logo.src;
   </div>
 
   <script>
-    import { mountStarfield } from "./StarfieldCanvas";
-    import { mountShootingStars } from "./ShootingStarsCanvas";
+    import { initReactiveHero } from '../../scripts/init-reactive-hero';
 
-    const heroes = document.querySelectorAll(".gs-hero");
-    heroes.forEach((root) => {
-      const stars = root.querySelector("[data-stars]");
-      const shooting = root.querySelector("[data-shooting]");
-      if (stars instanceof HTMLCanvasElement) mountStarfield(stars);
-      if (shooting instanceof HTMLCanvasElement) mountShootingStars(shooting);
-    });
+    const cleanups = [];
+
+    const teardown = () => {
+      cleanups.forEach((cleanup) => {
+        if (typeof cleanup === 'function') cleanup();
+      });
+      cleanups.length = 0;
+    };
+
+    const boot = () => {
+      teardown();
+      document.querySelectorAll('[data-reactive-hero]').forEach((root) => {
+        const cleanup = initReactiveHero(root);
+        if (typeof cleanup === 'function') {
+          cleanups.push(cleanup);
+        }
+      });
+    };
+
+    boot();
+    document.addEventListener('astro:page-load', boot);
+    document.addEventListener('astro:before-swap', teardown);
   </script>
 </section>
+
+<style>
+  .gs-hero {
+    position: relative;
+    overflow: hidden;
+    min-height: calc(100vh - 88px);
+    background: #0b0f18;
+    border-top: 1px solid rgba(226, 232, 240, 0.08);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.08);
+  }
+
+  .gs-wave-bg,
+  .gs-grid,
+  .gs-vignette {
+    position: absolute;
+    inset: 0;
+  }
+
+  .gs-wave-bg {
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  .gs-grid {
+    z-index: 0;
+    background:
+      linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+    background-size: 72px 72px;
+    opacity: 0.18;
+    mask-image: radial-gradient(circle at 30% 30%, black 35%, transparent 78%);
+    pointer-events: none;
+  }
+
+  .gs-vignette {
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 22% 24%, rgba(90, 162, 255, 0.12), transparent 42%),
+      radial-gradient(circle at 70% 42%, rgba(59, 130, 246, 0.08), transparent 52%),
+      linear-gradient(120deg, rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 0.72));
+  }
+
+  .hero-mark-wrap {
+    position: absolute;
+    left: clamp(1.5rem, 8vw, 6rem);
+    top: clamp(5rem, 18vh, 10rem);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .gs-logo-reactive {
+    width: clamp(72px, 10vw, 132px);
+    height: auto;
+    color: #5aa2ff;
+    transform-origin: 50% 50%;
+    will-change: transform, filter, opacity;
+    transition:
+      transform 120ms linear,
+      filter 160ms linear,
+      opacity 160ms linear;
+    opacity: 0.88;
+  }
+
+  .gs-logo-path,
+  .gs-logo-seam {
+    vector-effect: non-scaling-stroke;
+  }
+
+  .gs-logo-seam {
+    opacity: 0.68;
+  }
+
+  .gs-hero-inner {
+    position: relative;
+    z-index: 2;
+    width: min(1200px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 96px 0 76px;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .gs-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: rgba(90, 162, 255, 0.95);
+    border: 1px solid rgba(90, 162, 255, 0.26);
+    background: rgba(2, 6, 23, 0.35);
+    padding: 10px 14px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+
+  .gs-pill .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(90, 162, 255, 1);
+    box-shadow: 0 0 18px rgba(90, 162, 255, 0.55);
+  }
+
+  .gs-hero h1 {
+    margin: 18px 0 10px;
+    font-family: var(--gs-font-display, ui-serif, Georgia, serif);
+    font-size: clamp(44px, 5vw, 74px);
+    line-height: 1.02;
+    color: rgba(226, 232, 240, 0.98);
+    text-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  .sub {
+    max-width: 52ch;
+    color: rgba(226, 232, 240, 0.72);
+    font-size: 15.5px;
+    line-height: 1.55;
+  }
+
+  .actions {
+    margin-top: 22px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 10px;
+    font-weight: 650;
+    font-size: 13px;
+    border: 1px solid rgba(226, 232, 240, 0.14);
+    background: rgba(2, 6, 23, 0.35);
+    color: rgba(226, 232, 240, 0.92);
+    backdrop-filter: blur(10px);
+    text-decoration: none;
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  }
+
+  .btn.primary {
+    border-color: rgba(90, 162, 255, 0.35);
+    background: linear-gradient(90deg, rgba(90, 162, 255, 0.22), rgba(59, 130, 246, 0.12));
+    box-shadow: 0 10px 30px rgba(90, 162, 255, 0.14);
+  }
+
+  .btn.ghost:hover,
+  .btn.primary:hover {
+    transform: translateY(-1px);
+  }
+
+  .panel {
+    border-radius: 18px;
+    border: 1px solid rgba(226, 232, 240, 0.12);
+    background: rgba(2, 6, 23, 0.38);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    transform: translateZ(0);
+  }
+
+  .panel-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.1);
+  }
+
+  .lights {
+    display: flex;
+    gap: 8px;
+  }
+
+  .lights span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(226, 232, 240, 0.18);
+  }
+
+  .lights span:nth-child(1) { background: rgba(239, 68, 68, 0.55); }
+  .lights span:nth-child(2) { background: rgba(245, 158, 11, 0.55); }
+  .lights span:nth-child(3) { background: rgba(34, 197, 94, 0.55); }
+
+  .panel-title {
+    font-size: 12px;
+    color: rgba(226, 232, 240, 0.55);
+    letter-spacing: 0.08em;
+  }
+
+  .panel-body {
+    padding: 16px;
+  }
+
+  .kv {
+    display: grid;
+    gap: 10px;
+  }
+
+  .kv div {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .kv span {
+    font-size: 12px;
+    color: rgba(226, 232, 240, 0.45);
+  }
+
+  .kv b {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+  }
+
+  .kv .ok { color: rgba(34, 197, 94, 0.9); }
+  .kv .mode { color: rgba(90, 162, 255, 0.9); }
+
+  .bars {
+    margin: 14px 0 10px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    height: 60px;
+  }
+
+  .bars i {
+    display: block;
+    width: 18%;
+    background: linear-gradient(180deg, rgba(90, 162, 255, 0.75), rgba(59, 130, 246, 0.25));
+    border-radius: 8px;
+    animation: bar 1.6s ease-in-out infinite;
+  }
+
+  .bars i:nth-child(1) { height: 32%; }
+  .bars i:nth-child(2) { height: 54%; animation-delay: 0.1s; }
+  .bars i:nth-child(3) { height: 38%; animation-delay: 0.2s; }
+  .bars i:nth-child(4) { height: 68%; animation-delay: 0.3s; }
+  .bars i:nth-child(5) { height: 44%; animation-delay: 0.4s; }
+
+  @keyframes bar {
+    0%, 100% { filter: brightness(1); transform: translateY(0); }
+    50% { filter: brightness(1.15); transform: translateY(-4px); }
+  }
+
+  .terminal {
+    margin-top: 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono';
+    font-size: 12px;
+    line-height: 1.6;
+    color: rgba(226, 232, 240, 0.55);
+  }
+
+  @media (max-width: 980px) {
+    .gs-hero-inner {
+      grid-template-columns: 1fr;
+      padding-top: 112px;
+      gap: 32px;
+    }
+
+    .hero-mark-wrap {
+      left: 50%;
+      top: 2.5rem;
+      transform: translateX(-50%);
+    }
+
+    .gs-grid {
+      background-size: 56px 56px;
+    }
+  }
+</style>
