@@ -101,7 +101,10 @@ try {
 
 } catch (e) {
   const errorMessage = (e && e.message) ? e.message : String(e);
-  const safeMessage = errorMessage.replace(/[\x00-\x1F\x7F\u2028\u2029]+/g, ' ');
+  const safeMessage = errorMessage
+    .replace(/[\x00-\x1F\x7F\u2028\u2029]+/g, ' ') // remove control characters
+    .replace(/[\r\n]+/g, ' ')                      // ensure no newlines remain
+    .trim();
   console.error('Error during security check:', safeMessage);
 } finally {
   serverProcess.kill();
