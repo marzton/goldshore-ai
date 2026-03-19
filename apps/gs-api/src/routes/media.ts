@@ -34,13 +34,22 @@ const SVG_EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>
 const SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*(?:javascript:|data:text\/html)[\s\S]*?\1/gi;
 const SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*(?:javascript:|data:text\/html)[^\s>]*/gi;
 
-const sanitizeSvg = (input: string): string =>
-  input
-    .replace(SVG_DANGEROUS_TAGS_REGEX, '')
-    .replace(SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX, '')
-    .replace(SVG_EVENT_HANDLER_ATTR_REGEX, '')
-    .replace(SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX, '')
-    .replace(SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX, '');
+const sanitizeSvg = (input: string): string => {
+  let current = input;
+  let previous: string;
+
+  do {
+    previous = current;
+    current = current
+      .replace(SVG_DANGEROUS_TAGS_REGEX, '')
+      .replace(SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX, '')
+      .replace(SVG_EVENT_HANDLER_ATTR_REGEX, '')
+      .replace(SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX, '')
+      .replace(SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX, '');
+  } while (current !== previous);
+
+  return current;
+};
 
 const isUploadFileLike = (value: unknown): value is UploadFileLike => {
   if (!value || typeof value !== 'object') {
