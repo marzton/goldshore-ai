@@ -16,15 +16,12 @@ ENV = "production"
 # Sentinel: Audience tag for Cloudflare Access.
 # CRITICAL: This must be set to the specific Application Audience (AUD) tag
 # for the GoldShore API service to prevent token reuse from other apps.
-# Use 'wrangler secret put CLOUDFLARE_ACCESS_AUDIENCE --env prod' to set the actual value.
-CLOUDFLARE_ACCESS_AUDIENCE = ""
+CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b"
 
 # Sentinel: Team domain for Cloudflare Access (e.g., goldshore.cloudflareaccess.com).
 # Used to fetch JWKS for token verification.
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
-
-# Use 'wrangler secret put CONTROL_SYNC_TOKEN --env prod' to set the actual value.
-CONTROL_SYNC_TOKEN = ""
+CONTROL_SYNC_TOKEN = "__PROD_CONTROL_SYNC_TOKEN__"
 
 [[env.prod.kv_namespaces]]
 binding = "KV"
@@ -58,15 +55,12 @@ ENV = "production"
 # Sentinel: Audience tag for Cloudflare Access.
 # CRITICAL: This must be set to the specific Application Audience (AUD) tag
 # for the GoldShore API service to prevent token reuse from other apps.
-# Use 'wrangler secret put CLOUDFLARE_ACCESS_AUDIENCE --env production' to set the actual value.
-CLOUDFLARE_ACCESS_AUDIENCE = ""
+CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b"
 
 # Sentinel: Team domain for Cloudflare Access (e.g., goldshore.cloudflareaccess.com).
 # Used to fetch JWKS for token verification.
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
-
-# Use 'wrangler secret put CONTROL_SYNC_TOKEN --env production' to set the actual value.
-CONTROL_SYNC_TOKEN = ""
+CONTROL_SYNC_TOKEN = "__PROD_CONTROL_SYNC_TOKEN__"
 
 [[env.production.kv_namespaces]]
 binding = "KV"
@@ -86,4 +80,35 @@ database_name = "goldshore"
 database_id = "gs_db_001"
 
 [env.production.ai]
+binding = "AI"
+
+[env.preview]
+routes = [
+  { pattern = "api-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+
+[env.preview.vars]
+ENV = "preview"
+CLOUDFLARE_ACCESS_AUDIENCE = "SECRET_MANAGED"
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
+CONTROL_SYNC_TOKEN = "SECRET_MANAGED"
+
+[[env.preview.kv_namespaces]]
+binding = "KV"
+id = "gs_api_kv_preview"
+
+[[env.preview.kv_namespaces]]
+binding = "CONTROL_LOGS"
+id = "gs_control_logs_preview"
+
+[[env.preview.r2_buckets]]
+binding = "ASSETS"
+bucket_name = "gs-assets-preview"
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "goldshore_preview"
+database_id = "gs_db_preview"
+
+[env.preview.ai]
 binding = "AI"

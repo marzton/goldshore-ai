@@ -1,4 +1,4 @@
-# wrangler.toml for the goldshore-web Astro Pages app (for Pages Functions)
+# wrangler.toml for the gs-web Astro Pages app (for Pages Functions; formerly goldshore-web)
 
 name = "gs-web" # Base name for Pages project
 

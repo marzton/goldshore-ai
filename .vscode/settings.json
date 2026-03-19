@@ -1,3 +1,6 @@
 {
-    "chatgpt.openOnStartup": true
+    "chatgpt.openOnStartup": true,
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "main"
+    ]
 }

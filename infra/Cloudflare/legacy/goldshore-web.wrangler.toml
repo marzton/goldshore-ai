@@ -1,6 +1,6 @@
-# wrangler.toml for the goldshore-web Astro Pages app (for Pages Functions)
+# wrangler.toml for the legacy goldshore-web Astro Pages app (historical alias for gs-web)
 
-name = "goldshore-web" # Base name for Pages project
+name = "goldshore-web" # Historical Pages project alias; canonical name is gs-web
 
 # This file is primarily for configuring bindings for Cloudflare Pages Functions.
 # The actual deployment will be handled by the GitHub Action connecting to the Pages project.
