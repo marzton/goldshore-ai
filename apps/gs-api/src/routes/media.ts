@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { requirePermission } from '../auth';
 import { Env, Variables } from '../types';
+import sanitizeHtml from 'sanitize-html';
 
 type MediaRecord = {
   id: string;
@@ -47,7 +48,12 @@ const sanitizeSvg = (input: string): string => {
       .replace(SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX, '');
   } while (current !== previous);
 
-  return current;
+  // Apply a final pass with a well-tested sanitizer to ensure that
+  // any residual scriptable content (e.g. <script> tags or dangerous
+  // attributes) is removed and cannot reappear after regex replacements.
+  const fullySanitized = sanitizeHtml(current);
+
+  return fullySanitized;
 };
 
 const isUploadFileLike = (value: unknown): value is UploadFileLike => {
