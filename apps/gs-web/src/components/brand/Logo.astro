@@ -1,62 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 200">
+---
+const {
+  title = 'GoldShore logo',
+  class: className,
+  ariaHidden = false,
+} = Astro.props;
+---
 
-<defs>
-  <linearGradient id="metal" x1="0%" y1="0%" x2="100%" y2="100%">
-    <stop offset="0%" stop-color="#e6f3ff"/>
-    <stop offset="50%" stop-color="#4da3ff"/>
-    <stop offset="100%" stop-color="#0a4c8a"/>
-  </linearGradient>
-
-  <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="0%">
-    <stop offset="0%" stop-color="transparent"/>
-    <stop offset="50%" stop-color="#ffffff" stop-opacity="0.8"/>
-    <stop offset="100%" stop-color="transparent"/>
-    <animateTransform attributeName="gradientTransform"
-      type="translate"
-      from="-200 0" to="200 0"
-      dur="3.5s"
-      repeatCount="indefinite"/>
-  </linearGradient>
-
-  <filter id="softGlow">
-    <feGaussianBlur stdDeviation="1.8"/>
-  </filter>
-</defs>
-
-<rect width="160" height="200" fill="black"/>
-
-<g transform="translate(20,10) scale(1.2)">
-
-  <!-- Left Beam -->
-  <path d="M50 20 L20 120 L45 120 L70 50 Z"
-        fill="url(#metal)"
-        stroke="#052f54"
-        stroke-width="1"
-        filter="url(#softGlow)"/>
-
-  <!-- Right Beam -->
-  <path d="M50 20 L100 20 L120 120 L95 120 Z"
-        fill="url(#metal)"
-        stroke="#052f54"
-        stroke-width="1"
-        filter="url(#softGlow)"/>
-
-  <!-- Bottom Beam -->
-  <path d="M20 120 L120 120 L95 100 L45 100 Z"
-        fill="url(#metal)"
-        stroke="#052f54"
-        stroke-width="1"
-        filter="url(#softGlow)"/>
-
-  <!-- Inner Triangle (cut illusion edge) -->
-  <path d="M70 50 L45 100 L95 100 Z"
-        fill="black"/>
-
-  <!-- Twinkle Overlay -->
-  <path d="M50 20 L100 20 L120 120 L20 120 Z"
-        fill="url(#shine)"
-        opacity="0.3"/>
-
-</g>
-
+<svg
+  viewBox="0 0 128 128"
+  role={ariaHidden ? undefined : 'img'}
+  aria-hidden={ariaHidden ? 'true' : undefined}
+  aria-label={ariaHidden ? undefined : title}
+  class={className}
+  xmlns="http://www.w3.org/2000/svg"
+  fill="none"
+>
+  {!ariaHidden && <title>{title}</title>}
+  <g fill="currentColor">
+    <path d="M64 12 22 86h18.5L72 30.5H64Z" />
+    <path d="M64 12h8l33.8 58.4-9.3 16.2L64 30.5Z" opacity="0.94" />
+    <path d="M22 86h74.5L87.2 102H31.2z" opacity="0.88" />
+  </g>
+  <path
+    d="M64 12 22 86h18.5L72 30.5H64Zm8 0h-8l33.8 58.4-9.3 16.2L64 30.5Zm-50 74 9.2 16h56l9.3-16H22Z"
+    stroke="currentColor"
+    stroke-width="2.4"
+    stroke-linejoin="round"
+  />
 </svg>

@@ -1,116 +1,321 @@
 ---
-import '@goldshore/theme';
-import '../styles/brand.css';
-import '../styles/home.css';
-import SiteNav from '../components/SiteNav.astro';
-import GlobalModal from '../components/GlobalModal.astro';
-import themeRuntimeUrl from '../scripts/theme-runtime.ts?url';
+import Logo from '../components/brand/Logo.astro';
+import '../styles/global.css';
 
-interface Props {
-  title?: string;
-  description?: string;
-  structuredData?: Record<string, unknown> | Array<Record<string, unknown>>;
-}
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/team', label: 'Team' },
+  { href: '/contact', label: 'Contact' },
+  { href: '/apps/risk-radar', label: 'Risk Radar' },
+  { href: '/developer', label: 'Developer' },
+];
 
-const {
-  title = 'Gold Shore',
-  description = 'Institutional-grade automation and intelligence.',
-  structuredData,
-} = Astro.props;
-
-const siteUrl = 'https://goldshore.ai';
-const organizationId = `${siteUrl}#organization`;
-const sameAs: string[] = [];
-
-const organizationSchema: Record<string, unknown> = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  '@id': organizationId,
-  name: 'Gold Shore',
-  url: siteUrl,
-  logo: `${siteUrl}/logo/gs-penrose.svg`,
-  ...(sameAs.length > 0 ? { sameAs } : {}),
-};
-
-const pageSchemas = Array.isArray(structuredData)
-  ? structuredData
-  : structuredData
-    ? [structuredData]
-    : [];
+const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.url.pathname } = Astro.props;
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
     <title>{title}</title>
-    <link rel="icon" href="/logo/gs-penrose.svg" type="image/svg+xml" />
-    <link rel="icon" href="/logo/gs-penrose.png" type="image/png" />
-    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)}></script>
-    {pageSchemas.map((schema) => (
-      <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
-    ))}
-    <slot name="head" />
-    <script type="application/ld+json" set:html={JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Organization',
-      name: 'Gold Shore',
-      url: 'https://goldshore.ai',
-      logo: 'https://goldshore.ai/logo/gs-penrose.svg',
-      description: 'Institutional-grade automation and intelligence systems.',
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: 'https://goldshore.ai/developer/docs/search?q={search_term_string}',
-        'query-input': 'required name=search_term_string'
-      }
-    })} />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0b0f18" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';" />
+    <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
+    <link rel="shortcut icon" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
-  <body class="gs-theme-root">
-    <SiteNav />
+  <body>
+    <a href="#content" class="skip-link">Skip to content</a>
+    <div class="gs-page-shell">
+      <header class="header" data-menu-open="false">
+        <a href="/" class="gs-logo-link" aria-label="GoldShore home">
+          <Logo class="gs-logo" title="GoldShore" />
+        </a>
 
-    <slot name="hero" />
+        <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
-    <main id="main-content">
-      <slot />
-    </main>
+        <nav id="primary-navigation" class="menu-panel" aria-label="Primary navigation">
+          <div class="menu-panel__inner">
+            {navLinks.map((link) => (
+              <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </nav>
+      </header>
 
-    <footer class="gs-footer">
-      <div class="gs-container">
-        <img src="/logo/gs-penrose.svg" class="footer-logo" alt="GoldShore logo" />
-        <p>Gold Shore — Designed not to manage capital, but to steer it.</p>
-        <p>
-          <a href="/status">System Status</a> |
-          <a href="/legal/compliance">Legal &amp; Compliance</a> |
-          <a href="/legal/privacy">Privacy Policy</a> |
-          <a href="/legal/terms">Terms of Service</a>
-        </p>
-        <p class="gs-footer-utility">
-          <a href="https://admin.goldshore.ai" rel="nofollow">Admin Login</a>
-        </p>
-      </div>
-    </footer>
+      <main id="content" class="gs-page-content">
+        <slot />
+      </main>
 
-    <GlobalModal />
+      <footer class="gs-footer">
+        <div class="gs-footer__inner">
+          <div>
+            <Logo class="gs-logo gs-logo--footer" title="GoldShore" />
+            <p>Infrastructure for high-trust AI, risk tooling, and resilient operator systems.</p>
+          </div>
+          <div class="gs-footer__links">
+            <a href="/about">About</a>
+            <a href="/team">Team</a>
+            <a href="/contact">Contact</a>
+            <a href="/apps/risk-radar">Risk Radar</a>
+          </div>
+        </div>
+      </footer>
+    </div>
 
-    <script>
-      import { initGoldShoreUI } from '@goldshore/theme/runtime';
-      import { initParallax } from '../components/parallax';
+    <script is:inline>
+      const menuGlobal = window;
 
-      initGoldShoreUI();
-      initParallax();
+      const bindMenu = () => {
+        if (menuGlobal.__gsMenuBound) return;
+        menuGlobal.__gsMenuBound = true;
+
+        const setMenu = (isOpen) => {
+          const header = document.querySelector('.header');
+          const toggle = document.querySelector('.menu-button');
+          if (!(header instanceof HTMLElement) || !(toggle instanceof HTMLButtonElement)) return;
+          header.dataset.menuOpen = String(isOpen);
+          toggle.setAttribute('aria-expanded', String(isOpen));
+          document.body.classList.toggle('menu-open', isOpen);
+        };
+
+        const handleToggle = () => {
+          const header = document.querySelector('.header');
+          const next = header?.dataset.menuOpen !== 'true';
+          setMenu(next);
+        };
+
+        document.addEventListener('click', (event) => {
+          const target = event.target;
+          if (!(target instanceof Element)) return;
+
+          if (target.closest('.menu-button')) {
+            handleToggle();
+            return;
+          }
+
+          if (target.closest('.menu-panel a') || target.classList.contains('menu-panel')) {
+            setMenu(false);
+          }
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            setMenu(false);
+          }
+        });
+
+        document.addEventListener('astro:before-swap', () => {
+          setMenu(false);
+        });
+      };
+
+      bindMenu();
     </script>
-    <script type="module">
-      import { initStarField, initTilt, cleanupUI } from '/src/scripts/init-ui.ts';
 
-      function init() {
-        initStarField('hero-stars');
-        initTilt('[data-tilt]');
+    <style is:global>
+      .skip-link {
+        position: absolute;
+        left: 1rem;
+        top: -3rem;
+        z-index: 1200;
+        padding: 0.75rem 1rem;
+        background: var(--gs-surface-strong);
+        color: var(--gs-text);
+        border-radius: 999px;
+        border: 1px solid var(--gs-border);
+        text-decoration: none;
       }
 
-      document.addEventListener('astro:page-load', init);
-      document.addEventListener('astro:before-swap', cleanupUI);
-    </script>
-    <script type="module" src={themeRuntimeUrl}></script>
+      .skip-link:focus {
+        top: 1rem;
+      }
+
+      .gs-page-shell {
+        min-height: 100vh;
+      }
+
+      .gs-page-content {
+        min-height: calc(100vh - 220px);
+      }
+
+      .header {
+        position: sticky;
+        top: 0;
+        z-index: 1100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem clamp(1rem, 3vw, 2rem);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        background: rgba(8, 12, 22, 0.65);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .gs-logo-link {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+      }
+
+      .gs-logo {
+        width: clamp(20px, 3vw, 36px);
+        height: auto;
+        color: var(--gs-primary);
+      }
+
+      .gs-logo--footer {
+        width: 28px;
+        margin-bottom: 0.85rem;
+      }
+
+      .menu-button {
+        position: relative;
+        z-index: 1102;
+        width: 46px;
+        height: 46px;
+        display: inline-grid;
+        place-items: center;
+        gap: 4px;
+        border-radius: 999px;
+        border: 1px solid var(--gs-border);
+        background: rgba(90, 162, 255, 0.08);
+        cursor: pointer;
+      }
+
+      .menu-button span {
+        display: block;
+        width: 18px;
+        height: 1.5px;
+        border-radius: 999px;
+        background: var(--gs-text);
+        transition: transform 160ms ease, opacity 160ms ease;
+      }
+
+      .header[data-menu-open='true'] .menu-button span:nth-child(1) {
+        transform: translateY(5.5px) rotate(45deg);
+      }
+
+      .header[data-menu-open='true'] .menu-button span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .header[data-menu-open='true'] .menu-button span:nth-child(3) {
+        transform: translateY(-5.5px) rotate(-45deg);
+      }
+
+      .menu-panel {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        justify-items: end;
+        background: rgba(5, 8, 14, 0);
+        pointer-events: none;
+        transition: background 180ms ease;
+      }
+
+      .menu-panel__inner {
+        width: min(360px, 100vw);
+        height: 100%;
+        padding: 6rem 1.5rem 1.5rem;
+        display: grid;
+        align-content: start;
+        gap: 0.75rem;
+        transform: translateX(100%);
+        transition: transform 180ms ease;
+        background: rgba(7, 14, 28, 0.94);
+        border-left: 1px solid var(--gs-border);
+        box-shadow: -24px 0 80px rgba(0, 0, 0, 0.38);
+      }
+
+      .menu-panel a {
+        padding: 0.95rem 1rem;
+        border-radius: 14px;
+        color: var(--gs-text-dim);
+        text-decoration: none;
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .menu-panel a:hover,
+      .menu-panel a[aria-current='page'] {
+        color: var(--gs-text);
+        border-color: var(--gs-border);
+        background: rgba(90, 162, 255, 0.08);
+      }
+
+      .header[data-menu-open='true'] .menu-panel {
+        pointer-events: auto;
+        background: rgba(5, 8, 14, 0.42);
+      }
+
+      .header[data-menu-open='true'] .menu-panel__inner {
+        transform: translateX(0);
+      }
+
+      .gs-footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 2rem clamp(1rem, 3vw, 2rem) 3rem;
+      }
+
+      .gs-footer__inner {
+        width: min(100%, var(--gs-max-width));
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+        align-items: flex-start;
+      }
+
+      .gs-footer p {
+        max-width: 42ch;
+        color: var(--gs-text-dim);
+        line-height: 1.7;
+      }
+
+      .gs-footer__links {
+        display: grid;
+        gap: 0.65rem;
+      }
+
+      .gs-footer__links a {
+        color: var(--gs-text-dim);
+        text-decoration: none;
+      }
+
+      .gs-footer__links a:hover {
+        color: var(--gs-text);
+      }
+
+      .gs-shell-section {
+        width: min(100% - 2rem, var(--gs-max-width));
+        margin: 0 auto;
+      }
+
+      .gs-eyebrow {
+        margin: 0;
+        color: var(--gs-primary);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+      }
+
+      @media (max-width: 720px) {
+        .gs-footer__inner {
+          flex-direction: column;
+        }
+      }
+    </style>
   </body>
 </html>

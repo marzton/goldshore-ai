@@ -1,7 +1,15 @@
 import type { APIRoute } from 'astro';
-import { parseJson } from '@goldshore/utils';
 
 export const prerender = false;
+
+const parseJson = <T>(value: string | null, fallback: T): T => {
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return fallback;
+  }
+};
 
 const normalizeRow = (row: Record<string, string>) => ({
   id: row.id,
@@ -120,5 +128,3 @@ export const PUT: APIRoute = async ({ request, locals, params }) => {
 };
 
 export const PATCH = PUT;
-
-export const getStaticPaths = async () => [];

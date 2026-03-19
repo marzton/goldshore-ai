@@ -1,21 +1,83 @@
 ---
-// This is a pure redirect file to handle legacy paths.
-const target = '/risk-radar';
+import MarketingLayout from '../../layouts/MarketingLayout.astro';
+import RiskRadarVisual from '../../components/RiskRadar.astro';
+
+export const prerender = true;
+
+const modules = [
+  'Rotating sweep for continuous signal acquisition',
+  'Pulsing blips with slight drift for repeatable screen capture',
+  'High-contrast layout tuned for demos, clips, and investor visuals',
+];
 ---
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="refresh" content={`0;url=${target}`} />
-    <link rel="canonical" href={target} />
-    <title>Redirecting to Risk Radar…</title>
-    <script is:inline define:vars={{ target }}>
-      window.location.replace(target);
-    </script>
-  </head>
-  <body class="bg-gray-50 flex items-center justify-center min-h-screen font-sans">
-    <div class="text-center">
-      <p class="text-gray-500 mb-2">The Risk Radar has been promoted to a canonical route.</p>
-      <p>Redirecting to <a href={target} class="text-blue-600 font-bold underline">{target}</a>...</p>
+
+<MarketingLayout title="Risk Radar | GoldShore" description="Social-ready risk visualization system from GoldShore.">
+  <section class="risk-page gs-shell-section">
+    <div class="risk-page__intro">
+      <p class="gs-eyebrow">Risk Radar</p>
+      <h1>Operational risk visualization for social clips and live systems.</h1>
+      <p>
+        Designed as a reusable signal surface: loopable motion, readable contrast, and an institutional interface tone that holds up on the homepage or in a recorded demo.
+      </p>
     </div>
-  </body>
-</html>
+
+    <RiskRadarVisual title="GoldShore Risk Radar" subtitle="Reusable system component for homepage embeds, investor visuals, and operator dashboards." />
+
+    <div class="risk-page__modules">
+      {modules.map((module) => (
+        <article>
+          <h2>{module}</h2>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <style>
+    .risk-page {
+      padding: 4.5rem 0 5rem;
+      display: grid;
+      gap: 2rem;
+    }
+
+    .risk-page__intro h1 {
+      max-width: 12ch;
+      margin: 0.75rem 0 1rem;
+      font-size: clamp(2.5rem, 6vw, 4.6rem);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+    }
+
+    .risk-page__intro p:last-child {
+      max-width: 64ch;
+      color: var(--gs-text-dim);
+      line-height: 1.75;
+    }
+
+    .risk-page__modules {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .risk-page__modules article {
+      padding: 1.25rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(10, 18, 36, 0.72);
+    }
+
+    .risk-page__modules h2 {
+      margin: 0;
+      font-size: 1.05rem;
+      line-height: 1.55;
+      color: var(--gs-text-dim);
+      font-weight: 500;
+    }
+
+    @media (max-width: 900px) {
+      .risk-page__modules {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</MarketingLayout>

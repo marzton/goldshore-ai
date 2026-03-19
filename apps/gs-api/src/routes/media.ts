@@ -28,102 +28,27 @@ const ALLOWED_MIME_TYPES = new Map([
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
-const DANGEROUS_SVG_PATTERNS = [
-  /<\s*script/gi,
-  /\son[a-z0-9_-]+\s*=/gi,
-  /javascript\s*:/gi,
-  /data\s*:\s*text\/html/gi,
-];
-
-const stripDangerousSvgContent = (input: string): string =>
-  DANGEROUS_SVG_PATTERNS.reduce(
-    (value, pattern) => value.replace(pattern, ''),
-    input,
-  );
+const SVG_DANGEROUS_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)[\s\S]*?>[\s\S]*?<\/\1>/gi;
+const SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)\b[^>]*\/?>/gi;
+const SVG_EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*(?:javascript:|data:text\/html)[\s\S]*?\1/gi;
+const SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*(?:javascript:|data:text\/html)[^\s>]*/gi;
 
 const sanitizeSvg = (input: string): string => {
-  return sanitizeHtml(stripDangerousSvgContent(input), {
-    // Allow common SVG container and shape elements; adjust if needed.
-    allowedTags: [
-      'svg',
-      'g',
-      'defs',
-      'clipPath',
-      'mask',
-      'pattern',
-      'linearGradient',
-      'radialGradient',
-      'stop',
-      'path',
-      'rect',
-      'circle',
-      'ellipse',
-      'line',
-      'polyline',
-      'polygon',
-      'text',
-      'tspan',
-      'textPath',
-      'image',
-      'use',
-    ],
-    // Explicitly control which attributes are allowed on which tags.
-    allowedAttributes: {
-      svg: ['width', 'height', 'viewBox', 'xmlns', 'fill', 'stroke'],
-      g: ['transform', 'fill', 'stroke'],
-      path: ['d', 'fill', 'stroke', 'transform'],
-      rect: [
-        'x',
-        'y',
-        'width',
-        'height',
-        'rx',
-        'ry',
-        'fill',
-        'stroke',
-        'transform',
-      ],
-      circle: ['cx', 'cy', 'r', 'fill', 'stroke', 'transform'],
-      ellipse: ['cx', 'cy', 'rx', 'ry', 'fill', 'stroke', 'transform'],
-      line: ['x1', 'y1', 'x2', 'y2', 'stroke', 'transform'],
-      polyline: ['points', 'fill', 'stroke', 'transform'],
-      polygon: ['points', 'fill', 'stroke', 'transform'],
-      text: [
-        'x',
-        'y',
-        'dx',
-        'dy',
-        'textLength',
-        'lengthAdjust',
-        'fill',
-        'stroke',
-        'transform',
-      ],
-      tspan: [
-        'x',
-        'y',
-        'dx',
-        'dy',
-        'textLength',
-        'lengthAdjust',
-        'fill',
-        'stroke',
-        'transform',
-      ],
-      textPath: ['href', 'startOffset', 'method', 'spacing'],
-      image: ['href', 'x', 'y', 'width', 'height', 'preserveAspectRatio'],
-      use: ['href', 'x', 'y', 'width', 'height', 'transform'],
-    },
-    // Disallow javascript: and data:text/html schemes explicitly.
-    allowedSchemes: ['http', 'https'],
-    allowedSchemesByTag: {
-      image: ['http', 'https'],
-      use: ['http', 'https'],
-    },
-    allowedSchemesAppliedToAttributes: ['href', 'xlink:href', 'src'],
-    // By not listing any "on*" attributes in allowedAttributes, all event
-    // handler attributes are stripped by sanitize-html.
-  });
+  let current = input;
+  let previous: string;
+
+  do {
+    previous = current;
+    current = current
+      .replace(SVG_DANGEROUS_TAGS_REGEX, '')
+      .replace(SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX, '')
+      .replace(SVG_EVENT_HANDLER_ATTR_REGEX, '')
+      .replace(SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX, '')
+      .replace(SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX, '');
+  } while (current !== previous);
+
+  return current;
 };
 
 const isUploadFileLike = (value: unknown): value is UploadFileLike => {
@@ -201,10 +126,7 @@ media.get('/:id', requirePermission('media:read'), async (c) => {
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
 
   // Sentinel: Enforce strict CSP to mitigate SVG XSS
-  headers.set(
-    'Content-Security-Policy',
-    "default-src 'none'; script-src 'none'; object-src 'none'; sandbox",
-  );
+  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; object-src 'none'; sandbox");
 
   return new Response(object.body, { headers });
 });
@@ -213,10 +135,8 @@ media.post('/upload', requirePermission('media:write'), async (c) => {
   const formData = await c.req.formData();
   const file = formData.get('file');
 
-  if (!isUploadFileLike(file))
-    return c.json({ error: 'Missing file upload' }, 400);
-  if (file.size > MAX_FILE_SIZE)
-    return c.json({ error: 'File too large' }, 413);
+  if (!isUploadFileLike(file)) return c.json({ error: 'Missing file upload' }, 400);
+  if (file.size > MAX_FILE_SIZE) return c.json({ error: 'File too large' }, 413);
 
   const filename = file.name || 'upload';
   const extension = filename.split('.').pop()?.toLowerCase() ?? '';

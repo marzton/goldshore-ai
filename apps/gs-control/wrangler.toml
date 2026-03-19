@@ -10,8 +10,8 @@ routes = [
 
 [vars]
 ENV = "production"
-# Use 'wrangler secret put CONTROL_SYNC_TOKEN' to set the actual value.
-CONTROL_SYNC_TOKEN = ""
+# CONTROL_SYNC_TOKEN is managed via Cloudflare Secret.
+CONTROL_SYNC_TOKEN = "SECRET_MANAGED"
 SYNC_TARGET_SUBDOMAIN = "api.goldshore.ai"
 
 [[kv_namespaces]]
@@ -33,3 +33,22 @@ service = "gs-api"
 [[services]]
 binding = "GATEWAY"
 service = "gs-gateway"
+
+[env.preview]
+routes = [
+  { pattern = "ops-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+
+[env.preview.vars]
+ENV = "preview"
+CONTROL_SYNC_TOKEN = "SECRET_MANAGED"
+SYNC_TARGET_SUBDOMAIN = "api-preview.goldshore.ai"
+
+[[env.preview.kv_namespaces]]
+binding = "CONTROL_LOGS"
+id = "gs_control_logs_preview"
+
+[[env.preview.services]]
+binding = "API"
+service = "gs-api"
+environment = "preview"

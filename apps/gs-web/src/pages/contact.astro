@@ -1,204 +1,83 @@
 ---
-import WebLayout from '../layouts/WebLayout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactForm from '../components/ContactForm.astro';
 
 export const prerender = true;
 ---
 
-<WebLayout title="Contact | Gold Shore" description="Start a guided engagement intake.">
-  <section class="gs-section">
-    <div class="gs-container">
-      <h1>Contact</h1>
+<BaseLayout title="Contact | GoldShore" description="Contact the GoldShore team.">
+  <section class="page-shell gs-shell-section contact-page">
+    <div class="contact-copy">
+      <p class="gs-eyebrow">Contact</p>
+      <h1>Open a direct line with GoldShore.</h1>
       <p>
-        Start with the guided intake to receive a tailored service recommendation
-        and week-one engagement outline.
+        Share the system, workflow, or risk surface you need to operationalize. We respond with scope, cadence,
+        and next actions.
       </p>
-
-      <form
-        class="contact-form"
-        id="contact-form"
-        action="/api/contact"
-        method="post"
-        novalidate
-      >
-        <input type="hidden" name="redirectTo" value="/thank-you" />
-        <label for="name">Name</label>
-        <p id="name-help" class="field-help">
-          Enter your full name so we know how to address you.
-        </p>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          placeholder="e.g., Alex Morgan"
-          autocomplete="name"
-          required
-          aria-required="true"
-          aria-describedby="name-help"
-        />
-
-        <label for="email">Email</label>
-        <p id="email-help" class="field-help">
-          Use the best email for project follow-up.
-        </p>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="you@company.com"
-          autocomplete="email"
-          required
-          aria-required="true"
-          aria-describedby="email-help"
-        />
-
-        <label for="brief">Project Brief</label>
-        <p id="brief-help" class="field-help">
-          Share a short summary of your goals, timeline, and budget.
-        </p>
-        <textarea
-          id="brief"
-          name="message"
-          rows="5"
-          placeholder="We need support with cloud architecture and security hardening over the next 8 weeks."
-          autocomplete="off"
-          required
-          aria-required="true"
-          aria-describedby="brief-help"></textarea>
-
-        <div
-          id="form-status"
-          class="form-status"
-          aria-live="polite"
-          role="status"
-        >
+      <div class="contact-notes">
+        <div>
+          <span>Focus</span>
+          <strong>Decision support, workflow orchestration, applied AI</strong>
         </div>
-
-        <button type="submit" class="gs-button" id="submit-button">
-          <span id="submit-text">Send</span>
-        </button>
-      </form>
-      <div class="grid gap-4 md:grid-cols-2" style="margin: 1rem 0;">
-        <article class="gs-card">
-          <h2>Guided intake</h2>
-          <p>Best for active projects that need architecture, security, or operational support.</p>
-          <a class="gs-button gs-button-solid" href="/intake">Launch intake wizard</a>
-        </article>
-
-        <article class="gs-card">
-          <h2>General inquiry</h2>
-          <p>For media, partnerships, or lightweight requests.</p>
-          <a class="gs-button gs-button-outline" href="mailto:hello@goldshore.ai">Email hello@goldshore.ai</a>
-        </article>
+        <div>
+          <span>Working style</span>
+          <strong>Clear scopes, operator checkpoints, measurable delivery</strong>
+        </div>
       </div>
     </div>
+
+    <ContactForm heading="Send your brief" />
   </section>
-</WebLayout>
 
-<script>
-  const form = document.querySelector('#contact-form');
-  const submitButton = document.querySelector('#submit-button');
-  const submitText = document.querySelector('#submit-text');
-  const formStatus = document.querySelector('#form-status');
-
-  const setStatus = (message, type) => {
-    if (!formStatus) return;
-    formStatus.textContent = message;
-    formStatus.classList.remove('success', 'error', 'progress');
-
-    if (type) {
-      formStatus.classList.add(type);
-    }
-  };
-
-  if (!(form instanceof HTMLFormElement)) {
-    throw new Error('Contact form not found.');
-  }
-
-  if (!(submitButton instanceof HTMLButtonElement)) {
-    throw new Error('Contact submit button not found.');
-  }
-
-  if (!(submitText instanceof HTMLElement)) {
-    throw new Error('Contact submit text element not found.');
-  }
-
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      setStatus(
-        'Please complete all required fields before submitting.',
-        'error',
-      );
-      return;
+  <style>
+    .contact-page {
+      padding: 4.5rem 0 5rem;
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 1.5rem;
+      align-items: start;
     }
 
-    submitButton.disabled = true;
-    submitButton.setAttribute('aria-busy', 'true');
-    submitText.textContent = 'Sending…';
-    setStatus('Sending your message…', 'progress');
+    .contact-copy h1 {
+      margin: 0.75rem 0 1rem;
+      font-size: clamp(2.5rem, 6vw, 4.6rem);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+      max-width: 10ch;
+    }
 
-    try {
-      const response = await fetch(form.action, {
-        method: form.method,
-        body: new FormData(form),
-      });
+    .contact-copy > p {
+      max-width: 56ch;
+      color: var(--gs-text-dim);
+      line-height: 1.75;
+    }
 
-      if (!response.ok) {
-        throw new Error(`Request failed: ${response.status}`);
+    .contact-notes {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .contact-notes div {
+      padding: 1.2rem;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(10, 18, 36, 0.7);
+    }
+
+    .contact-notes span {
+      display: block;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gs-text-dim);
+      margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 920px) {
+      .contact-page {
+        grid-template-columns: 1fr;
       }
-
-      form.reset();
-      setStatus('Thanks! Your message has been sent successfully.', 'success');
-    } catch {
-      setStatus(
-        'Something went wrong while sending your message. Please try again.',
-        'error',
-      );
-    } finally {
-      submitButton.disabled = false;
-      submitButton.removeAttribute('aria-busy');
-      submitText.textContent = 'Send';
     }
-  });
-</script>
-
-<style>
-  .field-help {
-    margin: 0.25rem 0 0.5rem;
-    color: #666;
-    font-size: 0.95rem;
-  }
-
-  .form-status {
-    margin: 0.75rem 0;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid transparent;
-    min-height: 1.25rem;
-  }
-
-  .form-status.progress {
-    background: #f5f7ff;
-    border-color: #c8d1ff;
-    color: #25348a;
-  }
-
-  .form-status.success {
-    background: #effaf2;
-    border-color: #b9e6c3;
-    color: #0a5f25;
-  }
-
-  .form-status.error {
-    background: #fff3f3;
-    border-color: #ffc9c9;
-    color: #8f1717;
-  }
-
-  #submit-button:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-  }
-</style>
+  </style>
+</BaseLayout>

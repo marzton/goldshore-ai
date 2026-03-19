@@ -20,7 +20,6 @@ if (slug) {
     const response = await fetch(`${API_BASE}/pages/slug/${encodeURIComponent(slug)}`, {
       headers: { Accept: 'application/json' }
     });
-
     if (response.ok) {
       page = await response.json();
     } else {

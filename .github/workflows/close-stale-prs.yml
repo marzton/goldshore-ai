@@ -1,0 +1,34 @@
+name: Close Stale Conflict PRs
+
+on:
+  # Allows manual triggering from the Actions tab
+  workflow_dispatch:
+  # Optional: Run automatically every Sunday at midnight
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  cleanup-prs:
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run PR Cleanup Script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Ensure the script is executable
+          chmod +x ./close-stale-conflict-prs-audit.sh
+          ./close-stale-conflict-prs-audit.sh
+
+      - name: Upload Audit Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-closure-audit-logs
+          path: pr-close-audit-goldshore-goldshore-ai-*.json
+          retention-days: 30

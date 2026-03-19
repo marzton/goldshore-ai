@@ -1,575 +1,469 @@
 ---
+import RiskRadar from '../components/RiskRadar.astro';
+import Logo from '../components/brand/Logo.astro';
 import WebLayout from '../layouts/WebLayout.astro';
-import HeroBase from '../components/hero/HeroBase.astro';
-import {
-  DEFAULT_HERO_VARIANT,
-  normalizeHeroVariant,
-} from '../components/hero/hero.config';
-
-const env = Astro.locals.runtime?.env as
-  | { HERO_CONFIG_KV?: { get(key: string): Promise<string | null> } }
-  | undefined;
-const heroVariant = normalizeHeroVariant(
-  await env?.HERO_CONFIG_KV?.get('hero_variant'),
-);
 
 export const prerender = true;
+
+const signals = [
+  { label: 'System uptime', value: '99.98%' },
+  { label: 'Operator latency', value: '< 45ms' },
+  { label: 'Decision loops', value: 'Human + AI' },
+  { label: 'Review posture', value: 'High trust' },
+];
+
+const capabilities = [
+  {
+    title: 'Decision systems',
+    body: 'Operator-grade AI workflows for scoring, routing, and intervention with traceable outcomes.',
+  },
+  {
+    title: 'Risk tooling',
+    body: 'Surveillance surfaces, monitoring loops, and alerting that keep uncertainty visible and actionable.',
+  },
+  {
+    title: 'Resilient infrastructure',
+    body: 'Applied platform engineering for control, observability, and dependable automation across teams.',
+  },
+];
+
+const proofPoints = [
+  {
+    title: 'Architecture',
+    body: 'Structured around auditable services, operator checkpoints, and system states that explain themselves.',
+  },
+  {
+    title: 'Proof',
+    body: 'Every workflow is designed to be demonstrable in real use: logs, thresholds, review modes, and fallback paths.',
+  },
+];
 ---
 
-<WebLayout
-  title="Gold Shore — Institutional Infrastructure & Operational Systems"
-  description="Gold Shore builds resilient infrastructure, automation, and operational platforms designed for real-time systems, reliability, and controlled performance."
->
-  <HeroBase variant={heroVariant ?? DEFAULT_HERO_VARIANT} />
+<WebLayout title="GoldShore | Infrastructure for High-Trust AI" description="GoldShore builds resilient decision systems, risk tooling, and operator infrastructure.">
+  <main class="home-page">
+    <section class="hero">
+      <canvas id="wave-bg" aria-hidden="true"></canvas>
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-mark">
+        <Logo class="gs-logo-reactive" ariaHidden={true} />
+      </div>
 
-  <section class="gs-section dark-narrative" id="philosophy">
-    <div class="gs-container">
-      <div class="narrative-grid">
-        <div class="narrative-content">
-          <h2 class="serif-display">Built for Resiliency</h2>
-          <p class="cinematic-lead">
-            Shaping waves with composable systems and disciplined guardrails.
-          </p>
-          <div class="narrative-body">
-            <p>
-              In a world of increasing complexity, clarity is the ultimate
-              competitive advantage. Gold Shore combines high-fidelity telemetry,
-              operator workflows, and institutional governance to preserve clarity
-              under pressure.
-            </p>
+      <div class="hero-shell gs-shell-section">
+        <div class="hero-content">
+          <span class="eyebrow">System operational</span>
+          <h1>Infrastructure for High-Trust AI</h1>
+          <p>GoldShore builds resilient decision systems, risk tooling, and operator infrastructure.</p>
+          <div class="hero-actions">
+            <a href="/contact" class="hero-button hero-button--primary">Open a workstream</a>
+            <a href="/about" class="hero-button">View operating model</a>
           </div>
         </div>
-        <div class="narrative-visual">
-          <div class="visual-panel">
-            <div class="visual-grid"></div>
-            <div class="visual-orb"></div>
+
+        <aside class="hero-panel">
+          <div>
+            <p class="gs-eyebrow">Control surface</p>
+            <h2>Signal over spectacle.</h2>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="gs-section" id="offerings">
-    <div class="gs-container">
-      <div class="gs-label" style="margin-bottom: 0.75rem;">
-        Core Offerings
-      </div>
-      <div class="gs-grid-3">
-        <article
-          class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
-          data-gs-reveal
-          data-gs-tilt
-        >
-          <div class="gs-label">Vibe Coding</div>
-          <div class="gs-stat">Agile</div>
-          <div class="gs-meta">Rapid experimentation paths that still pass institutional control checks.</div>
-        </article>
-        <article
-          class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
-          data-gs-reveal
-          data-gs-tilt
-        >
-          <div class="gs-label">Cinematic Ops</div>
-          <div class="gs-stat">Context</div>
-          <div class="gs-meta">Operator interfaces with clear escalation context and human override points.</div>
-        </article>
-        <article
-          class="gs-panel gs-hoverlift gs-edge-light gs-edge-scan gs-scroll-reveal gs-vt-reveal"
-          data-gs-reveal
-          data-gs-tilt
-        >
-          <div class="gs-label">Applied Intelligence</div>
-          <div class="gs-stat">Signal</div>
-          <div class="gs-meta">Signal fusion that turns data density into execution-ready recommendations.</div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="gs-section bordered-top">
-    <div class="gs-container">
-      <div class="content-row">
-        <div class="content-text">
-          <span class="section-tag">Deployment Intelligence</span>
-          <h2>Orchestrate with absolute precision.</h2>
-          <p>
-            GoldShore's deployment engine provides granular control over global
-            infrastructure. Manage multi-region rollouts, automated rollbacks, and
-            real-time health monitoring from a single, unified interface.
-          </p>
-          <ul class="feature-list">
-            <li>Immutable infrastructure as code</li>
-            <li>Canary and Blue/Green strategies</li>
-            <li>Automated vulnerability scanning</li>
+          <ul>
+            <li>Operational UX with clear status, escalation, and review states.</li>
+            <li>Decision-support tooling built for real environments, not demo loops.</li>
+            <li>Motion that communicates energy, drift, and readiness without noise.</li>
           </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="signal-strip gs-shell-section" aria-label="Signal strip">
+      {signals.map((signal) => (
+        <div class="signal-tile">
+          <span>{signal.label}</span>
+          <strong>{signal.value}</strong>
         </div>
-        <div class="content-preview">
-          <div class="glass-panel">
-            <div class="panel-header">
-              <span class="panel-dot"></span>
-              <span class="panel-title">GS_OPS_SURFACE</span>
-            </div>
-            <div class="panel-content">
-              <div class="pulse-line"></div>
-              <div class="pulse-line delay-1"></div>
-              <div class="pulse-line delay-2"></div>
-            </div>
+      ))}
+    </section>
+
+    <section class="section-block gs-shell-section">
+      <div class="section-copy">
+        <p class="gs-eyebrow">Capabilities</p>
+        <h2>Institutional surfaces for operators, analysts, and systems teams.</h2>
+      </div>
+      <div class="capability-grid">
+        {capabilities.map((capability) => (
+          <article class="capability-card">
+            <h3>{capability.title}</h3>
+            <p>{capability.body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section-block gs-shell-section">
+      <div class="section-copy">
+        <p class="gs-eyebrow">Risk Radar</p>
+        <h2>High-contrast motion system built for screen capture and live demonstration.</h2>
+      </div>
+      <RiskRadar />
+    </section>
+
+    <section class="section-block gs-shell-section architecture-section">
+      <div class="section-copy">
+        <p class="gs-eyebrow">Architecture / Proof</p>
+        <h2>Systems that explain themselves under pressure.</h2>
+      </div>
+      <div class="proof-grid">
+        {proofPoints.map((point) => (
+          <article class="proof-card">
+            <h3>{point.title}</h3>
+            <p>{point.body}</p>
+          </article>
+        ))}
+        <article class="proof-card proof-card--metrics">
+          <div>
+            <span>Review posture</span>
+            <strong>Operator in loop</strong>
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="gs-section">
-    <div class="gs-container">
-      <div class="content-row reverse">
-        <div class="content-text">
-          <span class="section-tag">Risk Radar</span>
-          <h2>Identify threats before they emerge.</h2>
-          <p>
-            Our Risk Radar leverages applied intelligence to scan billions of
-            signals across your network, identifying anomalies and potential
-            security breaches in milliseconds.
-          </p>
-          <div class="radar-stats">
-            <div class="radar-stat">
-              <strong>12ms</strong>
-              <span>Mean Response Time</span>
-            </div>
-            <div class="radar-stat">
-              <strong>100%</strong>
-              <span>Threat Coverage</span>
-            </div>
+          <div>
+            <span>Observability</span>
+            <strong>Logs + thresholds</strong>
           </div>
-        </div>
-      </div>
-      <div class="content-preview">
-        <div class="grid-field small-grid"></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="gs-section metrics-surface" id="performance">
-    <div class="gs-container">
-      <div class="section-header">
-        <span class="eyebrow">Operational Metrics</span>
-        <h2 class="serif-display">Performance at a glance</h2>
-      </div>
-
-      <div class="gs-grid-3">
-        <article class="metric-card is-loading" data-metric-card>
-          <div class="metric-label">System Availability</div>
-          <div class="metric-value">99.995%</div>
-          <div class="metric-trend">Institutional Standard · Last 30 days</div>
-        </article>
-
-        <article class="metric-card is-loading" data-metric-card>
-          <div class="metric-label">Deployment Frequency</div>
-          <div class="metric-value">48/day</div>
-          <div class="metric-trend">
-            <a href="/developer-hub"
-              >Continuous Integration · verified in Developer Hub</a>
+          <div>
+            <span>Deployment tone</span>
+            <strong>Measured, auditable</strong>
           </div>
         </article>
+      </div>
+    </section>
 
-        <article class="metric-card is-loading" data-metric-card>
-          <div class="metric-label">Signal Throughput</div>
-          <div class="metric-value">4.8B</div>
-          <div class="metric-trend">Signals processed data points / day</div>
+    <section class="section-block gs-shell-section compact-team">
+      <div class="section-copy">
+        <p class="gs-eyebrow">Team</p>
+        <h2>Built by operators focused on resilient systems and applied intelligence.</h2>
+      </div>
+      <div class="team-row">
+        <article class="team-card team-card--founder">
+          <h3>Robert M.</h3>
+          <p>Leads product direction, systems strategy, and applied intelligence.</p>
+        </article>
+        <article class="team-card">
+          <h3>Systems</h3>
+          <p>Infrastructure, execution, observability.</p>
+        </article>
+        <article class="team-card">
+          <h3>Risk</h3>
+          <p>Monitoring, analytics, decision systems.</p>
         </article>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="gs-section footer-cta" id="contact">
-    <div class="gs-container">
-      <div class="cta-panel">
-        <h2 class="serif-display">Advance your operational baseline.</h2>
-        <div class="cta-actions">
-          <a href="/experience" class="btn primary btn-large"
-            >Request Briefing</a
-          >
-        </div>
+    <section class="section-block gs-shell-section contact-cta">
+      <div>
+        <p class="gs-eyebrow">Contact</p>
+        <h2>Ready to operationalize AI with trust, control, and signal clarity?</h2>
       </div>
-    </div>
-  </section>
+      <a href="/contact" class="hero-button hero-button--primary">Start a conversation</a>
+    </section>
+  </main>
 
-<script>
-  const revealMetrics = () => {
-    window.setTimeout(() => {
-      document.querySelectorAll('[data-metric-card]').forEach((card) => {
-        card.classList.remove('is-loading');
-      });
-    }, 550);
-  };
+  <script>
+    import { initWave } from '../scripts/init-wave';
+    import { initLogo } from '../scripts/init-logo-reactive';
 
-  document.addEventListener('astro:page-load', revealMetrics);
-</script>
+    let homeCleanup;
 
-<style>
-  .gs-section {
-    padding: 8rem 0;
-    position: relative;
-    background: #020408;
-  }
+    const cleanup = () => {
+      homeCleanup?.();
+      homeCleanup = undefined;
+    };
 
-  .gs-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-  }
+    const boot = () => {
+      cleanup();
+      const canvas = document.getElementById('wave-bg');
+      const logo = document.querySelector('.gs-logo-reactive');
+      const isReactiveLogo = logo instanceof HTMLElement || logo instanceof SVGElement;
+      if (!(canvas instanceof HTMLCanvasElement) || !isReactiveLogo) return;
 
-  .serif-display {
-    font-family: 'Ibarra Real Nova', serif;
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 400;
-    margin-bottom: 1.5rem;
-    color: #f1f5f9;
-  }
+      const wave = initWave(canvas);
+      const destroyLogo = initLogo(logo, wave);
 
-  .high-contrast-heading {
-    color: #ffffff;
-    font-weight: 600;
-  }
+      homeCleanup = () => {
+        destroyLogo?.();
+        wave.destroy();
+      };
+    };
 
-  .cinematic-lead {
-    font-size: 1.5rem;
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.4;
-    margin-bottom: 2rem;
-  }
+    const homeGlobal = window as typeof window & {
+      __gsHomeHeroBound?: boolean;
+    };
 
-  .narrative-body {
-    color: rgba(255, 255, 255, 0.5);
-    line-height: 1.6;
-    max-width: 50ch;
-  }
-
-  .narrative-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-  }
-
-  .visual-panel {
-    aspect-ratio: 1;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 24px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .visual-grid {
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(
-      circle at 1px 1px,
-      rgba(255, 255, 255, 0.05) 1px,
-      transparent 0
-    );
-    background-size: 20px 20px;
-  }
-
-  .visual-orb {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60%;
-    height: 60%;
-    background: radial-gradient(
-      circle at center,
-      rgba(59, 130, 246, 0.1),
-      transparent 70%
-    );
-    filter: blur(40px);
-  }
-
-  .bordered-top {
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    padding-top: 6rem;
-  }
-
-  .content-row {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 4rem;
-    align-items: center;
-    margin-bottom: 6rem;
-  }
-
-  .content-row.reverse {
-    grid-template-columns: 1fr 1.2fr;
-  }
-
-  .content-row.reverse .content-text {
-    order: 2;
-  }
-
-  .section-tag {
-    color: var(--gs-accent, #3b82f6);
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    display: block;
-    margin-bottom: 1rem;
-  }
-
-  .content-text h2 {
-    font-size: 2.8rem;
-    margin-bottom: 1.5rem;
-    line-height: 1.1;
-    font-family: 'Ibarra Real Nova', serif;
-  }
-
-  .feature-list {
-    list-style: none;
-    padding: 0;
-    margin-top: 2rem;
-  }
-
-  .feature-list li {
-    padding-left: 1.5rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .feature-list li::before {
-    content: '→';
-    position: absolute;
-    left: 0;
-    color: var(--gs-accent, #3b82f6);
-  }
-
-  .radar-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-top: 2.5rem;
-  }
-
-  .radar-stat strong {
-    display: block;
-    font-size: 1.5rem;
-    color: #f1f5f9;
-  }
-
-  .radar-stat span {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.4);
-  }
-
-  .glass-panel {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    overflow: hidden;
-    height: 300px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .panel-header {
-    background: rgba(255, 255, 255, 0.03);
-    padding: 0.75rem 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  .panel-dot {
-    width: 8px;
-    height: 8px;
-    background: #444;
-    border-radius: 50%;
-  }
-
-  .panel-title {
-    font-size: 0.7rem;
-    font-family: monospace;
-    color: rgba(255, 255, 255, 0.4);
-  }
-
-  .panel-content {
-    flex: 1;
-    position: relative;
-    padding: 2rem;
-  }
-
-  .pulse-line {
-    height: 2px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--gs-accent, #3b82f6),
-      transparent
-    );
-    margin-bottom: 2rem;
-    opacity: 0.3;
-    animation: slide 3s infinite linear;
-  }
-
-  @keyframes metric-loading {
-    from {
-      transform: translateX(-100%);
+    if (!homeGlobal.__gsHomeHeroBound) {
+      homeGlobal.__gsHomeHeroBound = true;
+      document.addEventListener('astro:before-swap', cleanup);
+      document.addEventListener('astro:page-load', boot);
     }
-    to {
-      transform: translateX(100%);
+
+    boot();
+  </script>
+
+  <style>
+    .home-page {
+      padding-bottom: 4rem;
     }
-  }
 
-  @keyframes slide {
-    from {
-      transform: translateX(-100%);
+    .hero {
+      position: relative;
+      min-height: min(88vh, 860px);
+      display: grid;
+      align-items: end;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
-    to {
-      transform: translateX(100%);
+
+    #wave-bg,
+    .hero-grid {
+      position: absolute;
+      inset: 0;
     }
-  }
 
-  .delay-1 {
-    animation-delay: 1s;
-  }
-  .delay-2 {
-    animation-delay: 2s;
-  }
-
-  @media (max-width: 900px) {
-    .content-row,
-    .content-row.reverse {
-      grid-template-columns: 1fr;
-      gap: 2rem;
+    #wave-bg {
+      width: 100%;
+      height: 100%;
     }
-    .content-row.reverse .content-text {
-      order: 0;
+
+    .hero-grid {
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: radial-gradient(circle at 50% 30%, black 30%, transparent 80%);
+      opacity: 0.5;
     }
-  }
 
-  .section-header {
-    margin-bottom: 4rem;
-  }
-
-  .eyebrow {
-    display: block;
-    text-transform: uppercase;
-    font-family: ui-monospace, monospace;
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
-    color: #3b82f6;
-    margin-bottom: 1rem;
-  }
-
-  .gs-grid-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-  }
-
-  .metric-card {
-    padding: 3rem 2rem;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .metric-card.is-loading::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.08),
-      transparent
-    );
-    animation: metric-loading 1.2s linear infinite;
-  }
-
-  .metric-trend a {
-    color: rgba(255, 255, 255, 0.8);
-    text-decoration-color: rgba(255, 255, 255, 0.35);
-  }
-
-  .metric-card:hover {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.1);
-    transform: translateY(-5px);
-  }
-
-  .metric-label {
-    font-family: ui-monospace, monospace;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.4);
-    margin-bottom: 1rem;
-  }
-
-  .metric-value {
-    font-size: 3rem;
-    font-weight: 500;
-    color: #f1f5f9;
-    margin-bottom: 0.5rem;
-  }
-
-  .metric-trend {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.3);
-  }
-
-  .cta-panel {
-    text-align: center;
-    padding: 6rem 2rem;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 32px;
-  }
-
-  .cta-actions {
-    margin-top: 3rem;
-  }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s;
-    text-decoration: none;
-    font-size: 0.95rem;
-  }
-
-  .btn-large {
-    padding: 1rem 2rem;
-    font-size: 1rem;
-  }
-
-  .btn.primary {
-    background: #f1f5f9;
-    color: #020408;
-  }
-
-  .btn.primary:hover {
-    background: #ffffff;
-    transform: translateY(-1px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  }
-
-  @media (max-width: 768px) {
-    .narrative-grid {
-      grid-template-columns: 1fr;
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 25% 20%, rgba(90, 162, 255, 0.16), transparent 28%),
+        linear-gradient(180deg, rgba(7, 11, 20, 0.15), rgba(7, 11, 20, 0.8));
+      pointer-events: none;
     }
-    .gs-grid-3 {
-      grid-template-columns: 1fr;
+
+    .hero-mark {
+      position: absolute;
+      inset: 18% auto auto clamp(1rem, 7vw, 6rem);
+      z-index: 1;
     }
-  }
-</style>
+
+    .gs-logo-reactive {
+      width: clamp(72px, 11vw, 120px);
+      height: auto;
+      will-change: transform, filter;
+    }
+
+    .hero-shell {
+      position: relative;
+      z-index: 2;
+      width: min(100% - 2rem, var(--gs-max-width));
+      padding: clamp(7rem, 12vh, 10rem) 0 clamp(2rem, 5vw, 4rem);
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: clamp(1.5rem, 4vw, 4rem);
+      align-items: end;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.85rem;
+      border: 1px solid rgba(90, 162, 255, 0.2);
+      border-radius: 999px;
+      background: rgba(90, 162, 255, 0.08);
+      color: var(--gs-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.75rem;
+    }
+
+    .hero-content h1,
+    .section-copy h2,
+    .contact-cta h2 {
+      margin: 1rem 0 1rem;
+      font-size: clamp(2.6rem, 7vw, 5.4rem);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-content p,
+    .section-copy p,
+    .hero-panel li,
+    .proof-card p,
+    .team-card p,
+    .contact-cta p {
+      color: var(--gs-text-dim);
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+
+    .hero-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem 1.2rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      text-decoration: none;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .hero-button:hover,
+    .hero-button:focus-visible {
+      transform: translateY(-1px);
+      border-color: rgba(90, 162, 255, 0.32);
+      background: rgba(90, 162, 255, 0.12);
+    }
+
+    .hero-button--primary {
+      border-color: rgba(90, 162, 255, 0.28);
+      background: rgba(90, 162, 255, 0.16);
+    }
+
+    .hero-panel {
+      padding: 1.4rem;
+      border-radius: 24px;
+      border: 1px solid var(--gs-border);
+      background: rgba(10, 18, 36, 0.72);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--gs-shadow);
+    }
+
+    .hero-panel h2 {
+      margin: 0.5rem 0 1rem;
+      font-size: clamp(1.55rem, 2.6vw, 2.1rem);
+    }
+
+    .hero-panel ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .signal-strip {
+      margin-top: 1.25rem;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .signal-tile,
+    .capability-card,
+    .proof-card,
+    .team-card,
+    .contact-cta {
+      padding: 1.2rem 1.25rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(10, 18, 36, 0.7);
+      box-shadow: var(--gs-shadow);
+    }
+
+    .signal-tile span,
+    .proof-card span {
+      display: block;
+      color: var(--gs-text-dim);
+      font-size: 0.84rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .signal-tile strong,
+    .proof-card strong {
+      font-size: 1.15rem;
+    }
+
+    .section-block {
+      padding-top: 4.5rem;
+    }
+
+    .section-copy {
+      margin-bottom: 1.5rem;
+      max-width: 60rem;
+    }
+
+    .section-copy h2 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      margin-top: 0.65rem;
+    }
+
+    .capability-grid,
+    .proof-grid,
+    .team-row {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .capability-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .proof-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .proof-card--metrics {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .team-row {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .team-card--founder {
+      border-color: rgba(90, 162, 255, 0.2);
+      background: rgba(90, 162, 255, 0.08);
+    }
+
+    .contact-cta {
+      display: flex;
+      justify-content: space-between;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    @media (max-width: 960px) {
+      .hero-shell,
+      .capability-grid,
+      .proof-grid,
+      .team-row,
+      .signal-strip,
+      .contact-cta {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-shell {
+        padding-top: 7rem;
+      }
+
+      .contact-cta {
+        align-items: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-button {
+        transition: none;
+      }
+    }
+  </style>
 </WebLayout>

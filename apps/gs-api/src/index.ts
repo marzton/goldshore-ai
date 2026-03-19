@@ -1,7 +1,10 @@
 import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
-import { verifyAccessWithClaims, type AccessTokenPayload } from '@goldshore/auth';
+import {
+  verifyAccessWithClaims,
+  type AccessTokenPayload,
+} from '@goldshore/auth';
 import users from './routes/users';
 import health from './routes/health';
 import ai from './routes/ai';
@@ -26,38 +29,73 @@ type Env = {
   // Sentinel: Added support for dynamic team domain
   CLOUDFLARE_TEAM_DOMAIN?: string;
   CONTROL_SYNC_TOKEN?: string;
+  ALLOWED_ORIGINS?: string;
+  ENV?: string;
 };
 
-const app = new Hono<{ Bindings: Env; Variables: { accessClaims: AccessTokenPayload | null } }>();
+const app = new Hono<{
+  Bindings: Env;
+  Variables: { accessClaims: AccessTokenPayload | null };
+}>();
 
-const ALLOWED_ORIGIN_PATTERNS = [
-  /^https:\/\/(www\.)?goldshore\.ai$/,
-  /^https:\/\/([a-z0-9-]+\.)+goldshore\.ai$/,
-  /^https:\/\/([a-z0-9-]+\.)+goldshore-pages\.dev$/,
-  /^http:\/\/localhost(:\d+)?$/
+const DEFAULT_ALLOWED_ORIGINS = [
+  'https://goldshore.ai',
+  'https://www.goldshore.ai',
+  'https://admin.goldshore.ai',
+  'https://ops.goldshore.ai',
+  'https://admin-preview.goldshore.ai',
+  'https://preview.goldshore.ai',
 ];
 
-const isAllowedOrigin = (origin: string) => {
-  return ALLOWED_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin));
+const parseAllowedOrigins = (allowedOrigins?: string) => {
+  return (allowedOrigins ? allowedOrigins.split(',') : DEFAULT_ALLOWED_ORIGINS)
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+};
+
+const isLocalDevelopmentOrigin = (origin: string) => {
+  return (
+    origin.startsWith('http://localhost') ||
+    origin.startsWith('http://127.0.0.1')
+  );
 };
 
 // Sentinel: Security Middleware
 app.use('*', secureHeaders());
 
 // Enforce CORS to allow legitimate browser clients
-app.use('*', cors({
-  origin: (origin) => (isAllowedOrigin(origin) ? origin : 'https://goldshore.ai'),
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
-  exposeHeaders: ['Content-Length'],
-  credentials: true,
-  maxAge: 600,
-}));
+app.use(
+  '*',
+  cors({
+    origin: (origin, c) => {
+      if (!origin) {
+        return null;
+      }
+
+      if (c.env.ENV !== 'production' && isLocalDevelopmentOrigin(origin)) {
+        return origin;
+      }
+
+      const allowedOrigins = parseAllowedOrigins(c.env.ALLOWED_ORIGINS);
+      return allowedOrigins.includes(origin) ? origin : null;
+    },
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
+    exposeHeaders: ['Content-Length'],
+    credentials: true,
+    maxAge: 600,
+  }),
+);
 
 // Enforce Authentication (Defense in Depth)
 app.use('*', async (c, next) => {
   // Allow health checks, root, and CORS preflight
-  if (c.req.path === '/health' || c.req.path.startsWith('/health/') || c.req.path === '/' || c.req.method === 'OPTIONS') {
+  if (
+    c.req.path === '/health' ||
+    c.req.path.startsWith('/health/') ||
+    c.req.path === '/' ||
+    c.req.method === 'OPTIONS'
+  ) {
     c.set('accessClaims', null);
     await next();
     return;
@@ -65,7 +103,11 @@ app.use('*', async (c, next) => {
 
   if (c.req.path === '/internal/sync-runs' && c.req.method === 'POST') {
     const controlToken = c.req.header('x-control-sync-token');
-    if (controlToken && c.env.CONTROL_SYNC_TOKEN && controlToken === c.env.CONTROL_SYNC_TOKEN) {
+    if (
+      controlToken &&
+      c.env.CONTROL_SYNC_TOKEN &&
+      controlToken === c.env.CONTROL_SYNC_TOKEN
+    ) {
       c.set('accessClaims', null);
       await next();
       return;
