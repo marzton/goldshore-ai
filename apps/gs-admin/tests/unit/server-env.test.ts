@@ -15,14 +15,14 @@ test('getServerEnv returns locals.runtime.env when it exists', () => {
     }
   };
 
-  const result = getServerEnv(locals as any);
+  const result = getServerEnv(locals as Record<string, unknown>);
   assert.strictEqual(result, mockEnv);
 });
 
 test('getServerEnv returns process.env when locals.runtime is missing', () => {
   const locals = {};
 
-  const result = getServerEnv(locals as any);
+  const result = getServerEnv(locals as Record<string, unknown>);
   assert.strictEqual(result, process.env);
 });
 
@@ -31,6 +31,6 @@ test('getServerEnv returns process.env when locals.runtime.env is missing', () =
     runtime: {}
   };
 
-  const result = getServerEnv(locals as any);
+  const result = getServerEnv(locals as Record<string, unknown>);
   assert.strictEqual(result, process.env);
 });

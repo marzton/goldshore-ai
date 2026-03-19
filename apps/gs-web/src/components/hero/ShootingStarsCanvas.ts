@@ -13,13 +13,13 @@ export function mountShootingStars(canvas: HTMLCanvasElement) {
   const stars: ShootingStar[] = [];
 
   function resize() {
-    const { clientWidth: w, clientHeight: h } = canvas;
+    const { clientWidth: w } = canvas;
     canvas.width = Math.floor(w * DPR);
-    canvas.height = Math.floor(h * DPR);
+    canvas.height = Math.floor(canvas.clientHeight * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   }
 
-  function spawn(w: number, h: number) {
+  function spawn(w: number) {
     // spawn offscreen upper-left-ish, travel down-right
     const startX = Math.random() * w * 0.6;
     const startY = -20 - Math.random() * 120;
@@ -40,7 +40,7 @@ export function mountShootingStars(canvas: HTMLCanvasElement) {
 
     // spawn cadence
     if (t - lastSpawn > 800 + Math.random() * 1400) {
-      spawn(w, h);
+      spawn(w);
       lastSpawn = t;
     }
 

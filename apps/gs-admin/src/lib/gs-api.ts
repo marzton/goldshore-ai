@@ -1,4 +1,8 @@
-export function getGsApiBaseUrl(env: any) {
+type GsApiEnv = {
+  API_ORIGIN?: string;
+};
+
+export function getGsApiBaseUrl(env: GsApiEnv) {
   return env.API_ORIGIN || 'https://api.goldshore.ai';
 }
 
