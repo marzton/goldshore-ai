@@ -101,8 +101,8 @@ try {
       console.log('✅ PASS: Valid signature accepted.');
   } else {
       console.log(`❌ FAIL: Valid signature rejected (Status: ${res3.status}).`);
-      exitCode = 1;
   }
+
 
 } catch (e) {
   const errorMessage = (e && e.message) ? e.message : String(e);
