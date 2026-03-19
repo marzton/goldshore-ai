@@ -105,5 +105,5 @@ try {
   console.error('Error during security check:', safeMessage);
 } finally {
   serverProcess.kill();
-  process.exit(0); // Always exit 0 to not break the tool chain, rely on logs
+  process.exit(exitCode);
 }
