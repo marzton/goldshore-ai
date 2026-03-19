@@ -7,10 +7,7 @@ import { latestPagesStatus, workerBindingsOk } from './checks';
 import { smoke, lighthouse } from './tests';
 import { changedPaths, pathsMatchOnly, withinDailyCap } from './guards';
 
-type Cfg = ReturnType<typeof loadCfg>;
-function loadCfg() {
-  return YAML.parse(fs.readFileSync('infra/Cloudflare/config.yaml', 'utf8'));
-}
+function loadCfg() { return YAML.parse(fs.readFileSync("infra/Cloudflare/config.yaml","utf8")); }
 
 async function countTodayDeploys(deployments: any[]) {
   const today = new Date().toISOString().slice(0, 10);
@@ -27,6 +24,17 @@ function pagesCheckUrl(p: any): string {
   // Backward-compatible fallback for environments that have not yet set public_url.
   if (p.name === 'gs-web') return 'https://goldshore.ai/';
   if (p.name === 'gs-admin') return 'https://admin.goldshore.ai/';
+  return `https://${p.name}.goldshore.ai/`;
+}
+
+function pagesCheckUrl(p: any): string {
+  if (typeof p.public_url === "string" && p.public_url.length > 0) {
+    return p.public_url;
+  }
+
+  // Backward-compatible fallback for environments that have not yet set public_url.
+  if (p.name === "gs-web") return "https://goldshore.ai/";
+  if (p.name === "gs-admin") return "https://admin.goldshore.ai/";
   return `https://${p.name}.goldshore.ai/`;
 }
 
@@ -48,8 +56,8 @@ async function deployPages(p: any) {
 
   const url = pagesCheckUrl(p);
 
-  if (p.require_checks?.includes('smoke')) {
-    await smoke(url, 200).catch(() => {});
+  if (p.require_checks?.includes("smoke")) {
+    await smoke(url, 200).catch(()=>{});
   }
 
   const status = await latestPagesStatus(p.name);
@@ -72,10 +80,10 @@ async function deployPages(p: any) {
     await new Promise((r) => setTimeout(r, 5000));
   }
 
-  if (p.require_checks?.includes('smoke')) {
+  if (p.require_checks?.includes("smoke")) {
     await smoke(url, 200, 8000);
   }
-  if (p.require_checks?.includes('lighthouse')) {
+  if (p.require_checks?.includes("lighthouse")) {
     await lighthouse(url, 0.8);
   }
   console.log(`[pages:${p.name}] Deploy OK.`);
@@ -110,8 +118,8 @@ async function deployWorker(w: any) {
   console.log(`[worker:${w.script}] Deploying…`);
   await cf.workers.deploy(w.script, fd);
 
-  if (w.require_checks?.includes('smoke')) {
-    await smoke('https://api.goldshore.ai/health', 200, 8000);
+  if (w.require_checks?.includes("smoke")) {
+    await smoke("https://api.goldshore.ai/health", 200, 8000);
   }
 
   console.log(`[worker:${w.script}] Deploy OK.`);

@@ -58,13 +58,13 @@
 
 - KV:
   - Binding: `API_KV`
-  - Namespace: `goldshore-api-kv`
+  - Namespace: `goldshore-api-kv` _(historical resource name; canonical service prefix is `gs-api`)_
 - D1:
   - Binding: `DB`
-  - Database: `goldshore-api-db`
+  - Database: `goldshore-api-db` _(historical resource name; canonical service prefix is `gs-api`)_
 - R2:
   - Binding: `ASSETS`
-  - Bucket: `goldshore-api-assets`
+  - Bucket: `goldshore-api-assets` _(historical resource name; canonical service prefix is `gs-api`)_
 - AI:
   - Binding: `AI`
   - Gateway: `goldshore-ai-gateway`

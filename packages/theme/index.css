@@ -1,9 +1,6 @@
-@import "./styles/tokens.css";
-@import "./styles/base.css";
-@import "./styles/layout.css";
-@import "./styles/components.css";
+@import "./src/styles/global.css";
 @import "./styles/blueprint.css";
-@import "./styles/motion.css";
+@import "./src/styles/motion.css";
 @import "./styles/scroll.css";
 @import "./styles/edge-light.css";
 @import "./styles/pulsar.css";
@@ -11,35 +8,3 @@
 @import "./styles/view-timeline.css";
 @import "./styles/sequencing.css";
 @import "./styles/skin-defense.css";
-@import "./src/styles/global.css";
-@import "./src/styles/motion.css";
-
-header,
-.gs-nav,
-.gs-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  backdrop-filter: blur(8px);
-  background: rgba(2, 4, 8, 0.8);
-}
-
-.hero-bg,
-.grid-field,
-.starfield {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-}
-
-body.nav-open .gs-mobile-panel {
-  transform: translateX(0);
-  opacity: 1;
-  visibility: visible;
-}
