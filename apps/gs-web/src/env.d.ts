@@ -16,20 +16,28 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
+interface D1Result<Row> {
+  results?: Row[];
+}
+
+interface D1PreparedStatement<Row = Record<string, unknown>> {
+  bind(...values: unknown[]): D1PreparedStatement<Row>;
+  all(): Promise<D1Result<Row>>;
+  run(): Promise<unknown>;
+}
+
 // Global Cloudflare Env types
 interface KVNamespace {
   put(
     key: string,
     value: string | ReadableStream | ArrayBuffer,
-    options?: any,
+    options?: unknown,
   ): Promise<void>;
-  get(key: string, options?: any): Promise<string | null>;
-  // Add other methods as needed
+  get(key: string, options?: unknown): Promise<string | null>;
 }
 
 interface D1Database {
-  prepare(query: string): any;
-  // Add other methods as needed
+  prepare<Row = Record<string, unknown>>(query: string): D1PreparedStatement<Row>;
 }
 
 interface Env {

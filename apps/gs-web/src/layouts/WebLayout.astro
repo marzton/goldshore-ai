@@ -194,17 +194,6 @@ const logoSrc = logo.src;
         box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.8);
       }
 
-      @keyframes glow-pulse {
-        0%, 100% {
-          filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.3)) brightness(1.2);
-          transform: scale(1);
-        }
-        50% {
-          filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.6)) brightness(1.4);
-          transform: scale(1.05);
-        }
-      }
-
       .gs-logo {
         display: flex;
         align-items: center;
@@ -219,17 +208,16 @@ const logoSrc = logo.src;
       }
 
       .gs-logo img {
-        height: 90px; /* 2.5x larger than base ~36px */
-        width: auto;
-        mix-blend-mode: normal;
-        animation: glow-pulse 3s infinite ease-in-out;
-      }
-
-      .gs-logo img {
         height: 40px;
         width: auto;
-        /* Ensure logo blends if it has a dark bg */
         mix-blend-mode: normal;
+        filter: drop-shadow(0 0 0 rgba(90, 162, 255, 0));
+        transition: filter 180ms ease, opacity 180ms ease;
+      }
+
+      .gs-logo:hover img,
+      .gs-logo:focus-visible img {
+        filter: drop-shadow(0 0 8px rgba(90, 162, 255, 0.28));
       }
 
       .gs-nav {

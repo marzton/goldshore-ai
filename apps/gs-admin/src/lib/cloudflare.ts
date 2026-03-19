@@ -25,7 +25,13 @@ export type CloudflareMetrics = {
   charts: Record<string, ChartMetrics>;
 };
 
-export function getCloudflareContext(locals: any) {
+type CloudflareRuntimeLocals = {
+  runtime?: {
+    env?: NodeJS.ProcessEnv;
+  };
+};
+
+export function getCloudflareContext(locals: CloudflareRuntimeLocals) {
   return locals.runtime?.env || process.env;
 }
 
