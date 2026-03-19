@@ -2,8 +2,8 @@
   "name": "@goldshore/auth",
   "version": "0.0.1",
   "main": "index.ts",
-  "type": "module",
   "types": "index.ts",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./index.ts",

@@ -1,147 +1,75 @@
-import { Account, Position, AccountType } from "@goldshore/core-schema";
-import { BrokerAdapter } from "../index.js";
-
-/**
- * Schwab API Interface Definitions
- */
-interface SchwabAccount {
-  hashValue: string;
-  securitiesAccount: {
-    accountId: string;
-    type: string;
-    nickname?: string;
-    isMarginEnabled?: boolean;
-    optionLevel?: number;
-    baseCurrency?: string;
-  };
-}
-
-interface SchwabPosition {
-  longQuantity?: number;
-  shortQuantity?: number;
-  averagePrice: number;
-  marketValue: number;
-  currentDayProfitLoss?: number;
-  instrument: {
-    symbol: string;
-    assetType: "EQUITY" | "OPTION" | "MUTUAL_FUND" | "CASH_EQUIVALENT" | "FIXED_INCOME" | "CURRENCY";
-    underlyingSymbol?: string;
-    putCall?: "CALL" | "PUT";
-    strikePrice?: number;
-    expirationDate?: string;
-  };
-}
-
-interface SchwabAccountDetails {
-  securitiesAccount: {
-    accountId: string;
-    positions?: SchwabPosition[];
-  };
-}
+import type { Account, Position, Order } from "@goldshore/core-schema";
+import type { BrokerAdapter } from "../index.ts";
+import { createHttpClient, type HttpClient } from "@goldshore/integrations/http.ts";
+import { TosAccountsResponseSchema, TosAccountSchema, TosOrdersResponseSchema } from "./schema.ts";
 
 export class TOSAdapter implements BrokerAdapter {
   id = "tos";
   name = "thinkorswim";
-  private baseUrl = "https://api.schwabapi.com/trader/v1";
-  private accessToken: string;
-  private apiKey: string;
+  private client: HttpClient;
 
-  constructor(accessToken: string, apiKey: string) {
-    this.accessToken = accessToken;
-    this.apiKey = apiKey;
-  }
-
-  /**
-   * Helper to make authenticated requests to Schwab API
-   */
-  private async request<T>(path: string): Promise<T> {
-    const response = await fetch(`${this.baseUrl}${path}`, {
+  constructor(config?: { apiKey?: string; accessToken?: string; baseUrl?: string }) {
+    this.client = createHttpClient({
+      baseUrl: config?.baseUrl || "https://api.tdameritrade.com/v1",
+      authTokenManager: config?.accessToken
+        ? { getToken: async () => config.accessToken! }
+        : undefined,
       headers: {
-        Authorization: `Bearer ${this.accessToken}`,
-        "Schwab-Client-Id": this.apiKey,
-        "Accept": "application/json",
-      },
+        "Authorization": config?.accessToken ? `Bearer ${config.accessToken}` : undefined,
+      } as Record<string, string | undefined>
     });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Schwab API Error (${response.status}): ${errorText}`);
-    }
-
-    return response.json() as Promise<T>;
   }
 
-  /**
-   * Fetches all accounts associated with the credentials
-   */
   async getAccounts(): Promise<Account[]> {
-    const rawAccounts = await this.request<SchwabAccount[]>("/accounts");
+    const response = await this.client.get("/accounts");
+    if (response.status !== 200) return [];
+    const raw = await response.json();
+    const result = TosAccountsResponseSchema.safeParse(raw);
+    if (!result.success) return [];
 
-    return rawAccounts.map(raw => {
-      const acc = raw.securitiesAccount;
-      const accountId = raw.hashValue;
-
-      return {
-        id: accountId as any,
-        broker: "tos",
-        brokerAccountId: raw.hashValue,
-        name: acc.nickname || `TOS Account ${acc.accountId.slice(-4)}`,
-        type: this.mapAccountType(acc.type),
-        baseCurrency: acc.baseCurrency || "USD",
-        isMarginEnabled: acc.isMarginEnabled || false,
-        optionsLevel: acc.optionLevel || 0,
-        isCloseOnly: false,
-        isPdtTracked: false,
-        isIraRestricted: false,
-        updatedAt: new Date(),
-      } as Account;
-    });
+    return result.data.map(acc => ({
+      id: acc.securitiesAccount.accountId,
+      broker: "tos" as const,
+      brokerAccountId: acc.securitiesAccount.accountId,
+      name: acc.securitiesAccount.accountId,
+      type: acc.securitiesAccount.type as any,
+      baseCurrency: "USD",
+      isMarginEnabled: acc.securitiesAccount.type === "MARGIN",
+      updatedAt: new Date(),
+    } as Account));
   }
 
-  /**
-   * Fetches positions for a given account
-   * @param accountId The Schwab account hash (hashValue)
-   */
   async getPositions(accountId: string): Promise<Position[]> {
-    const rawResponse = await this.request<SchwabAccountDetails>(`/accounts/${accountId}?fields=positions`);
-    const acc = rawResponse.securitiesAccount;
-
-    if (!acc || !acc.positions) {
-      return [];
-    }
-
-    return acc.positions.map((p) => {
-      const quantity = p.longQuantity || (p.shortQuantity ? -p.shortQuantity : 0);
-      const symbol = p.instrument.symbol;
-      const posId = `${accountId}-${symbol}`;
-
-      return {
-        id: posId as any,
-        accountId: accountId as any,
-        instrumentId: null as any, // Linked during core sync
+    const response = await this.client.get(`/accounts/${accountId}?fields=positions`);
+    if (response.status !== 200) return [];
+    const data = await response.json() as any;
+    const positions = data.securitiesAccount.positions || [];
+    return positions.map((p: any): Position => {
+      const quantity = p.longQuantity || -p.shortQuantity || 0;
+      const position: Position = {
+        id: `${accountId}-${p.instrument.symbol}`,
+        accountId: accountId,
         quantity: quantity.toString(),
-        averageOpenPrice: (p.averagePrice || 0).toString(),
-        markPrice: quantity !== 0 ? (Math.abs(p.marketValue) / Math.abs(quantity)).toString() : "0",
-        marketValue: (p.marketValue || 0).toString(),
-        dayPnl: (p.currentDayProfitLoss || 0).toString(),
-        unrealizedPnl: (p.marketValue - (p.averagePrice * quantity)).toString(),
-        greeks: null,
+        averageOpenPrice: p.averagePrice.toString(),
         updatedAt: new Date(),
-      } as Position;
+      };
+      return position;
     });
   }
 
-  private mapAccountType(type: string): AccountType {
-    const t = type?.toUpperCase() || "";
-    if (t.includes("INDIVIDUAL")) return "INDIVIDUAL";
-    if (t.includes("ROTH")) return "ROTH_IRA";
-    if (t.includes("IRA")) return "IRA";
-    if (t.includes("CASH")) return "CASH";
-    return "MARGIN";
+  async getOrders(accountId: string): Promise<Order[]> {
+    const response = await this.client.get(`/accounts/${accountId}/orders`);
+    if (response.status !== 200) return [];
+    const data = await response.json() as any[];
+    return data.map((o: any) => ({
+      id: o.orderId.toString(),
+      accountId: accountId,
+      brokerOrderId: o.orderId.toString(),
+      status: o.status,
+      symbol: o.orderLegCollection[0].instrument.symbol,
+      side: o.orderLegCollection[0].instruction,
+      quantity: o.quantity.toString(),
+      submittedAt: new Date(o.enteredTime),
+    } as Order));
   }
-export class TOSAdapter {
-  id = "tos";
-  name = "thinkorswim";
-
-  // TODO: implement adapter specific APIs
 }

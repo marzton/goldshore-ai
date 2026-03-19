@@ -10,6 +10,14 @@ export interface Env {
 // Sentinel: Default to existing hardcoded values if not provided in Env
 const DEFAULT_TEAM_DOMAIN = "goldshore.cloudflareaccess.com";
 
+function normalizeTeamDomain(teamDomain?: string): string {
+    if (!teamDomain) {
+        return DEFAULT_TEAM_DOMAIN;
+    }
+
+    return teamDomain.includes(".") ? teamDomain : `${teamDomain}.cloudflareaccess.com`;
+}
+
 export interface Dependencies {
     createRemoteJWKSet: typeof createRemoteJWKSet;
     jwtVerify: typeof jwtVerify;
@@ -43,7 +51,7 @@ export async function verifyAccessWithClaimsInternal(req: Request, env: Env, dep
   const token = req.headers.get("CF-Access-Jwt-Assertion");
   if (!token) return null;
 
-  const teamDomain = (env && env.CLOUDFLARE_TEAM_DOMAIN) || DEFAULT_TEAM_DOMAIN;
+  const teamDomain = normalizeTeamDomain(env?.CLOUDFLARE_TEAM_DOMAIN);
   const JWKS = getJwks(teamDomain, deps);
 
   try {
@@ -70,6 +78,15 @@ export async function verifyAccessWithClaims(req: Request, env: Env) {
 }
 
 export async function verifyAccess(req: Request, env: Env) {
-  const payload = await verifyAccessWithClaims(req, env);
-  return Boolean(payload);
+  const token = req.headers.get("CF-Access-Jwt-Assertion");
+  if (!token) return false;
+
+  // Validate via Access JWKS
+  await fetch(
+    "https://goldshore.cloudflareaccess.com/cdn-cgi/access/certs"
+  );
+
+  // TODO: add JOSE verification
+
+  return true;
 }

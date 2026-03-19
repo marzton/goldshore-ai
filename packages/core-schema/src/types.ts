@@ -7,7 +7,7 @@ import {
   orders,
   fills,
   taxLots,
-} from "./db";
+} from "./db.ts";
 
 // -- Canonical Type Exports (Drizzle Inferred) --
 
