@@ -11,11 +11,14 @@ test('evaluateAdminAccess returns 401 when no claims are present', () => {
 });
 
 test('evaluateAdminAccess returns 403 when caller has no admin role', () => {
-  const result = evaluateAdminAccess({
-    sub: 'user-1',
-    email: 'viewer@example.com',
-    roles: ['member']
-  }, {});
+  const result = evaluateAdminAccess(
+    {
+      sub: 'user-1',
+      email: 'viewer@example.com',
+      roles: ['member'],
+    },
+    {},
+  );
 
   assert.strictEqual(result.ok, false);
   assert.strictEqual(result.status, 403);
@@ -23,13 +26,17 @@ test('evaluateAdminAccess returns 403 when caller has no admin role', () => {
 });
 
 test('evaluateAdminAccess enforces required permissions', () => {
-  const result = evaluateAdminAccess({
-    sub: 'user-2',
-    email: 'viewer@example.com',
-    roles: ['viewer']
-  }, {}, {
-    requiredPermission: 'content:write'
-  });
+  const result = evaluateAdminAccess(
+    {
+      sub: 'user-2',
+      email: 'viewer@example.com',
+      roles: ['viewer'],
+    },
+    {},
+    {
+      requiredPermission: 'content:write',
+    },
+  );
 
   assert.strictEqual(result.ok, false);
   assert.strictEqual(result.status, 403);
@@ -37,13 +44,17 @@ test('evaluateAdminAccess enforces required permissions', () => {
 });
 
 test('evaluateAdminAccess accepts valid admin claims', () => {
-  const result = evaluateAdminAccess({
-    sub: 'user-3',
-    email: 'admin@example.com',
-    roles: ['admin']
-  }, {}, {
-    requiredPermission: 'users:manage'
-  });
+  const result = evaluateAdminAccess(
+    {
+      sub: 'user-3',
+      email: 'admin@example.com',
+      roles: ['admin'],
+    },
+    {},
+    {
+      requiredPermission: 'users:manage',
+    },
+  );
 
   assert.strictEqual(result.ok, true);
   assert.strictEqual(result.status, 200);
