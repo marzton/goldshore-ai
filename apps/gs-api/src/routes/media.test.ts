@@ -126,7 +126,7 @@ describe('Media Endpoint Security', () => {
   
 
   it('sanitizes svg uploads before storing', async () => {
-    const app = new Hono();
+    const app = createApp({ roles: ['editor'] });
 
     const mockDB = {
       prepare: (_query: string) => ({
@@ -142,9 +142,6 @@ describe('Media Endpoint Security', () => {
         storedBody = body;
       },
     };
-
-    app.route('/', media);
-
     const formData = new FormData();
     const file = new File([
       '<svg><script>alert(1)</script><foreignObject>bad</foreignObject><rect onclick="evil()" width="10" href=javascript:alert(2)/></svg>',
