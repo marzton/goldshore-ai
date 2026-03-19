@@ -4,18 +4,45 @@ import WebLayout from '../layouts/WebLayout.astro';
 export const prerender = true;
 ---
 
-<WebLayout title="About | Gold Shore" description="About Gold Shore Labs.">
+<WebLayout title="About | Gold Shore" description="Disciplined engineering for mission-critical systems.">
   <section class="gs-section gs-blueprint-bg">
     <div class="gs-container">
-      <h1>About Gold Shore</h1>
-      <p>
-        Gold Shore Labs is a design-first engineering studio building AI-powered operational systems.
+      <h1 class="gs-display" data-gs-reveal>About Gold Shore</h1>
+      <p data-gs-reveal>
+        Gold Shore was founded on a simple premise: mission-critical systems deserve disciplined engineering.
       </p>
+      <p data-gs-reveal>
+        We do not build “apps.” We engineer infrastructure surfaces that support long-term operational integrity.
+      </p>
+    </div>
+  </section>
 
-    <h2>Mission</h2>
-    <p>Bridging military-grade precision and modern technology agility.</p>
+  <section class="gs-section">
+    <div class="gs-container">
+      <h2 class="gs-display" data-gs-reveal>Engineering Philosophy</h2>
+      <p data-gs-reveal>Every system we design adheres to five principles:</p>
+      <ul data-gs-reveal>
+        <li>Determinism over convenience</li>
+        <li>Observability before expansion</li>
+        <li>Controlled access over implicit trust</li>
+        <li>Layered abstraction without obfuscation</li>
+        <li>Deployment confidence through reproducibility</li>
+      </ul>
+      <p data-gs-reveal>
+        We leverage Cloudflare Workers and edge surfaces, Astro static-to-edge hybrids, TypeScript-first runtime
+        discipline, controlled CI workflows, structured JSON diff merging, and hash-based integrity validation.
+      </p>
+    </div>
+  </section>
 
-    <h2>Leadership</h2>
-    <p>Led by Robert Marston, focused on secure automation and infrastructure.</p>
+  <section class="gs-section">
+    <div class="gs-container">
+      <h2 class="gs-display" data-gs-reveal>Operational Discipline</h2>
+      <p data-gs-reveal>
+        Gold Shore applies structured environment segmentation including preview isolation, production hardening,
+        role-based access control, managed OAuth boundaries, and audit traceability.
+      </p>
+      <p data-gs-reveal>Systems are versioned, observable, and recoverable.</p>
+    </div>
   </section>
 </WebLayout>
