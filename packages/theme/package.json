@@ -3,17 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "main": "index.css",
-  "files": [
-    "*.css",
-    "src/styles/*.css",
-    "src/*.ts",
-    "assets/*"
-  ],
   "exports": {
-    ".": "./index.css"
-  },
-  "scripts": {
-    "test": "node --experimental-strip-types --test src/*.test.ts"
+    ".": "./index.css",
+    "./runtime": "./index.ts",
+    "./runtime-webgl": "./runtime-webgl.ts"
   }
 }

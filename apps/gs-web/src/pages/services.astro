@@ -4,17 +4,47 @@ import WebLayout from '../layouts/WebLayout.astro';
 export const prerender = true;
 ---
 
-<WebLayout title="Services | Gold Shore" description="Service overview for Gold Shore.">
+<WebLayout title="Services | Gold Shore" description="Infrastructure automation, platform architecture, and secure surface engineering.">
   <section class="gs-section gs-blueprint-bg">
     <div class="gs-container">
-      <h1>Services</h1>
+      <h1 class="gs-display" data-gs-reveal>Services</h1>
+      <p data-gs-reveal>
+        Formal, operator-grade service delivery for organizations requiring deterministic infrastructure and secure
+        systems execution.
+      </p>
+    </div>
+  </section>
 
-      <ul>
-        <li>AI System Architecture</li>
-        <li>Infrastructure Automation</li>
-        <li>Cloud Security Engineering</li>
-        <li>Operational Dashboards</li>
-      </ul>
+  <section class="gs-section">
+    <div class="gs-container" style="display:grid; gap:1rem;">
+      <div class="gs-panel gs-hoverlift" data-gs-reveal>
+        <h2 class="gs-display">Infrastructure Automation</h2>
+        <p>
+          Deterministic CI/CD pipelines, Cloudflare Worker orchestration, environment isolation strategy, and automated
+          deployment promotion controls.
+        </p>
+      </div>
+      <div class="gs-panel gs-hoverlift" data-gs-reveal>
+        <h2 class="gs-display">Platform Architecture</h2>
+        <p>
+          Distributed real-time systems, event ingestion surfaces, stateless edge compute, signal enrichment pipelines,
+          and scalable API proxy layers.
+        </p>
+      </div>
+      <div class="gs-panel gs-hoverlift" data-gs-reveal>
+        <h2 class="gs-display">Secure Surface Engineering</h2>
+        <p>
+          Managed OAuth integrations, authentication middleware, token-bound preview environments, access audit
+          logging, and route-based surface segmentation.
+        </p>
+      </div>
+      <div class="gs-panel gs-hoverlift" data-gs-reveal>
+        <h2 class="gs-display">Developer Systems</h2>
+        <p>
+          SDK interfaces, API schema versioning, typed runtime contracts, hash-based merge engines, and structured JSON
+          diff resolution.
+        </p>
+      </div>
     </div>
   </section>
 </WebLayout>

@@ -1,29 +1,34 @@
 ---
-import { SharedHeader } from '@goldshore/ui';
-import '../styles/global.css';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import '@goldshore/theme';
+import SiteNav from '../components/SiteNav.astro';
+import GlobalModal from '../components/GlobalModal.astro';
 
-const { title = 'Gold Shore', description = '' } = Astro.props;
+const { title = 'Gold Shore', description = 'Designed not to manage capital, but to steer it.' } = Astro.props;
 ---
 
-<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-gs-skin="defense">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
-
   <body>
-    <Header />
+    <SiteNav />
+    <slot />
 
-    <main>
-      <slot />
-    </main>
+    <footer class="gs-footer">
+      <div class="gs-container gs-muted">Gold Shore — Designed not to manage capital, but to steer it.</div>
+    </footer>
 
-    <Footer />
+    <GlobalModal />
+
+    <script type="module">
+      import { initGoldShoreUI } from '@goldshore/theme/runtime';
+      import { initWebGLField } from '@goldshore/theme/runtime-webgl';
+
+      initGoldShoreUI();
+      initWebGLField();
+    </script>
   </body>
 </html>
