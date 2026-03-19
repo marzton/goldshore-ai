@@ -45,24 +45,33 @@ const pageSchemas = Array.isArray(structuredData)
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
-    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)}></script>
-    {pageSchemas.map((schema) => (
-      <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
-    ))}
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(organizationSchema)}
+    />
+    {
+      pageSchemas.map((schema) => (
+        <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+      ))
+    }
     <slot name="head" />
-    <script type="application/ld+json" set:html={JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Organization',
-      name: 'Gold Shore',
-      url: 'https://goldshore.ai',
-      logo: 'https://goldshore.ai/assets/brand/logo-penrose.svg',
-      description: 'Institutional-grade automation and intelligence systems.',
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: 'https://goldshore.ai/developer/docs/search?q={search_term_string}',
-        'query-input': 'required name=search_term_string'
-      }
-    })} />
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'Gold Shore',
+        url: 'https://goldshore.ai',
+        logo: 'https://goldshore.ai/assets/brand/logo-penrose.svg',
+        description: 'Institutional-grade automation and intelligence systems.',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target:
+            'https://goldshore.ai/developer/docs/search?q={search_term_string}',
+          'query-input': 'required name=search_term_string',
+        },
+      })}
+    />
   </head>
   <body class="gs-theme-root">
     <SiteNav />
@@ -98,7 +107,11 @@ const pageSchemas = Array.isArray(structuredData)
       initParallax();
     </script>
     <script type="module">
-      import { initStarField, initTilt, cleanupUI } from '/src/scripts/init-ui.ts';
+      import {
+        initStarField,
+        initTilt,
+        cleanupUI,
+      } from '/src/scripts/init-ui.ts';
 
       function init() {
         initStarField('hero-stars');
