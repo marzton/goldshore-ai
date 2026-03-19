@@ -102,8 +102,10 @@ try {
 } catch (e) {
   const errorMessage = (e && e.message) ? e.message : String(e);
   const safeMessage = errorMessage
-    // Replace control characters, including CR and LF, with spaces
-    .replace(/[\x00-\x1F\x7F]+/g, ' ')
+    // Replace control characters, including CR, LF and common Unicode line separators with spaces
+    .replace(/[\x00-\x1F\x7F\u0085\u2028\u2029]+/g, ' ')
+    // Collapse multiple whitespace characters into a single space
+    .replace(/\s+/g, ' ')
     .trim();
   console.error('Error during security check:', safeMessage);
 } finally {
