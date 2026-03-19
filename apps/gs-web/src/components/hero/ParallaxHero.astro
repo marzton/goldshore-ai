@@ -2,30 +2,11 @@
 const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
 ---
 
-<section class="gs-hero gs-hero--reactive" data-reactive-hero aria-label="Hero">
-  <canvas class="gs-wave-bg" data-wave-bg aria-hidden="true"></canvas>
-  <div class="gs-grid" aria-hidden="true"></div>
-  <div class="gs-vignette" aria-hidden="true"></div>
-
-  <div class="hero-mark-wrap" aria-hidden="true">
-    <svg
-      class="gs-logo-reactive"
-      viewBox="0 0 128 160"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="1.8"
-      stroke-linejoin="round"
-      stroke-linecap="square"
-      vector-effect="non-scaling-stroke"
-      shape-rendering="geometricPrecision"
-    >
-      <path
-        class="gs-logo-path"
-        d="M64 20 L17 93 H103 L64 20 M64 20 L103 93 M64 20 L17 93 M64 58 L49 83 H79 L64 58"
-      />
-      <path class="gs-logo-seam" d="M64 58 L49 83 H79" />
-    </svg>
+<section class="gs-hero" data-reactive-hero aria-label="Hero">
+  <div class="gs-hero-bg" aria-hidden="true">
+    <canvas class="gs-wave-field" data-wave-bg></canvas>
+    <div class="gs-grid"></div>
+    <div class="gs-vignette"></div>
   </div>
 
   <div class="hero-mark-wrap" aria-hidden="true">
@@ -91,30 +72,30 @@ const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
   </div>
 
   <script>
-    import { initReactiveHero } from '../../scripts/init-reactive-hero';
+    import { mountHero } from "./mountHero";
 
-    const cleanups = [];
+    const globalState = window as typeof window & {
+      __gsReactiveHeroCleanup?: (() => void) | null;
+      __gsReactiveHeroBound?: boolean;
+    };
 
-    const teardown = () => {
-      cleanups.forEach((cleanup) => {
-        if (typeof cleanup === 'function') cleanup();
-      });
-      cleanups.length = 0;
+    const cleanup = () => {
+      globalState.__gsReactiveHeroCleanup?.();
+      globalState.__gsReactiveHeroCleanup = null;
     };
 
     const boot = () => {
-      teardown();
-      document.querySelectorAll('[data-reactive-hero]').forEach((root) => {
-        const cleanup = initReactiveHero(root);
-        if (typeof cleanup === 'function') {
-          cleanups.push(cleanup);
-        }
-      });
+      cleanup();
+      globalState.__gsReactiveHeroCleanup = mountHero(document);
     };
 
+    if (!globalState.__gsReactiveHeroBound) {
+      globalState.__gsReactiveHeroBound = true;
+      document.addEventListener("astro:page-load", boot);
+      document.addEventListener("astro:before-swap", cleanup);
+    }
+
     boot();
-    document.addEventListener('astro:page-load', boot);
-    document.addEventListener('astro:before-swap', teardown);
   </script>
 </section>
 
