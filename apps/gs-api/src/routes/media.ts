@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { requirePermission } from '../auth';
 import { Env, Variables } from '../types';
-import sanitizeHtml from 'sanitize-html';
 
 type MediaRecord = {
   id: string;
@@ -149,7 +148,12 @@ media.post('/upload', requirePermission('media:write'), async (c) => {
 
   if (contentType === 'image/svg+xml') {
     const sanitizedSvg = sanitizeSvg(await file.text());
-    const encoded = new TextEncoder().encode(sanitizedSvg);
+    const trimmed = sanitizedSvg.trim();
+    // Ensure sanitized SVG is still non-empty and appears to be valid SVG markup
+    if (!trimmed || !/<svg[\s>]/i.test(trimmed)) {
+      return c.json({ error: 'Invalid SVG after sanitization' }, 400);
+    }
+    const encoded = new TextEncoder().encode(trimmed);
     body = encoded;
     size = encoded.byteLength;
   } else {
@@ -157,7 +161,7 @@ media.post('/upload', requirePermission('media:write'), async (c) => {
   }
 
   const id = crypto.randomUUID();
-  const objectKey = `media/${id}/${filename.replace(/[^a-zA-Z0-9._-]/g, '_').replace(/\.+/g, '.')}`;
+  const objectKey = `media/${id}`;
 
   await c.env.ASSETS.put(objectKey, body, { httpMetadata: { contentType } });
 
