@@ -1,203 +1,469 @@
 ---
-import '@goldshore/theme/styles/tokens.css';
+import RiskRadar from '../components/RiskRadar.astro';
+import Logo from '../components/brand/Logo.astro';
 import WebLayout from '../layouts/WebLayout.astro';
-import ParallaxHero from "../components/hero/ParallaxHero.astro";
-import '../styles/home.css';
 
 export const prerender = true;
 
-const features = [
+const signals = [
+  { label: 'System uptime', value: '99.98%' },
+  { label: 'Operator latency', value: '< 45ms' },
+  { label: 'Decision loops', value: 'Human + AI' },
+  { label: 'Review posture', value: 'High trust' },
+];
+
+const capabilities = [
   {
-    title: 'Vibe Coding',
-    body: 'Aesthetic-driven development where code flows like fluid dynamics. Provable experience.',
-    icon: 'palette'
+    title: 'Decision systems',
+    body: 'Operator-grade AI workflows for scoring, routing, and intervention with traceable outcomes.',
   },
   {
-    title: 'Cinematic Ops',
-    body: 'Infrastructure monitoring that feels like a sci-fi HUD. Real-time, responsive, and beautiful.',
-    icon: 'monitor_heart'
+    title: 'Risk tooling',
+    body: 'Surveillance surfaces, monitoring loops, and alerting that keep uncertainty visible and actionable.',
   },
   {
-    title: 'Applied Intelligence',
-    body: 'AI agents that don\'t just work—they perform. Seamless integration into your workflow.',
-    icon: 'psychology'
+    title: 'Resilient infrastructure',
+    body: 'Applied platform engineering for control, observability, and dependable automation across teams.',
   },
 ];
 
-const highlights = [
-  { label: 'Global Latency', value: '< 30ms', tone: 'success' },
-  { label: 'System Status', value: 'Normal', tone: 'success' },
-  { label: 'Active Nodes', value: '24/24', tone: 'info' },
-  { label: 'Threat Level', value: 'None', tone: '' },
+const proofPoints = [
+  {
+    title: 'Architecture',
+    body: 'Structured around auditable services, operator checkpoints, and system states that explain themselves.',
+  },
+  {
+    title: 'Proof',
+    body: 'Every workflow is designed to be demonstrable in real use: logs, thresholds, review modes, and fallback paths.',
+  },
 ];
 ---
 
-<WebLayout title="GoldShore | Shaping Waves" description="Unified AI infrastructure for trading and intelligent operations.">
-  <main class="home">
-    <ParallaxHero title="Shaping Waves with Applied Intelligence" />
+<WebLayout title="GoldShore | Infrastructure for High-Trust AI" description="GoldShore builds resilient decision systems, risk tooling, and operator infrastructure.">
+  <main class="home-page">
+    <section class="hero">
+      <canvas id="wave-bg" aria-hidden="true"></canvas>
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-mark">
+        <Logo class="gs-logo-reactive" ariaHidden={true} />
+      </div>
 
-    <div class="cinematic-wrapper">
-    <!-- Performance Section (Secondary Hero) -->
-    <section class="gs-hero home-hero parallax-section" style="padding-top: 0;">
-        <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.08" aria-hidden="true"></div>
-        <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.14" aria-hidden="true"></div>
-        <div class="parallax-layer gs-parallax layer-orbit" data-parallax="0.2" aria-hidden="true"></div>
-
-        <div class="hero-content reveal">
-            <p class="gs-badge" style="margin-bottom: var(--gs-space-3);">Modern ops for fluid markets</p>
-            <h2>Built for Resiliency</h2>
-            <p>
-                GoldShore builds resilient, automation-first systems for trading, control, and applied intelligence. Each surface ships with observability, safety, and responsive design baked in.
-            </p>
+      <div class="hero-shell gs-shell-section">
+        <div class="hero-content">
+          <span class="eyebrow">System operational</span>
+          <h1>Infrastructure for High-Trust AI</h1>
+          <p>GoldShore builds resilient decision systems, risk tooling, and operator infrastructure.</p>
+          <div class="hero-actions">
+            <a href="/contact" class="hero-button hero-button--primary">Open a workstream</a>
+            <a href="/about" class="hero-button">View operating model</a>
+          </div>
         </div>
 
-        <div class="gs-card gs-pulse-frame hero-card reveal">
-            <h3 class="section-title"><span>⇄</span>Performance at a glance</h3>
-            <div class="gs-grid columns-2">
-                {highlights.map((item) => (
-                <div class="gs-kpi">
-                    <span>{item.label}</span>
-                    <strong>{item.value}</strong>
-                    <div class={`gs-badge ${item.tone ?? ''}`}>Live</div>
-                </div>
-                ))}
-            </div>
-            <div class="gs-helper" style="margin-top: var(--gs-space-4);">Backed by global routing, automated rollbacks, and human-in-the-loop controls.</div>
-        </div>
+        <aside class="hero-panel">
+          <div>
+            <p class="gs-eyebrow">Control surface</p>
+            <h2>Signal over spectacle.</h2>
+          </div>
+          <ul>
+            <li>Operational UX with clear status, escalation, and review states.</li>
+            <li>Decision-support tooling built for real environments, not demo loops.</li>
+            <li>Motion that communicates energy, drift, and readiness without noise.</li>
+          </ul>
+        </aside>
+      </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features-section blueprint-section parallax-section">
-        <div class="parallax-layer gs-parallax layer-blueprint" data-parallax="0.04" aria-hidden="true"></div>
-        <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.1" aria-hidden="true"></div>
-        <div class="parallax-layer gs-parallax layer-sheen" data-parallax="0.16" aria-hidden="true"></div>
-        <div class="features-grid">
-            {features.map((feature, i) => (
-            <div class="feature-card glass-panel reveal lux-card" style={`transition-delay: ${0.1 + (i * 0.1)}s;`}>
-                <div class="icon-box">
-                <span class="material-symbols-rounded">{feature.icon}</span>
-                </div>
-                <h3>{feature.title}</h3>
-                <p>{feature.body}</p>
-            </div>
-            ))}
+    <section class="signal-strip gs-shell-section" aria-label="Signal strip">
+      {signals.map((signal) => (
+        <div class="signal-tile">
+          <span>{signal.label}</span>
+          <strong>{signal.value}</strong>
         </div>
+      ))}
     </section>
-    </div>
+
+    <section class="section-block gs-shell-section">
+      <div class="section-copy">
+        <p class="gs-eyebrow">Capabilities</p>
+        <h2>Institutional surfaces for operators, analysts, and systems teams.</h2>
+      </div>
+      <div class="capability-grid">
+        {capabilities.map((capability) => (
+          <article class="capability-card">
+            <h3>{capability.title}</h3>
+            <p>{capability.body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section-block gs-shell-section">
+      <div class="section-copy">
+        <p class="gs-eyebrow">Risk Radar</p>
+        <h2>High-contrast motion system built for screen capture and live demonstration.</h2>
+      </div>
+      <RiskRadar />
+    </section>
+
+    <section class="section-block gs-shell-section architecture-section">
+      <div class="section-copy">
+        <p class="gs-eyebrow">Architecture / Proof</p>
+        <h2>Systems that explain themselves under pressure.</h2>
+      </div>
+      <div class="proof-grid">
+        {proofPoints.map((point) => (
+          <article class="proof-card">
+            <h3>{point.title}</h3>
+            <p>{point.body}</p>
+          </article>
+        ))}
+        <article class="proof-card proof-card--metrics">
+          <div>
+            <span>Review posture</span>
+            <strong>Operator in loop</strong>
+          </div>
+          <div>
+            <span>Observability</span>
+            <strong>Logs + thresholds</strong>
+          </div>
+          <div>
+            <span>Deployment tone</span>
+            <strong>Measured, auditable</strong>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-block gs-shell-section compact-team">
+      <div class="section-copy">
+        <p class="gs-eyebrow">Team</p>
+        <h2>Built by operators focused on resilient systems and applied intelligence.</h2>
+      </div>
+      <div class="team-row">
+        <article class="team-card team-card--founder">
+          <h3>Robert M.</h3>
+          <p>Leads product direction, systems strategy, and applied intelligence.</p>
+        </article>
+        <article class="team-card">
+          <h3>Systems</h3>
+          <p>Infrastructure, execution, observability.</p>
+        </article>
+        <article class="team-card">
+          <h3>Risk</h3>
+          <p>Monitoring, analytics, decision systems.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-block gs-shell-section contact-cta">
+      <div>
+        <p class="gs-eyebrow">Contact</p>
+        <h2>Ready to operationalize AI with trust, control, and signal clarity?</h2>
+      </div>
+      <a href="/contact" class="hero-button hero-button--primary">Start a conversation</a>
+    </section>
   </main>
+
+  <script>
+    import { initWave } from '../scripts/init-wave';
+    import { initLogo } from '../scripts/init-logo-reactive';
+
+    let homeCleanup;
+
+    const cleanup = () => {
+      homeCleanup?.();
+      homeCleanup = undefined;
+    };
+
+    const boot = () => {
+      cleanup();
+      const canvas = document.getElementById('wave-bg');
+      const logo = document.querySelector('.gs-logo-reactive');
+      const isReactiveLogo = logo instanceof HTMLElement || logo instanceof SVGElement;
+      if (!(canvas instanceof HTMLCanvasElement) || !isReactiveLogo) return;
+
+      const wave = initWave(canvas);
+      const destroyLogo = initLogo(logo, wave);
+
+      homeCleanup = () => {
+        destroyLogo?.();
+        wave.destroy();
+      };
+    };
+
+    const homeGlobal = window as typeof window & {
+      __gsHomeHeroBound?: boolean;
+    };
+
+    if (!homeGlobal.__gsHomeHeroBound) {
+      homeGlobal.__gsHomeHeroBound = true;
+      document.addEventListener('astro:before-swap', cleanup);
+      document.addEventListener('astro:page-load', boot);
+    }
+
+    boot();
+  </script>
+
+  <style>
+    .home-page {
+      padding-bottom: 4rem;
+    }
+
+    .hero {
+      position: relative;
+      min-height: min(88vh, 860px);
+      display: grid;
+      align-items: end;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    #wave-bg,
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+    }
+
+    #wave-bg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-grid {
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: radial-gradient(circle at 50% 30%, black 30%, transparent 80%);
+      opacity: 0.5;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 25% 20%, rgba(90, 162, 255, 0.16), transparent 28%),
+        linear-gradient(180deg, rgba(7, 11, 20, 0.15), rgba(7, 11, 20, 0.8));
+      pointer-events: none;
+    }
+
+    .hero-mark {
+      position: absolute;
+      inset: 18% auto auto clamp(1rem, 7vw, 6rem);
+      z-index: 1;
+    }
+
+    .gs-logo-reactive {
+      width: clamp(72px, 11vw, 120px);
+      height: auto;
+      will-change: transform, filter;
+    }
+
+    .hero-shell {
+      position: relative;
+      z-index: 2;
+      width: min(100% - 2rem, var(--gs-max-width));
+      padding: clamp(7rem, 12vh, 10rem) 0 clamp(2rem, 5vw, 4rem);
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: clamp(1.5rem, 4vw, 4rem);
+      align-items: end;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.85rem;
+      border: 1px solid rgba(90, 162, 255, 0.2);
+      border-radius: 999px;
+      background: rgba(90, 162, 255, 0.08);
+      color: var(--gs-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.75rem;
+    }
+
+    .hero-content h1,
+    .section-copy h2,
+    .contact-cta h2 {
+      margin: 1rem 0 1rem;
+      font-size: clamp(2.6rem, 7vw, 5.4rem);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-content p,
+    .section-copy p,
+    .hero-panel li,
+    .proof-card p,
+    .team-card p,
+    .contact-cta p {
+      color: var(--gs-text-dim);
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+
+    .hero-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem 1.2rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      text-decoration: none;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .hero-button:hover,
+    .hero-button:focus-visible {
+      transform: translateY(-1px);
+      border-color: rgba(90, 162, 255, 0.32);
+      background: rgba(90, 162, 255, 0.12);
+    }
+
+    .hero-button--primary {
+      border-color: rgba(90, 162, 255, 0.28);
+      background: rgba(90, 162, 255, 0.16);
+    }
+
+    .hero-panel {
+      padding: 1.4rem;
+      border-radius: 24px;
+      border: 1px solid var(--gs-border);
+      background: rgba(10, 18, 36, 0.72);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--gs-shadow);
+    }
+
+    .hero-panel h2 {
+      margin: 0.5rem 0 1rem;
+      font-size: clamp(1.55rem, 2.6vw, 2.1rem);
+    }
+
+    .hero-panel ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .signal-strip {
+      margin-top: 1.25rem;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .signal-tile,
+    .capability-card,
+    .proof-card,
+    .team-card,
+    .contact-cta {
+      padding: 1.2rem 1.25rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(10, 18, 36, 0.7);
+      box-shadow: var(--gs-shadow);
+    }
+
+    .signal-tile span,
+    .proof-card span {
+      display: block;
+      color: var(--gs-text-dim);
+      font-size: 0.84rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .signal-tile strong,
+    .proof-card strong {
+      font-size: 1.15rem;
+    }
+
+    .section-block {
+      padding-top: 4.5rem;
+    }
+
+    .section-copy {
+      margin-bottom: 1.5rem;
+      max-width: 60rem;
+    }
+
+    .section-copy h2 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      margin-top: 0.65rem;
+    }
+
+    .capability-grid,
+    .proof-grid,
+    .team-row {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .capability-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .proof-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .proof-card--metrics {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .team-row {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .team-card--founder {
+      border-color: rgba(90, 162, 255, 0.2);
+      background: rgba(90, 162, 255, 0.08);
+    }
+
+    .contact-cta {
+      display: flex;
+      justify-content: space-between;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    @media (max-width: 960px) {
+      .hero-shell,
+      .capability-grid,
+      .proof-grid,
+      .team-row,
+      .signal-strip,
+      .contact-cta {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-shell {
+        padding-top: 7rem;
+      }
+
+      .contact-cta {
+        align-items: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-button {
+        transition: none;
+      }
+    }
+  </style>
 </WebLayout>
-
-<style>
-  /* Cinematic Wrapper */
-  .cinematic-wrapper {
-    position: relative;
-    /* Removed min-height: 100vh to let it flow naturally */
-    overflow: hidden;
-  }
-
-  /* Hero Section */
-  .gs-hero {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--gs-space-8);
-    align-items: center;
-    padding: var(--gs-space-12) var(--gs-space-6);
-    max-width: 1280px;
-    margin: 0 auto;
-  }
-
-  @media (max-width: 900px) {
-    .gs-hero { grid-template-columns: 1fr; text-align: center; }
-  }
-
-  h2 {
-    font-size: 3rem;
-    line-height: 1.1;
-    margin-bottom: var(--gs-space-4);
-    background: linear-gradient(to right, #fff, #94a3b8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  /* KPI & Performance Cards */
-  .gs-kpi {
-    background: var(--gs-color-bg-surface);
-    padding: var(--gs-space-3);
-    border-radius: var(--gs-radius-sm);
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  .gs-kpi span { font-size: 0.75rem; text-transform: uppercase; color: var(--gs-color-subtle); letter-spacing: 0.05em; }
-  .gs-kpi strong { font-size: 1.5rem; color: var(--gs-color-text); }
-  .section-title {
-    margin-top: 0;
-    margin-bottom: var(--gs-space-4);
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--gs-color-subtle);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  /* Features */
-  .features-section {
-    position: relative;
-    padding: 4rem 2rem;
-    max-width: 1280px;
-    margin: 0 auto;
-  }
-
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-  }
-
-  .glass-panel {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 2rem;
-    border-radius: 1rem;
-    transition: all 0.3s;
-  }
-
-  .glass-panel:hover {
-    background: rgba(255, 255, 255, 0.05);
-    transform: translateY(-5px);
-    border-color: rgba(34, 211, 238, 0.3);
-  }
-
-  .icon-box {
-    width: 48px;
-    height: 48px;
-    background: rgba(34, 211, 238, 0.1);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #22d3ee;
-    margin-bottom: 1.5rem;
-  }
-
-  .glass-panel h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: #fff;
-  }
-
-  .glass-panel p {
-    color: #94a3b8;
-    line-height: 1.6;
-  }
-</style>
-
-<script>
-  // Ensure parallax init works if it exists
-  // Assuming it's available in the module scope or global
-  // If the previous index.astro had it, we keep it logic-wise if needed.
-  // The ParallaxHero has its own script for canvas.
-</script>
