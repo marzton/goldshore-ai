@@ -26,4 +26,16 @@
   --gs-color-border: var(--gs-border-subtle);
   --gs-accent: var(--gs-accent-blue);
   --gs-accent-strong: var(--gs-accent-gold);
+
+  /* Hero and marketing effect tokens */
+  --gs-hero-text-primary: #e5eefc;
+  --gs-hero-text-secondary: #bfccdf;
+  --gs-hero-mark: #f6cf7a;
+  --gs-hero-vignette-core: rgba(140, 176, 255, 0.16);
+  --gs-hero-vignette-fade-start: rgba(2, 6, 23, 0.18);
+  --gs-hero-vignette-fade-end: rgba(2, 6, 23, 0.78);
+  --gs-hero-depth-glow: rgba(90, 140, 255, 0.12);
+  --gs-divider-signal: rgba(90, 140, 255, 0.3);
+  --gs-divider-sweep: rgba(255, 107, 0, 0.15);
+  --gs-panel-border-subtle: rgba(255, 255, 255, 0.05);
 }
