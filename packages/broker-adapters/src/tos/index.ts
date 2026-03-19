@@ -1,6 +1,7 @@
 import type { Account, Position, Order } from "@goldshore/core-schema";
-import type { BrokerAdapter } from "../index.js";
-import { createHttpClient, type HttpClient } from "../../../integrations/http.ts";
+import type { BrokerAdapter } from "../index.ts";
+import { createHttpClient, type HttpClient } from "@goldshore/integrations/http.ts";
+import { TosAccountsResponseSchema, TosAccountSchema, TosOrdersResponseSchema } from "./schema.ts";
 
 export class TOSAdapter implements BrokerAdapter {
   id = "tos";
@@ -15,24 +16,27 @@ export class TOSAdapter implements BrokerAdapter {
         : undefined,
       headers: {
         "Authorization": config?.accessToken ? `Bearer ${config.accessToken}` : undefined,
-      } as any
+      } as Record<string, string | undefined>
     });
   }
 
   async getAccounts(): Promise<Account[]> {
     const response = await this.client.get("/accounts");
     if (response.status !== 200) return [];
-    const data = await response.json() as any[];
-    return data.map(acc => ({
+    const raw = await response.json();
+    const result = TosAccountsResponseSchema.safeParse(raw);
+    if (!result.success) return [];
+
+    return result.data.map(acc => ({
       id: acc.securitiesAccount.accountId,
-      broker: "tos",
+      broker: "tos" as const,
       brokerAccountId: acc.securitiesAccount.accountId,
       name: acc.securitiesAccount.accountId,
-      type: acc.securitiesAccount.type,
+      type: acc.securitiesAccount.type as any,
       baseCurrency: "USD",
       isMarginEnabled: acc.securitiesAccount.type === "MARGIN",
       updatedAt: new Date(),
-    } as any as Account));
+    } as Account));
   }
 
   async getPositions(accountId: string): Promise<Position[]> {
@@ -40,15 +44,16 @@ export class TOSAdapter implements BrokerAdapter {
     if (response.status !== 200) return [];
     const data = await response.json() as any;
     const positions = data.securitiesAccount.positions || [];
-    return positions.map((p: any) => {
+    return positions.map((p: any): Position => {
       const quantity = p.longQuantity || -p.shortQuantity || 0;
-      return {
+      const position: Position = {
         id: `${accountId}-${p.instrument.symbol}`,
         accountId: accountId,
         quantity: quantity.toString(),
         averageOpenPrice: p.averagePrice.toString(),
         updatedAt: new Date(),
-      } as any as Position;
+      };
+      return position;
     });
   }
 
@@ -65,6 +70,6 @@ export class TOSAdapter implements BrokerAdapter {
       side: o.orderLegCollection[0].instruction,
       quantity: o.quantity.toString(),
       submittedAt: new Date(o.enteredTime),
-    } as any as Order));
+    } as Order));
   }
 }

@@ -16,12 +16,12 @@ ENV = "production"
 # Sentinel: Audience tag for Cloudflare Access.
 # CRITICAL: This must be set to the specific Application Audience (AUD) tag
 # for the GoldShore API service to prevent token reuse from other apps.
-CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
+CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b"
 
 # Sentinel: Team domain for Cloudflare Access (e.g., goldshore.cloudflareaccess.com).
 # Used to fetch JWKS for token verification.
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
-CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+CONTROL_SYNC_TOKEN = "__PROD_CONTROL_SYNC_TOKEN__"
 
 [[env.prod.kv_namespaces]]
 binding = "KV"
@@ -55,12 +55,12 @@ ENV = "production"
 # Sentinel: Audience tag for Cloudflare Access.
 # CRITICAL: This must be set to the specific Application Audience (AUD) tag
 # for the GoldShore API service to prevent token reuse from other apps.
-CLOUDFLARE_ACCESS_AUDIENCE = "YOUR_AUDIENCE_TAG_HERE"
+CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29cb9c52b6cd731b"
 
 # Sentinel: Team domain for Cloudflare Access (e.g., goldshore.cloudflareaccess.com).
 # Used to fetch JWKS for token verification.
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
-CONTROL_SYNC_TOKEN = "set-a-shared-secret"
+CONTROL_SYNC_TOKEN = "__PROD_CONTROL_SYNC_TOKEN__"
 
 [[env.production.kv_namespaces]]
 binding = "KV"
