@@ -149,7 +149,12 @@ media.post('/upload', requirePermission('media:write'), async (c) => {
 
   if (contentType === 'image/svg+xml') {
     const sanitizedSvg = sanitizeSvg(await file.text());
-    const encoded = new TextEncoder().encode(sanitizedSvg);
+    const trimmed = sanitizedSvg.trim();
+    // Ensure sanitized SVG is still non-empty and appears to be valid SVG markup
+    if (!trimmed || !/<svg[\s>]/i.test(trimmed)) {
+      return c.json({ error: 'Invalid SVG after sanitization' }, 400);
+    }
+    const encoded = new TextEncoder().encode(trimmed);
     body = encoded;
     size = encoded.byteLength;
   } else {
