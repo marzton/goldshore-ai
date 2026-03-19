@@ -74,7 +74,7 @@ try {
       console.log('✅ PASS: Unsigned request rejected.');
   } else {
       console.log('❌ FAIL: Unsigned request accepted (VULNERABLE).');
-      exitCode = 1; // Mark as failed for CI if this was a test
+      exitCode = 1; // Mark as failed for CI
   }
 
   console.log('\n--- TEST 2: Invalid Signature Request (Expect 401 after fix) ---');
