@@ -81,3 +81,34 @@ database_id = "gs_db_001"
 
 [env.production.ai]
 binding = "AI"
+
+[env.preview]
+routes = [
+  { pattern = "api-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+
+[env.preview.vars]
+ENV = "preview"
+CLOUDFLARE_ACCESS_AUDIENCE = "SECRET_MANAGED"
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
+CONTROL_SYNC_TOKEN = "SECRET_MANAGED"
+
+[[env.preview.kv_namespaces]]
+binding = "KV"
+id = "gs_api_kv_preview"
+
+[[env.preview.kv_namespaces]]
+binding = "CONTROL_LOGS"
+id = "gs_control_logs_preview"
+
+[[env.preview.r2_buckets]]
+binding = "ASSETS"
+bucket_name = "gs-assets-preview"
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "goldshore_preview"
+database_id = "gs_db_preview"
+
+[env.preview.ai]
+binding = "AI"

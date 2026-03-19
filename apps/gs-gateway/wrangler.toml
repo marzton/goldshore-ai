@@ -38,6 +38,26 @@ binding = "AGENT"
 service = "gs-agent"
 environment = "prod"
 
+[env.preview]
+routes = [
+  { pattern = "gw-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+
+[env.preview.vars]
+ENV = "preview"
+API_ORIGIN = "https://api-preview.goldshore.ai"
+CLOUDFLARE_ACCESS_AUDIENCE = "SECRET_MANAGED"
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
+
+[[env.preview.kv_namespaces]]
+binding = "GATEWAY_KV"
+id = "9cc2209906a94851b704be57543987a9"
+
+[[env.preview.services]]
+binding = "API"
+service = "gs-api"
+environment = "preview"
+
 [env.preview.ai]
 binding = "AI"
 
