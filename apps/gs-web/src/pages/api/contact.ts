@@ -246,69 +246,6 @@ const safeRedirect = (redirectTo: string | null, origin: string) => {
   return new URL(trimmed, origin);
 };
 
-const dedupeRecipients = (recipients: MailRecipient[]) => {
-  const unique = new Map<string, MailRecipient>();
-  recipients.forEach((recipient) => {
-    const email = recipient.email.trim().toLowerCase();
-    if (!email) return;
-    if (!isValidEmail(email)) return;
-    if (!unique.has(email)) {
-      unique.set(email, {
-        email,
-        name: recipient.name?.trim() || undefined,
-      });
-    }
-  });
-  return [...unique.values()];
-};
-
-const recipientsFromEnv = (
-  rawRecipients: string | undefined,
-): MailRecipient[] => {
-  if (!rawRecipients) return [];
-
-  return rawRecipients
-    .split(',')
-    .map((entry) => entry.trim())
-    .filter(Boolean)
-    .map((email) => ({ email }));
-};
-
-const buildSubmissionDigest = (submission: Submission) => {
-  const pairs: Array<[string, string]> = [
-    ['Submission ID', submission.id],
-    ['Form type', submission.formType],
-    ['Received', submission.receivedAt],
-    ['Name', submission.name],
-    ['Email', submission.email],
-    ['Company', submission.company],
-    ['Role', submission.role],
-    ['Website', submission.website],
-    ['Team size', submission.teamSize],
-    ['Industry', submission.industry],
-    ['Timeline', submission.timeline],
-    ['Budget', submission.budget],
-    ['Goals', submission.goals],
-    ['Message', submission.message],
-    ['IP', submission.ipAddress ?? ''],
-    ['User agent', submission.userAgent ?? ''],
-  ];
-
-  const filtered = pairs.filter(([, value]) => value);
-
-  const text = filtered
-    .map(([label, value]) => `${label}: ${value}`)
-    .join('\n');
-  const html = filtered
-    .map(
-      ([label, value]) =>
-        `<p><strong>${label}:</strong> ${value.replace(/</g, '&lt;')}</p>`,
-    )
-    .join('');
-
-  return { text, html };
-};
-
 export const sendMail = async (
   env: Env,
   to: MailRecipient[],
