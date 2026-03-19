@@ -2,7 +2,7 @@
 const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
 ---
 
-<section class="gs-hero" data-reactive-hero aria-label="Hero">
+<section class="gs-hero gs-hero-reactive" aria-label="Hero" data-reactive-hero>
   <div class="gs-hero-bg" aria-hidden="true">
     <canvas class="gs-wave-field" data-wave-bg></canvas>
     <div class="gs-grid"></div>
@@ -34,6 +34,29 @@ const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
   <div class="gs-hero-inner">
     <div class="gs-hero-left">
       <div class="gs-pill"><span class="dot"></span> SYSTEM OPERATIONAL</div>
+      <div class="hero-logo-wrapper">
+        <svg
+          class="gs-logo-reactive"
+          data-reactive-logo
+          viewBox="0 0 128 160"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linejoin="round"
+          stroke-linecap="square"
+          vector-effect="non-scaling-stroke"
+          shape-rendering="geometricPrecision"
+          role="img"
+          aria-label="GoldShore Penrose mark"
+        >
+          <path
+            class="gs-logo-path"
+            d="M64 20 L17 93 H103 L64 20 M64 20 L103 93 M64 20 L17 93 M64 58 L49 83 H79 L64 58"
+          />
+          <path class="gs-logo-seam" d="M64 58 L49 83" />
+        </svg>
+      </div>
       <h1>{title}</h1>
       <p class="sub">
         GoldShore isn’t just code. It’s a provable experience. We build resilient, cinematic systems where automation meets art.
@@ -61,8 +84,8 @@ const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
           </div>
           <div class="terminal" aria-hidden="true">
             <div>&gt; Initializing cinematic protocols…</div>
-            <div>&gt; Optimizing user experience…</div>
-            <div>&gt; Done.</div>
+            <div>&gt; Synchronizing wave field…</div>
+            <div>&gt; Signal resonance stable.</div>
           </div>
         </div>
       </div>
@@ -72,27 +95,23 @@ const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
   <script>
     import { mountHero } from "./mountHero";
 
-    const globalState = window as typeof window & {
-      __gsReactiveHeroCleanup?: (() => void) | null;
-      __gsReactiveHeroBound?: boolean;
-    };
-
-    const cleanup = () => {
-      globalState.__gsReactiveHeroCleanup?.();
-      globalState.__gsReactiveHeroCleanup = null;
-    };
+    let cleanup;
 
     const boot = () => {
-      cleanup();
-      globalState.__gsReactiveHeroCleanup = mountHero(document);
+      cleanup?.();
+      cleanup = mountHero(document);
     };
 
-    if (!globalState.__gsReactiveHeroBound) {
-      globalState.__gsReactiveHeroBound = true;
-      document.addEventListener("astro:page-load", boot);
-      document.addEventListener("astro:before-swap", cleanup);
+    if (document.readyState !== "loading") {
+      boot();
+    } else {
+      document.addEventListener("DOMContentLoaded", boot, { once: true });
     }
 
-    boot();
+    document.addEventListener("astro:page-load", boot);
+    document.addEventListener("astro:before-swap", () => {
+      cleanup?.();
+      cleanup = undefined;
+    });
   </script>
 </section>
