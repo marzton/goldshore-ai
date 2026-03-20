@@ -1,13 +1,14 @@
 ---
+import { GSButton } from '@goldshore/ui';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ContactForm from '../components/ContactForm.astro';
+import FlowSection from '../components/FlowSection.astro';
 
 export const prerender = true;
 ---
 
 <BaseLayout title="Contact | GoldShore" description="Contact the GoldShore team.">
-  <section class="page-shell gs-shell-section contact-page">
-    <div class="contact-copy">
+  <FlowSection variant="hero">
+    <div>
       <p class="gs-eyebrow">Contact</p>
       <h1>Open a direct line with GoldShore.</h1>
       <p>
@@ -19,18 +20,28 @@ export const prerender = true;
         <a href="/intake">project qualification form</a>.
       </p>
     </div>
+
     <form id="contact-form" class="gs-card" action="/api/contact" method="post">
       <input type="hidden" name="formType" value="contact" />
       <input type="hidden" name="redirectTo" value="/thank-you" />
       <input type="hidden" name="formStartedAt" value="" />
+
       <div class="gs-honeypot" aria-hidden="true">
         <label for="companyWebsite">Company website</label>
-        <input id="companyWebsite" name="companyWebsite" type="text" autocomplete="off" tabindex="-1" />
+        <input
+          id="companyWebsite"
+          name="companyWebsite"
+          type="text"
+          autocomplete="off"
+          tabindex="-1"
+        />
       </div>
+
       <div class="gs-input-group">
         <label for="name">Name</label>
         <input id="name" name="name" type="text" autocomplete="name" required />
       </div>
+
       <div class="gs-input-group">
         <label for="email">Work email</label>
         <p id="email-help" class="field-help">
@@ -46,6 +57,7 @@ export const prerender = true;
           required
         />
       </div>
+
       <div class="gs-input-group">
         <label for="inquiry">Inquiry type</label>
         <p id="inquiry-help" class="field-help">
@@ -58,9 +70,10 @@ export const prerender = true;
           <option value="support">Support</option>
         </select>
       </div>
+
       <div class="gs-input-group">
         <label for="message">Project brief</label>
-        <p id="message-helper" class="field-help">
+        <p id="message-help" class="field-help">
           Share a short summary of your goals, timeline, and budget. We read every
           request, so please avoid sensitive data.
         </p>
@@ -69,10 +82,13 @@ export const prerender = true;
           name="message"
           rows="5"
           placeholder="We need support with cloud architecture and security hardening over the next 8 weeks."
-          aria-describedby="message-helper"
-          required></textarea>
+          aria-describedby="message-help"
+          required
+        ></textarea>
       </div>
+
       <div id="form-status" class="form-status" aria-live="polite" role="status"></div>
+
       <GSButton type="submit">
         <span id="submit-text">Send message</span>
       </GSButton>
@@ -83,7 +99,9 @@ export const prerender = true;
     <div class="gs-grid columns-2">
       <div>
         <h2>Snapshot</h2>
-        <p class="gs-text-lg">Direct, senior-led delivery that keeps programs steady and fast.</p>
+        <p class="gs-text-lg">
+          Direct, senior-led delivery that keeps programs steady and fast.
+        </p>
         <GSButton href="#contact-form" variant="secondary">Send your brief</GSButton>
       </div>
       <div class="gs-card">
@@ -94,7 +112,9 @@ export const prerender = true;
           <li><strong>How I work:</strong> Clear scope, weekly checkpoints, and transparent delivery metrics.</li>
           <li><strong>Availability:</strong> Full-time or contract engagements.</li>
         </ul>
-        <p class="gs-text-sm">Have a scope in mind? Send the brief and I’ll respond with a plan.</p>
+        <p class="gs-text-sm">
+          Have a scope in mind? Send the brief and I’ll respond with a plan.
+        </p>
       </div>
     </div>
   </FlowSection>
@@ -109,7 +129,6 @@ export const prerender = true;
       if (!(formStatus instanceof HTMLElement)) return;
       formStatus.textContent = message;
       formStatus.classList.remove('success', 'error', 'progress');
-
       if (type) {
         formStatus.classList.add(type);
       }
@@ -176,8 +195,8 @@ export const prerender = true;
                 : '/thank-you';
 
           window.location.href = redirectTarget;
-        } catch (err) {
-          console.error(err);
+        } catch (error) {
+          console.error(error);
           button.disabled = false;
           button.removeAttribute('aria-busy');
           if (submitText instanceof HTMLElement) {
@@ -189,58 +208,17 @@ export const prerender = true;
           );
         }
       });
-        Share the system, workflow, or risk surface you need to operationalize. We respond with scope, cadence,
-        and next actions.
-      </p>
-      <div class="contact-notes">
-        <div>
-          <span>Focus</span>
-          <strong>Decision support, workflow orchestration, applied AI</strong>
-        </div>
-        <div>
-          <span>Working style</span>
-          <strong>Clear scopes, operator checkpoints, measurable delivery</strong>
-        </div>
-      </div>
-    </div>
-
-    <ContactForm heading="Send your brief" />
-  </section>
-
-  <style>
-    .contact-page {
-      padding: 4.5rem 0 5rem;
-      display: grid;
-      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-      gap: 1.5rem;
-      align-items: start;
     }
+  </script>
 
-    .contact-copy h1 {
-      margin: 0.75rem 0 1rem;
-      font-size: clamp(2.5rem, 6vw, 4.6rem);
-      line-height: 0.98;
-      letter-spacing: -0.04em;
-      max-width: 10ch;
-    }
-
-    .contact-copy > p {
-      max-width: 56ch;
-      color: var(--gs-text-dim);
-      line-height: 1.75;
-    }
-
-    .contact-notes {
-      display: grid;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    .contact-notes div {
-      padding: 1.2rem;
-      border-radius: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      background: rgba(10, 18, 36, 0.7);
+  <style is:global>
+    .gs-honeypot {
+      position: absolute;
+      left: -10000px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
     }
 
     .field-help {
@@ -278,19 +256,6 @@ export const prerender = true;
     #contact-form button[disabled] {
       opacity: 0.65;
       cursor: not-allowed;
-    .contact-notes span {
-      display: block;
-      font-size: 0.78rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--gs-text-dim);
-      margin-bottom: 0.5rem;
-    }
-
-    @media (max-width: 920px) {
-      .contact-page {
-        grid-template-columns: 1fr;
-      }
     }
   </style>
 </BaseLayout>
