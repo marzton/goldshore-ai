@@ -5,6 +5,7 @@ import path from 'path';
 
 const WEBHOOK_SECRET = 'test-secret';
 const PORT = 3333;
+const MAX_LOG_MESSAGE_LENGTH = 1000;
 
 const env = {
   ...process.env,
@@ -104,10 +105,13 @@ try {
 
 } catch (e) {
   const errorMessage = String(e && e.message ? e.message : e);
-  const safeMessage = errorMessage
-    .replace(/[\r\n]+/g, ' ')                 // explicitly remove newlines
+  let safeMessage = errorMessage
+    .replace(/[\r\n]+/g, ' ')                   // explicitly remove newlines
     .replace(/[\x00-\x08\x0B-\x1F\x7F]+/g, ' ') // remove remaining control characters
-    .replace(/[^ -~]/g, '?');                 // replace remaining non-ASCII-printable chars
+    .replace(/[^ -~]/g, '?');                   // replace remaining non-ASCII-printable chars
+  if (safeMessage.length > MAX_LOG_MESSAGE_LENGTH) {
+    safeMessage = safeMessage.slice(0, MAX_LOG_MESSAGE_LENGTH) + '...';
+  }
   console.error('Error during security check: [details: ' + safeMessage + ']');
 } finally {
   serverProcess.kill();
