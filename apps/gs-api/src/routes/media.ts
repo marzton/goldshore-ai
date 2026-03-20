@@ -51,7 +51,10 @@ const sanitizeSvg = (input: string): string => {
   // Apply a final pass with a well-tested sanitizer to ensure that
   // any residual scriptable content (e.g. <script> tags or dangerous
   // attributes) is removed and cannot reappear after regex replacements.
-  const fullySanitized = sanitizeHtml(current);
+  const fullySanitized = sanitizeHtml(current, {
+    allowedTags: [],
+    allowedAttributes: {},
+  });
 
   return fullySanitized;
 };
