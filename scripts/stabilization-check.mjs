@@ -108,8 +108,9 @@ const normalizeCheckConclusion = (conclusion) =>
   String(conclusion || '').toLowerCase();
 const isCompletedCheck = (check) =>
   normalizeCheckStatus(check.status) === 'completed';
+const SUCCESSFUL_CHECK_CONCLUSIONS = new Set(['success', 'neutral', 'skipped']);
 const isSuccessfulCheck = (check) =>
-  normalizeCheckConclusion(check.conclusion) === 'success';
+  SUCCESSFUL_CHECK_CONCLUSIONS.has(normalizeCheckConclusion(check.conclusion));
 const hasCompletedNonSuccessCheck = (checks) =>
   checks.some((check) => isCompletedCheck(check) && !isSuccessfulCheck(check));
 
