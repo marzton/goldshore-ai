@@ -1,66 +1,55 @@
 ---
-import '@goldshore/theme/styles/tokens.css';
-import '@goldshore/theme/styles/base.css';
-import '@goldshore/theme/styles/components.css';
-import '@goldshore/theme/styles/layout.css';
-import { GSButton } from '@goldshore/ui';
+import Logo from '../components/brand/Logo.astro';
+import '../styles/global.css';
 
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
-  { href: '/services', label: 'Services' },
   { href: '/team', label: 'Team' },
   { href: '/contact', label: 'Contact' },
-  { href: '/apps/risk-radar', label: 'Risk Radar' }
+  { href: '/apps/risk-radar', label: 'Risk Radar' },
+  { href: '/developer', label: 'Developer' },
 ];
 
 const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.url.pathname } = Astro.props;
-import logo from "../assets/logo.svg";
-import '../styles/global.css';
-
-const logoSrc = logo.src;
 ---
+
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';" />
-    <link rel="icon" href="/favicon.png" type="image/png" />
-    <!-- Bolt: Preconnect to external origins to speed up resource loading -->
+    <meta name="theme-color" content="#0b0f18" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';" />
+    <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
+    <link rel="shortcut icon" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://unpkg.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0" />
-    <link rel="stylesheet" href="https://unpkg.com/aria-icons@1.0.0/aria-icons.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body>
     <a href="#content" class="skip-link">Skip to content</a>
     <div class="gs-page-shell">
-      <header class="gs-header" data-menu-open="false">
-        <a class="gs-logo" href="/" aria-label="GoldShore home">
-          <img src={logoSrc} alt="GoldShore logo" width="27" height="36" fetchpriority="high" />
+      <header class="header" data-menu-open="false">
+        <a href="/" class="gs-logo-link" aria-label="GoldShore home">
+          <Logo class="gs-logo" title="GoldShore" />
         </a>
-        <button class="gs-nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation">
-          <span class="material-symbols-rounded" aria-hidden="true">menu</span>
-          <span class="sr-only">Toggle menu</span>
+
+        <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation">
+          <span></span>
+          <span></span>
+          <span></span>
         </button>
-        <nav class="gs-nav" id="primary-navigation" aria-label="Primary">
-          {navLinks.map((link) => (
-            <a
-              href={link.href}
-              aria-current={currentPath === link.href ? 'page' : undefined}
-              data-astro-prefetch
-            >
-              {link.label}
-            </a>
-          ))}
-          <GSButton href="/developer" variant="secondary" class="gs-button--small gs-button--with-icon">
-            <span class="material-symbols-rounded" aria-hidden="true">terminal</span>
-            Developer
-          </GSButton>
+
+        <nav id="primary-navigation" class="menu-panel" aria-label="Primary navigation">
+          <div class="menu-panel__inner">
+            {navLinks.map((link) => (
+              <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
+                {link.label}
+              </a>
+            ))}
+          </div>
         </nav>
       </header>
 
@@ -69,223 +58,262 @@ const logoSrc = logo.src;
       </main>
 
       <footer class="gs-footer">
-        <div class="gs-section gs-section--padded">
-          <div class="gs-grid columns-2">
-            <div>
-              <div class="gs-logo" style="gap: var(--gs-space-2);">
-                <img src={logoSrc} alt="GoldShore logo" width="24" height="32" loading="lazy" decoding="async" />
-              </div>
-              <p>Applied intelligence, resilient infrastructure, and responsive operations.</p>
-            </div>
-            <div class="gs-grid columns-2" style="gap: var(--gs-space-2);">
-              <div class="gs-nav gs-nav--vertical">
-                <strong><span class="aria-icon aria-icon-orbit" aria-hidden="true"></span>Company</strong>
-                <a href="/about" aria-current={currentPath === '/about' ? 'page' : undefined}>About</a>
-                <a href="/team" aria-current={currentPath === '/team' ? 'page' : undefined}>Team</a>
-                <a href="/services" aria-current={currentPath === '/services' ? 'page' : undefined}>Services</a>
-              </div>
-              <div class="gs-nav gs-nav--vertical-support">
-                <strong><span class="aria-icon aria-icon-signal" aria-hidden="true"></span>Support</strong>
-                <a href="/contact" aria-current={currentPath === '/contact' ? 'page' : undefined}>Contact</a>
-                <a href="/legal/privacy" aria-current={currentPath === '/legal/privacy' ? 'page' : undefined}>Privacy</a>
-                <a href="/legal/terms" aria-current={currentPath === '/legal/terms' ? 'page' : undefined}>Terms</a>
-              </div>
-            </div>
+        <div class="gs-footer__inner">
+          <div>
+            <Logo class="gs-logo gs-logo--footer" title="GoldShore" />
+            <p>Infrastructure for high-trust AI, risk tooling, and resilient operator systems.</p>
+          </div>
+          <div class="gs-footer__links">
+            <a href="/about">About</a>
+            <a href="/team">Team</a>
+            <a href="/contact">Contact</a>
+            <a href="/apps/risk-radar">Risk Radar</a>
           </div>
         </div>
       </footer>
     </div>
+
     <script is:inline>
-      const header = document.querySelector('.gs-header');
-      const toggle = document.querySelector('.gs-nav-toggle');
+      const menuGlobal = window;
 
-      // Scroll handling with requestAnimationFrame
-      let ticking = false;
-      let wasScrolled = false;
+      const bindMenu = () => {
+        if (menuGlobal.__gsMenuBound) return;
+        menuGlobal.__gsMenuBound = true;
 
-      const updateHeader = () => {
-        if (!header) {
-          ticking = false;
-          return;
-        }
+        const setMenu = (isOpen) => {
+          const header = document.querySelector('.header');
+          const toggle = document.querySelector('.menu-button');
+          if (!(header instanceof HTMLElement) || !(toggle instanceof HTMLButtonElement)) return;
+          header.dataset.menuOpen = String(isOpen);
+          toggle.setAttribute('aria-expanded', String(isOpen));
+          document.body.classList.toggle('menu-open', isOpen);
+        };
 
-        const isScrolled = window.scrollY > 10;
-        if (isScrolled !== wasScrolled) {
-          header.classList.toggle('is-scrolled', isScrolled);
-          wasScrolled = isScrolled;
-        }
-        ticking = false;
+        const handleToggle = () => {
+          const header = document.querySelector('.header');
+          const next = header?.dataset.menuOpen !== 'true';
+          setMenu(next);
+        };
+
+        document.addEventListener('click', (event) => {
+          const target = event.target;
+          if (!(target instanceof Element)) return;
+
+          if (target.closest('.menu-button')) {
+            handleToggle();
+            return;
+          }
+
+          if (target.closest('.menu-panel a') || target.classList.contains('menu-panel')) {
+            setMenu(false);
+          }
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            setMenu(false);
+          }
+        });
+
+        document.addEventListener('astro:before-swap', () => {
+          setMenu(false);
+        });
       };
 
-      window.addEventListener('scroll', () => {
-        if (!ticking) {
-          window.requestAnimationFrame(updateHeader);
-          ticking = true;
-        }
-      }, { passive: true });
-
-      // Initial check
-      updateHeader();
-
-      // Mobile Menu Handling
-      const closeMenu = () => {
-        if (header && toggle) {
-          header.setAttribute('data-menu-open', 'false');
-          toggle.setAttribute('aria-expanded', 'false');
-        }
-      };
-
-      toggle?.addEventListener('click', (e) => {
-        if (!header) return;
-        e.stopPropagation();
-        const isOpen = header.getAttribute('data-menu-open') === 'true';
-        if (isOpen) {
-          closeMenu();
-        } else {
-          header.setAttribute('data-menu-open', 'true');
-          toggle.setAttribute('aria-expanded', 'true');
-        }
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && header?.getAttribute('data-menu-open') === 'true') {
-          closeMenu();
-          toggle?.focus();
-        }
-      });
-
-      document.addEventListener('click', (e) => {
-        if (header?.getAttribute('data-menu-open') === 'true' && !header.contains(e.target)) {
-          closeMenu();
-        }
-      });
+      bindMenu();
     </script>
+
     <style is:global>
-      :root {
-        --gs-header-height: 100px;
+      .skip-link {
+        position: absolute;
+        left: 1rem;
+        top: -3rem;
+        z-index: 1200;
+        padding: 0.75rem 1rem;
+        background: var(--gs-surface-strong);
+        color: var(--gs-text);
+        border-radius: 999px;
+        border: 1px solid var(--gs-border);
+        text-decoration: none;
       }
-      .gs-page-content {
-        padding-top: calc(var(--gs-header-height) + 2rem);
+
+      .skip-link:focus {
+        top: 1rem;
+      }
+
+      .gs-page-shell {
         min-height: 100vh;
-        --gs-header-height: 72px;
       }
-      /* Cinematic Header Overrides */
-      .gs-header {
-        position: fixed;
+
+      .gs-page-content {
+        min-height: calc(100vh - 220px);
+      }
+
+      .header {
+        position: sticky;
         top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        height: var(--gs-header-height);
+        z-index: 1100;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 2rem;
-        background: rgba(3, 3, 5, 0.7); /* Deep dark tint */
+        padding: 1rem clamp(1rem, 3vw, 2rem);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
+        background: rgba(8, 12, 22, 0.65);
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
-      .gs-header.is-scrolled {
-        background: rgba(0, 0, 0, 0.95);
-        border-bottom-color: rgba(34, 211, 238, 0.15); /* Cyan hint */
-        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.8);
-      }
-
-      @keyframes glow-pulse {
-        0%, 100% {
-          filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.3)) brightness(1.2);
-          transform: scale(1);
-        }
-        50% {
-          filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.6)) brightness(1.4);
-          transform: scale(1.05);
-        }
+      .gs-logo-link {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
       }
 
       .gs-logo {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        text-decoration: none;
-        color: #fff;
-        font-weight: 600;
-        font-size: 1.1rem;
-        letter-spacing: -0.01em;
-        padding: 0.5rem;
-        margin-right: 1.5rem;
+        width: clamp(20px, 3vw, 36px);
+        height: auto;
+        color: var(--gs-primary);
       }
 
-      .gs-logo img {
-        height: 90px; /* 2.5x larger than base ~36px */
-        width: auto;
-        mix-blend-mode: normal;
-        animation: glow-pulse 3s infinite ease-in-out;
+      .gs-logo--footer {
+        width: 28px;
+        margin-bottom: 0.85rem;
       }
 
-      .gs-logo img {
-        height: 40px;
-        width: auto;
-        /* Ensure logo blends if it has a dark bg */
-        mix-blend-mode: normal;
-      }
-
-      .gs-nav {
-        display: flex;
-        gap: 2rem;
-        align-items: center;
-      }
-
-      .gs-nav a {
-        color: rgba(255, 255, 255, 0.7);
-        text-decoration: none;
-        font-size: 0.95rem;
-        transition: color 0.2s ease;
+      .menu-button {
         position: relative;
-      }
-
-      .gs-nav a:hover,
-      .gs-nav a[aria-current="page"] {
-        color: #fff;
-      }
-
-      .gs-nav a[aria-current="page"]::after {
-        content: '';
-        position: absolute;
-        bottom: -4px;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: #22d3ee; /* Cyan accent */
-        box-shadow: 0 0 8px #22d3ee;
-      }
-
-      /* Mobile toggle */
-      .gs-nav-toggle {
-        display: none; /* Hidden by default on desktop */
-        background: none;
-        border: none;
-        color: #fff;
+        z-index: 1102;
+        width: 46px;
+        height: 46px;
+        display: inline-grid;
+        place-items: center;
+        gap: 4px;
+        border-radius: 999px;
+        border: 1px solid var(--gs-border);
+        background: rgba(90, 162, 255, 0.08);
         cursor: pointer;
       }
 
-      @media (max-width: 768px) {
-        .gs-header { padding: 0 1rem; }
-        .gs-nav { display: none; } /* Simplified mobile handling for now */
-        .gs-nav-toggle { display: block; }
+      .menu-button span {
+        display: block;
+        width: 18px;
+        height: 1.5px;
+        border-radius: 999px;
+        background: var(--gs-text);
+        transition: transform 160ms ease, opacity 160ms ease;
+      }
 
-        .gs-header[data-menu-open="true"] .gs-nav {
-          display: flex;
+      .header[data-menu-open='true'] .menu-button span:nth-child(1) {
+        transform: translateY(5.5px) rotate(45deg);
+      }
+
+      .header[data-menu-open='true'] .menu-button span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .header[data-menu-open='true'] .menu-button span:nth-child(3) {
+        transform: translateY(-5.5px) rotate(-45deg);
+      }
+
+      .menu-panel {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        justify-items: end;
+        background: rgba(5, 8, 14, 0);
+        pointer-events: none;
+        transition: background 180ms ease;
+      }
+
+      .menu-panel__inner {
+        width: min(360px, 100vw);
+        height: 100%;
+        padding: 6rem 1.5rem 1.5rem;
+        display: grid;
+        align-content: start;
+        gap: 0.75rem;
+        transform: translateX(100%);
+        transition: transform 180ms ease;
+        background: rgba(7, 14, 28, 0.94);
+        border-left: 1px solid var(--gs-border);
+        box-shadow: -24px 0 80px rgba(0, 0, 0, 0.38);
+      }
+
+      .menu-panel a {
+        padding: 0.95rem 1rem;
+        border-radius: 14px;
+        color: var(--gs-text-dim);
+        text-decoration: none;
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .menu-panel a:hover,
+      .menu-panel a[aria-current='page'] {
+        color: var(--gs-text);
+        border-color: var(--gs-border);
+        background: rgba(90, 162, 255, 0.08);
+      }
+
+      .header[data-menu-open='true'] .menu-panel {
+        pointer-events: auto;
+        background: rgba(5, 8, 14, 0.42);
+      }
+
+      .header[data-menu-open='true'] .menu-panel__inner {
+        transform: translateX(0);
+      }
+
+      .gs-footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 2rem clamp(1rem, 3vw, 2rem) 3rem;
+      }
+
+      .gs-footer__inner {
+        width: min(100%, var(--gs-max-width));
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+        align-items: flex-start;
+      }
+
+      .gs-footer p {
+        max-width: 42ch;
+        color: var(--gs-text-dim);
+        line-height: 1.7;
+      }
+
+      .gs-footer__links {
+        display: grid;
+        gap: 0.65rem;
+      }
+
+      .gs-footer__links a {
+        color: var(--gs-text-dim);
+        text-decoration: none;
+      }
+
+      .gs-footer__links a:hover {
+        color: var(--gs-text);
+      }
+
+      .gs-shell-section {
+        width: min(100% - 2rem, var(--gs-max-width));
+        margin: 0 auto;
+      }
+
+      .gs-eyebrow {
+        margin: 0;
+        color: var(--gs-primary);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+      }
+
+      @media (max-width: 720px) {
+        .gs-footer__inner {
           flex-direction: column;
-          position: absolute;
-          top: 100%;
-          left: 0;
-          right: 0;
-          background: #000;
-          padding: 2rem;
-          border-bottom: 1px solid rgba(255,255,255,0.1);
         }
       }
     </style>

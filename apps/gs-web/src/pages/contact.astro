@@ -1,15 +1,15 @@
 ---
-import { GSButton } from '@goldshore/ui';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import FlowSection from '../components/FlowSection.astro';
+import ContactForm from '../components/ContactForm.astro';
 
 export const prerender = true;
 ---
 
-<BaseLayout title="Contact | GoldShore" description="Reach the GoldShore team">
-  <FlowSection variant="hero">
-    <div>
-      <h1>Contact</h1>
+<BaseLayout title="Contact | GoldShore" description="Contact the GoldShore team.">
+  <section class="page-shell gs-shell-section contact-page">
+    <div class="contact-copy">
+      <p class="gs-eyebrow">Contact</p>
+      <h1>Open a direct line with GoldShore.</h1>
       <p>
         Start with the guided intake to receive a tailored service
         recommendation and week-one engagement outline.
@@ -189,17 +189,58 @@ export const prerender = true;
           );
         }
       });
-    }
-  </script>
+        Share the system, workflow, or risk surface you need to operationalize. We respond with scope, cadence,
+        and next actions.
+      </p>
+      <div class="contact-notes">
+        <div>
+          <span>Focus</span>
+          <strong>Decision support, workflow orchestration, applied AI</strong>
+        </div>
+        <div>
+          <span>Working style</span>
+          <strong>Clear scopes, operator checkpoints, measurable delivery</strong>
+        </div>
+      </div>
+    </div>
 
-  <style is:global>
-    .gs-honeypot {
-      position: absolute;
-      left: -10000px;
-      top: auto;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
+    <ContactForm heading="Send your brief" />
+  </section>
+
+  <style>
+    .contact-page {
+      padding: 4.5rem 0 5rem;
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .contact-copy h1 {
+      margin: 0.75rem 0 1rem;
+      font-size: clamp(2.5rem, 6vw, 4.6rem);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+      max-width: 10ch;
+    }
+
+    .contact-copy > p {
+      max-width: 56ch;
+      color: var(--gs-text-dim);
+      line-height: 1.75;
+    }
+
+    .contact-notes {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .contact-notes div {
+      padding: 1.2rem;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(10, 18, 36, 0.7);
     }
 
     .field-help {
@@ -237,6 +278,19 @@ export const prerender = true;
     #contact-form button[disabled] {
       opacity: 0.65;
       cursor: not-allowed;
+    .contact-notes span {
+      display: block;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gs-text-dim);
+      margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 920px) {
+      .contact-page {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </BaseLayout>
