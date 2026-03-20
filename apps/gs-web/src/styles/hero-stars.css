@@ -89,6 +89,9 @@
   }
   to {
     transform: translate3d(0, 40%, 0);
+  }
+}
+
 .hero {
   position: relative;
   isolation: isolate;

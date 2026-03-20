@@ -3,6 +3,11 @@
   --gs-color-text: #fff;
   --gs-accent-blue: #5882ff;
 
+  --gs-signal-base: #0a0f1c;
+  --gs-signal-mid: #1e3a8a;
+  --gs-signal-edge: #5fa8ff;
+  --gs-signal-text: #e5e7eb;
+
   /* Effect tokens */
   --gs-effect-signal-blue-08: color-mix(in srgb, var(--gs-accent-blue) 8%, transparent);
   --gs-effect-signal-blue-12: color-mix(in srgb, var(--gs-accent-blue) 12%, transparent);
