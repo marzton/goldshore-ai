@@ -100,13 +100,13 @@
   background: var(--gs-accent);
   color: var(--gs-accent-contrast);
   cursor: pointer;
-  transition: transform var(--gs-transition), box-shadow var(--gs-transition), background var(--gs-transition), color var(--gs-transition);
+  transition: transform var(--gs-transition), box-shadow var(--gs-transition), background var(--gs-transition), color var(--gs-transition), border-color var(--gs-transition);
 }
 
 .gs-button--small { padding: var(--gs-space-2) var(--gs-space-4); font-size: 0.9rem; }
 .gs-button--large { padding: var(--gs-space-4) var(--gs-space-6); font-size: 1rem; }
 
-.gs-button:hover { transform: translateY(-2px); box-shadow: 0 10px 30px var(--gs-accent-soft); }
+.gs-button:hover { transform: translateY(-1px); box-shadow: 0 0 20px rgba(95, 168, 255, 0.3), 0 10px 30px var(--gs-accent-soft); }
 .gs-button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--gs-accent-soft); }
 
 .gs-button--secondary {
@@ -125,10 +125,12 @@
   border-radius: var(--gs-radius-md);
   padding: var(--gs-space-6);
   box-shadow: var(--gs-shadow-soft);
+  transition: border-color var(--gs-transition), box-shadow var(--gs-transition), transform var(--gs-transition);
 }
 
 .gs-card { background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent), var(--gs-color-surface); }
 .gs-panel { background: var(--gs-color-muted-surface); }
+.gs-card:hover, .gs-panel:hover { border-color: rgba(95, 168, 255, 0.4); }
 
 .gs-grid {
   display: grid;
@@ -377,4 +379,14 @@
     pointer-events: auto;
   }
   .gs-shell { flex-direction: column; }
+}
+
+@keyframes gs-signal-flash {
+  0% { background: transparent; }
+  50% { background: rgba(16, 185, 129, 0.2); }
+  100% { background: transparent; }
+}
+
+.signal-update {
+  animation: gs-signal-flash 0.6s ease;
 }
