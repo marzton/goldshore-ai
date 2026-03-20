@@ -17,14 +17,21 @@
     "verify:dist": "node ../../scripts/verify-web-dist.mjs"
   },
   "dependencies": {
+    "@astrojs/react": "^5.0.1",
     "@goldshore/auth": "workspace:*",
     "@goldshore/brand": "workspace:*",
     "@goldshore/config": "workspace:^",
     "@goldshore/theme": "workspace:*",
     "@goldshore/ui": "workspace:*",
     "@goldshore/utils": "workspace:*",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
     "astro": "^5.18.0",
+    "framer-motion": "^12.38.0",
     "fuse.js": "^7.1.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "three": "^0.183.2",
     "vanilla-tilt": "^1.8.1"
   },
   "devDependencies": {
