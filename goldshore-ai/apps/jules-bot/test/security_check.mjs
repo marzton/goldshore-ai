@@ -105,9 +105,10 @@ try {
 
 
 } catch (e) {
-  const errorMessage = (e && e.message) ? e.message : String(e);
+  const errorMessage = String(e && e.message ? e.message : e);
   const safeMessage = errorMessage
-    .replace(/[\x00-\x1F\x7F]+/g, ' ')        // remove control characters, including newlines
+    .replace(/[\r\n]+/g, ' ')                 // explicitly remove newlines
+    .replace(/[\x00-\x08\x0B-\x1F\x7F]+/g, ' ') // remove remaining control characters
     .replace(/[^ -~]/g, '?');                 // replace remaining non-ASCII-printable chars
   console.error('Error during security check: [details: ' + safeMessage + ']');
   exitCode = 1;
