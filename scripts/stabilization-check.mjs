@@ -103,6 +103,15 @@ const gitRefExists = (ref) => {
     return false;
   }
 };
+const normalizeCheckStatus = (status) => String(status || '').toLowerCase();
+const normalizeCheckConclusion = (conclusion) =>
+  String(conclusion || '').toLowerCase();
+const isCompletedCheck = (check) =>
+  normalizeCheckStatus(check.status) === 'completed';
+const isSuccessfulCheck = (check) =>
+  normalizeCheckConclusion(check.conclusion) === 'success';
+const hasCompletedNonSuccessCheck = (checks) =>
+  checks.some((check) => isCompletedCheck(check) && !isSuccessfulCheck(check));
 
 function resolveBaseRef() {
   if (gitRefExists('origin/main')) return 'origin/main';
@@ -159,12 +168,10 @@ function getCiStatus(branch) {
         item.conclusion || (item.state === 'SUCCESS' ? 'SUCCESS' : item.state),
     }));
 
-    const hasFailed = checks.some((c) =>
-      ['FAILURE', 'TIMED_OUT', 'CANCELLED'].includes(c.conclusion),
-    );
+    const hasFailed = hasCompletedNonSuccessCheck(checks);
     const state = hasFailed
       ? '❌ FAIL'
-      : checks.every((c) => c.status === 'COMPLETED')
+      : checks.every((c) => isCompletedCheck(c) && isSuccessfulCheck(c))
         ? '✅ PASS'
         : '🟡 PENDING';
     return {
@@ -196,14 +203,10 @@ function getCiStatus(branch) {
       r.conclusion || (r.status === 'completed' ? 'success' : 'pending'),
   }));
 
-  const hasFailed = commitRuns.some((c) =>
-    ['failure', 'timed_out', 'cancelled'].includes(
-      String(c.conclusion).toLowerCase(),
-    ),
-  );
+  const hasFailed = hasCompletedNonSuccessCheck(commitRuns);
   const allCompleted =
     commitRuns.length > 0 &&
-    commitRuns.every((c) => String(c.status).toLowerCase() === 'completed');
+    commitRuns.every((c) => isCompletedCheck(c) && isSuccessfulCheck(c));
   const state = hasFailed ? '❌ FAIL' : allCompleted ? '✅ PASS' : '🟡 PENDING';
   return {
     summary: `${state} No active PR found; reporting commit checks for [${headSha.slice(0, 7)}](https://github.com/goldshore/goldshore-ai/commit/${headSha}).`,
