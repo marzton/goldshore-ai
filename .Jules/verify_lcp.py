@@ -1,4 +1,4 @@
-
+.jules/verification/verify_lcp.py
 from playwright.sync_api import sync_playwright
 
 def verify_lcp_optimization():
