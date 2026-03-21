@@ -7,17 +7,25 @@ readonly -a ALLOWED_TARGET_HOSTS=(
   "admin-preview.goldshore.ai"
   "gs-admin.pages.dev"
   "ops.goldshore.ai"
+  "ops-preview.goldshore.ai"
+)
+readonly -a ALLOWED_TARGET_HOST_PATTERNS=(
+  "*.admin-preview.goldshore.ai"
+  "*.gs-admin.pages.dev"
 )
 
-is_allowed_target_url() {
+target_host_for_url() {
   local url="$1"
-  local host
 
   if [[ ! "$url" =~ ^https://([^/?#:]+)(:[0-9]+)?([/?#].*)?$ ]]; then
     return 1
   fi
 
-  host="${BASH_REMATCH[1],,}"
+  printf "%s\n" "${BASH_REMATCH[1],,}"
+}
+
+is_allowed_target_host() {
+  local host="$1"
 
   for allowed_host in "${ALLOWED_TARGET_HOSTS[@]}"; do
     if [[ "$host" == "$allowed_host" ]]; then
@@ -25,7 +33,21 @@ is_allowed_target_url() {
     fi
   done
 
+  for allowed_pattern in "${ALLOWED_TARGET_HOST_PATTERNS[@]}"; do
+    if [[ "$host" == $allowed_pattern ]]; then
+      return 0
+    fi
+  done
+
   return 1
+}
+
+is_allowed_target_url() {
+  local url="$1"
+  local host
+
+  host="$(target_host_for_url "$url")" || return 1
+  is_allowed_target_host "$host"
 }
 
 main() {
@@ -41,13 +63,13 @@ main() {
 
   if ! is_allowed_target_url "$target_url"; then
     printf 'Refusing to send Cloudflare Access credentials to unapproved target: %s\n' "$target_url" >&2
-    printf 'Allowed hosts: %s\n' "${ALLOWED_TARGET_HOSTS[*]}" >&2
+    printf 'Allowed hosts: %s; wildcard patterns: %s\n' "${ALLOWED_TARGET_HOSTS[*]}" "${ALLOWED_TARGET_HOST_PATTERNS[*]}" >&2
     exit 1
   fi
 
   response_file="$(mktemp /tmp/jules-sync-response.XXXXXX.txt)"
   headers_file="$(mktemp /tmp/jules-sync-headers.XXXXXX.txt)"
-  trap 'rm -f "$response_file" "$headers_file"' EXIT
+  trap 'rm -f "${response_file:-}" "${headers_file:-}"' EXIT
 
   echo "Testing Cloudflare Access service-token auth against: $target_url"
 
