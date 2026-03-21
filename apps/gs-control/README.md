@@ -1,19 +1,39 @@
 # apps/gs-control
 
 ## Overview
-The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers. It is managed alongside the gateway worker as part of the Edge Workers deployment group.
+`gs-control` is the Cloudflare Worker that owns infrastructure automation for Goldshore, including DNS reconciliation, Cloudflare resource administration, scheduled maintenance tasks, and the shared system configuration sync endpoint in `src/index.ts`.
 
-Cloudflare metadata (from `wrangler.toml`):
+## Cloudflare deployment metadata
+Source of truth: `apps/gs-control/wrangler.toml`.
+
 - Worker name: `gs-control`
+- Entry point: `src/index.ts`
 - Route: `ops.goldshore.ai/*`
-- Compatibility date: `2025-01-10`
-- Bindings: `CONTROL_LOGS` (KV), `STATE` (R2)
-- Service bindings: `API` (`gs-api`), `GATEWAY` (`gs-gateway`)
-- Environment variable: `ENV=production`
+- Compatibility date: `2024-11-01`
+- Compatibility flags: `nodejs_compat`
 
-## Routes/Endpoints
-These are worker API endpoints implemented in `src/index.ts` and `src/routes/cloudflare.ts` (not HTML pages). The router files are the source of truth.
-- `GET /` (service health)
+### Real binding set
+- KV namespaces:
+  - `CONTROL_LOGS`
+  - `GS_CONFIG`
+- R2 buckets:
+  - `STATE`
+- Service bindings:
+  - `API` → `gs-api`
+  - `GATEWAY` → `gs-gateway`
+- Vars:
+  - `ENV=production`
+  - `CONTROL_SYNC_TOKEN`
+  - `SYNC_TARGET_SUBDOMAIN`
+
+## Shared config ownership
+The shared config KV for cross-worker runtime data is `GS_CONFIG`. `gs-control` writes `ROUTING_TABLE`, `SERVICE_STATUS`, and `AI_ORCHESTRATION` through `POST /system/sync`, while `CONTROL_LOGS` remains the audit and task-log KV used by scheduled jobs and Cloudflare admin routes.
+
+## Routes and endpoints
+Implemented in `src/index.ts` and `src/routes/cloudflare.ts`.
+
+- `GET /`
+- `POST /system/sync`
 - `POST /dns/apply`
 - `POST /workers/reconcile`
 - `POST /pages/deploy`
@@ -26,34 +46,20 @@ These are worker API endpoints implemented in `src/index.ts` and `src/routes/clo
 - `GET /cloudflare/r2/buckets`
 - `GET /cloudflare/d1/databases`
 - `GET /cloudflare/access/policies`
-The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers.
 
-Configuration highlights (from `wrangler.toml`):
-- `ENV=production`
-- KV binding: `CONTROL_LOGS`
-- R2 binding: `STATE`
-- Service bindings: `API` (`gs-api`), `GATEWAY` (`gs-gateway`)
-
-## Routes/Endpoints
-These are worker API endpoints implemented in `src/index.ts` (not HTML pages). Route handlers are defined in `src/index.ts`.
-- `POST /system/sync`
-- `POST /dns/update`
-- `POST /preview/create`
-
-## Local Dev
+## Local development
 ```bash
 pnpm install
 pnpm --filter ./apps/gs-control dev
 pnpm --filter ./apps/gs-control run-task
 ```
 
-## Deploy
-- Production deploy: `.github/workflows/deploy-control-worker.yml`
-- Preview deploy: `.github/workflows/preview-control-worker.yml`
-- Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
-- Store `CLOUDFLARE_API_TOKEN` in Cloudflare secrets (via `wrangler secret put`) rather than committing env values
-
-<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
+## Testing and build
 ```bash
-pnpm --filter ./apps/gs-control deploy
+pnpm --filter ./apps/gs-control test
+pnpm --filter ./apps/gs-control build
 ```
+
+## Deploy
+- Production deploy uses `wrangler deploy`.
+- Store secrets such as `CLOUDFLARE_API_TOKEN` with `wrangler secret put` instead of committing plaintext values.
