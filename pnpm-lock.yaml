@@ -98,6 +98,9 @@ importers:
 
   apps/gs-admin:
     dependencies:
+      '@astrojs/tailwind':
+        specifier: ^6.0.2
+        version: 6.0.2(astro@5.18.1(@types/node@25.5.0)(jiti@1.21.7)(rollup@4.59.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))
       '@goldshore/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -119,19 +122,16 @@ importers:
       astro:
         specifier: ^5.18.0
         version: 5.18.1(@types/node@25.5.0)(jiti@1.21.7)(rollup@4.59.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
+      tailwindcss:
+        specifier: ^3.4.17
+        version: 3.4.19(tsx@4.21.0)(yaml@2.8.2)
     devDependencies:
       '@astrojs/cloudflare':
         specifier: 12.6.12
         version: 12.6.12(@types/node@25.5.0)(astro@5.18.1(@types/node@25.5.0)(jiti@1.21.7)(rollup@4.59.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
-      '@astrojs/tailwind':
-        specifier: ^6.0.2
-        version: 6.0.2(astro@5.18.1(@types/node@25.5.0)(jiti@1.21.7)(rollup@4.59.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))
       '@types/node':
         specifier: ^25.3.3
         version: 25.5.0
-      tailwindcss:
-        specifier: ^3.4.17
-        version: 3.4.19(tsx@4.21.0)(yaml@2.8.2)
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
@@ -293,6 +293,9 @@ importers:
       '@astrojs/react':
         specifier: ^5.0.1
         version: 5.0.1(@types/node@25.5.0)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(jiti@1.21.7)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(tsx@4.21.0)(yaml@2.8.2)
+      '@astrojs/tailwind':
+        specifier: ^6.0.2
+        version: 6.0.2(astro@5.18.1(@types/node@25.5.0)(jiti@1.21.7)(rollup@4.59.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))
       '@goldshore/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -332,6 +335,9 @@ importers:
       react-dom:
         specifier: ^19.2.4
         version: 19.2.4(react@19.2.4)
+      tailwindcss:
+        specifier: ^3.4.17
+        version: 3.4.19(tsx@4.21.0)(yaml@2.8.2)
       three:
         specifier: ^0.183.2
         version: 0.183.2
@@ -345,24 +351,21 @@ importers:
       '@astrojs/cloudflare':
         specifier: 12.6.12
         version: 12.6.12(@types/node@25.5.0)(astro@5.18.1(@types/node@25.5.0)(jiti@1.21.7)(rollup@4.59.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.2)
-      '@astrojs/tailwind':
-        specifier: ^6.0.2
-        version: 6.0.2(astro@5.18.1(@types/node@25.5.0)(jiti@1.21.7)(rollup@4.59.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))
       '@playwright/test':
         specifier: ^1.55.0
         version: 1.58.2
-      tailwindcss:
-        specifier: ^3.4.17
-        version: 3.4.19(tsx@4.21.0)(yaml@2.8.2)
       typescript:
         specifier: ^5.4.2
         version: 5.9.3
 
   apps/web:
-    devDependencies:
+    dependencies:
       '@astrojs/tailwind':
         specifier: ^6.0.2
         version: 6.0.2(astro@5.18.1(@types/node@25.5.0)(jiti@1.21.7)(rollup@4.59.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))
+      '@goldshore/gs-web':
+        specifier: workspace:*
+        version: link:../gs-web
       tailwindcss:
         specifier: ^3.4.17
         version: 3.4.19(tsx@4.21.0)(yaml@2.8.2)
@@ -410,7 +413,7 @@ importers:
     dependencies:
       drizzle-orm:
         specifier: ^0.30.0
-        version: 0.30.10(@cloudflare/workers-types@4.20260313.1)(react@19.2.4)
+        version: 0.30.10(@cloudflare/workers-types@4.20260313.1)(@types/react@19.2.14)(react@19.2.4)
     devDependencies:
       drizzle-kit:
         specifier: ^0.20.0
@@ -6079,9 +6082,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.30.10(@cloudflare/workers-types@4.20260313.1)(react@19.2.4):
+  drizzle-orm@0.30.10(@cloudflare/workers-types@4.20260313.1)(@types/react@19.2.14)(react@19.2.4):
     optionalDependencies:
       '@cloudflare/workers-types': 4.20260313.1
+      '@types/react': 19.2.14
       react: 19.2.4
 
   dset@3.1.4: {}
