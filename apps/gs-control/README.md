@@ -1,46 +1,66 @@
 # apps/gs-control
 
 ## Overview
-The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers. It is managed alongside the gateway worker as part of the Edge Workers deployment group.
+The `gs-control` worker handles infrastructure automation and operator workflows for GoldShore. It exposes control-plane endpoints for sync operations and Cloudflare administration, and it also runs scheduled maintenance tasks.
 
-Cloudflare metadata (from `wrangler.toml`):
+## Source of truth
+This README is maintained manually. No README generator was found in the repository. Keep it synchronized with:
+
+- `apps/gs-control/wrangler.toml` for routes, compatibility date, bindings, service bindings, and declared vars.
+- `apps/gs-control/src/index.ts` for mounted routes, auth behavior, and scheduled tasks.
+- `apps/gs-control/src/routes/cloudflare.ts` for Cloudflare admin endpoints.
+
+## Cloudflare configuration
+From `apps/gs-control/wrangler.toml`:
+
 - Worker name: `gs-control`
-- Route: `ops.goldshore.ai/*`
-- Compatibility date: `2025-01-10`
-- Bindings: `CONTROL_LOGS` (KV), `STATE` (R2)
-- Service bindings: `API` (`gs-api`), `GATEWAY` (`gs-gateway`)
-- Environment variable: `ENV=production`
+- Entry point: `src/index.ts`
+- Compatibility date: `2024-11-01`
+- Compatibility flags: `nodejs_compat`
+- Production route: `ops.goldshore.ai/*`
+- Declared vars:
+  - `ENV=production`
+  - `CONTROL_SYNC_TOKEN`
+  - `SYNC_TARGET_SUBDOMAIN=api.goldshore.ai`
+- Declared bindings:
+  - `CONTROL_LOGS` (`kv_namespaces`)
+  - `STATE` (`r2_buckets`)
+  - `API` (`services`, bound to `gs-api`)
+  - `GATEWAY` (`services`, bound to `gs-gateway`)
 
-## Routes/Endpoints
-These are worker API endpoints implemented in `src/index.ts` and `src/routes/cloudflare.ts` (not HTML pages). The router files are the source of truth.
-- `GET /` (service health)
+## Runtime notes
+- Only `/` and `OPTIONS` bypass Cloudflare Access auth.
+- Cloudflare admin routes additionally require one of the admin roles from `CONTROL_ADMIN_ROLES`, or the default roles `admin`, `ops`, `owner`, `infra`.
+- Scheduled runs write to `CONTROL_LOGS` and invoke `syncDNS(env)` and `rotateKeys(env)`.
+- The code expects additional runtime values not declared in `wrangler.toml`, including:
+  - `GS_CONFIG` KV binding used by `POST /system/sync`
+  - `CLOUDFLARE_API_TOKEN`
+  - `CLOUDFLARE_ACCOUNT_ID`
+  - `CLOUDFLARE_ZONE_ID`
+  - `CONTROL_ADMIN_ROLES`
+  - `ALLOWED_ORIGINS`
+
+## Authoritative endpoint list
+Mounted in `src/index.ts` and `src/routes/cloudflare.ts`.
+
+### Core control routes
+- `GET /` — JSON service status.
+- `POST /system/sync` — validates and writes routing/service/orchestration config to `GS_CONFIG`, with an audit entry in `CONTROL_LOGS`.
 - `POST /dns/apply`
 - `POST /workers/reconcile`
 - `POST /pages/deploy`
 - `POST /access/audit`
+
+### Cloudflare administration routes
 - `GET /cloudflare/dns/records`
 - `PUT /cloudflare/dns/records/:recordId`
 - `GET /cloudflare/workers/status`
 - `GET /cloudflare/pages/projects`
 - `GET /cloudflare/kv/namespaces`
 - `GET /cloudflare/r2/buckets`
-- `GET /cloudflare/d1/databases`
-- `GET /cloudflare/access/policies`
-The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers.
+- `GET /cloudflare/access/policies?appId=...`
 
-Configuration highlights (from `wrangler.toml`):
-- `ENV=production`
-- KV binding: `CONTROL_LOGS`
-- R2 binding: `STATE`
-- Service bindings: `API` (`gs-api`), `GATEWAY` (`gs-gateway`)
-
-## Routes/Endpoints
-These are worker API endpoints implemented in `src/index.ts` (not HTML pages). Route handlers are defined in `src/index.ts`.
-- `POST /system/sync`
-- `POST /dns/update`
-- `POST /preview/create`
-
-## Local Dev
+## Local development
 ```bash
 pnpm install
 pnpm --filter ./apps/gs-control dev
@@ -48,12 +68,11 @@ pnpm --filter ./apps/gs-control run-task
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-control-worker.yml`
-- Preview deploy: `.github/workflows/preview-control-worker.yml`
-- Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
-- Store `CLOUDFLARE_API_TOKEN` in Cloudflare secrets (via `wrangler secret put`) rather than committing env values
+- Production workflow: `.github/workflows/deploy-control-worker.yml`
+- Preview workflow: `.github/workflows/preview-control-worker.yml`
+- Store `CLOUDFLARE_API_TOKEN` as a Cloudflare secret instead of committing it.
+- Deploy command:
 
-<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 ```bash
 pnpm --filter ./apps/gs-control deploy
 ```
