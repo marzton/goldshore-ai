@@ -352,26 +352,35 @@ POST /preview/create
 Location:
 
 ```
-infra/github/workflows/
+.github/workflows/
 ```
 
-Workflows include:
+Representative workflows include:
 
 ```
-preview-web.yml
-preview-admin.yml
-deploy-api.yml
-deploy-gateway.yml
-deploy-control.yml
+preview-gs-web.yml
+preview-gs-admin.yml
+preview-gs-api.yml
+preview-gs-agent.yml
+preview-gs-gateway.yml
+deploy-gs-web.yml
+deploy-gs-admin.yml
+deploy-gs-api.yml
 ```
+
+Worker deployment policy:
+
+- `gs-agent`: preview-only by design in GitHub Actions
+- `gs-gateway`: preview-only by design in GitHub Actions
+- `gs-control`: fully manual / no GitHub deploy automation
+- Manual deployment policy reference: `docs/ci/WORKER_DEPLOYMENT_STATES.md`
 
 Features:
 
 - pnpm install
-- Pinned SHA for all actions
 - Preview deploys for PRs
-- Automatic production deploy on main
-- Cloudflare Pages + Workers deploy
+- Production automation for the services that still use GitHub Actions as the source of truth
+- Explicit manual deployment documentation for workers that are no longer GitHub-managed
 
 ## Local Development
 
@@ -422,14 +431,22 @@ pnpm test
 
 Pages deploy automatically via GitHub Actions.
 
-Workers deploy:
+Workers that still deploy automatically via GitHub Actions:
 
 ```bash
 pnpm --filter ./apps/gs-api deploy
+pnpm --filter ./apps/gs-mail deploy
+```
+
+Workers with manual production deployment policy:
+
+```bash
+pnpm --filter ./apps/gs-agent deploy
 pnpm --filter ./apps/gs-gateway deploy
 pnpm --filter ./apps/gs-control deploy
-pnpm --filter ./apps/gs-agent deploy
 ```
+
+See `docs/ci/WORKER_DEPLOYMENT_STATES.md` for which of those workers still have preview workflows in GitHub Actions.
 
 ## Versioning Strategy
 
