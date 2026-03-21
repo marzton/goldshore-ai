@@ -147,11 +147,13 @@ function getBranchInfo() {
 function getCiStatus(branch) {
   if (!tryRun('gh --version')) return { summary: '⚠️ gh CLI unavailable.' };
 
-  const prNumber = process.env.GITHUB_REF?.startsWith('refs/pull/')
+  const prNumberResult = process.env.GITHUB_REF?.startsWith('refs/pull/')
     ? process.env.GITHUB_REF.split('/')[2]
     : tryRun(
         `gh pr list --head "${branch}" --state open --limit 1 --json number --jq '.[0].number'`,
       );
+  const prNumber =
+    prNumberResult && prNumberResult !== 'null' ? prNumberResult : null;
 
   if (prNumber) {
     const prData = tryRun(
