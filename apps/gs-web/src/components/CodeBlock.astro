@@ -3,6 +3,18 @@ const { code, lang = 'bash' } = Astro.props;
 ---
 
 <div class="code-block">
-  <button class="copy" onclick="navigator.clipboard.writeText(this.nextElementSibling.innerText)">Copy</button>
+  <button class="copy" type="button">Copy</button>
   <pre><code class={"language-" + lang}>{code}</code></pre>
 </div>
+
+<script>
+  document.addEventListener('click', async (event) => {
+    const target = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('.code-block .copy') : null;
+    if (!target) return;
+
+    const code = target.nextElementSibling?.textContent;
+    if (!code) return;
+
+    await navigator.clipboard.writeText(code);
+  });
+</script>
