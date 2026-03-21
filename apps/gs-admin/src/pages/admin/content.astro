@@ -4,7 +4,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 const apiBase = import.meta.env.PUBLIC_API ?? '';
 ---
 
-<AdminLayout title="Content Studio">
+<AdminLayout title="Content Studio" requiredPermission="content:write">
   <div class="content-header">
     <div>
       <h1>Content Studio</h1>

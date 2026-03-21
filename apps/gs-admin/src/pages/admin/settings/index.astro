@@ -31,6 +31,31 @@ const infrastructureReferences = {
       Local UI preferences can be changed here. Operational configuration is managed through protected
       infrastructure pages and is shown below as reference-only context.
     </p>
+  <section class="gs-card gs-mb-6">
+    <div class="section-title"><span>ℹ️</span><h3>Page Classification</h3></div>
+    <p class="gs-helper">
+      This settings page is intentionally read-only for infrastructure reference data. Theme controls only change local browser UI preferences and do not update backend system configuration.
+    </p>
+  </section>
+
+  <section class="gs-grid columns-2">
+    <Card>
+      <div class="section-title"><span>🌐</span><h3>Domain & DNS</h3></div>
+      <ul>
+        {domains.map((domain) => (
+          <li>{domain}</li>
+        ))}
+      </ul>
+    </Card>
+    <Card>
+      <div class="section-title"><span>🛡</span><h3>Access & Identity</h3></div>
+      <p class="gs-helper">Cloudflare Access policies for admin, workers, and developer endpoints.</p>
+      <ul>
+        <li>Admin locked behind Access and OTP.</li>
+        <li>Workers restricted with Access JWT audience.</li>
+        <li>Per-client tenants planned.</li>
+      </ul>
+    </Card>
   </section>
 
   <section class="gs-grid columns-2 gs-mt-6">
