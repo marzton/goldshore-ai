@@ -246,7 +246,7 @@ const safeRedirect = (redirectTo: string | null, origin: string) => {
   return new URL(trimmed, origin);
 };
 
-const sendMail = async (
+export const sendMail = async (
   env: Env,
   to: MailRecipient[],
   subject: string,
