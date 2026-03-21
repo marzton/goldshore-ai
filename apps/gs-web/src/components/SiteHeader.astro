@@ -33,59 +33,54 @@ const {
   </nav>
 </header>
 
-<script is:inline>
-  const header = document.querySelector('.gs-header');
-  const toggle = document.querySelector('#menu-toggle');
-  const menu = document.querySelector('#primary-navigation');
+<script>
+  const header = document.querySelector<HTMLElement>('.gs-header');
+  const toggle = document.querySelector<HTMLButtonElement>('#menu-toggle');
+  const menu = document.querySelector<HTMLElement>('#primary-navigation');
 
-  const firstMobileLink = () => menu?.querySelector('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+  if (header && toggle && menu) {
+    const firstMobileLink = () =>
+      menu.querySelector<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
 
-  const setMenuState = (isOpen, options = { restoreFocus: false }) => {
-    if (!header || !toggle || !menu) {
-      return;
-    }
+    const setMenuState = (isOpen: boolean, options: { restoreFocus?: boolean } = { restoreFocus: false }) => {
+      const value = isOpen ? 'true' : 'false';
+      header.setAttribute('data-menu-open', value);
+      toggle.setAttribute('aria-expanded', value);
+      menu.toggleAttribute('hidden', !isOpen);
 
-    const value = isOpen ? 'true' : 'false';
-    header.setAttribute('data-menu-open', value);
-    toggle.setAttribute('aria-expanded', value);
-    menu.toggleAttribute('hidden', !isOpen);
+      if (isOpen) {
+        firstMobileLink()?.focus();
+      } else if (options.restoreFocus) {
+        toggle.focus();
+      }
+    };
 
-    if (isOpen) {
-      firstMobileLink()?.focus();
-    } else if (options.restoreFocus) {
-      toggle.focus();
-    }
-  };
+    const closeMenu = (options?: { restoreFocus?: boolean }) =>
+      setMenuState(false, { restoreFocus: true, ...options });
 
-  const closeMenu = (options) => setMenuState(false, { restoreFocus: true, ...options });
+    toggle.addEventListener('click', (event) => {
+      event.stopPropagation();
 
-  toggle?.addEventListener('click', (event) => {
-    event.stopPropagation();
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      if (isOpen) {
+        closeMenu({ restoreFocus: true });
+      } else {
+        setMenuState(true);
+      }
+    });
 
-    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
-    if (isOpen) {
-      closeMenu({ restoreFocus: true });
-    } else {
-      setMenuState(true);
-    }
-  });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        closeMenu({ restoreFocus: true });
+      }
+    });
 
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
-      closeMenu({ restoreFocus: true });
-    }
-  });
+    document.addEventListener('click', (event) => {
+      if (toggle.getAttribute('aria-expanded') === 'true' && event.target instanceof Node && !header.contains(event.target)) {
+        closeMenu({ restoreFocus: true });
+      }
+    });
 
-  document.addEventListener('click', (event) => {
-    if (
-      toggle?.getAttribute('aria-expanded') === 'true' &&
-      header &&
-      event.target instanceof Node &&
-      !header.contains(event.target)
-    ) {
-      closeMenu({ restoreFocus: true });
-    }
-  });
-
-  setMenuState(false);
+    setMenuState(false);
+  }
 </script>
