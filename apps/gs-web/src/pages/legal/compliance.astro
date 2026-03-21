@@ -7,11 +7,17 @@ const entityMeta = [
   ['FEIN / EIN', 'Available under NDA during onboarding'],
   ['NYS entity ID', 'Available under NDA during onboarding'],
   ['Registered address', 'Published in onboarding packet'],
-  ['Certificate of authority', 'Current; latest filing confirmation available on request']
+  [
+    'Certificate of authority',
+    'Current; latest filing confirmation available on request',
+  ],
 ];
 ---
 
-<BaseLayout title="Legal & Compliance | GoldShore" description="Entity and compliance disclosures.">
+<BaseLayout
+  title="Legal & Compliance | GoldShore"
+  description="Entity and compliance disclosures."
+>
   <section class="gs-section gs-blueprint-bg gs-section--padded">
     <div class="gs-container">
       <h1>Legal &amp; Compliance</h1>
@@ -20,13 +26,15 @@ const entityMeta = [
         disclosures, and baseline operating controls used in client engagements.
       </p>
 
-      <div class="gs-card" style="margin: 1rem 0;">
+      <div class="gs-card compliance-entity-card">
         <h2>Entity profile</h2>
-        <dl>
+        <dl class="compliance-entity-list">
           {
             entityMeta.map(([label, value]) => (
-              <div style="display:grid;grid-template-columns:220px 1fr;gap:0.75rem;padding:0.4rem 0;border-bottom:1px solid var(--gs-border-color);">
-                <dt><strong>{label}</strong></dt>
+              <div class="compliance-entity-row">
+                <dt>
+                  <strong>{label}</strong>
+                </dt>
                 <dd>{value}</dd>
               </div>
             ))
@@ -49,7 +57,9 @@ const entityMeta = [
           <ul>
             <li><a href="/legal/privacy">Privacy policy</a></li>
             <li><a href="/legal/terms">Terms of service</a></li>
-            <li><a href="/status">Service status and maintenance updates</a></li>
+            <li>
+              <a href="/status">Service status and maintenance updates</a>
+            </li>
           </ul>
         </article>
       </div>
