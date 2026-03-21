@@ -20,14 +20,9 @@ interface ImportMetaEnv {
   readonly PUBLIC_AUTH_CLIENT_ID: string;
 
   /**
-   * @deprecated SECURITY RISK: Do not use PUBLIC_ prefix for secrets. Use AUTH_CLIENT_SECRET instead.
-   */
-  readonly PUBLIC_AUTH_CLIENT_SECRET?: string;
-
-  /**
    * Secure Client Secret (Server-side only)
    */
-  readonly AUTH_CLIENT_SECRET?: string;
+  readonly AUTH_CLIENT_SECRET: string;
 
   /**
    * Server-side only gs-api base URL (overrides PUBLIC_API when set).
