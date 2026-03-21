@@ -71,12 +71,23 @@ function getBranchInfo() {
   return { branch, baseRef, behind: parseInt(behindRaw, 10), ahead: parseInt(aheadRaw, 10) };
 }
 
+function resolveCiBranch(branch) {
+  if (process.env.GITHUB_HEAD_REF) return process.env.GITHUB_HEAD_REF;
+  if (process.env.GITHUB_REF?.startsWith('refs/heads/')) return process.env.GITHUB_REF.slice('refs/heads/'.length);
+  if (process.env.GITHUB_REF_NAME && process.env.GITHUB_REF_NAME !== 'merge') return process.env.GITHUB_REF_NAME;
+  if (branch && branch !== 'HEAD') return branch;
+
+  const baseRef = resolveBaseRef();
+  return baseRef ? baseRef.replace(/^origin\//, '') : 'main';
+}
+
 function getCiStatus(branch) {
   if (!tryRun('gh --version')) return { summary: '⚠️ gh CLI unavailable.' };
 
+  const ciBranch = resolveCiBranch(branch);
   const prNumber = process.env.GITHUB_REF?.startsWith('refs/pull/')
     ? process.env.GITHUB_REF.split('/')[2]
-    : tryRun(`gh pr list --head "${branch}" --state open --limit 1 --json number --jq '.[0].number'`);
+    : tryRun(`gh pr list --head "${ciBranch}" --state open --limit 1 --json number --jq '.[0].number'`);
 
   if (prNumber) {
     const prData = tryRun(`gh pr view ${prNumber} --json number,url,statusCheckRollup`);
@@ -94,14 +105,14 @@ function getCiStatus(branch) {
     return { summary: `${state} PR #${pr.number} checks. [Link](${pr.url})`, checks };
   }
 
-  const runsRaw = tryRun(`gh run list --branch "${branch}" --limit 10 --json workflowName,displayTitle,status,conclusion,url`);
+  const runsRaw = tryRun(`gh run list --branch "${ciBranch}" --limit 10 --json workflowName,displayTitle,status,conclusion,url`);
   if (!runsRaw) {
-    return { summary: '⚠️ No active PR found and unable to fetch recent workflow runs for this branch.' };
+    return { summary: `⚠️ No active PR found and unable to fetch recent workflow runs for branch '${ciBranch}'.` };
   }
 
   const runs = JSON.parse(runsRaw);
   if (!runs.length) {
-    return { summary: `⚠️ No active PR found and no recent workflow runs detected for branch '${branch}'.` };
+    return { summary: `⚠️ No active PR found and no recent workflow runs detected for branch '${ciBranch}'.` };
   }
 
   const hasFailed = runs.some(r => ['failure', 'timed_out', 'cancelled', 'action_required', 'startup_failure'].includes((r.conclusion || '').toLowerCase()));
@@ -115,7 +126,7 @@ function getCiStatus(branch) {
   }));
 
   return {
-    summary: `${state} Recent workflow runs for branch '${branch}' (${runs.length} checked).`,
+    summary: `${state} Recent workflow runs for branch '${ciBranch}' (${runs.length} checked).`,
     checks,
   };
 }
