@@ -1,5 +1,5 @@
-// infra/cf/deploy.ts
 import fs from 'node:fs';
+import path from 'node:path';
 import YAML from 'yaml';
 import FormData from 'form-data';
 import { cf } from './client';
@@ -7,7 +7,9 @@ import { latestPagesStatus, workerBindingsOk } from './checks';
 import { smoke, lighthouse } from './tests';
 import { changedPaths, pathsMatchOnly, withinDailyCap } from './guards';
 
-function loadCfg() { return YAML.parse(fs.readFileSync("infra/Cloudflare/config.yaml","utf8")); }
+function loadCfg() {
+  return YAML.parse(fs.readFileSync('infra/Cloudflare/config.yaml', 'utf8'));
+}
 
 async function countTodayDeploys(deployments: any[]) {
   const today = new Date().toISOString().slice(0, 10);
@@ -27,15 +29,9 @@ function pagesCheckUrl(p: any): string {
   return `https://${p.name}.goldshore.ai/`;
 }
 
-function pagesCheckUrl(p: any): string {
-  if (typeof p.public_url === "string" && p.public_url.length > 0) {
-    return p.public_url;
-  }
-
-  // Backward-compatible fallback for environments that have not yet set public_url.
-  if (p.name === "gs-web") return "https://goldshore.ai/";
-  if (p.name === "gs-admin") return "https://admin.goldshore.ai/";
-  return `https://${p.name}.goldshore.ai/`;
+function resolveWorkerEntryPath(entry: string): string {
+  const canonicalEntry = entry.replace(/^apps\/api-worker\//, 'apps/gs-api/');
+  return path.resolve(process.cwd(), canonicalEntry);
 }
 
 async function deployPages(p: any) {
@@ -56,8 +52,8 @@ async function deployPages(p: any) {
 
   const url = pagesCheckUrl(p);
 
-  if (p.require_checks?.includes("smoke")) {
-    await smoke(url, 200).catch(()=>{});
+  if (p.require_checks?.includes('smoke')) {
+    await smoke(url, 200).catch(() => {});
   }
 
   const status = await latestPagesStatus(p.name);
@@ -80,10 +76,10 @@ async function deployPages(p: any) {
     await new Promise((r) => setTimeout(r, 5000));
   }
 
-  if (p.require_checks?.includes("smoke")) {
+  if (p.require_checks?.includes('smoke')) {
     await smoke(url, 200, 8000);
   }
-  if (p.require_checks?.includes("lighthouse")) {
+  if (p.require_checks?.includes('lighthouse')) {
     await lighthouse(url, 0.8);
   }
   console.log(`[pages:${p.name}] Deploy OK.`);
@@ -109,8 +105,22 @@ async function deployWorker(w: any) {
     throw new Error(`[worker:${w.script}] No bindings found; aborting deploy`);
   }
 
+  if (!w.entry) {
+    throw new Error(
+      `[worker:${w.script}] Missing worker entry in infra/Cloudflare/config.yaml`,
+    );
+  }
+
+  const entryPath = resolveWorkerEntryPath(w.entry);
+  if (!fs.existsSync(entryPath)) {
+    throw new Error(
+      `[worker:${w.script}] Worker entry not found: ${w.entry} (resolved: ${entryPath}). ` +
+        'Check infra/Cloudflare/config.yaml for stale worker paths.',
+    );
+  }
+
   const fd = new FormData();
-  fd.append('main', fs.createReadStream(w.entry), {
+  fd.append('main', fs.createReadStream(entryPath), {
     filename: 'index.js',
     contentType: 'application/javascript',
   });
@@ -118,8 +128,8 @@ async function deployWorker(w: any) {
   console.log(`[worker:${w.script}] Deploying…`);
   await cf.workers.deploy(w.script, fd);
 
-  if (w.require_checks?.includes("smoke")) {
-    await smoke("https://api.goldshore.ai/health", 200, 8000);
+  if (w.require_checks?.includes('smoke')) {
+    await smoke('https://api.goldshore.ai/health', 200, 8000);
   }
 
   console.log(`[worker:${w.script}] Deploy OK.`);
