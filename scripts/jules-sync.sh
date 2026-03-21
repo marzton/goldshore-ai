@@ -10,18 +10,33 @@ readonly -a ALLOWED_TARGET_HOSTS=(
   "ops-preview.goldshore.ai"
 )
 readonly -a ALLOWED_TARGET_HOST_PATTERNS=(
-  "*.admin-preview.goldshore.ai"
   "*.gs-admin.pages.dev"
 )
 
-target_host_for_url() {
+parse_target_url() {
   local url="$1"
+  local authority host port
 
-  if [[ ! "$url" =~ ^https://([^/?#:]+)(:[0-9]+)?([/?#].*)?$ ]]; then
+  if [[ ! "$url" =~ ^https://([^/?#]+)(/.*)?$ ]]; then
     return 1
   fi
 
-  printf "%s\n" "${BASH_REMATCH[1],,}"
+  authority="${BASH_REMATCH[1]}"
+  if [[ "$authority" == *"@"* ]]; then
+    return 1
+  fi
+
+  host="$authority"
+  port="443"
+  if [[ "$authority" == *:* ]]; then
+    host="${authority%%:*}"
+    port="${authority##*:}"
+    [[ "$port" =~ ^[0-9]+$ ]] || return 1
+  fi
+
+  [[ -n "$host" ]] || return 1
+
+  printf '%s %s\n' "${host,,}" "$port"
 }
 
 is_allowed_target_host() {
@@ -44,9 +59,10 @@ is_allowed_target_host() {
 
 is_allowed_target_url() {
   local url="$1"
-  local host
+  local host port
 
-  host="$(target_host_for_url "$url")" || return 1
+  read -r host port < <(parse_target_url "$url") || return 1
+  [[ "$port" == "443" ]] || return 1
   is_allowed_target_host "$host"
 }
 
@@ -63,7 +79,7 @@ main() {
 
   if ! is_allowed_target_url "$target_url"; then
     printf 'Refusing to send Cloudflare Access credentials to unapproved target: %s\n' "$target_url" >&2
-    printf 'Allowed hosts: %s; wildcard patterns: %s\n' "${ALLOWED_TARGET_HOSTS[*]}" "${ALLOWED_TARGET_HOST_PATTERNS[*]}" >&2
+    printf 'Allowed hosts: %s; wildcard patterns: %s; required port: 443\n' "${ALLOWED_TARGET_HOSTS[*]}" "${ALLOWED_TARGET_HOST_PATTERNS[*]}" >&2
     exit 1
   fi
 
