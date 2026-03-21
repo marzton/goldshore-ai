@@ -1,5 +1,6 @@
 // infra/cf/deploy.ts
 import fs from 'node:fs';
+import path from 'node:path';
 import YAML from 'yaml';
 import FormData from 'form-data';
 import { cf } from './client';
@@ -109,8 +110,15 @@ async function deployWorker(w: any) {
     throw new Error(`[worker:${w.script}] No bindings found; aborting deploy`);
   }
 
+  const entryPath = path.resolve(process.cwd(), w.entry);
+  if (!fs.existsSync(entryPath)) {
+    throw new Error(
+      `[worker:${w.script}] Entry file not found at ${entryPath}; verify infra/Cloudflare/config.yaml uses the canonical gs-* app directory.`,
+    );
+  }
+
   const fd = new FormData();
-  fd.append('main', fs.createReadStream(w.entry), {
+  fd.append('main', fs.createReadStream(entryPath), {
     filename: 'index.js',
     contentType: 'application/javascript',
   });
