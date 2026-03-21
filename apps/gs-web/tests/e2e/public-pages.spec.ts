@@ -43,20 +43,34 @@ const assertHealthyPage = ({
   expect(assetLoads.length, 'Expected CSS/JS assets to load.').toBeGreaterThan(0);
 };
 
-test('home page renders core layout and CTA navigation', async ({ page }) => {
+const expectSharedLayout = async (page: import('@playwright/test').Page) => {
+  await expect(page.locator('a.skip-link')).toHaveAttribute('href', '#content');
+  await expect(page.locator('header.gs-header')).toBeVisible();
+  await expect(page.locator('main#content')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'GoldShore home' })).toHaveAttribute('href', '/');
+  await expect(page.locator('nav#primary-navigation')).toHaveAttribute('aria-label', 'Primary');
+  await expect(page.locator('footer.gs-footer')).toBeVisible();
+};
+
+test('home page renders current hero copy and CTA navigation', async ({ page }) => {
   const monitors = attachPageMonitors(page);
 
   await page.goto('/', { waitUntil: 'networkidle' });
 
-  await expect(page.locator('header.gs-header')).toBeVisible();
-  await expect(page.locator('footer.gs-footer')).toBeVisible();
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Shaping Waves');
-  await expect(page.getByRole('link', { name: 'Start the Experience' })).toHaveAttribute('href', '/services');
-  await expect(page.getByRole('link', { name: 'Contact Sales' })).toHaveAttribute('href', '/contact');
+  await expectSharedLayout(page);
+  await expect(page.getByText('System operational')).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'Infrastructure for High-Trust AI' })).toBeVisible();
+  await expect(
+    page.getByText(
+      'Resilient decision systems, risk tooling, and operator infrastructure designed to stage structure, activation, and confirmation without adding noise.',
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Open Workstream' })).toHaveAttribute('href', '/contact');
+  await expect(page.getByRole('link', { name: 'View Model' })).toHaveAttribute('href', '/developer');
 
-  await page.getByRole('link', { name: 'Start the Experience' }).click();
-  await page.waitForURL('**/services');
-  await expect(page.getByRole('heading', { level: 1, name: 'Services' })).toBeVisible();
+  await page.getByRole('link', { name: 'Open Workstream' }).click();
+  await page.waitForURL('**/contact');
+  await expect(page.getByRole('heading', { level: 1, name: 'Contact' })).toBeVisible();
 
   assertHealthyPage(monitors);
 });
@@ -66,6 +80,7 @@ test('services page renders highlights and CTA', async ({ page }) => {
 
   await page.goto('/services', { waitUntil: 'networkidle' });
 
+  await expectSharedLayout(page);
   await expect(page.getByRole('heading', { level: 1, name: 'Services' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Request a scoping call' })).toHaveAttribute('href', '/contact');
   await expect(page.locator('.gs-card').first()).toBeVisible();
@@ -77,6 +92,8 @@ test('contact form submits and redirects to thank-you', async ({ page }) => {
   const monitors = attachPageMonitors(page);
 
   await page.goto('/contact', { waitUntil: 'networkidle' });
+
+  await expectSharedLayout(page);
 
   await page.route('**/api/contact', async (route) => {
     await route.fulfill({
@@ -96,20 +113,21 @@ test('contact form submits and redirects to thank-you', async ({ page }) => {
     page.getByRole('button', { name: 'Send message' }).click(),
   ]);
 
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Thank you');
+  await expect(page.getByRole('heading', { level: 1, name: 'Thank you' })).toBeVisible();
 
   assertHealthyPage(monitors);
 });
 
-test('super bowl boxes page renders board and CTAs', async ({ page }) => {
+test('about page renders company overview and contact CTA', async ({ page }) => {
   const monitors = attachPageMonitors(page);
 
-  await page.goto('/super-bowl-boxes', { waitUntil: 'networkidle' });
+  await page.goto('/about', { waitUntil: 'networkidle' });
 
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Super Bowl');
-  await expect(page.locator('.sb-board__cell')).toHaveCount(100);
-  await expect(page.getByRole('link', { name: 'View board' })).toHaveAttribute('href', '#board');
-  await expect(page.getByRole('link', { name: 'How it works' })).toHaveAttribute('href', '#rules');
+  await expectSharedLayout(page);
+  await expect(page.getByRole('heading', { level: 1, name: 'About GoldShore' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 3, name: 'Our Mission' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Start a scoped conversation' })).toHaveAttribute('href', '/contact');
+  await expect(page.locator('.gs-card').first()).toBeVisible();
 
   assertHealthyPage(monitors);
 });
@@ -124,15 +142,22 @@ test.describe('mobile navigation toggle', () => {
 
     const header = page.locator('header.gs-header');
     const toggle = page.locator('.gs-nav-toggle');
+    const menu = page.locator('nav#primary-navigation');
 
     await expect(toggle).toBeVisible();
     await expect(header).toHaveAttribute('data-menu-open', 'false');
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(menu).toHaveAttribute('aria-hidden', 'true');
 
     await toggle.click();
     await expect(header).toHaveAttribute('data-menu-open', 'true');
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(menu).toHaveAttribute('aria-hidden', 'false');
 
     await toggle.click();
     await expect(header).toHaveAttribute('data-menu-open', 'false');
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(menu).toHaveAttribute('aria-hidden', 'true');
 
     assertHealthyPage(monitors);
   });
