@@ -1,6 +1,7 @@
 # apps/gs-control
 
 ## Overview
+The `gs-control` worker handles infrastructure automation tasks such as DNS updates, preview environment creation, secret rotation, and sync operations. It is served from `https://ops.goldshore.ai/*` on Cloudflare Workers.
 `gs-control` is the Cloudflare Worker that owns infrastructure automation for Goldshore, including DNS reconciliation, Cloudflare resource administration, scheduled maintenance tasks, and the shared system configuration sync endpoint in `src/index.ts`.
 
 ## Cloudflare deployment metadata
@@ -56,6 +57,11 @@ pnpm --filter ./apps/gs-control dev
 pnpm --filter ./apps/gs-control run-task
 ```
 
+## Deploy
+- Deployment state: **fully manual / no GitHub deploy automation**.
+- There is intentionally no active preview or production deploy workflow under `.github/workflows/`.
+- This worker is deployed manually by ops via Wrangler because it can mutate shared infrastructure state.
+- Deployment policy reference: [`docs/ci/WORKER_DEPLOYMENT_STATES.md`](../../docs/ci/WORKER_DEPLOYMENT_STATES.md).
 ## Testing and build
 - Production workflow: `.github/workflows/deploy-control-worker.yml`
 - Preview workflow: `.github/workflows/preview-control-worker.yml`

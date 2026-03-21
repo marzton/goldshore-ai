@@ -1,12 +1,13 @@
 # Workflow Inventory
 
-Last audited: 2026-02-18
+Last audited: 2026-03-21
 
 ## Scope notes
 
 - Active workflow directory: `.github/workflows/`.
 - There is currently **no** `.github/AI/` directory in this repository; agent/governance content is stored under `AI/` at the repo root.
 - `naming-lint.yml` is the active naming gate in this repo and serves as the practical equivalent of the planned `naming-guard.yml`.
+- Deployment policy for worker exceptions lives in [`docs/ci/WORKER_DEPLOYMENT_STATES.md`](./WORKER_DEPLOYMENT_STATES.md).
 
 ## Blocking policy legend
 
@@ -18,33 +19,30 @@ Last audited: 2026-02-18
 | `.github/workflows/lockfile-guard.yml` | Prevent lockfile drift in PRs. | `pull_request` | **Blocking** |
 | `.github/workflows/naming-lint.yml` | Enforce naming conventions (`pnpm check:naming`). | `pull_request`, `push` to `main` | **Blocking** |
 | `.github/workflows/route-collision-check.yml` | Validate route ownership/collision map. | `pull_request`, `workflow_dispatch` | **Blocking** |
-| `.github/workflows/preview-web.yml` | Preview deploy for web app. | `pull_request` (path-filtered) | Non-blocking |
-| `.github/workflows/preview-admin.yml` | Preview deploy for admin app. | `pull_request` (path-filtered) | Non-blocking |
-| `.github/workflows/preview-api-worker.yml` | Preview deploy for API worker. | `pull_request` (path-filtered) | Non-blocking |
-| `.github/workflows/preview-control-worker.yml` | Preview deploy for control worker. | `pull_request` (path-filtered) | Non-blocking |
-| `.github/workflows/preview-gateway.yml` | Preview deploy for gateway worker. | `pull_request` (path-filtered) | Non-blocking |
+| `.github/workflows/preview-gs-admin.yml` | Preview deploy for admin app. | `pull_request` (path-filtered) | Non-blocking |
 | `.github/workflows/preview-gs-agent.yml` | Preview deploy for agent worker. | `pull_request` (path-filtered) | Non-blocking |
-| `.github/workflows/deploy-web.yml` | Legacy production deploy for web app. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-admin.yml` | Legacy production deploy for admin app. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-api-worker.yml` | Legacy production deploy for API worker. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-control-worker.yml` | Legacy production deploy for control worker. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-gateway.yml` | Legacy production deploy for gateway worker. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-agent.yml` | Legacy production deploy for agent worker. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-gs-web.yml` | Current production deploy for web app with validation gates. | `push` to `main` | Non-blocking |
+| `.github/workflows/preview-gs-api.yml` | Preview deploy for API worker. | `pull_request` (path-filtered) | Non-blocking |
+| `.github/workflows/preview-gs-gateway.yml` | Preview deploy for gateway worker. | `pull_request` (path-filtered) | Non-blocking |
+| `.github/workflows/preview-gs-web.yml` | Preview deploy for web app. | `pull_request` (path-filtered) | Non-blocking |
 | `.github/workflows/deploy-gs-admin.yml` | Current production deploy for admin app with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-api.yml` | Current production deploy for API worker with validation gates. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-gs-control.yml` | Current production deploy for control worker with validation gates. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-gs-gateway.yml` | Current production deploy for gateway worker with validation gates. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-gs-agent.yml` | Current production deploy for agent worker with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-mail.yml` | Current production deploy for mail worker with validation gates. | `push` to `main` | Non-blocking |
+| `.github/workflows/deploy-gs-web.yml` | Current production deploy for web app with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/jules-nightly.yml` | Nightly orchestrator for automation jobs. | `schedule`, `workflow_dispatch` | Non-blocking |
-| `.github/workflows/palette-manual.yml` | Manual run for Palette agent. | `workflow_dispatch` | Non-blocking |
 | `.github/workflows/manual.yml` | Example manual workflow. | `workflow_dispatch` | Non-blocking |
-| `.github/workflows/pii-scan.yml` | Scheduled PII scan/reporting. | `schedule`, `workflow_dispatch`, path-filtered `pull_request` | Non-blocking |
-| `.github/workflows/summary.yml` | Summarize new issues using AI. | `issues` events | Non-blocking |
-| `.github/workflows/sonarcloud.yml` | SonarCloud analysis. | `push`, `pull_request`, `workflow_dispatch`, `schedule` | Non-blocking |
-| `.github/workflows/tfsec.yml` | Infrastructure security scan (tfsec). | `push`, `pull_request`, `workflow_dispatch`, `schedule` | Non-blocking |
 | `.github/workflows/neuralegion.yml` | DAST/Nexploit security scan. | `push`, `workflow_dispatch`, `schedule` | Non-blocking |
+| `.github/workflows/palette-manual.yml` | Manual run for Palette agent. | `workflow_dispatch` | Non-blocking |
+| `.github/workflows/pii-scan.yml` | Scheduled PII scan/reporting. | `schedule`, `workflow_dispatch`, path-filtered `pull_request` | Non-blocking |
+| `.github/workflows/sonarcloud.yml` | SonarCloud analysis. | `push`, `pull_request`, `workflow_dispatch`, `schedule` | Non-blocking |
+| `.github/workflows/summary.yml` | Summarize new issues using AI. | `issues` events | Non-blocking |
+| `.github/workflows/sync-infra.yml` | Synchronize Cloudflare infrastructure state. | `workflow_dispatch` | Non-blocking |
+| `.github/workflows/tfsec.yml` | Infrastructure security scan (tfsec). | `push`, `pull_request`, `workflow_dispatch`, `schedule` | Non-blocking |
+
+## Deployment exceptions to note
+
+- `gs-agent` is intentionally **preview-only** in GitHub Actions.
+- `gs-gateway` is intentionally **preview-only** in GitHub Actions.
+- `gs-control` is intentionally **fully manual** and has no active deploy workflow in `.github/workflows/`.
 
 ## Stabilization/disable procedure (real filenames)
 
