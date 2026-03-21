@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { parseJson } from '@goldshore/utils';
+import { authorizeAdminRequest } from '../../../utils/adminAuth';
 
 const normalizeRow = (row: Record<string, string>) => ({
   id: row.id,
@@ -13,8 +14,12 @@ const normalizeRow = (row: Record<string, string>) => ({
   updatedAt: row.updated_at
 });
 
-export const GET: APIRoute = async ({ locals }) => {
+export const GET: APIRoute = async ({ request, locals }) => {
   const env = locals.runtime?.env as Env | undefined;
+  const auth = await authorizeAdminRequest(request, env ?? {}, 'forms:read');
+  if (!auth.authorized) {
+    return auth.response;
+  }
 
   if (!env?.DB) {
     return new Response('Storage unavailable.', { status: 503 });
@@ -33,6 +38,10 @@ export const GET: APIRoute = async ({ locals }) => {
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const env = locals.runtime?.env as Env | undefined;
+  const auth = await authorizeAdminRequest(request, env ?? {}, 'forms:write');
+  if (!auth.authorized) {
+    return auth.response;
+  }
 
   if (!env?.DB) {
     return new Response('Storage unavailable.', { status: 503 });
