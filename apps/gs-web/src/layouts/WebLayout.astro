@@ -11,7 +11,11 @@ const navLinks = [
   { href: '/developer', label: 'Developer' },
 ];
 
-const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.url.pathname } = Astro.props;
+const {
+  title = 'GoldShore',
+  description = 'GoldShore AI',
+  currentPath = Astro.url.pathname,
+} = Astro.props;
 ---
 
 <html lang="en">
@@ -21,34 +25,59 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0b0f18" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';"
+    />
     <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
     <link rel="shortcut icon" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <a href="#content" class="skip-link">Skip to content</a>
     <div class="gs-page-shell">
       <header class="header" data-menu-open="false">
-        <a href="/" class="gs-logo-link" aria-label="GoldShore home">
-          <Logo class="gs-logo" title="GoldShore" />
+        <a href="/" class="gs-logo-link" aria-label="Gold Shore home">
+          <Logo
+            class="gs-logo gs-logo--lockup"
+            title="Gold Shore"
+            variant="lockup"
+          />
         </a>
 
-        <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation">
+        <button
+          class="menu-button"
+          type="button"
+          aria-expanded="false"
+          aria-controls="primary-navigation"
+          aria-label="Open navigation"
+        >
           <span></span>
           <span></span>
           <span></span>
         </button>
 
-        <nav id="primary-navigation" class="menu-panel" aria-label="Primary navigation">
+        <nav
+          id="primary-navigation"
+          class="menu-panel"
+          aria-label="Primary navigation"
+        >
           <div class="menu-panel__inner">
-            {navLinks.map((link) => (
-              <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
-                {link.label}
-              </a>
-            ))}
+            {
+              navLinks.map((link) => (
+                <a
+                  href={link.href}
+                  aria-current={currentPath === link.href ? 'page' : undefined}
+                >
+                  {link.label}
+                </a>
+              ))
+            }
           </div>
         </nav>
       </header>
@@ -60,8 +89,11 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
       <footer class="gs-footer">
         <div class="gs-footer__inner">
           <div>
-            <Logo class="gs-logo gs-logo--footer" title="GoldShore" />
-            <p>Infrastructure for high-trust AI, risk tooling, and resilient operator systems.</p>
+            <Logo class="gs-logo gs-logo--footer" title="Gold Shore" />
+            <p>
+              Infrastructure for high-trust AI, risk tooling, and resilient
+              operator systems.
+            </p>
           </div>
           <div class="gs-footer__links">
             <a href="/about">About</a>
@@ -83,7 +115,11 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
         const setMenu = (isOpen) => {
           const header = document.querySelector('.header');
           const toggle = document.querySelector('.menu-button');
-          if (!(header instanceof HTMLElement) || !(toggle instanceof HTMLButtonElement)) return;
+          if (
+            !(header instanceof HTMLElement) ||
+            !(toggle instanceof HTMLButtonElement)
+          )
+            return;
           header.dataset.menuOpen = String(isOpen);
           toggle.setAttribute('aria-expanded', String(isOpen));
           document.body.classList.toggle('menu-open', isOpen);
@@ -104,7 +140,10 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
             return;
           }
 
-          if (target.closest('.menu-panel a') || target.classList.contains('menu-panel')) {
+          if (
+            target.closest('.menu-panel a') ||
+            target.classList.contains('menu-panel')
+          ) {
             setMenu(false);
           }
         });
@@ -160,18 +199,24 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         background: rgba(8, 12, 22, 0.65);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 2px solid rgba(255, 255, 255, 0.08);
       }
 
       .gs-logo-link {
         display: inline-flex;
         align-items: center;
         text-decoration: none;
+        min-width: 0;
       }
 
       .gs-logo {
         width: clamp(20px, 3vw, 36px);
         height: auto;
+        color: var(--gs-primary);
+      }
+
+      .gs-logo--lockup {
+        width: clamp(188px, 24vw, 260px);
         color: var(--gs-primary);
       }
 
@@ -197,10 +242,12 @@ const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.u
       .menu-button span {
         display: block;
         width: 18px;
-        height: 1.5px;
+        height: 2px;
         border-radius: 999px;
         background: var(--gs-text);
-        transition: transform 160ms ease, opacity 160ms ease;
+        transition:
+          transform 160ms ease,
+          opacity 160ms ease;
       }
 
       .header[data-menu-open='true'] .menu-button span:nth-child(1) {
