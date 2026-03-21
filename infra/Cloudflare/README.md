@@ -23,6 +23,8 @@ Use exactly one canonical path per live service:
 | `gs-control` | `apps/gs-control/wrangler.toml` |
 | `gs-mail` | `apps/gs-mail/wrangler.toml` |
 
+The legacy `infra/Cloudflare/legacy/goldshore-api.wrangler.toml` file remains for reference only; production tooling should target the canonical `gs-api` manifest and `apps/gs-api` worker sources.
+
 ## Selection policy
 
 Do **not** glob `infra/Cloudflare/*.wrangler.toml` in scripts/docs. Use the explicit canonical paths above.
