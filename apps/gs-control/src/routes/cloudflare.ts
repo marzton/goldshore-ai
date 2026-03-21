@@ -16,7 +16,16 @@ const dnsRecordSchema = z.object({
   comment: z.string().optional(),
   tags: z.array(z.string()).optional(),
   priority: z.number().int().optional(),
-}).strip();
+}).passthrough().transform((record) => ({
+  type: record.type,
+  name: record.name,
+  content: record.content,
+  ttl: record.ttl,
+  proxied: record.proxied,
+  comment: record.comment,
+  tags: record.tags,
+  priority: record.priority,
+}));
 
 const dnsQuerySchema = z.object({
   match: z.enum(["any", "all"]).optional(),
