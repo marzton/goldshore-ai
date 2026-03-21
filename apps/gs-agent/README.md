@@ -8,10 +8,6 @@ Cloudflare metadata (from `apps/gs-agent/wrangler.toml`):
 - Queue consumer: `goldshore-jobs`
 - Compatibility date: `2025-01-10`
 
-Codex bot decision:
-- `jules-bot` remains a separate Node.js webhook service.
-- A placeholder `codex-bot` module now lives in `apps/gs-agent/src/bots/codex-bot.ts` for future queue-driven automation.
-
 ## Routes/Endpoints
 - `/` → status UI
 - `/health` → JSON health response
@@ -35,11 +31,12 @@ pnpm --filter ./apps/gs-agent build
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-agent.yml`
-- Preview deploy: `.github/workflows/preview-agent.yml`
-- Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
+- Deployment state: **preview-only by design**.
+- Active preview workflow: `.github/workflows/preview-gs-agent.yml`.
+- There is intentionally no active production deploy workflow under `.github/workflows/`.
+- Production deploys, when needed, are run manually by ops via Wrangler.
+- Deployment policy reference: [`docs/ci/WORKER_DEPLOYMENT_STATES.md`](../../docs/ci/WORKER_DEPLOYMENT_STATES.md).
 
-<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
 ```bash
 pnpm --filter ./apps/gs-agent deploy
 ```

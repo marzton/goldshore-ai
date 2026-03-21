@@ -7,7 +7,7 @@ const config = slug ? getFormConfig(slug) : undefined;
 const fallback = formConfigs[0];
 const activeConfig = config ?? fallback;
 ---
-<AdminLayout title={`Form Details | ${activeConfig.name} | GoldShore Admin`}>
+<AdminLayout title={`Form Details | ${activeConfig.name} | GoldShore Admin`} requiredPermission="forms:read">
   <section class="max-w-6xl mx-auto py-16 px-6 space-y-8">
     <header class="space-y-3">
       <p class="text-sm gs-text-subtle">
