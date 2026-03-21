@@ -26,6 +26,9 @@ const logoSrc = '/logo.svg';
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';" />
+    <!-- Canonical favicon asset; modern browsers use the checked-in SVG. -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- PNG fallback retained for compatibility with browsers that do not support SVG favicons. -->
     <link rel="icon" href="/favicon.png" type="image/png" />
     <!-- Bolt: Preconnect to external origins to speed up resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
