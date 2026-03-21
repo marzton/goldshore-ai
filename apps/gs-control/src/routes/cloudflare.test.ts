@@ -213,6 +213,50 @@ describe('Cloudflare Routes Middleware', () => {
   });
 
 
+  it('should allow DNS update payloads copied from GET /dns/records', async () => {
+    let forwardedBody: any;
+    global.fetch = mock.fn(async (_input, init) => {
+      forwardedBody = init?.body;
+      return new Response(JSON.stringify({ success: true, result: {} }), { status: 200 });
+    });
+
+    const payload = {
+      id: 'record-id',
+      zone_id: 'zone-id',
+      zone_name: 'example.com',
+      created_on: '2024-01-01T00:00:00.000000Z',
+      modified_on: '2024-01-02T00:00:00.000000Z',
+      meta: { auto_added: false },
+      settings: {},
+      tags_modified_on: '2024-01-03T00:00:00.000000Z',
+      comment_modified_on: '2024-01-04T00:00:00.000000Z',
+      type: 'A',
+      name: 'example.com',
+      content: '1.2.3.4',
+      ttl: 3600,
+      proxied: true,
+      comment: 'managed by control',
+      tags: ['owner:dns']
+    };
+
+    const response = await createRequest({
+      email: 'admin@example.com',
+      roles: ['admin'],
+    }, '/dns/records/123', 'PUT', payload);
+
+    assert.strictEqual(response.status, 200);
+    assert.ok(forwardedBody);
+    assert.deepStrictEqual(JSON.parse(forwardedBody as string), {
+      type: 'A',
+      name: 'example.com',
+      content: '1.2.3.4',
+      ttl: 3600,
+      proxied: true,
+      comment: 'managed by control',
+      tags: ['owner:dns']
+    });
+  });
+
   it('should allow DNS update payloads with extra Cloudflare-managed fields', async () => {
     let forwardedBody: any;
     global.fetch = mock.fn(async (_input, init) => {
