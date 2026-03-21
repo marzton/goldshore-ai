@@ -17,6 +17,7 @@ name = "gs-agent-dev"
 name = "gs-agent-preview"
 
 [env.prod]
+name = "gs-agent"
 main = "../../apps/gs-agent/src/index.ts"
 tsconfig = "../../apps/gs-agent/tsconfig.json"
 [env.prod.vars]
@@ -33,6 +34,7 @@ binding = "AGENT_KV"
 id = "9cc2209906a94851b704be57543987a9"
 
 [env.production]
+name = "gs-agent"
 main = "../../apps/gs-agent/src/index.ts"
 tsconfig = "../../apps/gs-agent/tsconfig.json"
 [env.production.vars]
