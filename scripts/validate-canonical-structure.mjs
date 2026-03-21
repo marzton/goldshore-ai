@@ -2,8 +2,13 @@ import fs from 'node:fs';
 import { execSync } from 'node:child_process';
 
 const canonicalRoots = ['apps/gs-', 'packages/', 'infra/'];
-const canonicalTopLevelFiles = new Set(['package.json', 'pnpm-workspace.yaml', 'turbo.json', 'README.md']);
-const legacyCompatFiles = new Set(['apps/web/package.json', 'apps/web/README.md']);
+const canonicalTopLevelFiles = new Set(['package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'turbo.json', 'README.md']);
+const legacyCompatFiles = new Set([
+  'apps/web/package.json',
+  'apps/web/README.md',
+  'apps/admin/package.json',
+  'apps/admin/README.md',
+]);
 const disallowed = ['apps/web', 'apps/admin', 'astro-goldshore', 'public', 'src'];
 
 const trackedChangedFiles = execSync('git diff --name-only HEAD', { encoding: 'utf8' })
