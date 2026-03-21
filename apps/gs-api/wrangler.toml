@@ -23,7 +23,10 @@ CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 CONTROL_SYNC_TOKEN = "__PROD_CONTROL_SYNC_TOKEN__"
 
+# Keep the legacy KV binding name because the API routes still read c.env.KV
+# for service status, admin state, orchestration config, and health checks.
 [[env.prod.kv_namespaces]]
+# Keep the runtime binding name aligned with c.env.KV in the API handlers.
 binding = "KV"
 id = "gs_api_kv_001"
 
@@ -32,7 +35,10 @@ id = "gs_api_kv_001"
 binding = "CONTROL_LOGS"
 id = "gs_control_logs_001"
 
+# Production deploys also require the same D1, R2, and AI bindings used by
+# pages, media, and AI routes in addition to the env-specific KV namespaces.
 [[env.prod.r2_buckets]]
+# The deployed API also depends on ASSETS/DB/AI for media, pages, and AI routes.
 binding = "ASSETS"
 bucket_name = "gs-assets"
 
@@ -62,7 +68,10 @@ CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 CONTROL_SYNC_TOKEN = "__PROD_CONTROL_SYNC_TOKEN__"
 
+# Keep the legacy KV binding name because the API routes still read c.env.KV
+# for service status, admin state, orchestration config, and health checks.
 [[env.production.kv_namespaces]]
+# Keep the runtime binding name aligned with c.env.KV in the API handlers.
 binding = "KV"
 id = "gs_api_kv_001"
 
@@ -70,7 +79,10 @@ id = "gs_api_kv_001"
 binding = "CONTROL_LOGS"
 id = "gs_control_logs_001"
 
+# Production deploys also require the same D1, R2, and AI bindings used by
+# pages, media, and AI routes in addition to the env-specific KV namespaces.
 [[env.production.r2_buckets]]
+# The deployed API also depends on ASSETS/DB/AI for media, pages, and AI routes.
 binding = "ASSETS"
 bucket_name = "gs-assets"
 
