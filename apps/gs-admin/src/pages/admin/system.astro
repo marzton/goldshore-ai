@@ -2,6 +2,69 @@
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { GSButton } from '@goldshore/ui';
 import InboxTable from '../../components/InboxTable.astro';
+
+const linkedPages = [
+  {
+    href: '/admin/system',
+    title: 'System Configuration',
+    status: 'implemented and backed by live data',
+    detail: 'Live Cloudflare controls routed through adminService for DNS, Workers, Pages, KV, R2, D1, and Access reads.'
+  },
+  {
+    href: '/admin/workers',
+    title: 'Workers Overview',
+    status: 'placeholder/incomplete',
+    detail: 'Overview page now directs operators to the live status screen and labels unfinished sections as roadmap-only.'
+  },
+  {
+    href: '/admin/workers/status',
+    title: 'Worker Status',
+    status: 'implemented and backed by live data',
+    detail: 'Backed by /api/gs-api/dns-sync-status and renders current sync telemetry.'
+  },
+  {
+    href: '/admin/settings',
+    title: 'Settings',
+    status: 'intentionally read-only informational',
+    detail: 'Infrastructure, access, and email sections are reference-only; theme controls affect local admin UI preferences only.'
+  },
+  {
+    href: '/admin/system/dns',
+    title: 'System DNS',
+    status: 'placeholder/incomplete',
+    detail: 'Roadmap-only route; operators should use the live controls on this System Configuration page instead.'
+  },
+  {
+    href: '/admin/system/pages',
+    title: 'System Pages',
+    status: 'placeholder/incomplete',
+    detail: 'Roadmap-only route; operators should use the live Pages Projects panel on this page instead.'
+  },
+  {
+    href: '/admin/system/secrets',
+    title: 'System Secrets',
+    status: 'placeholder/incomplete',
+    detail: 'Roadmap-only route with no live secret controls yet.'
+  },
+  {
+    href: '/admin/system/storage',
+    title: 'System Storage',
+    status: 'placeholder/incomplete',
+    detail: 'Roadmap-only route; operators should use the live KV, R2, and D1 panels on this page instead.'
+  },
+  {
+    href: '/admin/workers/bindings',
+    title: 'Worker Bindings',
+    status: 'placeholder/incomplete',
+    detail: 'Roadmap-only route with no live bindings inventory or edit controls yet.'
+  },
+  {
+    href: '/admin/workers/routes',
+    title: 'Worker Routes',
+    status: 'placeholder/incomplete',
+    detail: 'Roadmap-only route with no live route management controls yet.'
+  }
+];
 ---
 <AdminLayout title="System | GoldShore Admin" requiredRole="admin">
     <section class="max-w-6xl mx-auto py-16 px-6 space-y-10">
@@ -30,6 +93,40 @@ import InboxTable from '../../components/InboxTable.astro';
                     <span class="gs-pill">R2</span>
                     <span class="gs-pill">D1</span>
                     <span class="gs-pill">DNS</span>
+                </div>
+            </div>
+
+            <div class="gs-card space-y-4 lg:col-span-2">
+                <div>
+                    <h2 class="text-xl font-semibold">Linked Page Inventory</h2>
+                    <p class="text-sm gs-text-subtle">
+                        Classification for related settings and system routes so operators can distinguish live tools from roadmap-only pages.
+                    </p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-sm gs-text-subtle border-b border-[var(--gs-color-border)]">
+                                <th class="py-2 pr-4">Page</th>
+                                <th class="py-2 pr-4">Classification</th>
+                                <th class="py-2">Operator Note</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {linkedPages.map((page) => (
+                                <tr class="border-b border-[var(--gs-color-border)]/50">
+                                    <td class="py-3 pr-4 align-top">
+                                        <a class="font-medium underline underline-offset-4" href={page.href}>{page.title}</a>
+                                        <div class="text-xs gs-text-subtle">{page.href}</div>
+                                    </td>
+                                    <td class="py-3 pr-4 align-top">
+                                        <span class="gs-pill">{page.status}</span>
+                                    </td>
+                                    <td class="py-3 text-sm gs-text-subtle">{page.detail}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -132,23 +229,14 @@ import InboxTable from '../../components/InboxTable.astro';
             }
         };
 
-        const handleResponse = async (response) => {
-            if (!response.ok) {
-                const text = await response.text();
-                return { payload: `Error ${response.status}: ${text}` };
-            }
-            return await response.json();
+        const runAction = async (elementId, pendingMessage, action) => {
+            setOutput(elementId, pendingMessage);
+            const result = await action();
+            setOutput(elementId, result?.payload ?? 'No data returned.');
         };
 
         document.getElementById('dns-list')?.addEventListener('click', async () => {
-            setOutput('dns-output', 'Loading...');
-            const result = await adminService.listDnsRecords();
-            setOutput('dns-output', result.payload);
-            const response = await fetch(`${opsBase}/dns/records`, {
-                credentials: 'include',
-            });
-            const { payload } = await handleResponse(response);
-            setOutput('dns-output', payload);
+            await runAction('dns-output', 'Loading...', () => adminService.listDnsRecords());
         });
 
         document.getElementById('dns-update')?.addEventListener('click', async () => {
@@ -158,52 +246,27 @@ import InboxTable from '../../components/InboxTable.astro';
                 setOutput('dns-update-output', 'Record ID and content are required.');
                 return;
             }
-            setOutput('dns-update-output', 'Updating...');
-            const result = await adminService.updateDnsRecord(recordId, content);
-            setOutput('dns-update-output', result.payload);
-            const response = await fetch(`${opsBase}/dns/records/${recordId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content }),
-                credentials: 'include',
-            });
-            const { payload } = await handleResponse(response);
-            setOutput('dns-update-output', payload);
+            await runAction('dns-update-output', 'Updating...', () => adminService.updateDnsRecord(recordId, content));
         });
 
         document.getElementById('workers-status')?.addEventListener('click', async () => {
-            setOutput('workers-output', 'Loading...');
-            const result = await adminService.getWorkersStatus();
-            setOutput('workers-output', result.payload);
+            await runAction('workers-output', 'Loading...', () => adminService.getWorkersStatus());
         });
 
         document.getElementById('pages-projects')?.addEventListener('click', async () => {
-            setOutput('pages-output', 'Loading...');
-            const result = await adminService.listPagesProjects();
-            setOutput('pages-output', result.payload);
+            await runAction('pages-output', 'Loading...', () => adminService.listPagesProjects());
         });
 
         document.getElementById('kv-namespaces')?.addEventListener('click', async () => {
-            setOutput('kv-output', 'Loading...');
-            const result = await adminService.listKvNamespaces();
-            setOutput('kv-output', result.payload);
+            await runAction('kv-output', 'Loading...', () => adminService.listKvNamespaces());
         });
 
         document.getElementById('r2-buckets')?.addEventListener('click', async () => {
-            setOutput('r2-output', 'Loading...');
-            const result = await adminService.listR2Buckets();
-            setOutput('r2-output', result.payload);
+            await runAction('r2-output', 'Loading...', () => adminService.listR2Buckets());
         });
 
         document.getElementById('d1-databases')?.addEventListener('click', async () => {
-            setOutput('d1-output', 'Loading...');
-            const result = await adminService.listD1Databases();
-            setOutput('d1-output', result.payload);
-            const response = await fetch(`${opsBase}/workers/status`, {
-                credentials: 'include',
-            });
-            const { payload } = await handleResponse(response);
-            setOutput('workers-output', payload);
+            await runAction('d1-output', 'Loading...', () => adminService.listD1Databases());
         });
 
         document.getElementById('access-list')?.addEventListener('click', async () => {
@@ -212,14 +275,7 @@ import InboxTable from '../../components/InboxTable.astro';
                 setOutput('access-output', 'Access App ID is required.');
                 return;
             }
-            setOutput('access-output', 'Loading...');
-            const result = await adminService.listAccessPolicies(appId);
-            setOutput('access-output', result.payload);
-            const response = await fetch(`${opsBase}/access/policies?appId=${encodeURIComponent(appId)}`, {
-                credentials: 'include',
-            });
-            const { payload } = await handleResponse(response);
-            setOutput('access-output', payload);
+            await runAction('access-output', 'Loading...', () => adminService.listAccessPolicies(appId));
         });
     </script>
 </AdminLayout>

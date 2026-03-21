@@ -1,9 +1,16 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
-<AdminLayout title="System Pages | GoldShore Admin" requiredRole="admin">
-    <section class="max-w-5xl mx-auto py-24 px-6">
+<AdminLayout title="System Pages | GoldShore Admin">
+    <section class="max-w-5xl mx-auto py-24 px-6 space-y-6">
         <h1 class="text-3xl gs-heading mb-4">Pages Deployments</h1>
+        <div class="gs-card space-y-3 border border-[var(--gs-color-border)]">
+            <span class="gs-pill">roadmap-only</span>
+            <p class="text-sm gs-text-subtle">
+                This route is currently a placeholder. For live Cloudflare Pages project data, use the Pages Projects panel on
+                <a class="underline underline-offset-4" href="/admin/system">System Configuration</a>.
+            </p>
+        </div>
         <p class="text-[var(--gs-text-secondary)]">
             Build status, deployment history, and environment settings will appear here.
         </p>

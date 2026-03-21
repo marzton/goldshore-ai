@@ -1,11 +1,59 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
+
+const workerPages = [
+  {
+    href: '/admin/workers/status',
+    title: 'Worker Status',
+    status: 'implemented and backed by live data',
+    detail: 'Uses live sync telemetry from /api/gs-api/dns-sync-status.'
+  },
+  {
+    href: '/admin/workers/bindings',
+    title: 'Worker Bindings',
+    status: 'placeholder/incomplete',
+    detail: 'Roadmap-only until a real bindings inventory and controls are wired.'
+  },
+  {
+    href: '/admin/workers/routes',
+    title: 'Worker Routes',
+    status: 'placeholder/incomplete',
+    detail: 'Roadmap-only until route tables and management actions are backed by live data.'
+  }
+];
 ---
-<AdminLayout title="Workers | GoldShore Admin" requiredRole="admin">
-    <section class="max-w-5xl mx-auto py-24 px-6">
-        <h1 class="text-3xl gs-heading mb-4">Workers Overview</h1>
-        <p class="text-[var(--gs-text-secondary)]">
-            Worker bindings, status, routes, and metrics will appear here.
-        </p>
+<AdminLayout title="Workers | GoldShore Admin">
+    <section class="max-w-5xl mx-auto py-24 px-6 space-y-8">
+        <div class="space-y-3">
+            <h1 class="text-3xl gs-heading">Workers Overview</h1>
+            <p class="text-[var(--gs-text-secondary)]">
+                Use this hub to distinguish live worker telemetry from roadmap-only worker management screens.
+            </p>
+        </div>
+
+        <div class="gs-card space-y-4">
+            <div>
+                <h2 class="text-xl font-semibold">Route Classification</h2>
+                <p class="text-sm gs-text-subtle">
+                    Only Worker Status is currently backed by live data. Bindings and Routes remain clearly marked roadmap-only.
+                </p>
+            </div>
+            <div class="grid gap-4 md:grid-cols-3">
+                {workerPages.map((page) => (
+                    <article class="rounded-xl border border-[var(--gs-color-border)] p-4 space-y-3">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between gap-3">
+                                <h3 class="font-semibold">{page.title}</h3>
+                                <span class="gs-pill">{page.status}</span>
+                            </div>
+                            <p class="text-sm gs-text-subtle">{page.detail}</p>
+                        </div>
+                        <a class="font-medium underline underline-offset-4" href={page.href}>
+                            Open {page.title}
+                        </a>
+                    </article>
+                ))}
+            </div>
+        </div>
     </section>
 </AdminLayout>

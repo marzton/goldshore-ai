@@ -1,9 +1,16 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 ---
-<AdminLayout title="System Storage | GoldShore Admin" requiredRole="admin">
-    <section class="max-w-5xl mx-auto py-24 px-6">
+<AdminLayout title="System Storage | GoldShore Admin">
+    <section class="max-w-5xl mx-auto py-24 px-6 space-y-6">
         <h1 class="text-3xl gs-heading mb-4">Storage Services</h1>
+        <div class="gs-card space-y-3 border border-[var(--gs-color-border)]">
+            <span class="gs-pill">roadmap-only</span>
+            <p class="text-sm gs-text-subtle">
+                This route is still a placeholder. Use the live KV, R2, and D1 panels on
+                <a class="underline underline-offset-4" href="/admin/system">System Configuration</a> for current backend data.
+            </p>
+        </div>
         <p class="text-[var(--gs-text-secondary)]">
             Buckets, usage metrics, and retention policies will be summarized here.
         </p>
