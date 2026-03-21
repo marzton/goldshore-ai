@@ -5,11 +5,30 @@ import WebLayout from '../layouts/WebLayout.astro';
 
 export const prerender = true;
 
-const signals = [
-  { label: 'System uptime', value: '99.98%' },
-  { label: 'Operator latency', value: '< 45ms' },
-  { label: 'Decision loops', value: 'Human + AI' },
-  { label: 'Review posture', value: 'High trust' },
+const trustMetrics = [
+  {
+    label: 'Availability',
+    value: '99.995%',
+    context: 'Last 30 days',
+    detail:
+      'Measured across managed production workloads and controlled maintenance windows.',
+  },
+  {
+    label: 'Deploy cadence',
+    value: '48 / day',
+    context: 'Delivery velocity',
+    detail:
+      'Aligned with release automation, verification steps, and rollback controls.',
+    href: '/developer',
+    hrefLabel: 'See the Developer Hub',
+  },
+  {
+    label: 'Signal integrity',
+    value: '4.8B',
+    context: 'Validated telemetry events / month',
+    detail:
+      'Data points normalized for anomaly detection, routing, and post-incident review.',
+  },
 ];
 
 const capabilities = [
@@ -39,84 +58,164 @@ const proofPoints = [
 ];
 ---
 
-<WebLayout title="GoldShore | Infrastructure for High-Trust AI" description="GoldShore builds resilient decision systems, risk tooling, and operator infrastructure.">
+<WebLayout
+  title="GoldShore | Infrastructure for High-Trust AI"
+  description="GoldShore builds resilient decision systems, risk tooling, and operator infrastructure."
+>
   <main class="home-page">
-    <section class="hero">
-      <canvas id="wave-bg" aria-hidden="true"></canvas>
+    <section class="hero" aria-labelledby="home-hero-title">
+      <canvas
+        id="wave-bg"
+        role="img"
+        aria-label="Animated wave field representing live operational telemetry and system activity."
+      ></canvas>
       <div class="hero-grid" aria-hidden="true"></div>
-      <div class="hero-mark">
+      <div class="hero-mark" aria-hidden="true">
         <Logo class="gs-logo-reactive" ariaHidden={true} />
       </div>
 
       <div class="hero-shell gs-shell-section">
         <div class="hero-content">
-          <span class="eyebrow">System operational</span>
-          <h1>Infrastructure for High-Trust AI</h1>
-          <p>GoldShore builds resilient decision systems, risk tooling, and operator infrastructure.</p>
+          <span class="eyebrow">Institutional-grade operational AI</span>
+          <h1 id="home-hero-title">
+            Clarity, control, and trust for live AI systems.
+          </h1>
+          <p class="hero-lead">
+            GoldShore builds resilient decision systems, risk tooling, and
+            operator infrastructure for teams that need explainable performance
+            under pressure.
+          </p>
+          <p class="hero-supporting-copy">
+            We align telemetry, governance, and release discipline so
+            engineering, operations, and leadership teams can act from the same
+            signal.
+          </p>
           <div class="hero-actions">
-            <a href="/contact" class="hero-button hero-button--primary">Open a workstream</a>
+            <a href="/contact" class="hero-button hero-button--primary"
+              >Request Briefing</a
+            >
             <a href="/about" class="hero-button">View operating model</a>
           </div>
         </div>
 
-        <aside class="hero-panel">
-          <div>
+        <aside class="hero-panel" aria-label="Live operating posture">
+          <div class="hero-panel__heading">
             <p class="gs-eyebrow">Control surface</p>
             <h2>Signal over spectacle.</h2>
           </div>
+          <div class="status-banner">
+            <span class="status-dot" aria-hidden="true"></span>
+            <div>
+              <strong>System status: Operational</strong>
+              <p>Monitoring, escalation, and response pathways are active.</p>
+            </div>
+          </div>
           <ul>
-            <li>Operational UX with clear status, escalation, and review states.</li>
-            <li>Decision-support tooling built for real environments, not demo loops.</li>
-            <li>Motion that communicates energy, drift, and readiness without noise.</li>
+            <li>
+              Operational UX with clear status, escalation, and review states.
+            </li>
+            <li>
+              Decision-support tooling built for real environments, not demo
+              loops.
+            </li>
+            <li>
+              Motion that communicates energy, drift, and readiness without
+              visual noise.
+            </li>
           </ul>
         </aside>
       </div>
-    </section>
 
-    <section class="signal-strip gs-shell-section" aria-label="Signal strip">
-      {signals.map((signal) => (
-        <div class="signal-tile">
-          <span>{signal.label}</span>
-          <strong>{signal.value}</strong>
+      <div class="metrics-shell gs-shell-section">
+        <div class="metrics-grid" data-metrics-grid>
+          {
+            trustMetrics.map((metric) => (
+              <article
+                class="signal-tile signal-tile--loading"
+                aria-live="polite"
+              >
+                <div class="signal-tile__header">
+                  <span>{metric.label}</span>
+                  <small>{metric.context}</small>
+                </div>
+                <strong>{metric.value}</strong>
+                <p>{metric.detail}</p>
+                {metric.href && (
+                  <a href={metric.href} class="signal-link">
+                    {metric.hrefLabel} →
+                  </a>
+                )}
+              </article>
+            ))
+          }
         </div>
-      ))}
+      </div>
     </section>
 
-    <section class="section-block gs-shell-section">
+    <section
+      class="section-block gs-shell-section"
+      aria-labelledby="capabilities-title"
+    >
       <div class="section-copy">
         <p class="gs-eyebrow">Capabilities</p>
-        <h2>Institutional surfaces for operators, analysts, and systems teams.</h2>
+        <h2 id="capabilities-title">
+          Institutional surfaces for operators, analysts, and systems teams.
+        </h2>
+        <p class="section-intro">
+          GoldShore turns volatile runtime behavior into decision-ready
+          workflows with stronger hierarchy, clearer ownership, and resilient
+          delivery patterns.
+        </p>
       </div>
       <div class="capability-grid">
-        {capabilities.map((capability) => (
-          <article class="capability-card">
-            <h3>{capability.title}</h3>
-            <p>{capability.body}</p>
-          </article>
-        ))}
+        {
+          capabilities.map((capability) => (
+            <article class="capability-card">
+              <h3>{capability.title}</h3>
+              <p>{capability.body}</p>
+            </article>
+          ))
+        }
       </div>
     </section>
 
-    <section class="section-block gs-shell-section">
+    <section
+      class="section-block gs-shell-section"
+      aria-labelledby="risk-radar-title"
+    >
       <div class="section-copy">
         <p class="gs-eyebrow">Risk Radar</p>
-        <h2>High-contrast motion system built for screen capture and live demonstration.</h2>
+        <h2 id="risk-radar-title">
+          High-contrast motion designed for live demonstration and executive
+          review.
+        </h2>
+        <p class="section-intro">
+          The visualization system emphasizes readability first, so every sweep,
+          pulse, and threshold communicates operational meaning.
+        </p>
       </div>
       <RiskRadar />
     </section>
 
-    <section class="section-block gs-shell-section architecture-section">
+    <section
+      class="section-block gs-shell-section architecture-section"
+      aria-labelledby="proof-title"
+    >
       <div class="section-copy">
         <p class="gs-eyebrow">Architecture / Proof</p>
-        <h2>Systems that explain themselves under pressure.</h2>
+        <h2 id="proof-title">
+          Systems that explain themselves under pressure.
+        </h2>
       </div>
       <div class="proof-grid">
-        {proofPoints.map((point) => (
-          <article class="proof-card">
-            <h3>{point.title}</h3>
-            <p>{point.body}</p>
-          </article>
-        ))}
+        {
+          proofPoints.map((point) => (
+            <article class="proof-card">
+              <h3>{point.title}</h3>
+              <p>{point.body}</p>
+            </article>
+          ))
+        }
         <article class="proof-card proof-card--metrics">
           <div>
             <span>Review posture</span>
@@ -134,15 +233,23 @@ const proofPoints = [
       </div>
     </section>
 
-    <section class="section-block gs-shell-section compact-team">
+    <section
+      class="section-block gs-shell-section compact-team"
+      aria-labelledby="team-title"
+    >
       <div class="section-copy">
         <p class="gs-eyebrow">Team</p>
-        <h2>Built by operators focused on resilient systems and applied intelligence.</h2>
+        <h2 id="team-title">
+          Built by operators focused on resilient systems and applied
+          intelligence.
+        </h2>
       </div>
       <div class="team-row">
         <article class="team-card team-card--founder">
           <h3>Robert M.</h3>
-          <p>Leads product direction, systems strategy, and applied intelligence.</p>
+          <p>
+            Leads product direction, systems strategy, and applied intelligence.
+          </p>
         </article>
         <article class="team-card">
           <h3>Systems</h3>
@@ -155,12 +262,19 @@ const proofPoints = [
       </div>
     </section>
 
-    <section class="section-block gs-shell-section contact-cta">
+    <section
+      class="section-block gs-shell-section contact-cta"
+      aria-labelledby="contact-cta-title"
+    >
       <div>
         <p class="gs-eyebrow">Contact</p>
-        <h2>Ready to operationalize AI with trust, control, and signal clarity?</h2>
+        <h2 id="contact-cta-title">
+          Ready to operationalize AI with trust, control, and signal clarity?
+        </h2>
       </div>
-      <a href="/contact" class="hero-button hero-button--primary">Start a conversation</a>
+      <a href="/contact" class="hero-button hero-button--primary"
+        >Start a conversation</a
+      >
     </section>
   </main>
 
@@ -175,11 +289,27 @@ const proofPoints = [
       homeCleanup = undefined;
     };
 
+    const hydrateMetrics = () => {
+      const cards = document.querySelectorAll('.signal-tile--loading');
+      const reduceMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)',
+      ).matches;
+      window.setTimeout(
+        () =>
+          cards.forEach((card) =>
+            card.classList.remove('signal-tile--loading'),
+          ),
+        reduceMotion ? 0 : 650,
+      );
+    };
+
     const boot = () => {
       cleanup();
+      hydrateMetrics();
       const canvas = document.getElementById('wave-bg');
       const logo = document.querySelector('.gs-logo-reactive');
-      const isReactiveLogo = logo instanceof HTMLElement || logo instanceof SVGElement;
+      const isReactiveLogo =
+        logo instanceof HTMLElement || logo instanceof SVGElement;
       if (!(canvas instanceof HTMLCanvasElement) || !isReactiveLogo) return;
 
       const wave = initWave(canvas);
@@ -211,7 +341,7 @@ const proofPoints = [
 
     .hero {
       position: relative;
-      min-height: min(88vh, 860px);
+      min-height: min(92vh, 960px);
       display: grid;
       align-items: end;
       overflow: hidden;
@@ -231,11 +361,15 @@ const proofPoints = [
 
     .hero-grid {
       background:
-        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
       background-size: 72px 72px;
-      mask-image: radial-gradient(circle at 50% 30%, black 30%, transparent 80%);
-      opacity: 0.5;
+      mask-image: radial-gradient(
+        circle at 50% 30%,
+        black 30%,
+        transparent 80%
+      );
+      opacity: 0.55;
     }
 
     .hero::after {
@@ -243,8 +377,12 @@ const proofPoints = [
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at 25% 20%, rgba(90, 162, 255, 0.16), transparent 28%),
-        linear-gradient(180deg, rgba(7, 11, 20, 0.15), rgba(7, 11, 20, 0.8));
+        radial-gradient(
+          circle at 25% 20%,
+          rgba(90, 162, 255, 0.18),
+          transparent 28%
+        ),
+        linear-gradient(180deg, rgba(7, 11, 20, 0.18), rgba(7, 11, 20, 0.84));
       pointer-events: none;
     }
 
@@ -257,6 +395,7 @@ const proofPoints = [
     .gs-logo-reactive {
       width: clamp(72px, 11vw, 120px);
       height: auto;
+      color: #8ec1ff;
       will-change: transform, filter;
     }
 
@@ -264,9 +403,9 @@ const proofPoints = [
       position: relative;
       z-index: 2;
       width: min(100% - 2rem, var(--gs-max-width));
-      padding: clamp(7rem, 12vh, 10rem) 0 clamp(2rem, 5vw, 4rem);
+      padding: clamp(7rem, 12vh, 10rem) 0 1.75rem;
       display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
       gap: clamp(1.5rem, 4vw, 4rem);
       align-items: end;
     }
@@ -276,22 +415,25 @@ const proofPoints = [
       align-items: center;
       gap: 0.5rem;
       padding: 0.5rem 0.85rem;
-      border: 1px solid rgba(90, 162, 255, 0.2);
+      border: 1px solid rgba(90, 162, 255, 0.22);
       border-radius: 999px;
-      background: rgba(90, 162, 255, 0.08);
-      color: var(--gs-primary);
+      background: rgba(90, 162, 255, 0.1);
+      color: #dcedff;
       text-transform: uppercase;
       letter-spacing: 0.16em;
       font-size: 0.75rem;
+      font-weight: 700;
     }
 
     .hero-content h1,
     .section-copy h2,
     .contact-cta h2 {
       margin: 1rem 0 1rem;
-      font-size: clamp(2.6rem, 7vw, 5.4rem);
-      line-height: 0.96;
-      letter-spacing: -0.04em;
+      font-size: clamp(2.7rem, 7vw, 5.4rem);
+      line-height: 0.98;
+      letter-spacing: -0.045em;
+      color: #fff;
+      text-wrap: balance;
     }
 
     .hero-content p,
@@ -299,10 +441,23 @@ const proofPoints = [
     .hero-panel li,
     .proof-card p,
     .team-card p,
-    .contact-cta p {
-      color: var(--gs-text-dim);
-      line-height: 1.7;
+    .contact-cta p,
+    .signal-tile p {
+      color: rgba(233, 238, 252, 0.82);
+      line-height: 1.72;
       font-size: 1rem;
+    }
+
+    .hero-lead {
+      max-width: 34rem;
+      font-size: clamp(1.08rem, 0.98rem + 0.45vw, 1.3rem);
+      color: rgba(248, 251, 255, 0.95);
+    }
+
+    .hero-supporting-copy,
+    .section-intro {
+      max-width: 42rem;
+      color: rgba(233, 238, 252, 0.72);
     }
 
     .hero-actions {
@@ -318,36 +473,77 @@ const proofPoints = [
       justify-content: center;
       padding: 0.9rem 1.2rem;
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: #fff;
       text-decoration: none;
-      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+      transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease;
     }
 
     .hero-button:hover,
     .hero-button:focus-visible {
       transform: translateY(-1px);
-      border-color: rgba(90, 162, 255, 0.32);
-      background: rgba(90, 162, 255, 0.12);
+      border-color: rgba(90, 162, 255, 0.36);
+      background: rgba(90, 162, 255, 0.14);
     }
 
     .hero-button--primary {
       border-color: rgba(90, 162, 255, 0.28);
-      background: rgba(90, 162, 255, 0.16);
+      background: rgba(90, 162, 255, 0.18);
+      box-shadow: 0 18px 42px rgba(9, 17, 33, 0.28);
     }
 
     .hero-panel {
       padding: 1.4rem;
       border-radius: 24px;
       border: 1px solid var(--gs-border);
-      background: rgba(10, 18, 36, 0.72);
+      background: rgba(10, 18, 36, 0.8);
       backdrop-filter: blur(12px);
       box-shadow: var(--gs-shadow);
     }
 
-    .hero-panel h2 {
-      margin: 0.5rem 0 1rem;
-      font-size: clamp(1.55rem, 2.6vw, 2.1rem);
+    .hero-panel__heading h2 {
+      margin: 0.45rem 0 0.85rem;
+      font-size: clamp(1.65rem, 2.6vw, 2.1rem);
+      line-height: 1.1;
+      color: #fff;
+    }
+
+    .status-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.95rem 1rem;
+      margin-bottom: 1rem;
+      border-radius: 18px;
+      border: 1px solid rgba(90, 162, 255, 0.18);
+      background: rgba(90, 162, 255, 0.08);
+    }
+
+    .status-banner strong {
+      display: block;
+      margin-bottom: 0.2rem;
+      color: #fff;
+    }
+
+    .status-banner p {
+      margin: 0;
+      color: rgba(233, 238, 252, 0.76);
+      font-size: 0.95rem;
+    }
+
+    .status-dot {
+      width: 0.72rem;
+      height: 0.72rem;
+      border-radius: 999px;
+      background: #47e3a7;
+      box-shadow: 0 0 0 rgba(71, 227, 167, 0.5);
+      animation: statusPulse 1.9s ease-out infinite;
+      flex-shrink: 0;
+      margin-top: 0.28rem;
     }
 
     .hero-panel ul {
@@ -357,10 +553,15 @@ const proofPoints = [
       gap: 0.85rem;
     }
 
-    .signal-strip {
-      margin-top: 1.25rem;
+    .metrics-shell {
+      position: relative;
+      z-index: 2;
+      padding-bottom: 2rem;
+    }
+
+    .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 1rem;
     }
 
@@ -372,23 +573,80 @@ const proofPoints = [
       padding: 1.2rem 1.25rem;
       border-radius: 20px;
       border: 1px solid rgba(255, 255, 255, 0.06);
-      background: rgba(10, 18, 36, 0.7);
+      background: rgba(10, 18, 36, 0.74);
       box-shadow: var(--gs-shadow);
+    }
+
+    .signal-tile {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .signal-tile__header,
+    .proof-card span {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
     }
 
     .signal-tile span,
     .proof-card span {
       display: block;
-      color: var(--gs-text-dim);
-      font-size: 0.84rem;
+      color: rgba(233, 238, 252, 0.62);
+      font-size: 0.82rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      margin-bottom: 0.5rem;
+    }
+
+    .signal-tile small {
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     .signal-tile strong,
     .proof-card strong {
-      font-size: 1.15rem;
+      font-size: clamp(1.35rem, 1.05rem + 1vw, 2rem);
+      color: #fff;
+    }
+
+    .signal-tile p {
+      margin: 0.65rem 0 0;
+      color: rgba(233, 238, 252, 0.75);
+    }
+
+    .signal-link {
+      display: inline-flex;
+      margin-top: 0.85rem;
+      color: #b2d7ff;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .signal-link:hover,
+    .signal-link:focus-visible {
+      color: #fff;
+    }
+
+    .signal-tile--loading > * {
+      opacity: 0.2;
+    }
+
+    .signal-tile--loading::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        110deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.08) 40%,
+        transparent 82%
+      );
+      transform: translateX(-100%);
+      animation: skeletonSweep 1.2s ease-in-out infinite;
     }
 
     .section-block {
@@ -441,12 +699,32 @@ const proofPoints = [
       align-items: center;
     }
 
+    @keyframes skeletonSweep {
+      to {
+        transform: translateX(100%);
+      }
+    }
+
+    @keyframes statusPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(71, 227, 167, 0.48);
+      }
+
+      70% {
+        box-shadow: 0 0 0 12px rgba(71, 227, 167, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(71, 227, 167, 0);
+      }
+    }
+
     @media (max-width: 960px) {
       .hero-shell,
       .capability-grid,
       .proof-grid,
       .team-row,
-      .signal-strip,
+      .metrics-grid,
       .contact-cta {
         grid-template-columns: 1fr;
       }
@@ -460,9 +738,38 @@ const proofPoints = [
       }
     }
 
-    @media (prefers-reduced-motion: reduce) {
+    @media (max-width: 720px) {
+      .hero-shell {
+        width: min(100% - 1.5rem, var(--gs-max-width));
+        padding-top: 6rem;
+      }
+
+      .hero-mark {
+        inset: 12% auto auto 1rem;
+      }
+
+      .hero-actions,
+      .contact-cta {
+        width: 100%;
+      }
+
       .hero-button {
+        width: 100%;
+      }
+
+      .signal-tile__header,
+      .proof-card span {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-button,
+      .status-dot,
+      .signal-tile--loading::after {
         transition: none;
+        animation: none;
       }
     }
   </style>
