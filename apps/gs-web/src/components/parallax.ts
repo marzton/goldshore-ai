@@ -27,7 +27,7 @@ export const initParallax = (options: ParallaxOptions = {}) => {
     isVisible: false
   }));
 
-  if (elements.length === 0) {
+  if (layers.length === 0) {
     return () => undefined;
   }
 
@@ -35,7 +35,7 @@ export const initParallax = (options: ParallaxOptions = {}) => {
   const observer = new IntersectionObserver((entries) => {
     let needsUpdate = false;
     entries.forEach((entry) => {
-      const layer = layers.find(l => l.element === entry.target);
+      const layer = layers.find((parallaxLayer) => parallaxLayer.element === entry.target);
       if (layer) {
         if (layer.isVisible !== entry.isIntersecting) {
           layer.isVisible = entry.isIntersecting;
@@ -50,7 +50,7 @@ export const initParallax = (options: ParallaxOptions = {}) => {
     }
   }, { rootMargin: '200px' });
 
-  layers.forEach(l => observer.observe(l.element));
+  layers.forEach((parallaxLayer) => observer.observe(parallaxLayer.element));
 
   let ticking = false;
   const updateParallax = () => {
@@ -68,7 +68,7 @@ export const initParallax = (options: ParallaxOptions = {}) => {
 
   const handleScroll = () => {
     // Bolt: Bail out early if no parallax elements are visible
-    if (!layers.some(l => l.isVisible)) return;
+    if (!layers.some((parallaxLayer) => parallaxLayer.isVisible)) return;
 
     if (!ticking) {
       window.requestAnimationFrame(updateParallax);
