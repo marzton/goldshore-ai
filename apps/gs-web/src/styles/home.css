@@ -119,11 +119,14 @@
 
 .gs-hero h1{
   margin: 18px 0 10px;
-  font-family: var(--gs-font-display, ui-serif, Georgia, serif);
+  font-family: var(--gs-font-display, ui-sans-serif, system-ui, sans-serif);
   font-size: clamp(44px, 5vw, 74px);
   line-height: 1.02;
-  color: rgba(226,232,240,.98);
-  text-shadow: 0 8px 30px rgba(0,0,0,.35);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #f8fafc;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 .gs-hero .sub{
   max-width: 52ch;
@@ -215,4 +218,197 @@
   .gs-hero-inner{ grid-template-columns: 1fr; padding-top: 64px; }
   .gs-grid{ background-size: 64px 64px; }
   .hero-mark-wrap{ left: 6%; top: 14%; }
+}
+
+/* --- Cinematic Hero Integration --- */
+
+.stars {
+  z-index: 0;
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgba(255, 255, 255, 0.28), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.22), transparent),
+    radial-gradient(1px 1px at 260px 150px, rgba(255, 255, 255, 0.24), transparent),
+    radial-gradient(1px 1px at 320px 40px, rgba(255, 255, 255, 0.19), transparent);
+  background-repeat: repeat;
+  background-size: 360px 220px;
+}
+
+.gs-cinematic-hero {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  text-align: center;
+  color: var(--gs-hero-text-primary);
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 35%, var(--gs-hero-vignette-core), transparent 46%),
+    linear-gradient(180deg, var(--gs-hero-vignette-fade-start) 0%, var(--gs-hero-vignette-fade-end) 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 52rem;
+  padding: 0 1.5rem;
+}
+
+.hero-mark {
+  width: 92px;
+  margin: 0 auto 1.25rem;
+  color: var(--gs-hero-mark);
+}
+
+.gs-logo-mark {
+  width: 100%;
+}
+
+.hero-subtitle {
+  margin: 0 0 1.5rem;
+  color: var(--gs-hero-text-secondary);
+}
+
+.hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.gs-depth-bg {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 0%, var(--gs-hero-depth-glow), transparent 60%),
+    linear-gradient(180deg, #05070d 0%, #060a14 100%);
+}
+
+#pulsar-field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.gs-hero-mark {
+  width: clamp(68px, 10vw, 96px);
+  margin-bottom: 1rem;
+}
+
+.gs-hero-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Hardened Logo (Glare & Pulses Disabled) */
+.gs-logo-stroke {
+  stroke-dasharray: none;
+  stroke-dashoffset: 0;
+  animation: none;
+  filter: none;
+}
+
+.gs-logo-glow {
+  display: none;
+  animation: none;
+}
+
+.gs-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gs-divider-signal), transparent);
+  position: relative;
+  overflow: hidden;
+}
+
+.gs-divider::after {
+  content: '';
+  position: absolute;
+  inset: -20px 0;
+  background: linear-gradient(120deg, transparent, var(--gs-divider-sweep), transparent);
+  animation: signalSweep 6s ease-in-out infinite;
+}
+
+.gs-panel {
+  background: linear-gradient(180deg, #0b1220, #0a101c);
+  border: 1px solid var(--gs-panel-border-subtle);
+  border-radius: 20px;
+  padding: 2.5rem;
+}
+
+.gs-label {
+  opacity: 0.8;
+}
+
+.gs-stat {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+.gs-signal-btn {
+  border-color: var(--gs-signal-soft);
+}
+
+.gs-signal-btn:hover {
+  box-shadow: 0 0 24px var(--gs-signal-soft);
+}
+
+.gs-signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.gs-status-indicator {
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  border-radius: 999px;
+  background: #94a3b8;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.42);
+  flex-shrink: 0;
+}
+
+.gs-status-indicator.is-operational {
+  background: #34d399;
+  box-shadow: 0 0 0 1px rgba(110, 231, 183, 0.5);
+  animation: gs-status-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes gs-status-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+
+@keyframes signalSweep {
+  0% { transform: translateX(-100%); }
+  50%, 100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gs-divider::after,
+  .gs-status-indicator.is-operational {
+    animation: none !important;
+    opacity: 1;
+  }
 }
