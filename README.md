@@ -283,22 +283,29 @@ Hono-based API Worker.
 Route: https://api.goldshore.ai/*
 ```
 
-### Endpoints
+### Currently mounted route groups
 
+The route-mounting source of truth is `apps/gs-api/src/index.ts` (the current repo path for the worker entrypoint referenced as `apps/api-worker/src/index.ts` in older docs).
+
+```text
+/health
+  GET  /health            # shallow health check
+  GET  /health?type=deep  # deep dependency health check
+
+/user
+  GET  /user/:id          # deprecated compatibility route; 308 redirects to /users/:id
+
+/system
+  GET  /system/status
+  GET  /system/routing
+  GET  /system/config
+  PUT  /system/config
+  GET  /system/version
 ```
-GET   /health
-GET   /health?type=deep
 
-GET   /user/:id
+### Planned endpoints
 
-GET   /system/status
-GET   /system/routing
-GET   /system/config
-PUT   /system/config
-GET   /system/version
-```
-
-### Planned endpoints (not currently mounted)
+These endpoints are not currently mounted in `apps/gs-api/src/index.ts` and should be treated as planned only.
 
 ```text
 GET   /version
@@ -307,8 +314,6 @@ GET   /auth/session
 GET   /content/:slug
 POST  /queue/task
 ```
-
-Route-mounting source of truth: `apps/api-worker/src/index.ts` (current repo path: `apps/gs-api/src/index.ts`).
 
 Bindings:
 
