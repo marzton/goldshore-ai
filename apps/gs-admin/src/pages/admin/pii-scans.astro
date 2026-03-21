@@ -22,7 +22,7 @@ const formattedDate = new Date(generatedAt).toLocaleString('en-US', {
   timeStyle: 'short'
 });
 ---
-<AdminLayout title="PII Scan Results">
+<AdminLayout title="PII Scan Results" requiredRole="admin">
   <section class="gs-grid columns-3">
     <Card>
       <div class="section-title"><span>⚠</span><h3>Alert Status</h3></div>
