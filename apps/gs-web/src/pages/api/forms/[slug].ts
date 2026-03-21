@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { parseJson } from '@goldshore/utils';
+import { authorizeAdminRequest } from '../../../utils/adminAuth';
 
 export const prerender = false;
 
@@ -15,8 +16,13 @@ const normalizeRow = (row: Record<string, string>) => ({
   updatedAt: row.updated_at
 });
 
-export const GET: APIRoute = async ({ locals, params }) => {
+export const GET: APIRoute = async ({ request, locals, params }) => {
   const env = locals.runtime?.env as Env | undefined;
+  const auth = await authorizeAdminRequest(request, env ?? {}, 'forms:read');
+  if (!auth.authorized) {
+    return auth.response;
+  }
+
   const slug = params.slug;
 
   if (!env?.DB) {
@@ -46,6 +52,11 @@ export const GET: APIRoute = async ({ locals, params }) => {
 
 export const PUT: APIRoute = async ({ request, locals, params }) => {
   const env = locals.runtime?.env as Env | undefined;
+  const auth = await authorizeAdminRequest(request, env ?? {}, 'forms:write');
+  if (!auth.authorized) {
+    return auth.response;
+  }
+
   const slug = params.slug;
 
   if (!env?.DB) {

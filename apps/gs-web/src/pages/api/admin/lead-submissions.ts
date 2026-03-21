@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { authorizeAdminRequest } from '../../../utils/adminAuth';
 
 const allowedStatuses = new Set(['new', 'read', 'archived']);
 
@@ -35,6 +36,11 @@ const buildCsv = (rows: Record<string, unknown>[]) => {
 
 export const GET: APIRoute = async ({ request, locals }) => {
   const env = locals.runtime?.env as Env | undefined;
+  const auth = await authorizeAdminRequest(request, env ?? {}, 'forms:read');
+  if (!auth.authorized) {
+    return auth.response;
+  }
+
   if (!env?.DB) {
     return new Response('Storage unavailable.', { status: 503 });
   }
@@ -89,6 +95,11 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const env = locals.runtime?.env as Env | undefined;
+  const auth = await authorizeAdminRequest(request, env ?? {}, 'forms:write');
+  if (!auth.authorized) {
+    return auth.response;
+  }
+
   if (!env?.DB) {
     return new Response('Storage unavailable.', { status: 503 });
   }
