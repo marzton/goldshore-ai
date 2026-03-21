@@ -81,7 +81,7 @@ export const prerender = true;
         </button>
       </form>
 
-      <div class="grid gap-4 md:grid-cols-2" style="margin: 1rem 0;">
+      <div class="grid gap-4 md:grid-cols-2 contact-options-grid">
         <article class="gs-card">
           <h2>Guided intake</h2>
           <p>
@@ -175,42 +175,3 @@ export const prerender = true;
     }
   });
 </script>
-
-<style>
-  .field-help {
-    margin: 0.25rem 0 0.5rem;
-    color: #666;
-    font-size: 0.95rem;
-  }
-
-  .form-status {
-    margin: 0.75rem 0;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid transparent;
-    min-height: 1.25rem;
-  }
-
-  .form-status.progress {
-    background: #f5f7ff;
-    border-color: #c8d1ff;
-    color: #25348a;
-  }
-
-  .form-status.success {
-    background: #effaf2;
-    border-color: #b9e6c3;
-    color: #0a5f25;
-  }
-
-  .form-status.error {
-    background: #fff3f3;
-    border-color: #ffc9c9;
-    color: #8f1717;
-  }
-
-  #submit-button:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-  }
-</style>
