@@ -47,10 +47,24 @@ const DEFAULT_ALLOWED_ORIGINS = [
   'https://preview.goldshore.ai',
 ];
 
+const PREVIEW_ORIGIN_PATTERNS = [
+  /^https:\/\/[a-z0-9-]+-preview\.goldshore\.ai$/i,
+  /^https:\/\/[a-z0-9-]+\.goldshore-pages\.dev$/i,
+];
+
 const parseAllowedOrigins = (allowedOrigins?: string) => {
   return (allowedOrigins ? allowedOrigins.split(',') : DEFAULT_ALLOWED_ORIGINS)
     .map((origin) => origin.trim())
     .filter(Boolean);
+};
+
+const isPreviewOrigin = (origin: string) => {
+  return PREVIEW_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin));
+};
+
+const isAllowedOrigin = (origin: string, allowedOrigins?: string) => {
+  const configuredOrigins = parseAllowedOrigins(allowedOrigins);
+  return configuredOrigins.includes(origin) || isPreviewOrigin(origin);
 };
 
 const isLocalDevelopmentOrigin = (origin: string) => {
@@ -76,8 +90,7 @@ app.use(
         return origin;
       }
 
-      const allowedOrigins = parseAllowedOrigins(c.env.ALLOWED_ORIGINS);
-      return allowedOrigins.includes(origin) ? origin : null;
+      return isAllowedOrigin(origin, c.env.ALLOWED_ORIGINS) ? origin : null;
     },
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
@@ -176,4 +189,5 @@ v1.get('/logs', (c) => c.json({ logs: ['log1', 'log2'] }));
 
 app.route('/v1', v1);
 
+export { isAllowedOrigin, isPreviewOrigin, parseAllowedOrigins };
 export default app;
