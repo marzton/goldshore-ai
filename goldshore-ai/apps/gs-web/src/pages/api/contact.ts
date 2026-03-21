@@ -39,6 +39,11 @@ type FormRecipient = {
   channel?: string;
 };
 
+type MailRecipient = {
+  email: string;
+  name?: string;
+};
+
 type FormIntegration = {
   type: string;
   enabled?: boolean;
@@ -274,6 +279,20 @@ const recipientsFromEnv = (
     .map((email) => ({ email }));
 };
 
+const resolveNotificationRecipients = (
+  formConfig: FormConfig,
+  rawRecipients: string | undefined,
+) => {
+  const configuredRecipients = formConfig.recipients
+    .filter((recipient) => !recipient.channel || recipient.channel === 'email')
+    .map(({ email, name }) => ({ email, name }));
+
+  return dedupeRecipients([
+    ...configuredRecipients,
+    ...recipientsFromEnv(rawRecipients),
+  ]);
+};
+
 const buildSubmissionDigest = (submission: Submission) => {
   const pairs: Array<[string, string]> = [
     ['Submission ID', submission.id],
@@ -366,6 +385,8 @@ const sendMail = async (
     body: await response.text(),
   };
 };
+
+type MailResult = Awaited<ReturnType<typeof sendMail>>;
 
 export const POST: APIRoute = async ({ request, locals }) => {
   if (!request.headers.get('content-type')?.includes('form')) {
@@ -463,6 +484,82 @@ export const POST: APIRoute = async ({ request, locals }) => {
       recipients: formConfig.recipients,
       integrations: formConfig.integrations
     });
+  }
+
+  const notificationRecipients = resolveNotificationRecipients(
+    formConfig,
+    env?.CONTACT_NOTIFICATION_EMAILS,
+  );
+  const digest = buildSubmissionDigest(submission);
+  const emailTasks: Array<{
+    kind: 'notification' | 'auto_responder';
+    recipients: string[];
+    task: Promise<MailResult>;
+  }> = [];
+
+  if (notificationRecipients.length > 0) {
+    emailTasks.push({
+      kind: 'notification',
+      recipients: notificationRecipients.map(({ email }) => email),
+      task: sendMail(
+        env,
+        notificationRecipients,
+        `New ${submission.formType} submission from ${submission.name || submission.email || 'unknown sender'}`,
+        digest.text,
+        digest.html,
+        submission.email
+          ? {
+              email: submission.email,
+              name: submission.name || undefined,
+            }
+          : undefined,
+      ),
+    });
+  }
+
+  if (submission.email) {
+    emailTasks.push({
+      kind: 'auto_responder',
+      recipients: [submission.email],
+      task: sendMail(
+        env,
+        [
+          {
+            email: submission.email,
+            name: submission.name || undefined,
+          },
+        ],
+        autoResponder.subject,
+        autoResponder.text,
+        autoResponder.html,
+      ),
+    });
+  }
+
+  const emailResults = await Promise.allSettled(emailTasks.map(({ task }) => task));
+
+  if (env?.DB) {
+    await Promise.all(
+      emailResults.map((result, index) => {
+        const { kind, recipients } = emailTasks[index];
+        const emailResult =
+          result.status === 'fulfilled'
+            ? result.value
+            : { attempted: true, reason: String(result.reason) };
+        const status =
+          emailResult.attempted && emailResult.ok !== false ? 'email_sent' : 'email_failed';
+        const message =
+          kind === 'notification'
+            ? 'Notification email processed.'
+            : 'Auto-responder email processed.';
+
+        return logSubmissionStatus(env.DB!, submission.id, formType, status, message, {
+          kind,
+          recipients,
+          result: emailResult,
+        });
+      }),
+    );
   }
 
   const redirectUrl = safeRedirect(redirectTo, new URL(request.url).origin);
