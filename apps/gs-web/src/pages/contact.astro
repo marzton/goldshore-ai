@@ -6,11 +6,14 @@ import FlowSection from '../components/FlowSection.astro';
 export const prerender = true;
 ---
 
-<BaseLayout title="Contact | GoldShore" description="Contact the GoldShore team.">
+<BaseLayout
+  title="Contact | Gold Shore"
+  description="Contact the Gold Shore team."
+>
   <FlowSection variant="hero">
     <div>
       <p class="gs-eyebrow">Contact</p>
-      <h1>Open a direct line with GoldShore.</h1>
+      <h1>Open a direct line with Gold Shore.</h1>
       <p>
         Start with the guided intake to receive a tailored service
         recommendation and week-one engagement outline.
@@ -74,8 +77,8 @@ export const prerender = true;
       <div class="gs-input-group">
         <label for="message">Project brief</label>
         <p id="message-help" class="field-help">
-          Share a short summary of your goals, timeline, and budget. We read every
-          request, so please avoid sensitive data.
+          Share a short summary of your goals, timeline, and budget. We read
+          every request, so please avoid sensitive data.
         </p>
         <textarea
           id="message"
@@ -83,11 +86,16 @@ export const prerender = true;
           rows="5"
           placeholder="We need support with cloud architecture and security hardening over the next 8 weeks."
           aria-describedby="message-help"
-          required
-        ></textarea>
+          required></textarea>
       </div>
 
-      <div id="form-status" class="form-status" aria-live="polite" role="status"></div>
+      <div
+        id="form-status"
+        class="form-status"
+        aria-live="polite"
+        role="status"
+      >
+      </div>
 
       <GSButton type="submit">
         <span id="submit-text">Send message</span>
@@ -102,15 +110,28 @@ export const prerender = true;
         <p class="gs-text-lg">
           Direct, senior-led delivery that keeps programs steady and fast.
         </p>
-        <GSButton href="#contact-form" variant="secondary">Send your brief</GSButton>
+        <GSButton href="#contact-form" variant="secondary"
+          >Send your brief</GSButton
+        >
       </div>
       <div class="gs-card">
         <h3 class="section-title"><span>◆</span>Snapshot</h3>
         <ul>
-          <li><strong>Current Focus:</strong> Automation layers, resilient infrastructure, and AI-assisted operations.</li>
-          <li><strong>What I build:</strong> End-to-end platforms, secure integrations, and operator-facing tooling.</li>
-          <li><strong>How I work:</strong> Clear scope, weekly checkpoints, and transparent delivery metrics.</li>
-          <li><strong>Availability:</strong> Full-time or contract engagements.</li>
+          <li>
+            <strong>Current Focus:</strong> Automation layers, resilient infrastructure,
+            and AI-assisted operations.
+          </li>
+          <li>
+            <strong>What I build:</strong> End-to-end platforms, secure integrations,
+            and operator-facing tooling.
+          </li>
+          <li>
+            <strong>How I work:</strong> Clear scope, weekly checkpoints, and transparent
+            delivery metrics.
+          </li>
+          <li>
+            <strong>Availability:</strong> Full-time or contract engagements.
+          </li>
         </ul>
         <p class="gs-text-sm">
           Have a scope in mind? Send the brief and I’ll respond with a plan.
@@ -134,14 +155,19 @@ export const prerender = true;
       }
     };
 
-    if (form instanceof HTMLFormElement && button instanceof HTMLButtonElement) {
+    if (
+      form instanceof HTMLFormElement &&
+      button instanceof HTMLButtonElement
+    ) {
       const startedAtField = form.querySelector('[name="formStartedAt"]');
       if (startedAtField instanceof HTMLInputElement) {
         startedAtField.value = String(Date.now());
       }
 
       const inquiryField = form.querySelector('#inquiry');
-      const inquiryParam = new URLSearchParams(window.location.search).get('inquiry');
+      const inquiryParam = new URLSearchParams(window.location.search).get(
+        'inquiry',
+      );
       const allowedInquiryTypes = new Set([
         'general',
         'strategy-call',
@@ -163,12 +189,17 @@ export const prerender = true;
 
         if (!form.checkValidity()) {
           form.reportValidity();
-          setStatus('Please complete all required fields before submitting.', 'error');
+          setStatus(
+            'Please complete all required fields before submitting.',
+            'error',
+          );
           return;
         }
 
         const originalText =
-          submitText instanceof HTMLElement ? submitText.textContent : button.textContent;
+          submitText instanceof HTMLElement
+            ? submitText.textContent
+            : button.textContent;
         button.disabled = true;
         button.setAttribute('aria-busy', 'true');
         if (submitText instanceof HTMLElement) {
@@ -177,10 +208,13 @@ export const prerender = true;
         setStatus('Sending your message...', 'progress');
 
         try {
-          const response = await fetch(form.getAttribute('action') || '/api/contact', {
-            method: form.getAttribute('method') || 'POST',
-            body: new FormData(form),
-          });
+          const response = await fetch(
+            form.getAttribute('action') || '/api/contact',
+            {
+              method: form.getAttribute('method') || 'POST',
+              body: new FormData(form),
+            },
+          );
 
           if (!response.ok && !response.redirected) {
             throw new Error(`Submission failed: ${response.status}`);
@@ -190,7 +224,8 @@ export const prerender = true;
           const redirectTarget =
             response.redirected && response.url
               ? response.url
-              : redirectToField instanceof HTMLInputElement && redirectToField.value
+              : redirectToField instanceof HTMLInputElement &&
+                  redirectToField.value
                 ? redirectToField.value
                 : '/thank-you';
 

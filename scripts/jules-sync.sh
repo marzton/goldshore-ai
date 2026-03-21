@@ -4,6 +4,7 @@ set -euo pipefail
 TARGET_URL="${1:-https://gs-admin.pages.dev/}"
 CLIENT_ID="${CF_ACCESS_CLIENT_ID:-}"
 CLIENT_SECRET="${CF_ACCESS_CLIENT_SECRET:-}"
+TRUSTED_HOSTS=("gs-admin.pages.dev" "admin.goldshore.ai" "ops.goldshore.ai")
 
 if [[ -z "$CLIENT_ID" || -z "$CLIENT_SECRET" ]]; then
   echo "Missing CF_ACCESS_CLIENT_ID or CF_ACCESS_CLIENT_SECRET" >&2
@@ -17,13 +18,10 @@ print(urlparse(sys.argv[1]).hostname or "")
 PY
 )
 
-case "$host" in
-  gs-admin.pages.dev|admin.goldshore.ai) ;;
-  *)
-    echo "Refusing to send service-token headers to untrusted host: ${host:-<none>}" >&2
-    exit 1
-    ;;
-esac
+if [[ ! " ${TRUSTED_HOSTS[*]} " =~ " ${host:-} " ]]; then
+  echo "Refusing to send service-token headers to untrusted host: ${host:-<none>}" >&2
+  exit 1
+fi
 
 echo "Testing Cloudflare Access service-token auth against: $TARGET_URL"
 
