@@ -42,8 +42,15 @@ Cloudflare applications (Pages / Workers / KV / R2 / D1 / AI / Queues).
    - What changed
    - Any TODOs left for manual steps (e.g. Cloudflare UI-only flows)
 
+10. Worker Builds token policy:
 
-## 10. Service Token Sync for AI Agents (gs-global-protect)
+- For `gs-web`, `gs-admin`, and `gs-api`, use the `gs-control` build token in Cloudflare Worker Builds.
+- Current repo wrangler files live at:
+  - `infra/Cloudflare/gs-web.wrangler.toml`
+  - `infra/Cloudflare/gs-admin.wrangler.toml`
+  - `infra/Cloudflare/gs-api.wrangler.toml`
+
+## 11. Service Token Sync for AI Agents (gs-global-protect)
 
 When Cloudflare Access protects `gs-admin` and related operator endpoints:
 
@@ -59,4 +66,4 @@ scripts/jules-sync.sh https://gs-admin.pages.dev/
 ```
 
 The command must return an HTTP 2xx status to pass.
-The script only sends service-token headers to trusted hosts (`gs-admin.pages.dev`, `admin.goldshore.ai`).
+The script only sends service-token headers to trusted hosts (`gs-admin.pages.dev`, `admin.goldshore.ai`, `ops.goldshore.ai`).

@@ -7,7 +7,7 @@ import type { ControlEnv } from "../libs/types";
 import { extractRoles, getRequiredRoles, isAuthorizedRole } from "../libs/adminAuth";
 import { logAuditEvent } from "@goldshore/utils";
 
-const dnsRecordSchema = z.object({
+const editableDnsRecordFields = {
   type: z.string().min(1).optional(),
   name: z.string().min(1).optional(),
   content: z.string().min(1),
@@ -16,7 +16,32 @@ const dnsRecordSchema = z.object({
   comment: z.string().optional(),
   tags: z.array(z.string()).optional(),
   priority: z.number().int().optional(),
-}).strip();
+}).passthrough().transform((record) => ({
+  type: record.type,
+  name: record.name,
+  content: record.content,
+  ttl: record.ttl,
+  proxied: record.proxied,
+  comment: record.comment,
+  tags: record.tags,
+  priority: record.priority,
+}));
+} as const;
+
+type EditableDnsRecordKey = keyof typeof editableDnsRecordFields;
+
+const editableDnsRecordKeys = Object.keys(editableDnsRecordFields) as EditableDnsRecordKey[];
+
+const dnsRecordSchema = z
+  .object(editableDnsRecordFields)
+  .passthrough()
+  .transform((payload) =>
+    Object.fromEntries(
+      editableDnsRecordKeys
+        .filter((key) => payload[key] !== undefined)
+        .map((key) => [key, payload[key]])
+    ) as Partial<Record<EditableDnsRecordKey, unknown>>
+  );
 
 const dnsQuerySchema = z.object({
   match: z.enum(["any", "all"]).optional(),
