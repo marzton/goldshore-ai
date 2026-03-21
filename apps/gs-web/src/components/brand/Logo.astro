@@ -1,20 +1,13 @@
 ---
 const {
-  title = 'Gold Shore logo',
+  title = 'GoldShore logo',
   class: className,
   ariaHidden = false,
-  variant = 'mark',
 } = Astro.props;
-
-const isLockup = variant === 'lockup';
-const viewBox = isLockup ? '0 0 440 128' : '0 0 128 128';
-const uid = `gs-logo-${crypto.randomUUID()}`;
-const penroseFillId = `${uid}-penrose-fill`;
-const wordmarkFillId = `${uid}-wordmark-fill`;
 ---
 
 <svg
-  viewBox={viewBox}
+  viewBox="0 0 128 128"
   role={ariaHidden ? undefined : 'img'}
   aria-hidden={ariaHidden ? 'true' : undefined}
   aria-label={ariaHidden ? undefined : title}
@@ -23,68 +16,15 @@ const wordmarkFillId = `${uid}-wordmark-fill`;
   fill="none"
 >
   {!ariaHidden && <title>{title}</title>}
-
-  <defs>
-    <linearGradient
-      id={penroseFillId}
-      x1="20"
-      x2="108"
-      y1="16"
-      y2="108"
-      gradientUnits="userSpaceOnUse"
-    >
-      <stop offset="0" stop-color="var(--gs-logo-top, #f4f8ff)"></stop>
-      <stop offset="0.45" stop-color="var(--gs-logo-mid, #86c3ff)"></stop>
-      <stop offset="1" stop-color="var(--gs-logo-bottom, #0d4f8f)"></stop>
-    </linearGradient>
-    <linearGradient
-      id={wordmarkFillId}
-      x1="156"
-      x2="412"
-      y1="32"
-      y2="96"
-      gradientUnits="userSpaceOnUse"
-    >
-      <stop offset="0" stop-color="var(--gs-wordmark-top, #eef5ff)"></stop>
-      <stop offset="1" stop-color="var(--gs-wordmark-bottom, #79b9ff)"></stop>
-    </linearGradient>
-  </defs>
-
-  <g transform={isLockup ? undefined : 'translate(0 2)'}>
-    <path
-      d="m111.87 92.5-41-72A1 1 0 0 0 70 20H57a1 1 0 0 0-.87.5l-41 72a1 1 0 0 0 0 1l6.5 11.41a1 1 0 0 0 .87.5h82a1 1 0 0 0 .87-.5l6.5-11.41a1 1 0 0 0 0-1m-2.59-.5H43.72l5.36-9.42H91.5a1 1 0 0 0 .87-1.49L58.72 22h10.7ZM63.5 57.27l13.28 23.31H50.22ZM17.15 93 57 23.02l32.78 57.56h-10.7L57.87 43.34a1.04 1.04 0 0 0-1.74 0L22.5 102.39Zm86.77 10.41h-79.7L57 45.85l5.35 9.39L41.13 92.5A1 1 0 0 0 42 94h67.28Z"
-      fill={`url(#${penroseFillId})`}
-      stroke="var(--gs-logo-stroke, rgba(8, 20, 38, 0.8))"
-      stroke-linejoin="round"
-      stroke-width="3.2"></path>
+  <g fill="currentColor">
+    <path d="M64 12 22 86h18.5L72 30.5H64Z" />
+    <path d="M64 12h8l33.8 58.4-9.3 16.2L64 30.5Z" opacity="0.94" />
+    <path d="M22 86h74.5L87.2 102H31.2z" opacity="0.88" />
   </g>
-
-  {
-    isLockup && (
-      <g>
-        <text
-          x="152"
-          y="60"
-          fill={`url(#${wordmarkFillId})`}
-          font-family="Inter, Avenir Next, Segoe UI, sans-serif"
-          font-size="34"
-          font-weight="600"
-          letter-spacing="1.2"
-        >
-          Gold Shore
-        </text>
-        <text
-          x="154"
-          y="87"
-          fill="var(--gs-wordmark-subtle, rgba(233, 238, 252, 0.62))"
-          font-family="Inter, Avenir Next, Segoe UI, sans-serif"
-          font-size="11"
-          font-weight="500"
-          letter-spacing="5.2"
-        >
-          STRUCTURED KINETIC SYSTEMS
-        </text>
-      </g>
-    )
-  }
+  <path
+    d="M64 12 22 86h18.5L72 30.5H64Zm8 0h-8l33.8 58.4-9.3 16.2L64 30.5Zm-50 74 9.2 16h56l9.3-16H22Z"
+    stroke="currentColor"
+    stroke-width="2.4"
+    stroke-linejoin="round"
+  />
 </svg>

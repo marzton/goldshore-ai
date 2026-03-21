@@ -5,6 +5,11 @@ import WebLayout from '../layouts/WebLayout.astro';
 
 export const prerender = true;
 
+const signals = [
+  { label: 'System uptime', value: '99.98%' },
+  { label: 'Operator latency', value: '< 45ms' },
+  { label: 'Decision loops', value: 'Human + AI' },
+  { label: 'Review posture', value: 'High trust' },
 const trustMetrics = [
   {
     label: 'Availability',
@@ -33,27 +38,27 @@ const trustMetrics = [
 
 const capabilities = [
   {
-    title: 'Brand-led systems',
-    body: 'A single Penrose language now anchors navigation, hero presentation, and iconography without duplicate lockups or visual drift.',
+    title: 'Decision systems',
+    body: 'Operator-grade AI workflows for scoring, routing, and intervention with traceable outcomes.',
   },
   {
-    title: 'Structured kinetic hero',
-    body: 'The opening surface cycles through engineered wave, star, storm, thermal, and vibration states while keeping the copy legible and authoritative.',
+    title: 'Risk tooling',
+    body: 'Surveillance surfaces, monitoring loops, and alerting that keep uncertainty visible and actionable.',
   },
   {
-    title: 'Heavier visual infrastructure',
-    body: 'Borders, shells, and grid divisions now carry more physical weight so the interface feels deliberate, machined, and screen-capture ready.',
+    title: 'Resilient infrastructure',
+    body: 'Applied platform engineering for control, observability, and dependable automation across teams.',
   },
 ];
 
 const proofPoints = [
   {
-    title: 'Visual control',
-    body: 'The hero engine can rotate between multiple atmospheres while preserving a strict layout, strong typography, and high-contrast framing.',
+    title: 'Architecture',
+    body: 'Structured around auditable services, operator checkpoints, and system states that explain themselves.',
   },
   {
-    title: 'Interactive states',
-    body: 'The Penrose engine spins on load, throws a sheen on hover, deepens on focus, and compresses on press to make interaction feel intentional.',
+    title: 'Proof',
+    body: 'Every workflow is designed to be demonstrable in real use: logs, thresholds, review modes, and fallback paths.',
   },
 ];
 ---
@@ -123,13 +128,16 @@ const proofPoints = [
               visual noise.
             </li>
           </ul>
-          <div class="hero-panel__meta">
-            <span>Current mode</span>
-            <strong id="hero-mode-chip">Storm / Wave / Vibration</strong>
-          </div>
         </aside>
       </div>
 
+    <section class="signal-strip gs-shell-section" aria-label="Signal strip">
+      {signals.map((signal) => (
+        <div class="signal-tile">
+          <span>{signal.label}</span>
+          <strong>{signal.value}</strong>
+        </div>
+      ))}
       <div class="metrics-shell gs-shell-section">
         <div class="metrics-grid" data-metrics-grid>
           {
@@ -172,14 +180,12 @@ const proofPoints = [
         </p>
       </div>
       <div class="capability-grid">
-        {
-          capabilities.map((capability) => (
-            <article class="capability-card">
-              <h3>{capability.title}</h3>
-              <p>{capability.body}</p>
-            </article>
-          ))
-        }
+        {capabilities.map((capability) => (
+          <article class="capability-card">
+            <h3>{capability.title}</h3>
+            <p>{capability.body}</p>
+          </article>
+        ))}
       </div>
     </section>
 
@@ -212,26 +218,24 @@ const proofPoints = [
         </h2>
       </div>
       <div class="proof-grid">
-        {
-          proofPoints.map((point) => (
-            <article class="proof-card">
-              <h3>{point.title}</h3>
-              <p>{point.body}</p>
-            </article>
-          ))
-        }
+        {proofPoints.map((point) => (
+          <article class="proof-card">
+            <h3>{point.title}</h3>
+            <p>{point.body}</p>
+          </article>
+        ))}
         <article class="proof-card proof-card--metrics">
           <div>
-            <span>Icon system</span>
-            <strong>Accurate Penrose</strong>
+            <span>Review posture</span>
+            <strong>Operator in loop</strong>
           </div>
           <div>
-            <span>Favicon posture</span>
-            <strong>Single-symbol family</strong>
+            <span>Observability</span>
+            <strong>Logs + thresholds</strong>
           </div>
           <div>
-            <span>Hero behavior</span>
-            <strong>Scene-aware overlays</strong>
+            <span>Deployment tone</span>
+            <strong>Measured, auditable</strong>
           </div>
         </article>
       </div>
@@ -256,18 +260,12 @@ const proofPoints = [
           </p>
         </article>
         <article class="team-card">
-          <h3>Motion system</h3>
-          <p>
-            Load, hover, focus, and click states that express energy without
-            compromising clarity.
-          </p>
+          <h3>Systems</h3>
+          <p>Infrastructure, execution, observability.</p>
         </article>
         <article class="team-card">
-          <h3>Brand assets</h3>
-          <p>
-            Lockup, mark, and favicon symbols aligned around the same Penrose
-            geometry.
-          </p>
+          <h3>Risk</h3>
+          <p>Monitoring, analytics, decision systems.</p>
         </article>
       </div>
     </section>
@@ -282,127 +280,19 @@ const proofPoints = [
           Ready to operationalize AI with trust, control, and signal clarity?
         </h2>
       </div>
-      <a href="/contact" class="hero-button hero-button--primary"
-        >Start a conversation</a
-      >
+      <a href="/contact" class="hero-button hero-button--primary">Start a conversation</a>
     </section>
   </main>
 
   <script>
     import { initWave } from '../scripts/init-wave';
-
-    const heroModes = [
-      {
-        id: 'storm',
-        eyebrow: 'Storm / Wave / Vibration',
-        title: 'Structured kinetic surfaces for Gold Shore.',
-        body: 'Dark elemental motion overlays the landing area with engineered waves, pressure lines, and industrial glow rather than soft decorative noise.',
-      },
-      {
-        id: 'astral',
-        eyebrow: 'Stars / Supersonic / Natural',
-        title: 'A landing experience with signal, depth, and velocity.',
-        body: 'Starfields, supersonic streaks, and layered atmospherics create visual impact while the interface stays balanced, crisp, and operational.',
-      },
-      {
-        id: 'thermal',
-        eyebrow: 'Ice / Heat / Wind',
-        title: 'Physical contrast rendered as premium digital structure.',
-        body: 'Thermal gradients, frost edges, and directional flow give the hero a high-end material quality with disciplined linework and spacing.',
-      },
-      {
-        id: 'buoyant',
-        eyebrow: 'Buoyant / Heavy / Supernatural',
-        title: 'Motion that feels powerful without losing precision.',
-        body: 'Dense lower-field mass and buoyant upper drift keep the page cinematic while every movement remains locked to a professional visual system.',
-      },
-    ];
+    import { initLogo } from '../scripts/init-logo-reactive';
 
     let homeCleanup;
-    let sceneInterval;
 
     const cleanup = () => {
       homeCleanup?.();
       homeCleanup = undefined;
-      if (sceneInterval) {
-        window.clearInterval(sceneInterval);
-        sceneInterval = undefined;
-      }
-    };
-
-    const setHeroMode = (index) => {
-      const hero = document.querySelector('.hero');
-      const title = document.getElementById('hero-title');
-      const body = document.getElementById('hero-body');
-      const label = document.getElementById('hero-mode-label');
-      const chip = document.getElementById('hero-mode-chip');
-      if (!(hero instanceof HTMLElement) || !title || !body || !label || !chip)
-        return;
-
-      const mode = heroModes[index % heroModes.length];
-      hero.dataset.heroDesign = mode.id;
-      title.textContent = mode.title;
-      body.textContent = mode.body;
-      label.textContent = mode.eyebrow;
-      chip.textContent = mode.eyebrow;
-      hero.dataset.heroModeIndex = String(index % heroModes.length);
-    };
-
-    const initHeroEngine = () => {
-      const hero = document.querySelector('.hero');
-      const engine = document.getElementById('hero-engine');
-      if (
-        !(hero instanceof HTMLElement) ||
-        !(engine instanceof HTMLButtonElement)
-      )
-        return () => {};
-
-      let modeIndex = Number(hero.dataset.heroModeIndex || '0');
-      let raf = 0;
-
-      const renderProgress = (value) => {
-        hero.style.setProperty('--hero-load-progress', `${value}`);
-      };
-
-      const animateLoad = () => {
-        const duration = 1500;
-        const start = performance.now();
-
-        const tick = (now) => {
-          const elapsed = Math.min((now - start) / duration, 1);
-          const eased = 1 - Math.pow(1 - elapsed, 3);
-          renderProgress(eased);
-          if (elapsed < 1) {
-            raf = window.requestAnimationFrame(tick);
-          } else {
-            hero.dataset.loadState = 'ready';
-          }
-        };
-
-        hero.dataset.loadState = 'loading';
-        renderProgress(0);
-        raf = window.requestAnimationFrame(tick);
-      };
-
-      const advanceMode = () => {
-        modeIndex = (modeIndex + 1) % heroModes.length;
-        setHeroMode(modeIndex);
-      };
-
-      animateLoad();
-      setHeroMode(modeIndex);
-      sceneInterval = window.setInterval(advanceMode, 9000);
-
-      const clickHandler = () => {
-        advanceMode();
-      };
-
-      engine.addEventListener('click', clickHandler);
-
-      return () => {
-        window.cancelAnimationFrame(raf);
-        engine.removeEventListener('click', clickHandler);
-      };
     };
 
     const hydrateMetrics = () => {
@@ -429,15 +319,17 @@ const proofPoints = [
       if (!(canvas instanceof HTMLCanvasElement) || !isReactiveLogo) return;
 
       const wave = initWave(canvas);
-      const destroyEngine = initHeroEngine();
+      const destroyLogo = initLogo(logo, wave);
 
       homeCleanup = () => {
-        destroyEngine?.();
+        destroyLogo?.();
         wave.destroy();
       };
     };
 
-    const homeGlobal = window;
+    const homeGlobal = window as typeof window & {
+      __gsHomeHeroBound?: boolean;
+    };
 
     if (!homeGlobal.__gsHomeHeroBound) {
       homeGlobal.__gsHomeHeroBound = true;
@@ -454,39 +346,23 @@ const proofPoints = [
     }
 
     .hero {
-      --hero-load-progress: 0;
       position: relative;
       min-height: min(92vh, 960px);
       display: grid;
       align-items: end;
       overflow: hidden;
-      border-bottom: 2px solid rgba(255, 255, 255, 0.08);
-      background:
-        radial-gradient(
-          circle at 50% 10%,
-          rgba(119, 180, 255, 0.12),
-          transparent 30%
-        ),
-        linear-gradient(180deg, rgba(7, 12, 24, 0.32), rgba(6, 10, 20, 0.88));
-      isolation: isolate;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     #wave-bg,
-    .hero-grid,
-    .hero-aurora,
-    .hero-particles,
-    .hero-lattice,
-    .hero-energy {
+    .hero-grid {
       position: absolute;
       inset: 0;
-      pointer-events: none;
     }
 
     #wave-bg {
       width: 100%;
       height: 100%;
-      opacity: 0.52;
-      mix-blend-mode: screen;
     }
 
     .hero-grid {
@@ -503,120 +379,8 @@ const proofPoints = [
         linear-gradient(rgba(255, 255, 255, 0.08) 2px, transparent 2px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.08) 2px, transparent 2px);
       background-size: 72px 72px;
-      mask-image: radial-gradient(
-        circle at 50% 36%,
-        black 34%,
-        transparent 92%
-      );
-      opacity: 0.48;
-    }
-
-    .hero-aurora {
-      filter: blur(22px);
-      opacity: 0.8;
-      transition:
-        opacity 400ms ease,
-        transform 500ms ease,
-        background 400ms ease;
-    }
-
-    .hero-aurora--primary {
-      background: radial-gradient(
-        circle at 28% 26%,
-        rgba(97, 164, 255, 0.22),
-        transparent 28%
-      );
-      transform: translate3d(-2%, -1%, 0);
-    }
-
-    .hero-aurora--secondary {
-      background: radial-gradient(
-        circle at 76% 22%,
-        rgba(255, 173, 82, 0.12),
-        transparent 24%
-      );
-      transform: translate3d(2%, 1%, 0);
-    }
-
-    .hero-particles {
-      opacity: 0.45;
-      background-image:
-        radial-gradient(
-          circle at 18% 24%,
-          rgba(255, 255, 255, 0.9) 0 1px,
-          transparent 1.8px
-        ),
-        radial-gradient(
-          circle at 74% 18%,
-          rgba(173, 216, 255, 0.75) 0 1px,
-          transparent 2px
-        ),
-        radial-gradient(
-          circle at 84% 44%,
-          rgba(255, 255, 255, 0.7) 0 1px,
-          transparent 2px
-        ),
-        radial-gradient(
-          circle at 58% 28%,
-          rgba(255, 214, 160, 0.65) 0 1px,
-          transparent 2px
-        ),
-        radial-gradient(
-          circle at 38% 44%,
-          rgba(255, 255, 255, 0.7) 0 1px,
-          transparent 2px
-        );
-      background-size: 320px 220px;
-      animation: particleDrift 18s linear infinite;
-    }
-
-    .hero-lattice {
-      inset: 10% 8% 18%;
-      border: 2px solid rgba(116, 174, 255, 0.08);
-      border-radius: 40px;
-      box-shadow:
-        inset 0 0 0 2px rgba(255, 255, 255, 0.025),
-        0 0 0 1px rgba(90, 162, 255, 0.08);
-      opacity: 0.9;
-    }
-
-    .hero-energy--x {
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.05) 25%,
-        transparent 50%,
-        rgba(97, 164, 255, 0.1) 75%,
-        transparent 100%
-      );
-      mask-image: linear-gradient(
-        180deg,
-        transparent 0%,
-        black 18%,
-        black 82%,
-        transparent 100%
-      );
+      mask-image: radial-gradient(circle at 50% 30%, black 30%, transparent 80%);
       opacity: 0.5;
-      animation: energySweepX 12s linear infinite;
-    }
-
-    .hero-energy--y {
-      background: repeating-linear-gradient(
-        90deg,
-        transparent 0 12px,
-        rgba(255, 255, 255, 0.05) 12px 16px,
-        transparent 16px 44px
-      );
-      mask-image: linear-gradient(
-        180deg,
-        transparent,
-        black 24%,
-        black 80%,
-        transparent
-      );
-      opacity: 0.22;
-      animation: vibrationBars 2.8s ease-in-out infinite alternate;
-      transform-origin: center;
     }
 
     .hero::after {
@@ -624,6 +388,9 @@ const proofPoints = [
       position: absolute;
       inset: 0;
       background:
+        radial-gradient(circle at 25% 20%, rgba(90, 162, 255, 0.16), transparent 28%),
+        linear-gradient(180deg, rgba(7, 11, 20, 0.15), rgba(7, 11, 20, 0.8));
+      pointer-events: none;
         radial-gradient(
           circle at 25% 20%,
           rgba(90, 162, 255, 0.18),
@@ -665,44 +432,16 @@ const proofPoints = [
       );
     }
 
-    .hero[data-hero-design='thermal'] .hero-aurora--secondary {
-      background: radial-gradient(
-        circle at 80% 18%,
-        rgba(124, 208, 255, 0.18),
-        transparent 24%
-      );
+    .hero-mark {
+      position: absolute;
+      inset: 18% auto auto clamp(1rem, 7vw, 6rem);
+      z-index: 1;
     }
 
-    .hero[data-hero-design='thermal'] .hero-energy--y {
-      opacity: 0.28;
-      background: repeating-linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.06) 0 10px,
-        transparent 10px 28px
-      );
-      animation-duration: 6s;
-    }
-
-    .hero[data-hero-design='buoyant'] .hero-aurora--primary {
-      background: radial-gradient(
-        circle at 30% 78%,
-        rgba(90, 162, 255, 0.18),
-        transparent 26%
-      );
-      transform: translate3d(-1%, 3%, 0);
-    }
-
-    .hero[data-hero-design='buoyant'] .hero-aurora--secondary {
-      background: radial-gradient(
-        circle at 76% 24%,
-        rgba(190, 126, 255, 0.12),
-        transparent 28%
-      );
-    }
-
-    .hero[data-hero-design='buoyant'] .hero-energy--x {
-      opacity: 0.44;
-      animation-duration: 18s;
+    .gs-logo-reactive {
+      width: clamp(72px, 11vw, 120px);
+      height: auto;
+      will-change: transform, filter;
     }
 
     .hero-shell {
@@ -742,7 +481,7 @@ const proofPoints = [
       text-wrap: balance;
     }
 
-    .hero-content > p:not(.hero-engine-note),
+    .hero-content p,
     .section-copy p,
     .hero-panel li,
     .proof-card p,
@@ -770,14 +509,14 @@ const proofPoints = [
       display: flex;
       gap: 0.9rem;
       flex-wrap: wrap;
-      margin-top: 0.35rem;
+      margin-top: 1.5rem;
     }
 
     .hero-button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 1rem 1.28rem;
+      padding: 0.9rem 1.2rem;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.1);
       background: rgba(255, 255, 255, 0.04);
@@ -854,32 +593,9 @@ const proofPoints = [
 
     .hero-panel ul {
       margin: 0;
-      padding-left: 1.2rem;
+      padding-left: 1.1rem;
       display: grid;
-      gap: 0.95rem;
-    }
-
-    .hero-panel__meta {
-      display: grid;
-      gap: 0.45rem;
-      padding-top: 1rem;
-      border-top: 2px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .hero-panel__meta span,
-    .signal-tile span,
-    .proof-card span {
-      display: block;
-      color: var(--gs-text-dim);
-      font-size: 0.84rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .hero-panel__meta strong,
-    .signal-tile strong,
-    .proof-card strong {
-      font-size: 1.1rem;
+      gap: 0.85rem;
     }
 
     .metrics-shell {
@@ -890,7 +606,7 @@ const proofPoints = [
 
     .metrics-grid {
     .signal-strip {
-      margin-top: 1.5rem;
+      margin-top: 1.25rem;
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 1rem;
@@ -990,9 +706,8 @@ const proofPoints = [
     }
 
     .section-copy h2 {
-      font-size: clamp(2.15rem, 5vw, 3.7rem);
-      margin-top: 0.72rem;
-      max-width: 17ch;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      margin-top: 0.65rem;
     }
 
     .capability-grid,
@@ -1020,7 +735,7 @@ const proofPoints = [
     }
 
     .team-card--founder {
-      border-color: rgba(90, 162, 255, 0.24);
+      border-color: rgba(90, 162, 255, 0.2);
       background: rgba(90, 162, 255, 0.08);
     }
 
@@ -1095,13 +810,7 @@ const proofPoints = [
       }
 
       .hero-shell {
-        padding-top: 6.75rem;
-      }
-
-      .hero-content h1,
-      .section-copy h2,
-      .contact-cta h2 {
-        max-width: 100%;
+        padding-top: 7rem;
       }
 
       .contact-cta {
@@ -1157,14 +866,7 @@ const proofPoints = [
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .hero-aurora,
-      .hero-particles,
-      .hero-energy,
-      .hero-engine,
-      .hero-engine__mark,
-      .hero-engine__sheen,
       .hero-button {
-        animation: none;
         transition: none;
         animation: none;
       }

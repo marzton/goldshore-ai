@@ -28,6 +28,7 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0b0f18" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -46,15 +47,29 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
     <link rel="shortcut icon" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body>
     <a href="#content" class="skip-link">Skip to content</a>
     <div class="gs-page-shell">
       <header class="header" data-menu-open="false">
+        <a href="/" class="gs-logo-link" aria-label="GoldShore home">
+          <Logo class="gs-logo" title="GoldShore" />
+        </a>
+
+        <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav id="primary-navigation" class="menu-panel" aria-label="Primary navigation">
+          <div class="menu-panel__inner">
+            {navLinks.map((link) => (
+              <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
+                {link.label}
+              </a>
+            ))}
         <div class="header__inner">
           <a href="/" class="gs-logo-link" aria-label="GoldShore home">
             <Logo class="gs-logo" title="GoldShore" />
@@ -156,6 +171,8 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
       <footer class="gs-footer">
         <div class="gs-footer__inner">
           <div>
+            <Logo class="gs-logo gs-logo--footer" title="GoldShore" />
+            <p>Infrastructure for high-trust AI, risk tooling, and resilient operator systems.</p>
             <div class="footer-brand">
               <Logo class="gs-logo gs-logo--footer" title="GoldShore" />
               <div class="brand-lockup brand-lockup--footer">
@@ -189,11 +206,7 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
         const setMenu = (isOpen) => {
           const header = document.querySelector('.header');
           const toggle = document.querySelector('.menu-button');
-          if (
-            !(header instanceof HTMLElement) ||
-            !(toggle instanceof HTMLButtonElement)
-          )
-            return;
+          if (!(header instanceof HTMLElement) || !(toggle instanceof HTMLButtonElement)) return;
           header.dataset.menuOpen = String(isOpen);
           toggle.setAttribute('aria-expanded', String(isOpen));
           document.body.classList.toggle('menu-open', isOpen);
@@ -291,6 +304,11 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
         display: flex;
         align-items: center;
         justify-content: space-between;
+        padding: 1rem clamp(1rem, 3vw, 2rem);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        background: rgba(8, 12, 22, 0.65);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         gap: 1rem;
       }
 
@@ -299,7 +317,6 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
         align-items: center;
         gap: 0.8rem;
         text-decoration: none;
-        min-width: 0;
       }
 
       .gs-logo {
@@ -309,6 +326,10 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
         flex-shrink: 0;
       }
 
+      .gs-logo--footer {
+        width: 28px;
+        margin-bottom: 0.85rem;
+       }
       .brand-lockup {
         display: grid;
         gap: 0.1rem;
@@ -421,9 +442,7 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
         height: 1.5px;
         border-radius: 999px;
         background: var(--gs-text);
-        transition:
-          transform 160ms ease,
-          opacity 160ms ease;
+        transition: transform 160ms ease, opacity 160ms ease;
       }
 
       .header[data-menu-open='true'] .menu-button span:nth-child(1) {
