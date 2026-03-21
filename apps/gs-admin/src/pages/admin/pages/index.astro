@@ -3,7 +3,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 
 const API_BASE = import.meta.env.PUBLIC_API || 'https://api.goldshore.dev';
 ---
-<AdminLayout title="Pages | GoldShore Admin">
+<AdminLayout title="Pages | GoldShore Admin" requiredPermission="content:read">
   <section class="max-w-6xl mx-auto py-12 px-6 space-y-6">
     <header class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
       <div>
