@@ -22,7 +22,10 @@ const isRoleAllowed = requiredRole ? session.roles.includes(requiredRole) : true
 const isPermissionAllowed = requiredPermission
   ? session.permissions.includes(requiredPermission)
   : true;
-const isAuthorized = isRoleAllowed && isPermissionAllowed;
+const isAuthorized = session.isAuthenticated && isRoleAllowed && isPermissionAllowed;
+const accessSummaryMessage = session.isAuthenticated
+  ? 'Your account does not have permission to view this section. Contact an administrator if you need expanded access.'
+  : 'You must sign in with an authenticated admin session before this page can be displayed.';
 ---
 <html lang="en">
   <head>
@@ -194,11 +197,11 @@ const isAuthorized = isRoleAllowed && isPermissionAllowed;
             <section class="max-w-4xl mx-auto py-24 px-6">
               <h1 class="text-3xl gs-heading mb-4">Access restricted</h1>
               <p class="text-[var(--gs-text-secondary)] mb-6">
-                Your account does not have permission to view this section. Contact an administrator
-                if you need expanded access.
+                {accessSummaryMessage}
               </p>
               <div class="gs-panel">
                 <div class="section-title"><span>🔒</span><h3>Access summary</h3></div>
+                <p class="gs-helper">Authenticated: {session.isAuthenticated ? 'Yes' : 'No'}</p>
                 <p class="gs-helper">Assigned roles: {session.roles.length ? session.roles.join(', ') : 'None'}</p>
                 <p class="gs-helper">Required role: {requiredRole ?? 'None'}</p>
                 <p class="gs-helper">Required permission: {requiredPermission ?? 'None'}</p>

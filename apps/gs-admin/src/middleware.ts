@@ -15,15 +15,16 @@ type AdminEnv = {
 
 const API_BASE = import.meta.env.PUBLIC_API;
 
+const PUBLIC_PATH_PREFIXES = ['/_astro', '/assets', '/favicon', '/fonts'];
+
+const isPublicRoute = (pathname: string) =>
+  PUBLIC_PATH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+
 const authMiddleware = defineMiddleware(async (context, next) => {
   const { pathname } = context.url;
-  const isAssetRoute =
-    pathname.startsWith('/_astro') ||
-    pathname.startsWith('/assets') ||
-    pathname.startsWith('/favicon') ||
-    pathname.startsWith('/fonts');
+  const isPublicPath = isPublicRoute(pathname);
 
-  if (!isAssetRoute) {
+  if (!isPublicPath) {
     const sessionCookie = context.cookies.get('gs_admin_session');
     const accessHeader = context.request.headers.get('CF-Access-Jwt-Assertion');
 
@@ -78,6 +79,26 @@ const authMiddleware = defineMiddleware(async (context, next) => {
     actor,
     isAuthenticated: Boolean(claims)
   };
+
+  if (!isPublicPath && !context.locals.adminSession.isAuthenticated) {
+    if (pathname.startsWith('/api/')) {
+      return new Response(JSON.stringify({ error: 'Authentication required.' }), {
+        status: 401,
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'cache-control': 'no-store'
+        }
+      });
+    }
+
+    return new Response('Authentication required.', {
+      status: 401,
+      headers: {
+        'content-type': 'text/plain; charset=utf-8',
+        'cache-control': 'no-store'
+      }
+    });
+  }
 
   return next();
 });
