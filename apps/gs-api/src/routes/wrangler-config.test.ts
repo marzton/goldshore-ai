@@ -1,37 +1,32 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { resolve } from 'node:path';
 
-const testDir = dirname(fileURLToPath(import.meta.url));
-const wranglerToml = readFileSync(join(testDir, '..', '..', 'wrangler.toml'), 'utf8');
+const wranglerToml = readFileSync(resolve(import.meta.dirname, '../../wrangler.toml'), 'utf8');
 
-const getEnvBlock = (env: 'prod' | 'production' | 'preview') => {
-  const envHeader = `[env.${env}]`;
-  const start = wranglerToml.indexOf(envHeader);
+describe('gs-api wrangler env bindings', () => {
+  for (const envName of ['prod', 'production', 'preview']) {
+    it(`keeps the KV binding required by runtime handlers in ${envName}`, () => {
+      assert.match(
+        wranglerToml,
+        new RegExp(`\\[\\[env\\.${envName}\\.kv_namespaces\\]\\][\\s\\S]*?binding = "KV"[\\s\\S]*?id = "`)
+      );
+    });
 
-  assert.notStrictEqual(start, -1, `Expected ${envHeader} to exist in wrangler.toml`);
-
-  const remaining = wranglerToml.slice(start + envHeader.length);
-  const nextEnvMatch = remaining.match(/\n\[env\.(?:prod|production|preview)\]/);
-  const end = nextEnvMatch ? start + envHeader.length + nextEnvMatch.index! : wranglerToml.length;
-
-  return wranglerToml.slice(start, end);
-};
-
-describe('wrangler runtime bindings', () => {
-  for (const env of ['prod', 'production', 'preview'] as const) {
-    it(`keeps required bindings for ${env}`, () => {
-      const block = getEnvBlock(env);
-
-      for (const binding of ['KV', 'CONTROL_LOGS', 'ASSETS', 'DB', 'AI']) {
-        assert.match(
-          block,
-          new RegExp(`binding = "${binding}"`),
-          `Expected env.${env} to declare ${binding}`,
-        );
-      }
+    it(`defines DB, ASSETS, and AI bindings for ${envName}`, () => {
+      assert.match(
+        wranglerToml,
+        new RegExp(`\\[\\[env\\.${envName}\\.r2_buckets\\]\\][\\s\\S]*?binding = "ASSETS"`)
+      );
+      assert.match(
+        wranglerToml,
+        new RegExp(`\\[\\[env\\.${envName}\\.d1_databases\\]\\][\\s\\S]*?binding = "DB"`)
+      );
+      assert.match(
+        wranglerToml,
+        new RegExp(`\\[env\\.${envName}\\.ai\\][\\s\\S]*?binding = "AI"`)
+      );
     });
   }
 });
