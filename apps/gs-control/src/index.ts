@@ -8,11 +8,12 @@ import * as DNS from "./libs/dns";
 import * as Workers from "./libs/workers";
 import * as Pages from "./libs/pages";
 import * as Access from "./libs/access";
+import type { ControlEnv } from "./libs/types";
 import { syncDNS } from "./tasks/syncDNS";
 import { rotateKeys } from "./tasks/rotateKeys";
 import { cloudflareRoutes } from "./routes/cloudflare";
 
-const app = new Hono<{ Bindings: any }>();
+const app = new Hono<{ Bindings: ControlEnv }>();
 
 // Security & CORS (Updated to support your admin domains)
 app.use('*', secureHeaders());

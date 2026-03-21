@@ -106,7 +106,7 @@ describe('gs-mail email handler persistence', () => {
 
   it('handles malformed existing KV payloads without crashing', async () => {
     mock.method(globalThis.crypto, 'randomUUID', () => '33333333-3333-4333-8333-333333333333');
-    const parseErrorSpy = mock.method(console, 'error', () => {});
+    const parseWarningSpy = mock.method(console, 'warn', () => {});
 
     const kv = new MockKV('{ malformed json');
     const waits: Promise<unknown>[] = [];
@@ -119,6 +119,6 @@ describe('gs-mail email handler persistence', () => {
     const payload = JSON.parse(kv.puts[0].value);
     assert.equal(payload.length, 1);
     assert.equal(payload[0].id, '33333333-3333-4333-8333-333333333333');
-    assert.ok(parseErrorSpy.mock.calls.some((call) => String(call.arguments[0]).includes('Failed to parse EMAIL_INBOX_LOGS payload')));
+    assert.ok(parseWarningSpy.mock.calls.some((call) => String(call.arguments[0]).includes('Unable to parse EMAIL_INBOX_LOGS. Resetting mailbox log.')));
   });
 });

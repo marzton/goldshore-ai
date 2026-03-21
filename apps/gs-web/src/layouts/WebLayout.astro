@@ -22,6 +22,8 @@ const {
 } = Astro.props;
 
 const siteUrl = 'https://goldshore.ai';
+const logoPath = '/logo.svg';
+const faviconPath = '/favicon.svg';
 const organizationId = `${siteUrl}#organization`;
 const sameAs: string[] = [];
 
@@ -31,7 +33,7 @@ const organizationSchema: Record<string, unknown> = {
   '@id': organizationId,
   name: 'Gold Shore',
   url: siteUrl,
-  logo: `${siteUrl}/assets/brand/logo-penrose.svg`,
+  logo: `${siteUrl}${logoPath}`,
   ...(sameAs.length > 0 ? { sameAs } : {}),
 };
 
@@ -47,6 +49,8 @@ const pageSchemas = Array.isArray(structuredData)
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <meta name="gs-logo-src" content={logoPath} />
+    <link rel="icon" type="image/svg+xml" href={faviconPath} />
     <title>{title}</title>
     <script
       type="application/ld+json"
@@ -65,7 +69,7 @@ const pageSchemas = Array.isArray(structuredData)
         '@type': 'Organization',
         name: 'Gold Shore',
         url: 'https://goldshore.ai',
-        logo: 'https://goldshore.ai/assets/brand/logo-penrose.svg',
+        logo: `${siteUrl}${logoPath}`,
         description: 'Institutional-grade automation and intelligence systems.',
         potentialAction: {
           '@type': 'SearchAction',
