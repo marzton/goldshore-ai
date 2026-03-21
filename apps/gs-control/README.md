@@ -38,6 +38,8 @@ Implemented in `src/index.ts` and `src/routes/cloudflare.ts`.
 - `POST /workers/reconcile`
 - `POST /pages/deploy`
 - `POST /access/audit`
+
+### Cloudflare administration routes
 - `GET /cloudflare/dns/records`
 - `PUT /cloudflare/dns/records/:recordId`
 - `GET /cloudflare/workers/status`
@@ -55,6 +57,11 @@ pnpm --filter ./apps/gs-control run-task
 ```
 
 ## Testing and build
+- Production workflow: `.github/workflows/deploy-control-worker.yml`
+- Preview workflow: `.github/workflows/preview-control-worker.yml`
+- Store `CLOUDFLARE_API_TOKEN` as a Cloudflare secret instead of committing it.
+- Deploy command:
+
 ```bash
 pnpm --filter ./apps/gs-control test
 pnpm --filter ./apps/gs-control build
