@@ -24,6 +24,7 @@ CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 CONTROL_SYNC_TOKEN = "__PROD_CONTROL_SYNC_TOKEN__"
 
 [[env.prod.kv_namespaces]]
+# Keep the runtime binding name aligned with c.env.KV in the API handlers.
 binding = "KV"
 id = "gs_api_kv_001"
 
@@ -33,6 +34,7 @@ binding = "CONTROL_LOGS"
 id = "gs_control_logs_001"
 
 [[env.prod.r2_buckets]]
+# The deployed API also depends on ASSETS/DB/AI for media, pages, and AI routes.
 binding = "ASSETS"
 bucket_name = "gs-assets"
 
@@ -63,6 +65,7 @@ CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 CONTROL_SYNC_TOKEN = "__PROD_CONTROL_SYNC_TOKEN__"
 
 [[env.production.kv_namespaces]]
+# Keep the runtime binding name aligned with c.env.KV in the API handlers.
 binding = "KV"
 id = "gs_api_kv_001"
 
@@ -71,6 +74,7 @@ binding = "CONTROL_LOGS"
 id = "gs_control_logs_001"
 
 [[env.production.r2_buckets]]
+# The deployed API also depends on ASSETS/DB/AI for media, pages, and AI routes.
 binding = "ASSETS"
 bucket_name = "gs-assets"
 
