@@ -6,14 +6,14 @@ The `gs-api` worker is the primary Hono-based API layer for GoldShore, served fr
 Cloudflare metadata (from `wrangler.toml`):
 - Worker name: `gs-api`
 - Route: `api.goldshore.ai/*`
-- Compatibility date: `2025-01-10`
-- Bindings: `API_KV` (KV), `ASSETS` (R2), `DB` (D1), `AI` (AI Gateway)
+- Compatibility date: `2024-11-01`
+- Bindings: `KV` (KV), `CONTROL_LOGS` (KV), `ASSETS` (R2), `DB` (D1), `AI` (AI Gateway)
 - Environment variable: `ENV=production`
 The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers. It uses KV, R2, D1, and the AI Gateway bindings configured in `wrangler.toml`.
 
 Configuration highlights (from `wrangler.toml`):
 - `ENV=production`
-- KV binding: `API_KV`
+- KV binding: `KV`
 - R2 binding: `ASSETS`
 - D1 binding: `DB`
 - AI binding: `AI`
@@ -56,7 +56,7 @@ the issue is in Worker Builds project settings (not this repository code).
 Fix in Cloudflare Dashboard:
 
 1. Open **Workers & Pages** → **gs-api** → **Settings** → **Builds**.
-2. Create or select an active Worker Builds token.
+2. Create or select an active Worker Builds token for the `gs-control` service.
 3. Save the updated token in Worker Builds settings.
 4. Re-run the build.
 
