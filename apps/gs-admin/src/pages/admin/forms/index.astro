@@ -2,7 +2,7 @@
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import { formConfigs } from '../../../data/forms';
 ---
-<AdminLayout title="Forms Dashboard | GoldShore Admin">
+<AdminLayout title="Forms Dashboard | GoldShore Admin" requiredPermission="forms:read">
   <section class="max-w-6xl mx-auto py-16 px-6 space-y-8">
     <header class="space-y-3">
       <h1 class="text-3xl gs-heading">Forms Dashboard</h1>
