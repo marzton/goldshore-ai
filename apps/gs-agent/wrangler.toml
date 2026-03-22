@@ -28,10 +28,28 @@ name = "gs-agent-dev"
 [env.dev.vars]
   ENV = "development"
 
+[env.preview]
+name = "gs-agent-preview"
+[env.preview.vars]
+  ENV = "preview"
+[[env.preview.kv_namespaces]]
+  binding = "AGENT_KV"
+  id = "9cc2209906a94851b704be57543987a9"
+[env.preview.ai]
+  binding = "AI"
+[[env.preview.queues.consumers]]
+  queue = "goldshore-jobs"
+  max_batch_size = 10
+
 [env.prod]
 name = "gs-agent"
 [env.prod.vars]
   ENV = "production"
+[[env.prod.kv_namespaces]]
+  binding = "AGENT_KV"
+  id = "9cc2209906a94851b704be57543987a9"
+[env.prod.ai]
+  binding = "AI"
 [[env.prod.queues.consumers]]
   queue = "goldshore-jobs"
   max_batch_size = 10

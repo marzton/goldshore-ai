@@ -1,6 +1,6 @@
 # wrangler.toml for the legacy goldshore-admin Astro Pages app (historical alias for gs-admin)
 
-name = "goldshore-admin" # Historical Pages project alias; canonical project is gs-admin
+name = "goldshore-admin" # Historical Pages project alias; canonical name is gs-admin
 
 # This file is primarily for configuring bindings for Cloudflare Pages Functions.
 # The canonical config lives in gs-admin.wrangler.toml and should stay in sync.

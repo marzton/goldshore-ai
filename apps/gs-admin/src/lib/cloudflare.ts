@@ -1,35 +1,25 @@
-export type MetricPoint = {
-  label: string;
-  value: number;
-  display: string;
-};
-
-export type ChartMetrics = {
-  title: string;
-  description: string;
-  summary: string;
-  trend: string;
-  series: MetricPoint[];
-};
-
 export type CloudflareMetrics = {
-  highlights: {
-    totalRequests: string;
-    cacheHitRate: string;
-    threatsBlocked: string;
-    dnsChanges: string;
+  requests: number;
+  bandwidth: number;
+  threats: number;
+  pageViews: number;
+};
+
+type CloudflareContext = {
+  runtime?: {
+    env?: Record<string, string | undefined>;
   };
 };
 
-export function getCloudflareContext(locals: any) {
+export function getCloudflareContext(locals: CloudflareContext) {
   return locals.runtime?.env || process.env;
 }
 
-export async function getCloudflareMetrics() {
+export async function getCloudflareMetrics(): Promise<CloudflareMetrics> {
   return {
     requests: 0,
     bandwidth: 0,
     threats: 0,
-    pageViews: 0
+    pageViews: 0,
   };
 }
