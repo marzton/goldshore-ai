@@ -28,16 +28,11 @@ async function run() {
     fs.writeFileSync(target1, JSON.stringify(parsed, null, 2));
     console.log(`Wrote ${target1}`);
 
-    // Target 2: apps/web/openapi (so it is served via publicDir)
-    const target2 = path.join(ROOT, jsonOut);
+    // Target 2: apps/web/public/openapi (standard static assets)
+    const target2 = path.join(ROOT, '../public/openapi', jsonOut);
+    fs.mkdirSync(path.dirname(target2), { recursive: true });
     fs.writeFileSync(target2, JSON.stringify(parsed, null, 2));
     console.log(`Wrote ${target2}`);
-
-    // Target 3: apps/web/openapi/openapi (to match /openapi/v1.json request with publicDir=./openapi)
-    const target3 = path.join(ROOT, 'openapi', jsonOut);
-    fs.mkdirSync(path.dirname(target3), { recursive: true });
-    fs.writeFileSync(target3, JSON.stringify(parsed, null, 2));
-    console.log(`Wrote ${target3}`);
   }
 }
 

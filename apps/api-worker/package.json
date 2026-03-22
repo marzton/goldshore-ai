@@ -5,11 +5,13 @@
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy",
-    "build": "wrangler deploy --dry-run --outdir=dist"
+    "build": "wrangler deploy --dry-run --outdir=dist",
+    "test": "node --experimental-strip-types --test src/routes/*.test.ts"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:^",
-    "hono": "^4.0.0"
+    "hono": "^4.0.0",
+    "@goldshore/ai-providers": "workspace:^"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240512.0",

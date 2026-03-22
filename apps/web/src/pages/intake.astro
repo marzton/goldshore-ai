@@ -1,6 +1,7 @@
 ---
 import { GSButton } from '@goldshore/ui';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import FlowSection from '../components/FlowSection.astro';
 
 export const prerender = true;
 ---
@@ -9,7 +10,7 @@ export const prerender = true;
   title="Project Intake | GoldShore"
   description="Share your goals and requirements so we can qualify your lead and respond quickly."
 >
-  <section class="gs-hero">
+  <FlowSection variant="hero">
     <div>
       <h1>Project intake</h1>
       <p>
@@ -20,6 +21,11 @@ export const prerender = true;
     <form class="gs-card" action="/api/contact" method="post">
       <input type="hidden" name="formType" value="lead-qualification" />
       <input type="hidden" name="redirectTo" value="/thank-you" />
+      <input type="hidden" name="formStartedAt" value="" />
+      <div class="gs-honeypot" aria-hidden="true">
+        <label for="companyWebsite">Company website</label>
+        <input id="companyWebsite" name="companyWebsite" type="text" autocomplete="off" tabindex="-1" />
+      </div>
       <div class="gs-input-group">
         <label for="name">Name</label>
         <input id="name" name="name" type="text" autocomplete="name" required />
@@ -112,5 +118,26 @@ export const prerender = true;
       </div>
       <GSButton type="submit">Submit intake</GSButton>
     </form>
-  </section>
+  </FlowSection>
+
+  <script>
+    const form = document.querySelector('form[action="/api/contact"]');
+    if (form instanceof HTMLFormElement) {
+      const startedAtField = form.querySelector('[name="formStartedAt"]');
+      if (startedAtField instanceof HTMLInputElement) {
+        startedAtField.value = String(Date.now());
+      }
+    }
+  </script>
+
+  <style is:global>
+    .gs-honeypot {
+      position: absolute;
+      left: -10000px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+  </style>
 </BaseLayout>
