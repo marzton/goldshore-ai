@@ -14,6 +14,11 @@ fi
 
 git fetch --all --prune
 
+if ! git rev-parse --verify "$LOG_REF" >/dev/null 2>&1; then
+  echo "LOG_REF does not exist: $LOG_REF" >&2
+  exit 1
+fi
+
 {
   echo "# Maintenance branch report"
   echo
