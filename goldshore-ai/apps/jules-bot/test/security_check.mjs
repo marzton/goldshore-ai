@@ -106,13 +106,15 @@ try {
 } catch (e) {
   const errorMessage = String(e && e.message ? e.message : e);
   let safeMessage = errorMessage
-    .replace(/[\r\n]+/g, ' ')                   // explicitly remove newlines
-    .replace(/[\x00-\x08\x0B-\x1F\x7F]+/g, ' ') // remove remaining control characters
-    .replace(/[^ -~]/g, '?');                   // replace remaining non-ASCII-printable chars
+    .replace(/[\r\n]+/g, ' ')                    // explicitly remove newlines
+    .replace(/[\x00-\x08\x0B-\x1F\x7F]+/g, ' ')  // remove remaining control characters
+    .replace(/[^ -~]/g, '?')                    // replace remaining non-ASCII-printable chars
+    .replace(/\s+/g, ' ')                       // normalize any remaining whitespace
+    .trim();                                    // trim leading/trailing spaces
   if (safeMessage.length > MAX_LOG_MESSAGE_LENGTH) {
     safeMessage = safeMessage.slice(0, MAX_LOG_MESSAGE_LENGTH) + '...';
   }
-  console.error('Error during security check: [details: ' + safeMessage + ']');
+  console.error('Error during security check: [details="' + safeMessage + '"]');
 } finally {
   serverProcess.kill();
   process.exit(exitCode);
