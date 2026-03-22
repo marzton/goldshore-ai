@@ -79,7 +79,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.75.0(@cloudflare/workers-types@4.20260317.1)
+        version: 4.75.0(@cloudflare/workers-types@4.20260313.1)
       yaml:
         specifier: ^2.8.2
         version: 2.8.2
@@ -176,7 +176,7 @@ importers:
         specifier: ^2.16.0
         version: 2.16.1
       hono:
-        specifier: ^4.12.8
+        specifier: ^4.12.4
         version: 4.12.8
       openai:
         specifier: ^6.32.0
@@ -273,7 +273,7 @@ importers:
         version: 4.12.8
       postal-mime:
         specifier: 2.7.3
-        version: 2.7.3
+        version: 2.7.4
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -3280,8 +3280,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  postal-mime@2.7.3:
-    resolution: {integrity: sha512-MjhXadAJaWgYzevi46+3kLak8y6gbg0ku14O1gO/LNOuay8dO+1PtcSGvAdgDR0DoIsSaiIA8y/Ddw6MnrO0Tw==}
+  postal-mime@2.7.4:
+    resolution: {integrity: sha512-0WdnFQYUrPGGTFu1uOqD2s7omwua8xaeYGdO6rb88oD5yJ/4pPHDA4sdWqfD8wQVfCny563n/HQS7zTFft+f/g==}
 
   postcss-import@15.1.0:
     resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
@@ -7829,7 +7829,7 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.2
 
-  postal-mime@2.7.3: {}
+  postal-mime@2.7.4: {}
 
   postcss-import@15.1.0(postcss@8.5.8):
     dependencies:
