@@ -1,56 +1,60 @@
 name: Deploy GS Agent Worker (gs-agent)
-main = "src/index.ts"
-compatibility_date = "2024-11-01"
-compatibility_flags = ["nodejs_compat"]
-tsconfig = "tsconfig.json"
 
-[ai]
-binding = "AI"
+permissions:
+  contents: read
 
-[[queues.consumers]]
-queue = "goldshore-jobs"
-max_batch_size = 10
-max_batch_timeout = 5
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+      - ready_for_review
+    paths:
+      - "apps/gs-agent/**"
+      - "infra/Cloudflare/gs-agent.wrangler.toml"
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
 
-[[kv_namespaces]]
-binding = "AGENT_KV"
-id = "9cc2209906a94851b704be57543987a9"
+jobs:
+  preview-agent:
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'production') ||
+      (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
 
-[vars]
-ENV = "production"
-CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
-CLOUDFLARE_ACCESS_AUDIENCE = "97f797aab186a591099e54b9973e4e1ffd21aa13f5ae0e80a42dba09b674f254"
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-[env.dev]
-name = "gs-agent-dev"
+      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+        with:
+          run_install: false
 
-[env.dev.vars]
-ENV = "development"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
 
-[env.preview]
-name = "gs-agent-preview"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-[env.preview.vars]
-ENV = "preview"
-CLOUDFLARE_TEAM_DOMAIN = "__OPTIONAL__"
-CLOUDFLARE_ACCESS_AUDIENCE = "__OPTIONAL__"
+      - name: Validate workspace contract
+        run: pnpm validate:workspace
 
-[env.prod]
-name = "gs-agent"
+      - name: Validate canonical worker structure
+        run: pnpm validate:structure
 
-[env.prod.vars]
-ENV = "production"
-CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
-CLOUDFLARE_ACCESS_AUDIENCE = "97f797aab186a591099e54b9973e4e1ffd21aa13f5ae0e80a42dba09b674f254"
+      - name: Validate canonical worker names
+        run: pnpm validate:names
 
-[env.prod.ai]
-binding = "AI"
+      - name: Deploy GS agent worker (preview)
+        working-directory: apps/gs-agent
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm exec wrangler deploy --env prod --config ../../infra/Cloudflare/gs-agent.wrangler.toml
 
-[[env.prod.queues.consumers]]
-queue = "goldshore-jobs"
-max_batch_size = 10
-max_batch_timeout = 5
-
-[[env.prod.kv_namespaces]]
-binding = "AGENT_KV"
-id = "9cc2209906a94851b704be57543987a9"
+# // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43
