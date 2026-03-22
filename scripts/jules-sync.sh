@@ -124,6 +124,9 @@ trap 'rm -f "$headers_file" "$body_file"' EXIT
 echo "Testing Cloudflare Access service-token auth against: $TARGET_URL"
 
 curl -sS -o "$body_file" -D "$headers_file" \
+echo "Testing Cloudflare Access service-token auth against: $TARGET_URL"
+
+curl -sS -o /tmp/jules-sync-response.txt -D /tmp/jules-sync-headers.txt \
   -H "CF-Access-Client-Id: $CLIENT_ID" \
   -H "CF-Access-Client-Secret: $CLIENT_SECRET" \
   "$TARGET_URL"
@@ -138,5 +141,6 @@ else
   cat "$headers_file" >&2
   echo "Response body:" >&2
   cat "$body_file" >&2
+  cat /tmp/jules-sync-headers.txt >&2
   exit 1
 fi

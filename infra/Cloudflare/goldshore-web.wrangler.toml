@@ -1,4 +1,5 @@
-# wrangler.toml for the legacy goldshore-web Astro Pages app (historical alias; canonical project is gs-web)
+# wrangler.toml for the legacy goldshore-web Astro Pages app (historical alias for gs-web)
+# Prefer infra/Cloudflare/gs-web.wrangler.toml for active edits.
 
 name = "goldshore-web" # Historical Pages project alias; canonical name is gs-web
 
