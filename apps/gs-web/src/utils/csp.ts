@@ -2,6 +2,8 @@ const SELF = "'self'";
 const UNSAFE_INLINE = "'unsafe-inline'";
 const NONE = "'none'";
 
+type ContentSecurityPolicyDirectives = Record<string, readonly string[]>;
+
 export const GOLDSHORE_API_ORIGINS = [
   'https://api.goldshore.ai',
   'https://api-preview.goldshore.ai',
@@ -15,7 +17,7 @@ export const GOLDSHORE_API_ORIGINS = [
  */
 export const WEB_CONNECT_SRC = [SELF, ...GOLDSHORE_API_ORIGINS] as const;
 
-export const BROWSER_CONNECT_SRC = [SELF, ...GOLDSHORE_API_ORIGINS] as const;
+export const BROWSER_CONNECT_SRC = WEB_CONNECT_SRC;
 
 export const WEB_CSP_DIRECTIVES = {
   'default-src': [SELF],
@@ -45,7 +47,7 @@ const BASE_CSP_DIRECTIVES = {
  * Keep it limited to directives supported by `<meta http-equiv="Content-Security-Policy">`.
  */
 const WEB_META_DIRECTIVES = {
-  ...WEB_SHARED_CSP_DIRECTIVES,
+  ...WEB_CSP_DIRECTIVES,
 } as const satisfies ContentSecurityPolicyDirectives;
 
 /**
@@ -53,16 +55,16 @@ const WEB_META_DIRECTIVES = {
  * Header delivery can enforce `frame-ancestors`, which meta CSP cannot.
  */
 const WEB_HEADER_DIRECTIVES = {
-  ...WEB_SHARED_CSP_DIRECTIVES,
+  ...WEB_CSP_DIRECTIVES,
   'frame-ancestors': [NONE],
 } as const;
 
 export function buildContentSecurityPolicy(
-  directives: ContentSecurityPolicyDirectives,
-): string;
+  directives?: ContentSecurityPolicyDirectives,
+): string {
   return serializeCsp(directives ?? WEB_CSP_DIRECTIVES);
 }
-  directives?: Record<string, readonly string[]>,
+
 export const WEB_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy();
-  return serializeCsp(directives ?? WEB_CSP_DIRECTIVES);
-export const WEB_HEADERS_CSP = serializeCsp(HEADER_CSP_DIRECTIVES);
+export const WEB_HEADERS_CSP = serializeCsp(WEB_HEADER_DIRECTIVES);
+
