@@ -1,30 +1,103 @@
-# GoldShore Web (`apps/gs-web`)
+# GoldShore Web (Astro)
 
-Public marketing site, documentation hub, and customer-facing Astro app for GoldShore. This app deploys to Cloudflare Pages and shares UI/theme packages with the rest of the monorepo.
+Public marketing site and content hub for GoldShore.
 
-## App overview
+## Goals
 
-`gs-web` is the public web surface for:
+- Keep **navbars, menus, and responsive containers** in shared layouts.
+- Keep **page content** in `src/pages` to remain lightweight.
+- Keep **search** as a reusable component that can be embedded in marketing, docs, and portals.
 
-- marketing pages and contact flows,
-- developer documentation and API reference,
-- lightweight customer-facing routes,
-- preview environments protected with Cloudflare Access.
+## Template Page
+
+Use the template page as the default starting point for new marketing or campaign pages:
+
+- `src/pages/templates/index.astro`
+
+The template demonstrates:
+
+- Layout-driven navigation + menus.
+- Grid containers for desktop/tablet/mobile.
+- Search module integration.
+- CTA cards and campaign-ready sections.
+
+## Key Layouts + Components
+
+- `src/layouts/WebLayout.astro`: Global nav, menu toggle, and footer.
+- `src/layouts/MarketingLayout.astro`: Thin wrapper for marketing content.
+- `src/components/DocsSearch.astro`: Independent search widget.
+- `src/components/Hero.astro`, `FeatureGrid.astro`: Reusable marketing sections.
+
+## SEO + Marketing Guidance
+
+- Use descriptive `title` and `description` props on layouts.
+- Keep CTA blocks consistent with `@goldshore/ui` buttons.
+- Make every page responsive using `gs-grid` and `gs-section` helpers.
+
+## Integrations to Plan
+
+- AI: Google Gemini, ChatGPT, Jules, Cloudflare AI Gateway.
+- Marketing + CRM: HubSpot, Mailchimp, Salesforce.
+- Commerce: Stripe, Shopify, invoicing portals.
+- Market data landing pages: Alpaca, Thinkorswim, Polygon, Tradier.
+
+## Development
+
+# apps/gs-web
+
+## Overview
+
+The public GoldShore website and user portal built with Astro and shared theme/UI packages. It deploys to Cloudflare Pages.
 
 Cloudflare metadata:
 
 - Pages project name: `gs-web` (production), `preview-web` (preview)
 - Pages bindings config: `infra/cloudflare/goldshore-web.wrangler.toml`
-- Preview runtime bindings commonly set by CI:
-  - `PUBLIC_API=https://api-preview.goldshore.ai`
-  - `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
-- Build diagnostics exposed on `/status`:
-  - `PUBLIC_BUILD_TIMESTAMP`
-  - `PUBLIC_COMMIT_HASH`
+- Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
+- Public diagnostics metadata injected during GitHub Actions builds:
+  - `PUBLIC_BUILD_TIMESTAMP` = `${{ github.run_started_at }}` (ISO timestamp for the workflow run)
+  - `PUBLIC_COMMIT_HASH` = `${{ github.sha }}` (full commit SHA used for the build)
+- `/status` renders this metadata plus runtime counts for stylesheet links and scripts, and the layout logo asset path from `meta[name="gs-logo-src"]`.
 
-## Routes
+## CSP compatibility
 
-Routing and access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
+Browser-side network inventory under `src`:
+
+- `'self'` for same-origin endpoints (for example `/api/contact` and `/api/docs-search`).
+- `https://api.goldshore.ai` for production API calls (the docs "Try it" console uses `PUBLIC_API` in production).
+- `https://api-preview.goldshore.ai` for preview API calls (the same docs console uses `PUBLIC_API` in preview deployments).
+
+Keep `connect-src` scoped to these explicit hosts unless a new client-side integration is added and reviewed. Do **not** tighten to `connect-src 'self'` until the remaining browser-side `PUBLIC_API` calls have been migrated behind same-origin Astro/API routes.
+
+## Browser-side network call inventory
+
+Inventory for `apps/gs-web/src/` before the CSP refactor:
+
+- `src/components/ContactForm.astro`: browser `fetch()` POST to same-origin `/api/contact`.
+- `src/components/DocsSearch.astro`: browser `fetch()` GET to same-origin `/api/docs-search`.
+- `src/components/ServiceStatus.astro`: browser `fetch()` to the caller-provided `serviceUrl`; keep this same-origin if the component is mounted again.
+- `src/components/TryItConsole.astro`: browser `fetch()` to `${PUBLIC_API}${path}`. This is the only current browser call site that still requires the external GoldShore API origins in `connect-src`.
+- `src/pages/[...path].astro`: server-side Astro `fetch()` to `${PUBLIC_API}/pages/slug/...`; this is **not** a browser `connect-src` dependency.
+- `src/pages/developer/docs/index.astro`: renders `PUBLIC_API` / `PUBLIC_GATEWAY` values as documentation text only; it does **not** issue a browser request by itself.
+- `src/components/TryItConsole.astro`: browser `fetch(url)` to `PUBLIC_API + path`, so CSP must allow `https://api.goldshore.ai` in production and `https://api-preview.goldshore.ai` in preview deployments.
+- `src/components/DocsSearch.astro`: browser `fetch('/api/docs-search?...')` to the same origin.
+- `src/components/ContactForm.astro`: browser `fetch('/api/contact')` to the same origin.
+- `src/pages/contact.astro`: inline browser `fetch('/api/contact')` to the same origin.
+- `src/components/ServiceStatus.astro`: browser `fetch(serviceUrl)` if mounted; keep this prop same-origin to stay within `'self'`.
+- `src/pages/[...path].astro`: uses `PUBLIC_API` server-side in Astro frontmatter during SSR, so it does **not** require `connect-src`.
+- `src/pages/developer/docs/index.astro` and `src/content/docs/api/system-info.mdx`: display `PUBLIC_API` / `PUBLIC_GATEWAY` values in docs/examples only; they do **not** make browser runtime requests themselves.
+
+Approved outbound `connect-src` origins for browser runtime network calls:
+
+- `'self'` for same-origin endpoints such as `/api/contact`, `/api/docs-search`, and any `ServiceStatus` usage kept on-site.
+- `https://api.goldshore.ai` for production API calls made from the docs "Try it" console.
+- `https://api-preview.goldshore.ai` for preview API calls when preview deployments point `PUBLIC_API` at the preview API worker.
+
+The shared CSP policy constants live in `src/utils/csp.ts`. Keep `connect-src` scoped to these explicit hosts unless a new browser-side integration is added and reviewed.
+
+## Routes/Endpoints
+
+Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
 
 Public routes:
 
@@ -34,39 +107,15 @@ Public routes:
 - `/legal/privacy`
 - `/legal/terms`
 - `/contact`
-- `/developer/docs`
-- `/developer/api/*`
 
-Authenticated or protected surfaces:
+Authenticated user portal:
 
 - `/app/dashboard`
 - `/app/profile`
 - `/app/logs`
 - `/app/settings`
-- preview hostnames documented in [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md)
 
-## CSP inventory
-
-Browser-side `connect-src` dependencies currently required by `gs-web`:
-
-- `'self'` for same-origin endpoints such as `/api/contact` and `/api/docs-search`
-- `https://api.goldshore.ai` for production browser calls made by `src/components/TryItConsole.astro`
-- `https://api-preview.goldshore.ai` for preview browser calls when `PUBLIC_API` points at the preview API
-
-Current browser/runtime call inventory under `src/`:
-
-- `src/components/ContactForm.astro` → same-origin `POST /api/contact`
-- `src/components/DocsSearch.astro` → same-origin `GET /api/docs-search`
-- `src/components/ServiceStatus.astro` → browser `fetch(serviceUrl)`; keep this prop same-origin unless CSP is explicitly expanded
-- `src/components/TryItConsole.astro` → browser `fetch(${PUBLIC_API} + path)`; this is the reason external API origins remain in `connect-src`
-- `src/pages/[...path].astro` → server-side Astro fetches to `${PUBLIC_API}/pages/slug/...`; this is **not** a browser CSP dependency
-- `src/pages/developer/docs/index.astro` and content docs may display `PUBLIC_API` / `PUBLIC_GATEWAY` values in examples, but they do **not** create browser runtime network calls by themselves
-
-The shared CSP constants live in `src/utils/csp.ts`. Keep `connect-src` limited to the hosts above unless a new browser-side integration is added and reviewed.
-
-## Deployment
-
-Local development:
+## Local Dev
 
 ```bash
 pnpm install
@@ -75,36 +124,9 @@ pnpm --filter ./apps/gs-web build
 pnpm --filter ./apps/gs-web preview
 ```
 
-Production build from repo root:
+## Contact form + Cloudflare mail delivery
 
-```bash
-pnpm --filter @goldshore/gs-web build
-```
-
-Cloudflare Pages settings for the monorepo:
-
-- **Root directory:** `apps/gs-web`
-- **Build command:** `pnpm build`
-- **Output directory:** `dist`
-
-Deployment workflows:
-
-- Production deploy: `.github/workflows/deploy-web.yml`
-- Preview deploy: `.github/workflows/preview-web.yml`
-- Domains, previews, and Access policy details: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md)
-
-## Preview auth
-
-Preview environments are not public.
-
-- Preview builds reuse the centralized GitHub App callback handler instead of registering per-branch callbacks.
-- Cloudflare Access protects preview hostnames using the shared Access application and policy set.
-- Non-interactive checks against Access-protected preview hosts should use Cloudflare Access service-token headers (`CF_ACCESS_CLIENT_ID` / `CF_ACCESS_CLIENT_SECRET`) rather than assuming anonymous access.
-- Canonical domain and Access policy details live in [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
-
-## Contact form and mail delivery
-
-`/api/contact` stores submissions in KV/D1 and can send email through MailChannels from Cloudflare Pages Functions.
+`/api/contact` stores submissions in KV/D1 and can send emails through MailChannels from Cloudflare Pages Functions.
 
 Set these environment variables in the `gs-web` Pages project:
 
@@ -113,8 +135,150 @@ Set these environment variables in the `gs-web` Pages project:
 - `CONTACT_NOTIFICATION_EMAILS` (comma-separated recipient list for new submissions)
 - `MAILCHANNELS_API_URL` (optional override, defaults to `https://api.mailchannels.net/tx/v1/send`)
 
-Keep the existing `KV` and `DB` bindings so submissions continue to persist even if email delivery is temporarily unavailable.
+Keep the existing bindings for `KV` and `DB` so submissions continue to persist even if email delivery is temporarily unavailable.
 
-## Source of truth
+## Live deployment (with themes)
 
-For API behavior, treat the OpenAPI description and generated API reference as canonical. `README.md` and the prose docs in `src/content/docs/` should summarize and explain that behavior; if they diverge from the OpenAPI surface, update the docs to match the API contract.
+The live web deployment (`gs-web`) already includes GoldShore theme styling because the app imports `@goldshore/theme` in both layout and global styles.
+
+From repo root, deploy the current web build to Cloudflare Pages production:
+
+```bash
+pnpm --filter @goldshore/gs-web build
+```
+
+This builds `@goldshore/gs-web` and produces `apps/gs-web/dist` for deployment to the `gs-web` Pages project on `main`.
+
+Cloudflare Pages settings for monorepo correctness:
+- **Root directory:** `apps/gs-web`
+- **Build command:** `pnpm build`
+- **Output directory:** `dist`
+
+If root is left at repository root, Pages looks for `/dist` and fails with `Output directory "dist" not found`.
+
+## Deploy
+
+- Production deploy: `.github/workflows/deploy-web.yml`
+- Preview deploy: `.github/workflows/preview-web.yml`
+- Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
+
+## Preview Authentication
+
+- Preview builds reuse the centralized GitHub App callback handler; OAuth completes in the shared callback service, which redirects back to the preview hostname instead of registering per-branch callbacks.
+- Cloudflare Access is enforced by the shared Access application and policy set, with preview hostnames allowlisted alongside production domains.
+- See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
+
+<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
+
+# GoldShore Web (Astro)
+
+Public marketing site and content hub for GoldShore.
+
+## Goals
+
+- Keep **navbars, menus, and responsive containers** in shared layouts.
+- Keep **page content** in `src/pages` to remain lightweight.
+- Keep **search** as a reusable component that can be embedded in marketing, docs, and portals.
+
+## Template Page
+
+Use the template page as the default starting point for new marketing or campaign pages:
+
+- `src/pages/templates/index.astro`
+
+The template demonstrates:
+
+- Layout-driven navigation + menus.
+- Grid containers for desktop/tablet/mobile.
+- Search module integration.
+- CTA cards and campaign-ready sections.
+
+## Key Layouts + Components
+
+- `src/layouts/WebLayout.astro`: Global nav, menu toggle, and footer.
+- `src/layouts/MarketingLayout.astro`: Thin wrapper for marketing content.
+- `src/components/DocsSearch.astro`: Independent search widget.
+- `src/components/Hero.astro`, `FeatureGrid.astro`: Reusable marketing sections.
+
+## SEO + Marketing Guidance
+
+- Use descriptive `title` and `description` props on layouts.
+- Keep CTA blocks consistent with `@goldshore/ui` buttons.
+- Make every page responsive using `gs-grid` and `gs-section` helpers.
+
+## Integrations to Plan
+
+- AI: Google Gemini, ChatGPT, Jules, Cloudflare AI Gateway.
+- Marketing + CRM: HubSpot, Mailchimp, Salesforce.
+- Commerce: Stripe, Shopify, invoicing portals.
+- Market data landing pages: Alpaca, Thinkorswim, Polygon, Tradier.
+
+## Development
+
+```bash
+pnpm --filter @goldshore/gs-web dev
+```
+
+# apps/gs-web
+
+## Overview
+
+The public GoldShore website and user portal built with Astro, shared theme, and UI components. It deploys to Cloudflare Pages as the primary marketing and customer-facing experience.
+
+## Routes/Endpoints
+
+Routing & access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
+
+Public routes:
+
+- `/`
+- `/about`
+- `/pricing`
+- `/legal/privacy`
+- `/legal/terms`
+- `/contact`
+
+Authenticated user portal:
+
+- `/app/dashboard`
+- `/app/profile`
+- `/app/logs`
+- `/app/settings`
+
+## Local Dev
+
+```bash
+pnpm install
+pnpm --filter ./apps/gs-web dev
+pnpm --filter ./apps/gs-web build
+pnpm --filter ./apps/gs-web preview
+```
+
+## Live deployment (with themes)
+
+The live web deployment (`gs-web`) already includes GoldShore theme styling because the app imports `@goldshore/theme` in both layout and global styles.
+
+From repo root, deploy the current web build to Cloudflare Pages production:
+
+```bash
+pnpm --filter @goldshore/gs-web build
+```
+
+This builds `@goldshore/gs-web` and produces `apps/gs-web/dist` for deployment to the `gs-web` Pages project on `main`.
+
+Cloudflare Pages settings for monorepo correctness:
+- **Root directory:** `apps/gs-web`
+- **Build command:** `pnpm build`
+- **Output directory:** `dist`
+
+If root is left at repository root, Pages looks for `/dist` and fails with `Output directory "dist" not found`.
+
+## Deploy
+
+Cloudflare Pages deploys via GitHub Actions. Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
+
+## Preview Authentication
+
+- Preview builds reuse the centralized GitHub App callback handler; OAuth completes in the shared callback service, which redirects back to the preview hostname instead of registering per-branch callbacks.
+- Cloudflare Access is enforced by the shared Access application and policy set, with preview hostnames allowlisted alongside production domains.
+- See the centralized guide: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).

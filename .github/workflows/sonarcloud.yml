@@ -1,6 +1,3 @@
-# Manual operations guide:
-# - Use this workflow to re-run SonarCloud analysis on demand when operators need fresh code quality or security findings.
-# - Manual runs supplement the normal push, pull request, and scheduled analysis cadence.
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
@@ -29,8 +26,7 @@
 # Feel free to take a look at our documentation (https://docs.sonarcloud.io/getting-started/github/)
 # or reach out to our community forum if you need some help (https://community.sonarsource.com/c/help/sc/9)
 
-name: "Security: SonarCloud Analysis"
-run-name: "SonarCloud • ${{ github.event_name == 'workflow_dispatch' && format('manual • @{0}', github.actor) || github.ref_name }}"
+name: SonarCloud analysis
 
 on:
   push:

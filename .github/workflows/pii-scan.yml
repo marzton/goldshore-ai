@@ -1,8 +1,4 @@
-# Manual operations guide:
-# - Use this workflow to generate an updated PII scan artifact and Markdown summary for operator review.
-# - Run it before audits or after data-model/content changes that could introduce new sensitive fields.
-name: "Maintenance: PII Scan Report"
-run-name: "PII scan • @${{ github.actor }}"
+name: PII Scan Pipeline
 
 on:
   workflow_dispatch:

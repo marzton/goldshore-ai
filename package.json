@@ -58,7 +58,7 @@
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
     "p-limit": "^7.3.0",
-    "turbo": "^2.8.20"
+    "turbo": "^2.8.12"
   },
   "pnpm": {
     "overrides": {

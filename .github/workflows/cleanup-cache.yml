@@ -1,8 +1,4 @@
-# Manual operations guide:
-# - Use this workflow to remove stale GitHub Actions caches when storage bloat or corrupted caches are suspected.
-# - Pull-request-close runs handle routine cleanup automatically; manual runs are for operator intervention.
-name: "Maintenance: Cleanup GitHub Actions Cache"
-run-name: "Cache cleanup • ${{ github.event_name == 'workflow_dispatch' && format('@{0}', github.actor) || format('PR #{0}', github.event.pull_request.number) }}"
+name: Cleanup goldshore-ai Caches
 
 on:
   pull_request:

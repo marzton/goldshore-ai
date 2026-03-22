@@ -1,26 +1,22 @@
-# Manual operations guide:
-# - Use this workflow to verify Cloudflare Access service-token authentication against deployed gs-* service endpoints.
-# - Do not use it for Cloudflare KV or routing reconciliation; that operator task lives in maintenance.yml.
-name: "Maintenance: GS Service Token Sync Check"
-run-name: "Service token sync • ${{ inputs.services }}${{ inputs.endpoint_path != '/api/health' && format(' • {0}', inputs.endpoint_path) || '' }} • @${{ github.actor }}"
+name: Maintenance GS Service Sync
 
 on:
   workflow_dispatch:
     inputs:
       endpoint_path:
-        description: "Service endpoint path to probe with Cloudflare Access service-token headers (for example: /api/health)."
+        description: "Endpoint path to check on each service"
         required: false
         default: "/api/health"
       base_domain:
-        description: "Base domain appended to each gs-* service name when building the check URL."
+        description: "Base domain for gs services"
         required: false
         default: "goldshore.ai"
       services:
-        description: "Comma-separated gs-* services to check with service tokens. This only validates endpoint auth behavior; it does not reconcile infra state."
+        description: "Comma-separated services (e.g., gs-web,gs-api)"
         required: false
         default: "gs-web,gs-admin,gs-api,gs-gateway,gs-mail,gs-agent,gs-control"
       timeout_seconds:
-        description: "Maximum time in seconds to wait for each authenticated endpoint response."
+        description: "curl timeout in seconds"
         required: false
         default: "20"
 
@@ -33,7 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Run service-token endpoint sync checks
+      - name: Run jules service-token sync checks
         env:
           CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
           CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}

@@ -1,8 +1,4 @@
-# Manual operations guide:
-# - Use this workflow to close stale pull requests that are blocked by merge conflicts and already covered by the cleanup audit rules.
-# - Scheduled runs handle routine cleanup; manual runs are for catch-up after backlog spikes.
-name: "Maintenance: Close Stale Conflict PRs"
-run-name: "Stale PR cleanup • ${{ github.event_name == 'workflow_dispatch' && format('manual • @{0}', github.actor) || 'scheduled sweep' }}"
+name: Close Stale Conflict PRs
 
 on:
   # Allows manual triggering from the Actions tab

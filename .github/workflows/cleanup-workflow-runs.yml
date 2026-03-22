@@ -1,8 +1,4 @@
-# Manual operations guide:
-# - Use this workflow to bulk-delete old or failed workflow runs after an incident or to recover Actions storage.
-# - Prefer dry_run=true first so operators can confirm which runs will be targeted.
-name: "Maintenance: Cleanup Workflow Runs"
-run-name: "Workflow cleanup • ${{ github.event_name == 'workflow_dispatch' && format('{0} • @{1}', inputs.status_filter, github.actor) || format('PR #{0}', github.event.pull_request.number) }}"
+name: Cleanup Workflow Runs
 
 on:
   pull_request:
@@ -11,19 +7,19 @@ on:
   workflow_dispatch:
     inputs:
       status_filter:
-        description: "Comma-separated run conclusions/statuses to inspect and optionally delete (for example: startup_failure,failure,cancelled)."
+        description: "Comma-separated statuses (startup_failure,failure,cancelled,success)"
         required: false
         default: "startup_failure,failure,cancelled"
       workflow_name:
-        description: "Optional exact workflow name to limit cleanup to a single pipeline."
+        description: "Optional exact workflow name to target"
         required: false
         default: ""
       max_runs:
-        description: "Maximum number of runs to inspect for each selected status before deletion begins."
+        description: "Maximum runs per status to inspect"
         required: false
         default: "500"
       dry_run:
-        description: "Set to true to preview matches without deleting any workflow runs."
+        description: "Log only, do not delete"
         required: false
         default: "false"
 

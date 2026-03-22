@@ -1,8 +1,4 @@
-# Manual operations guide:
-# - Use this workflow to verify that a branch or ad-hoc change set does not modify pnpm-lock.yaml outside the approved process.
-# - This is an operator guardrail, not a dependency-update workflow.
-name: "Manual Guard: Lockfile Policy Check"
-run-name: "Lockfile policy check • @${{ github.actor }}"
+name: Lockfile Guard
 
 permissions:
   contents: read

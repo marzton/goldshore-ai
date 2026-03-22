@@ -22,17 +22,13 @@ export const extractRoles = (claims: AccessTokenPayload | null | undefined) => {
 
   for (const candidate of candidates) {
     if (Array.isArray(candidate)) {
-      candidate.forEach((value) => {
-        if (typeof value === "string") {
-          roles.add(value.toLowerCase());
-        }
-      });
+      candidate.forEach((value) => roles.add(value));
     } else if (typeof candidate === "string") {
-      roles.add(candidate.toLowerCase());
+      roles.add(candidate);
     }
   }
 
-  return Array.from(roles);
+  return Array.from(roles).map((role) => role.toLowerCase());
 };
 
 export const isAuthorizedRole = (

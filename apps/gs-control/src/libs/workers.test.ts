@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { reconcile } from './workers.ts';
-import type { ControlEnv } from './types.ts';
+import { reconcile } from './workers';
+import type { ControlEnv } from './types';
 
 describe('Workers Lib', () => {
   const mockEnv = {} as ControlEnv;

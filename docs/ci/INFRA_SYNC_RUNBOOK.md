@@ -1,18 +1,27 @@
 # Infra Sync Runbook
 
-Use `.github/workflows/maintenance.yml` to run Cloudflare infrastructure reconciliation separately from app deploy pipelines.
+Use `.github/workflows/sync-infra.yml` to run Cloudflare infrastructure synchronization separately from app deploy pipelines.
 
 ## Trigger model
 
-- **Manual (`workflow_dispatch`):** the only trigger; recommended for urgent reconciliation, post-incident verification, or post-rotation validation.
+- **Automatic on `main` push (path-filtered):** runs when infra sources change (`infra/Cloudflare/**`, `infra/cron/**`).
+- **Scheduled (weekly):** catches drift even without recent infra commits.
+- **Manual (`workflow_dispatch`):** recommended for urgent reconciliation or post-incident verification.
 
 ## When to run manually
 
-Run `Maintenance: Cloudflare Infra Reconcile` manually when:
+Run `Sync Infrastructure (Cloudflare)` manually when:
 
 - You rotate Cloudflare credentials or namespace bindings.
 - You changed Cloudflare resources via dashboard/API and need repo-defined state re-applied.
 - You need immediate drift correction before the next scheduled run.
+
+## When schedule is enough
+
+Rely on the weekly schedule when:
+
+- No urgent Cloudflare drift is observed.
+- Infra updates are already merged and path-filtered push runs succeeded.
 
 ## Required GitHub Secrets
 
@@ -64,7 +73,7 @@ Rotate the GitHub Actions secrets in the same maintenance window so preview and 
 | `.github/workflows/deploy-gs-control.yml.disabled` | production deploy for `gs-control` (currently disabled) | `CLOUDFLARE_BUILD_API_TOKEN` **or** `CLOUDFLARE_API_TOKEN`, plus `CLOUDFLARE_ACCOUNT_ID` | Keep the override token aligned with preview/prod policy before re-enabling. |
 | `.github/workflows/preview-gs-agent.yml` | PR preview deploy for `gs-agent` | `CLOUDFLARE_BUILD_API_TOKEN` **or** `CLOUDFLARE_API_TOKEN`, plus `CLOUDFLARE_ACCOUNT_ID` | Include when agent preview retries share the same maintenance window. |
 | `.github/workflows/deploy-gs-agent.yml.disabled` | production deploy for `gs-agent` (currently disabled) | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Base-token-only workflow. |
-| `.github/workflows/maintenance.yml` | manual infra reconciliation after rotation | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `GS_KV_NAMESPACE_ID` | Run after secret updates to confirm the repo can still reconcile Cloudflare state. |
+| `.github/workflows/sync-infra.yml` | manual infra reconciliation after rotation | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `GS_KV_NAMESPACE_ID` | Run after secret updates to confirm the repo can still reconcile Cloudflare state. |
 
 ### 3. Reconcile preview worker environments and service names in Cloudflare
 
@@ -94,5 +103,5 @@ After Cloudflare and GitHub secrets are updated:
 
 1. Rerun the failed preview jobs first so branch environments recover quickly.
 2. Rerun the related production deploy jobs if they were blocked by the same token issue.
-3. Manually run `.github/workflows/maintenance.yml` to confirm the new secret set can still reconcile infra state.
+3. Manually run `.github/workflows/sync-infra.yml` to confirm the new secret set can still reconcile infra state.
 4. Record which token secret path was used (`CLOUDFLARE_API_TOKEN` only vs. `CLOUDFLARE_BUILD_API_TOKEN` override) so the next rotation stays consistent.

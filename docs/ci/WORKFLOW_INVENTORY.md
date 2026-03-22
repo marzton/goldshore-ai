@@ -38,9 +38,9 @@ Last audited: 2026-02-18
 | `.github/workflows/deploy-gs-agent.yml` | Current production deploy for agent worker with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-mail.yml` | Current production deploy for mail worker with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/jules-nightly.yml` | Nightly orchestrator for automation jobs. | `schedule`, `workflow_dispatch` | Non-blocking |
-| `.github/workflows/palette-manual.yml` | Dispatch-triggered run for the Palette agent. | `repository_dispatch` | Non-blocking |
-| `.github/workflows/maintenance.yml` | Manual Cloudflare infra reconciliation workflow. | `workflow_dispatch` | Non-blocking |
-| `.github/workflows/pii-scan.yml` | Manual PII scan/reporting workflow. | `workflow_dispatch` | Non-blocking |
+| `.github/workflows/palette-manual.yml` | Manual run for Palette agent. | `workflow_dispatch` | Non-blocking |
+| `.github/workflows/manual.yml` | Example manual workflow. | `workflow_dispatch` | Non-blocking |
+| `.github/workflows/pii-scan.yml` | Scheduled PII scan/reporting. | `schedule`, `workflow_dispatch`, path-filtered `pull_request` | Non-blocking |
 | `.github/workflows/summary.yml` | Summarize new issues using AI. | `issues` events | Non-blocking |
 | `.github/workflows/sonarcloud.yml` | SonarCloud analysis. | `push`, `pull_request`, `workflow_dispatch`, `schedule` | Non-blocking |
 | `.github/workflows/tfsec.yml` | Infrastructure security scan (tfsec). | `push`, `pull_request`, `workflow_dispatch`, `schedule` | Non-blocking |

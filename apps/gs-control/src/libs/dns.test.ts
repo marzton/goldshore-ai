@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { sync } from './dns.ts';
-import type { ControlEnv } from './types.ts';
+import { sync } from './dns';
+import type { ControlEnv } from './types';
 
 describe('DNS Lib', () => {
   const mockEnv = {} as ControlEnv;

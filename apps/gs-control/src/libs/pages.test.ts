@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { deploy } from './pages.ts';
-import type { ControlEnv } from './types.ts';
+import { deploy } from './pages';
+import type { ControlEnv } from './types';
 
 describe('Pages Lib', () => {
   const mockEnv = {} as ControlEnv;
