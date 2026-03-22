@@ -6,8 +6,8 @@ loadGatewayEnv({ cwd: process.cwd() });
 async function main() {
   const result = await generateResponse('Hello world');
 
-  console.log('Gateway response:', result.text);
-  console.log('x-cf-ai-gateway-id:', result.gatewayId ?? 'header not present');
+  console.info('✅ Gateway response:', result.text);
+  console.info('✅ x-cf-ai-gateway-id:', result.gatewayId ?? 'header not present');
 }
 
 main().catch((error) => {
