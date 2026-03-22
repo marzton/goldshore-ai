@@ -2,7 +2,6 @@
 import Logo from '../components/brand/Logo.astro';
 import SiteNav from '../components/SiteNav.astro';
 import '../styles/global.css';
-import { WEB_CONTENT_SECURITY_POLICY } from '../utils/csp';
 import { WEB_META_CSP } from '../utils/csp';
 
 const navLinks = [
@@ -20,14 +19,14 @@ const {
   currentPath = Astro.url.pathname,
 } = Astro.props;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
-const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
+const logoAssetPath = '/logo.svg';
+const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="Content-Security-Policy" content={WEB_CONTENT_SECURITY_POLICY} />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0b0f18" />
@@ -41,11 +40,8 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={socialImage} />
+    <meta name="gs-logo-src" content={logoAssetPath} />
     <link rel="canonical" href={canonicalUrl} />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content={WEB_META_CSP}
-    />
     <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
     <link rel="shortcut icon" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
