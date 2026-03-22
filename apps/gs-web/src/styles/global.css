@@ -26,7 +26,11 @@ body {
   padding: 0;
   background: var(--gs-bg-primary);
   color: var(--gs-text-primary);
-  font-family: Inter, system-ui, -apple-system, sans-serif;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
