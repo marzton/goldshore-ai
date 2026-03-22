@@ -1,0 +1,30 @@
+[
+  {
+    "title": "Welcome",
+    "slug": ""
+  },
+  {
+    "title": "API Overview",
+    "slug": "api/overview"
+  },
+  {
+    "title": "System Info",
+    "slug": "api/system-info"
+  },
+  {
+    "title": "Authentication",
+    "slug": "auth/overview"
+  },
+  {
+    "title": "Gateway Routing",
+    "slug": "gateway/routing"
+  },
+  {
+    "title": "Getting Started",
+    "slug": "getting-started"
+  },
+  {
+    "title": "Introduction",
+    "slug": "intro"
+  }
+]

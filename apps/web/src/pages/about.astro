@@ -1,11 +1,12 @@
 ---
 import { GSButton } from '@goldshore/ui';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import FlowSection from '../components/FlowSection.astro';
 
 export const prerender = true;
 ---
 <BaseLayout title="About | GoldShore" description="Background on GoldShore AI">
-  <section class="gs-hero">
+  <FlowSection variant="hero">
     <div>
       <h1>About GoldShore</h1>
       <p class="gs-text-lg">GoldShore Labs is a design-first engineering studio founded by <strong>@marzton</strong>. We build AI-powered operations for teams that demand clarity, resiliency, and speed.</p>
@@ -14,9 +15,9 @@ export const prerender = true;
       <h3 class="section-title"><span>↺</span>Our Mission</h3>
       <p>Bridging the gap between military-grade precision and modern tech agility. We create systems that feel like a quiet operations room: powerful, predictable, and devoid of visual noise.</p>
     </div>
-  </section>
+  </FlowSection>
 
-  <section class="gs-section">
+  <FlowSection>
     <div class="gs-grid columns-2">
       <article class="gs-card">
         <h3>Leadership</h3>
@@ -27,13 +28,13 @@ export const prerender = true;
         <p>Our aesthetic is grounded in "Military x Tech" — utilizing a palette of Matte Grey, Silver, and Utility Orange to convey purpose. We believe tools should be sharp, fast, and reliable.</p>
       </article>
     </div>
-  </section>
+  </FlowSection>
 
-  <section class="gs-section">
+  <FlowSection>
     <div class="gs-grid columns-2">
       <div>
         <h2>Snapshot</h2>
-        <p class="gs-text-lg">Seasoned execution for teams that want calm, high-trust delivery.</p>
+        <p class="gs-text-lg">Confident execution for teams that want calm, high-trust delivery.</p>
         <GSButton href="/contact" variant="secondary">Start a scoped conversation</GSButton>
       </div>
       <div class="gs-card">
@@ -42,13 +43,14 @@ export const prerender = true;
           <li><strong>Current Focus:</strong> Operational AI systems, resilient pipelines, and decision-ready dashboards.</li>
           <li><strong>What I build:</strong> Observability foundations, automation workflows, and security-first platforms.</li>
           <li><strong>How I work:</strong> Clear discovery, tight iterations, and measurable outcomes with your team.</li>
-          <li><strong>Availability:</strong> Open for full-time or contract engagements.</li>
+          <li><strong>Availability:</strong> Full-time or contract engagements.</li>
         </ul>
+        <p class="gs-text-sm">Ready to align on scope? Share your goals and I’ll map the next steps.</p>
       </div>
     </div>
-  </section>
+  </FlowSection>
 
-  <section class="gs-section">
+  <FlowSection>
     <div class="gs-grid columns-2">
       <article class="gs-card">
         <h3>Core Values</h3>
@@ -63,5 +65,5 @@ export const prerender = true;
         <p>From infrastructure-as-code to model evaluation, we build stack pieces that fit together seamlessly. We ship interfaces for analysts, operators, and developers alike.</p>
       </article>
     </div>
-  </section>
+  </FlowSection>
 </BaseLayout>

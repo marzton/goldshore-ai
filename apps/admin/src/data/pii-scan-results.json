@@ -21,6 +21,21 @@
       "findings": 2
     }
   ],
+  "alerts": {
+    "status": "Immediate",
+    "channels": [
+      {
+        "channel": "Slack #security-alerts",
+        "owner": "Security Ops",
+        "action": "Create incident ticket and triage within 4 hours."
+      },
+      {
+        "channel": "Email ops@goldshore.ai",
+        "owner": "Platform Ops",
+        "action": "Notify service owners and confirm remediation owners."
+      }
+    ]
+  },
   "findings": [
     {
       "id": "PII-001",

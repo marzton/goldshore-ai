@@ -11,7 +11,7 @@ export type IntegrationDefinition = {
 export const integrations: IntegrationDefinition[] = [
   {
     id: 'cloudflare-api',
-    name: 'Cloudflare API',
+    name: 'Cloudflare API (Zones, Workers, Access, DNS)',
     baseUrl: 'https://api.cloudflare.com/client/v4',
     authMethod: 'API token (bearer)',
     scopes: [

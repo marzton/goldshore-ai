@@ -1,0 +1,20 @@
+{
+  "name": "gs-mail",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev src/index.ts",
+    "deploy": "wrangler deploy --minify src/index.ts",
+    "build": "npx wrangler deploy --dry-run --outdir=dist --env prod",
+    "lint": "eslint src/**"
+  },
+  "dependencies": {
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260207.0",
+    "postal-mime": "^2.7.3",
+    "typescript": "^5.0.0",
+    "wrangler": "^4.63.0"
+  }
+}
