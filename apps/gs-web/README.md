@@ -57,7 +57,7 @@ Cloudflare metadata:
 - Public diagnostics metadata injected during GitHub Actions builds:
   - `PUBLIC_BUILD_TIMESTAMP` = `${{ github.run_started_at }}` (ISO timestamp for the workflow run)
   - `PUBLIC_COMMIT_HASH` = `${{ github.sha }}` (full commit SHA used for the build)
-- `/status` renders this metadata plus runtime counts for stylesheet links and scripts, and the layout logo asset path from `meta[name="gs-logo-src"]`.
+- `/status` renders this metadata plus runtime counts for stylesheet links and scripts, and the shared layout logo asset path from `meta[name="gs-logo-src"]`, which `src/layouts/WebLayout.astro` emits from the `/logo.svg` source of truth.
 
 ## CSP compatibility
 
