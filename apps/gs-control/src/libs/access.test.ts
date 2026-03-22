@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { configure, audit } from './access';
-import type { ControlEnv } from './types';
+import { configure, audit } from './access.ts';
+import type { ControlEnv } from './types.ts';
 
 describe('Access Lib', () => {
   const mockEnv = {} as ControlEnv;
