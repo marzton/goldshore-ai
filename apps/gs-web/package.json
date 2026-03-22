@@ -19,7 +19,9 @@
     "@goldshore/theme": "workspace:^",
     "@goldshore/ui": "workspace:^",
     "astro": "^5.15.9",
-    "fuse.js": "^7.1.0"
+    "fuse.js": "^7.1.0",
+    "three": "^0.183.2",
+    "vanilla-tilt": "^1.8.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",

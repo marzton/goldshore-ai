@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/triple-slash-reference */
-/// <reference types="@goldshore/config/env" />
-
 // Type definitions for environment variables
 interface ImportMetaEnv {
   readonly PUBLIC_API: string;
@@ -45,5 +42,6 @@ declare namespace App {
     runtime: {
       env: Env;
     };
+    securityPolicySource?: 'response-header' | 'platform-config';
   }
 }

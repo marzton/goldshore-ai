@@ -1,9 +1,9 @@
-@import "@goldshore/theme/styles/tokens.css";
-@import "@goldshore/theme/styles/base.css";
-@import "@goldshore/theme/styles/components.css";
-@import "@goldshore/theme/styles/layout.css";
-@import "@goldshore/theme/index.css";
+@import "@goldshore/theme/styles/tokens";
+@import "@goldshore/theme/styles/base";
+@import "@goldshore/theme/styles/components";
+@import "@goldshore/theme/styles/layout";
 @import "./gs-effects.css";
+@import "./hero-stars.css";
 
 :root {
   font-family: var(--gs-font-body);

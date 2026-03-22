@@ -1,4 +1,5 @@
 @import './gs-effects.css';
+@import './hero-stars.css';
 
 .home-hero,
 .home-features,
@@ -11,19 +12,6 @@
   box-shadow: inset 0 0 140px rgba(0, 0, 0, 0.65);
 }
 
-.home-hero::after,
-.home-features::after,
-.blueprint-section::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(rgba(100, 130, 200, 0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(100, 130, 200, 0.1) 1px, transparent 1px);
-  background-size: 42px 42px;
-  mix-blend-mode: screen;
-  opacity: 0.4;
-  pointer-events: none;
-}
 
 .home-hero::before,
 .home-features::before,
@@ -44,13 +32,6 @@
   box-shadow: inset 0 0 160px rgba(0, 0, 0, 0.72), inset 0 0 60px rgba(26, 39, 74, 0.6);
 }
 
-.blueprint-section::after {
-  background-image: linear-gradient(rgba(110, 160, 240, 0.16) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(110, 160, 240, 0.12) 1px, transparent 1px),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 55%);
-  background-size: 48px 48px, 48px 48px, 100% 100%;
-  opacity: 0.55;
-}
 
 .parallax-layer {
   position: absolute;
@@ -59,26 +40,44 @@
   opacity: 0.55;
 }
 
+
+.home-hero::after,
+.home-features::after,
+.blueprint-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-size: 42px 42px;
+  mix-blend-mode: screen;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.blueprint-section::after {
+  background-size: 48px 48px, 48px 48px, 100% 100%;
+  opacity: 0.55;
+}
+
 .layer-grid {
-  background-image: linear-gradient(rgba(120, 180, 255, 0.22) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(120, 180, 255, 0.18) 1px, transparent 1px);
   background-size: 120px 120px;
-  filter: drop-shadow(0 0 24px rgba(88, 130, 255, 0.4));
 }
 
 .layer-blueprint {
-  background-image: linear-gradient(rgba(136, 196, 255, 0.3) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(136, 196, 255, 0.2) 1px, transparent 1px);
   background-size: 140px 140px;
   opacity: 0.5;
-  filter: drop-shadow(0 0 18px rgba(100, 160, 255, 0.45));
 }
 
 .layer-glow {
-  background: radial-gradient(circle at 40% 30%, rgba(190, 224, 255, 0.36), transparent 45%),
-    radial-gradient(circle at 65% 70%, rgba(212, 179, 93, 0.3), transparent 45%);
   filter: blur(2px);
 }
+
+.layer-orbit {
+  mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.9), transparent 70%);
+  opacity: 0.5;
+}
+
+
+
 
 .layer-sheen {
   background: linear-gradient(120deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 45%),
@@ -92,11 +91,6 @@
   opacity: 0.6;
 }
 
-.layer-orbit {
-  background: conic-gradient(from 140deg, rgba(255, 255, 255, 0.12), transparent 60%, rgba(255, 255, 255, 0.12));
-  mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.9), transparent 70%);
-  opacity: 0.5;
-}
 
 .home-hero .hero-content,
 .home-hero .hero-card,

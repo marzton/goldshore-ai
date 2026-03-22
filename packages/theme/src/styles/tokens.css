@@ -1,4 +1,40 @@
 :root {
   --gs-color-primary: #22d3ee;
   --gs-color-text: #fff;
+  --gs-accent-blue: #5882ff;
+
+  --gs-signal-base: #0a0f1c;
+  --gs-signal-mid: #1e3a8a;
+  --gs-signal-edge: #5fa8ff;
+  --gs-signal-text: #e5e7eb;
+
+  /* Effect tokens */
+  --gs-effect-signal-blue-08: color-mix(in srgb, var(--gs-accent-blue) 8%, transparent);
+  --gs-effect-signal-blue-12: color-mix(in srgb, var(--gs-accent-blue) 12%, transparent);
+  --gs-effect-signal-blue-18: color-mix(in srgb, var(--gs-accent-blue) 18%, transparent);
+  --gs-effect-signal-blue-24: color-mix(in srgb, var(--gs-accent-blue) 24%, transparent);
+  --gs-effect-signal-blue-32: color-mix(in srgb, var(--gs-accent-blue) 32%, transparent);
+  --gs-effect-signal-blue-45: color-mix(in srgb, var(--gs-accent-blue) 45%, transparent);
+  --gs-effect-star-core: color-mix(in srgb, white 92%, var(--gs-accent-blue) 8%);
+  --gs-effect-star-glow: var(--gs-effect-signal-blue-24);
+  --gs-effect-sweep-core: var(--gs-effect-signal-blue-32);
+  --gs-effect-sweep-edge: var(--gs-effect-signal-blue-08);
+  --gs-text-primary: #fff;
+  --gs-text-secondary: rgba(255, 255, 255, 0.7);
+  --gs-accent-cyan: #22d3ee;
+
+  --gs-header-bg-glass: rgba(3, 3, 5, 0.7);
+  --gs-header-bg-scrolled: rgba(0, 0, 0, 0.95);
+  --gs-header-border-subtle: rgba(255, 255, 255, 0.05);
+  --gs-header-border-accent: rgba(34, 211, 238, 0.15);
+  --gs-header-shadow-scrolled: 0 10px 40px -10px rgba(0, 0, 0, 0.8);
+
+  --gs-logo-glow-soft: rgba(34, 211, 238, 0.3);
+  --gs-logo-glow-strong: rgba(34, 211, 238, 0.6);
+
+  --gs-nav-indicator-bg: var(--gs-accent-cyan);
+  --gs-nav-indicator-shadow: 0 0 8px var(--gs-accent-cyan);
+
+  --gs-mobile-menu-bg: #000;
+  --gs-mobile-menu-border: rgba(255, 255, 255, 0.1);
 }
