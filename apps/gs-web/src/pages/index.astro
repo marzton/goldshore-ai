@@ -10,6 +10,8 @@ const signals = [
   { label: 'Operator latency', value: '< 45ms' },
   { label: 'Decision loops', value: 'Human + AI' },
   { label: 'Review posture', value: 'High trust' },
+];
+
 const trustMetrics = [
   {
     label: 'Availability',
@@ -376,11 +378,6 @@ const proofPoints = [
         transparent 80%
       );
       opacity: 0.55;
-        linear-gradient(rgba(255, 255, 255, 0.08) 2px, transparent 2px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.08) 2px, transparent 2px);
-      background-size: 72px 72px;
-      mask-image: radial-gradient(circle at 50% 30%, black 30%, transparent 80%);
-      opacity: 0.5;
     }
 
     .hero::after {
@@ -390,13 +387,6 @@ const proofPoints = [
       background:
         radial-gradient(circle at 25% 20%, rgba(90, 162, 255, 0.16), transparent 28%),
         linear-gradient(180deg, rgba(7, 11, 20, 0.15), rgba(7, 11, 20, 0.8));
-      pointer-events: none;
-        radial-gradient(
-          circle at 25% 20%,
-          rgba(90, 162, 255, 0.18),
-          transparent 28%
-        ),
-        linear-gradient(180deg, rgba(7, 11, 20, 0.18), rgba(7, 11, 20, 0.84));
       pointer-events: none;
       z-index: 0;
     }
@@ -412,6 +402,8 @@ const proofPoints = [
       height: auto;
       color: #8ec1ff;
       will-change: transform, filter;
+    }
+
     .hero[data-hero-design='astral'] .hero-energy--x {
       opacity: 0.68;
       background: linear-gradient(
@@ -604,7 +596,7 @@ const proofPoints = [
       padding-bottom: 2rem;
     }
 
-    .metrics-grid {
+    .metrics-grid,
     .signal-strip {
       margin-top: 1.25rem;
       display: grid;
@@ -763,6 +755,9 @@ const proofPoints = [
 
       100% {
         box-shadow: 0 0 0 0 rgba(71, 227, 167, 0);
+      }
+    }
+
     @keyframes particleDrift {
       from {
         transform: translate3d(0, 0, 0);
@@ -848,6 +843,10 @@ const proofPoints = [
       .hero-button,
       .status-dot,
       .signal-tile--loading::after {
+        transition: none;
+        animation: none;
+      }
+
       .hero {
         min-height: auto;
       }
