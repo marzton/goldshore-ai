@@ -8,9 +8,9 @@ const { headers, rows } = Astro.props;
     </tr>
   </thead>
   <tbody>
-    {rows.map((row: any[]) => (
+    {rows.map((row: unknown[]) => (
       <tr>
-        {row.map((cell) => <td>{cell}</td>)}
+        {row.map((cell) => <td>{cell as string}</td>)}
       </tr>
     ))}
   </tbody>

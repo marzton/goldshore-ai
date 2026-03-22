@@ -1,5 +1,5 @@
 ---
-const { method, path, openapi } = Astro.props;
+const { method, path } = Astro.props;
 
 const base = import.meta.env.PUBLIC_API || '';
 const url = base + path;
@@ -91,7 +91,7 @@ const url = base + path;
       if (bodyInput && bodyInput.value.trim()) {
         try {
           body = JSON.stringify(JSON.parse(bodyInput.value));
-        } catch (e) {
+        } catch {
           alert('Invalid JSON in request body');
           sendBtn.disabled = false;
           spinner.setAttribute('hidden', '');

@@ -151,6 +151,7 @@ Require:
 - Passing `pnpm build`
 - No merge markers (`<<<<<<<` etc.)
 - No leftover debug logs
+- No stray patch artifacts (e.g., `user_patch.diff`)
 - No duplicate workspace roots
 
 ### 4.3 Use CODEOWNERS

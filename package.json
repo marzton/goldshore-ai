@@ -1,12 +1,7 @@
 {
   "name": "astro-goldshore",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*",
-    "infra/*"
-  ],
-  "packageManager": "pnpm@10.20.0",
+  "packageManager": "pnpm@9.0.0",
   "scripts": {
     "dev": "turbo run dev --parallel",
     "build:openapi": "node scripts/build-openapi.mjs",
@@ -18,11 +13,14 @@
     "build:control": "turbo run build --filter=@goldshore/control-worker",
     "lint": "turbo run lint",
     "test": "turbo run test",
+    "check:pages": "tsx scripts/check-pages-200.ts",
     "scan:pii": "node scripts/pii-scan.mjs --mode local --output apps/admin/src/data/pii-scan-results.json --summary reports/pii-scan-summary.md"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",
     "@types/node": "^25.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
+    "@typescript-eslint/parser": "^8.54.0",
     "astro": "^5.15.9",
     "eslint": "^8.57.0",
     "eslint-plugin-astro": "^1.5.0",
@@ -33,6 +31,7 @@
     "tailwindcss": "^3",
     "tsx": "^4.21.0",
     "typescript": "^5.4.2",
+    "wrangler": "^3.114.0",
     "yaml": "^2.8.2"
   },
   "dependencies": {
@@ -42,7 +41,8 @@
   "pnpm": {
     "overrides": {
       "@astrojs/cloudflare": "latest",
-      "@astrojs/adapter-cloudflare": "latest"
+      "@astrojs/adapter-cloudflare": "latest",
+      "postal-mime": "2.7.3"
     }
   }
 }

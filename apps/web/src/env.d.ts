@@ -1,12 +1,4 @@
-/// <reference path="../.astro/types.d.ts" />
-/// <reference types="astro/client" />
+/* eslint-disable @typescript-eslint/triple-slash-reference */
+/// <reference types="@goldshore/config/env" />
 
-// Type definitions for environment variables
-interface ImportMetaEnv {
-  readonly PUBLIC_API: string;
-  readonly PUBLIC_GATEWAY: string;
-}
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv;
-}
+// Additional Web specific Env types if needed

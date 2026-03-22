@@ -2,19 +2,18 @@ import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
 import { checkAuth } from './auth';
+import { STATUS_PAGE_HTML } from './templates/status';
 
 type Env = {
   API: Fetcher;
   GATEWAY_KV: KVNamespace;
   AI: any;
   ENV: string;
-  // Sentinel: Added support for Audience verification to prevent auth bypass
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
-  // Sentinel: Added support for dynamic team domain
   CLOUDFLARE_TEAM_DOMAIN?: string;
+  API_ORIGIN?: string;
 };
 
-const API_ORIGIN = 'https://api.goldshore.ai';
 const app = new Hono<{ Bindings: Env }>();
 const INTEGRATION_PATH_PREFIXES = ['/integrations', '/market-streams'];
 const DATA_CLASSIFICATIONS = new Set(['public', 'internal', 'confidential', 'restricted']);
@@ -36,7 +35,14 @@ app.use('*', secureHeaders());
 app.use('*', cors({
   origin: '*', // Public gateway
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
+  allowHeaders: [
+    'Content-Type',
+    'Authorization',
+    'CF-Access-Jwt-Assertion',
+    'X-Data-Classification',
+    'X-Secrets-Access-Policy',
+    'X-Audit-Trace-Id'
+  ],
   exposeHeaders: ['Content-Length'],
   maxAge: 600,
 }));
@@ -47,6 +53,10 @@ app.use('*', async (c, next) => {
     if (c.req.path === '/health' || c.req.path === '/' || c.req.method === 'OPTIONS') {
         await next();
         return;
+    }
+
+    if (!c.env.CLOUDFLARE_ACCESS_AUDIENCE) {
+        console.warn('SECURITY WARNING: CLOUDFLARE_ACCESS_AUDIENCE is not set. Audience verification is disabled.');
     }
 
     const authorized = await checkAuth(c.req.raw, c.env);
@@ -85,7 +95,7 @@ app.use('*', async (c, next) => {
     );
   }
 
-  const auditTraceId = c.req.header('X-Audit-Trace-Id');
+  const auditTraceId = c.req.header('X-Audit-Trace-Id')?.trim();
   if (!auditTraceId) {
     return c.json({ error: 'Missing audit trace id.' }, 400);
   }
@@ -141,58 +151,7 @@ app.get('/templates', (c) =>
 
 // Root Status Page
 app.get('/', (c) => {
-  return c.html(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <title>GoldShore Gateway</title>
-      <style>
-        body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .container { text-align: center; border: 1px solid #334155; padding: 2rem; border-radius: 8px; background: #1e293b; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        h1 { margin-bottom: 0.5rem; color: #38bdf8; }
-        p { color: #94a3b8; }
-        .status { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 4px; background: #059669; color: #fff; font-size: 0.875rem; font-weight: 600; margin-top: 1rem; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <h1>GoldShore Gateway</h1>
-        <p>Intelligent Routing & Security Layer</p>
-        <div class="status">SYSTEM OPERATIONAL</div>
-        <p><small>Service: gs-gateway</small></p>
-      </div>
-    </body>
-    </html>
-  `);
-});
-
-// Root Status Page
-app.get('/', (c) => {
-  return c.html(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <title>GoldShore Gateway</title>
-      <style>
-        body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .container { text-align: center; border: 1px solid #334155; padding: 2rem; border-radius: 8px; background: #1e293b; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        h1 { margin-bottom: 0.5rem; color: #38bdf8; }
-        p { color: #94a3b8; }
-        .status { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 4px; background: #059669; color: #fff; font-size: 0.875rem; font-weight: 600; margin-top: 1rem; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <h1>GoldShore Gateway</h1>
-        <p>Intelligent Routing & Security Layer</p>
-        <div class="status">SYSTEM OPERATIONAL</div>
-        <p><small>Service: gs-gateway</small></p>
-      </div>
-    </body>
-    </html>
-  `);
+  return c.html(STATUS_PAGE_HTML);
 });
 
 // Example specific routes
@@ -207,9 +166,9 @@ app.all('*', async (c) => {
     }
 
     // Fallback logic for environments without Service Bindings
-    if (API_ORIGIN) {
+    if (c.env.API_ORIGIN) {
         const url = new URL(c.req.url);
-        const targetUrl = new URL(url.pathname + url.search, API_ORIGIN);
+        const targetUrl = new URL(url.pathname + url.search, c.env.API_ORIGIN);
         return fetch(targetUrl.toString(), c.req.raw);
     }
 
