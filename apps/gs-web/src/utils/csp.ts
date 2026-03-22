@@ -2,6 +2,8 @@ const SELF = "'self'";
 const UNSAFE_INLINE = "'unsafe-inline'";
 const NONE = "'none'";
 
+type ContentSecurityPolicyDirectives = Record<string, readonly string[]>;
+
 export const GOLDSHORE_API_ORIGINS = [
   'https://api.goldshore.ai',
   'https://api-preview.goldshore.ai',
