@@ -1,3 +1,7 @@
+# Platform-served static files that can bypass Astro middleware keep their security
+# policy here. HTML rendered through Astro should inherit the authoritative policy
+# from src/middleware.ts, with route-specific CSP relaxations defined in
+# src/security/policy.ts instead of duplicated in layout metadata.
 # Platform-served static files that can bypass Astro middleware keep their
 # authoritative security headers here. Astro-rendered HTML gets its header policy
 # from src/middleware.ts, with only a fallback meta CSP in WebLayout.astro.

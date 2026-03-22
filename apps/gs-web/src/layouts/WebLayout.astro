@@ -3,8 +3,10 @@ import '@goldshore/theme/styles/tokens';
 import '@goldshore/theme/styles/base';
 import '@goldshore/theme/styles/components';
 import '@goldshore/theme/styles/layout';
+import '../styles/web-layout.css';
 import { GSButton } from '@goldshore/ui';
 import SiteFooter from '../components/SiteFooter.astro';
+import { getMetaContentSecurityPolicy } from '../security/policy';
 import { HTML_CSP_META_FALLBACK } from '../security/policy';
 
 const navLinks = [
@@ -19,7 +21,8 @@ const navLinks = [
 
 const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.url.pathname } = Astro.props;
 const logoSrc = '/logo.svg';
-const shouldRenderCspMeta = !(Astro.locals as { securityPolicySource?: string }).securityPolicySource;
+const shouldRenderCspMeta = !Astro.locals.securityPolicySource;
+const cspMetaFallback = getMetaContentSecurityPolicy(currentPath);
 ---
 <html lang="en">
   <head>
@@ -27,11 +30,8 @@ const shouldRenderCspMeta = !(Astro.locals as { securityPolicySource?: string })
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <!-- Response headers from middleware/platform config are authoritative. Keep this meta CSP only as a fallback when headers are unavailable. -->
-    {shouldRenderCspMeta && <meta http-equiv="Content-Security-Policy" content={HTML_CSP_META_FALLBACK} />}
-    <!-- Canonical favicon asset; modern browsers use the checked-in SVG. -->
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <!-- PNG fallback retained for compatibility with browsers that do not support SVG favicons. -->
+    <!-- Security headers are authoritative in Astro middleware and platform config. Keep a CSP meta fallback only for environments without response headers. -->
+    {shouldRenderCspMeta && <meta http-equiv="Content-Security-Policy" content={cspMetaFallback} />}
     <link rel="icon" href="/favicon.png" type="image/png" />
     <!-- Bolt: Preconnect to external origins to speed up resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -88,290 +88,9 @@ const shouldRenderCspMeta = !(Astro.locals as { securityPolicySource?: string })
 
       <SiteFooter currentPath={currentPath} logoSrc={logoSrc} />
     </div>
-    <script is:inline>
-      const initializeHeaderInteractions = () => {
-        const header = document.querySelector('.gs-header');
-        const toggle = header?.querySelector('.gs-nav-toggle');
-        const menu = header?.querySelector('#primary-navigation');
-
-        if (!header || !toggle || !menu || header.dataset.interactionsBound === 'true') {
-          return;
-        }
-
-        header.dataset.interactionsBound = 'true';
-
-        // Scroll handling with requestAnimationFrame
-        let ticking = false;
-        let wasScrolled = false;
-        let lastFocusedBeforeOpen = null;
-
-        const getFocusableMenuItems = () => {
-          return Array.from(
-            menu.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
-          );
-        };
-
-        const setMenuState = (open) => {
-          header.setAttribute('data-menu-open', String(open));
-          toggle.setAttribute('aria-expanded', String(open));
-          menu.setAttribute('aria-hidden', String(!open));
-        };
-
-        const closeMenu = ({ restoreFocus = true } = {}) => {
-          setMenuState(false);
-          if (restoreFocus && lastFocusedBeforeOpen instanceof HTMLElement) {
-            lastFocusedBeforeOpen.focus();
-          }
-          lastFocusedBeforeOpen = null;
-        };
-
-        const openMenu = () => {
-          lastFocusedBeforeOpen = document.activeElement instanceof HTMLElement ? document.activeElement : toggle;
-          setMenuState(true);
-          const [firstFocusable] = getFocusableMenuItems();
-          (firstFocusable ?? toggle).focus();
-        };
-
-        const updateHeader = () => {
-          const isScrolled = window.scrollY > 10;
-          if (isScrolled !== wasScrolled) {
-            header.classList.toggle('is-scrolled', isScrolled);
-            wasScrolled = isScrolled;
-          }
-          ticking = false;
-        };
-
-        setMenuState(false);
-        updateHeader();
-
-        window.addEventListener('scroll', () => {
-          if (!ticking) {
-            window.requestAnimationFrame(updateHeader);
-            ticking = true;
-          }
-        }, { passive: true });
-
-        toggle.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const isOpen = header.getAttribute('data-menu-open') === 'true';
-          if (isOpen) {
-            closeMenu({ restoreFocus: false });
-          } else {
-            openMenu();
-          }
-        });
-
-        menu.addEventListener('click', (e) => {
-          const routeLink = e.target instanceof Element ? e.target.closest('a[href]') : null;
-          if (routeLink) {
-            closeMenu({ restoreFocus: false });
-          }
-        });
-
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape' && header.getAttribute('data-menu-open') === 'true') {
-            closeMenu();
-          }
-        });
-
-        document.addEventListener('click', (e) => {
-          if (header.getAttribute('data-menu-open') === 'true' && !header.contains(e.target)) {
-            closeMenu({ restoreFocus: false });
-          }
-        });
-      };
-
-      document.addEventListener('astro:page-load', initializeHeaderInteractions);
-
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeHeaderInteractions, { once: true });
-      } else {
-        initializeHeaderInteractions();
-      }
-      const STAR_COUNT = 16;
-
-      const initializeShootingStars = (container) => {
-        if (!(container instanceof HTMLElement)) return;
-
-        const existingStars = container.querySelectorAll('.shooting-star');
-        const isInitialized = container.dataset.starsInitialized === 'true';
-
-        if (isInitialized && existingStars.length > 0) {
-          return;
-        }
-
-        container.replaceChildren();
-
-        for (let i = 0; i < STAR_COUNT; i += 1) {
-          const star = document.createElement('span');
-          star.className = 'shooting-star';
-          container.appendChild(star);
-        }
-
-        container.dataset.starsInitialized = 'true';
-      };
-
-      const initializeAllShootingStars = () => {
-        document.querySelectorAll('.shooting-stars').forEach((container) => {
-          initializeShootingStars(container);
-        });
-      };
-
-      const cleanupShootingStars = () => {
-        document.querySelectorAll('.shooting-stars[data-stars-initialized="true"]').forEach((container) => {
-          container.removeAttribute('data-stars-initialized');
-          container.replaceChildren();
-        });
-      };
-
-      initializeAllShootingStars();
-      document.addEventListener('astro:page-load', initializeAllShootingStars);
-      document.addEventListener('astro:before-swap', cleanupShootingStars);
-      document.addEventListener('astro:after-swap', initializeAllShootingStars);
-    </script>
     <script>
-      import { cleanupUI, initBriefingModal, initStarField, initTilt } from '../scripts/init-ui';
-
-      const initCodexUI = () => {
-        initStarField('hero-stars');
-        initTilt('[data-tilt]');
-        initBriefingModal();
-      };
-
-      document.addEventListener('astro:page-load', initCodexUI);
-      document.addEventListener('astro:before-swap', cleanupUI);
-      if (document.readyState !== 'loading') {
-        initCodexUI();
-      }
+      import '../scripts/web-layout';
     </script>
-    <style is:global>
-      :root {
-        --gs-header-height: 100px;
-      }
-      .gs-page-content {
-        padding-top: calc(var(--gs-header-height) + 2rem);
-        min-height: 100vh;
-        --gs-header-height: 72px;
-      }
-      /* Cinematic Header Overrides */
-      .gs-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        height: var(--gs-header-height);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 2rem;
-        background: var(--gs-header-bg-glass);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--gs-header-border-subtle);
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      }
 
-      .gs-header.is-scrolled {
-        background: var(--gs-header-bg-scrolled);
-        border-bottom-color: var(--gs-header-border-accent);
-        box-shadow: var(--gs-header-shadow-scrolled);
-      }
-
-      @keyframes glow-pulse {
-        0%, 100% {
-          filter: drop-shadow(0 0 8px var(--gs-logo-glow-soft)) brightness(1.2);
-          transform: scale(1);
-        }
-        50% {
-          filter: drop-shadow(0 0 15px var(--gs-logo-glow-strong)) brightness(1.4);
-          transform: scale(1.05);
-        }
-      }
-
-      .gs-logo {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        text-decoration: none;
-        color: var(--gs-text-primary);
-        font-weight: 600;
-        font-size: 1.1rem;
-        letter-spacing: -0.01em;
-        padding: 0.5rem;
-        margin-right: 1.5rem;
-      }
-
-      .gs-logo-mark {
-        width: 32px;
-        height: 32px;
-        color: #d6b65a;
-        filter: drop-shadow(0 0 8px rgba(63, 126, 255, 0.25));
-      }
-
-      .gs-logo-text {
-        font-size: 1rem;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        font-family: 'JetBrains Mono', monospace;
-      }
-
-      .gs-nav {
-        display: flex;
-        gap: 2rem;
-        align-items: center;
-      }
-
-      .gs-nav a {
-        color: var(--gs-text-secondary);
-        text-decoration: none;
-        font-size: 0.95rem;
-        transition: color 0.2s ease;
-        position: relative;
-      }
-
-      .gs-nav a:hover,
-      .gs-nav a[aria-current="page"] {
-        color: var(--gs-text-primary);
-      }
-
-      .gs-nav a[aria-current="page"]::after {
-        content: '';
-        position: absolute;
-        bottom: -4px;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: var(--gs-nav-indicator-bg);
-        box-shadow: var(--gs-nav-indicator-shadow);
-      }
-
-      /* Mobile toggle */
-      .gs-nav-toggle {
-        display: none; /* Hidden by default on desktop */
-        background: none;
-        border: none;
-        color: var(--gs-text-primary);
-        cursor: pointer;
-      }
-
-      @media (max-width: 768px) {
-        .gs-header { padding: 0 1rem; }
-        .gs-nav { display: none; } /* Simplified mobile handling for now */
-        .gs-nav-toggle { display: block; }
-
-        .gs-header[data-menu-open="true"] .gs-nav {
-          display: flex;
-          flex-direction: column;
-          position: absolute;
-          top: 100%;
-          left: 0;
-          right: 0;
-          background: var(--gs-mobile-menu-bg);
-          padding: 2rem;
-          border-bottom: 1px solid var(--gs-mobile-menu-border);
-        }
-      }
-    </style>
   </body>
 </html>
