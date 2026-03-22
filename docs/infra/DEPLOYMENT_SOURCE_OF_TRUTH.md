@@ -7,9 +7,22 @@ Gold Shore web deployments must use the canonical app surface only.
 - **Root directory:** `apps/gs-web`
 - **Build output directory:** `dist`
 
+## Control-plane worker boundary
+
+`apps/gs-control` is the privileged infrastructure automation worker and must remain a distinct service on `ops.goldshore.ai`. Future consolidation proposals should treat it as a control plane, not as a generic extension of `gs-api`.
+
+### Capabilities that remain exclusive to `gs-control`
+
+- Cloudflare DNS reconciliation and record writes
+- Cloudflare Pages deploy/project operations
+- Access policy and infrastructure audit endpoints
+- Authoritative writes to the shared `GS_CONFIG` KV
+
+`apps/gs-api` remains the public and app-facing API surface. It may read replicated config state, but it is not the owner for Cloudflare control-plane actions.
+
 ## Runtime config source of truth (`GS_CONFIG` KV)
 
-The authoritative contract for cross-worker config sync lives in `@goldshore/schema` at `packages/schema/src/system-sync.ts`.
+The authoritative contract for cross-worker config sync lives in `@goldshore/schema` at `packages/schema/src/system-sync.ts`. The current auth exception around `CONTROL_SYNC_TOKEN` should remain limited to the explicit `gs-control` ⇄ `gs-api` sync flow; do not broaden it into a general bypass.
 
 ### Canonical keys and ownership
 

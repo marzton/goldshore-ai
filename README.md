@@ -356,7 +356,7 @@ Responsibilities:
 
 ---
 
-## **6. gs-control (optional)**
+## **6. gs-control – Privileged Infra Automation Worker**
 
 System worker for automation:
 ### 5) `apps/gs-agent` — Autonomous AI Agent Service
@@ -376,6 +376,11 @@ Route: https://ops.goldshore.ai/*
 - Worker deployment orchestrator
 - Secret rotation
 - Observability sync
+- Cloudflare Pages operations
+- Access policy / infra audit workflows
+- Authoritative `GS_CONFIG` writes
+
+`gs-control` stays deployed as its own worker on `ops.goldshore.ai`. It is privileged infra automation, not "just another API worker," and future consolidation proposals should keep `gs-api` focused on public and app-facing traffic.
 
 ```
 Route: https://ops.goldshore.ai/*

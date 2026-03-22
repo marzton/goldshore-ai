@@ -19,13 +19,14 @@ The `gs-control` build token is the canonical token used for Cloudflare Worker b
 
 ## 2. CONTROL_SYNC_TOKEN Rotation
 
-The `CONTROL_SYNC_TOKEN` is used for secure service-to-service communication between `gs-control` and `gs-api`.
+The `CONTROL_SYNC_TOKEN` is used only for the narrow `gs-control` -> `gs-api` service-to-service sync path (currently `POST /internal/sync-runs`). It must not become a general-purpose auth bypass for other routes.
 
 - [ ] Generate a new cryptographically secure secret (e.g., `openssl rand -hex 32`).
 - [ ] Update the secret in **Cloudflare Workers** settings for both services:
     - **gs-api**: Update `CONTROL_SYNC_TOKEN` secret.
     - **gs-control**: Update `CONTROL_SYNC_TOKEN` secret.
 - [ ] Verify that `wrangler.toml` files for both services use `CONTROL_SYNC_TOKEN = "SECRET_MANAGED"` to indicate dashboard/CLI management.
+- [ ] Confirm `gs-control` remains the only privileged caller allowed to use this secret and prefer a narrower explicit service-to-service mechanism if the contract ever expands beyond the single sync route.
 
 ## 3. Workflow Reconciliation
 

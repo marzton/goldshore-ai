@@ -40,3 +40,13 @@ describe('wrangler environment bindings', () => {
     }
   });
 });
+
+
+describe('wrangler secrets', () => {
+  it('keeps CONTROL_SYNC_TOKEN secret-managed in deployed envs', () => {
+    for (const envName of ['prod', 'production']) {
+      const block = getEnvBlock(envName);
+      assert.match(block, /CONTROL_SYNC_TOKEN = "SECRET_MANAGED"/);
+    }
+  });
+});

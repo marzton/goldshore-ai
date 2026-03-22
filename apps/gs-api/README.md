@@ -1,7 +1,7 @@
 # apps/gs-api
 
 ## Overview
-The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers.
+The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers. It should stay focused on public, product, and app-facing API traffic rather than privileged Cloudflare control-plane automation.
 
 Cloudflare metadata (from `wrangler.toml`):
 - Worker name: `gs-api`
@@ -9,7 +9,7 @@ Cloudflare metadata (from `wrangler.toml`):
 - Compatibility date: `2024-11-01`
 - Bindings: `KV` (KV), `CONTROL_LOGS` (KV), `ASSETS` (R2), `DB` (D1), `AI` (AI Gateway)
 - Environment variable: `ENV=production`
-The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers. It uses KV, R2, D1, and the AI Gateway bindings configured in `wrangler.toml`.
+The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers. It uses KV, R2, D1, and the AI Gateway bindings configured in `wrangler.toml`. Privileged infrastructure automation remains the responsibility of `gs-control` on `https://ops.goldshore.ai/*`.
 
 Configuration highlights (from `wrangler.toml`):
 - `ENV=production`
@@ -20,6 +20,13 @@ Configuration highlights (from `wrangler.toml`):
 
 ## Routes/Endpoints
 These are API endpoints handled by the worker in `src/index.ts` and the route files in `src/routes` (not HTML pages). The router files are the source of truth.
+
+### Control-plane boundary
+- `gs-api` owns public and app-facing API routes for product traffic.
+- `gs-api` must **not** become the write owner for Cloudflare DNS, Cloudflare Pages, Access policy audits, or `GS_CONFIG`; those remain exclusive to `gs-control`.
+- The only special service-to-service auth exception in `gs-api` today is `POST /internal/sync-runs`, where `gs-control` may present `x-control-sync-token` matching the shared `CONTROL_SYNC_TOKEN` secret. This is intentionally scoped to that single route and does not replace Cloudflare Access for the rest of the worker.
+- If this contract is ever replaced, the successor must be narrower and more explicit than the current shared secret, while preserving `gs-control` as the privileged caller.
+
 - `GET /` (status page)
 - `GET /health`
 - `GET /ai`
@@ -44,6 +51,7 @@ pnpm --filter ./apps/gs-api build
 - Production deploy: `.github/workflows/deploy-api-worker.yml`
 - Preview deploy: `.github/workflows/preview-api-worker.yml`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
+- Production and preview `CONTROL_SYNC_TOKEN` values are secret-managed in Cloudflare rather than committed to the repo.
 
 ### Cloudflare Worker Builds troubleshooting
 
