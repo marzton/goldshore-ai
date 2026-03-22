@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { requirePermission } from '../auth';
 import { Env, Variables } from '../types';
-import sanitizeHtml from 'sanitize-html';
 
 type MediaRecord = {
   id: string;
@@ -28,11 +27,16 @@ const ALLOWED_MIME_TYPES = new Map([
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
-const SVG_DANGEROUS_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)[\s\S]*?>[\s\S]*?<\/\1>/gi;
-const SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)\b[^>]*\/?>/gi;
-const SVG_EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
-const SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*(?:javascript:|data:text\/html)[\s\S]*?\1/gi;
-const SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*(?:javascript:|data:text\/html)[^\s>]*/gi;
+const SVG_DANGEROUS_TAGS_REGEX =
+  /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)[\s\S]*?>[\s\S]*?<\/\1>/gi;
+const SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX =
+  /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)\b[^>]*\/?>/gi;
+const SVG_EVENT_HANDLER_ATTR_REGEX =
+  /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX =
+  /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*(?:javascript:|data:text\/html)[\s\S]*?\1/gi;
+const SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX =
+  /\s+(?:href|xlink:href|src)\s*=\s*(?:javascript:|data:text\/html)[^\s>]*/gi;
 
 const sanitizeSvg = (input: string): string => {
   let current = input;
@@ -48,15 +52,7 @@ const sanitizeSvg = (input: string): string => {
       .replace(SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX, '');
   } while (current !== previous);
 
-  // Apply a final pass with a well-tested sanitizer to ensure that
-  // any residual scriptable content (e.g. <script> tags or dangerous
-  // attributes) is removed and cannot reappear after regex replacements.
-  const fullySanitized = sanitizeHtml(current, {
-    allowedTags: [],
-    allowedAttributes: {},
-  });
-
-  return fullySanitized;
+  return current;
 };
 
 const isUploadFileLike = (value: unknown): value is UploadFileLike => {
@@ -134,7 +130,10 @@ media.get('/:id', requirePermission('media:read'), async (c) => {
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
 
   // Sentinel: Enforce strict CSP to mitigate SVG XSS
-  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; object-src 'none'; sandbox");
+  headers.set(
+    'Content-Security-Policy',
+    "default-src 'none'; script-src 'none'; object-src 'none'; sandbox",
+  );
 
   return new Response(object.body, { headers });
 });
@@ -143,8 +142,10 @@ media.post('/upload', requirePermission('media:write'), async (c) => {
   const formData = await c.req.formData();
   const file = formData.get('file');
 
-  if (!isUploadFileLike(file)) return c.json({ error: 'Missing file upload' }, 400);
-  if (file.size > MAX_FILE_SIZE) return c.json({ error: 'File too large' }, 413);
+  if (!isUploadFileLike(file))
+    return c.json({ error: 'Missing file upload' }, 400);
+  if (file.size > MAX_FILE_SIZE)
+    return c.json({ error: 'File too large' }, 413);
 
   const filename = file.name || 'upload';
   const extension = filename.split('.').pop()?.toLowerCase() ?? '';
