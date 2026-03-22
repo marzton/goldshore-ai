@@ -12,6 +12,14 @@ const navLinks = [
   { href: '/developer', label: 'Developer Hub' },
 ];
 
+const footerLinks = [
+  { href: '/about', label: 'About' },
+  { href: '/team', label: 'Team' },
+  { href: '/contact', label: 'Contact' },
+  { href: '/apps/risk-radar', label: 'Risk Radar' },
+  { href: '/developer', label: 'Developer Hub' },
+];
+
 const {
   title = 'GoldShore',
   description = 'GoldShore AI',
@@ -19,18 +27,18 @@ const {
 } = Astro.props;
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
-const logoAssetPath = '/logo.svg';
-const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
+const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
+const mobileNavId = 'mobile-navigation';
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content={WEB_META_CSP} />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0b0f18" />
-    <meta http-equiv="Content-Security-Policy" content={WEB_META_CSP} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -46,7 +54,10 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
     <link rel="shortcut icon" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <a href="#content" class="skip-link">Skip to content</a>
@@ -68,18 +79,28 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
             <a href="/contact" class="header-cta">Request Briefing</a>
           </nav>
 
-          <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation">
+          <button
+            class="menu-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls={mobileNavId}
+            aria-label="Open navigation"
+          >
             <span></span>
             <span></span>
             <span></span>
           </button>
         </div>
 
-        <nav id="primary-navigation" class="menu-panel" aria-label="Mobile navigation">
+        <nav id={mobileNavId} class="menu-panel" aria-label="Mobile navigation">
           <div class="menu-panel__inner">
             <div class="menu-panel__header">
-              <a href="/" class="gs-logo-link gs-logo-link--mobile" aria-label="Gold Shore home">
-                <Logo class="gs-logo gs-logo--lockup" title="Gold Shore" variant="lockup" />
+              <a href="/" class="gs-logo-link gs-logo-link--mobile" aria-label="GoldShore home">
+                <Logo class="gs-logo" title="GoldShore" />
+                <div class="brand-lockup">
+                  <strong>GoldShore</strong>
+                  <span>Institutional AI systems</span>
+                </div>
               </a>
               <button class="menu-close" type="button" aria-label="Close navigation">×</button>
             </div>
@@ -106,7 +127,7 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
 
       <footer class="gs-footer">
         <div class="gs-footer__inner">
-          <div>
+          <div class="footer-brand-copy">
             <div class="footer-brand">
               <Logo class="gs-logo gs-logo--footer" title="Gold Shore" />
               <div class="brand-lockup brand-lockup--footer">
@@ -119,11 +140,9 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
             </p>
           </div>
           <div class="gs-footer__links">
-            <a href="/about">About</a>
-            <a href="/team">Team</a>
-            <a href="/contact">Contact</a>
-            <a href="/apps/risk-radar">Risk Radar</a>
-            <a href="/developer">Developer Hub</a>
+            {footerLinks.map((link) => (
+              <a href={link.href}>{link.label}</a>
+            ))}
           </div>
         </div>
       </footer>
@@ -136,18 +155,26 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
         if (menuGlobal.__gsMenuBound) return;
         menuGlobal.__gsMenuBound = true;
 
+        const header = document.querySelector('.header');
+        const toggle = document.querySelector('.menu-button');
+        const mobileNav = document.getElementById('mobile-navigation');
+
+        if (
+          !(header instanceof HTMLElement) ||
+          !(toggle instanceof HTMLButtonElement) ||
+          !(mobileNav instanceof HTMLElement)
+        ) {
+          return;
+        }
+
         const setMenu = (isOpen) => {
-          const header = document.querySelector('.header');
-          const toggle = document.querySelector('.menu-button');
-          if (!(header instanceof HTMLElement) || !(toggle instanceof HTMLButtonElement)) return;
           header.dataset.menuOpen = String(isOpen);
           toggle.setAttribute('aria-expanded', String(isOpen));
           document.body.classList.toggle('menu-open', isOpen);
         };
 
         const handleToggle = () => {
-          const header = document.querySelector('.header');
-          const next = header?.dataset.menuOpen !== 'true';
+          const next = header.dataset.menuOpen !== 'true';
           setMenu(next);
         };
 
@@ -165,7 +192,7 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
             return;
           }
 
-          if (target.closest('.menu-panel__links a') || target.classList.contains('menu-panel')) {
+          if (target.closest('#mobile-navigation .menu-panel__links a') || target === mobileNav) {
             setMenu(false);
           }
         });
@@ -493,17 +520,22 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
         align-items: flex-start;
       }
 
+      .footer-brand-copy {
+        display: grid;
+        gap: 1rem;
+      }
+
       .footer-brand {
         display: inline-flex;
         align-items: center;
         gap: 0.8rem;
-        margin-bottom: 0.85rem;
       }
 
       .gs-footer p {
         max-width: 42ch;
         color: var(--gs-text-dim);
         line-height: 1.7;
+        margin: 0;
       }
 
       .gs-footer__links {
