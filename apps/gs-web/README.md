@@ -63,6 +63,22 @@ Cloudflare metadata:
 
 Browser-side network inventory under `src`:
 
+- `'self'` for same-origin endpoints (for example `/api/contact` and `/api/docs-search`).
+- `https://api.goldshore.ai` for production API calls (the docs "Try it" console uses `PUBLIC_API` in production).
+- `https://api-preview.goldshore.ai` for preview API calls (the same docs console uses `PUBLIC_API` in preview deployments).
+
+Keep `connect-src` scoped to these explicit hosts unless a new client-side integration is added and reviewed. Do **not** tighten to `connect-src 'self'` until the remaining browser-side `PUBLIC_API` calls have been migrated behind same-origin Astro/API routes.
+
+## Browser-side network call inventory
+
+Inventory for `apps/gs-web/src/` before the CSP refactor:
+
+- `src/components/ContactForm.astro`: browser `fetch()` POST to same-origin `/api/contact`.
+- `src/components/DocsSearch.astro`: browser `fetch()` GET to same-origin `/api/docs-search`.
+- `src/components/ServiceStatus.astro`: browser `fetch()` to the caller-provided `serviceUrl`; keep this same-origin if the component is mounted again.
+- `src/components/TryItConsole.astro`: browser `fetch()` to `${PUBLIC_API}${path}`. This is the only current browser call site that still requires the external GoldShore API origins in `connect-src`.
+- `src/pages/[...path].astro`: server-side Astro `fetch()` to `${PUBLIC_API}/pages/slug/...`; this is **not** a browser `connect-src` dependency.
+- `src/pages/developer/docs/index.astro`: renders `PUBLIC_API` / `PUBLIC_GATEWAY` values as documentation text only; it does **not** issue a browser request by itself.
 - `src/components/TryItConsole.astro`: browser `fetch(url)` to `PUBLIC_API + path`, so CSP must allow `https://api.goldshore.ai` in production and `https://api-preview.goldshore.ai` in preview deployments.
 - `src/components/DocsSearch.astro`: browser `fetch('/api/docs-search?...')` to the same origin.
 - `src/components/ContactForm.astro`: browser `fetch('/api/contact')` to the same origin.

@@ -1,3 +1,4 @@
+export const GOLDSHORE_API_ORIGINS = [
 const SELF = "'self'";
 const UNSAFE_INLINE = "'unsafe-inline'";
 const NONE = "'none'";
@@ -17,6 +18,26 @@ export const WEB_CONNECT_SRC = [
   'https://api-preview.goldshore.ai',
 ] as const;
 
+export const BROWSER_CONNECT_SRC = [
+  "'self'",
+  ...GOLDSHORE_API_ORIGINS,
+] as const;
+
+export const WEB_CSP_DIRECTIVES = {
+  'default-src': ["'self'"],
+  'script-src': ["'self'", "'unsafe-inline'", 'https://*.cloudflare.com'],
+  'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https://unpkg.com'],
+  'font-src': ["'self'", 'https://fonts.gstatic.com'],
+  'img-src': ["'self'", 'data:', 'https://*.cloudflare.com'],
+  'connect-src': [...BROWSER_CONNECT_SRC],
+  'frame-ancestors': ["'none'"],
+  'object-src': ["'none'"],
+  'base-uri': ["'self'"],
+} as const;
+
+export function buildContentSecurityPolicy(
+  directives: Record<string, readonly string[]> = WEB_CSP_DIRECTIVES,
+): string {
 const BASE_CSP_DIRECTIVES = {
   'default-src': [SELF],
   'script-src': [SELF, UNSAFE_INLINE],
@@ -40,5 +61,6 @@ function serializeCsp(directives: Record<string, readonly string[]>): string {
     .join('; ');
 }
 
+export const WEB_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy();
 export const WEB_META_CSP = serializeCsp(BASE_CSP_DIRECTIVES);
 export const WEB_HEADERS_CSP = serializeCsp(HEADER_CSP_DIRECTIVES);
