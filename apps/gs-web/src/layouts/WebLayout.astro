@@ -29,6 +29,9 @@ const shouldRenderCspMeta = !(Astro.locals as { securityPolicySource?: string })
     <meta name="description" content={description} />
     <!-- Response headers from middleware/platform config are authoritative. Keep this meta CSP only as a fallback when headers are unavailable. -->
     {shouldRenderCspMeta && <meta http-equiv="Content-Security-Policy" content={HTML_CSP_META_FALLBACK} />}
+    <!-- Canonical favicon asset; modern browsers use the checked-in SVG. -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- PNG fallback retained for compatibility with browsers that do not support SVG favicons. -->
     <link rel="icon" href="/favicon.png" type="image/png" />
     <!-- Bolt: Preconnect to external origins to speed up resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
