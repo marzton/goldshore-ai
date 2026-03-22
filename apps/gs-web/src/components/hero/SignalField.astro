@@ -1,11 +1,24 @@
 <div class="signal-field" aria-hidden="true">
-  <div class="signal-field__grid"></div>
-  <div class="signal-field__particles" data-signal-field></div>
-  <svg class="signal-field__wave signal-field__wave--primary" viewBox="0 0 800 200" preserveAspectRatio="none">
-    <path d="M0 100 Q 100 40 200 100 T 400 100 T 600 100 T 800 100" />
+  <div class="signal-field__grid gs-parallax" data-parallax="0.32"></div>
+  <div
+    class="signal-field__particles gs-parallax"
+    data-signal-field
+    data-parallax="0.18"
+  >
+  </div>
+  <svg
+    class="signal-field__wave signal-field__wave--primary"
+    viewBox="0 0 800 200"
+    preserveAspectRatio="none"
+  >
+    <path d="M0 100 Q 100 40 200 100 T 400 100 T 600 100 T 800 100"></path>
   </svg>
-  <svg class="signal-field__wave signal-field__wave--secondary" viewBox="0 0 800 200" preserveAspectRatio="none">
-    <path d="M0 120 Q 100 70 200 120 T 400 120 T 600 120 T 800 120" />
+  <svg
+    class="signal-field__wave signal-field__wave--secondary"
+    viewBox="0 0 800 200"
+    preserveAspectRatio="none"
+  >
+    <path d="M0 120 Q 100 70 200 120 T 400 120 T 600 120 T 800 120"></path>
   </svg>
 </div>
 
@@ -14,10 +27,29 @@
   import * as THREE from 'three';
 
   const instances = new WeakMap();
-  const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const prefersReducedMotion = () => motionQuery.matches;
+
+  function applyReducedMotionFallback(root) {
+    root.replaceChildren();
+    root.dataset.motionMode = 'reduced';
+  }
+
+  function clearReducedMotionFallback(root) {
+    delete root.dataset.motionMode;
+  }
+  const prefersReducedMotion = () =>
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function initSignalField(root) {
     if (instances.has(root)) return;
+
+    if (prefersReducedMotion()) {
+      applyReducedMotionFallback(root);
+      return;
+    }
+
+    clearReducedMotionFallback(root);
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
@@ -47,7 +79,7 @@
       opacity: 0.72,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
-      sizeAttenuation: true
+      sizeAttenuation: true,
     });
 
     const points = new THREE.Points(geometry, material);
@@ -56,7 +88,11 @@
 
     const halo = new THREE.Mesh(
       new THREE.PlaneGeometry(18, 9),
-      new THREE.MeshBasicMaterial({ color: '#1E3A8A', transparent: true, opacity: 0.08 })
+      new THREE.MeshBasicMaterial({
+        color: '#1E3A8A',
+        transparent: true,
+        opacity: 0.08,
+      }),
     );
     halo.position.z = -2.4;
     scene.add(halo);
@@ -79,9 +115,7 @@
       points.position.y = Math.sin(elapsed * 0.42) * 0.08;
       halo.material.opacity = 0.06 + (Math.sin(elapsed * 0.65) + 1) * 0.025;
       renderer.render(scene, camera);
-      if (!prefersReducedMotion()) {
-        frame = window.requestAnimationFrame(renderFrame);
-      }
+      frame = window.requestAnimationFrame(renderFrame);
     };
 
     const observer = new ResizeObserver(resize);
@@ -100,14 +134,33 @@
       if (renderer.domElement.parentNode === root) {
         root.removeChild(renderer.domElement);
       }
+      if (prefersReducedMotion()) {
+        applyReducedMotionFallback(root);
+      } else {
+        clearReducedMotionFallback(root);
+      }
       instances.delete(root);
     };
 
     instances.set(root, cleanup);
   }
 
+  function syncSignalField(root) {
+    if (prefersReducedMotion()) {
+      const cleanup = instances.get(root);
+      cleanup?.();
+      if (!instances.has(root)) {
+        applyReducedMotionFallback(root);
+      }
+      return;
+    }
+
+    clearReducedMotionFallback(root);
+    initSignalField(root);
+  }
+
   function initSignalFields() {
-    document.querySelectorAll('[data-signal-field]').forEach((root) => initSignalField(root));
+    document.querySelectorAll('[data-signal-field]').forEach((root) => syncSignalField(root));
   }
 
   function cleanupSignalFields() {
@@ -117,13 +170,28 @@
     });
   }
 
+  const handleMotionPreferenceChange = () => {
+    document.querySelectorAll('[data-signal-field]').forEach((root) => syncSignalField(root));
+  };
+
+  if (!window.__signalFieldMotionListenerRegistered) {
+    if (typeof motionQuery.addEventListener === 'function') {
+      motionQuery.addEventListener('change', handleMotionPreferenceChange);
+    } else {
+      motionQuery.addListener(handleMotionPreferenceChange);
+    }
+    window.__signalFieldMotionListenerRegistered = true;
+  }
+
   document.addEventListener('astro:page-load', initSignalFields);
   document.addEventListener('astro:before-swap', cleanupSignalFields);
 
   if (document.readyState !== 'loading') {
     initSignalFields();
   } else {
-    document.addEventListener('DOMContentLoaded', initSignalFields, { once: true });
+    document.addEventListener('DOMContentLoaded', initSignalFields, {
+      once: true,
+    });
   }
 </script>
 
@@ -150,7 +218,26 @@
     background-size: 40px 40px;
     opacity: 0.45;
     mask-image: radial-gradient(circle at 55% 40%, black 30%, transparent 80%);
-    -webkit-mask-image: radial-gradient(circle at 55% 40%, black 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(
+      circle at 55% 40%,
+      black 30%,
+      transparent 80%
+    );
+  }
+
+  .signal-field__particles {
+    background:
+      radial-gradient(circle at 50% 48%, rgba(95, 168, 255, 0.16), transparent 44%),
+      radial-gradient(circle at 60% 42%, rgba(30, 58, 138, 0.2), transparent 58%);
+    opacity: 0.9;
+  }
+
+  .signal-field__particles[data-motion-mode='reduced'] {
+    background:
+      radial-gradient(circle at 50% 48%, rgba(95, 168, 255, 0.12), transparent 42%),
+      radial-gradient(circle at 60% 42%, rgba(30, 58, 138, 0.18), transparent 56%),
+      linear-gradient(180deg, rgba(10, 20, 40, 0), rgba(10, 20, 40, 0.18));
+    opacity: 0.82;
   }
 
   .signal-field__particles :global(canvas) {
