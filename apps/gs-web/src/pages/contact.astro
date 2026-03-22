@@ -4,13 +4,16 @@ import WebLayout from '../layouts/WebLayout.astro';
 export const prerender = true;
 ---
 
-<WebLayout title="Contact | Gold Shore" description="Start a guided engagement intake.">
+<WebLayout
+  title="Contact | Gold Shore"
+  description="Start a guided engagement intake."
+>
   <section class="gs-section">
     <div class="gs-container">
       <h1>Contact</h1>
       <p>
-        Start with the guided intake to receive a tailored service recommendation
-        and week-one engagement outline.
+        Start with the guided intake to receive a tailored service
+        recommendation and week-one engagement outline.
       </p>
 
       <form
@@ -77,17 +80,26 @@ export const prerender = true;
           <span id="submit-text">Send</span>
         </button>
       </form>
-      <div class="grid gap-4 md:grid-cols-2" style="margin: 1rem 0;">
+
+      <div class="grid gap-4 md:grid-cols-2 contact-options-grid">
         <article class="gs-card">
           <h2>Guided intake</h2>
-          <p>Best for active projects that need architecture, security, or operational support.</p>
-          <a class="gs-button gs-button-solid" href="/intake">Launch intake wizard</a>
+          <p>
+            Best for active projects that need architecture, security, or
+            operational support.
+          </p>
+          <a class="gs-button gs-button-solid" href="/intake"
+            >Launch intake wizard</a
+          >
         </article>
 
         <article class="gs-card">
           <h2>General inquiry</h2>
           <p>For media, partnerships, or lightweight requests.</p>
-          <a class="gs-button gs-button-outline" href="mailto:hello@goldshore.ai">Email hello@goldshore.ai</a>
+          <a
+            class="gs-button gs-button-outline"
+            href="mailto:hello@goldshore.ai">Email hello@goldshore.ai</a
+          >
         </article>
       </div>
     </div>
@@ -163,42 +175,3 @@ export const prerender = true;
     }
   });
 </script>
-
-<style>
-  .field-help {
-    margin: 0.25rem 0 0.5rem;
-    color: #666;
-    font-size: 0.95rem;
-  }
-
-  .form-status {
-    margin: 0.75rem 0;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid transparent;
-    min-height: 1.25rem;
-  }
-
-  .form-status.progress {
-    background: #f5f7ff;
-    border-color: #c8d1ff;
-    color: #25348a;
-  }
-
-  .form-status.success {
-    background: #effaf2;
-    border-color: #b9e6c3;
-    color: #0a5f25;
-  }
-
-  .form-status.error {
-    background: #fff3f3;
-    border-color: #ffc9c9;
-    color: #8f1717;
-  }
-
-  #submit-button:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-  }
-</style>

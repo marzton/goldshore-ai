@@ -1,9 +1,10 @@
-# wrangler.toml for the API Worker (canonical gs-api service; legacy alias goldshore-api)
+# wrangler.toml for the legacy goldshore-api worker config (historical alias for gs-api)
+# Prefer infra/Cloudflare/gs-api.wrangler.toml for active edits.
 
-name = "gs-api" # Canonical Worker base name; will be suffixed per environment
-main = "../../apps/api-worker/src/index.ts"
+name = "gs-api" # Canonical worker name
+main = "../../apps/gs-api/src/index.ts"
 compatibility_date = "2024-03-20"
-tsconfig = "../../apps/api-worker/tsconfig.json"
+tsconfig = "../../apps/gs-api/tsconfig.json"
 
 [env.dev]
 name = "gs-api-dev"

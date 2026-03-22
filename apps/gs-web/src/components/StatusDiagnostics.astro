@@ -6,21 +6,32 @@ const commitHash = import.meta.env.PUBLIC_COMMIT_HASH || 'unknown';
 <section class="gs-section" aria-labelledby="build-diagnostics-heading">
   <div class="gs-card">
     <h2 id="build-diagnostics-heading">Build Diagnostics</h2>
-    <p style="margin-top: 0.5rem; color: var(--gs-text-muted);">
+    <p class="gs-diagnostics-intro">
       Public build metadata for quick verification.
     </p>
-    <ul style="list-style: none; padding: 0; margin-top: 1rem; display: grid; gap: 0.75rem;">
+    <ul class="gs-diagnostics-list">
       <li><strong>Build timestamp:</strong> <code>{buildTimestamp}</code></li>
       <li><strong>Commit hash:</strong> <code>{commitHash}</code></li>
-      <li><strong>Stylesheet link count:</strong> <code data-diagnostic="css-link-count">loading…</code></li>
-      <li><strong>Script tag count:</strong> <code data-diagnostic="script-count">loading…</code></li>
-      <li><strong>Resolved logo asset path:</strong> <code data-diagnostic="logo-src">loading…</code></li>
+      <li>
+        <strong>Stylesheet link count:</strong>
+        <code data-diagnostic="css-link-count">loading…</code>
+      </li>
+      <li>
+        <strong>Script tag count:</strong>
+        <code data-diagnostic="script-count">loading…</code>
+      </li>
+      <li>
+        <strong>Resolved logo asset path:</strong>
+        <code data-diagnostic="logo-src">loading…</code>
+      </li>
     </ul>
   </div>
 </section>
 
 <script is:inline>
-  const cssLinkCount = document.querySelectorAll('link[rel~="stylesheet"]').length;
+  const cssLinkCount = document.querySelectorAll(
+    'link[rel~="stylesheet"]',
+  ).length;
   const scriptCount = document.querySelectorAll('script').length;
   const logoMeta = document.querySelector('meta[name="gs-logo-src"]');
   const logoSrc = logoMeta?.getAttribute('content') || 'unknown';

@@ -6,14 +6,10 @@ import { createAdminService } from '@goldshore/integrations';
 const API_BASE = import.meta.env.PUBLIC_API;
 const AUTH_TOKEN_URL = import.meta.env.PUBLIC_AUTH_TOKEN_URL;
 const AUTH_CLIENT_ID = import.meta.env.PUBLIC_AUTH_CLIENT_ID;
+const AUTH_CLIENT_SECRET = import.meta.env.AUTH_CLIENT_SECRET;
 
-// 🛡️ Sentinel: Security Hardening
-// Prioritize private environment variable for Client Secret to prevent client-side exposure.
-// Fallback to PUBLIC_ var ensures backward compatibility but logs a security warning.
-const AUTH_CLIENT_SECRET = import.meta.env.AUTH_CLIENT_SECRET || import.meta.env.PUBLIC_AUTH_CLIENT_SECRET;
-
-if (!import.meta.env.AUTH_CLIENT_SECRET && import.meta.env.PUBLIC_AUTH_CLIENT_SECRET) {
-  console.warn('🚨 SECURITY WARNING: AUTH_CLIENT_SECRET is configured via PUBLIC_ prefix. This exposes the secret to the client bundle. Please rename to AUTH_CLIENT_SECRET in your environment.');
+if (!AUTH_CLIENT_SECRET) {
+  throw new Error('Missing required server-side AUTH_CLIENT_SECRET for the admin dashboard.');
 }
 
 const AUDIT_ENDPOINT = import.meta.env.PUBLIC_ADMIN_AUDIT_ENDPOINT;
