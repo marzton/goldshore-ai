@@ -1,39 +1,95 @@
 # apps/gs-api
 
 ## Overview
-The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers.
+The `gs-api` worker is the primary Hono API for GoldShore. In production it is deployed as the `gs-api` Cloudflare Worker and serves `api.goldshore.ai/*` from the `prod` environment.
 
-Cloudflare metadata (from `wrangler.toml`):
+## Source of truth
+This README is maintained manually. There is no generator in this repository for worker endpoint docs. If this file drifts, treat these files as authoritative and update the README to match them:
+
+- `apps/gs-api/wrangler.toml` for routes, compatibility date, and declared bindings.
+- `apps/gs-api/src/index.ts` for mounted route prefixes and auth behavior.
+- `apps/gs-api/src/routes/*.ts` for concrete endpoint handlers.
+
+## Cloudflare configuration
+From `apps/gs-api/wrangler.toml`:
+
 - Worker name: `gs-api`
-- Route: `api.goldshore.ai/*`
-- Compatibility date: `2025-01-10`
-- Bindings: `API_KV` (KV), `ASSETS` (R2), `DB` (D1), `AI` (AI Gateway)
-- Environment variable: `ENV=production`
-The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers. It uses KV, R2, D1, and the AI Gateway bindings configured in `wrangler.toml`.
+- Entry point: `src/index.ts`
+- Compatibility date: `2024-11-01`
+- Compatibility flags: `nodejs_compat`
+- Production route: `api.goldshore.ai/*`
+- Declared vars:
+  - `ENV=production`
+  - `CLOUDFLARE_ACCESS_AUDIENCE`
+  - `CLOUDFLARE_TEAM_DOMAIN`
+  - `CONTROL_SYNC_TOKEN`
+- Declared bindings:
+  - `KV` (`kv_namespaces`)
+  - `CONTROL_LOGS` (`kv_namespaces`)
+  - `ASSETS` (`r2_buckets`)
+  - `DB` (`d1_databases`)
+  - `AI` (`ai`)
 
-Configuration highlights (from `wrangler.toml`):
-- `ENV=production`
-- KV binding: `API_KV`
-- R2 binding: `ASSETS`
-- D1 binding: `DB`
-- AI binding: `AI`
+## Runtime notes
+- All routes except `/`, `/health`, `/health/*`, and `OPTIONS` require Cloudflare Access JWT validation.
+- `POST /internal/sync-runs` can bypass Access when `x-control-sync-token` matches `CONTROL_SYNC_TOKEN`.
+- The code also references optional secrets/vars that are not declared in `wrangler.toml`: `OPENAI_API_KEY`, `GEMINI_API_KEY`, and `GIT_SHA`.
 
-## Routes/Endpoints
-These are API endpoints handled by the worker in `src/index.ts` and the route files in `src/routes` (not HTML pages). The router files are the source of truth.
-- `GET /` (status page)
-- `GET /health`
-- `GET /ai`
-- `POST /ai/analysis`
-- `GET /users`
-- `GET /user/:id`
-- `GET /system/info`
-- `GET /templates`
+## Authoritative endpoint list
+Mounted in `src/index.ts` and implemented in `src/routes/*.ts`.
+
+### Public / infra
+- `GET /` — HTML status page.
+- `GET /health` — shallow health check.
+- `GET /health?type=deep` — deep health check covering `KV` and `DB`.
+
+### AI
+- `GET /ai` — AI service status.
+- `POST /ai/analysis` — orchestration-backed analysis endpoint using `KV` cache/config and provider secrets.
+
+### User data
+- `GET /users` — list users.
+- `GET /users/:id` — fetch a user.
+- `GET /user/:id` — legacy redirect to `/users/:id`.
 - `GET /v1/users`
+- `GET /v1/users/:id`
+
+### System / templates / internal
+- `GET /system/status`
+- `GET /system/routing`
+- `GET /system/config`
+- `PUT /system/config`
+- `GET /system/version`
+- `GET /templates`
+- `GET /internal/inbox-status`
+- `GET /internal/dns-sync-status`
+
+### Admin
+- `GET /admin/users`
+- `POST /admin/users`
+- `PATCH /admin/users/:id`
+- `GET /admin/audit`
+
+### Media
+- `GET /media`
+- `GET /media/:id`
+- `POST /media/upload`
+
+### Pages
+- `GET /pages`
+- `GET /pages/slug/:slug`
+- `GET /pages/:id`
+- `POST /pages`
+- `PUT /pages/:id`
+- `PATCH /pages/:id/status`
+- `DELETE /pages/:id`
+
+### Versioned placeholder routes
 - `GET /v1/agents`
 - `GET /v1/models`
 - `GET /v1/logs`
 
-## Local Dev
+## Local development
 ```bash
 pnpm install
 pnpm --filter ./apps/gs-api dev
@@ -41,19 +97,16 @@ pnpm --filter ./apps/gs-api build
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-api-worker.yml`
-- Preview deploy: `.github/workflows/preview-api-worker.yml`
-- Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
+- Production workflow: `.github/workflows/deploy-api-worker.yml`
+- Preview workflow: `.github/workflows/preview-api-worker.yml`
+- Deploy command:
 
-### Cloudflare Worker Builds troubleshooting
+```bash
+pnpm --filter ./apps/gs-api deploy
+```
 
-If Cloudflare Worker Builds fails before dependency installation with:
-
-`Failed: The build token selected for this build has been deleted or rolled and cannot be used for this build.`
-
-the issue is in Worker Builds project settings (not this repository code).
-
-Fix in Cloudflare Dashboard:
+## Cloudflare Worker Builds troubleshooting
+If Cloudflare Worker Builds fails before dependency installation with the deleted-or-rolled build token error, the problem is in the Worker Builds project settings rather than this repository.
 
 1. Open **Workers & Pages** → **gs-api** → **Settings** → **Builds**.
 2. Create or select an active Worker Builds token.
@@ -62,9 +115,4 @@ Fix in Cloudflare Dashboard:
 
 Notes:
 - `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` can still be valid while Worker Builds fails.
-- Rotating/deleting the Worker Builds token immediately invalidates queued and new builds that reference the old token.
-
-<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
-```bash
-pnpm --filter ./apps/gs-api deploy
-```
+- Rotating or deleting the Worker Builds token invalidates queued and new builds that still reference the old token.
