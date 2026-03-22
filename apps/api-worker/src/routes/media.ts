@@ -17,12 +17,19 @@ const ALLOWED_MIME_TYPES = new Map([
 ]);
 
 const sanitizeSvg = (rawSvg: string) => {
-  let sanitized = rawSvg
-    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
-    .replace(/<foreignObject[\s\S]*?>[\s\S]*?<\/foreignObject>/gi, '')
-    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-    .replace(/(href|xlink:href)\s*=\s*("|')\s*javascript:[^\2]*\2/gi, '')
-    .replace(/(href|xlink:href)\s*=\s*javascript:[^\s>]+/gi, '');
+  let sanitized = rawSvg;
+  let previous: string;
+
+  // Apply sanitization repeatedly until no further changes occur
+  do {
+    previous = sanitized;
+    sanitized = sanitized
+      .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+      .replace(/<foreignObject[\s\S]*?>[\s\S]*?<\/foreignObject>/gi, '')
+      .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+      .replace(/(href|xlink:href)\s*=\s*("|')\s*javascript:[^\2]*\2/gi, '')
+      .replace(/(href|xlink:href)\s*=\s*javascript:[^\s>]+/gi, '');
+  } while (sanitized !== previous);
 
   if (!sanitized.trim().startsWith('<svg')) {
     sanitized = `<svg xmlns=\"http://www.w3.org/2000/svg\">${sanitized}</svg>`;
