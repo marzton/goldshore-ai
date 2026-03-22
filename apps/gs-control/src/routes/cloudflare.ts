@@ -20,7 +20,9 @@ const editableDnsRecordFields = {
 
 type EditableDnsRecordKey = keyof typeof editableDnsRecordFields;
 
-const editableDnsRecordKeys = Object.keys(editableDnsRecordFields) as EditableDnsRecordKey[];
+const editableDnsRecordKeys = Object.keys(
+  editableDnsRecordFields
+) as EditableDnsRecordKey[];
 
 const dnsRecordSchema = z
   .object(editableDnsRecordFields)
@@ -28,8 +30,8 @@ const dnsRecordSchema = z
   .transform((payload) =>
     Object.fromEntries(
       editableDnsRecordKeys
-        .filter((key) => payload[key] !== undefined)
-        .map((key) => [key, payload[key]])
+        .filter((key) => payload[key as EditableDnsRecordKey] !== undefined)
+        .map((key) => [key, payload[key as EditableDnsRecordKey]])
     ) as Partial<Record<EditableDnsRecordKey, unknown>>
   );
 

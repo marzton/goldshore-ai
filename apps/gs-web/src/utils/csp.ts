@@ -31,16 +31,16 @@ export const WEB_CSP_DIRECTIVES = {
   'base-uri': [SELF],
 } as const;
 
-const BASE_CSP_DIRECTIVES = {
-  'default-src': [SELF],
-  'script-src': [SELF, UNSAFE_INLINE],
-  'style-src': [SELF, UNSAFE_INLINE, 'https://fonts.googleapis.com', 'https://unpkg.com'],
-  'font-src': [SELF, 'https://fonts.gstatic.com'],
-  'img-src': [SELF, 'data:'],
-  'connect-src': [...WEB_CONNECT_SRC],
-  'object-src': [NONE],
-  'base-uri': [SELF],
-} as const satisfies ContentSecurityPolicyDirectives;
+/**
+ * Serializes a Content Security Policy directive object into a single string.
+ * @param directives Object mapping CSP directives to an array of allowed sources.
+ * @returns The serialized CSP string.
+ */
+export function serializeCsp(directives: ContentSecurityPolicyDirectives): string {
+  return Object.entries(directives)
+    .map(([directive, sources]) => `${directive} ${sources.join(' ')}`)
+    .join('; ');
+}
 
 /**
  * Meta CSP is consumed by `src/layouts/WebLayout.astro`.
@@ -74,6 +74,5 @@ export function buildContentSecurityPolicy(
 }
 
 export const WEB_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy();
-export const WEB_HEADERS_CSP = serializeCsp(WEB_HEADER_DIRECTIVES);
 export const WEB_META_CSP = serializeCsp(WEB_META_DIRECTIVES);
-
+export const WEB_HEADERS_CSP = serializeCsp(WEB_HEADER_DIRECTIVES);
