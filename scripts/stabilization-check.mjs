@@ -91,7 +91,6 @@ const ALLOWED_ACTIONS = [
   'stefanzweifel/git-auto-commit-action',
   'NeuraLegion/run-scan',
   'SonarSource/sonarcloud-github-action',
-  'actions/ai-inference',
 ];
 
 // --- State Tracking ---
