@@ -4,6 +4,12 @@ export type ParallaxOptions = {
   factor?: number;
 };
 
+type ParallaxLayer = {
+  element: HTMLElement;
+  speed: number;
+  isVisible: boolean;
+};
+
 export const initParallax = (options: ParallaxOptions = {}) => {
   if (typeof window === 'undefined') {
     return () => undefined;
@@ -59,11 +65,13 @@ export const initParallax = (options: ParallaxOptions = {}) => {
 
   const updateParallax = () => {
     const scrollY = window.scrollY || window.pageYOffset;
+
     layers.forEach(({ element, speed, isVisible }) => {
       if (!isVisible) return;
       const offset = scrollY * speed * factor;
       element.style.setProperty('--gs-parallax-offset', `${offset}px`);
     });
+
     ticking = false;
   };
 

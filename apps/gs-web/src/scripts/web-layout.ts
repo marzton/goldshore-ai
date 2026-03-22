@@ -166,7 +166,10 @@ const cleanupPageBehaviors = () => {
   cleanupUI();
 };
 
+let cleanupParallax: (() => void) | undefined;
+
 const initCodexUI = () => {
+  cleanupParallax?.();
   initStarField('hero-stars');
   initTilt('[data-tilt]');
   initBriefingModal();
