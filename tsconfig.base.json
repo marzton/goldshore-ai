@@ -17,6 +17,9 @@
       "@goldshore/auth": [
         "packages/auth/index.ts"
       ],
+      "@goldshore/utils": [
+        "packages/utils/index.ts"
+      ],
       "@goldshore/auth/*": [
         "packages/auth/*"
       ],

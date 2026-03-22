@@ -31,7 +31,9 @@ const dnsRecordTransformer = z.object(editableDnsRecordFields).passthrough().tra
 
 type EditableDnsRecordKey = keyof typeof editableDnsRecordFields;
 
-const editableDnsRecordKeys = Object.keys(editableDnsRecordFields) as EditableDnsRecordKey[];
+const editableDnsRecordKeys = Object.keys(
+  editableDnsRecordFields
+) as EditableDnsRecordKey[];
 
 const dnsRecordSchema = dnsRecordTransformer
   .transform((payload) =>
