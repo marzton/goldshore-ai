@@ -20,7 +20,8 @@ const {
   currentPath = Astro.url.pathname,
 } = Astro.props;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
-const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
+const logoAssetPath = '/logo.svg';
+const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
 ---
 
 <html lang="en">
@@ -41,6 +42,7 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={socialImage} />
+    <meta name="gs-logo-src" content={logoAssetPath} />
     <link rel="canonical" href={canonicalUrl} />
     <meta
       http-equiv="Content-Security-Policy"
