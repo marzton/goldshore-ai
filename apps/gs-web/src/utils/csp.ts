@@ -45,7 +45,7 @@ const BASE_CSP_DIRECTIVES = {
  * Keep it limited to directives supported by `<meta http-equiv="Content-Security-Policy">`.
  */
 const WEB_META_DIRECTIVES = {
-  ...WEB_SHARED_CSP_DIRECTIVES,
+  ...WEB_CSP_DIRECTIVES,
 } as const satisfies ContentSecurityPolicyDirectives;
 
 /**
@@ -53,7 +53,7 @@ const WEB_META_DIRECTIVES = {
  * Header delivery can enforce `frame-ancestors`, which meta CSP cannot.
  */
 const WEB_HEADER_DIRECTIVES = {
-  ...WEB_SHARED_CSP_DIRECTIVES,
+  ...WEB_CSP_DIRECTIVES,
   'frame-ancestors': [NONE],
 } as const;
 
