@@ -12,59 +12,80 @@ import LogoGL from './logo/LogoGL.astro';
       <span class="signal-hero__eyebrow signal-update">System operational</span>
       <h1>Infrastructure for High-Trust AI</h1>
       <p class="signal-hero__lede">
-        Resilient decision systems, risk tooling, and operator infrastructure designed to stage structure,
-        activation, and confirmation without adding noise.
+        Resilient decision systems, risk tooling, and operator infrastructure
+        designed to stage structure, activation, and confirmation without adding
+        noise.
       </p>
 
       <div class="signal-hero__actions">
-        <GSButton href="/contact" class="signal-button">Open Workstream</GSButton>
-        <GSButton href="/developer" variant="secondary" class="signal-button signal-button--secondary">View Model</GSButton>
+        <GSButton href="/contact" class="signal-button"
+          >Open Workstream</GSButton
+        >
+        <GSButton
+          href="/developer"
+          variant="secondary"
+          class="signal-button signal-button--secondary">View Model</GSButton
+        >
       </div>
 
       <div class="signal-hero__panels">
         <Panel class="signal-panel signal-panel--primary">
           <span>Structure</span>
           <strong>Policy-bound routing</strong>
-          <p>Execution lanes stay deterministic while operators retain full audit visibility.</p>
+          <p>
+            Execution lanes stay deterministic while operators retain full audit
+            visibility.
+          </p>
         </Panel>
         <Panel class="signal-panel">
           <span>Activation</span>
           <strong>Live signal orchestration</strong>
-          <p>Telemetry, scoring, and event flows surface only when the system state changes.</p>
+          <p>
+            Telemetry, scoring, and event flows surface only when the system
+            state changes.
+          </p>
         </Panel>
         <Panel class="signal-panel">
           <span>Confirmation</span>
           <strong>Review-ready outputs</strong>
-          <p>Each path closes with traceable outcomes, controls, and model evidence.</p>
+          <p>
+            Each path closes with traceable outcomes, controls, and model
+            evidence.
+          </p>
         </Panel>
       </div>
     </div>
 
     <div class="signal-hero__visual">
-      <div class="signal-hero__lock-card gs-parallax" data-parallax="0.72">
-        <LogoGL />
-      </div>
+      <div class="signal-hero__visual-shell gs-parallax" data-parallax="0.12">
+        <div class="signal-hero__lock-card">
+          <LogoGL />
+        </div>
 
-      <div class="signal-hero__telemetry">
-        <Panel class="signal-panel signal-panel--telemetry signal-update">
-          <span>Signal status</span>
-          <strong>Confirmation edge active</strong>
-          <p>Edge path pulse synced to field cadence. Risk envelope stable. Operators in control.</p>
-        </Panel>
-        <Panel class="signal-panel signal-panel--metrics">
-          <div>
-            <span>Latency</span>
-            <strong>24ms</strong>
-          </div>
-          <div>
-            <span>Uptime</span>
-            <strong>99.98%</strong>
-          </div>
-          <div>
-            <span>Watchlist</span>
-            <strong>Active</strong>
-          </div>
-        </Panel>
+        <div class="signal-hero__telemetry">
+          <Panel class="signal-panel signal-panel--telemetry signal-update">
+            <span>Signal status</span>
+            <strong>Confirmation edge active</strong>
+            <p>
+              Edge path pulse synced to field cadence. Risk envelope stable.
+              Operators in control.
+            </p>
+          </Panel>
+          <Panel class="signal-panel signal-panel--metrics">
+            <div>
+              <span>Latency</span>
+              <strong>24ms</strong>
+            </div>
+            <div>
+              <span>Uptime</span>
+              <strong>99.98%</strong>
+            </div>
+            <div>
+              <span>Watchlist</span>
+              <strong>Active</strong>
+            </div>
+          </Panel>
+        </div>
       </div>
     </div>
   </div>
@@ -79,8 +100,16 @@ import LogoGL from './logo/LogoGL.astro';
     border-radius: 1.5rem;
     min-height: min(52rem, calc(100vh - var(--gs-header-height) - 2rem));
     background:
-      radial-gradient(circle at 15% 20%, rgba(30, 58, 138, 0.34), transparent 34%),
-      radial-gradient(circle at 78% 24%, rgba(95, 168, 255, 0.18), transparent 28%),
+      radial-gradient(
+        circle at 15% 20%,
+        rgba(30, 58, 138, 0.34),
+        transparent 34%
+      ),
+      radial-gradient(
+        circle at 78% 24%,
+        rgba(95, 168, 255, 0.18),
+        transparent 28%
+      ),
       linear-gradient(180deg, rgba(10, 15, 28, 0.96), rgba(2, 6, 23, 0.98));
     box-shadow:
       inset 0 0 120px rgba(3, 8, 24, 0.7),
@@ -91,7 +120,11 @@ import LogoGL from './logo/LogoGL.astro';
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.08), transparent 38%);
+    background: radial-gradient(
+      circle at 50% 18%,
+      rgba(255, 255, 255, 0.08),
+      transparent 38%
+    );
     opacity: 0.9;
     pointer-events: none;
   }
@@ -177,7 +210,11 @@ import LogoGL from './logo/LogoGL.astro';
     display: grid;
     gap: 0.55rem;
     min-height: 100%;
-    background: linear-gradient(180deg, rgba(10, 15, 28, 0.9), rgba(6, 12, 24, 0.75));
+    background: linear-gradient(
+      180deg,
+      rgba(10, 15, 28, 0.9),
+      rgba(6, 12, 24, 0.75)
+    );
     border-color: rgba(95, 168, 255, 0.14);
     backdrop-filter: blur(18px);
   }
@@ -204,15 +241,26 @@ import LogoGL from './logo/LogoGL.astro';
   }
 
   .signal-panel--primary {
-    box-shadow: inset 0 0 32px rgba(95, 168, 255, 0.08), 0 24px 60px rgba(2, 8, 23, 0.28);
+    box-shadow:
+      inset 0 0 32px rgba(95, 168, 255, 0.08),
+      0 24px 60px rgba(2, 8, 23, 0.28);
   }
 
   .signal-hero__visual {
     display: grid;
-    gap: 1.1rem;
     align-items: center;
     position: relative;
     z-index: 1;
+  }
+
+  .signal-hero__visual-shell {
+    display: grid;
+    gap: 1.1rem;
+    pointer-events: none;
+  }
+
+  .signal-hero__visual-shell > * {
+    pointer-events: auto;
   }
 
   .signal-hero__lock-card {
@@ -222,7 +270,11 @@ import LogoGL from './logo/LogoGL.astro';
     border-radius: 1.4rem;
     border: 1px solid rgba(95, 168, 255, 0.14);
     background:
-      radial-gradient(circle at 50% 48%, rgba(95, 168, 255, 0.08), transparent 45%),
+      radial-gradient(
+        circle at 50% 48%,
+        rgba(95, 168, 255, 0.08),
+        transparent 45%
+      ),
       linear-gradient(180deg, rgba(9, 14, 25, 0.82), rgba(4, 9, 20, 0.78));
     backdrop-filter: blur(16px);
   }

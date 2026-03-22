@@ -15,7 +15,9 @@ export const initParallax = (options: ParallaxOptions = {}) => {
     return () => undefined;
   }
 
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReducedMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  ).matches;
   if (prefersReducedMotion) {
     return () => undefined;
   }
@@ -23,20 +25,42 @@ export const initParallax = (options: ParallaxOptions = {}) => {
   const {
     selector = '[data-parallax]',
     speedAttribute = 'data-parallax',
-    factor = -0.12
+    factor = -0.12,
   } = options;
 
-  const layers: ParallaxLayer[] = Array.from(document.querySelectorAll<HTMLElement>(selector)).map((element) => ({
+  const layers = Array.from(
+    document.querySelectorAll<HTMLElement>(selector),
+  ).map((element) => ({
     element,
-    speed: Number.parseFloat(element.getAttribute(speedAttribute) || '0'),
-    isVisible: false
+    speed: parseFloat(element.getAttribute(speedAttribute) || '0'),
+    isVisible: false,
   }));
 
   if (layers.length === 0) {
     return () => undefined;
   }
 
-  const layerByElement = new Map(layers.map((layer) => [layer.element, layer]));
+  // Bolt: Use IntersectionObserver to skip updates for off-screen elements
+  const observer = new IntersectionObserver((entries) => {
+    let needsUpdate = false;
+    entries.forEach((entry) => {
+      const layer = layers.find((candidate) => candidate.element === entry.target);
+      if (layer) {
+        if (layer.isVisible !== entry.isIntersecting) {
+          layer.isVisible = entry.isIntersecting;
+          needsUpdate = true;
+        }
+      }
+    });
+
+    // Trigger update if visibility changed (e.g. initial load)
+    if (needsUpdate) {
+      updateParallax();
+    }
+  }, { rootMargin: '200px' });
+
+  layers.forEach((layer) => observer.observe(layer.element));
+
   let ticking = false;
 
   const updateParallax = () => {
@@ -54,29 +78,29 @@ export const initParallax = (options: ParallaxOptions = {}) => {
   const observer = new IntersectionObserver(
     (entries) => {
       let needsUpdate = false;
-
       entries.forEach((entry) => {
-        const layer = layerByElement.get(entry.target as HTMLElement);
-        if (!layer || layer.isVisible === entry.isIntersecting) {
-          return;
+        const layer = layers.find(
+          (candidate) => candidate.element === entry.target,
+        );
+        if (layer && layer.isVisible !== entry.isIntersecting) {
+          layer.isVisible = entry.isIntersecting;
+          needsUpdate = true;
         }
-
-        layer.isVisible = entry.isIntersecting;
-        needsUpdate = true;
       });
 
       if (needsUpdate) {
         updateParallax();
       }
     },
-    { rootMargin: '200px' }
+    { rootMargin: '200px' },
   );
 
   layers.forEach(({ element }) => observer.observe(element));
   updateParallax();
 
   const handleScroll = () => {
-    if (!layers.some(({ isVisible }) => isVisible)) return;
+    // Bolt: Bail out early if no parallax elements are visible
+    if (!layers.some((layer) => layer.isVisible)) return;
 
     if (!ticking) {
       window.requestAnimationFrame(updateParallax);
@@ -91,7 +115,6 @@ export const initParallax = (options: ParallaxOptions = {}) => {
     window.removeEventListener('scroll', handleScroll);
     window.removeEventListener('resize', updateParallax);
     observer.disconnect();
-
     layers.forEach(({ element }) => {
       element.style.removeProperty('--gs-parallax-offset');
     });
