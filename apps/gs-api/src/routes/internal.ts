@@ -1,6 +1,9 @@
 import { Hono } from 'hono';
-import { EmailInboxLogsSchema, ServiceStatusSchema } from '@goldshore/schema';
-import type { Env } from '../types';
+import {
+  EmailInboxLogsSchema,
+  ServiceStatusSchema,
+} from '@goldshore/schema';
+import { Env } from '../types';
 
 const internal = new Hono<{ Bindings: Env }>();
 
@@ -51,15 +54,21 @@ internal.get('/inbox-status', async (c) => {
     return c.json({
       success: true,
       timestamp: new Date().toISOString(),
-      services,
+      services: statusResult.success
+        ? statusResult.data
+        : {
+            maintenance_mode: false,
+            active_services: [],
+            version: 'unknown',
+          },
       inbox: {
-        count: logs.length,
-        recent: logs.slice(0, 5),
+        count: logsResult.success ? logsResult.data.length : 0,
+        recent: logsResult.success ? logsResult.data.slice(0, 5) : [],
       },
     });
   } catch (error) {
-    console.error('Failed to retrieve inbox logs', error);
-    return c.json({ success: false, error: 'Failed to retrieve inbox logs' }, 500);
+    console.error('Internal API error while retrieving inbox status:', error);
+    return c.json({ success: false, error: 'Failed to retrieve internal system state' }, 500);
   }
 });
 
@@ -70,7 +79,7 @@ internal.get('/dns-sync-status', async (c) => {
     controlLogs.get(DNS_SYNC_RUN_INDEX_KEY, 'json'),
   ]);
 
-  const statusResult = ServiceStatusSchema.partial().safeParse(serviceStatusRaw ?? {});
+  const statusResult = ServiceStatusSchema.safeParse(serviceStatusRaw);
   const runKeys = Array.isArray(runIndexRaw)
     ? runIndexRaw.filter((key): key is string => typeof key === 'string')
     : [];

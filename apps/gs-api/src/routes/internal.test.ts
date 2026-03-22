@@ -112,11 +112,9 @@ describe('internal inbox status', () => {
       {},
       { KV: kv, CONTROL_LOGS: controlLogs } as any,
     );
-
     assert.strictEqual(res.status, 200);
 
     const data = (await res.json()) as any;
-
     assert.strictEqual(data.success, true);
     assert.strictEqual(data.masterConfigReport.syncSource, 'durable');
     assert.strictEqual(data.masterConfigReport.driftStatusComputed, 'drifted');
