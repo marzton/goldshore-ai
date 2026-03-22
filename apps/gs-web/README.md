@@ -93,7 +93,7 @@ Approved outbound `connect-src` origins for browser runtime network calls:
 - `https://api.goldshore.ai` for production API calls made from the docs "Try it" console.
 - `https://api-preview.goldshore.ai` for preview API calls when preview deployments point `PUBLIC_API` at the preview API worker.
 
-The shared CSP policy constants live in `src/utils/csp.ts`. Keep `connect-src` scoped to these explicit hosts unless a new browser-side integration is added and reviewed.
+The shared CSP policy constants live in `src/utils/csp.ts`. `WEB_META_CSP` is used by `src/layouts/WebLayout.astro`, while `WEB_HEADERS_CSP` is enforced by `src/middleware.ts` and mirrored in `public/_headers`. Keep `connect-src` scoped to these explicit hosts unless a new browser-side integration is added and reviewed.
 
 ## Routes/Endpoints
 
