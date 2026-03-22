@@ -12,7 +12,7 @@ if ! [[ "$LOG_LIMIT" =~ ^[0-9]+$ ]]; then
   exit 1
 fi
 
-git fetch --all --prune
+git fetch origin --prune
 
 if ! git rev-parse --verify "$LOG_REF" >/dev/null 2>&1; then
   echo "LOG_REF does not exist: $LOG_REF" >&2
