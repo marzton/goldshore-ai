@@ -48,7 +48,8 @@ const BASE_CSP_DIRECTIVES = {
  */
 const WEB_META_DIRECTIVES = {
   ...WEB_CSP_DIRECTIVES,
-} as const satisfies ContentSecurityPolicyDirectives;
+  'frame-ancestors': undefined,
+} as const;
 
 /**
  * Header CSP is consumed by runtime headers in `src/middleware.ts` and mirrored in `public/_headers`.
@@ -59,6 +60,13 @@ const WEB_HEADER_DIRECTIVES = {
   'frame-ancestors': [NONE],
 } as const;
 
+export function serializeCsp(directives: Record<string, readonly string[] | undefined>): string {
+  return Object.entries(directives)
+    .filter(([_key, values]) => values !== undefined)
+    .map(([key, values]) => `${key} ${values!.join(' ')}`)
+    .join('; ');
+}
+
 export function buildContentSecurityPolicy(
   directives?: ContentSecurityPolicyDirectives,
 ): string {
@@ -67,4 +75,5 @@ export function buildContentSecurityPolicy(
 
 export const WEB_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy();
 export const WEB_HEADERS_CSP = serializeCsp(WEB_HEADER_DIRECTIVES);
+export const WEB_META_CSP = serializeCsp(WEB_META_DIRECTIVES);
 

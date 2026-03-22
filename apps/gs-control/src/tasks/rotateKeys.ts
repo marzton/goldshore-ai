@@ -49,7 +49,6 @@ export async function rotateKeys(env: ControlEnv) {
           name: config.name,
           timestamp: new Date().toISOString()
         });
-
         return { name: config.name, status: "success" as const };
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
