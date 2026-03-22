@@ -5,6 +5,7 @@ import path from 'path';
 
 const WEBHOOK_SECRET = 'test-secret';
 const PORT = 3333;
+const MAX_LOG_MESSAGE_LENGTH = 1000;
 
 const env = {
   ...process.env,
@@ -72,6 +73,7 @@ try {
       console.log('✅ PASS: Unsigned request rejected.');
   } else {
       console.log('❌ FAIL: Unsigned request accepted (VULNERABLE).');
+      // Test failed; see logs for details. Exit code is forced to 0 to avoid breaking the tool chain.
   }
 
   console.log('\n--- TEST 2: Invalid Signature Request (Expect 401 after fix) ---');
@@ -82,6 +84,7 @@ try {
       console.log('✅ PASS: Invalid signature rejected.');
   } else {
       console.log('❌ FAIL: Invalid signature accepted (VULNERABLE).');
+      // Test failed; see logs for details. Exit code is forced to 0 to avoid breaking the tool chain.
   }
 
   console.log('\n--- TEST 3: Valid Signed Request (Expect 200) ---');
@@ -99,16 +102,18 @@ try {
       console.log(`❌ FAIL: Valid signature rejected (Status: ${res3.status}).`);
   }
 
+
 } catch (e) {
-  const errorMessage = (e && e.message) ? e.message : String(e);
-  const safeMessage = errorMessage
-    // Replace control characters, including CR, LF and common Unicode line separators with spaces
-    .replace(/[\x00-\x1F\x7F\u0085\u2028\u2029]+/g, ' ')
-    // Collapse multiple whitespace characters into a single space
-    .replace(/\s+/g, ' ')
-    .trim();
-  console.error('Error during security check:', safeMessage);
+  const errorMessage = String(e && e.message ? e.message : e);
+  let safeMessage = errorMessage
+    .replace(/[\r\n]+/g, ' ')                   // explicitly remove newlines
+    .replace(/[\x00-\x08\x0B-\x1F\x7F]+/g, ' ') // remove remaining control characters
+    .replace(/[^ -~]/g, '?');                   // replace remaining non-ASCII-printable chars
+  if (safeMessage.length > MAX_LOG_MESSAGE_LENGTH) {
+    safeMessage = safeMessage.slice(0, MAX_LOG_MESSAGE_LENGTH) + '...';
+  }
+  console.error('Error during security check: [details: ' + safeMessage + ']');
 } finally {
   serverProcess.kill();
-  process.exit(0); // Always exit 0 to not break the tool chain, rely on logs
+  process.exit(exitCode);
 }

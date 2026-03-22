@@ -1,5 +1,5 @@
-import { describe, it } from 'node:test';
 import assert from 'node:assert';
+import { describe, it } from 'node:test';
 import { Hono } from 'hono';
 import internal from './internal.ts';
 
@@ -42,9 +42,11 @@ describe('internal inbox status', () => {
     };
 
     const res = await app.request('/internal/inbox-status', {}, { KV: kv } as any);
+
     assert.strictEqual(res.status, 200);
 
     const data = (await res.json()) as any;
+
     assert.strictEqual(data.success, true);
     assert.strictEqual(data.inbox.count, 2);
     assert.strictEqual(data.inbox.recent.length, 2);

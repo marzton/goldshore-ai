@@ -32,6 +32,7 @@ const parseDnsSyncRun = (value: unknown): DnsSyncRun | null => {
   if (!value || typeof value !== 'object') return null;
 
   const run = value as DnsSyncRun;
+
   if (!run.runId || !Array.isArray(run.results)) return null;
 
   return run;
@@ -45,7 +46,10 @@ internal.get('/inbox-status', async (c) => {
     ]);
 
     const logsResult = EmailInboxLogsSchema.safeParse(rawLogs);
-    const statusResult = ServiceStatusSchema.safeParse(rawStatus);
+    const statusResult = ServiceStatusSchema.partial().safeParse(rawStatus ?? {});
+
+    const logs = logsResult.success ? logsResult.data : [];
+    const services = statusResult.success ? statusResult.data : {};
 
     return c.json({
       success: true,
