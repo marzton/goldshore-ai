@@ -145,8 +145,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/auth
       hono:
-        specifier: ^4.12.3
-        version: 4.12.7
+        specifier: ^4.12.8
+        version: 4.12.8
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20260301.1
@@ -176,11 +176,11 @@ importers:
         specifier: ^2.16.0
         version: 2.16.1
       hono:
-        specifier: ^4.12.4
-        version: 4.12.7
+        specifier: ^4.12.8
+        version: 4.12.8
       openai:
         specifier: ^6.29.0
-        version: 6.29.0(ws@8.18.0)(zod@4.3.6)
+        version: 6.29.0(ws@8.20.0)(zod@4.3.6)
       safe-stable-stringify:
         specifier: ^2.5.0
         version: 2.5.0
@@ -214,10 +214,10 @@ importers:
         version: link:../../packages/utils
       '@hono/zod-validator':
         specifier: ^0.7.6
-        version: 0.7.6(hono@4.12.7)(zod@4.3.6)
+        version: 0.7.6(hono@4.12.8)(zod@4.3.6)
       hono:
-        specifier: ^4.12.4
-        version: 4.12.7
+        specifier: ^4.12.8
+        version: 4.12.8
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -241,8 +241,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/auth
       hono:
-        specifier: ^4.12.4
-        version: 4.12.7
+        specifier: ^4.12.8
+        version: 4.12.8
       zod:
         specifier: ^3.23.0
         version: 3.25.76
@@ -269,8 +269,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/schema
       hono:
-        specifier: ^4.12.4
-        version: 4.12.7
+        specifier: ^4.12.8
+        version: 4.12.8
       postal-mime:
         specifier: 2.7.3
         version: 2.7.3
@@ -2584,8 +2584,8 @@ packages:
   hls.js@1.6.15:
     resolution: {integrity: sha512-E3a5VwgXimGHwpRGV+WxRTKeSp2DW5DI5MWv34ulL3t5UNmyJWCQ1KmLEHbYzcfThfXG8amBL+fCYPneGHC4VA==}
 
-  hono@4.12.7:
-    resolution: {integrity: sha512-jq9l1DM0zVIvsm3lv9Nw9nlJnMNPOcAtsbsgiUhWcFzPE99Gvo6yRTlszSLLYacMeQ6quHD6hMfId8crVHvexw==}
+  hono@4.12.8:
+    resolution: {integrity: sha512-VJCEvtrezO1IAR+kqEYnxUOoStaQPGrCmX3j4wDTNOcD1uRPFpGlwQUIW8niPuvHXaTUxeOUl5MMDGrl+tmO9A==}
     engines: {node: '>=16.9.0'}
 
   html-escaper@3.0.3:
@@ -4814,18 +4814,18 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@hono/node-server@1.19.11(hono@4.12.7)':
+  '@hono/node-server@1.19.11(hono@4.12.8)':
     dependencies:
-      hono: 4.12.7
+      hono: 4.12.8
 
-  '@hono/zod-validator@0.2.2(hono@4.12.7)(zod@3.25.76)':
+  '@hono/zod-validator@0.2.2(hono@4.12.8)(zod@3.25.76)':
     dependencies:
-      hono: 4.12.7
+      hono: 4.12.8
       zod: 3.25.76
 
-  '@hono/zod-validator@0.7.6(hono@4.12.7)(zod@4.3.6)':
+  '@hono/zod-validator@0.7.6(hono@4.12.8)(zod@4.3.6)':
     dependencies:
-      hono: 4.12.7
+      hono: 4.12.8
       zod: 4.3.6
 
   '@humanwhocodes/config-array@0.13.0':
@@ -6156,8 +6156,8 @@ snapshots:
   drizzle-kit@0.20.18:
     dependencies:
       '@esbuild-kit/esm-loader': 2.6.5
-      '@hono/node-server': 1.19.11(hono@4.12.7)
-      '@hono/zod-validator': 0.2.2(hono@4.12.7)(zod@3.25.76)
+      '@hono/node-server': 1.19.11(hono@4.12.8)
+      '@hono/zod-validator': 0.2.2(hono@4.12.8)(zod@3.25.76)
       camelcase: 7.0.1
       chalk: 5.6.2
       commander: 9.5.0
@@ -6166,7 +6166,7 @@ snapshots:
       esbuild-register: 3.6.0(esbuild@0.25.12)
       glob: 8.1.0
       hanji: 0.0.5
-      hono: 4.12.7
+      hono: 4.12.8
       json-diff: 0.9.0
       minimatch: 7.4.9
       semver: 7.7.4
@@ -6785,7 +6785,7 @@ snapshots:
 
   hls.js@1.6.15: {}
 
-  hono@4.12.7: {}
+  hono@4.12.8: {}
 
   html-escaper@3.0.3: {}
 
@@ -7568,9 +7568,9 @@ snapshots:
       regex: 6.1.0
       regex-recursion: 6.0.2
 
-  openai@6.29.0(ws@8.18.0)(zod@4.3.6):
+  openai@6.29.0(ws@8.20.0)(zod@4.3.6):
     optionalDependencies:
-      ws: 8.18.0
+      ws: 8.20.0
       zod: 4.3.6
 
   optionator@0.9.4:
