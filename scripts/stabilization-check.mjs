@@ -175,6 +175,12 @@ function getCiStatus(branch) {
     const state = hasFailed
       ? '❌ FAIL'
       : checks.every((c) => isCompletedCheck(c) && isSuccessfulCheck(c))
+    const hasFailed = checks.some((c) =>
+      ['FAILURE', 'TIMED_OUT', 'CANCELLED'].includes(c.conclusion),
+    );
+    const state = hasFailed
+      ? '❌ FAIL'
+      : checks.every((c) => c.status === 'COMPLETED')
         ? '✅ PASS'
         : '🟡 PENDING';
     return {
@@ -210,6 +216,14 @@ function getCiStatus(branch) {
   const allCompleted =
     commitRuns.length > 0 &&
     commitRuns.every((c) => isCompletedCheck(c) && isSuccessfulCheck(c));
+  const hasFailed = commitRuns.some((c) =>
+    ['failure', 'timed_out', 'cancelled'].includes(
+      String(c.conclusion).toLowerCase(),
+    ),
+  );
+  const allCompleted =
+    commitRuns.length > 0 &&
+    commitRuns.every((c) => String(c.status).toLowerCase() === 'completed');
   const state = hasFailed ? '❌ FAIL' : allCompleted ? '✅ PASS' : '🟡 PENDING';
   return {
     summary: `${state} No active PR found; reporting commit checks for [${headSha.slice(0, 7)}](https://github.com/goldshore/goldshore-ai/commit/${headSha}).`,
