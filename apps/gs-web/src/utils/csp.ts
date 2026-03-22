@@ -58,11 +58,11 @@ const WEB_HEADER_DIRECTIVES = {
 } as const;
 
 export function buildContentSecurityPolicy(
-  directives: ContentSecurityPolicyDirectives,
-): string;
+  directives?: ContentSecurityPolicyDirectives,
+): string {
   return serializeCsp(directives ?? WEB_CSP_DIRECTIVES);
 }
-  directives?: Record<string, readonly string[]>,
+
 export const WEB_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy();
-  return serializeCsp(directives ?? WEB_CSP_DIRECTIVES);
-export const WEB_HEADERS_CSP = serializeCsp(HEADER_CSP_DIRECTIVES);
+export const WEB_HEADERS_CSP = serializeCsp(WEB_HEADER_DIRECTIVES);
+
