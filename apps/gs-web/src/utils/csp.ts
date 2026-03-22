@@ -1,3 +1,9 @@
+export function serializeCsp(directives: ContentSecurityPolicyDirectives): string {
+  return Object.entries(directives)
+    .map(([directive, sources]) => `${directive} ${sources.join(' ')}`)
+    .join('; ');
+}
+
 const SELF = "'self'";
 const UNSAFE_INLINE = "'unsafe-inline'";
 const NONE = "'none'";
@@ -46,9 +52,7 @@ const BASE_CSP_DIRECTIVES = {
  * Meta CSP is consumed by `src/layouts/WebLayout.astro`.
  * Keep it limited to directives supported by `<meta http-equiv="Content-Security-Policy">`.
  */
-const WEB_META_DIRECTIVES = {
-  ...WEB_CSP_DIRECTIVES,
-} as const satisfies ContentSecurityPolicyDirectives;
+const { 'frame-ancestors': _, ...WEB_META_DIRECTIVES } = WEB_CSP_DIRECTIVES;
 
 /**
  * Header CSP is consumed by runtime headers in `src/middleware.ts` and mirrored in `public/_headers`.
@@ -67,4 +71,5 @@ export function buildContentSecurityPolicy(
 
 export const WEB_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy();
 export const WEB_HEADERS_CSP = serializeCsp(WEB_HEADER_DIRECTIVES);
+export const WEB_META_CSP = serializeCsp(WEB_META_DIRECTIVES);
 
