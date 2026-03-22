@@ -18,20 +18,6 @@ const editableDnsRecordFields = {
   priority: z.number().int().optional(),
 };
 
-const editableDnsRecordFieldsSchema = z
-  .object(editableDnsRecordFields)
-  .passthrough()
-  .transform((record) => ({
-    type: record.type,
-    name: record.name,
-    content: record.content,
-    ttl: record.ttl,
-    proxied: record.proxied,
-    comment: record.comment,
-    tags: record.tags,
-    priority: record.priority,
-  }));
-
 type EditableDnsRecordKey = keyof typeof editableDnsRecordFields;
 
 const editableDnsRecordKeys = Object.keys(

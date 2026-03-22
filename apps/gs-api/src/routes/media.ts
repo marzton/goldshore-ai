@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { requirePermission } from '../auth';
 import { Env, Variables } from '../types';
-import sanitizeHtml from 'sanitize-html';
 
 type MediaRecord = {
   id: string;
@@ -28,11 +27,16 @@ const ALLOWED_MIME_TYPES = new Map([
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
-const SVG_DANGEROUS_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)[\s\S]*?>[\s\S]*?<\/\1>/gi;
-const SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)\b[^>]*\/?>/gi;
-const SVG_EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
-const SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*(?:javascript:|data:text\/html)[\s\S]*?\1/gi;
-const SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*(?:javascript:|data:text\/html)[^\s>]*/gi;
+const SVG_DANGEROUS_TAGS_REGEX =
+  /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)[\s\S]*?>[\s\S]*?<\/\1>/gi;
+const SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX =
+  /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)\b[^>]*\/?>/gi;
+const SVG_EVENT_HANDLER_ATTR_REGEX =
+  /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX =
+  /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*(?:javascript:|data:text\/html)[\s\S]*?\1/gi;
+const SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX =
+  /\s+(?:href|xlink:href|src)\s*=\s*(?:javascript:|data:text\/html)[^\s>]*/gi;
 
 const sanitizeSvg = (input: string): string => {
   let current = input;
@@ -48,139 +52,7 @@ const sanitizeSvg = (input: string): string => {
       .replace(SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX, '');
   } while (current !== previous);
 
-  // Apply a final pass with a well-tested sanitizer to ensure that
-  // any residual scriptable content (e.g. <script> tags or dangerous
-  // attributes) is removed and cannot reappear after regex replacements.
-  const fullySanitized = sanitizeHtml(current, {
-    allowedTags: [
-      'svg',
-      'g',
-      'path',
-      'rect',
-      'circle',
-      'ellipse',
-      'line',
-      'polyline',
-      'polygon',
-      'text',
-      'tspan',
-      'defs',
-      'lineargradient',
-      'radialgradient',
-      'stop',
-      'clipPath',
-      'mask',
-      'use',
-      'symbol',
-      'marker',
-      'pattern',
-      'desc',
-      'title',
-      'metadata',
-    ],
-    allowedAttributes: {
-      '*': [
-        'id',
-        'class',
-        'style',
-        'transform',
-        'opacity',
-        'fill',
-        'fill-opacity',
-        'fill-rule',
-        'stroke',
-        'stroke-width',
-        'stroke-opacity',
-        'stroke-linecap',
-        'stroke-linejoin',
-        'stroke-miterlimit',
-        'stroke-dasharray',
-        'stroke-dashoffset',
-        'visibility',
-        'display',
-        'clip-path',
-        'mask',
-        'filter',
-      ],
-      svg: [
-        'width',
-        'height',
-        'viewBox',
-        'preserveAspectRatio',
-        'xmlns',
-        'xmlns:xlink',
-        'version',
-        'baseProfile',
-        'contentScriptType',
-        'contentStyleType',
-        'x',
-        'y',
-      ],
-      path: ['d'],
-      rect: ['x', 'y', 'width', 'height', 'rx', 'ry'],
-      circle: ['cx', 'cy', 'r'],
-      ellipse: ['cx', 'cy', 'rx', 'ry'],
-      line: ['x1', 'y1', 'x2', 'y2'],
-      polyline: ['points'],
-      polygon: ['points'],
-      text: ['x', 'y', 'dx', 'dy', 'rotate', 'textLength', 'lengthAdjust'],
-      tspan: ['x', 'y', 'dx', 'dy', 'rotate', 'textLength', 'lengthAdjust'],
-      lineargradient: [
-        'x1',
-        'y1',
-        'x2',
-        'y2',
-        'gradientUnits',
-        'gradientTransform',
-        'spreadMethod',
-        'xlink:href',
-      ],
-      radialgradient: [
-        'cx',
-        'cy',
-        'r',
-        'fx',
-        'fy',
-        'fr',
-        'gradientUnits',
-        'gradientTransform',
-        'spreadMethod',
-        'xlink:href',
-      ],
-      stop: ['offset', 'stop-color', 'stop-opacity'],
-      use: ['x', 'y', 'width', 'height', 'xlink:href', 'href'],
-      symbol: ['viewBox', 'preserveAspectRatio'],
-      marker: [
-        'viewBox',
-        'preserveAspectRatio',
-        'refX',
-        'refY',
-        'markerUnits',
-        'markerWidth',
-        'markerHeight',
-        'orient',
-      ],
-      pattern: [
-        'viewBox',
-        'preserveAspectRatio',
-        'x',
-        'y',
-        'width',
-        'height',
-        'patternUnits',
-        'patternContentUnits',
-        'patternTransform',
-        'xlink:href',
-      ],
-    },
-    allowedSchemes: ['http', 'https', 'data'],
-    allowedSchemesByTag: {
-      use: ['http', 'https'],
-    },
-    allowProtocolRelative: true,
-  });
-
-  return fullySanitized;
+  return current;
 };
 
 const isUploadFileLike = (value: unknown): value is UploadFileLike => {
@@ -258,7 +130,10 @@ media.get('/:id', requirePermission('media:read'), async (c) => {
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
 
   // Sentinel: Enforce strict CSP to mitigate SVG XSS
-  headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; object-src 'none'; sandbox");
+  headers.set(
+    'Content-Security-Policy',
+    "default-src 'none'; script-src 'none'; object-src 'none'; sandbox",
+  );
 
   return new Response(object.body, { headers });
 });
@@ -267,8 +142,10 @@ media.post('/upload', requirePermission('media:write'), async (c) => {
   const formData = await c.req.formData();
   const file = formData.get('file');
 
-  if (!isUploadFileLike(file)) return c.json({ error: 'Missing file upload' }, 400);
-  if (file.size > MAX_FILE_SIZE) return c.json({ error: 'File too large' }, 413);
+  if (!isUploadFileLike(file))
+    return c.json({ error: 'Missing file upload' }, 400);
+  if (file.size > MAX_FILE_SIZE)
+    return c.json({ error: 'File too large' }, 413);
 
   const filename = file.name || 'upload';
   const extension = filename.split('.').pop()?.toLowerCase() ?? '';

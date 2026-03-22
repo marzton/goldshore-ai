@@ -132,37 +132,40 @@ const proofPoints = [
           </ul>
         </aside>
       </div>
+    </section>
 
     <section class="signal-strip gs-shell-section" aria-label="Signal strip">
       {signals.map((signal) => (
-        <div class="signal-tile">
+        <div class="signal-tile" key={signal.label}>
           <span>{signal.label}</span>
           <strong>{signal.value}</strong>
         </div>
       ))}
-      <div class="metrics-shell gs-shell-section">
-        <div class="metrics-grid" data-metrics-grid>
-          {
-            trustMetrics.map((metric) => (
-              <article
-                class="signal-tile signal-tile--loading"
-                aria-live="polite"
-              >
-                <div class="signal-tile__header">
-                  <span>{metric.label}</span>
-                  <small>{metric.context}</small>
-                </div>
-                <strong>{metric.value}</strong>
-                <p>{metric.detail}</p>
-                {metric.href && (
-                  <a href={metric.href} class="signal-link">
-                    {metric.hrefLabel} →
-                  </a>
-                )}
-              </article>
-            ))
-          }
-        </div>
+    </section>
+
+    <section class="metrics-shell gs-shell-section">
+      <div class="metrics-grid" data-metrics-grid>
+        {
+          trustMetrics.map((metric) => (
+            <article
+              class="signal-tile signal-tile--loading"
+              aria-live="polite"
+              key={metric.label}
+            >
+              <div class="signal-tile__header">
+                <span>{metric.label}</span>
+                <small>{metric.context}</small>
+              </div>
+              <strong>{metric.value}</strong>
+              <p>{metric.detail}</p>
+              {metric.href && (
+                <a href={metric.href} class="signal-link">
+                  {metric.hrefLabel} →
+                </a>
+              )}
+            </article>
+          ))
+        }
       </div>
     </section>
 
@@ -183,7 +186,7 @@ const proofPoints = [
       </div>
       <div class="capability-grid">
         {capabilities.map((capability) => (
-          <article class="capability-card">
+          <article class="capability-card" key={capability.title}>
             <h3>{capability.title}</h3>
             <p>{capability.body}</p>
           </article>
@@ -221,7 +224,7 @@ const proofPoints = [
       </div>
       <div class="proof-grid">
         {proofPoints.map((point) => (
-          <article class="proof-card">
+          <article class="proof-card" key={point.title}>
             <h3>{point.title}</h3>
             <p>{point.body}</p>
           </article>
@@ -428,12 +431,6 @@ const proofPoints = [
       position: absolute;
       inset: 18% auto auto clamp(1rem, 7vw, 6rem);
       z-index: 1;
-    }
-
-    .gs-logo-reactive {
-      width: clamp(72px, 11vw, 120px);
-      height: auto;
-      will-change: transform, filter;
     }
 
     .hero-shell {
@@ -853,21 +850,6 @@ const proofPoints = [
 
       .hero-grid {
         background-size: 52px 52px;
-      }
-
-      .hero-lattice {
-        inset: 8% 4% 14%;
-      }
-
-      .hero-engine {
-        --engine-size: min(44vw, 188px);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .hero-button {
-        transition: none;
-        animation: none;
       }
     }
   </style>
