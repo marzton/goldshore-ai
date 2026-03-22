@@ -55,8 +55,8 @@ const KNOWN_WORKFLOWS = [
   'deploy-frontend.yml',
   'deploy-gs-agent.yml',
   'deploy-gs-api.yml',
-  'deploy-gs-control.yml',
-  'deploy-gs-gateway.yml',
+  'deploy-gs-control.yml.disabled',
+  'deploy-gs-gateway.yml.disabled',
   'deploy-gs-mail.yml',
   'lockfile-guard.yml',
   'maintenance-gs-sync.yml',
@@ -90,6 +90,7 @@ const ALLOWED_ACTIONS = [
   'stefanzweifel/git-auto-commit-action',
   'NeuraLegion/run-scan',
   'SonarSource/sonarcloud-github-action',
+  'actions/ai-inference',
 ];
 
 // --- State Tracking ---
