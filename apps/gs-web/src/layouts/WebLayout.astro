@@ -1,6 +1,5 @@
 ---
 import Logo from '../components/brand/Logo.astro';
-import SiteNav from '../components/SiteNav.astro';
 import '../styles/global.css';
 import { WEB_META_CSP } from '../utils/csp';
 
@@ -18,6 +17,7 @@ const {
   description = 'GoldShore AI',
   currentPath = Astro.url.pathname,
 } = Astro.props;
+
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
 const logoAssetPath = '/logo.svg';
 const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
@@ -52,112 +52,49 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
     <a href="#content" class="skip-link">Skip to content</a>
     <div class="gs-page-shell">
       <header class="header" data-menu-open="false">
-        <a href="/" class="gs-logo-link" aria-label="GoldShore home">
-          <Logo class="gs-logo" title="GoldShore" />
-        </a>
-
-        <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <nav id="primary-navigation" class="menu-panel" aria-label="Primary navigation">
-          <div class="menu-panel__inner">
-            {navLinks.map((link) => (
-              <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
-                {link.label}
-              </a>
-            ))}
         <div class="header__inner">
-          <a href="/" class="gs-logo-link" aria-label="GoldShore home">
-            <Logo class="gs-logo" title="GoldShore" />
-            <div class="brand-lockup">
-              <strong>GoldShore</strong>
-              <span>Institutional AI systems</span>
-            </div>
+          <a href="/" class="gs-logo-link" aria-label="Gold Shore home">
+            <Logo class="gs-logo gs-logo--lockup" title="Gold Shore" variant="lockup" />
           </a>
 
           <nav class="desktop-nav" aria-label="Primary navigation">
             <div class="desktop-nav__links">
-              {
-                navLinks.map((link) => (
-                  <a
-                    href={link.href}
-                    aria-current={
-                      currentPath === link.href ? 'page' : undefined
-                    }
-                  >
-                    {link.label}
-                  </a>
-                ))
-              }
+              {navLinks.map((link) => (
+                <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
+                  {link.label}
+                </a>
+              ))}
             </div>
             <a href="/contact" class="header-cta">Request Briefing</a>
           </nav>
 
-          <button
-            class="menu-button"
-            type="button"
-            aria-expanded="false"
-            aria-controls="primary-navigation"
-            aria-label="Open navigation"
-          >
+          <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation">
             <span></span>
             <span></span>
             <span></span>
           </button>
         </div>
 
-        <nav
-          id="primary-navigation"
-          class="menu-panel"
-          aria-label="Mobile navigation"
-        >
+        <nav id="primary-navigation" class="menu-panel" aria-label="Mobile navigation">
           <div class="menu-panel__inner">
             <div class="menu-panel__header">
-              <a
-                href="/"
-                class="gs-logo-link gs-logo-link--mobile"
-                aria-label="GoldShore home"
-              >
-                <Logo class="gs-logo" title="GoldShore" />
-                <div class="brand-lockup">
-                  <strong>GoldShore</strong>
-                  <span>Institutional AI systems</span>
-                </div>
+              <a href="/" class="gs-logo-link gs-logo-link--mobile" aria-label="Gold Shore home">
+                <Logo class="gs-logo gs-logo--lockup" title="Gold Shore" variant="lockup" />
               </a>
-              <button
-                class="menu-close"
-                type="button"
-                aria-label="Close navigation"
-              >
-                ×
-              </button>
+              <button class="menu-close" type="button" aria-label="Close navigation">×</button>
             </div>
 
             <div class="menu-panel__links">
-              {
-                navLinks.map((link) => (
-                  <a
-                    href={link.href}
-                    aria-current={
-                      currentPath === link.href ? 'page' : undefined
-                    }
-                  >
-                    {link.label}
-                  </a>
-                ))
-              }
+              {navLinks.map((link) => (
+                <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
+                  {link.label}
+                </a>
+              ))}
             </div>
 
             <div class="menu-panel__actions">
-              <a href="/contact" class="header-cta header-cta--mobile"
-                >Request Briefing</a
-              >
-              <a href="/developer" class="menu-secondary-link"
-                >Open Developer Hub</a
-              >
+              <a href="/contact" class="header-cta header-cta--mobile">Request Briefing</a>
+              <a href="/developer" class="menu-secondary-link">Open Developer Hub</a>
             </div>
           </div>
         </nav>
@@ -170,18 +107,15 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
       <footer class="gs-footer">
         <div class="gs-footer__inner">
           <div>
-            <Logo class="gs-logo gs-logo--footer" title="GoldShore" />
-            <p>Infrastructure for high-trust AI, risk tooling, and resilient operator systems.</p>
             <div class="footer-brand">
-              <Logo class="gs-logo gs-logo--footer" title="GoldShore" />
+              <Logo class="gs-logo gs-logo--footer" title="Gold Shore" />
               <div class="brand-lockup brand-lockup--footer">
-                <strong>GoldShore</strong>
+                <strong>Gold Shore</strong>
                 <span>Operational AI, observability, and control systems</span>
               </div>
             </div>
             <p>
-              Infrastructure for high-trust AI, risk tooling, and resilient
-              operator systems.
+              Infrastructure for high-trust AI, risk tooling, and resilient operator systems.
             </p>
           </div>
           <div class="gs-footer__links">
@@ -231,10 +165,7 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
             return;
           }
 
-          if (
-            target.closest('.menu-panel__links a') ||
-            target.classList.contains('menu-panel')
-          ) {
+          if (target.closest('.menu-panel__links a') || target.classList.contains('menu-panel')) {
             setMenu(false);
           }
         });
@@ -289,7 +220,7 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
         position: sticky;
         top: 0;
         z-index: 1100;
-        padding: 0 clamp(1rem, 3vw, 2rem);
+        padding-inline: clamp(1rem, 3vw, 2rem);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         background: rgba(8, 12, 22, 0.78);
@@ -303,11 +234,6 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 1rem clamp(1rem, 3vw, 2rem);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        background: rgba(8, 12, 22, 0.65);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         gap: 1rem;
       }
 
@@ -325,10 +251,14 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
         flex-shrink: 0;
       }
 
+      .gs-logo--lockup {
+        width: clamp(220px, 24vw, 320px);
+      }
+
       .gs-logo--footer {
         width: 28px;
-        margin-bottom: 0.85rem;
-       }
+      }
+
       .brand-lockup {
         display: grid;
         gap: 0.1rem;
@@ -336,7 +266,8 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
 
       .brand-lockup strong {
         font-size: 0.98rem;
-        letter-spacing: 0.02em;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
       }
 
       .brand-lockup span {
@@ -395,11 +326,7 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
         padding: 0.82rem 1.2rem;
         border-radius: 999px;
         text-decoration: none;
-        background: linear-gradient(
-          135deg,
-          rgba(90, 162, 255, 0.28),
-          rgba(90, 162, 255, 0.16)
-        );
+        background: linear-gradient(135deg, rgba(90, 162, 255, 0.28), rgba(90, 162, 255, 0.16));
         border: 1px solid rgba(90, 162, 255, 0.34);
         color: var(--gs-text);
         font-weight: 700;
@@ -410,11 +337,7 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
       .header-cta:hover,
       .header-cta:focus-visible {
         transform: translateY(-1px);
-        background: linear-gradient(
-          135deg,
-          rgba(90, 162, 255, 0.34),
-          rgba(90, 162, 255, 0.2)
-        );
+        background: linear-gradient(135deg, rgba(90, 162, 255, 0.34), rgba(90, 162, 255, 0.2));
       }
 
       .menu-button,
@@ -574,10 +497,7 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
         display: inline-flex;
         align-items: center;
         gap: 0.8rem;
-      }
-
-      .gs-logo--footer {
-        width: 28px;
+        margin-bottom: 0.85rem;
       }
 
       .gs-footer p {
@@ -620,6 +540,10 @@ const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
 
         .menu-button {
           display: inline-grid;
+        }
+
+        .gs-logo--lockup {
+          width: clamp(190px, 44vw, 260px);
         }
       }
 
