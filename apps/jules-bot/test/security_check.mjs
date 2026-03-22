@@ -105,7 +105,9 @@ try {
   }
 
 } catch (e) {
-  console.error(e);
+  const rawErrorMessage = (e && (e.stack || e.message)) ? String(e.stack || e.message) : String(e);
+  const sanitizedErrorMessage = rawErrorMessage.replace(/[\r\n]/g, ' ');
+  console.error(`Error in security_check: ${sanitizedErrorMessage}`);
   exitCode = 1;
 } finally {
   serverProcess.kill();

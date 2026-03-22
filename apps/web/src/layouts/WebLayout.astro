@@ -7,7 +7,6 @@ const navLinks = [
   { href: '/about', label: 'About' },
   { href: '/services', label: 'Services' },
   { href: '/team', label: 'Team' },
-  { href: '/super-bowl-boxes', label: 'Super Bowl Boxes' },
   { href: '/contact', label: 'Contact' },
   { href: '/apps/risk-radar', label: 'Risk Radar' },
 ];
@@ -18,6 +17,7 @@ const {
   currentPath = Astro.url.pathname,
 } = Astro.props;
 const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.url.pathname } = Astro.props;
+
 const logoSrc = '/logo.svg';
 
 const faviconPng32 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACRElEQVR42mNgGAWjgBzAyMQiYJR7nFcrZvmAuYFD2jqHhU/eYsAcwC5mEMHMKaIyMDHAzM4jZFX/nFAUsPBIqgAdKUN1B3ApejSLOPT8B2EWHikD7I5k4xB1m31bMmjLf3Hfle9FHHqPA6MthGLLmTiEFITtOr7DHMCvn74bmzoetZAKkOUwLOG/7jszl5gCxQ4ABTvMchhmFVB2QHWkoATI18gO4NWKbabYclZ+RRt0y0FYwKToPLI6fqO82ciWi3stfs7IwsFDsQMEjAtOY3MACINyBcSRSgaSgRt/IzuAU94lgfJ8L2megstyEBY0r7gNUids33UY2XIRx/7TlGc7Fk4BULbD5wBe7bjVnDJ2EciWgzCrkDrlhRW3klc7PstBuQKY53XEPObdR7ZcwLR4McWWg0o75GyHDYMcyKMRXoOR7ahRCIGCFp/loKgBRRF6tuPRjGqgPNsB8zc+y0EYlDhBakWcJ52HWS7mueAxqCSkvMoF5m98loOyJUw5n37GZHi2k3WMoTzbSVlmEPI9qGCC1w8KbingbAcs86mT7awbX2O12L7rv6BJ7n8B/aT3nNJm82GYR9l9u7BV1X9etYDDyOIcYjqkpwVuZd9u7L7u/i9olPGfXzucJMzCLe5CUtxzybvUAIO0AR3z68U/J9VyEOZR8bjMwMjIQlmaAAYlOZbDMJugcgZl7QBWbgVcmFVA0UHcZ9lvYMm3GZcaYG0oQbMmmoBZ2XJQDgC1gOjePgS2jMF1AAxTpd4fBSMKAABhq6yBi637mAAAAABJRU5ErkJggg==';
