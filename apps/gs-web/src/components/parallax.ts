@@ -40,27 +40,6 @@ export const initParallax = (options: ParallaxOptions = {}) => {
     return () => undefined;
   }
 
-  // Bolt: Use IntersectionObserver to skip updates for off-screen elements
-  const observer = new IntersectionObserver((entries) => {
-    let needsUpdate = false;
-    entries.forEach((entry) => {
-      const layer = layers.find((candidate) => candidate.element === entry.target);
-      if (layer) {
-        if (layer.isVisible !== entry.isIntersecting) {
-          layer.isVisible = entry.isIntersecting;
-          needsUpdate = true;
-        }
-      }
-    });
-
-    // Trigger update if visibility changed (e.g. initial load)
-    if (needsUpdate) {
-      updateParallax();
-    }
-  }, { rootMargin: '200px' });
-
-  layers.forEach((layer) => observer.observe(layer.element));
-
   let ticking = false;
 
   const updateParallax = () => {

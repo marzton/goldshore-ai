@@ -8,7 +8,7 @@ import {
 
 const STAR_COUNT = 16;
 
-let cleanupParallax: (() => void) | null = null;
+let cleanupParallax: (() => void) | undefined;
 
 const initializeHeaderInteractions = () => {
   const header = document.querySelector<HTMLElement>('.gs-header');
@@ -161,12 +161,10 @@ const cleanupShootingStars = () => {
 
 const cleanupPageBehaviors = () => {
   cleanupParallax?.();
-  cleanupParallax = null;
+  cleanupParallax = undefined;
   cleanupShootingStars();
   cleanupUI();
 };
-
-let cleanupParallax: (() => void) | undefined;
 
 const initCodexUI = () => {
   cleanupParallax?.();
@@ -174,7 +172,6 @@ const initCodexUI = () => {
   initTilt('[data-tilt]');
   initBriefingModal();
 
-  cleanupParallax?.();
   cleanupParallax = initParallax();
 };
 
