@@ -7,6 +7,7 @@ import '../styles/web-layout.css';
 import { GSButton } from '@goldshore/ui';
 import SiteFooter from '../components/SiteFooter.astro';
 import { getMetaContentSecurityPolicy } from '../security/policy';
+import { HTML_CSP_META_FALLBACK } from '../security/policy';
 
 const navLinks = [
   { href: '/', label: 'Home' },
