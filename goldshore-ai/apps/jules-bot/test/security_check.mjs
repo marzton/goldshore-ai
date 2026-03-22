@@ -117,15 +117,3 @@ try {
   serverProcess.kill();
   process.exit(exitCode);
 }
-
-function sanitizeLogMessage(message) {
-  // Ensure we are working with a string
-  let msg = String(message);
-  // Remove control characters, including newlines and Unicode line separators
-  msg = msg.replace(/[\x00-\x1F\x7F\u2028\u2029]+/g, ' ');
-  // Restrict to a conservative printable subset; replace others with '?'
-  msg = msg.replace(/[^ -~]+/g, '?');
-  // Collapse multiple spaces and trim
-  msg = msg.replace(/\s+/g, ' ').trim();
-  return msg;
-}
