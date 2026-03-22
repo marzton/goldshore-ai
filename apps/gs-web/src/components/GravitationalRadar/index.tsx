@@ -3,7 +3,6 @@ import type { FC } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
 // As per the spec, RKLB is the fixed origin. All other variables are satellites.
-const RKLB_ORIGIN = { x: 0, y: 0 };
 
 // Placeholder for Supabase credentials - should be in environment variables
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
