@@ -115,5 +115,17 @@ try {
   console.error('Error during security check: [details: ' + safeMessage + ']');
 } finally {
   serverProcess.kill();
-  process.exit(0); // Always exit 0 to not break the tool chain, rely on logs
+  process.exit(exitCode);
+}
+
+function sanitizeLogMessage(message) {
+  // Ensure we are working with a string
+  let msg = String(message);
+  // Remove control characters, including newlines and Unicode line separators
+  msg = msg.replace(/[\x00-\x1F\x7F\u2028\u2029]+/g, ' ');
+  // Restrict to a conservative printable subset; replace others with '?'
+  msg = msg.replace(/[^ -~]+/g, '?');
+  // Collapse multiple spaces and trim
+  msg = msg.replace(/\s+/g, ' ').trim();
+  return msg;
 }
