@@ -49,7 +49,6 @@ internal.get('/inbox-status', async (c) => {
     const statusResult = ServiceStatusSchema.partial().safeParse(rawStatus ?? {});
 
     const logs = logsResult.success ? logsResult.data : [];
-    const services = statusResult.success ? statusResult.data : {};
 
     return c.json({
       success: true,
