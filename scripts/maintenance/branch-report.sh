@@ -34,7 +34,7 @@ git fetch --all --prune
       --json number,title,headRefName,baseRefName,updatedAt,url \
       --jq '.[] | "#\(.number) \(.headRefName) -> \(.baseRefName) | \(.updatedAt) | \(.title) | \(.url)"'
   else
-    echo "gh CLI is not available on this runner."
+    echo "gh CLI is not available on this runner - open pull request information will be omitted from this report."
   fi
   echo
   echo "## Recent commits for ${LOG_REF}"
