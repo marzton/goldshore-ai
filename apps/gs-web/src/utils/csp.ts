@@ -2,29 +2,22 @@ const SELF = "'self'";
 const UNSAFE_INLINE = "'unsafe-inline'";
 const NONE = "'none'";
 
+type ContentSecurityPolicyDirectives = Record<string, readonly string[]>;
+
 export const GOLDSHORE_API_ORIGINS = [
   'https://api.goldshore.ai',
   'https://api-preview.goldshore.ai',
 ] as const;
 
 /**
- * Browser runtime call sites that currently require cross-origin `connect-src`.
+ * Approved external GoldShore API origins for browser runtime requests.
  *
- * - `src/components/TryItConsole.astro` calls `PUBLIC_API` from the browser.
- * - Preview deployments point `PUBLIC_API` at `https://api-preview.goldshore.ai`.
- *
- * Same-origin browser calls such as `/api/contact` and `/api/docs-search` remain covered by `'self'`.
- * Server-side Astro fetches (for example `src/pages/[...path].astro`) do not use `connect-src`.
+ * Keep this list limited to browser-visible `PUBLIC_API` targets. Server-side Astro
+ * fetches can talk to additional origins without expanding browser `connect-src`.
  */
-export const WEB_CONNECT_SRC = [
-  SELF,
-  ...GOLDSHORE_API_ORIGINS,
-] as const;
+export const WEB_CONNECT_SRC = [SELF, ...GOLDSHORE_API_ORIGINS] as const;
 
-export const BROWSER_CONNECT_SRC = [
-  SELF,
-  ...GOLDSHORE_API_ORIGINS,
-] as const;
+export const BROWSER_CONNECT_SRC = WEB_CONNECT_SRC;
 
 export const WEB_CSP_DIRECTIVES = {
   'default-src': [SELF],
@@ -38,35 +31,40 @@ export const WEB_CSP_DIRECTIVES = {
   'base-uri': [SELF],
 } as const;
 
-export function serializeCsp(directives: Record<string, readonly string[]>): string {
-  return Object.entries(directives)
-    .map(([directive, values]) => `${directive} ${values.join(' ')}`)
-    .join('; ');
-}
-
-export function buildContentSecurityPolicy(
-  directives: Record<string, readonly string[]> = WEB_CSP_DIRECTIVES,
-): string {
-  return serializeCsp(directives);
-}
-
 const BASE_CSP_DIRECTIVES = {
   'default-src': [SELF],
   'script-src': [SELF, UNSAFE_INLINE],
-  'style-src': [SELF, UNSAFE_INLINE, 'https://fonts.googleapis.com'],
+  'style-src': [SELF, UNSAFE_INLINE, 'https://fonts.googleapis.com', 'https://unpkg.com'],
   'font-src': [SELF, 'https://fonts.gstatic.com'],
   'img-src': [SELF, 'data:'],
   'connect-src': [...WEB_CONNECT_SRC],
   'object-src': [NONE],
   'base-uri': [SELF],
+} as const satisfies ContentSecurityPolicyDirectives;
+
+/**
+ * Meta CSP is consumed by `src/layouts/WebLayout.astro`.
+ * Keep it limited to directives supported by `<meta http-equiv="Content-Security-Policy">`.
+ */
+const WEB_META_DIRECTIVES = {
+  ...WEB_CSP_DIRECTIVES,
+} as const satisfies ContentSecurityPolicyDirectives;
+
+/**
+ * Header CSP is consumed by runtime headers in `src/middleware.ts` and mirrored in `public/_headers`.
+ * Header delivery can enforce `frame-ancestors`, which meta CSP cannot.
+ */
+const WEB_HEADER_DIRECTIVES = {
+  ...WEB_CSP_DIRECTIVES,
+  'frame-ancestors': [NONE],
 } as const;
 
-const HEADER_CSP_DIRECTIVES = {
-  ...BASE_CSP_DIRECTIVES,
-  'style-src': [...BASE_CSP_DIRECTIVES['style-src'], 'https://unpkg.com'],
-  'frame-ancestors': [NONE],
-};
+export function buildContentSecurityPolicy(
+  directives?: ContentSecurityPolicyDirectives,
+): string {
+  return serializeCsp(directives ?? WEB_CSP_DIRECTIVES);
+}
 
 export const WEB_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy();
-export const WEB_META_CSP = serializeCsp(BASE_CSP_DIRECTIVES);
-export const WEB_HEADERS_CSP = serializeCsp(HEADER_CSP_DIRECTIVES);
+export const WEB_HEADERS_CSP = serializeCsp(WEB_HEADER_DIRECTIVES);
+

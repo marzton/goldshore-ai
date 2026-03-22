@@ -11,7 +11,8 @@ async function main() {
 }
 
 main().catch((error) => {
-  if (error.message.includes('Missing AI Gateway configuration')) {
+  const message = typeof error?.message === 'string' ? error.message : '';
+  if (message.includes('Missing AI Gateway configuration')) {
     console.error(
       'Gateway test failed: missing CF_GATEWAY_URL/CF_AIG_TOKEN. Copy apps/gs-api/.env.example to apps/gs-api/.env and set real values.',
     );
