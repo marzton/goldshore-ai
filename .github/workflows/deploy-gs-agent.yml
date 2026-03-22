@@ -1,0 +1,56 @@
+name: Deploy GS Agent Worker (gs-agent)
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+tsconfig = "tsconfig.json"
+
+[ai]
+binding = "AI"
+
+[[queues.consumers]]
+queue = "goldshore-jobs"
+max_batch_size = 10
+max_batch_timeout = 5
+
+[[kv_namespaces]]
+binding = "AGENT_KV"
+id = "9cc2209906a94851b704be57543987a9"
+
+[vars]
+ENV = "production"
+CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
+CLOUDFLARE_ACCESS_AUDIENCE = "97f797aab186a591099e54b9973e4e1ffd21aa13f5ae0e80a42dba09b674f254"
+
+[env.dev]
+name = "gs-agent-dev"
+
+[env.dev.vars]
+ENV = "development"
+
+[env.preview]
+name = "gs-agent-preview"
+
+[env.preview.vars]
+ENV = "preview"
+CLOUDFLARE_TEAM_DOMAIN = "__OPTIONAL__"
+CLOUDFLARE_ACCESS_AUDIENCE = "__OPTIONAL__"
+
+[env.prod]
+name = "gs-agent"
+
+[env.prod.vars]
+ENV = "production"
+CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
+CLOUDFLARE_ACCESS_AUDIENCE = "97f797aab186a591099e54b9973e4e1ffd21aa13f5ae0e80a42dba09b674f254"
+
+[env.prod.ai]
+binding = "AI"
+
+[[env.prod.queues.consumers]]
+queue = "goldshore-jobs"
+max_batch_size = 10
+max_batch_timeout = 5
+
+[[env.prod.kv_namespaces]]
+binding = "AGENT_KV"
+id = "9cc2209906a94851b704be57543987a9"
