@@ -1,7 +1,6 @@
 # apps/gs-gateway
 
 ## Overview
-The `gs-gateway` worker is the routing and queue ingress layer for GoldShore on Cloudflare Workers.
 The `gs-gateway` worker is the GoldShore edge gateway. It applies CORS and Cloudflare Access checks, enforces integration request headers, serves a small set of gateway-native endpoints, and proxies unmatched traffic to `gs-api`.
 
 ## Source of truth
@@ -15,6 +14,8 @@ This README is maintained manually. No generator for this worker README was foun
 From `apps/gs-gateway/wrangler.toml`:
 
 - Worker name: `gs-gateway`
+- Entry point: `src/index.ts`
+- Compatibility date: `2025-01-10`
 - Routes: `agent.goldshore.ai/*`, `gw.goldshore.ai/*`, `gateway.goldshore.ai/*`
 - Compatibility date: `2025-01-10`
 - Bindings: `GATEWAY_KV` (KV), `JOB_QUEUE` (Queues producer), `API` (service binding), `AI` (AI binding)
