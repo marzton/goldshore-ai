@@ -1,0 +1,52 @@
+# Manual operations guide:
+# - Use this workflow after secret rotation, configuration drift, or incident response to reconcile Cloudflare KV/system state.
+# - Do not use it for service-token endpoint checks; those remain in maintenance-gs-sync.yml.
+name: "Maintenance: Cloudflare Infra Reconcile"
+run-name: "Reconcile infra • ${{ inputs.reason }} • @${{ github.actor }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Why this Cloudflare reconciliation is being run (for example: post-secret-rotation or drift-repair)."
+        required: true
+        default: "post-secret-rotation"
+        type: string
+      confirm_apply:
+        description: "Set to true to confirm this workflow may write Cloudflare KV/system configuration. This workflow is for infra reconciliation only."
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  reconcile-infra:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirm maintenance intent
+        if: ${{ !inputs.confirm_apply }}
+        run: |
+          echo "Set confirm_apply=true to run Cloudflare infra reconciliation."
+          exit 1
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - name: Install pnpm
+        run: npm install -g pnpm@9
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Cloudflare infrastructure reconciliation
+        run: pnpm sync:infra
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GS_KV_NAMESPACE_ID: ${{ secrets.GS_KV_NAMESPACE_ID }}

@@ -1,4 +1,8 @@
-name: Route Collision Check
+# Manual operations guide:
+# - Use this workflow to regenerate the route ownership matrix and verify there are no collisions before or after routing changes.
+# - Manual runs are useful when operators want the guard output without opening a pull request.
+name: "Manual Guard: Route Collision Check"
+run-name: "Route collision check • @${{ github.actor }}"
 
 permissions:
   contents: read
