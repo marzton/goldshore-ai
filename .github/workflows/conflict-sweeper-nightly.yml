@@ -1,0 +1,24 @@
+name: Conflict Sweeper Nightly
+
+on:
+  workflow_call:
+
+jobs:
+  conflict-sweeper:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run integration conflict sweeper
+        run: scripts/integration-conflict-sweeper.sh --dry-run
