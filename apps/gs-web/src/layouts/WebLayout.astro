@@ -64,12 +64,8 @@ const mobileNavId = 'mobile-navigation';
     <div class="gs-page-shell">
       <header class="header" data-menu-open="false">
         <div class="header__inner">
-          <a href="/" class="gs-logo-link" aria-label="GoldShore home">
-            <Logo class="gs-logo" title="GoldShore" />
-            <div class="brand-lockup">
-              <strong>GoldShore</strong>
-              <span>Institutional AI systems</span>
-            </div>
+          <a href="/" class="gs-logo-link" aria-label="Gold Shore home">
+            <Logo class="gs-logo gs-logo--lockup" title="Gold Shore" variant="lockup" />
           </a>
 
           <nav class="desktop-nav" aria-label="Primary navigation">
@@ -133,9 +129,9 @@ const mobileNavId = 'mobile-navigation';
         <div class="gs-footer__inner">
           <div class="footer-brand-copy">
             <div class="footer-brand">
-              <Logo class="gs-logo gs-logo--footer" title="GoldShore" />
+              <Logo class="gs-logo gs-logo--footer" title="Gold Shore" />
               <div class="brand-lockup brand-lockup--footer">
-                <strong>GoldShore</strong>
+                <strong>Gold Shore</strong>
                 <span>Operational AI, observability, and control systems</span>
               </div>
             </div>
@@ -251,7 +247,7 @@ const mobileNavId = 'mobile-navigation';
         position: sticky;
         top: 0;
         z-index: 1100;
-        padding: 0 clamp(1rem, 3vw, 2rem);
+        padding-inline: clamp(1rem, 3vw, 2rem);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         background: rgba(8, 12, 22, 0.78);
@@ -265,11 +261,6 @@ const mobileNavId = 'mobile-navigation';
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 1rem clamp(1rem, 3vw, 2rem);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        background: rgba(8, 12, 22, 0.65);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         gap: 1rem;
       }
 
@@ -287,6 +278,10 @@ const mobileNavId = 'mobile-navigation';
         flex-shrink: 0;
       }
 
+      .gs-logo--lockup {
+        width: clamp(220px, 24vw, 320px);
+      }
+
       .gs-logo--footer {
         width: 28px;
       }
@@ -298,7 +293,8 @@ const mobileNavId = 'mobile-navigation';
 
       .brand-lockup strong {
         font-size: 0.98rem;
-        letter-spacing: 0.02em;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
       }
 
       .brand-lockup span {
@@ -357,11 +353,7 @@ const mobileNavId = 'mobile-navigation';
         padding: 0.82rem 1.2rem;
         border-radius: 999px;
         text-decoration: none;
-        background: linear-gradient(
-          135deg,
-          rgba(90, 162, 255, 0.28),
-          rgba(90, 162, 255, 0.16)
-        );
+        background: linear-gradient(135deg, rgba(90, 162, 255, 0.28), rgba(90, 162, 255, 0.16));
         border: 1px solid rgba(90, 162, 255, 0.34);
         color: var(--gs-text);
         font-weight: 700;
@@ -372,11 +364,7 @@ const mobileNavId = 'mobile-navigation';
       .header-cta:hover,
       .header-cta:focus-visible {
         transform: translateY(-1px);
-        background: linear-gradient(
-          135deg,
-          rgba(90, 162, 255, 0.34),
-          rgba(90, 162, 255, 0.2)
-        );
+        background: linear-gradient(135deg, rgba(90, 162, 255, 0.34), rgba(90, 162, 255, 0.2));
       }
 
       .menu-button,
@@ -584,6 +572,10 @@ const mobileNavId = 'mobile-navigation';
 
         .menu-button {
           display: inline-grid;
+        }
+
+        .gs-logo--lockup {
+          width: clamp(190px, 44vw, 260px);
         }
       }
 
