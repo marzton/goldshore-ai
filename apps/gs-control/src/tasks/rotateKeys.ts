@@ -30,39 +30,7 @@ export async function rotateKeys(env: ControlEnv) {
     results: []
   };
 
-  for (const config of ROTATION_CONFIG) {
-    try {
-      // 1. Generate new key
-      const newKey = generateKey(config.prefix, config.length);
-
-      // 2. Store new key as active
-      // In a real system, this would update a secure store or service configuration
-      await env.CONTROL_LOGS.put(`secrets:${config.name}:active`, newKey);
-
-      // 3. Archive the rotation event
-      await env.CONTROL_LOGS.put(`secrets:${config.name}:history:${timestamp}`, newKey);
-
-      console.info({
-        event: "key_rotated",
-        name: config.name,
-        timestamp: new Date().toISOString()
-      });
-      auditLog.results.push({ name: config.name, status: "success" });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error({
-        event: "key_rotation_failed",
-        name: config.name,
-        error: errorMessage,
-        timestamp: new Date().toISOString()
-      });
-      auditLog.results.push({
-        name: config.name,
-        status: "error",
-        error: errorMessage
-      });
-    }
-  }
+  // Perform rotation in parallel
   auditLog.results = await Promise.all(
     ROTATION_CONFIG.map(async (config) => {
       try {
@@ -76,11 +44,21 @@ export async function rotateKeys(env: ControlEnv) {
           env.CONTROL_LOGS.put(`secrets:${config.name}:history:${timestamp}`, newKey)
         ]);
 
-        console.log(`Successfully rotated key: ${config.name}`);
+        console.info({
+          event: "key_rotated",
+          name: config.name,
+          timestamp: new Date().toISOString()
+        });
+
         return { name: config.name, status: "success" as const };
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        console.error(`Failed to rotate key for ${config.name}:`, errorMessage);
+        console.error({
+          event: "key_rotation_failed",
+          name: config.name,
+          error: errorMessage,
+          timestamp: new Date().toISOString()
+        });
         return {
           name: config.name,
           status: "error" as const,
