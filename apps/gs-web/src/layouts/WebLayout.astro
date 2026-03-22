@@ -1,6 +1,7 @@
 ---
 import Logo from '../components/brand/Logo.astro';
 import '../styles/global.css';
+import { WEB_CONTENT_SECURITY_POLICY } from '../utils/csp';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -24,7 +25,7 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*.cloudflare.com; connect-src 'self' https://*.cloudflare.com https://*.supabase.co;" />
+    <meta http-equiv="Content-Security-Policy" content={WEB_CONTENT_SECURITY_POLICY} />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0b0f18" />
