@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { Env, Variables } from '../types';
+import sanitizeHtml from 'sanitize-html';
 
 type MediaRecord = {
   id: string;
@@ -8,6 +9,13 @@ type MediaRecord = {
   size: number;
   type: string;
   created_at: string;
+};
+
+type UploadFileLike = {
+  name: string;
+  size: number;
+  text: () => Promise<string>;
+  arrayBuffer: () => Promise<ArrayBuffer>;
 };
 
 const ALLOWED_MIME_TYPES = new Map([
@@ -19,15 +27,112 @@ const ALLOWED_MIME_TYPES = new Map([
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
-const SVG_SCRIPT_TAG_REGEX = /<script[\s\S]*?>[\s\S]*?<\/script>/gi;
-const SVG_EVENT_HANDLER_REGEX = /\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
-const SVG_JAVASCRIPT_URL_REGEX = /javascript:/gi;
+const sanitizeSvg = (input: string): string => {
+  return sanitizeHtml(input, {
+    allowedTags: [
+      'svg',
+      'g',
+      'defs',
+      'clipPath',
+      'mask',
+      'pattern',
+      'linearGradient',
+      'radialGradient',
+      'stop',
+      'path',
+      'circle',
+      'ellipse',
+      'rect',
+      'line',
+      'polyline',
+      'polygon',
+      'text',
+      'tspan',
+      'textPath',
+      'image',
+      'use',
+      'symbol',
+      'view',
+      'marker',
+      'filter',
+      'feGaussianBlur',
+      'feOffset',
+      'feBlend',
+      'feColorMatrix',
+      'feComposite',
+      'feFlood',
+      'feImage',
+      'feMerge',
+      'feMergeNode',
+      'feMorphology',
+      'feTile',
+      'feTurbulence'
+    ],
+    allowedAttributes: {
+      '*': [
+        'id',
+        'class',
+        'style',
+        'transform',
+        'x',
+        'y',
+        'x1',
+        'y1',
+        'x2',
+        'y2',
+        'cx',
+        'cy',
+        'r',
+        'rx',
+        'ry',
+        'd',
+        'points',
+        'width',
+        'height',
+        'viewBox',
+        'preserveAspectRatio',
+        'fill',
+        'fill-opacity',
+        'stroke',
+        'stroke-width',
+        'stroke-linecap',
+        'stroke-linejoin',
+        'stroke-miterlimit',
+        'stroke-dasharray',
+        'stroke-dashoffset',
+        'stroke-opacity',
+        'opacity',
+        'font-family',
+        'font-size',
+        'font-weight',
+        'text-anchor',
+        'xlink:href'
+      ]
+    },
+    allowedSchemes: ['http', 'https', 'data'],
+    allowedSchemesByTag: {
+      image: ['http', 'https', 'data'],
+      use: ['http', 'https']
+    },
+    allowProtocolRelative: false,
+    // Do not allow any unknown protocols like "javascript:" or "data:text/html"
+    enforceHtmlBoundary: true
+  });
+};
 
-const sanitizeSvg = (input: string) =>
-  input
-    .replace(SVG_SCRIPT_TAG_REGEX, '')
-    .replace(SVG_EVENT_HANDLER_REGEX, '')
-    .replace(SVG_JAVASCRIPT_URL_REGEX, '');
+const isUploadFileLike = (value: unknown): value is UploadFileLike => {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const candidate = value as Partial<UploadFileLike>;
+  return (
+    typeof candidate.name === 'string' &&
+    typeof candidate.size === 'number' &&
+    typeof candidate.text === 'function' &&
+    typeof candidate.arrayBuffer === 'function'
+  );
+};
 
 /**
  * [SOP] Media Asset Management
@@ -58,7 +163,7 @@ media.get('/:id', async (c) => {
   const headers = new Headers();
   headers.set('Content-Type', result.type || object.httpMetadata?.contentType || 'application/octet-stream');
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-  
+
   // Sentinel: Enforce strict CSP to mitigate SVG XSS
   headers.set('Content-Security-Policy', "default-src 'none'; script-src 'none'; object-src 'none'; sandbox");
 
@@ -69,7 +174,7 @@ media.post('/upload', async (c) => {
   const formData = await c.req.formData();
   const file = formData.get('file');
 
-  if (!(file instanceof File)) return c.json({ error: 'Missing file upload' }, 400);
+  if (!isUploadFileLike(file)) return c.json({ error: 'Missing file upload' }, 400);
   if (file.size > MAX_FILE_SIZE) return c.json({ error: 'File too large' }, 413);
 
   const filename = file.name || 'upload';
