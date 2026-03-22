@@ -32,7 +32,13 @@ const renderResults = (input: HTMLInputElement, list: HTMLUListElement, results:
     const link = document.createElement('a');
     const url = result.url?.trim();
 
-    link.href = url && !url.toLowerCase().startsWith('javascript:') ? url : '#';
+    link.href =
+      url &&
+      !url.toLowerCase().startsWith('javascript:') &&
+      !url.toLowerCase().startsWith('data:') &&
+      !url.toLowerCase().startsWith('vbscript:')
+        ? url
+        : '#';
     link.textContent = result.title;
     link.className = 'search-result-link';
 
