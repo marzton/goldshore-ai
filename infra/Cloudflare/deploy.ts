@@ -65,6 +65,10 @@ async function deployPages(p: any) {
   }
 
   if (p.require_checks?.includes("smoke")) {
+    await smoke(url, 200, 8000);
+  }
+  if (p.require_checks?.includes("lighthouse")) {
+    await lighthouse(url, 0.8);
     await smoke(`https://${p.name}.goldshore.ai/`, 200, 8000);
   }
   if (p.require_checks?.includes("lighthouse")) {

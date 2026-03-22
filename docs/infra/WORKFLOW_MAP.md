@@ -12,7 +12,7 @@ This document maps the active GitHub Actions workflows in the repository, their 
 | Deploy GS API | `.github/workflows/deploy-gs-api.yml` | `push` (main) | `actions/checkout`, `pnpm/action-setup`, `actions/setup-node` | None | VALID | Deploys using Wrangler. |
 | Deploy GS Mail | `.github/workflows/deploy-gs-mail.yml` | `push` (main) | `actions/checkout`, `pnpm/action-setup`, `actions/setup-node` | None | VALID | Deploys using Wrangler. |
 | Deploy GS Web | `.github/workflows/deploy-gs-web.yml` | `push` (main) | `actions/checkout`, `pnpm/action-setup`, `actions/setup-node`, `cloudflare/pages-action` | None | VALID | Deploys to Cloudflare Pages. |
-| Jules Nightly | `.github/workflows/jules-nightly.yml` | `schedule`, `workflow_dispatch` | None | `jules-daily.yml`, `jules-nightly-clean.yml`, `palette-daily.yml`, `sentinel-nightly.yml`, `conflict-sweeper-nightly.yml` | **INVALID** | References missing reusable workflows. Requires repair or removal. |
+| Jules Nightly | `.github/workflows/jules-nightly.yml` | `schedule`, `workflow_dispatch` | None | `jules-daily.yml`, `jules-nightly-clean.yml`, `palette-daily.yml`, `sentinel-nightly.yml`, `conflict-sweeper-nightly.yml` | VALID | Orchestrates restored nightly maintenance, stabilization, UX, diagnostics, and conflict-sweeper reusable workflows. |
 | Lockfile Guard | `.github/workflows/lockfile-guard.yml` | `workflow_dispatch` | `actions/checkout` | None | **MANUAL** | Enforces strict lockfile policy. Disabled automation (Cost Containment). |
 | Manual | `.github/workflows/manual.yml` | `workflow_dispatch` | None | None | VALID | Simple greeting workflow. |
 | Naming Guard | `.github/workflows/naming-guard.yml` | `workflow_dispatch` | `actions/checkout` | None | **MANUAL** | Checks for legacy paths/files. Disabled automation (Cost Containment). |
@@ -34,6 +34,18 @@ This document maps the active GitHub Actions workflows in the repository, their 
 
 ## Governance Observations
 
+1.  **Nightly Governance Coverage Restored**: The `jules-nightly.yml` workflow now points only to existing reusable workflows for guardian, cleanup, Palette, Sentinel, and conflict-sweeper automation.
+2.  **Deprecated Runners**: `neuralegion.yml` must be updated to use a supported runner or removed.
+3.  **Strict Lockfile Policy**: `lockfile-guard.yml` prevents lockfile changes in PRs without process.
+4.  **Suspicious Actions**: `summary.yml` uses an AI inference action that warrants investigation.
+5.  **Disabled Workflows**: `gs-agent`, `gs-control`, and `gs-gateway` deployments are explicitly disabled during Phase 0 to isolate CI for core services.
+
+## Next Steps (Phase 1)
+
+*   Monitor the restored nightly reusable workflows and retire any lanes that are superseded by standalone workflows.
+*   Update `neuralegion.yml` runner or remove.
+*   Investigate `summary.yml`.
+*   Review `lockfile-guard.yml` strictness.
 1. `gs-agent` is intentionally **preview-only** in GitHub Actions; production deploys are manual.
 2. `gs-gateway` is intentionally **preview-only** in GitHub Actions; production deploys are manual.
 3. `gs-control` is intentionally **fully manual** and has no active deploy workflow.
