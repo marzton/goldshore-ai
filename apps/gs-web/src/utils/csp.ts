@@ -15,7 +15,7 @@ export const GOLDSHORE_API_ORIGINS = [
  */
 export const WEB_CONNECT_SRC = [SELF, ...GOLDSHORE_API_ORIGINS] as const;
 
-export const BROWSER_CONNECT_SRC = [SELF, ...GOLDSHORE_API_ORIGINS] as const;
+export const BROWSER_CONNECT_SRC = WEB_CONNECT_SRC;
 
 export const WEB_CSP_DIRECTIVES = {
   'default-src': [SELF],
