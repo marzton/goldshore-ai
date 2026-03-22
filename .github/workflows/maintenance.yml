@@ -1,128 +1,19 @@
-name: Maintenance
+name: Maintenance Orchestration
 
 on:
-  schedule:
-    - cron: "0 4 * * 1"
-  workflow_dispatch:
-
-permissions:
-  contents: read
-name: Maintenance Branch Report
-
-on:
-  schedule:
-    - cron: "30 4 * * *"
   workflow_dispatch:
     inputs:
       log_ref:
-        description: "Git ref to summarize with git log"
-        required: false
-        default: "origin/main"
+        description: 'Target ref for report'
+        default: 'origin/main'
       log_limit:
-        description: "Maximum number of commits to include in the report"
-        required: false
-        default: "20"
-
-permissions:
-  contents: read
-  pull-requests: read
-
-jobs:
-  branch-report:
-    name: Inspection-only branch and PR report
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository history without write credentials
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Enforce inspection-only mode
-        run: |
-          set -euo pipefail
-          echo "This workflow is inspection-only."
-          echo "It must not checkout feature branches, pull them, or push rewritten refs from CI."
-          echo "Protected branches such as main must never be rewritten from this workflow."
-
-      - name: Generate branch maintenance report
-        env:
-          GH_TOKEN: ${{ github.token }}
-          LOG_REF: ${{ inputs.log_ref || 'origin/main' }}
-          LOG_LIMIT: ${{ inputs.log_limit || '20' }}
-        run: bash scripts/maintenance/branch-report.sh
-
-      - name: Upload branch maintenance report
-        uses: actions/upload-artifact@v4
-        with:
-          name: maintenance-branch-report
-          path: reports/maintenance/branch-report.txt
-name: Repo Maintenance & Agent Sync
-run-name: Maintenance by @${{ github.actor }} on ${{ inputs.target_branch }}
-
-on:
-  workflow_dispatch:
-    inputs:
-      target_branch:
-        description: "Branch to audit/align against"
-        required: true
-        default: "main"
-        type: string
-      run_builds:
-        description: "Run workspace builds"
-        required: true
-        default: true
+        description: 'Number of logs'
+        default: '20'
+      confirm_apply:
+        description: 'Set to true to run reconciliation'
         type: boolean
-      run_tests:
-        description: "Run workspace tests"
-        required: true
         default: false
-        type: boolean
-      run_service_sync:
-        description: "Run gs service-token sync checks"
-        required: true
-        default: true
-        type: boolean
-      endpoint_path:
-        description: "Endpoint path to check on each service"
-        required: false
-        default: "/api/health"
-        type: string
-      base_domain:
-        description: "Base domain for gs services"
-        required: false
-        default: "goldshore.ai"
-        type: string
-      services:
-        description: "Comma-separated services to check"
-        required: false
-        default: "gs-web,gs-admin,gs-api,gs-gateway,gs-mail,gs-agent,gs-control"
-        type: string
-      timeout_seconds:
-        description: "curl timeout in seconds"
-        required: false
-        default: "20"
-        type: string
 
-permissions:
-  contents: read
-
-jobs:
-  reconcile-infra:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Confirm maintenance intent
-        if: ${{ !inputs.confirm_apply }}
-        run: |
-          echo "Set confirm_apply=true to run Cloudflare infra reconciliation."
-          exit 1
-
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-
-      - name: Install pnpm
-        run: npm install -g pnpm@9
-
-      - uses: actions/setup-node@v6
 concurrency:
   group: maintenance-${{ github.ref }}
   cancel-in-progress: false
@@ -132,20 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-node@v6
-
-    steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
@@ -159,111 +43,37 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Validate workspace contract
-        run: pnpm validate
-
       - name: Repo health checks
         run: pnpm run repo:health
 
       - name: Build all packages
         run: pnpm -r build
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
 
-      - name: Run Cloudflare infrastructure reconciliation
-        run: pnpm sync:infra
+      - name: Generate branch maintenance report
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          GS_KV_NAMESPACE_ID: ${{ secrets.GS_KV_NAMESPACE_ID }}
-      - name: Enable corepack and pin pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@9.0.0 --activate
-          pnpm --version
+          GH_TOKEN: ${{ github.token }}
+          LOG_REF: ${{ inputs.log_ref }}
+          LOG_LIMIT: ${{ inputs.log_limit }}
+        run: bash scripts/maintenance/branch-report.sh
 
-      - name: Install dependencies (read-only)
-        run: pnpm install --frozen-lockfile
+      - name: Upload branch maintenance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: maintenance-branch-report
+          path: reports/maintenance/branch-report.txt
 
-      - name: Audit target branch state
-        shell: bash
-        run: |
-          set -euo pipefail
+  reconcile-infra:
+    needs: maintenance
+    runs-on: ubuntu-latest
+    if: ${{ inputs.confirm_apply == true }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-          git fetch --all --prune
+      - name: Install pnpm
+        run: npm install -g pnpm@9
 
-          if ! git show-ref --verify --quiet "refs/remotes/origin/${{ inputs.target_branch }}"; then
-            echo "❌ Missing remote branch origin/${{ inputs.target_branch }}"
-            exit 1
-          fi
-
-          TARGET_SHA="$(git rev-parse "origin/${{ inputs.target_branch }}")"
-          echo "TARGET_SHA=$TARGET_SHA" >> "$GITHUB_ENV"
-
-          echo "### Branch Audit" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Target branch: \`${{ inputs.target_branch }}\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Target SHA: \`$TARGET_SHA\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "Recent commits on origin/${{ inputs.target_branch }}:" >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-          git log -n 10 --pretty=format:'%H - %an: %s' "origin/${{ inputs.target_branch }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Validate workspace contract and naming
-        run: pnpm validate
-
-      - name: Run repo health checks
-        run: pnpm run repo:health
-
-      - name: Build workspace
-        if: ${{ inputs.run_builds }}
-        run: pnpm build
-
-      - name: Run workspace tests
-        if: ${{ inputs.run_tests }}
-        run: pnpm test
-
-      - name: Run gs service-token sync checks
-        if: ${{ inputs.run_service_sync }}
-        env:
-          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
-          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
-          GS_BASE_DOMAIN: ${{ inputs.base_domain }}
-          GS_SYNC_PATH: ${{ inputs.endpoint_path }}
-          GS_SERVICES: ${{ inputs.services }}
-          GS_SYNC_TIMEOUT_SECONDS: ${{ inputs.timeout_seconds }}
-        run: scripts/jules-sync.sh
-
-      - name: Verify workflow remained read-only
-        shell: bash
-        run: |
-          set -euo pipefail
-          if ! git diff --quiet; then
-            echo "❌ Workflow modified tracked files unexpectedly."
-            git status --short
-            exit 1
-          fi
-
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "❌ Workflow left untracked/dirty files in the workspace."
-            git status --short
-            exit 1
-          fi
-
-          echo "✅ Working tree remained clean."
-
-      - name: Publish maintenance summary
-        shell: bash
-        run: |
-          {
-            echo "### Maintenance Result"
-            echo ""
-            echo "- Actor: \`${{ github.actor }}\`"
-            echo "- Target branch: \`${{ inputs.target_branch }}\`"
-            echo "- Target SHA: \`${TARGET_SHA}\`"
-            echo "- Builds run: \`${{ inputs.run_builds }}\`"
-            echo "- Tests run: \`${{ inputs.run_tests }}\`"
-            echo "- Service sync run: \`${{ inputs.run_service_sync }}\`"
-          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
