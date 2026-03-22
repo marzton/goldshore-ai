@@ -43,7 +43,7 @@ async function deployPages(p: any) {
   const url = pagesCheckUrl(p);
 
   if (p.require_checks?.includes("smoke")) {
-    await smoke(url, 200).catch(()=>{});
+    await smoke(`https://${p.name}.goldshore.ai/`, 200).catch(()=>{});
   }
 
   const status = await latestPagesStatus(p.name);
@@ -69,6 +69,10 @@ async function deployPages(p: any) {
   }
   if (p.require_checks?.includes("lighthouse")) {
     await lighthouse(url, 0.8);
+    await smoke(`https://${p.name}.goldshore.ai/`, 200, 8000);
+  }
+  if (p.require_checks?.includes("lighthouse")) {
+    await lighthouse(`https://${p.name}.goldshore.ai/`, 0.8);
   }
   console.log(`[pages:${p.name}] Deploy OK.`);
 }

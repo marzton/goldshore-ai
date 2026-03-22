@@ -3,7 +3,7 @@
 name = "goldshore-admin" # Historical Pages project alias; canonical name is gs-admin
 
 # This file is primarily for configuring bindings for Cloudflare Pages Functions.
-# The actual deployment will be handled by the GitHub Action connecting to the Pages project.
+# The canonical config lives in gs-admin.wrangler.toml and should stay in sync.
 
 [vars]
 # Shared environment variables can go here.
