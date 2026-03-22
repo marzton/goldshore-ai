@@ -61,7 +61,7 @@ Cloudflare metadata:
 
 ## CSP compatibility
 
-Approved outbound `connect-src` origins for browser runtime network calls in `src`:
+Browser-side network inventory under `src`:
 
 - `'self'` for same-origin endpoints (for example `/api/contact` and `/api/docs-search`).
 - `https://api.goldshore.ai` for production API calls (the docs "Try it" console uses `PUBLIC_API` in production).
@@ -79,6 +79,21 @@ Inventory for `apps/gs-web/src/` before the CSP refactor:
 - `src/components/TryItConsole.astro`: browser `fetch()` to `${PUBLIC_API}${path}`. This is the only current browser call site that still requires the external GoldShore API origins in `connect-src`.
 - `src/pages/[...path].astro`: server-side Astro `fetch()` to `${PUBLIC_API}/pages/slug/...`; this is **not** a browser `connect-src` dependency.
 - `src/pages/developer/docs/index.astro`: renders `PUBLIC_API` / `PUBLIC_GATEWAY` values as documentation text only; it does **not** issue a browser request by itself.
+- `src/components/TryItConsole.astro`: browser `fetch(url)` to `PUBLIC_API + path`, so CSP must allow `https://api.goldshore.ai` in production and `https://api-preview.goldshore.ai` in preview deployments.
+- `src/components/DocsSearch.astro`: browser `fetch('/api/docs-search?...')` to the same origin.
+- `src/components/ContactForm.astro`: browser `fetch('/api/contact')` to the same origin.
+- `src/pages/contact.astro`: inline browser `fetch('/api/contact')` to the same origin.
+- `src/components/ServiceStatus.astro`: browser `fetch(serviceUrl)` if mounted; keep this prop same-origin to stay within `'self'`.
+- `src/pages/[...path].astro`: uses `PUBLIC_API` server-side in Astro frontmatter during SSR, so it does **not** require `connect-src`.
+- `src/pages/developer/docs/index.astro` and `src/content/docs/api/system-info.mdx`: display `PUBLIC_API` / `PUBLIC_GATEWAY` values in docs/examples only; they do **not** make browser runtime requests themselves.
+
+Approved outbound `connect-src` origins for browser runtime network calls:
+
+- `'self'` for same-origin endpoints such as `/api/contact`, `/api/docs-search`, and any `ServiceStatus` usage kept on-site.
+- `https://api.goldshore.ai` for production API calls made from the docs "Try it" console.
+- `https://api-preview.goldshore.ai` for preview API calls when preview deployments point `PUBLIC_API` at the preview API worker.
+
+The shared CSP policy constants live in `src/utils/csp.ts`. Keep `connect-src` scoped to these explicit hosts unless a new browser-side integration is added and reviewed.
 
 ## Routes/Endpoints
 
