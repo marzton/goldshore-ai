@@ -3,6 +3,8 @@
 // This is a Web Worker, so it runs in a separate thread.
 // It's responsible for fetching and normalizing data to keep the main thread clear.
 
+const TRUSTED_MESSAGE_SOURCE = 'gravitational-radar-main-thread';
+
 const normalizeData = (data: any[]) => {
   // TODO: Implement actual data normalization logic.
   // This could involve fetching from Supabase, calculating correlations (rho),
@@ -15,7 +17,20 @@ const normalizeData = (data: any[]) => {
 self.onmessage = (event) => {
   console.log('[Worker] Received message from main thread:', event.data);
 
-  if (event.data.type === 'FETCH_DATA') {
+  const data = event.data;
+
+  // Validate message structure and trusted source before handling.
+  if (
+    !data ||
+    typeof data !== 'object' ||
+    (data as any).source !== TRUSTED_MESSAGE_SOURCE ||
+    typeof (data as any).type !== 'string'
+  ) {
+    console.warn('[Worker] Ignoring message with invalid source or structure');
+    return;
+  }
+
+  if ((data as any).type === 'FETCH_DATA') {
     // In a real implementation, this would trigger a fetch from a Supabase Edge Function.
     const mockSignals = [
       { name: '10Y', rho: 0.8, category: 'Macro', isAnomaly: false },
