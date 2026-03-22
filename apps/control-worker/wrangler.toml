@@ -10,6 +10,7 @@ routes = [
 
 [vars]
 ENV = "production"
+ALLOWED_ORIGINS = "https://admin.goldshore.ai,https://admin-preview.goldshore.ai,http://localhost:4321"
 
 [[kv_namespaces]]
 binding = "CONTROL_LOGS"

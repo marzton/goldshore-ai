@@ -1,0 +1,16 @@
+{
+  "name": "astro-goldshore",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "preview": "turbo preview"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.16"
+  }
+}

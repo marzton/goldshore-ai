@@ -1,7 +1,7 @@
 # Authentication & Authorization
 
 ## Provider choice
-We will use **Auth0** as the primary authentication provider. Auth0 supports the required social IdPs (Google, Apple, GitHub), offers a hosted login experience, and provides built-in **RBAC**/role management that we can surface to the admin app and API layers.
+We will use **Auth0** as the primary authentication provider. Auth0 supports the required social IdPs (Google, Apple, GitHub), offers a hosted login experience, and provides built-in **RBAC**/role management that we can surface to the admin app and API layers. This keeps the admin app on standard OIDC flows while centralizing role governance in one system.
 
 Phone login will be implemented using **Twilio Verify** for SMS-based one-time codes, with Auth0 serving as the identity broker and token issuer.
 
@@ -46,6 +46,11 @@ Suggested baseline roles:
 - **admin**: Full access to all admin functionality.
 - **support**: Read-only access + support tooling.
 - **ops**: Operational controls (deployments, infra toggles).
+
+Example role-to-permission mapping (Auth0 RBAC):
+- **admin**: `admin:*`
+- **support**: `tickets:read`, `users:read`
+- **ops**: `deployments:write`, `feature_flags:write`
 
 ### Admin app enforcement
 - Require a valid Auth0 session for all admin routes.

@@ -1,21 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 220" role="img" aria-labelledby="title desc">
   <title id="title">Penrose Triangle Logo</title>
   <desc id="desc">Interlocking triangular mark used for the GoldShore identity.</desc>
   <defs>
-    <linearGradient id="penroseStroke" x1="0%" x2="100%" y1="0%" y2="100%">
-      <stop offset="0%" stop-color="#4f8cff" />
-      <stop offset="45%" stop-color="#2d6ce8" />
-      <stop offset="100%" stop-color="#1c52c8" />
+    <linearGradient id="penroseFill" x1="18" y1="18" x2="142" y2="142" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fef3c7" />
+      <stop offset="45%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
     </linearGradient>
-    <linearGradient id="penroseFill" x1="10%" x2="90%" y1="10%" y2="90%">
-      <stop offset="0%" stop-color="#0f2b57" />
-      <stop offset="60%" stop-color="#123a7a" />
-      <stop offset="100%" stop-color="#0c1f3f" />
+    <linearGradient id="penroseStroke" x1="18" y1="18" x2="142" y2="142" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="55%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
     </linearGradient>
   </defs>
-  <g fill="url(#penroseFill)" stroke="url(#penroseStroke)" stroke-width="14" stroke-linejoin="round">
-    <path d="M80 14 18 122h48l31-54-29-54Z" />
-    <path d="m83 146 62-108-23-4-31 54 12 58Z" />
-    <path d="M46 131h94l-12-21H65l-19 21Z" />
+  <g fill="url(#penroseFill)" stroke="url(#penroseStroke)" stroke-width="12" stroke-linejoin="round">
+    <path d="M130 14 68 122h48l31-54-29-54Z" />
+    <path d="m133 146 62-108-23-4-31 54 12 58Z" />
+    <path d="M96 131h94l-12-21H115l-19 21Z" />
   </g>
+  <text x="130" y="190" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="20" letter-spacing="6" fill="url(#penroseFill)" stroke="none" style="text-transform: uppercase;">GOLD SHORE</text>
 </svg>

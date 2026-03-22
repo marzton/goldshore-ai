@@ -1,5 +1,4 @@
 ---
-import ApiSchema from './ApiSchema.astro';
 import TryItConsole from './TryItConsole.astro';
 
 const { openapi, endpoint } = Astro.props;
@@ -35,7 +34,7 @@ const methods = ['get', 'post', 'put', 'delete', 'patch'];
                  <div class="parameters">
                      <h4>Parameters</h4>
                      <ul>
-                     {op.parameters.map((param: any) => (
+                     {op.parameters.map((param: { name: string; in: string; required?: boolean; description?: string }) => (
                          <li>
                              <code>{param.name}</code> ({param.in}) - {param.required ? 'Required' : 'Optional'}
                              {param.description && <span>: {param.description}</span>}

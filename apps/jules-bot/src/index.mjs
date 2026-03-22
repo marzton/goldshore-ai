@@ -2,14 +2,19 @@
 // This is a placeholder/starter implementation for the Jules/Palette bot server.
 // It includes the logic for handling the /palette improve command.
 
+import http from 'http';
+import crypto from 'node:crypto';
+
 // Assuming some environment variables are set:
 // GITHUB_TOKEN
 // GITHUB_ORG
 // GITHUB_REPO
+// WEBHOOK_SECRET
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_ORG = process.env.GITHUB_ORG;
 const GITHUB_REPO = process.env.GITHUB_REPO;
+const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
 
 // Validate required environment variables
 if (!GITHUB_TOKEN) {
@@ -22,6 +27,10 @@ if (!GITHUB_ORG) {
 }
 if (!GITHUB_REPO) {
   console.error("Missing required environment variable: GITHUB_REPO");
+  process.exit(1);
+}
+if (!WEBHOOK_SECRET) {
+  console.error("Missing required environment variable: WEBHOOK_SECRET");
   process.exit(1);
 }
 
@@ -97,9 +106,26 @@ async function handleEvent(eventName, payload) {
   }
 }
 
-// Example server setup (using Node http for simplicity, but could be Express/Fastify/Hono)
-// This part is just to make the file runnable/valid if needed.
-import http from 'http';
+// Helper: Verify GitHub Webhook Signature (Sentinel Protection)
+function verifySignature(secret, header, payload) {
+  if (!header || !header.startsWith('sha256=')) return false;
+
+  const sigHex = header.slice(7); // Remove 'sha256='
+  if (!sigHex) return false;
+
+  const hmac = crypto.createHmac('sha256', secret);
+  const digest = hmac.update(payload).digest('hex');
+
+  const sigBuffer = Buffer.from(sigHex, 'hex');
+  const digestBuffer = Buffer.from(digest, 'hex');
+
+  // Avoid timing attacks and length errors
+  if (sigBuffer.length !== digestBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(sigBuffer, digestBuffer);
+}
 
 const MAX_BODY_SIZE = 1024 * 1024; // 1MB max body size
 const server = http.createServer(async (req, res) => {
@@ -118,15 +144,31 @@ const server = http.createServer(async (req, res) => {
     });
     req.on('end', async () => {
       if (bodyTooLarge) return;
+
+      // Verify Signature
+      const signature = req.headers['x-hub-signature-256'];
+      if (!signature) {
+        res.writeHead(401, { 'Content-Type': 'text/plain' });
+        res.end('Missing Signature');
+        return;
+      }
+
       try {
+        if (!verifySignature(WEBHOOK_SECRET, signature, body)) {
+          console.warn('Invalid signature attempt');
+          res.writeHead(401, { 'Content-Type': 'text/plain' });
+          res.end('Invalid Signature');
+          return;
+        }
+
         const payload = JSON.parse(body);
         const eventName = req.headers['x-github-event'];
         await handleEvent(eventName, payload);
         res.writeHead(200);
         res.end('OK');
       } catch (err) {
-        console.error(`Error handling event "${eventName}":`, err);
-        res.writeHead(500);
+        console.error('Signature verification or handling error:', err);
+        res.writeHead(400, { 'Content-Type': 'text/plain' });
         res.end('Error');
       }
     });

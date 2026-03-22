@@ -1,8 +1,28 @@
 /* GoldShore Design Tokens */
 :root {
-  --gs-font-body: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --gs-font-display: 'Inter Tight', 'Inter', system-ui, sans-serif;
-  --gs-line-height: 1.6;
+  --gs-font-body: 'Source Sans 3', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --gs-font-display: 'Fraunces', 'Playfair Display', 'Iowan Old Style', 'Palatino', 'Times New Roman', serif;
+  --gs-line-height: 1.7;
+  --gs-line-height-heading: 1.15;
+  --gs-font-size-body: clamp(1.05rem, 1rem + 0.35vw, 1.2rem);
+  --gs-font-size-h1: clamp(2.4rem, 2.05rem + 2.1vw, 3.6rem);
+  --gs-font-size-h2: clamp(2rem, 1.72rem + 1.6vw, 3rem);
+  --gs-font-size-h3: clamp(1.6rem, 1.44rem + 0.9vw, 2.2rem);
+  --gs-font-size-h4: clamp(1.3rem, 1.2rem + 0.5vw, 1.8rem);
+  --gs-font-size-h5: clamp(1.1rem, 1.04rem + 0.3vw, 1.4rem);
+  --gs-font-size-h6: clamp(1rem, 0.98rem + 0.2vw, 1.2rem);
+
+  --gs-breakpoint-sm: 600px;
+  --gs-breakpoint-md: 900px;
+  --gs-breakpoint-lg: 1200px;
+  --gs-breakpoint-xl: 1440px;
+
+  --gs-section-max-width: 1200px;
+  --gs-section-padding-inline: clamp(1.25rem, 3vw, 2.5rem);
+  --gs-section-padding-block: clamp(2.5rem, 6vw, 4.25rem);
+  --gs-section-gap: clamp(1.5rem, 3vw, 2.75rem);
+  --gs-grid-min-2: 280px;
+  --gs-grid-min-3: 240px;
 
   --gs-color-bg: #050914;
   --gs-color-surface: #0c1221;
