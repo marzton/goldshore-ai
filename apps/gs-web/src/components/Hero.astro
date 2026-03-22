@@ -41,7 +41,7 @@ import LogoGL from './logo/LogoGL.astro';
     </div>
 
     <div class="signal-hero__visual">
-      <div class="signal-hero__lock-card">
+      <div class="signal-hero__lock-card gs-parallax" data-parallax="0.72">
         <LogoGL />
       </div>
 
@@ -211,6 +211,8 @@ import LogoGL from './logo/LogoGL.astro';
     display: grid;
     gap: 1.1rem;
     align-items: center;
+    position: relative;
+    z-index: 1;
   }
 
   .signal-hero__lock-card {

@@ -1,3 +1,4 @@
+import { initParallax } from '../components/parallax';
 import { cleanupUI, initBriefingModal, initStarField, initTilt } from './init-ui';
 
 const STAR_COUNT = 16;
@@ -131,10 +132,14 @@ const cleanupShootingStars = () => {
 };
 
 
+let cleanupParallax: (() => void) | undefined;
+
 const initCodexUI = () => {
+  cleanupParallax?.();
   initStarField('hero-stars');
   initTilt('[data-tilt]');
   initBriefingModal();
+  cleanupParallax = initParallax();
 };
 
 const initWebLayout = () => {
@@ -145,6 +150,8 @@ const initWebLayout = () => {
 
 document.addEventListener('astro:page-load', initWebLayout);
 document.addEventListener('astro:before-swap', () => {
+  cleanupParallax?.();
+  cleanupParallax = undefined;
   cleanupShootingStars();
   cleanupUI();
 });
