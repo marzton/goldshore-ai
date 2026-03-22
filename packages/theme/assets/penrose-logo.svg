@@ -1,16 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
-  <title id="title">Penrose Triangle Logo</title>
-  <desc id="desc">Interlocking triangular mark used for the GoldShore identity.</desc>
-  <defs>
-    <linearGradient id="penroseGradient" x1="0%" x2="100%" y1="0%" y2="100%">
-      <stop offset="0%" stop-color="#5b9dff" />
-      <stop offset="50%" stop-color="#6a5bff" />
-      <stop offset="100%" stop-color="#9b5bff" />
-    </linearGradient>
-  </defs>
-  <g fill="none" stroke="url(#penroseGradient)" stroke-width="18" stroke-linejoin="round">
-    <path d="M80 14 18 122h48l31-54-29-54Z" />
-    <path d="m83 146 62-108-23-4-31 54 12 58Z" />
-    <path d="M46 131h94l-12-21H65l-19 21Z" />
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 200"><title>Gold Shore Labs</title><path d="m111.87 92.505-41-72A1 1 0 0 0 70 20H57a1 1 0 0 0-.87.505l-41 72a1 1 0 0 0 0 .99l6.5 11.414a1 1 0 0 0 .87.506h82a1 1 0 0 0 .87-.506l6.5-11.414a1 1 0 0 0 0-.99M109.28 92H43.72l5.361-9.415H91.5a1 1 0 0 0 .87-1.494L58.72 22h10.698ZM63.5 57.265l13.28 23.32H50.22ZM17.15 93 57 23.021l32.78 57.564h-10.7l-21.21-37.25a1.04 1.04 0 0 0-1.738 0L22.5 102.392Zm86.768 10.415H24.22L57 45.85l5.35 9.394-21.22 37.261A1 1 0 0 0 42 94h67.28Z" fill="none" stroke="#0b3a5f" stroke-linejoin="round"/></svg>

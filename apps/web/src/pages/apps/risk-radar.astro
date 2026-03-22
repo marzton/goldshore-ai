@@ -1,6 +1,7 @@
 ---
 import '@goldshore/theme/tokens';
 import MarketingLayout from '../../layouts/MarketingLayout.astro';
+import { GSButton } from '@goldshore/ui';
 
 export const prerender = true;
 
@@ -14,7 +15,8 @@ const samples = [
     gForce: 'NW 18.2',
     drift: '145°',
     pressure: '+0.86',
-    momentum: 'Up-slope'
+    momentum: 'Up-slope',
+    riskScore: 72
   },
   {
     label: 'Titan Harbor',
@@ -25,7 +27,8 @@ const samples = [
     gForce: 'E 22.7',
     drift: '80°',
     pressure: '+1.34',
-    momentum: 'Accel'
+    momentum: 'Accel',
+    riskScore: 88
   },
   {
     label: 'Mariner Ghost',
@@ -36,147 +39,168 @@ const samples = [
     gForce: 'SE 12.3',
     drift: '205°',
     pressure: '-0.62',
-    momentum: 'Slip'
+    momentum: 'Slip',
+    riskScore: 65
   }
 ];
 ---
 
 <MarketingLayout title="Risk Radar | GoldShore" description="Blueprint-grade risk radar visual with live sample metrics.">
+  <div class="blueprint-grid"></div>
+
   <section class="risk-hero">
     <div class="risk-hero__content">
-      <p class="risk-badge">Risk Radar Suite</p>
-      <h1>Luxury-grade surveillance for volatility pressure</h1>
+      <div class="gs-badge-group">
+        <span class="gs-badge gs-badge--gold">GoldShore Intelligence</span>
+        <span class="gs-badge gs-badge--cyan">System Active</span>
+      </div>
+      <h1 class="glitch-text" data-text="Risk Radar">Risk Radar</h1>
       <p class="risk-subtitle">
-        A blueprint-inspired command surface that blends market telemetry, exposure drift, and watchmaking precision.
-        Designed for desks that live on the edge of momentum.
+        High-precision volatility surveillance.
+        <span class="highlight">Luxury-grade telemetry</span> for the modern strategist.
       </p>
-      <div class="risk-hero__stats">
-        <div>
-          <span>Signal latency</span>
-          <strong>&lt; 28ms</strong>
+
+      <div class="hud-stats">
+        <div class="hud-stat">
+          <span class="label">Latency</span>
+          <span class="value text-cyan">28ms</span>
         </div>
-        <div>
-          <span>Volatility sweep</span>
-          <strong>96 bands</strong>
+        <div class="hud-stat">
+          <span class="label">Resolution</span>
+          <span class="value text-gold">96-Band</span>
         </div>
-        <div>
-          <span>Directional bias</span>
-          <strong>Adaptive</strong>
+        <div class="hud-stat">
+          <span class="label">Status</span>
+          <span class="value text-green">Online</span>
         </div>
       </div>
+
+      <div class="cta-group">
+        <GSButton href="/contact" variant="primary" class="glow-button">Request Access</GSButton>
+        <GSButton href="#demo" variant="secondary">View Demo</GSButton>
+      </div>
     </div>
+
     <div class="risk-hero__visual">
-      <svg class="risk-sketch" viewBox="0 0 520 360" role="img" aria-label="3D sketch of the risk radar device">
-        <defs>
-          <linearGradient id="metal" x1="0" x2="1">
-            <stop offset="0%" stop-color="#d8d4c3" stop-opacity="0.85" />
-            <stop offset="100%" stop-color="#6f6a59" stop-opacity="0.9" />
-          </linearGradient>
-          <linearGradient id="glass" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0%" stop-color="#0b1d2b" stop-opacity="0.15" />
-            <stop offset="100%" stop-color="#6ea4c5" stop-opacity="0.35" />
-          </linearGradient>
-        </defs>
-        <rect x="38" y="70" width="300" height="200" rx="32" fill="url(#metal)" stroke="#a9a48f" stroke-width="2" />
-        <rect x="58" y="94" width="260" height="152" rx="20" fill="url(#glass)" stroke="#6788a1" stroke-width="1.4" />
-        <ellipse cx="360" cy="190" rx="120" ry="80" fill="none" stroke="#b4b09a" stroke-width="2" />
-        <ellipse cx="360" cy="190" rx="80" ry="55" fill="none" stroke="#556b7a" stroke-dasharray="6 10" stroke-width="1.5" />
-        <path d="M360 110 L360 270" stroke="#7f8890" stroke-width="1.5" />
-        <path d="M300 190 L420 190" stroke="#7f8890" stroke-width="1.5" />
-        <path d="M360 190 L420 150" stroke="#96b0c4" stroke-width="2" />
-        <path d="M86 238 L152 278" stroke="#aeb3b0" stroke-width="2" />
-        <path d="M112 84 L206 48" stroke="#aeb3b0" stroke-width="1.5" />
-        <circle cx="270" cy="170" r="22" fill="none" stroke="#c7c2ad" stroke-width="2" />
-        <circle cx="270" cy="170" r="6" fill="#c7c2ad" />
-        <path d="M402 78 L456 32" stroke="#8c8a78" stroke-width="1.5" />
-        <path d="M408 76 L468 90" stroke="#8c8a78" stroke-width="1.5" />
-      </svg>
-      <div class="risk-hero__caption">3D sketch motif · layered sapphire glass · brushed titanium case</div>
+      <div class="radar-container">
+        <div class="radar-scan"></div>
+        <div class="radar-grid"></div>
+        <div class="radar-rings">
+          <div class="ring ring-1"></div>
+          <div class="ring ring-2"></div>
+          <div class="ring ring-3"></div>
+        </div>
+        <div class="radar-blips">
+          <div class="blip blip-1"></div>
+          <div class="blip blip-2"></div>
+          <div class="blip blip-3"></div>
+        </div>
+        <div class="radar-overlay">
+          <span class="bearing b-n">N</span>
+          <span class="bearing b-e">E</span>
+          <span class="bearing b-s">S</span>
+          <span class="bearing b-w">W</span>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="risk-demo" aria-label="Interactive radar demo">
-    <header class="risk-demo__header">
-      <div>
-        <p class="risk-badge">Radar demo</p>
-        <h2>Interactive threat &amp; opportunity sweep</h2>
-        <p class="risk-subtitle">Select a working sample to preview how the radar translates flow into directional G-force.</p>
+  <section id="demo" class="risk-interface">
+    <div class="interface-header">
+      <div class="header-title">
+        <span class="icon">◈</span>
+        <h2>Command Interface</h2>
       </div>
-      <div class="risk-demo__controls">
-        <label class="risk-select">
-          <span>Sample set</span>
-          <select name="sample" id="risk-sample-select">
-            {samples.map((sample, index) => (
-              <option value={index}>{sample.label}</option>
-            ))}
-          </select>
-        </label>
-        <label class="risk-range">
-          <span>Direction drift</span>
-          <input type="range" id="risk-direction-range" min="0" max="360" value="145" />
-        </label>
+      <div class="header-controls">
+         <div class="control-group">
+            <label for="risk-sample-select">Target System</label>
+            <div class="select-wrapper">
+              <select id="risk-sample-select">
+                {samples.map((sample, index) => (
+                  <option value={index}>{sample.label} [{sample.ticker}]</option>
+                ))}
+              </select>
+            </div>
+         </div>
       </div>
-    </header>
+    </div>
 
-    <div class="risk-demo__grid">
-      <div class="risk-panel">
-        <div class="risk-panel__head">
-          <h3>Working sample</h3>
-          <span class="risk-chip" data-field="ticker">AXP</span>
+    <div class="interface-grid">
+      <!-- Main Display -->
+      <div class="panel main-display">
+        <div class="panel-header">
+          <span>Signal Analysis</span>
+          <span class="status-dot"></span>
         </div>
-        <div class="risk-panel__body">
-          <div class="risk-indicator" data-direction="145">
-            <div class="risk-indicator__arrow"></div>
-            <div class="risk-indicator__rings"></div>
-            <div class="risk-indicator__label" data-field="gForce">NW 18.2</div>
-            <div class="risk-indicator__drift" data-field="drift">145°</div>
+        <div class="vector-display">
+          <div class="compass-ring"></div>
+          <div class="vector-arrow" id="vector-arrow"></div>
+          <div class="data-overlay">
+             <div class="data-point">
+               <span class="label">Drift</span>
+               <span class="value" data-field="drift">145°</span>
+             </div>
+             <div class="data-point">
+               <span class="label">G-Force</span>
+               <span class="value text-cyan" data-field="gForce">NW 18.2</span>
+             </div>
           </div>
-          <dl class="risk-metrics">
-            <div>
-              <dt>Implied vol</dt>
-              <dd data-field="iv">38.6%</dd>
-            </div>
-            <div>
-              <dt>Open vol</dt>
-              <dd data-field="openVol">1.42M</dd>
-            </div>
-            <div>
-              <dt>Open positions</dt>
-              <dd data-field="openPositions">8,240</dd>
-            </div>
-            <div>
-              <dt>Pressure</dt>
-              <dd data-field="pressure">+0.86</dd>
-            </div>
-            <div>
-              <dt>Momentum</dt>
-              <dd data-field="momentum">Up-slope</dd>
-            </div>
-          </dl>
         </div>
       </div>
 
-      <div class="risk-panel risk-panel--radar">
-        <div class="risk-panel__head">
-          <h3>Radar sweep</h3>
-          <span class="risk-chip">Live simulation</span>
+      <!-- Metrics Array -->
+      <div class="panel metrics-array">
+        <div class="panel-header">
+          <span>Telemetry</span>
+          <span class="code">SEC-01</span>
         </div>
-        <div class="risk-radar">
-          <div class="risk-radar__grid"></div>
-          <div class="risk-radar__pulse"></div>
-          <div class="risk-radar__blip"></div>
-          <div class="risk-radar__legend">
-            <div>
-              <strong data-field="ticker">AXP</strong>
-              <span>Tracker lock</span>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <span class="label">Implied Vol</span>
+            <span class="value text-gold" data-field="iv">38.6%</span>
+            <div class="bar-chart">
+               <div class="bar" style="width: 60%"></div>
             </div>
-            <div>
-              <strong data-field="momentum">Up-slope</strong>
-              <span>Directional bias</span>
+          </div>
+          <div class="metric-card">
+            <span class="label">Open Vol</span>
+            <span class="value" data-field="openVol">1.42M</span>
+            <div class="bar-chart">
+               <div class="bar" style="width: 45%"></div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <span class="label">Pressure</span>
+            <span class="value text-cyan" data-field="pressure">+0.86</span>
+             <div class="bar-chart">
+               <div class="bar" style="width: 75%"></div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <span class="label">Momentum</span>
+            <span class="value" data-field="momentum">Up-slope</span>
+             <div class="bar-chart">
+               <div class="bar" style="width: 80%"></div>
             </div>
           </div>
         </div>
-        <p class="risk-helper">Rotating sweep translated into directional G-force bias for position mapping.</p>
+      </div>
+
+      <!-- Risk Score -->
+      <div class="panel score-panel">
+        <div class="panel-header">
+          <span>Risk Index</span>
+        </div>
+        <div class="score-display">
+           <svg viewBox="0 0 100 100" class="score-chart">
+             <circle cx="50" cy="50" r="45" class="score-bg" />
+             <circle cx="50" cy="50" r="45" class="score-val" id="score-ring" stroke-dasharray="283" stroke-dashoffset="70" />
+           </svg>
+           <div class="score-number">
+             <span class="value" data-field="riskScore">72</span>
+             <span class="label">/100</span>
+           </div>
+        </div>
       </div>
     </div>
   </section>
@@ -184,338 +208,410 @@ const samples = [
 
 <style>
   :global(body) {
-    background: #070a0f;
+    background-color: #030304;
+    color: #e5e7eb;
+    font-family: 'Inter', system-ui, sans-serif;
   }
-  .risk-hero {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: clamp(2rem, 4vw, 4rem);
-    padding: clamp(3rem, 6vw, 6rem) clamp(1.5rem, 5vw, 5rem);
-    max-width: 1300px;
-    margin: 0 auto;
-    color: #d7d3c6;
-    border-bottom: 1px solid rgba(211, 205, 187, 0.2);
+
+  /* Blueprint Grid Background */
+  .blueprint-grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: -1;
   }
-  .risk-hero::before {
+
+  .blueprint-grid::after {
     content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, transparent 0%, #030304 90%);
+  }
+
+  /* Typography & Badges */
+  .gs-badge-group {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .gs-badge {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .gs-badge--gold { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); background: rgba(251, 191, 36, 0.05); }
+  .gs-badge--cyan { color: #22d3ee; border-color: rgba(34, 211, 238, 0.3); background: rgba(34, 211, 238, 0.05); }
+
+  h1 {
+    font-size: clamp(3rem, 6vw, 5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .risk-subtitle {
+    font-size: 1.25rem;
+    color: #9ca3af;
+    max-width: 600px;
+    margin-bottom: 3rem;
+    line-height: 1.6;
+  }
+
+  .highlight { color: #22d3ee; }
+  .text-cyan { color: #22d3ee; }
+  .text-gold { color: #fbbf24; }
+  .text-green { color: #10b981; }
+
+  /* HUD Stats */
+  .hud-stats {
+    display: flex;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 1.5rem 0;
+    background: rgba(0,0,0,0.3);
+  }
+
+  .hud-stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hud-stat .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+  }
+
+  .hud-stat .value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .cta-group {
+    display: flex;
+    gap: 1rem;
+  }
+
+  /* Radar Visual */
+  .risk-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    min-height: 80vh;
+    padding: 0 5%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .radar-container {
+    position: relative;
+    width: 500px;
+    height: 500px;
+    margin: 0 auto;
+    border-radius: 50%;
+    border: 1px solid rgba(34, 211, 238, 0.2);
+    box-shadow: 0 0 50px rgba(34, 211, 238, 0.1);
+    background: radial-gradient(circle, rgba(34, 211, 238, 0.05) 0%, transparent 70%);
+  }
+
+  .radar-grid {
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba(116, 128, 140, 0.16) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(116, 128, 140, 0.16) 1px, transparent 1px),
-      linear-gradient(transparent 40%, rgba(186, 180, 162, 0.12) 60%, transparent 80%);
-    background-size: 48px 48px, 48px 48px, 100% 100%;
-    pointer-events: none;
-    opacity: 0.6;
+      radial-gradient(transparent 65%, rgba(34, 211, 238, 0.1) 66%, transparent 67%),
+      conic-gradient(from 0deg, transparent 0deg, rgba(34, 211, 238, 0.1) 1deg, transparent 2deg);
+    background-size: 100% 100%, 100% 100%;
+    background-repeat: no-repeat, repeat;
+    border-radius: 50%;
   }
-  .risk-hero::after {
-    content: '';
+
+  .radar-rings .ring {
+    position: absolute;
+    border: 1px dashed rgba(34, 211, 238, 0.15);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .ring-1 { width: 30%; height: 30%; }
+  .ring-2 { width: 60%; height: 60%; }
+  .ring-3 { width: 90%; height: 90%; }
+
+  .radar-scan {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at top right, rgba(122, 153, 180, 0.25), transparent 55%);
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 70%, rgba(34, 211, 238, 0.3) 100%);
+    animation: scan 4s linear infinite;
+  }
+
+  .radar-blips .blip {
+    position: absolute;
+    width: 6px; height: 6px;
+    background: #fbbf24;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #fbbf24;
+    opacity: 0;
+    animation: blip 4s infinite;
+  }
+  .blip-1 { top: 30%; left: 60%; animation-delay: 1s; }
+  .blip-2 { top: 70%; left: 40%; animation-delay: 2.5s; }
+  .blip-3 { top: 45%; left: 25%; animation-delay: 3.2s; }
+
+  .radar-overlay {
+    position: absolute;
+    inset: 0;
     pointer-events: none;
   }
-  .risk-hero__content,
-  .risk-hero__visual {
-    position: relative;
-    z-index: 1;
+  .bearing {
+    position: absolute;
+    color: rgba(34, 211, 238, 0.5);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
   }
-  .risk-badge {
-    display: inline-flex;
+  .b-n { top: 10px; left: 50%; transform: translateX(-50%); }
+  .b-s { bottom: 10px; left: 50%; transform: translateX(-50%); }
+  .b-e { right: 10px; top: 50%; transform: translateY(-50%); }
+  .b-w { left: 10px; top: 50%; transform: translateY(-50%); }
+
+  @keyframes scan {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes blip {
+    0% { opacity: 0; }
+    20% { opacity: 1; transform: scale(1.5); }
+    100% { opacity: 0; transform: scale(1); }
+  }
+
+  /* Interface Section */
+  .risk-interface {
+    padding: 4rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .interface-header {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.3em;
-    font-size: 0.75rem;
-    color: #b7b1a0;
-    border: 1px solid rgba(183, 177, 160, 0.4);
-    padding: 0.5rem 1rem;
-    border-radius: 999px;
-    margin-bottom: 1.5rem;
-  }
-  .risk-hero h1 {
-    font-size: clamp(2.5rem, 4vw, 3.5rem);
-    line-height: 1.1;
-    margin: 0 0 1.5rem;
-    color: #f5f2e8;
-  }
-  .risk-subtitle {
-    font-size: 1.1rem;
-    line-height: 1.7;
-    color: #b0ad9f;
     margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
   }
-  .risk-hero__stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1.25rem;
-  }
-  .risk-hero__stats div {
-    background: rgba(16, 20, 28, 0.7);
-    border: 1px solid rgba(176, 170, 150, 0.18);
-    padding: 1rem 1.25rem;
-    border-radius: 0.75rem;
-  }
-  .risk-hero__stats span {
-    display: block;
+
+  .header-title h2 {
+    font-size: 1.5rem;
     text-transform: uppercase;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    color: #807a6c;
+    letter-spacing: 0.1em;
+    font-family: 'JetBrains Mono', monospace;
   }
-  .risk-hero__stats strong {
-    font-size: 1.2rem;
-    color: #f4f1e6;
+
+  .select-wrapper select {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
   }
-  .risk-hero__visual {
+
+  .interface-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 0.8fr;
+    gap: 1.5rem;
+  }
+
+  .panel {
+    background: rgba(10, 10, 12, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    background: #22d3ee;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #22d3ee;
+  }
+
+  /* Vector Display */
+  .vector-display {
+    position: relative;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .compass-ring {
+    width: 240px; height: 240px;
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    background:
+      linear-gradient(0deg, transparent 49%, rgba(255,255,255,0.05) 50%, transparent 51%),
+      linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.05) 50%, transparent 51%);
+  }
+
+  .vector-arrow {
+    position: absolute;
+    width: 4px; height: 100px;
+    background: linear-gradient(to top, transparent, #fbbf24);
+    transform-origin: bottom center;
+    bottom: 50%;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .vector-arrow::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -3px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid #fbbf24;
+  }
+
+  .data-overlay {
+    position: absolute;
+    bottom: 10px;
+    display: flex;
+    gap: 2rem;
+  }
+
+  .data-point {
+    text-align: center;
+  }
+  .data-point .value {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+  }
+
+  /* Metrics Grid */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .metric-card {
+    background: rgba(255,255,255,0.03);
+    padding: 1rem;
+    border-radius: 4px;
+  }
+
+  .metric-card .label {
+    display: block;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-bottom: 0.5rem;
+  }
+
+  .metric-card .value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .bar-chart {
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+  }
+
+  .bar-chart .bar {
+    height: 100%;
+    background: #22d3ee;
+    border-radius: 2px;
+  }
+
+  /* Score Panel */
+  .score-display {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-  }
-  .risk-sketch {
-    width: min(520px, 100%);
-    height: auto;
-    filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.45));
-  }
-  .risk-hero__caption {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: #7f7a6b;
-  }
-  .risk-demo {
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: clamp(3rem, 6vw, 5.5rem) clamp(1.5rem, 5vw, 5rem);
-    color: #d7d3c6;
-  }
-  .risk-demo__header {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 2.5rem;
-  }
-  .risk-demo__header h2 {
-    font-size: clamp(2rem, 3vw, 2.6rem);
-    margin: 0.5rem 0 1rem;
-    color: #f5f2e8;
-  }
-  .risk-demo__controls {
-    display: grid;
-    gap: 1.5rem;
-    min-width: 240px;
-  }
-  .risk-select,
-  .risk-range {
-    display: grid;
-    gap: 0.5rem;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: #988f7d;
-  }
-  .risk-select select,
-  .risk-range input {
-    background: rgba(12, 16, 22, 0.8);
-    border: 1px solid rgba(150, 144, 126, 0.35);
-    color: #f5f2e8;
-    border-radius: 0.75rem;
-    padding: 0.65rem 0.75rem;
-    font-size: 0.9rem;
-  }
-  .risk-range input { accent-color: #b1a57c; }
-  .risk-demo__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-  }
-  .risk-panel {
-    background: rgba(11, 14, 20, 0.95);
-    border: 1px solid rgba(165, 158, 140, 0.3);
-    border-radius: 1.5rem;
-    padding: 2rem;
-    box-shadow: inset 0 0 60px rgba(18, 24, 34, 0.6);
-  }
-  .risk-panel__head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
-  }
-  .risk-panel__head h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    color: #f2efe3;
-  }
-  .risk-chip {
-    padding: 0.4rem 0.75rem;
-    border: 1px solid rgba(168, 160, 138, 0.4);
-    border-radius: 999px;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.25em;
-    color: #b7b1a0;
-  }
-  .risk-panel__body {
-    display: grid;
-    gap: 1.5rem;
-  }
-  .risk-indicator {
     position: relative;
-    width: 180px;
-    height: 180px;
-    margin: 0 auto;
   }
-  .risk-indicator__rings {
+
+  .score-chart {
+    width: 160px; height: 160px;
+    transform: rotate(-90deg);
+  }
+
+  .score-bg {
+    fill: none;
+    stroke: rgba(255,255,255,0.05);
+    stroke-width: 8;
+  }
+
+  .score-val {
+    fill: none;
+    stroke: #fbbf24;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s ease;
+  }
+
+  .score-number {
     position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 1px solid rgba(130, 141, 152, 0.35);
-    box-shadow: inset 0 0 30px rgba(62, 88, 112, 0.35);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
   }
-  .risk-indicator__rings::before,
-  .risk-indicator__rings::after {
-    content: '';
-    position: absolute;
-    inset: 18px;
-    border-radius: 50%;
-    border: 1px dashed rgba(130, 141, 152, 0.4);
-  }
-  .risk-indicator__rings::after { inset: 42px; }
-  .risk-indicator__arrow {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 6px;
-    height: 70px;
-    background: linear-gradient(to bottom, #e4dfd1, #6c95b8);
-    transform-origin: 50% 100%;
-    transform: translate(-50%, -100%) rotate(var(--direction, 145deg));
-    border-radius: 4px;
-    box-shadow: 0 0 12px rgba(114, 159, 196, 0.5);
-  }
-  .risk-indicator__arrow::after {
-    content: '';
-    position: absolute;
-    top: -14px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-bottom: 16px solid #e4dfd1;
-  }
-  .risk-indicator__label {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1rem;
-    color: #f2efe3;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-  }
-  .risk-indicator__drift {
-    position: absolute;
-    bottom: -6px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.75rem;
-    color: #97a7b6;
-    letter-spacing: 0.2em;
-  }
-  .risk-metrics {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 1rem;
-    margin: 0;
-  }
-  .risk-metrics div {
-    background: rgba(16, 20, 28, 0.9);
-    border: 1px solid rgba(150, 144, 126, 0.2);
-    padding: 0.8rem;
-    border-radius: 0.75rem;
-  }
-  .risk-metrics dt {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.25em;
-    color: #8b8576;
-  }
-  .risk-metrics dd {
-    margin: 0.5rem 0 0;
-    font-size: 1rem;
-    color: #f5f2e8;
-  }
-  .risk-panel--radar {
-    position: relative;
-    overflow: hidden;
-  }
-  .risk-radar {
-    position: relative;
-    height: 280px;
-    border-radius: 1.5rem;
-    background: radial-gradient(circle at center, rgba(36, 62, 82, 0.5), rgba(12, 16, 22, 0.9) 60%);
-    border: 1px solid rgba(120, 152, 175, 0.3);
-    display: grid;
-    place-items: center;
-    overflow: hidden;
-  }
-  .risk-radar__grid {
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(circle, rgba(103, 138, 161, 0.4) 1px, transparent 1px);
-    background-size: 36px 36px;
-    opacity: 0.6;
-  }
-  .risk-radar__pulse {
-    position: absolute;
-    width: 240px;
-    height: 240px;
-    border-radius: 50%;
-    border: 1px solid rgba(134, 165, 188, 0.45);
-    animation: radar-pulse 4s infinite ease-in-out;
-  }
-  .risk-radar__blip {
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #d6f0ff;
-    box-shadow: 0 0 20px rgba(130, 190, 240, 0.9);
-    transform: translate(60px, -40px);
-  }
-  .risk-radar__legend {
-    position: absolute;
-    bottom: 1rem;
-    left: 1rem;
-    display: grid;
-    gap: 0.4rem;
-    font-size: 0.8rem;
-    color: #b4c6d5;
-  }
-  .risk-radar__legend strong {
+
+  .score-number .value {
     display: block;
-    color: #f5f2e8;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
   }
-  .risk-helper {
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-    color: #8b8576;
+
+  .score-number .label {
+    font-size: 0.8rem;
+    color: #6b7280;
   }
-  @keyframes radar-pulse {
-    0% { transform: scale(0.8); opacity: 0.2; }
-    50% { transform: scale(1); opacity: 0.6; }
-    100% { transform: scale(1.15); opacity: 0.1; }
-  }
-  @media (max-width: 900px) {
-    .risk-demo__controls { width: 100%; }
-    .risk-indicator { width: 160px; height: 160px; }
+
+  @media (max-width: 1024px) {
+    .risk-hero { grid-template-columns: 1fr; text-align: center; padding-top: 8rem; }
+    .hud-stats { justify-content: center; }
+    .cta-group { justify-content: center; }
+    .interface-grid { grid-template-columns: 1fr; }
+    .metrics-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
 
@@ -530,7 +626,8 @@ const samples = [
       gForce: 'NW 18.2',
       drift: '145°',
       pressure: '+0.86',
-      momentum: 'Up-slope'
+      momentum: 'Up-slope',
+      riskScore: 72
     },
     {
       label: 'Titan Harbor',
@@ -541,7 +638,8 @@ const samples = [
       gForce: 'E 22.7',
       drift: '80°',
       pressure: '+1.34',
-      momentum: 'Accel'
+      momentum: 'Accel',
+      riskScore: 88
     },
     {
       label: 'Mariner Ghost',
@@ -552,53 +650,52 @@ const samples = [
       gForce: 'SE 12.3',
       drift: '205°',
       pressure: '-0.62',
-      momentum: 'Slip'
+      momentum: 'Slip',
+      riskScore: 65
     }
   ];
 
-  const fieldTargets = document.querySelectorAll('[data-field]');
+  // DOM Elements
   const select = document.getElementById('risk-sample-select');
-  const range = document.getElementById('risk-direction-range');
-  const indicator = document.querySelector('.risk-indicator');
+  const fieldTargets = document.querySelectorAll('[data-field]');
+  const vectorArrow = document.getElementById('vector-arrow');
+  const scoreRing = document.getElementById('score-ring');
 
-  const updateFields = (sample) => {
-    fieldTargets.forEach((node) => {
-      const key = node.dataset.field;
-      if (sample[key]) {
-        node.textContent = sample[key];
-      }
+  const updateDashboard = (index) => {
+    const data = sampleData[index];
+    if (!data) return;
+
+    // Update Text Fields
+    fieldTargets.forEach(el => {
+      const field = el.dataset.field;
+      if (data[field]) el.textContent = data[field];
     });
-    indicator?.style.setProperty('--direction', sample.drift.replace('°', '') + 'deg');
-    indicator?.setAttribute('data-direction', sample.drift.replace('°', ''));
-    if (range) {
-      range.value = sample.drift.replace('°', '');
-    }
-  };
 
-  const updateDirection = (value) => {
-    const numeric = `${value}`.padStart(3, '0');
-    const drift = `${numeric}°`;
-    indicator?.style.setProperty('--direction', `${value}deg`);
-    const driftField = document.querySelector('[data-field="drift"]');
-    if (driftField) {
-      driftField.textContent = drift;
+    // Update Vector Arrow
+    const degrees = parseInt(data.drift.replace('°', ''));
+    if (vectorArrow) {
+       vectorArrow.style.transform = `rotate(${degrees}deg)`;
+    }
+
+    // Update Score Ring
+    if (scoreRing) {
+      const circumference = 2 * Math.PI * 45; // r=45
+      const offset = circumference - (data.riskScore / 100) * circumference;
+      scoreRing.style.strokeDashoffset = offset;
+
+      // Color change based on risk
+      if (data.riskScore > 80) scoreRing.style.stroke = '#ef4444'; // Red
+      else if (data.riskScore > 60) scoreRing.style.stroke = '#fbbf24'; // Yellow
+      else scoreRing.style.stroke = '#10b981'; // Green
     }
   };
 
   if (select) {
-    select.addEventListener('change', (event) => {
-      const sample = sampleData[Number(event.target.value)];
-      if (sample) {
-        updateFields(sample);
-      }
+    select.addEventListener('change', (e) => {
+      updateDashboard(e.target.value);
     });
   }
 
-  if (range) {
-    range.addEventListener('input', (event) => {
-      updateDirection(event.target.value);
-    });
-  }
-
-  updateFields(sampleData[0]);
+  // Init
+  updateDashboard(0);
 </script>

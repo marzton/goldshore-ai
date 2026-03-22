@@ -5,15 +5,18 @@
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy",
-    "run-task": "wrangler dev src/index.ts --test-scheduled"
+    "run-task": "wrangler dev src/index.ts --test-scheduled",
+    "test": "node --experimental-strip-types --test src/routes/*.test.ts"
   },
   "dependencies": {
     "@goldshore/auth": "workspace:*",
-    "hono": "^4.0.0"
+    "@hono/zod-validator": "^0.7.6",
+    "hono": "^4.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "wrangler": "^3.101.0",
     "@cloudflare/workers-types": "^4",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "wrangler": "^3.101.0"
   }
 }

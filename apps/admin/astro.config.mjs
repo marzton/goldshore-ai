@@ -1,20 +1,15 @@
-import { defineConfig } from 'astro/config';
-import cloudflare from '@astrojs/cloudflare';
-import tailwind from '@astrojs/tailwind';
+import baseConfig from "@goldshore/config/astro";
+import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  srcDir: './src',
+  ...baseConfig,
+  // Admin specific overrides
+  srcDir: './src', // Redundant if in base, but safe to keep
   output: 'server',
-  adapter: cloudflare(),
-  integrations: [tailwind({
-    applyBaseStyles: false,
-    configFile: "../../tailwind.config.mjs"
-  })],
   vite: {
+    ...baseConfig.vite,
     resolve: {
       alias: {
-        '@goldshore/ui': new URL('../../packages/ui', import.meta.url).pathname,
-        '@goldshore/theme': new URL('../../packages/theme', import.meta.url).pathname,
         '@packages': new URL('../../packages', import.meta.url).pathname,
         '@apps': new URL('../../apps', import.meta.url).pathname
       }
