@@ -2,70 +2,274 @@
 import { SharedHeader } from '@goldshore/ui';
 import type { AdminPermission } from '@goldshore/auth';
 
-const links: Array<{ href: string; label: string; requiredPermission?: AdminPermission }> = [
-  { href: '/', label: 'Overview' },
-  { href: '/dashboard', label: 'Ops Dashboard' },
-  { href: '/admin/overview', label: 'Operational Overview' },
-  { href: '/admin/analytics', label: 'Analytics' },
-  { href: '/admin/content', label: 'Content Studio' },
-  { href: '/admin/monetization', label: 'Monetization' },
-  { href: '/admin/forms', label: 'Forms', requiredPermission: 'forms:read' },
-  { href: '/admin/media', label: 'Media Library', requiredPermission: 'media:read' },
-  { href: '/admin/page-editor', label: 'Page Editor' },
-  { href: '/admin/pages', label: 'Pages' },
-  { href: '/admin/pages/editor', label: 'Pages Editor' },
-  { href: '/admin/system', label: 'System' },
-  { href: '/admin/workers', label: 'Workers' },
-  { href: '/admin/users', label: 'Users', requiredPermission: 'users:read' },
-  { href: '/admin/pii-scans', label: 'PII Scans' },
-  { href: '/admin/logs', label: 'Logs', requiredPermission: 'audit:read' },
-  { href: '/admin/settings', label: 'Settings' },
-  { href: '/appearance/hero', label: 'Hero Engine' }
+interface NavLink {
+  href: string;
+  label: string;
+  requiredPermission?: AdminPermission;
+}
+
+interface NavGroup {
+  id: string;
+  label: string;
+  links: NavLink[];
+}
+
+const navGroups: NavGroup[] = [
+  {
+    id: 'platform',
+    label: 'Platform',
+    links: [
+      { href: '/appearance/hero', label: 'Hero Configuration' },
+      { href: '/admin/system', label: 'API Status' }
+    ]
+  },
+  {
+    id: 'infrastructure',
+    label: 'Infrastructure',
+    links: [
+      { href: '/admin/overview', label: 'Infrastructure Overview' },
+      { href: '/admin/agent-feed', label: 'Agent Feed' }
+    ]
+  },
+  {
+    id: 'content',
+    label: 'Content',
+    links: [
+      { href: '/admin/page-editor', label: 'Home Editor' },
+      { href: '/admin/pages', label: 'Team Profiles' },
+      { href: '/admin/content', label: 'Advisory Services' }
+    ]
+  },
+  {
+    id: 'intake',
+    label: 'Intake',
+    links: [
+      { href: '/admin/forms', label: 'Briefing Requests', requiredPermission: 'forms:read' },
+      { href: '/admin/workers', label: 'CRM Logic' }
+    ]
+  }
 ];
 
 const { logo, permissions = [] } = Astro.props;
 
-const visibleLinks = links.filter((link) =>
-  link.requiredPermission ? permissions.includes(link.requiredPermission) : true
-);
+const visibleGroups = navGroups
+  .map((group) => ({
+    ...group,
+    links: group.links.filter((link) =>
+      link.requiredPermission ? permissions.includes(link.requiredPermission) : true
+    )
+  }))
+  .filter((group) => group.links.length > 0);
 
-// Enhanced active state detection for nested routes
 const isActive = (href: string) => {
   const currentPath = Astro.url.pathname;
-
-  // Clean trailing slashes for consistent comparison
   const cleanCurrent = currentPath.endsWith('/') ? currentPath.slice(0, -1) : currentPath;
   const cleanHref = href.endsWith('/') ? href.slice(0, -1) : href;
 
-  // Exact match
   if (cleanCurrent === cleanHref) return true;
-
-  // Nested match (e.g., /admin/system/details starts with /admin/system)
-  // Ensure we don't partial match distinct roots (e.g. /admin/user vs /admin/users)
   return cleanCurrent.startsWith(cleanHref + '/');
 };
+
+const isGroupActive = (group: NavGroup) => group.links.some((link) => isActive(link.href));
 ---
+
 <aside class="gs-admin-sidebar" id="admin-sidebar" aria-label="Admin navigation">
   <SharedHeader
     class="sidebar-header"
     href="https://goldshore.ai"
     target="_blank"
     rel="noopener noreferrer"
-    logoSrc={logo?.src || logo || '/packages/brand/logo-penrose.svg'}
+    logoSrc={logo?.src || logo || '/assets/logo.svg'}
     logoAlt="GoldShore logo"
   >
     <span slot="brand-text">GoldShore</span>
     <button id="sidebar-close" class="sidebar-close" aria-label="Close menu">✕</button>
   </SharedHeader>
-  <nav class="gs-sidebar-links">
-    {visibleLinks.map((link) => (
-      <a
-        class={`gs-nav-block ${isActive(link.href) ? 'active' : ''}`}
-        href={link.href}
-        aria-current={isActive(link.href) ? 'page' : undefined}
-      >
-        {link.label}
-      </a>
-    ))}
+
+  <nav class="gs-sidebar-links" aria-label="Admin sections">
+    {visibleGroups.map((group) => {
+      const groupActive = isGroupActive(group);
+      const panelId = `sidebar-group-panel-${group.id}`;
+
+      return (
+        <section class={`gs-sidebar-group ${groupActive ? 'is-open is-active' : ''}`}>
+          <h2 class="gs-sidebar-group-title">
+            <button
+              type="button"
+              class="gs-sidebar-group-trigger"
+              data-sidebar-group-trigger
+              data-panel-id={panelId}
+              aria-expanded={groupActive ? 'true' : 'false'}
+              aria-controls={panelId}
+            >
+              <span>{group.label}</span>
+              <span class="gs-sidebar-group-chevron" aria-hidden="true">▾</span>
+            </button>
+          </h2>
+
+          <div
+            id={panelId}
+            class={`gs-sidebar-group-panel ${groupActive ? 'is-open' : ''}`}
+            data-sidebar-group-panel
+          >
+            <div class="gs-sidebar-group-panel-inner">
+              {group.links.map((link) => {
+                const linkActive = isActive(link.href);
+
+                return (
+                  <a
+                    class={`gs-nav-block ${linkActive ? 'active' : ''}`}
+                    href={link.href}
+                    aria-current={linkActive ? 'page' : undefined}
+                  >
+                    {link.label}
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      );
+    })}
   </nav>
 </aside>
+
+<script>
+  const sidebarGroupTriggers = Array.from(document.querySelectorAll('[data-sidebar-group-trigger]'));
+
+  const updateGroupState = (trigger, expand) => {
+    const panelId = trigger.getAttribute('data-panel-id');
+    const panel = panelId ? document.getElementById(panelId) : null;
+    const group = trigger.closest('.gs-sidebar-group');
+
+    if (!panel || !group) return;
+
+    trigger.setAttribute('aria-expanded', String(expand));
+    panel.classList.toggle('is-open', expand);
+    group.classList.toggle('is-open', expand);
+
+    if (expand) {
+      panel.style.maxHeight = `${panel.scrollHeight}px`;
+    } else {
+      panel.style.maxHeight = '0px';
+    }
+  };
+
+  sidebarGroupTriggers.forEach((trigger) => {
+    const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+    updateGroupState(trigger, isExpanded);
+
+    trigger.addEventListener('click', () => {
+      const expanded = trigger.getAttribute('aria-expanded') === 'true';
+      updateGroupState(trigger, !expanded);
+    });
+
+    trigger.addEventListener('keydown', (event) => {
+      const expanded = trigger.getAttribute('aria-expanded') === 'true';
+
+      if (event.key === 'ArrowRight' && !expanded) {
+        event.preventDefault();
+        updateGroupState(trigger, true);
+      }
+
+      if (event.key === 'ArrowLeft' && expanded) {
+        event.preventDefault();
+        updateGroupState(trigger, false);
+      }
+    });
+  });
+
+  window.addEventListener('resize', () => {
+    sidebarGroupTriggers.forEach((trigger) => {
+      const expanded = trigger.getAttribute('aria-expanded') === 'true';
+      if (expanded) updateGroupState(trigger, true);
+    });
+  });
+</script>
+
+<style>
+  .gs-admin-sidebar {
+    height: 100dvh;
+    overflow-y: auto;
+    background: rgba(5, 6, 10, 0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .gs-sidebar-links {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .gs-sidebar-group {
+    border-radius: 0.6rem;
+  }
+
+  .gs-sidebar-group.is-open,
+  .gs-sidebar-group.is-active {
+    background: color-mix(in oklab, var(--gs-surface, #111) 86%, white 14%);
+  }
+
+  .gs-sidebar-group-title {
+    margin: 0;
+  }
+
+  .gs-sidebar-group-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.7rem 0.8rem;
+    border: 0;
+    background: transparent;
+    color: var(--gs-text-primary);
+    font: inherit;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 0.6rem;
+  }
+
+  .gs-sidebar-group-trigger:focus-visible {
+    outline: 2px solid var(--gs-color-accent, #7ea2ff);
+    outline-offset: 2px;
+  }
+
+  .gs-sidebar-group-chevron {
+    font-size: 0.9rem;
+    transition: transform 0.24s ease;
+  }
+
+  .gs-sidebar-group-trigger[aria-expanded='true'] .gs-sidebar-group-chevron {
+    transform: rotate(180deg);
+  }
+
+  .gs-sidebar-group-panel {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.24s ease, opacity 0.2s ease;
+  }
+
+  .gs-sidebar-group-panel.is-open {
+    opacity: 1;
+  }
+
+  .gs-sidebar-group-panel-inner {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0 0.4rem 0.55rem;
+  }
+
+  .gs-nav-block {
+    border-radius: 0.45rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gs-sidebar-group-chevron,
+    .gs-sidebar-group-panel {
+      transition: none;
+    }
+  }
+</style>

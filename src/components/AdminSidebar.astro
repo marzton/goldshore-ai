@@ -1,0 +1,32 @@
+---
+const links = [
+  { href: "/admin", label: "Dashboard" },
+  { href: "/admin/agent-feed", label: "Agent Feed" },
+  { href: "/risk-radar", label: "Risk Radar" },
+  { href: "/developer-hub", label: "Developer Hub" },
+  { href: "/contact", label: "Contact" },
+];
+---
+
+<aside
+  id="admin-sidebar"
+  class="fixed top-16 left-0 z-40 w-64 h-screen transition-transform -translate-x-full lg:translate-x-0 border-r border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
+  aria-label="Admin Sidebar"
+>
+  <div class="h-full px-3 py-4 overflow-y-auto">
+    <ul class="space-y-2 font-medium">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="flex items-center p-2 rounded-lg text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700"
+            >
+              <span>{link.label}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</aside>

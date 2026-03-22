@@ -39,24 +39,8 @@ const readInboxLogs = async (kv: KVNamespace): Promise<EmailLog[]> => {
 };
 
 app.get('/', (c) => c.text('GoldShore Mail Worker'));
-
-app.get('/health', (c) =>
-  c.json({
-    status: 'ok',
-    service: 'gs-mail',
-    env: c.env.ENV ?? 'production',
-    version: VERSION,
-  }),
-);
-
-app.get('/system/info', (c) =>
-  c.json({
-    service: 'gs-mail',
-    runtime: 'cloudflare-worker',
-    kv_bound: !!c.env.GS_CONFIG,
-  }),
-);
-
+app.get('/health', (c) => c.json({ status: 'ok', service: 'gs-mail', env: c.env.ENV ?? 'production', version: VERSION }));
+app.get('/system/info', (c) => c.json({ service: 'gs-mail', runtime: 'cloudflare-worker', kv_bound: !!c.env.GS_CONFIG }));
 app.get('/version', (c) => c.json({ version: VERSION }));
 
 app.post('/webhook', async (c) => {
