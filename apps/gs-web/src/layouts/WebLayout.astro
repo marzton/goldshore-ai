@@ -2,6 +2,7 @@
 import Logo from '../components/brand/Logo.astro';
 import SiteNav from '../components/SiteNav.astro';
 import '../styles/global.css';
+import { WEB_META_CSP } from '../utils/csp';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -28,7 +29,7 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0b0f18" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';" />
+    <meta http-equiv="Content-Security-Policy" content={WEB_META_CSP} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -41,7 +42,7 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
     <link rel="canonical" href={canonicalUrl} />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self';"
+      content={WEB_META_CSP}
     />
     <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
     <link rel="shortcut icon" href="/favicon.svg" />
