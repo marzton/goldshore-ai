@@ -6,7 +6,6 @@ const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
   <div class="gs-hero-bg" aria-hidden="true">
     <canvas class="gs-wave-field" data-wave-bg></canvas>
     <div class="gs-grid"></div>
-    <div class="gs-vignette"></div>
   </div>
 
   <div class="hero-mark-wrap" aria-hidden="true">
@@ -103,55 +102,47 @@ const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
   .gs-hero {
     position: relative;
     overflow: hidden;
-    min-height: calc(100vh - 88px);
+    min-height: calc(100vh - 80px);
     background: #0b0f18;
-    border-top: 1px solid rgba(226, 232, 240, 0.08);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.08);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.05);
   }
 
-  .gs-wave-bg,
-  .gs-grid,
-  .gs-vignette {
+  .gs-hero-bg {
     position: absolute;
     inset: 0;
   }
 
-  .gs-wave-bg {
+  .gs-wave-field {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     z-index: 0;
+    opacity: 0.4;
   }
 
   .gs-grid {
+    position: absolute;
+    inset: 0;
     z-index: 0;
     background:
-      linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
-    background-size: 72px 72px;
-    opacity: 0.18;
-    mask-image: radial-gradient(circle at 30% 30%, black 35%, transparent 78%);
+      linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(circle at 30% 30%, black 35%, transparent 85%);
     pointer-events: none;
-  }
-
-  .gs-vignette {
-    z-index: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(circle at 22% 24%, rgba(90, 162, 255, 0.12), transparent 42%),
-      radial-gradient(circle at 70% 42%, rgba(59, 130, 246, 0.08), transparent 52%),
-      linear-gradient(120deg, rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 0.72));
   }
 
   .hero-mark-wrap {
     position: absolute;
-    left: clamp(1.5rem, 8vw, 6rem);
-    top: clamp(5rem, 18vh, 10rem);
+    left: clamp(2rem, 10vw, 8rem);
+    top: clamp(6rem, 20vh, 12rem);
     z-index: 1;
     pointer-events: none;
   }
 
   .gs-logo-reactive {
-    width: clamp(72px, 10vw, 132px);
+    width: clamp(120px, 15vw, 180px);
     height: auto;
     color: #5aa2ff;
     transform-origin: 50% 50%;
@@ -160,7 +151,7 @@ const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
       transform 120ms linear,
       filter 160ms linear,
       opacity 160ms linear;
-    opacity: 0.88;
+    opacity: 0.9;
   }
 
   .gs-logo-path,
@@ -169,18 +160,18 @@ const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
   }
 
   .gs-logo-seam {
-    opacity: 0.68;
+    opacity: 0.6;
   }
 
   .gs-hero-inner {
     position: relative;
     z-index: 2;
-    width: min(1200px, calc(100% - 48px));
+    width: min(1200px, calc(100% - 4rem));
     margin: 0 auto;
-    padding: 96px 0 76px;
+    padding: 120px 0 80px;
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 48px;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 60px;
     align-items: center;
   }
 
@@ -193,44 +184,46 @@ const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    color: rgba(90, 162, 255, 0.95);
-    border: 1px solid rgba(90, 162, 255, 0.26);
-    background: rgba(2, 6, 23, 0.35);
-    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--gs-primary);
+    border: 1px solid rgba(90, 162, 255, 0.2);
+    background: rgba(2, 6, 23, 0.4);
+    padding: 8px 14px;
     border-radius: 999px;
     text-transform: uppercase;
   }
 
   .gs-pill .dot {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background: rgba(90, 162, 255, 1);
-    box-shadow: 0 0 18px rgba(90, 162, 255, 0.55);
+    background: var(--gs-primary);
+    box-shadow: 0 0 10px var(--gs-primary);
   }
 
   .gs-hero h1 {
-    margin: 18px 0 10px;
-    font-family: var(--gs-font-display, ui-serif, Georgia, serif);
-    font-size: clamp(44px, 5vw, 74px);
-    line-height: 1.02;
-    color: rgba(226, 232, 240, 0.98);
-    text-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+    margin: 24px 0 16px;
+    font-family: 'Lexend', var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: #ffffff;
   }
 
   .sub {
-    max-width: 52ch;
-    color: rgba(226, 232, 240, 0.72);
-    font-size: 15.5px;
-    line-height: 1.55;
+    max-width: 50ch;
+    color: var(--gs-text-dim);
+    font-size: 1.1rem;
+    line-height: 1.6;
   }
 
   .actions {
-    margin-top: 22px;
+    margin-top: 32px;
     display: flex;
-    gap: 12px;
+    gap: 16px;
     flex-wrap: wrap;
   }
 
@@ -238,46 +231,47 @@ const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 40px;
-    padding: 0 14px;
-    border-radius: 10px;
-    font-weight: 650;
-    font-size: 13px;
-    border: 1px solid rgba(226, 232, 240, 0.14);
-    background: rgba(2, 6, 23, 0.35);
-    color: rgba(226, 232, 240, 0.92);
-    backdrop-filter: blur(10px);
+    height: 52px;
+    padding: 0 28px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
     text-decoration: none;
-    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    transition: all 180ms ease;
   }
 
   .btn.primary {
-    border-color: rgba(90, 162, 255, 0.35);
-    background: linear-gradient(90deg, rgba(90, 162, 255, 0.22), rgba(59, 130, 246, 0.12));
-    box-shadow: 0 10px 30px rgba(90, 162, 255, 0.14);
+    background: var(--gs-primary);
+    color: #020617;
+    box-shadow: 0 12px 30px rgba(90, 162, 255, 0.2);
   }
 
-  .btn.ghost:hover,
-  .btn.primary:hover {
-    transform: translateY(-1px);
+  .btn.ghost {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
   }
 
   .panel {
-    border-radius: 18px;
-    border: 1px solid rgba(226, 232, 240, 0.12);
-    background: rgba(2, 6, 23, 0.38);
-    backdrop-filter: blur(14px);
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+    border-radius: 24px;
+    background: rgba(10, 18, 36, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
     overflow: hidden;
-    transform: translateZ(0);
   }
 
   .panel-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 16px;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.1);
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   .lights {
@@ -286,29 +280,31 @@ const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
   }
 
   .lights span {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background: rgba(226, 232, 240, 0.18);
+    background: rgba(255, 255, 255, 0.1);
   }
 
-  .lights span:nth-child(1) { background: rgba(239, 68, 68, 0.55); }
-  .lights span:nth-child(2) { background: rgba(245, 158, 11, 0.55); }
-  .lights span:nth-child(3) { background: rgba(34, 197, 94, 0.55); }
+  .lights span:nth-child(1) { background: #ff5f56; }
+  .lights span:nth-child(2) { background: #ffbd2e; }
+  .lights span:nth-child(3) { background: #27c93f; }
 
   .panel-title {
-    font-size: 12px;
-    color: rgba(226, 232, 240, 0.55);
-    letter-spacing: 0.08em;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gs-text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
 
   .panel-body {
-    padding: 16px;
+    padding: 24px;
   }
 
   .kv {
     display: grid;
-    gap: 10px;
+    gap: 12px;
   }
 
   .kv div {
@@ -317,68 +313,82 @@ const { title = "Shaping Waves with Applied Intelligence" } = Astro.props;
   }
 
   .kv span {
-    font-size: 12px;
-    color: rgba(226, 232, 240, 0.45);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gs-text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   .kv b {
-    font-size: 12px;
-    letter-spacing: 0.12em;
+    font-size: 11px;
+    font-family: ui-monospace, monospace;
   }
 
-  .kv .ok { color: rgba(34, 197, 94, 0.9); }
-  .kv .mode { color: rgba(90, 162, 255, 0.9); }
+  .kv .ok { color: #27c93f; }
+  .kv .mode { color: var(--gs-primary); }
 
   .bars {
-    margin: 14px 0 10px;
+    margin: 24px 0 16px;
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: flex-end;
-    height: 60px;
+    height: 80px;
   }
 
   .bars i {
     display: block;
-    width: 18%;
-    background: linear-gradient(180deg, rgba(90, 162, 255, 0.75), rgba(59, 130, 246, 0.25));
-    border-radius: 8px;
+    width: 100%;
+    background: linear-gradient(180deg, var(--gs-primary), rgba(90, 162, 255, 0.2));
+    border-radius: 4px;
     animation: bar 1.6s ease-in-out infinite;
   }
 
-  .bars i:nth-child(1) { height: 32%; }
-  .bars i:nth-child(2) { height: 54%; animation-delay: 0.1s; }
-  .bars i:nth-child(3) { height: 38%; animation-delay: 0.2s; }
-  .bars i:nth-child(4) { height: 68%; animation-delay: 0.3s; }
-  .bars i:nth-child(5) { height: 44%; animation-delay: 0.4s; }
+  .bars i:nth-child(1) { height: 40%; }
+  .bars i:nth-child(2) { height: 70%; animation-delay: 0.1s; }
+  .bars i:nth-child(3) { height: 50%; animation-delay: 0.2s; }
+  .bars i:nth-child(4) { height: 90%; animation-delay: 0.3s; }
+  .bars i:nth-child(5) { height: 60%; animation-delay: 0.4s; }
 
   @keyframes bar {
-    0%, 100% { filter: brightness(1); transform: translateY(0); }
-    50% { filter: brightness(1.15); transform: translateY(-4px); }
+    0%, 100% { filter: brightness(1); transform: scaleY(1); }
+    50% { filter: brightness(1.2); transform: scaleY(1.05); }
   }
 
   .terminal {
-    margin-top: 10px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono';
-    font-size: 12px;
+    margin-top: 16px;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
     line-height: 1.6;
-    color: rgba(226, 232, 240, 0.55);
+    color: rgba(255, 255, 255, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    padding-top: 16px;
   }
 
   @media (max-width: 980px) {
     .gs-hero-inner {
       grid-template-columns: 1fr;
-      padding-top: 112px;
-      gap: 32px;
+      padding-top: 160px;
+      gap: 48px;
+      text-align: center;
     }
 
     .hero-mark-wrap {
       left: 50%;
-      top: 2.5rem;
+      top: 3rem;
       transform: translateX(-50%);
     }
 
+    .sub {
+      margin: 0 auto;
+    }
+
+    .actions {
+      justify-content: center;
+    }
+
     .gs-grid {
-      background-size: 56px 56px;
+      background-size: 40px 40px;
     }
   }
 </style>

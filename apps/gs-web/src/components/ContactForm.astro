@@ -21,32 +21,34 @@ const { heading = 'Contact operations', compact = false } = Astro.props;
   </div>
 
   <div class="contact-form__grid">
-    <label>
-      <span>Name</span>
-      <input name="name" type="text" autocomplete="name" required />
+    <label class="form-field">
+      <span class="label-text">Name</span>
+      <input name="name" type="text" placeholder="Your full name" autocomplete="name" required />
     </label>
-    <label>
-      <span>Work email</span>
-      <input name="email" type="email" autocomplete="email" spellcheck="false" required />
+    <label class="form-field">
+      <span class="label-text">Work email</span>
+      <input name="email" type="email" placeholder="name@company.com" autocomplete="email" spellcheck="false" required />
     </label>
-    <label>
-      <span>Inquiry type</span>
-      <select name="inquiry">
-        <option value="general">General inquiry</option>
-        <option value="strategy-call">Strategy call</option>
-        <option value="project-scope">Project scoping</option>
-        <option value="support">Support</option>
-      </select>
+    <label class="form-field">
+      <span class="label-text">Inquiry type</span>
+      <div class="select-wrapper">
+        <select name="inquiry">
+          <option value="general">General inquiry</option>
+          <option value="strategy-call">Strategy call</option>
+          <option value="project-scope">Project scoping</option>
+          <option value="support">Support</option>
+        </select>
+      </div>
     </label>
-    <label>
-      <span>Timeline</span>
-      <input name="timeline" type="text" placeholder="2-6 weeks" />
+    <label class="form-field">
+      <span class="label-text">Timeline</span>
+      <input name="timeline" type="text" placeholder="e.g. 2-6 weeks" />
     </label>
-    <label class="contact-form__message">
-      <span>Project brief</span>
+    <label class="form-field contact-form__message">
+      <span class="label-text">Project brief</span>
       <textarea
         name="message"
-        rows="6"
+        rows="5"
         placeholder="Outline the system, risk, or AI workflow you need to operationalize."
         required
       ></textarea>
@@ -57,6 +59,9 @@ const { heading = 'Contact operations', compact = false } = Astro.props;
     <div data-contact-form-status class="contact-form__status" aria-live="polite" role="status"></div>
     <button type="submit" class="contact-form__submit">
       <span data-contact-form-submit-text>Send brief</span>
+      <svg class="submit-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3.33331 8H12.6666M12.6666 8L7.99998 3.33334M12.6666 8L7.99998 12.6667" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </button>
   </div>
 </form>
@@ -93,7 +98,7 @@ const { heading = 'Contact operations', compact = false } = Astro.props;
 
       if (!form.checkValidity()) {
         form.reportValidity();
-        setStatus('Please complete the required fields before sending.', 'error');
+        setStatus('Please complete the required fields.', 'error');
         return;
       }
 
@@ -127,7 +132,7 @@ const { heading = 'Contact operations', compact = false } = Astro.props;
         button.disabled = false;
         button.removeAttribute('aria-busy');
         if (submitText instanceof HTMLElement) submitText.textContent = originalText;
-        setStatus('Unable to send right now. Please email hello@goldshore.ai.', 'error');
+        setStatus('Unable to send. Please email hello@goldshore.ai.', 'error');
       }
     });
   };
@@ -152,28 +157,39 @@ const { heading = 'Contact operations', compact = false } = Astro.props;
   .contact-form {
     position: relative;
     display: grid;
-    gap: 1.4rem;
-    padding: clamp(1.4rem, 2vw, 2rem);
-    border-radius: 24px;
-    background: rgba(10, 18, 36, 0.72);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    box-shadow: var(--gs-shadow);
-    backdrop-filter: blur(18px);
+    gap: 2.5rem;
+    padding: clamp(1.5rem, 5vw, 3.5rem);
+    border-radius: 32px;
+    background: #0a0f1b;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
   }
 
   .contact-form--compact {
-    gap: 1rem;
+    gap: 1.5rem;
+    padding: 2rem;
+  }
+
+  .contact-form__header {
+    text-align: center;
+    max-width: 50ch;
+    margin: 0 auto;
   }
 
   .contact-form__header h2 {
-    margin: 0.35rem 0 0.75rem;
-    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    margin: 0.75rem 0 1rem;
+    font-family: 'Lexend', var(--font-sans);
+    font-weight: 700;
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
   }
 
   .contact-form__header p {
     margin: 0;
     color: var(--gs-text-dim);
-    line-height: 1.7;
+    line-height: 1.6;
+    font-size: 1.1rem;
   }
 
   .contact-form__honeypot {
@@ -186,46 +202,85 @@ const { heading = 'Contact operations', compact = false } = Astro.props;
 
   .contact-form__grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
   }
 
-  .contact-form label {
-    display: grid;
-    gap: 0.45rem;
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
   }
 
-  .contact-form label span {
-    font-size: 0.82rem;
-    letter-spacing: 0.12em;
+  .label-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--gs-text-dim);
+    color: var(--gs-primary);
+    padding-left: 0.2rem;
   }
 
   .contact-form input,
   .contact-form select,
   .contact-form textarea {
     width: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.04);
-    color: var(--gs-text);
-    padding: 0.95rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    color: #ffffff;
+    padding: 1rem 1.2rem;
+    font-size: 1rem;
     outline: none;
-    transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    transition: all 160ms ease;
+  }
+
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  .contact-form input:hover,
+  .contact-form select:hover,
+  .contact-form textarea:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
   }
 
   .contact-form input:focus,
   .contact-form select:focus,
   .contact-form textarea:focus {
-    border-color: rgba(90, 162, 255, 0.4);
-    box-shadow: 0 0 0 4px rgba(90, 162, 255, 0.12);
     background: rgba(255, 255, 255, 0.06);
+    border-color: var(--gs-primary);
+    box-shadow: 0 0 0 4px rgba(90, 162, 255, 0.1);
+  }
+
+  .select-wrapper {
+    position: relative;
+  }
+
+  .select-wrapper::after {
+    content: '';
+    position: absolute;
+    right: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 6px;
+    background-color: var(--gs-text-dim);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    pointer-events: none;
+  }
+
+  .contact-form select {
+    appearance: none;
+    padding-right: 3rem;
   }
 
   .contact-form textarea {
-    min-height: 168px;
+    min-height: 140px;
     resize: vertical;
+    line-height: 1.5;
   }
 
   .contact-form__message {
@@ -234,60 +289,79 @@ const { heading = 'Contact operations', compact = false } = Astro.props;
 
   .contact-form__footer {
     display: flex;
-    gap: 1rem;
+    gap: 2rem;
     justify-content: space-between;
     align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 2rem;
   }
 
   .contact-form__status {
-    min-height: 1.2rem;
+    flex: 1;
     color: var(--gs-text-dim);
-    font-size: 0.94rem;
+    font-size: 0.95rem;
+    font-weight: 500;
   }
 
   .contact-form__status--progress {
-    color: #bcd4ff;
+    color: var(--gs-primary);
   }
 
   .contact-form__status--error {
-    color: #ffb4b4;
+    color: #ff5f56;
   }
 
   .contact-form__submit {
-    border: 1px solid rgba(90, 162, 255, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    border: none;
     border-radius: 999px;
-    background: rgba(90, 162, 255, 0.14);
-    color: var(--gs-text);
-    padding: 0.9rem 1.35rem;
-    min-width: 140px;
+    background: var(--gs-primary);
+    color: #020617;
+    padding: 1rem 2rem;
+    font-weight: 700;
+    font-size: 1rem;
     cursor: pointer;
-    transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    transition: all 160ms ease;
+    box-shadow: 0 8px 20px rgba(90, 162, 255, 0.2);
   }
 
-  .contact-form__submit:hover,
-  .contact-form__submit:focus-visible {
-    transform: translateY(-1px);
-    border-color: rgba(90, 162, 255, 0.45);
-    background: rgba(90, 162, 255, 0.2);
+  .contact-form__submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: 0 12px 28px rgba(90, 162, 255, 0.3);
   }
 
-  .contact-form__submit[disabled] {
-    opacity: 0.6;
+  .submit-arrow {
+    transition: transform 160ms ease;
+  }
+
+  .contact-form__submit:hover .submit-arrow {
+    transform: translateX(3px);
+  }
+
+  .contact-form__submit:disabled {
+    opacity: 0.5;
     cursor: not-allowed;
+    background: var(--gs-text-dim);
+    box-shadow: none;
   }
 
-  @media (max-width: 720px) {
+  @media (max-width: 768px) {
     .contact-form__grid {
       grid-template-columns: 1fr;
     }
 
     .contact-form__footer {
       flex-direction: column;
-      align-items: stretch;
+      gap: 1.5rem;
+      text-align: center;
     }
 
     .contact-form__submit {
       width: 100%;
+      justify-content: center;
     }
   }
 </style>
