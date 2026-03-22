@@ -1,13 +1,26 @@
-import { cleanupUI, initBriefingModal, initStarField, initTilt } from './init-ui';
+import { initParallax } from '../components/parallax';
+import {
+  cleanupUI,
+  initBriefingModal,
+  initStarField,
+  initTilt,
+} from './init-ui';
 
 const STAR_COUNT = 16;
+
+let cleanupParallax: (() => void) | null = null;
 
 const initializeHeaderInteractions = () => {
   const header = document.querySelector<HTMLElement>('.gs-header');
   const toggle = header?.querySelector<HTMLButtonElement>('.gs-nav-toggle');
   const menu = header?.querySelector<HTMLElement>('#primary-navigation');
 
-  if (!header || !toggle || !menu || header.dataset.interactionsBound === 'true') {
+  if (
+    !header ||
+    !toggle ||
+    !menu ||
+    header.dataset.interactionsBound === 'true'
+  ) {
     return;
   }
 
@@ -19,7 +32,9 @@ const initializeHeaderInteractions = () => {
 
   const getFocusableMenuItems = () =>
     Array.from(
-      menu.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+      menu.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ),
     );
 
   const setMenuState = (open: boolean) => {
@@ -28,7 +43,9 @@ const initializeHeaderInteractions = () => {
     menu.setAttribute('aria-hidden', String(!open));
   };
 
-  const closeMenu = ({ restoreFocus = true }: { restoreFocus?: boolean } = {}) => {
+  const closeMenu = ({
+    restoreFocus = true,
+  }: { restoreFocus?: boolean } = {}) => {
     setMenuState(false);
     if (restoreFocus && lastFocusedBeforeOpen instanceof HTMLElement) {
       lastFocusedBeforeOpen.focus();
@@ -37,7 +54,10 @@ const initializeHeaderInteractions = () => {
   };
 
   const openMenu = () => {
-    lastFocusedBeforeOpen = document.activeElement instanceof HTMLElement ? document.activeElement : toggle;
+    lastFocusedBeforeOpen =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : toggle;
     setMenuState(true);
     const [firstFocusable] = getFocusableMenuItems();
     (firstFocusable ?? toggle).focus();
@@ -63,7 +83,7 @@ const initializeHeaderInteractions = () => {
         ticking = true;
       }
     },
-    { passive: true }
+    { passive: true },
   );
 
   toggle.addEventListener('click', (event) => {
@@ -77,20 +97,27 @@ const initializeHeaderInteractions = () => {
   });
 
   menu.addEventListener('click', (event) => {
-    const routeLink = event.target instanceof Element ? event.target.closest('a[href]') : null;
+    const routeLink =
+      event.target instanceof Element ? event.target.closest('a[href]') : null;
     if (routeLink) {
       closeMenu({ restoreFocus: false });
     }
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && header.getAttribute('data-menu-open') === 'true') {
+    if (
+      event.key === 'Escape' &&
+      header.getAttribute('data-menu-open') === 'true'
+    ) {
       closeMenu();
     }
   });
 
   document.addEventListener('click', (event) => {
-    if (header.getAttribute('data-menu-open') === 'true' && !header.contains(event.target as Node)) {
+    if (
+      header.getAttribute('data-menu-open') === 'true' &&
+      !header.contains(event.target as Node)
+    ) {
       closeMenu({ restoreFocus: false });
     }
   });
@@ -124,17 +151,28 @@ const initializeAllShootingStars = () => {
 };
 
 const cleanupShootingStars = () => {
-  document.querySelectorAll('.shooting-stars[data-stars-initialized="true"]').forEach((container) => {
-    container.removeAttribute('data-stars-initialized');
-    container.replaceChildren();
-  });
+  document
+    .querySelectorAll('.shooting-stars[data-stars-initialized="true"]')
+    .forEach((container) => {
+      container.removeAttribute('data-stars-initialized');
+      container.replaceChildren();
+    });
 };
 
+const cleanupPageBehaviors = () => {
+  cleanupParallax?.();
+  cleanupParallax = null;
+  cleanupShootingStars();
+  cleanupUI();
+};
 
 const initCodexUI = () => {
   initStarField('hero-stars');
   initTilt('[data-tilt]');
   initBriefingModal();
+
+  cleanupParallax?.();
+  cleanupParallax = initParallax();
 };
 
 const initWebLayout = () => {
@@ -144,10 +182,7 @@ const initWebLayout = () => {
 };
 
 document.addEventListener('astro:page-load', initWebLayout);
-document.addEventListener('astro:before-swap', () => {
-  cleanupShootingStars();
-  cleanupUI();
-});
+document.addEventListener('astro:before-swap', cleanupPageBehaviors);
 document.addEventListener('astro:after-swap', initializeAllShootingStars);
 
 if (document.readyState === 'loading') {

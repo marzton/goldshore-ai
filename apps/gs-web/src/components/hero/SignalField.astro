@@ -1,11 +1,24 @@
 <div class="signal-field" aria-hidden="true">
-  <div class="signal-field__grid"></div>
-  <div class="signal-field__particles" data-signal-field></div>
-  <svg class="signal-field__wave signal-field__wave--primary" viewBox="0 0 800 200" preserveAspectRatio="none">
-    <path d="M0 100 Q 100 40 200 100 T 400 100 T 600 100 T 800 100" />
+  <div class="signal-field__grid gs-parallax" data-parallax="0.32"></div>
+  <div
+    class="signal-field__particles gs-parallax"
+    data-signal-field
+    data-parallax="0.18"
+  >
+  </div>
+  <svg
+    class="signal-field__wave signal-field__wave--primary"
+    viewBox="0 0 800 200"
+    preserveAspectRatio="none"
+  >
+    <path d="M0 100 Q 100 40 200 100 T 400 100 T 600 100 T 800 100"></path>
   </svg>
-  <svg class="signal-field__wave signal-field__wave--secondary" viewBox="0 0 800 200" preserveAspectRatio="none">
-    <path d="M0 120 Q 100 70 200 120 T 400 120 T 600 120 T 800 120" />
+  <svg
+    class="signal-field__wave signal-field__wave--secondary"
+    viewBox="0 0 800 200"
+    preserveAspectRatio="none"
+  >
+    <path d="M0 120 Q 100 70 200 120 T 400 120 T 600 120 T 800 120"></path>
   </svg>
 </div>
 
@@ -25,6 +38,8 @@
   function clearReducedMotionFallback(root) {
     delete root.dataset.motionMode;
   }
+  const prefersReducedMotion = () =>
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function initSignalField(root) {
     if (instances.has(root)) return;
@@ -64,7 +79,7 @@
       opacity: 0.72,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
-      sizeAttenuation: true
+      sizeAttenuation: true,
     });
 
     const points = new THREE.Points(geometry, material);
@@ -73,7 +88,11 @@
 
     const halo = new THREE.Mesh(
       new THREE.PlaneGeometry(18, 9),
-      new THREE.MeshBasicMaterial({ color: '#1E3A8A', transparent: true, opacity: 0.08 })
+      new THREE.MeshBasicMaterial({
+        color: '#1E3A8A',
+        transparent: true,
+        opacity: 0.08,
+      }),
     );
     halo.position.z = -2.4;
     scene.add(halo);
@@ -170,7 +189,9 @@
   if (document.readyState !== 'loading') {
     initSignalFields();
   } else {
-    document.addEventListener('DOMContentLoaded', initSignalFields, { once: true });
+    document.addEventListener('DOMContentLoaded', initSignalFields, {
+      once: true,
+    });
   }
 </script>
 
@@ -197,7 +218,11 @@
     background-size: 40px 40px;
     opacity: 0.45;
     mask-image: radial-gradient(circle at 55% 40%, black 30%, transparent 80%);
-    -webkit-mask-image: radial-gradient(circle at 55% 40%, black 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(
+      circle at 55% 40%,
+      black 30%,
+      transparent 80%
+    );
   }
 
   .signal-field__particles {
