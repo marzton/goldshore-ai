@@ -1,10 +1,11 @@
 import { readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
+import pLimit from 'p-limit';
 import { loadDynamicRoutes } from './dynamic-routes';
 
 const DEFAULT_BASE_URL = 'http://localhost:4321';
-const DEFAULT_PAGES_DIR = 'apps/web/src/pages';
+const DEFAULT_PAGES_DIR = 'apps/gs-web/src/pages';
 
 const listFiles = async (dir: string): Promise<string[]> => {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -70,22 +71,27 @@ const run = async () => {
   console.log(`Checking ${allRoutes.length} routes against ${baseUrl}`);
 
   const failures: string[] = [];
+  const limit = pLimit(10);
 
-  for (const route of allRoutes) {
-    const url = new URL(route, baseUrl);
-    try {
-      const { response, durationMs } = await fetchWithTiming(url);
-      const status = response.status;
-      console.log(`GET ${route} -> ${status} (${formatDuration(durationMs)})`);
-      if (status !== 200) {
-        failures.push(`GET ${route} -> ${status} (${formatDuration(durationMs)})`);
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      console.log(`GET ${route} -> ERROR (${message})`);
-      failures.push(`GET ${route} -> ERROR (${message})`);
-    }
-  }
+  await Promise.all(
+    allRoutes.map((route) =>
+      limit(async () => {
+        const url = new URL(route, baseUrl);
+        try {
+          const { response, durationMs } = await fetchWithTiming(url);
+          const status = response.status;
+          console.log(`GET ${route} -> ${status} (${formatDuration(durationMs)})`);
+          if (status !== 200) {
+            failures.push(`GET ${route} -> ${status} (${formatDuration(durationMs)})`);
+          }
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          console.log(`GET ${route} -> ERROR (${message})`);
+          failures.push(`GET ${route} -> ERROR (${message})`);
+        }
+      })
+    )
+  );
 
   if (failures.length > 0) {
     console.error('\nNon-200 responses detected:');

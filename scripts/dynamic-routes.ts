@@ -22,14 +22,14 @@ export const dynamicRouteSources: DynamicRouteSource[] = [
     name: 'docs',
     type: 'content',
     basePath: '/developer/docs',
-    contentDir: 'apps/web/src/content/docs',
+    contentDir: 'apps/gs-web/src/content/docs',
     extensions: ['.md', '.mdx']
   },
   {
     name: 'api-docs',
     type: 'openapi',
     basePath: '/developer/api',
-    specPath: 'apps/web/src/data/v1.json',
+    specPath: 'apps/gs-web/src/data/v1.json',
     includeIndex: true
   }
 ];
@@ -78,13 +78,9 @@ const buildOpenApiRoutes = async (source: Extract<DynamicRouteSource, { type: 'o
 };
 
 export const loadDynamicRoutes = async () => {
-  const routes: string[] = [];
-  for (const source of dynamicRouteSources) {
-    if (source.type === 'content') {
-      routes.push(...(await buildContentRoutes(source)));
-      continue;
-    }
-    routes.push(...(await buildOpenApiRoutes(source)));
-  }
-  return routes;
+  const routePromises = dynamicRouteSources.map((source) =>
+    source.type === 'content' ? buildContentRoutes(source) : buildOpenApiRoutes(source)
+  );
+  const results = await Promise.all(routePromises);
+  return results.flat();
 };

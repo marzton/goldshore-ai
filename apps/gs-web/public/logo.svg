@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <title>GoldShore logo</title>
+  <g fill="#5aa2ff">
+    <path d="M64 12 22 86h18.5L72 30.5H64Z"/>
+    <path d="M64 12h8l33.8 58.4-9.3 16.2L64 30.5Z" opacity="0.94"/>
+    <path d="M22 86h74.5L87.2 102H31.2z" opacity="0.88"/>
+  </g>
+  <path d="M64 12 22 86h18.5L72 30.5H64Zm8 0h-8l33.8 58.4-9.3 16.2L64 30.5Zm-50 74 9.2 16h56l9.3-16H22Z" stroke="#5aa2ff" stroke-width="2.4" stroke-linejoin="round"/>
+</svg>

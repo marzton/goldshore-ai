@@ -10,7 +10,7 @@
     *   **Assignee:** @codex
 
 2.  **Risk Radar Development**
-    *   **Scope:** Complete the styling and functionality for the Risk Radar app (`apps/web/src/pages/apps/risk-radar.astro`), ensuring it integrates with the new auth pipeline and displays real-time risk metrics.
+    *   **Scope:** Complete the styling and functionality for the Risk Radar app (`apps/gs-web/src/pages/apps/risk-radar.astro`), ensuring it integrates with the new auth pipeline and displays real-time risk metrics.
     *   **Impact:** Deliver a key product feature for risk assessment and monitoring.
     *   **Assignee:** @codex
 
@@ -25,7 +25,7 @@
     *   **Assignee:** @codex
 
 5.  **Admin Dashboard Enhancement**
-    *   **Scope:** Expand `apps/admin` to include real-time metrics from `gs-gateway`, user management for SSO, and service health monitoring dashboards.
+    *   **Scope:** Expand `apps/gs-admin` to include real-time metrics from `gs-gateway`, user management for SSO, and service health monitoring dashboards.
     *   **Impact:** Provide operational visibility and control.
     *   **Assignee:** @codex
 
@@ -34,13 +34,13 @@
 1.  **Logo Polish**
     *   Refine the "glow pulse" animation on the logo to be smoother and ensure it looks good on both dark and light modes (if applicable).
 2.  **Team Page Polish**
-    *   Add social links (LinkedIn, GitHub) to the team members in `apps/web/src/pages/team.astro`.
+    *   Add social links (LinkedIn, GitHub) to the team members in `apps/gs-web/src/pages/team.astro`.
 3.  **Missing Page Placeholders**
     *   Create a generic "Coming Soon" or 404 page for any future broken links.
 4.  **Code Completion**
-    *   Audit `apps/web` for any `TODO` or `FIXME` comments and resolve them.
+    *   Audit `apps/gs-web` for any `TODO` or `FIXME` comments and resolve them.
 5.  **Type Safety**
-    *   Ensure strict mode is enabled and passing for all workspaces (especially `apps/web` and `packages/utils`).
+    *   Ensure strict mode is enabled and passing for all workspaces (especially `apps/gs-web` and `packages/utils`).
 6.  **Dependency Audit**
     *   Update dependencies in `package.json` and `pnpm-lock.yaml` to their latest stable versions.
 7.  **Linting Rules**
@@ -48,6 +48,6 @@
 8.  **Documentation Update**
     *   Update `README.md` and `docs/` with the latest architecture changes (Auth, Gateway).
 9.  **Performance Tuning**
-    *   Optimize image loading (AVIF/WebP) and script execution in `apps/web`.
+    *   Optimize image loading (AVIF/WebP) and script execution in `apps/gs-web`.
 10. **Security Headers**
-    *   Verify and strengthen CSP and other security headers in `apps/gateway` and `apps/web`.
+    *   Verify and strengthen CSP and other security headers in `apps/gs-gateway` and `apps/gs-web`.

@@ -1,6 +1,6 @@
-import { test, describe, before, beforeEach, after, mock } from 'node:test';
+import { test, describe, before, beforeEach, after, afterEach, mock } from 'node:test';
 import assert from 'node:assert';
-import { verifyAccess, verifyAccessWithClaims, verifyAccessWithClaimsInternal, type Env, type Dependencies } from './verify.ts';
+import { verifyAccess, verifyAccessWithClaims, verifyAccessWithClaimsInternal, type Env, type Dependencies, deps } from './verify.ts';
 
 describe('verifyAccess', () => {
     let mockDeps: Dependencies;
@@ -107,6 +107,19 @@ describe('verifyAccess', () => {
         assert.strictEqual(calls.arguments[2].issuer, 'https://custom.team.com');
     });
 
+    test('normalizes short Cloudflare Access team names to a full domain', async () => {
+        const req = new Request('http://example.com', {
+            headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
+        });
+        const env: Env = { CLOUDFLARE_TEAM_DOMAIN: 'gsl-ops' };
+
+        await testVerify(req, env);
+
+        const calls = createRemoteJWKSetMock.mock.calls[0];
+        assert.strictEqual(calls.arguments[0].toString(), 'https://gsl-ops.cloudflareaccess.com/cdn-cgi/access/certs');
+        assert.strictEqual(jwtVerifyMock.mock.calls[0].arguments[2].issuer, 'https://gsl-ops.cloudflareaccess.com');
+    });
+
     test('verifyAccess public wrapper returns boolean', async () => {
          const req = new Request('http://example.com');
          const env: Env = {};
@@ -114,5 +127,58 @@ describe('verifyAccess', () => {
          // but we can ensure it runs safely.
          const result = await verifyAccess(req, env);
          assert.strictEqual(result, false);
+    });
+});
+
+describe('verifyAccessWithClaims (public)', () => {
+    let consoleErrorMock: any;
+    let jwtVerifyMock: any;
+
+    beforeEach(() => {
+        // Spy on console.error to prevent noise and verify it's called
+        consoleErrorMock = mock.method(console, 'error', () => {});
+    });
+
+    afterEach(() => {
+        // Restore mocks
+        if (consoleErrorMock) consoleErrorMock.mock.restore();
+        if (jwtVerifyMock) jwtVerifyMock.mock.restore();
+    });
+
+    test('catches error and returns null when verification fails', async () => {
+        const req = new Request('http://example.com', {
+            headers: { 'CF-Access-Jwt-Assertion': 'invalid-token' }
+        });
+        const env: Env = {};
+
+        // Mock deps.jwtVerify to throw
+        jwtVerifyMock = mock.method(deps, 'jwtVerify', async () => {
+            throw new Error('Verification failed');
+        });
+
+        const result = await verifyAccessWithClaims(req, env);
+
+        assert.strictEqual(result, null);
+        assert.strictEqual(consoleErrorMock.mock.callCount(), 1);
+        const args = consoleErrorMock.mock.calls[0].arguments;
+        assert.strictEqual(args[0], "Token verification failed");
+    });
+
+    test('returns payload when verification succeeds', async () => {
+        const req = new Request('http://example.com', {
+            headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
+        });
+        const env: Env = {};
+        const mockPayload = { sub: 'user123', email: 'test@example.com' };
+
+        // Mock deps.jwtVerify to return success
+        jwtVerifyMock = mock.method(deps, 'jwtVerify', async () => {
+            return { payload: mockPayload };
+        });
+
+        const result = await verifyAccessWithClaims(req, env);
+
+        assert.deepStrictEqual(result, mockPayload);
+        assert.strictEqual(consoleErrorMock.mock.callCount(), 0);
     });
 });

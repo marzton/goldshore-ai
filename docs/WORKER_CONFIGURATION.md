@@ -3,6 +3,7 @@
 This document details the configuration for all Cloudflare Workers and Pages projects in the GoldShore monorepo.
 
 ## 1. gs-mail (`apps/mail-worker`)
+
 The email routing and processing worker.
 
 - **Directory:** `apps/mail-worker`
@@ -13,14 +14,15 @@ The email routing and processing worker.
 - **Compatibility Date:** `2024-03-20`
 - **Main Entry:** `src/index.ts`
 - **Purpose:** Handles email routing logic, possibly integrated with Cloudflare Email Routing or third-party providers (e.g., MailChannels).
-- **Status:** Scaffolding complete. Needs implementation of specific email logic.
+- **Status:** Repaired with inbound routing logic. Supports sender blocking via `MAIL_BLOCKED_SENDERS`, optional recipient allowlists via `MAIL_ALLOWED_RECIPIENTS`, and fail-closed forwarding to `MAIL_FORWARD_TO`.
 
 ## 2. gs-agent (`apps/gs-agent`)
+
 The AI agent service.
 
 - **Directory:** `apps/gs-agent`
 - **Package Name:** `@goldshore/agent`
-- **Wrangler:** `infra/cloudflare/gs-agent.wrangler.toml` (external config)
+- **Wrangler:** `infra/Cloudflare/gs-agent.wrangler.toml` (external config)
 - **Deployment:** CI workflow (`deploy-agent.yml`).
 - **Bindings:**
   - `AI`: Cloudflare Workers AI binding.
@@ -29,10 +31,11 @@ The AI agent service.
 - **Main Entry:** `src/index.ts`
 - **Purpose:** Handles AI inference tasks, job processing from queues, and agent interactions.
 
-## 3. gs-gateway (`apps/gateway`)
+## 3. gs-gateway (`apps/gs-gateway`)
+
 The API gateway and router.
 
-- **Directory:** `apps/gateway`
+- **Directory:** `apps/gs-gateway`
 - **Package Name:** `@goldshore/gateway`
 - **Wrangler:** `wrangler.toml` (locally defined)
 - **Deployment:** CI workflow (`deploy-gateway.yml`).
@@ -46,10 +49,11 @@ The API gateway and router.
 - **Main Entry:** `src/index.ts` (implied).
 - **Purpose:** Primary entry point for API traffic, routing requests to `gs-api` or handling them directly (e.g., cached responses).
 
-## 4. gs-control (`apps/control-worker`)
+## 4. gs-control (`apps/gs-control`)
+
 The operational control plane worker.
 
-- **Directory:** `apps/control-worker`
+- **Directory:** `apps/gs-control`
 - **Package Name:** `@goldshore/control`
 - **Wrangler:** `wrangler.toml` (locally defined)
 - **Deployment:** CI workflow (`deploy-control-worker.yml`).
@@ -62,15 +66,17 @@ The operational control plane worker.
 - **Main Entry:** `src/index.ts`
 - **Purpose:** Internal tool for managing Cloudflare resources, viewing logs, and performing administrative actions via Hono API.
 
-## 5. gs-api (`apps/api-worker`)
+## 5. gs-api (`apps/gs-api`)
+
 The backend API service.
 
-- **Directory:** `apps/api-worker`
+- **Directory:** `apps/gs-api`
 - **Package Name:** `gs-api`
-- **Wrangler:** `wrangler.toml` (locally defined) or `infra/cloudflare/goldshore-api.wrangler.toml`.
+- **Wrangler:** `wrangler.toml` (locally defined) or `infra/Cloudflare/gs-api.wrangler.toml`.
 - **Deployment:** CI workflow (`deploy-api-worker.yml`).
 - **Bindings:** likely similar to gateway (KV, D1, etc.).
 - **Purpose:** Core business logic and data access layer.
 
 ## Deprecated
+
 - `apps/goldshore-agent`: Removed. Legacy shim for `gs-agent`.

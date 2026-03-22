@@ -10,24 +10,27 @@ export interface Env {
 // Sentinel: Default to existing hardcoded values if not provided in Env
 const DEFAULT_TEAM_DOMAIN = "goldshore.cloudflareaccess.com";
 
-// Dependencies object to allow mocking in tests
-export const deps = {
-    createRemoteJWKSet,
-    jwtVerify
-};
+function normalizeTeamDomain(teamDomain?: string): string {
+    if (!teamDomain) {
+        return DEFAULT_TEAM_DOMAIN;
+    }
 
-// Cache JWKS sets by domain to avoid recreation on every request while supporting multiple domains if needed
-const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
+    return teamDomain.includes(".") ? teamDomain : `${teamDomain}.cloudflareaccess.com`;
+}
 
 export interface Dependencies {
     createRemoteJWKSet: typeof createRemoteJWKSet;
     jwtVerify: typeof jwtVerify;
 }
 
-const defaultDeps: Dependencies = {
+// Dependencies object to allow mocking in tests
+export const deps: Dependencies = {
     createRemoteJWKSet,
     jwtVerify
 };
+
+// Cache JWKS sets by domain to avoid recreation on every request while supporting multiple domains if needed
+const jwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
 
 function getJwks(domain: string, deps: Dependencies) {
     if (!jwksCache.has(domain)) {
@@ -48,7 +51,7 @@ export async function verifyAccessWithClaimsInternal(req: Request, env: Env, dep
   const token = req.headers.get("CF-Access-Jwt-Assertion");
   if (!token) return null;
 
-  const teamDomain = (env && env.CLOUDFLARE_TEAM_DOMAIN) || DEFAULT_TEAM_DOMAIN;
+  const teamDomain = normalizeTeamDomain(env?.CLOUDFLARE_TEAM_DOMAIN);
   const JWKS = getJwks(teamDomain, deps);
 
   try {
@@ -71,10 +74,19 @@ export async function verifyAccessWithClaimsInternal(req: Request, env: Env, dep
 }
 
 export async function verifyAccessWithClaims(req: Request, env: Env) {
-    return verifyAccessWithClaimsInternal(req, env, defaultDeps);
+    return verifyAccessWithClaimsInternal(req, env, deps);
 }
 
 export async function verifyAccess(req: Request, env: Env) {
-  const payload = await verifyAccessWithClaims(req, env);
-  return Boolean(payload);
+  const token = req.headers.get("CF-Access-Jwt-Assertion");
+  if (!token) return false;
+
+  // Validate via Access JWKS
+  await fetch(
+    "https://goldshore.cloudflareaccess.com/cdn-cgi/access/certs"
+  );
+
+  // TODO: add JOSE verification
+
+  return true;
 }

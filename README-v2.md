@@ -72,6 +72,7 @@ See [ECOSYSTEM.md](./ECOSYSTEM.md) for full details on extensions and integratio
 ![GoldShore architecture diagram showing Cloudflare Pages for web and admin, Cloudflare Workers for API, gateway, agent, and control, and storage services (KV, R2, D1, Queues, AI Gateway).](docs/architecture/diagram.svg)
 
 Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd).
+
 ```
 /
 ├── apps/
@@ -103,14 +104,14 @@ The following diagram is defined in [`docs/architecture/diagram.mmd`](./docs/arc
 
 ```mermaid
 flowchart TB
-  web[goldshore.ai (Web)\nCloudflare Pages]
-  admin[admin.goldshore.ai (Admin)\nCloudflare Pages + Access]
+  web["goldshore.ai (Web)<br/>Cloudflare Pages"]
+  admin["admin.goldshore.ai (Admin)<br/>Cloudflare Pages + Access"]
 
   subgraph workers[Cloudflare Workers Layer]
-    api[gs-api\nHono API Worker]
-    gateway[gs-gateway\nRouter, proxy, auth, queues]
-    agent[gs-agent\nAutonomous AI Agent Service]
-    control[gs-control\nAutomation, DNS, previews]
+    api["gs-api<br/>Hono API Worker"]
+    gateway["gs-gateway<br/>Router, proxy, auth, queues"]
+    agent["gs-agent<br/>Autonomous AI Agent Service"]
+    control["gs-control<br/>Automation, DNS, previews"]
   end
 
   web --> admin
@@ -136,7 +137,7 @@ flowchart TB
 
 ## Applications
 
-### 1) `apps/web` — Public Website (Astro)
+### 1) `apps/gs-web` — Public Website (Astro)
 
 - Marketing site
 - User portal
@@ -164,7 +165,7 @@ Authenticated user portal:
 └── settings
 ```
 
-### 2) `apps/admin` — Admin Dashboard (Astro SSR)
+### 2) `apps/gs-admin` — Admin Dashboard (Astro SSR)
 
 Protected by **Cloudflare Access**.
 
@@ -187,7 +188,7 @@ Protected by **Cloudflare Access**.
     └── secrets
 ```
 
-### 3) `apps/api-worker` — gs-api (Hono API Worker)
+### 3) `apps/gs-api` — gs-api (Hono API Worker)
 
 ```
 Route: https://api.goldshore.ai/*
@@ -213,7 +214,7 @@ D1 = gs-db
 AI = AI (AI Gateway)
 ```
 
-### 4) `apps/gateway` — gs-gateway
+### 4) `apps/gs-gateway` — gs-gateway
 
 ```
 Route: https://gw.goldshore.ai/*
@@ -233,7 +234,7 @@ Responsibilities:
 - External AI model integration
 - Workflow orchestration
 
-### 6) `apps/control-worker` — Automation Worker
+### 6) `apps/gs-control` — Automation Worker
 
 ```
 Route: https://ops.goldshore.ai/*
@@ -297,15 +298,31 @@ Monorepo-wide:
 - prettier
 - tsconfig base
 
+## Website enhancement controls
+
+The marketing site rollout now uses shared CTA language and structured content blocks:
+
+- CTA labels are centralized in `src/data/site-config.json` (`primary`, `secondary`, `tertiary`).
+- Homepage offering cards, service panel metadata, team bios, and case studies live in `src/data/site-content.ts`.
+- Contact form routing and post-submit next steps are implemented under `src/pages/contact.astro` and `src/pages/contact/thanks.astro`.
+- Developer-facing maintenance notes are documented in `docs/developer-briefing.md`.
+
+### Editing playbook
+
+1. **Modify CTA labels:** update `src/data/site-config.json` and verify Header/Footer/Homepage rendering.
+2. **Add a case study:** append an object to `caseStudies` in `src/data/site-content.ts`.
+3. **Update a service panel:** edit `services` in `src/data/site-content.ts` (`objective`, `deliverables`, `timeframe`).
+4. **Adjust homepage outcomes:** edit `offerings` in `src/data/site-content.ts` for title/summary/metric rows.
+
 ## Domains & DNS
 
-| Component      | Domain                     | Hosting            |
-|----------------|----------------------------|--------------------|
-| Web            | https://goldshore.ai       | Pages              |
-| Admin          | https://admin.goldshore.ai | Pages + Access     |
-| API Worker     | https://api.goldshore.ai   | Workers            |
-| Gateway Worker | https://gw.goldshore.ai    | Workers            |
-| Control Worker | https://ops.goldshore.ai   | Workers            |
+| Component      | Domain                     | Hosting        |
+| -------------- | -------------------------- | -------------- |
+| Web            | https://goldshore.ai       | Pages          |
+| Admin          | https://admin.goldshore.ai | Pages + Access |
+| API Worker     | https://api.goldshore.ai   | Workers        |
+| Gateway Worker | https://gw.goldshore.ai    | Workers        |
+| Control Worker | https://ops.goldshore.ai   | Workers        |
 
 ## API + Gateway Routing
 
@@ -373,10 +390,10 @@ pnpm dev
 Run individual apps:
 
 ```bash
-pnpm --filter ./apps/web dev
-pnpm --filter ./apps/admin dev
-pnpm --filter ./apps/api-worker dev
-pnpm --filter ./apps/gateway dev
+pnpm --filter ./apps/gs-web dev
+pnpm --filter ./apps/gs-admin dev
+pnpm --filter ./apps/gs-api dev
+pnpm --filter ./apps/gs-gateway dev
 pnpm --filter ./apps/gs-agent dev
 ```
 
@@ -391,8 +408,8 @@ pnpm build
 Playwright tests live in:
 
 ```
-apps/admin/tests
-apps/web/tests
+apps/gs-admin/tests
+apps/gs-web/tests
 ```
 
 Run:
@@ -408,9 +425,9 @@ Pages deploy automatically via GitHub Actions.
 Workers deploy:
 
 ```bash
-pnpm --filter ./apps/api-worker deploy
-pnpm --filter ./apps/gateway deploy
-pnpm --filter ./apps/control-worker deploy
+pnpm --filter ./apps/gs-api deploy
+pnpm --filter ./apps/gs-gateway deploy
+pnpm --filter ./apps/gs-control deploy
 pnpm --filter ./apps/gs-agent deploy
 ```
 
