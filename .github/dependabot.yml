@@ -10,9 +10,6 @@ updates:
    directory: "/"
    schedule:
      interval: weekly
-version: 2
-
-updates:
   # ─────────────────────────────────────────────
   # 1. NPM (Monorepo: apps/* + packages/*)
   # ─────────────────────────────────────────────

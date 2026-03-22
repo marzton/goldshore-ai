@@ -63,8 +63,6 @@ for BRANCH in "${CONFLICT_BRANCHES[@]}"; do
 
     echo "  - Processing branch: ${BRANCH}"
 
-    if ! git checkout "${BRANCH}"; then
-        echo "  - ERROR: Cannot checkout branch ${BRANCH}"
     if ! ensure_local_branch "${BRANCH}"; then
         echo "  - ERROR: Branch ${BRANCH} does not exist on origin. Skipping."
         git checkout "${BASE_BRANCH}"

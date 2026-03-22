@@ -18,29 +18,35 @@ export const geminiProvider: AnalysisProvider = {
     }
 
     const model = config.model ?? 'gemini-1.5-pro';
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-    const response = await config.fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: 'user',
-            parts: [{ text: buildPrompt(input) }],
-          },
-        ],
-      }),
-    });
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+    try {
+      const response = await config.fetch(url, {
+        method: 'POST',
+        headers: {
+          'x-goog-api-key': apiKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: buildPrompt(input) }],
+            },
+          ],
+        }),
+      });
 
-    const payload = await response.json();
-    const output = payload?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+      const payload = await response.json();
+      const output = payload?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
 
-    return {
-      provider: 'gemini',
-      output,
-      raw: payload,
-    };
+      return {
+        provider: 'gemini',
+        output,
+        raw: payload,
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Gemini API request failed: ${errorMessage}`);
+    }
   },
 };

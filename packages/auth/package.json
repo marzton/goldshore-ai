@@ -8,5 +8,10 @@
   },
   "scripts": {
     "test": "tsx --test *.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "tsx": "^4.9.3",
+    "vitest": "^1.6.0"
   }
 }

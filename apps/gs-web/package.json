@@ -23,6 +23,7 @@
     "@goldshore/utils": "workspace:*",
     "astro": "^5.18.0",
     "fuse.js": "^7.1.0",
+    "@supabase/supabase-js": "^2.42.0",
     "@goldshore/brand": "workspace:*"
   },
   "devDependencies": {
