@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import worker from './index';
+import worker from './index.ts';
 
 test('keeps the status and health endpoints public', async () => {
   const rootResponse = await worker.fetch(new Request('https://agent.goldshore.ai/'), {
