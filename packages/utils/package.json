@@ -1,12 +1,18 @@
 {
   "name": "@goldshore/utils",
   "version": "0.0.1",
-  "private": true,
   "main": "index.ts",
-  "scripts": {
-    "build": "echo 'No build script yet'"
+  "type": "module",
+  "types": "index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "import": "./index.ts",
+      "require": "./index.ts",
+      "default": "./index.ts"
+    }
   },
-  "devDependencies": {
-    "typescript": "^5.0.0"
+  "scripts": {
+    "test": "tsx --test index.test.ts audit.test.ts"
   }
 }

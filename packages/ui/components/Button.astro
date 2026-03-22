@@ -1,0 +1,13 @@
+---
+import GSButton from '../GSButton.astro';
+
+const { kind = 'primary', size = 'md', class: className, href, ...attrs } = Astro.props;
+const variant = kind;
+
+const sizeClass = size === 'sm' ? 'gs-button--small' : size === 'lg' ? 'gs-button--large' : '';
+const mergedClass = [sizeClass, className].filter(Boolean).join(' ');
+---
+
+<GSButton variant={variant} class={mergedClass} href={href} {...attrs}>
+  <slot />
+</GSButton>

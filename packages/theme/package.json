@@ -1,9 +1,24 @@
 {
   "name": "@goldshore/theme",
-  "version": "0.0.1",
-  "main": "index.js",
+  "version": "1.0.0",
+  "private": true,
   "type": "module",
   "exports": {
-    "./tokens.css": "./tokens.css"
+    ".": "./index.css",
+    "./index.css": "./index.css",
+    "./styles/global.css": "./src/styles/global.css",
+    "./styles/tokens.css": "./src/styles/tokens.css",
+    "./styles/base.css": "./src/styles/base.css",
+    "./styles/layout.css": "./src/styles/layout.css",
+    "./styles/components.css": "./src/styles/components.css",
+    "./styles/motion.css": "./src/styles/motion.css",
+    "./styles/scroll.css": "./src/styles/scroll.css",
+    "./styles/edge-light.css": "./src/styles/edge-light.css",
+    "./styles/pulsar.css": "./src/styles/pulsar.css",
+    "./styles/*": "./src/styles/*",
+    "./runtime": "./index.ts",
+    "./manager": "./src/manager.ts",
+    "./components/Logo.astro": "./src/components/Logo.astro",
+    "./assets/logo.svg": "./assets/logo.svg"
   }
 }
