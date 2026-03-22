@@ -59,7 +59,6 @@ const KNOWN_WORKFLOWS = [
   'deploy-gs-gateway.yml.disabled',
   'deploy-gs-mail.yml',
   'deploy-gs-web.yml',
-  'jules-nightly.yml',
   'lockfile-guard.yml',
   'maintenance-gs-sync.yml',
   'maintenance.yml',
