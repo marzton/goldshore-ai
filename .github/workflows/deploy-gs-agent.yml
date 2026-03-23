@@ -17,6 +17,10 @@ on:
 jobs:
   deploy-agent:
     runs-on: ubuntu-latest
+<<<<<<< codex/review-and-update-workflow-models-2026-03-23
+=======
+    name: Deploy
+>>>>>>> main
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -47,6 +51,6 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: pnpm exec wrangler deploy --env prod --config ../../infra/Cloudflare/gs-agent.wrangler.toml
+        run: pnpm exec wrangler deploy --env production --config ../../infra/Cloudflare/gs-agent.wrangler.toml
 
-# // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43
+# // [AUTO-UPDATE] Updated by Jules AI on 2026-03-23 00:00
