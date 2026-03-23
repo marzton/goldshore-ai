@@ -28,7 +28,9 @@ jobs:
       gs_web_sha: ${{ steps.metadata.outputs.gs_web_sha }}
       gs_admin_sha: ${{ steps.metadata.outputs.gs_admin_sha }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
+        with:
+          ref: ${{ github.sha }}
 
       - uses: pnpm/action-setup@v5
         with:
