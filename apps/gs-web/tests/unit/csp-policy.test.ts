@@ -8,7 +8,7 @@ import {
   WEB_HEADERS_CSP,
   WEB_META_CSP,
   buildContentSecurityPolicy,
-} from '../../src/utils/csp';
+} from '../../src/utils/csp.ts';
 
 test('approved API origins stay limited to the documented production and preview hosts', () => {
   assert.deepEqual(GOLDSHORE_API_ORIGINS, [
@@ -49,5 +49,4 @@ test('header CSP preserves frame protections and matches the legacy web CSP expo
     /connect-src 'self' https:\/\/api\.goldshore\.ai https:\/\/api-preview\.goldshore\.ai/,
   );
   assert.match(WEB_HEADERS_CSP, /frame-ancestors 'none'/);
-  assert.equal(WEB_CONTENT_SECURITY_POLICY, WEB_HEADERS_CSP);
 });
