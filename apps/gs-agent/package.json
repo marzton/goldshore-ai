@@ -5,10 +5,10 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "wrangler dev src/index.ts --config ../../infra/Cloudflare/gs-agent.wrangler.toml",
-    "deploy": "wrangler deploy --minify src/index.ts --config ../../infra/Cloudflare/gs-agent.wrangler.toml",
-    "deploy:preview": "wrangler deploy --env preview --config ../../infra/Cloudflare/gs-agent.wrangler.toml",
-    "build": "wrangler deploy src/index.ts --dry-run --outdir=dist --config ../../infra/Cloudflare/gs-agent.wrangler.toml",
+    "dev": "wrangler dev --config wrangler.toml",
+    "deploy": "wrangler deploy --minify --env prod --config wrangler.toml",
+    "deploy:preview": "wrangler deploy --env preview --config wrangler.toml",
+    "build": "wrangler deploy --env prod --dry-run --outdir=dist --config wrangler.toml",
     "test": "tsx src/index.test.ts"
   },
   "dependencies": {
