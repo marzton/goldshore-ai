@@ -12,12 +12,7 @@ if ! [[ "$LOG_LIMIT" =~ ^[0-9]+$ ]]; then
   exit 1
 fi
 
-git fetch origin --prune
-
-if ! git rev-parse --verify "$LOG_REF" >/dev/null 2>&1; then
-  echo "LOG_REF does not exist: $LOG_REF" >&2
-  exit 1
-fi
+git fetch --all --prune
 
 {
   echo "# Maintenance branch report"
@@ -39,7 +34,7 @@ fi
       --json number,title,headRefName,baseRefName,updatedAt,url \
       --jq '.[] | "#\(.number) \(.headRefName) -> \(.baseRefName) | \(.updatedAt) | \(.title) | \(.url)"'
   else
-    echo "gh CLI is not available on this runner - open pull request information will be omitted from this report."
+    echo "gh CLI is not available on this runner."
   fi
   echo
   echo "## Recent commits for ${LOG_REF}"
