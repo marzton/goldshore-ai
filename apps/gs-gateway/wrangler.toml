@@ -6,6 +6,10 @@ tsconfig = "tsconfig.json"
 
 workers_dev = false
 
+# gs-gateway remains the ingress/proxy worker.
+# - Service bindings (`API`, `AGENT`) are for synchronous request/response flows.
+# - The queue producer (`JOB_QUEUE`) is for asynchronous/background handoff only.
+
 # Default routes (Top-level)
 routes = [
   { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
@@ -35,6 +39,11 @@ binding = "JOB_QUEUE"
 queue = "goldshore-jobs"
 
 [[env.production.services]]
+binding = "API"
+service = "gs-api"
+environment = "prod"
+
+[[env.production.services]]
 binding = "AGENT"
 service = "gs-agent"
 environment = "prod"
@@ -54,12 +63,26 @@ CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 binding = "GATEWAY_KV"
 id = "9cc2209906a94851b704be57543987a9"
 
+# Preview keeps the same split: direct service binding for sync traffic,
+# queue handoff for background work.
+[[env.preview.queues.producers]]
+binding = "JOB_QUEUE"
+queue = "goldshore-jobs"
+
 [[env.preview.services]]
 binding = "API"
 service = "gs-api"
 environment = "preview"
 
+[[env.preview.services]]
+binding = "AGENT"
+service = "gs-agent"
+environment = "preview"
+
 [env.preview.ai]
+binding = "AI"
+
+[env.production.ai]
 binding = "AI"
 
 [env.production.observability]
@@ -79,6 +102,11 @@ queue = "goldshore-jobs"
 [[env.prod.services]]
 binding = "API"
 service = "gs-api"
+environment = "prod"
+
+[[env.prod.services]]
+binding = "AGENT"
+service = "gs-agent"
 environment = "prod"
 
 [env.prod.vars]
