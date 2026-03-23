@@ -1,46 +1,56 @@
-# apps/gs-agent
+# GoldShore Agent (`apps/gs-agent`)
+
+Queue-driven Cloudflare Worker for background agent processing.
 
 ## Overview
-The `gs-agent` worker is the canonical GoldShore agent service. It serves a small Hono-based status UI, exposes a health endpoint, and enforces Cloudflare Access auth on protected routes. The deprecated `apps/goldshore-agent` directory now mirrors this implementation, but the active CI/CD story is anchored on the canonical `gs-agent` workflows and `infra/Cloudflare/gs-agent.wrangler.toml`.
 
-Cloudflare metadata (from `infra/Cloudflare/gs-agent.wrangler.toml`):
-- Worker base name: `gs-agent`
-- Preview environment name: `gs-agent-preview`
-- Production environment: Wrangler `production`
+`gs-agent` handles background jobs from the `goldshore-jobs` queue, exposes lightweight fetch routes for status and templates, and protects non-public fetch endpoints with Cloudflare Access.
+
+The repo also contains a placeholder bot module at `src/bots/codex-bot.ts` for future queue-driven automation work.
+
+## Cloudflare configuration
+
+- App-local Wrangler config: `apps/gs-agent/wrangler.toml`
+- Canonical Cloudflare manifest used by package scripts: `infra/Cloudflare/gs-agent.wrangler.toml`
+- Live deploy workflows: `.github/workflows/deploy-gs-agent.yml` and `.github/workflows/preview-gs-agent.yml`
 - Queue consumer: `goldshore-jobs`
-- Compatibility date: `2024-11-01`
 
-Codex bot decision:
-- `jules-bot` remains a separate Node.js webhook service.
-- A placeholder `codex-bot` module now lives in `apps/gs-agent/src/bots/codex-bot.ts` for future queue-driven automation.
+## Routes and endpoints
 
-## Routes/Endpoints
-- `/` → status UI
-- `/health` → JSON health response
+Fetch routes implemented in `src/index.ts`:
 
-## Configuration
-- The Wrangler configuration lives in `infra/Cloudflare/gs-agent.wrangler.toml` and defines queue consumers for `goldshore-jobs`.
-- Local dev uses the shared Wrangler config via `wrangler dev`.
-- Preview deploys must use `wrangler deploy --env preview`.
-- Production deploys must use `wrangler deploy --env production`.
+- `GET /` — HTML status page
+- `GET /health` — JSON health response
+- `GET /templates` — authenticated template/module inventory
 
-## Local Dev
+Background handling implemented in the worker export:
+
+- Queue consumer for `goldshore-jobs` that logs each processed message and acknowledges it
+
+## Development
+
 ```bash
 pnpm install
-pnpm --filter ./apps/gs-agent dev
-pnpm --filter ./apps/gs-agent build
+pnpm --filter @goldshore/gs-agent dev
+pnpm --filter @goldshore/gs-agent build
+pnpm --filter @goldshore/gs-agent test
 ```
 
-## Deploy
-- Preview deploy workflow: `.github/workflows/preview-gs-agent.yml`
-  - Trigger: pull requests affecting `apps/gs-agent`, shared packages, or `infra/Cloudflare/gs-agent.wrangler.toml`
-  - Wrangler target: `--env preview`
-- Production deploy workflow: `.github/workflows/deploy-gs-agent.yml`
-  - Trigger: `push` to `main` for the same path set
-  - Wrangler target: `--env production`
-- Both workflows use `CLOUDFLARE_BUILD_API_TOKEN` (falling back to `CLOUDFLARE_API_TOKEN`) plus `CLOUDFLARE_ACCOUNT_ID`.
+Deployment-oriented scripts exposed by the package:
 
 ```bash
-pnpm --filter ./apps/gs-agent deploy
-pnpm --filter ./apps/gs-agent deploy:preview
+pnpm --filter @goldshore/gs-agent deploy
+pnpm --filter @goldshore/gs-agent deploy:preview
 ```
+
+## Deployment
+
+- Production workflow: `.github/workflows/deploy-gs-agent.yml`
+- Preview workflow: `.github/workflows/preview-gs-agent.yml`
+- Package scripts reference `infra/Cloudflare/gs-agent.wrangler.toml` as the canonical deployment manifest.
+
+## Auth behavior
+
+- `/` and `/health` are public.
+- Other fetch routes require successful Cloudflare Access verification.
+- In production, `CLOUDFLARE_ACCESS_AUDIENCE` must be configured for protected routes.
