@@ -1,6 +1,6 @@
 # Manual operations guide:
 # - Use this workflow to verify Cloudflare Access service-token authentication against deployed gs-* service endpoints.
-# - Do not use it for Cloudflare KV or routing reconciliation; that operator task lives in maintenance-agent-sync.yml.
+# - Do not use it for Cloudflare KV or routing reconciliation; that operator task lives in maintenance.yml.
 name: "Maintenance: GS Service Token Sync Check"
 run-name: "Service token sync • ${{ inputs.services }}${{ inputs.endpoint_path != '/api/health' && format(' • {0}', inputs.endpoint_path) || '' }} • @${{ github.actor }}"
 

@@ -1,9 +1,3 @@
-export function serializeCsp(directives: ContentSecurityPolicyDirectives): string {
-  return Object.entries(directives)
-    .map(([directive, sources]) => `${directive} ${sources.join(' ')}`)
-    .join('; ');
-}
-
 const SELF = "'self'";
 const UNSAFE_INLINE = "'unsafe-inline'";
 const NONE = "'none'";
@@ -37,16 +31,16 @@ export const WEB_CSP_DIRECTIVES = {
   'base-uri': [SELF],
 } as const;
 
-/**
- * Serializes a Content Security Policy directive object into a single string.
- * @param directives Object mapping CSP directives to an array of allowed sources.
- * @returns The serialized CSP string.
- */
-export function serializeCsp(directives: ContentSecurityPolicyDirectives): string {
-  return Object.entries(directives)
-    .map(([directive, sources]) => `${directive} ${sources.join(' ')}`)
-    .join('; ');
-}
+const BASE_CSP_DIRECTIVES = {
+  'default-src': [SELF],
+  'script-src': [SELF, UNSAFE_INLINE],
+  'style-src': [SELF, UNSAFE_INLINE, 'https://fonts.googleapis.com', 'https://unpkg.com'],
+  'font-src': [SELF, 'https://fonts.gstatic.com'],
+  'img-src': [SELF, 'data:'],
+  'connect-src': [...WEB_CONNECT_SRC],
+  'object-src': [NONE],
+  'base-uri': [SELF],
+} as const satisfies ContentSecurityPolicyDirectives;
 
 /**
  * Meta CSP is consumed by `src/layouts/WebLayout.astro`.
@@ -54,8 +48,7 @@ export function serializeCsp(directives: ContentSecurityPolicyDirectives): strin
  */
 const WEB_META_DIRECTIVES = {
   ...WEB_CSP_DIRECTIVES,
-  'frame-ancestors': undefined,
-} as const;
+} as const satisfies ContentSecurityPolicyDirectives;
 
 /**
  * Header CSP is consumed by runtime headers in `src/middleware.ts` and mirrored in `public/_headers`.
@@ -66,10 +59,9 @@ const WEB_HEADER_DIRECTIVES = {
   'frame-ancestors': [NONE],
 } as const;
 
-export function serializeCsp(directives: Record<string, readonly string[] | undefined>): string {
+export function serializeCsp(directives: ContentSecurityPolicyDirectives): string {
   return Object.entries(directives)
-    .filter(([_key, values]) => values !== undefined)
-    .map(([key, values]) => `${key} ${values!.join(' ')}`)
+    .map(([key, value]) => `${key} ${value.join(' ')}`)
     .join('; ');
 }
 
