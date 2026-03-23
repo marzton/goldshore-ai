@@ -30,8 +30,7 @@ Last audited: 2026-02-18
 | `.github/workflows/deploy-control-worker.yml` | Legacy production deploy for control worker. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gateway.yml` | Legacy production deploy for gateway worker. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-agent.yml` | Legacy production deploy for agent worker. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-gs-web.yml` | Current production deploy for web app with validation gates. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-gs-admin.yml` | Current production deploy for admin app with validation gates. | `push` to `main` | Non-blocking |
+| `.github/workflows/deploy-frontend.yml` | Current production deploy for gs-web and gs-admin with parallel validation/deploy jobs pinned to the same commit SHA. | `push` to `main`, `workflow_dispatch` | Non-blocking |
 | `.github/workflows/deploy-gs-api.yml` | Current production deploy for API worker with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-control.yml` | Current production deploy for control worker with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-gateway.yml` | Current production deploy for gateway worker with validation gates. | `push` to `main` | Non-blocking |
@@ -39,7 +38,8 @@ Last audited: 2026-02-18
 | `.github/workflows/deploy-gs-mail.yml` | Current production deploy for mail worker with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/jules-nightly.yml` | Nightly orchestrator for automation jobs. | `schedule`, `workflow_dispatch` | Non-blocking |
 | `.github/workflows/palette-manual.yml` | Dispatch-triggered run for the Palette agent. | `repository_dispatch` | Non-blocking |
-| `.github/workflows/maintenance.yml` | Manual Cloudflare infra reconciliation workflow. | `workflow_dispatch` | Non-blocking |
+| `.github/workflows/maintenance-agent-sync.yml` | Manual repo audit and gs service-token sync workflow. | `workflow_dispatch` | Non-blocking |
+| `.github/workflows/maintenance.yml` | Inspection-only branch reporting workflow with artifact upload. | `schedule`, `workflow_dispatch` | Non-blocking |
 | `.github/workflows/pii-scan.yml` | Manual PII scan/reporting workflow. | `workflow_dispatch` | Non-blocking |
 | `.github/workflows/summary.yml` | Summarize new issues using AI. | `issues` events | Non-blocking |
 | `.github/workflows/sonarcloud.yml` | SonarCloud analysis. | `push`, `pull_request`, `workflow_dispatch`, `schedule` | Non-blocking |
