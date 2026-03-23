@@ -55,17 +55,6 @@ Browser-side `connect-src` dependencies currently required by `gs-web`:
 
 Current browser/runtime call inventory under `src/`:
 
-### Shared runtime config (`GS_CONFIG`)
-
-`gs-web` does not currently read `GS_CONFIG` directly. Mutable/shared runtime state is consumed indirectly through:
-
-- `PUBLIC_API`-backed server fetches such as `src/pages/[...path].astro`,
-- same-origin Pages Functions with their own app-local bindings (`KV`, `DB`), and
-- content/admin flows that are generated or mediated outside the public web runtime.
-
-Do not add a `GS_CONFIG` binding to the web Pages project unless a concrete `apps/gs-web` runtime consumer needs live request-time reads. If that happens, keep the web access pattern read-only and leave writes to `gs-control`/operator surfaces.
-
-
 - `src/components/ContactForm.astro` → same-origin `POST /api/contact`
 - `src/components/DocsSearch.astro` → same-origin `GET /api/docs-search`
 - `src/components/ServiceStatus.astro` → browser `fetch(serviceUrl)`; keep this prop same-origin unless CSP is explicitly expanded
