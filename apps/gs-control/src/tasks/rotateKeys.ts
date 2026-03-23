@@ -30,7 +30,6 @@ export async function rotateKeys(env: ControlEnv) {
     results: []
   };
 
-  // Perform rotation in parallel
   auditLog.results = await Promise.all(
     ROTATION_CONFIG.map(async (config) => {
       try {
