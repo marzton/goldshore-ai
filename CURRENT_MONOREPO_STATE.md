@@ -15,7 +15,7 @@
 | `apps/gs-admin` | `@goldshore/admin` | Astro (SSR) | Active | Secure operational console |
 | `apps/gs-api` | `gs-api` | Worker | Active | Core API logic |
 | `apps/gs-gateway` | `@goldshore/gateway` | Worker (Hono) | Active | API Gateway / Router |
-| `apps/gs-control` | `@goldshore/control` | Worker (Hono) | Active | Privileged control plane / infra automation |
+| `apps/gs-control` | `@goldshore/control` | Worker (Hono) | Active | Control plane logic |
 | `apps/gs-agent` | `@goldshore/agent` | Worker (Hono) | Active | Canonical AI agent service |
 | `apps/goldshore-agent` | `goldshore-agent` | Worker (Hono) | Deprecated | Legacy shim kept in sync with `gs-agent` |
 | `apps/jules-bot` | `jules-bot` | Archived | Archived | Bot logic (removed in restructuring) |

@@ -39,7 +39,7 @@ We recommend the following extensions/tools for maximizing productivity in this 
 *   `apps/gs-gateway`: Edge gateway for routing, auth, and rate limiting (Worker).
 *   `apps/gs-api`: Core business logic and data access (Worker).
 *   `apps/goldshore-agent`: AI agent service (Worker).
-*   `apps/gs-control`: Privileged infra automation and control-plane ownership for DNS, Pages, Access audit, and shared config writes.
+*   `apps/gs-control`: Internal ops automation.
 
 ---
 *Built with ❤️ by GoldShore Engineering.*
