@@ -79,7 +79,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.75.0(@cloudflare/workers-types@4.20260313.1)
+        version: 4.75.0(@cloudflare/workers-types@4.20260317.1)
       yaml:
         specifier: ^2.8.2
         version: 2.8.2
@@ -145,18 +145,18 @@ importers:
         specifier: workspace:*
         version: link:../../packages/auth
       hono:
-        specifier: ^4.12.3
-        version: 4.12.7
+        specifier: ^4.12.8
+        version: 4.12.8
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20260301.1
-        version: 4.20260313.1
+        specifier: ^4.20260317.1
+        version: 4.20260317.1
       typescript:
         specifier: ^5.4.2
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.75.0(@cloudflare/workers-types@4.20260313.1)
+        version: 4.75.0(@cloudflare/workers-types@4.20260317.1)
 
   apps/gs-api:
     dependencies:
@@ -176,11 +176,11 @@ importers:
         specifier: ^2.16.0
         version: 2.16.1
       hono:
-        specifier: ^4.12.4
-        version: 4.12.7
+        specifier: ^4.12.8
+        version: 4.12.8
       openai:
-        specifier: ^6.29.0
-        version: 6.29.0(ws@8.20.0)(zod@4.3.6)
+        specifier: ^6.32.0
+        version: 6.32.0(ws@8.20.0)(zod@4.3.6)
       safe-stable-stringify:
         specifier: ^2.5.0
         version: 2.5.0
@@ -189,8 +189,8 @@ importers:
         version: 2.17.1
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20260301.1
-        version: 4.20260313.1
+        specifier: ^4.20260317.1
+        version: 4.20260317.1
       tsx:
         specifier: ^4.7.1
         version: 4.21.0
@@ -199,7 +199,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.75.0(@cloudflare/workers-types@4.20260313.1)
+        version: 4.75.0(@cloudflare/workers-types@4.20260317.1)
 
   apps/gs-control:
     dependencies:
@@ -214,17 +214,17 @@ importers:
         version: link:../../packages/utils
       '@hono/zod-validator':
         specifier: ^0.7.6
-        version: 0.7.6(hono@4.12.7)(zod@4.3.6)
+        version: 0.7.6(hono@4.12.8)(zod@4.3.6)
       hono:
-        specifier: ^4.12.4
-        version: 4.12.7
+        specifier: ^4.12.8
+        version: 4.12.8
       zod:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20260301.1
-        version: 4.20260313.1
+        specifier: ^4.20260317.1
+        version: 4.20260317.1
       tsx:
         specifier: ^4.7.1
         version: 4.21.0
@@ -233,7 +233,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.75.0(@cloudflare/workers-types@4.20260313.1)
+        version: 4.75.0(@cloudflare/workers-types@4.20260317.1)
 
   apps/gs-gateway:
     dependencies:
@@ -241,15 +241,15 @@ importers:
         specifier: workspace:*
         version: link:../../packages/auth
       hono:
-        specifier: ^4.12.4
-        version: 4.12.7
+        specifier: ^4.12.8
+        version: 4.12.8
       zod:
         specifier: ^3.23.0
         version: 3.25.76
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20260301.1
-        version: 4.20260313.1
+        specifier: ^4.20260317.1
+        version: 4.20260317.1
       '@types/node':
         specifier: ^25.2.1
         version: 25.5.0
@@ -261,7 +261,7 @@ importers:
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.75.0(@cloudflare/workers-types@4.20260313.1)
+        version: 4.75.0(@cloudflare/workers-types@4.20260317.1)
 
   apps/gs-mail:
     dependencies:
@@ -269,8 +269,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/schema
       hono:
-        specifier: ^4.12.4
-        version: 4.12.7
+        specifier: ^4.12.8
+        version: 4.12.8
       postal-mime:
         specifier: 2.7.3
         version: 2.7.3
@@ -279,14 +279,14 @@ importers:
         version: 4.3.6
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20260301.1
-        version: 4.20260313.1
+        specifier: ^4.20260317.1
+        version: 4.20260317.1
       typescript:
         specifier: ^5.4.2
         version: 5.9.3
       wrangler:
         specifier: ^4.63.0
-        version: 4.75.0(@cloudflare/workers-types@4.20260313.1)
+        version: 4.75.0(@cloudflare/workers-types@4.20260317.1)
 
   apps/gs-web:
     dependencies:
@@ -378,8 +378,8 @@ importers:
   packages/auth:
     dependencies:
       jose:
-        specifier: ^6.1.3
-        version: 6.2.1
+        specifier: ^6.2.2
+        version: 6.2.2
 
   packages/brand:
     dependencies:
@@ -416,7 +416,7 @@ importers:
     dependencies:
       drizzle-orm:
         specifier: ^0.30.0
-        version: 0.30.10(@cloudflare/workers-types@4.20260313.1)(@types/react@19.2.14)(react@19.2.4)
+        version: 0.30.10(@cloudflare/workers-types@4.20260317.1)(@types/react@19.2.14)(react@19.2.4)
     devDependencies:
       drizzle-kit:
         specifier: ^0.20.0
@@ -661,6 +661,9 @@ packages:
 
   '@cloudflare/workers-types@4.20260313.1':
     resolution: {integrity: sha512-jMEeX3RKfOSVqqXRKr/ulgglcTloeMzSH3FdzIfqJHtvc12/ELKd5Ldsg8ZHahKX/4eRxYdw3kbzb8jLXbq/jQ==}
+
+  '@cloudflare/workers-types@4.20260317.1':
+    resolution: {integrity: sha512-+G4eVwyCpm8Au1ex8vQBCuA9wnwqetz4tPNRoB/53qvktERWBRMQnrtvC1k584yRE3emMThtuY0gWshvSJ++PQ==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -2614,8 +2617,8 @@ packages:
   hls.js@1.6.15:
     resolution: {integrity: sha512-E3a5VwgXimGHwpRGV+WxRTKeSp2DW5DI5MWv34ulL3t5UNmyJWCQ1KmLEHbYzcfThfXG8amBL+fCYPneGHC4VA==}
 
-  hono@4.12.7:
-    resolution: {integrity: sha512-jq9l1DM0zVIvsm3lv9Nw9nlJnMNPOcAtsbsgiUhWcFzPE99Gvo6yRTlszSLLYacMeQ6quHD6hMfId8crVHvexw==}
+  hono@4.12.8:
+    resolution: {integrity: sha512-VJCEvtrezO1IAR+kqEYnxUOoStaQPGrCmX3j4wDTNOcD1uRPFpGlwQUIW8niPuvHXaTUxeOUl5MMDGrl+tmO9A==}
     engines: {node: '>=16.9.0'}
 
   html-escaper@3.0.3:
@@ -2756,8 +2759,8 @@ packages:
     resolution: {integrity: sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==}
     hasBin: true
 
-  jose@6.2.1:
-    resolution: {integrity: sha512-jUaKr1yrbfaImV7R2TN/b3IcZzsw38/chqMpo2XJ7i2F8AfM/lA4G1goC3JVEwg0H7UldTmSt3P68nt31W7/mw==}
+  jose@6.2.2:
+    resolution: {integrity: sha512-d7kPDd34KO/YnzaDOlikGpOurfF0ByC2sEV4cANCtdqLlTfBlw2p14O/5d/zv40gJPbIQxfES3nSx1/oYNyuZQ==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -3162,8 +3165,8 @@ packages:
   oniguruma-to-es@4.3.4:
     resolution: {integrity: sha512-3VhUGN3w2eYxnTzHn+ikMI+fp/96KoRSVK9/kMTcFqj1NRDh2IhQCKvYxDnWePKRXY/AqH+Fuiyb7VHSzBjHfA==}
 
-  openai@6.29.0:
-    resolution: {integrity: sha512-YxoArl2BItucdO89/sN6edksV0x47WUTgkgVfCgX7EuEMhbirENsgYe5oO4LTjBL9PtdKtk2WqND1gSLcTd2yw==}
+  openai@6.32.0:
+    resolution: {integrity: sha512-j3k+BjydAf8yQlcOI7WUQMQTbbF5GEIMAE2iZYCOzwwB3S2pCheaWYp+XZRNAch4jWVc52PMDGRRjutao3lLCg==}
     hasBin: true
     peerDependencies:
       ws: ^8.18.0
@@ -4705,6 +4708,8 @@ snapshots:
 
   '@cloudflare/workers-types@4.20260313.1': {}
 
+  '@cloudflare/workers-types@4.20260317.1': {}
+
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -4850,18 +4855,18 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
-  '@hono/node-server@1.19.11(hono@4.12.7)':
+  '@hono/node-server@1.19.11(hono@4.12.8)':
     dependencies:
-      hono: 4.12.7
+      hono: 4.12.8
 
-  '@hono/zod-validator@0.2.2(hono@4.12.7)(zod@3.25.76)':
+  '@hono/zod-validator@0.2.2(hono@4.12.8)(zod@3.25.76)':
     dependencies:
-      hono: 4.12.7
+      hono: 4.12.8
       zod: 3.25.76
 
-  '@hono/zod-validator@0.7.6(hono@4.12.7)(zod@4.3.6)':
+  '@hono/zod-validator@0.7.6(hono@4.12.8)(zod@4.3.6)':
     dependencies:
-      hono: 4.12.7
+      hono: 4.12.8
       zod: 4.3.6
 
   '@humanwhocodes/config-array@0.13.0':
@@ -6312,8 +6317,8 @@ snapshots:
   drizzle-kit@0.20.18:
     dependencies:
       '@esbuild-kit/esm-loader': 2.6.5
-      '@hono/node-server': 1.19.11(hono@4.12.7)
-      '@hono/zod-validator': 0.2.2(hono@4.12.7)(zod@3.25.76)
+      '@hono/node-server': 1.19.11(hono@4.12.8)
+      '@hono/zod-validator': 0.2.2(hono@4.12.8)(zod@3.25.76)
       camelcase: 7.0.1
       chalk: 5.6.2
       commander: 9.5.0
@@ -6322,7 +6327,7 @@ snapshots:
       esbuild-register: 3.6.0(esbuild@0.25.12)
       glob: 8.1.0
       hanji: 0.0.5
-      hono: 4.12.7
+      hono: 4.12.8
       json-diff: 0.9.0
       minimatch: 7.4.9
       semver: 7.7.4
@@ -6331,9 +6336,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.30.10(@cloudflare/workers-types@4.20260313.1)(@types/react@19.2.14)(react@19.2.4):
+  drizzle-orm@0.30.10(@cloudflare/workers-types@4.20260317.1)(@types/react@19.2.14)(react@19.2.4):
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20260313.1
+      '@cloudflare/workers-types': 4.20260317.1
       '@types/react': 19.2.14
       react: 19.2.4
 
@@ -6941,7 +6946,7 @@ snapshots:
 
   hls.js@1.6.15: {}
 
-  hono@4.12.7: {}
+  hono@4.12.8: {}
 
   html-escaper@3.0.3: {}
 
@@ -7053,7 +7058,7 @@ snapshots:
 
   jiti@1.21.7: {}
 
-  jose@6.2.1: {}
+  jose@6.2.2: {}
 
   js-tokens@4.0.0: {}
 
@@ -7722,7 +7727,7 @@ snapshots:
       regex: 6.1.0
       regex-recursion: 6.0.2
 
-  openai@6.29.0(ws@8.20.0)(zod@4.3.6):
+  openai@6.32.0(ws@8.20.0)(zod@4.3.6):
     optionalDependencies:
       ws: 8.20.0
       zod: 4.3.6
@@ -8826,6 +8831,23 @@ snapshots:
       workerd: 1.20260317.1
     optionalDependencies:
       '@cloudflare/workers-types': 4.20260313.1
+      fsevents: 2.3.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
+  wrangler@4.75.0(@cloudflare/workers-types@4.20260317.1):
+    dependencies:
+      '@cloudflare/kv-asset-handler': 0.4.2
+      '@cloudflare/unenv-preset': 2.15.0(unenv@2.0.0-rc.24)(workerd@1.20260317.1)
+      blake3-wasm: 2.1.5
+      esbuild: 0.25.12
+      miniflare: 4.20260317.0
+      path-to-regexp: 6.3.0
+      unenv: 2.0.0-rc.24
+      workerd: 1.20260317.1
+    optionalDependencies:
+      '@cloudflare/workers-types': 4.20260317.1
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil
