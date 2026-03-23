@@ -10,14 +10,6 @@ queue = "goldshore-jobs"
 max_batch_size = 10
 max_batch_timeout = 5
 
-[env.production]
-main = "../../apps/gs-agent/src/index.ts"
-tsconfig = "../../apps/gs-agent/tsconfig.json"
-[[env.production.queues.consumers]]
-queue = "goldshore-jobs"
-max_batch_size = 10
-max_batch_timeout = 5
-
 [env.dev]
 name = "gs-agent-dev"
 
