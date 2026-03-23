@@ -26,10 +26,15 @@ export const WEB_CSP_DIRECTIVES = {
   'font-src': [SELF, 'https://fonts.gstatic.com'],
   'img-src': [SELF, 'data:', 'https://*.cloudflare.com'],
   'connect-src': [...BROWSER_CONNECT_SRC],
-  'frame-ancestors': [NONE],
   'object-src': [NONE],
   'base-uri': [SELF],
 } as const;
+
+export function serializeCsp(directives: ContentSecurityPolicyDirectives): string {
+  return Object.entries(directives)
+    .map(([key, values]) => `${key} ${values.join(' ')}`)
+    .join('; ');
+}
 
 const BASE_CSP_DIRECTIVES = {
   'default-src': [SELF],
@@ -54,10 +59,13 @@ const WEB_META_DIRECTIVES = {
  * Header CSP is consumed by runtime headers in `src/middleware.ts` and mirrored in `public/_headers`.
  * Header delivery can enforce `frame-ancestors`, which meta CSP cannot.
  */
+export const WEB_META_CSP = serializeCsp(WEB_META_DIRECTIVES);
+
 const WEB_HEADER_DIRECTIVES = {
   ...WEB_CSP_DIRECTIVES,
   'frame-ancestors': [NONE],
-} as const;
+} as const satisfies ContentSecurityPolicyDirectives;
+export const WEB_HEADERS_CSP = serializeCsp(WEB_HEADER_DIRECTIVES);
 
 export function serializeCsp(directives: ContentSecurityPolicyDirectives): string {
   return Object.entries(directives)
@@ -72,5 +80,4 @@ export function buildContentSecurityPolicy(
 }
 
 export const WEB_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy();
-export const WEB_META_CSP = serializeCsp(WEB_META_DIRECTIVES);
-export const WEB_HEADERS_CSP = serializeCsp(WEB_HEADER_DIRECTIVES);
+
