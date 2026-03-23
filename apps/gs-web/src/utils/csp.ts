@@ -59,6 +59,12 @@ const WEB_HEADER_DIRECTIVES = {
   'frame-ancestors': [NONE],
 } as const;
 
+export function serializeCsp(directives: ContentSecurityPolicyDirectives): string {
+  return Object.entries(directives)
+    .map(([key, value]) => `${key} ${value.join(' ')}`)
+    .join('; ');
+}
+
 export function buildContentSecurityPolicy(
   directives?: ContentSecurityPolicyDirectives,
 ): string {
@@ -66,5 +72,5 @@ export function buildContentSecurityPolicy(
 }
 
 export const WEB_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy();
+export const WEB_META_CSP = serializeCsp(WEB_META_DIRECTIVES);
 export const WEB_HEADERS_CSP = serializeCsp(WEB_HEADER_DIRECTIVES);
-
