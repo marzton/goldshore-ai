@@ -1,7 +1,7 @@
 # apps/gs-api
 
 ## Overview
-The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers.
+The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers. It uses KV, R2, D1, and the AI Gateway bindings configured in `wrangler.toml`.
 
 Cloudflare metadata (from `wrangler.toml`):
 - Worker name: `gs-api`
@@ -9,7 +9,6 @@ Cloudflare metadata (from `wrangler.toml`):
 - Compatibility date: `2024-11-01`
 - Bindings: `KV` (KV), `CONTROL_LOGS` (KV), `ASSETS` (R2), `DB` (D1), `AI` (AI Gateway)
 - Environment variable: `ENV=production`
-The `gs-api` worker is the primary Hono-based API layer for GoldShore, served from `https://api.goldshore.ai/*` on Cloudflare Workers. It uses KV, R2, D1, and the AI Gateway bindings configured in `wrangler.toml`.
 
 Configuration highlights (from `wrangler.toml`):
 - `ENV=production`
@@ -41,8 +40,8 @@ pnpm --filter ./apps/gs-api build
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-api-worker.yml`
-- Preview deploy: `.github/workflows/preview-api-worker.yml`
+- Production deploy: `.github/workflows/deploy-gs-api.yml`
+- Preview deploy: `.github/workflows/preview-gs-api.yml`
 - Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
 
 ### Cloudflare Worker Builds troubleshooting
@@ -63,11 +62,6 @@ Fix in Cloudflare Dashboard:
 Notes:
 - `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` can still be valid while Worker Builds fails.
 - Rotating/deleting the Worker Builds token immediately invalidates queued and new builds that reference the old token.
-
-<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
-```bash
-pnpm --filter ./apps/gs-api deploy
-```
 
 ## AI Gateway (gs-gateway) local setup
 

@@ -41,8 +41,8 @@ pnpm --filter ./apps/gs-control run-task
 ```
 
 ## Deploy
-- Production deploy workflow in repo: `.github/workflows/deploy-gs-control.yml.disabled`
-- No dedicated preview control workflow exists in `.github/workflows` right now; treat `ops-preview.goldshore.ai` validation as a Cloudflare/dashboard verification step until one is added.
+- Production deploy workflow in repo: `.github/workflows/deploy-gs-control.yml.disabled` (currently disabled on disk)
+- No dedicated preview control workflow exists in `.github/workflows`; treat `ops-preview.goldshore.ai` validation as a Cloudflare/dashboard verification step until one is added.
 - Worker deploy jobs use `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`, and some jobs prefer `CLOUDFLARE_BUILD_API_TOKEN` when that override secret is present.
 - Store runtime secrets with `wrangler secret put` rather than committing env values.
 
@@ -64,8 +64,3 @@ Operational checklist:
 5. Rerun the affected GitHub Actions workflows, then run `.github/workflows/maintenance.yml` to verify the rotated credentials can still reconcile Cloudflare state.
 
 For the full workflow/secret matrix, see `docs/ci/INFRA_SYNC_RUNBOOK.md`.
-
-<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-03-18 00:00 -->
-```bash
-pnpm --filter ./apps/gs-control deploy
-```
