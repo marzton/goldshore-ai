@@ -67,6 +67,12 @@ const WEB_HEADER_DIRECTIVES = {
 } as const satisfies ContentSecurityPolicyDirectives;
 export const WEB_HEADERS_CSP = serializeCsp(WEB_HEADER_DIRECTIVES);
 
+export function serializeCsp(directives: ContentSecurityPolicyDirectives): string {
+  return Object.entries(directives)
+    .map(([key, value]) => `${key} ${value.join(' ')}`)
+    .join('; ');
+}
+
 export function buildContentSecurityPolicy(
   directives?: ContentSecurityPolicyDirectives,
 ): string {

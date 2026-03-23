@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@goldshore/schema": "workspace:*",
-    "hono": "^4.12.4",
-    "postal-mime": "^2.7.3",
+    "hono": "^4.12.8",
+    "postal-mime": "^2.7.4",
     "zod": "^4.3.6"
   },
   "devDependencies": {

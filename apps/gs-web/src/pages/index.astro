@@ -131,6 +131,7 @@ const proofPoints = [
           </ul>
         </aside>
       </div>
+    </section>
 
     <section class="signal-strip gs-shell-section" aria-label="Signal strip">
       {signals.map((signal) => (
@@ -834,6 +835,19 @@ const proofPoints = [
       .hero-button,
       .status-dot,
       .signal-tile--loading::after {
+        animation: none;
+      }
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-grid {
+        background-size: 52px 52px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-button {
         transition: none;
         animation: none;
       }
