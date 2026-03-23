@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { Env, Variables } from '../types';
+import sanitizeHtml from 'sanitize-html';
 
 type MediaRecord = {
   id: string;

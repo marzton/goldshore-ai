@@ -4,6 +4,6 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "test": "npx tsx --test **/*.test.ts"
+    "test": "npx tsx --test *.test.ts"
   }
 }

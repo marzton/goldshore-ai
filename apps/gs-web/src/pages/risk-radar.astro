@@ -7,7 +7,9 @@ import Legend from "../components/risk-radar/Legend.astro";
 
 export const prerender = true;
 
-const radarMockData = {
+type RadarStatus = 'stable' | 'monitoring' | 'critical';
+
+const radarData = {
   snapshot: {
     generatedAt: "2026-03-05T00:00:00Z",
     uiState: "ready",
@@ -17,7 +19,7 @@ const radarMockData = {
     { id: "T2", label: "Critical Surface", radius: 158 },
     { id: "T3", label: "Extended Surface", radius: 224 },
   ],
-  services: [
+  nodes: [
     {
       id: "CI-01",
       label: "Workflow Governance",
@@ -93,15 +95,15 @@ const radarMockData = {
     },
   },
 };
-const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
 ---
 
 <WebLayout title="Risk Radar | Gold Shore" description="Operational threat visualization system.">
-  <section class="gs-section risk-radar blueprint-bg min-h-screen">
+  <section class="gs-section risk-radar gs-blueprint-bg">
     <div class="gs-container py-12">
       <header class="mb-8">
-        <h2 class="mb-4 text-5xl font-bold gs-heading">Risk Radar</h2>
-        <p class="max-w-2xl text-xl text-[var(--gs-text-secondary)]">
+        <div class="gs-kicker gs-signal" data-gs-reveal>Forthcoming Surface</div>
+        <h1 class="gs-display" data-gs-reveal>Risk Radar</h1>
+        <p class="max-w-2xl text-xl text-[var(--gs-text-secondary)]" data-gs-reveal>
           Systemic exposure mapping and signal volatility monitoring in near real time.
         </p>
       </header>
@@ -121,8 +123,6 @@ const radarDataEncoded = encodeURIComponent(JSON.stringify(radarMockData));
         </aside>
       </div>
     </div>
-
-    <script type="application/json" id="risk-radar-data" set:html={JSON.stringify(radarMockData)}></script>
   </section>
 </WebLayout>
 
