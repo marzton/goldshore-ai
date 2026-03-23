@@ -14,7 +14,7 @@ Public marketing site, documentation hub, and customer-facing Astro app for Gold
 Cloudflare metadata:
 
 - Pages project name: `gs-web` (production), `preview-web` (preview)
-- Pages bindings config: `infra/Cloudflare/gs-web.wrangler.toml`
+- Pages bindings config: `infra/cloudflare/goldshore-web.wrangler.toml`
 - Preview runtime bindings commonly set by CI:
   - `PUBLIC_API=https://api-preview.goldshore.ai`
   - `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
@@ -113,17 +113,9 @@ Preview environments are not public.
 - Non-interactive checks against Access-protected preview hosts should use Cloudflare Access service-token headers (`CF_ACCESS_CLIENT_ID` / `CF_ACCESS_CLIENT_SECRET`) rather than assuming anonymous access.
 - Canonical domain and Access policy details live in [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
-## Runtime storage bindings
-
-`gs-web` keeps its existing runtime storage model. Do **not** reuse these bindings as shared configuration storage.
-
-- `KV`: edge persistence and cache-style writes for Pages Functions, including contact submission replicas and other edge-friendly writes.
-- `DB`: D1-backed system of record for forms, form configuration, and lead/submission data.
-- `GS_CONFIG`: **not bound in `gs-web` today**. If the web app later needs shared configuration reads, add a separate intentional **read-only** config binding instead of repurposing `KV`.
-
 ## Contact form and mail delivery
 
-`/api/contact` stores submissions in both `KV` and `DB` when available, and can send email through MailChannels from Cloudflare Pages Functions.
+`/api/contact` stores submissions in KV/D1 and can send email through MailChannels from Cloudflare Pages Functions.
 
 Set these environment variables in the `gs-web` Pages project:
 
@@ -132,7 +124,7 @@ Set these environment variables in the `gs-web` Pages project:
 - `CONTACT_NOTIFICATION_EMAILS` (comma-separated recipient list for new submissions)
 - `MAILCHANNELS_API_URL` (optional override, defaults to `https://api.mailchannels.net/tx/v1/send`)
 
-Keep the existing `KV` and `DB` bindings so submissions continue to persist even if email delivery is temporarily unavailable. If shared config reads are ever needed here, introduce a new read-only config binding rather than changing the purpose of `KV`.
+Keep the existing `KV` and `DB` bindings so submissions continue to persist even if email delivery is temporarily unavailable.
 
 ## Source of truth
 

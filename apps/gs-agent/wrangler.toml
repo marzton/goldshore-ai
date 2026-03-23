@@ -4,11 +4,6 @@ compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
 tsconfig = "tsconfig.json"
 
-# gs-agent remains the queue-driven/background worker for goldshore-jobs.
-# - Queue consumers are the primary execution model.
-# - The fetch handler exists for status/admin and explicitly synchronous agent calls.
-# - This worker is not the public ingress/proxy layer; gs-gateway owns ingress.
-
 [vars]
 ENV = "production"
 CLOUDFLARE_TEAM_DOMAIN = "gsl-ops"
@@ -27,28 +22,8 @@ id = "9cc2209906a94851b704be57543987a9"
 
 [env.dev]
 name = "gs-agent-dev"
-
 [env.dev.vars]
 ENV = "development"
-
-[env.preview]
-name = "gs-agent-preview"
-
-[env.preview.vars]
-ENV = "preview"
-CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
-
-[env.preview.ai]
-binding = "AI"
-
-[[env.preview.queues.consumers]]
-queue = "goldshore-jobs"
-max_batch_size = 10
-max_batch_timeout = 5
-
-[[env.preview.kv_namespaces]]
-binding = "AGENT_KV"
-id = "9cc2209906a94851b704be57543987a9"
 
 [env.prod]
 name = "gs-agent"
