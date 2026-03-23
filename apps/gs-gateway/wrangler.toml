@@ -35,9 +35,20 @@ binding = "JOB_QUEUE"
 queue = "goldshore-jobs"
 
 [[env.production.services]]
+binding = "API"
+service = "gs-api"
+environment = "production"
+
+[[env.production.services]]
 binding = "AGENT"
 service = "gs-agent"
 environment = "prod"
+
+[env.production.ai]
+binding = "AI"
+
+[env.production.observability]
+enabled = true
 
 [env.preview]
 routes = [
@@ -62,11 +73,15 @@ environment = "preview"
 [env.preview.ai]
 binding = "AI"
 
-[env.production.observability]
+[env.preview.observability]
 enabled = true
 
 [env.prod]
-name = "gs-gateway"
+routes = [
+  { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "gateway.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
 
 [[env.prod.kv_namespaces]]
 binding = "GATEWAY_KV"
@@ -79,6 +94,11 @@ queue = "goldshore-jobs"
 [[env.prod.services]]
 binding = "API"
 service = "gs-api"
+environment = "prod"
+
+[[env.prod.services]]
+binding = "AGENT"
+service = "gs-agent"
 environment = "prod"
 
 [env.prod.vars]

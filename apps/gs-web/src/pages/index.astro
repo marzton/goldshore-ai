@@ -11,7 +11,6 @@ const signals = [
   { label: 'Decision loops', value: 'Human + AI' },
   { label: 'Review posture', value: 'High trust' },
 ];
-
 const trustMetrics = [
   {
     label: 'Availability',
@@ -136,36 +135,34 @@ const proofPoints = [
 
     <section class="signal-strip gs-shell-section" aria-label="Signal strip">
       {signals.map((signal) => (
-        <div class="signal-tile" key={signal.label}>
+        <div class="signal-tile">
           <span>{signal.label}</span>
           <strong>{signal.value}</strong>
         </div>
       ))}
-    </section>
-
-    <section class="metrics-shell gs-shell-section">
-      <div class="metrics-grid" data-metrics-grid>
-        {
-          trustMetrics.map((metric) => (
-            <article
-              class="signal-tile signal-tile--loading"
-              aria-live="polite"
-              key={metric.label}
-            >
-              <div class="signal-tile__header">
-                <span>{metric.label}</span>
-                <small>{metric.context}</small>
-              </div>
-              <strong>{metric.value}</strong>
-              <p>{metric.detail}</p>
-              {metric.href && (
-                <a href={metric.href} class="signal-link">
-                  {metric.hrefLabel} →
-                </a>
-              )}
-            </article>
-          ))
-        }
+      <div class="metrics-shell gs-shell-section">
+        <div class="metrics-grid" data-metrics-grid>
+          {
+            trustMetrics.map((metric) => (
+              <article
+                class="signal-tile signal-tile--loading"
+                aria-live="polite"
+              >
+                <div class="signal-tile__header">
+                  <span>{metric.label}</span>
+                  <small>{metric.context}</small>
+                </div>
+                <strong>{metric.value}</strong>
+                <p>{metric.detail}</p>
+                {metric.href && (
+                  <a href={metric.href} class="signal-link">
+                    {metric.hrefLabel} →
+                  </a>
+                )}
+              </article>
+            ))
+          }
+        </div>
       </div>
     </section>
 
@@ -186,7 +183,7 @@ const proofPoints = [
       </div>
       <div class="capability-grid">
         {capabilities.map((capability) => (
-          <article class="capability-card" key={capability.title}>
+          <article class="capability-card">
             <h3>{capability.title}</h3>
             <p>{capability.body}</p>
           </article>
@@ -224,7 +221,7 @@ const proofPoints = [
       </div>
       <div class="proof-grid">
         {proofPoints.map((point) => (
-          <article class="proof-card" key={point.title}>
+          <article class="proof-card">
             <h3>{point.title}</h3>
             <p>{point.body}</p>
           </article>
@@ -400,13 +397,6 @@ const proofPoints = [
       animation-duration: 26s;
     }
 
-    .gs-logo-reactive {
-      width: clamp(72px, 11vw, 120px);
-      height: auto;
-      color: #8ec1ff;
-      will-change: transform, filter;
-    }
-
     .hero[data-hero-design='astral'] .hero-energy--x {
       opacity: 0.68;
       background: linear-gradient(
@@ -431,6 +421,12 @@ const proofPoints = [
       position: absolute;
       inset: 18% auto auto clamp(1rem, 7vw, 6rem);
       z-index: 1;
+    }
+
+    .gs-logo-reactive {
+      width: clamp(72px, 11vw, 120px);
+      height: auto;
+      will-change: transform, filter;
     }
 
     .hero-shell {
@@ -754,7 +750,6 @@ const proofPoints = [
         box-shadow: 0 0 0 0 rgba(71, 227, 167, 0);
       }
     }
-
     @keyframes particleDrift {
       from {
         transform: translate3d(0, 0, 0);
@@ -840,10 +835,8 @@ const proofPoints = [
       .hero-button,
       .status-dot,
       .signal-tile--loading::after {
-        transition: none;
         animation: none;
       }
-
       .hero {
         min-height: auto;
       }
@@ -852,5 +845,13 @@ const proofPoints = [
         background-size: 52px 52px;
       }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-button {
+        transition: none;
+        animation: none;
+      }
+    }
+
   </style>
 </WebLayout>

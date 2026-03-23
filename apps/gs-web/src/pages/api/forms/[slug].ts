@@ -5,6 +5,7 @@ import {
   type AdminPermission,
   type Env as AccessEnv,
 } from '@goldshore/auth';
+import { parseJson } from '@goldshore/utils';
 
 /**
  * Admin UI form configuration item endpoint.
@@ -12,15 +13,6 @@ import {
  */
 
 export const prerender = false;
-
-const parseJson = <T>(value: string | null, fallback: T): T => {
-  if (!value) return fallback;
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    return fallback;
-  }
-};
 
 const normalizeRow = (row: Record<string, string>) => ({
   id: row.id,

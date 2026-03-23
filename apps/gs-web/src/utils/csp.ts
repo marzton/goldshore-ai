@@ -32,21 +32,26 @@ export const WEB_CSP_DIRECTIVES = {
   'font-src': [SELF, 'https://fonts.gstatic.com'],
   'img-src': [SELF, 'data:', 'https://*.cloudflare.com'],
   'connect-src': [...BROWSER_CONNECT_SRC],
-  'frame-ancestors': [NONE],
   'object-src': [NONE],
   'base-uri': [SELF],
 } as const;
 
-/**
- * Serializes a Content Security Policy directive object into a single string.
- * @param directives Object mapping CSP directives to an array of allowed sources.
- * @returns The serialized CSP string.
- */
 export function serializeCsp(directives: ContentSecurityPolicyDirectives): string {
   return Object.entries(directives)
-    .map(([directive, sources]) => `${directive} ${sources.join(' ')}`)
+    .map(([key, values]) => `${key} ${values.join(' ')}`)
     .join('; ');
 }
+
+const BASE_CSP_DIRECTIVES = {
+  'default-src': [SELF],
+  'script-src': [SELF, UNSAFE_INLINE],
+  'style-src': [SELF, UNSAFE_INLINE, 'https://fonts.googleapis.com', 'https://unpkg.com'],
+  'font-src': [SELF, 'https://fonts.gstatic.com'],
+  'img-src': [SELF, 'data:'],
+  'connect-src': [...WEB_CONNECT_SRC],
+  'object-src': [NONE],
+  'base-uri': [SELF],
+} as const satisfies ContentSecurityPolicyDirectives;
 
 /**
  * Meta CSP is consumed by `src/layouts/WebLayout.astro`.
@@ -54,22 +59,23 @@ export function serializeCsp(directives: ContentSecurityPolicyDirectives): strin
  */
 const WEB_META_DIRECTIVES = {
   ...WEB_CSP_DIRECTIVES,
-  'frame-ancestors': undefined,
-} as const;
+} as const satisfies ContentSecurityPolicyDirectives;
 
 /**
  * Header CSP is consumed by runtime headers in `src/middleware.ts` and mirrored in `public/_headers`.
  * Header delivery can enforce `frame-ancestors`, which meta CSP cannot.
  */
+export const WEB_META_CSP = serializeCsp(WEB_META_DIRECTIVES);
+
 const WEB_HEADER_DIRECTIVES = {
   ...WEB_CSP_DIRECTIVES,
   'frame-ancestors': [NONE],
-} as const;
+} as const satisfies ContentSecurityPolicyDirectives;
+export const WEB_HEADERS_CSP = serializeCsp(WEB_HEADER_DIRECTIVES);
 
-export function serializeCsp(directives: Record<string, readonly string[] | undefined>): string {
+export function serializeCsp(directives: ContentSecurityPolicyDirectives): string {
   return Object.entries(directives)
-    .filter(([_key, values]) => values !== undefined)
-    .map(([key, values]) => `${key} ${values!.join(' ')}`)
+    .map(([key, value]) => `${key} ${value.join(' ')}`)
     .join('; ');
 }
 
@@ -82,3 +88,4 @@ export function buildContentSecurityPolicy(
 export const WEB_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy();
   return serializeCsp(directives ?? WEB_CSP_DIRECTIVES);
 export const WEB_HEADERS_CSP = serializeCsp(HEADER_CSP_DIRECTIVES);
+
