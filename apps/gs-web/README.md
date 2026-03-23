@@ -65,7 +65,6 @@ Current browser/runtime call inventory under `src/`:
 
 Do not add a `GS_CONFIG` binding to the web Pages project unless a concrete `apps/gs-web` runtime consumer needs live request-time reads. If that happens, keep the web access pattern read-only and leave writes to `gs-control`/operator surfaces.
 
-
 - `src/components/ContactForm.astro` → same-origin `POST /api/contact`
 - `src/components/DocsSearch.astro` → same-origin `GET /api/docs-search`
 - `src/components/ServiceStatus.astro` → browser `fetch(serviceUrl)`; keep this prop same-origin unless CSP is explicitly expanded
@@ -100,8 +99,8 @@ Cloudflare Pages settings for the monorepo:
 
 Deployment workflows:
 
-- Production deploy: `.github/workflows/deploy-web.yml`
-- Preview deploy: `.github/workflows/preview-web.yml`
+- Production deploy: `.github/workflows/deploy-gs-web.yml`
+- Preview deploy: `.github/workflows/preview-gs-web.yml`
 - Domains, previews, and Access policy details: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md)
 
 ## Preview auth

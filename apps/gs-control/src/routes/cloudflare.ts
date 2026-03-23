@@ -16,7 +16,7 @@ const editableDnsRecordFields = {
   comment: z.string().optional(),
   tags: z.array(z.string()).optional(),
   priority: z.number().int().optional(),
-} as const;
+};
 
 type EditableDnsRecordKey = keyof typeof editableDnsRecordFields;
 
