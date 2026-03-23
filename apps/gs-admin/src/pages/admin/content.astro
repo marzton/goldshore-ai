@@ -117,7 +117,9 @@ const apiBase = import.meta.env.PUBLIC_API ?? '';
   </section>
 </AdminLayout>
 
-<script type="module">
+<script>
+  import { parseJson } from '@goldshore/utils';
+
   const apiStatus = document.getElementById('api-status');
   const apiBase = apiStatus?.dataset.apiBase ?? '';
 
@@ -126,15 +128,6 @@ const apiBase = import.meta.env.PUBLIC_API ?? '';
     if (!target) return;
     target.textContent = message;
     target.dataset.tone = tone;
-  };
-
-  const parseJson = (value) => {
-    if (!value) return null;
-    try {
-      return JSON.parse(value);
-    } catch {
-      return null;
-    }
   };
 
   const request = async (path, options = {}) => {
@@ -227,7 +220,7 @@ const apiBase = import.meta.env.PUBLIC_API ?? '';
   document.getElementById('content-form')?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const form = event.target;
-    const metadata = parseJson(form.metadata.value);
+    const metadata = parseJson(form.metadata.value, null);
     if (form.metadata.value && !metadata) {
       setStatus('content-status', 'Metadata JSON is invalid', 'error');
       return;
@@ -275,8 +268,8 @@ const apiBase = import.meta.env.PUBLIC_API ?? '';
   document.getElementById('form-config')?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const form = event.target;
-    const fields = parseJson(form.fields.value);
-    const settings = parseJson(form.settings.value);
+    const fields = parseJson(form.fields.value, null);
+    const settings = parseJson(form.settings.value, null);
     if (form.fields.value && !fields) {
       setStatus('form-status', 'Fields JSON is invalid', 'error');
       return;
