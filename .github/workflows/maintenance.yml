@@ -1,0 +1,130 @@
+name: Maintenance Branch Report
+
+on:
+  schedule:
+    - cron: "30 4 * * *"
+  workflow_dispatch:
+    inputs:
+      log_ref:
+        description: "Git ref to summarize with git log"
+        required: false
+        default: "origin/main"
+      log_limit:
+        description: "Maximum number of commits to include in the report"
+        required: false
+        default: "20"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  branch-report:
+    name: Inspection-only branch and PR report
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository history without write credentials
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Enforce inspection-only mode
+        run: |
+          set -euo pipefail
+          echo "This workflow is inspection-only."
+          echo "It must not checkout feature branches, pull them, or push rewritten refs from CI."
+          echo "Protected branches such as main must never be rewritten from this workflow."
+
+      - name: Generate branch maintenance report
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LOG_REF: ${{ inputs.log_ref || 'origin/main' }}
+          LOG_LIMIT: ${{ inputs.log_limit || '20' }}
+        run: bash scripts/maintenance/branch-report.sh
+
+      - name: Upload branch maintenance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: maintenance-branch-report
+          path: reports/maintenance/branch-report.txt
+name: Repo Maintenance & Agent Sync
+run-name: Maintenance by @${{ github.actor }} on ${{ inputs.target_branch }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      log_ref:
+        description: 'Target ref for report'
+        default: 'origin/main'
+      log_limit:
+        description: 'Number of logs'
+        default: '20'
+      confirm_apply:
+        description: 'Set to true to run reconciliation'
+        type: boolean
+        default: false
+
+concurrency:
+  group: maintenance-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  maintenance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Set pnpm version
+        run: corepack prepare pnpm@9.0.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Repo health checks
+        run: pnpm run repo:health
+
+      - name: Build all packages
+        run: pnpm -r build
+
+      - name: Generate branch maintenance report
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LOG_REF: ${{ inputs.log_ref }}
+          LOG_LIMIT: ${{ inputs.log_limit }}
+        run: bash scripts/maintenance/branch-report.sh
+
+      - name: Upload branch maintenance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: maintenance-branch-report
+          path: reports/maintenance/branch-report.txt
+
+  reconcile-infra:
+    needs: maintenance
+    runs-on: ubuntu-latest
+    if: ${{ inputs.confirm_apply == true }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        run: npm install -g pnpm@9
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
