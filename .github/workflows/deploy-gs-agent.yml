@@ -4,14 +4,9 @@ permissions:
   contents: read
 
 on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - labeled
-      - unlabeled
-      - ready_for_review
+  push:
+    branches:
+      - main
     paths:
       - "apps/gs-agent/**"
       - "infra/Cloudflare/gs-agent.wrangler.toml"
@@ -20,11 +15,8 @@ on:
       - "pnpm-lock.yaml"
 
 jobs:
-  preview-agent:
+  deploy-agent:
     runs-on: ubuntu-latest
-    if: |
-      contains(github.event.pull_request.labels.*.name, 'production') ||
-      (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -50,7 +42,7 @@ jobs:
       - name: Validate canonical worker names
         run: pnpm validate:names
 
-      - name: Deploy GS agent worker (preview)
+      - name: Deploy GS agent worker (production)
         working-directory: apps/gs-agent
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_BUILD_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}

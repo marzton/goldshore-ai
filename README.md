@@ -459,7 +459,7 @@ AI agent tooling, and market data services without rebuilding existing modules.
 To keep issues, workflows, PRs, branches, and components aligned:
 
 - Track work in **GitHub Issues/Projects** and the templates in `.github/ISSUE_TEMPLATE/`.
-- Review deployment flow in `infra/github/workflows/`.
+- Review deployment flow in `.github/workflows/`.
 - Use `ops/pr-playbook.md` and `ops/maintenance-playbook.md` for release continuity.
 - Document component ownership in the admin dashboard templates and UI kit README.
 
@@ -467,7 +467,7 @@ To keep issues, workflows, PRs, branches, and components aligned:
 
 - Read `docs/conventions/naming.md` before opening a PR.
 - Prefer `feat/add-new-worker-healthcheck` over mixed-case or space-separated branch names.
-- Prefer package names like `@goldshore/api-worker` and workflow file names like `deploy-api-worker.yml`.
+- Prefer package names like `@goldshore/api-worker` and workflow file names like `deploy-gs-api.yml`.
 - Anti-patterns to avoid: `Feature/AddThing`, `gs_api`, `Deploy API Worker.yml`, and job keys like `deploy_api`.
 - Use helper scripts:
   - `pnpm branch:bootstrap -- <type> <slug>`
