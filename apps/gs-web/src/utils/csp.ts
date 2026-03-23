@@ -49,12 +49,11 @@ const serializeCsp = (directives: ContentSecurityPolicyDirectives): string =>
     .join('; ');
 
 export function buildContentSecurityPolicy(
-  directives: ContentSecurityPolicyDirectives,
-): string;
-  return serializeCsp(directives ?? WEB_CSP_DIRECTIVES);
+  directives: ContentSecurityPolicyDirectives = WEB_CSP_DIRECTIVES,
+): string {
+  return serializeCsp(directives);
 }
-  directives?: Record<string, readonly string[]>,
-export const WEB_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy();
-  return serializeCsp(directives ?? WEB_CSP_DIRECTIVES);
-export const WEB_HEADERS_CSP = serializeCsp(HEADER_CSP_DIRECTIVES);
 
+export const WEB_META_CSP = buildContentSecurityPolicy(WEB_META_DIRECTIVES);
+export const WEB_HEADERS_CSP = buildContentSecurityPolicy(WEB_HEADER_DIRECTIVES);
+export const WEB_CONTENT_SECURITY_POLICY = WEB_HEADERS_CSP;
