@@ -1,6 +1,6 @@
 # Infra Sync Runbook
 
-Use `.github/workflows/maintenance-agent-sync.yml` for manual repo audit and service-token sync checks, and keep `.github/workflows/maintenance.yml` reserved for inspection-only branch reporting.
+Use `.github/workflows/maintenance.yml` to run Cloudflare infrastructure reconciliation separately from app deploy pipelines.
 
 ## Trigger model
 
@@ -64,8 +64,7 @@ Rotate the GitHub Actions secrets in the same maintenance window so preview and 
 | `.github/workflows/deploy-gs-control.yml.disabled` | production deploy for `gs-control` (currently disabled) | `CLOUDFLARE_BUILD_API_TOKEN` **or** `CLOUDFLARE_API_TOKEN`, plus `CLOUDFLARE_ACCOUNT_ID` | Keep the override token aligned with preview/prod policy before re-enabling. |
 | `.github/workflows/preview-gs-agent.yml` | PR preview deploy for `gs-agent` | `CLOUDFLARE_BUILD_API_TOKEN` **or** `CLOUDFLARE_API_TOKEN`, plus `CLOUDFLARE_ACCOUNT_ID` | Include when agent preview retries share the same maintenance window. |
 | `.github/workflows/deploy-gs-agent.yml.disabled` | production deploy for `gs-agent` (currently disabled) | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Base-token-only workflow. |
-| `.github/workflows/maintenance-agent-sync.yml` | manual audit + service-token sync after rotation | `CF_ACCESS_CLIENT_ID`, `CF_ACCESS_CLIENT_SECRET` | Run after secret updates to confirm the repo can still audit the target branch and probe gs service authentication. |
-| `.github/workflows/maintenance.yml` | inspection-only branch reporting | none beyond the default GitHub token | Use for read-only maintenance visibility and artifact capture; do not add deploy or mutation steps. |
+| `.github/workflows/maintenance.yml` | manual infra reconciliation after rotation | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `GS_KV_NAMESPACE_ID` | Run after secret updates to confirm the repo can still reconcile Cloudflare state. |
 
 ### 3. Reconcile preview worker environments and service names in Cloudflare
 
@@ -95,5 +94,5 @@ After Cloudflare and GitHub secrets are updated:
 
 1. Rerun the failed preview jobs first so branch environments recover quickly.
 2. Rerun the related production deploy jobs if they were blocked by the same token issue.
-3. Manually run `.github/workflows/maintenance-agent-sync.yml` to confirm the new secret set can still complete the audit and gs service-token sync checks.
+3. Manually run `.github/workflows/maintenance.yml` to confirm the new secret set can still reconcile infra state.
 4. Record which token secret path was used (`CLOUDFLARE_API_TOKEN` only vs. `CLOUDFLARE_BUILD_API_TOKEN` override) so the next rotation stays consistent.
