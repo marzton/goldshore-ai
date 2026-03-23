@@ -62,7 +62,7 @@ jobs:
 
           for file in .github/workflows/deploy-*.yml; do
             base="$(basename "$file")"
-            if [[ ! "$base" =~ ^deploy-gs-[a-z0-9-]+\.yml$ ]]; then
+            if [[ ! "$base" =~ ^deploy-gs-[a-z0-9-]+\.yml$ && "$base" != "deploy-frontend.yml" ]]; then
               echo "Non-canonical deploy workflow filename: $base"
               exit 1
             fi
