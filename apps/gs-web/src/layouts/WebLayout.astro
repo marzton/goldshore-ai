@@ -26,8 +26,9 @@ const {
   currentPath = Astro.url.pathname,
 } = Astro.props;
 
+const logoAssetPath = '/logo.svg';
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
-const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
+const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
 const mobileNavId = 'mobile-navigation';
 ---
 

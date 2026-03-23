@@ -39,6 +39,11 @@ type FormRecipient = {
   channel?: string;
 };
 
+type MailRecipient = {
+  email: string;
+  name?: string;
+};
+
 type FormIntegration = {
   type: string;
   enabled?: boolean;
