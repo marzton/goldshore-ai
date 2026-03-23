@@ -1,32 +1,51 @@
 # apps/gs-agent
 
 ## Overview
-The `gs-agent` worker is the canonical GoldShore agent service. It serves a small Hono-based status UI, exposes a health endpoint, and enforces Cloudflare Access auth on protected routes. The deprecated `apps/goldshore-agent` directory now mirrors this implementation; legacy workflows still reference `infra/Cloudflare/goldshore-agent.wrangler.toml`.
+`gs-agent` is the queue-driven/background worker for `goldshore-jobs`. Keep this service separate from `gs-gateway`.
 
-Cloudflare metadata (from `infra/Cloudflare/gs-agent.wrangler.toml`):
-- Worker base name: `gs-agent` (per-environment names: `gs-agent-dev`, `gs-agent-preview`, `gs-agent-prod`)
-- Queue consumer: `goldshore-jobs`
-- Compatibility date: `2024-03-20`
+Its responsibilities are:
+- consume background work from `goldshore-jobs`
+- process queue-driven automation and async tasks after ingress has already responded
+- provide a minimal fetch surface for health/status and any explicitly synchronous agent interactions routed through `gs-gateway`
 
-Codex bot decision:
-- `jules-bot` remains a separate Node.js webhook service.
-- A placeholder `codex-bot` module now lives in `apps/gs-agent/src/bots/codex-bot.ts` for future queue-driven automation.
+The presence of queue connectivity between `gs-gateway` and `gs-agent` is deliberate, but it does **not** justify a full service merge. The queue is the asynchronous contract between ingress and background execution.
 
-## Routes/Endpoints
-- `/` → status UI
-- `/health` → JSON health response
+## Sync vs async flow rules
 
-## Configuration
-- The Wrangler configuration lives in `infra/Cloudflare/gs-agent.wrangler.toml` and defines queue consumers for `goldshore-jobs`.
-- Local dev exposes the worker via `wrangler dev`.
-- No production routes are configured in the Wrangler config.
-The `gs-agent` worker is a queue-driven background agent. It currently returns a simple response for fetch requests and includes a stubbed queue consumer. The Wrangler configuration lives in `infra/Cloudflare/gs-agent.wrangler.toml` and defines queue consumers for `goldshore-jobs`.
+### Use direct service binding for synchronous interactions
+Use direct Worker-to-Worker fetches only when the request must complete inline and return a response immediately.
 
-## Routes/Endpoints
-- No production routes are configured in `wrangler.toml`.
-- Local dev exposes the worker via `wrangler dev`, returning `Hello from the GoldShore Agent!` from the fetch handler.
+Examples:
+- health/status checks
+- explicitly synchronous `agent.goldshore.ai` requests proxied through `gs-gateway`
+- any small control-plane interaction where waiting on queue processing would be incorrect
 
-## Local Dev
+`gs-agent` can participate in these flows, but they are secondary to its queue-consumer role.
+
+### Use queue handoff for asynchronous/background work
+Use `goldshore-jobs` for work that should be accepted now and processed later.
+
+Examples:
+- long-running AI agent tasks
+- retryable or batched automation
+- background enrichment, orchestration, or follow-up work triggered by ingress requests
+
+This is the primary runtime mode for `gs-agent`.
+
+## Wrangler configuration notes
+The local worker config in `apps/gs-agent/wrangler.toml` reflects the intended split:
+- `gs-agent` consumes `goldshore-jobs`
+- it does not act as the public ingress worker
+- its fetch handler exists for status/admin or explicitly synchronous agent calls, not to replace `gs-gateway`
+
+## Routes and endpoints
+These routes are implemented in `src/index.ts`:
+- `GET /`
+- `GET /health`
+- `GET /templates`
+- queue consumer for `goldshore-jobs`
+
+## Local dev
 ```bash
 pnpm install
 pnpm --filter ./apps/gs-agent dev
@@ -34,11 +53,7 @@ pnpm --filter ./apps/gs-agent build
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-agent.yml`
-- Preview deploy: `.github/workflows/preview-agent.yml`
-- Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
-
-<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
-```bash
-pnpm --filter ./apps/gs-agent deploy
-```
+- Production deploy workflow: `.github/workflows/deploy-gs-agent.yml`
+- Preview deploy workflow: `.github/workflows/preview-gs-agent.yml`
+- Deploy command: `wrangler deploy --env prod --config wrangler.toml`
+- Worker Builds should use the `gs-control` build token when configured in Cloudflare
