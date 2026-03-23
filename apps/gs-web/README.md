@@ -95,7 +95,10 @@ pnpm --filter @goldshore/gs-web test:e2e
 - Build command: `pnpm build`
 - Output directory: `dist`
 
-For domain, preview, and Access details, see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
+- For domain, preview, and Access details, see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
+- Production deploy: `.github/workflows/deploy-gs-web.yml`
+- Preview deploy: `.github/workflows/preview-gs-web.yml`
+- Domains, previews, and Access policy details: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md)
 
 ## Preview authentication
 
