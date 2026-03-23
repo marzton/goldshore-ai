@@ -40,7 +40,7 @@ const buildCsv = (rows: Record<string, unknown>[]) => {
 
 const hasPermission = async (
   request: Request,
-  env: AccessEnv,
+  env: AccessEnv & Env,
   permission: 'forms:read' | 'forms:write',
 ) => {
   const claims = await verifyAccessWithClaims(request, env);
