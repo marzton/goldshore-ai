@@ -66,19 +66,12 @@ const WEB_HEADER_DIRECTIVES = {
   'frame-ancestors': [NONE],
 } as const;
 
-export function serializeCsp(directives: Record<string, readonly string[] | undefined>): string {
-  return Object.entries(directives)
-    .filter(([_key, values]) => values !== undefined)
-    .map(([key, values]) => `${key} ${values!.join(' ')}`)
-    .join('; ');
-}
-
 export function buildContentSecurityPolicy(
-  directives?: ContentSecurityPolicyDirectives,
-): string {
+  directives: ContentSecurityPolicyDirectives,
+): string;
   return serializeCsp(directives ?? WEB_CSP_DIRECTIVES);
 }
-
+  directives?: Record<string, readonly string[]>,
 export const WEB_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy();
-export const WEB_META_CSP = serializeCsp(WEB_META_DIRECTIVES);
-export const WEB_HEADERS_CSP = serializeCsp(WEB_HEADER_DIRECTIVES);
+  return serializeCsp(directives ?? WEB_CSP_DIRECTIVES);
+export const WEB_HEADERS_CSP = serializeCsp(HEADER_CSP_DIRECTIVES);
