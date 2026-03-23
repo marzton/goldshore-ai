@@ -1,23 +1,12 @@
 /// <reference types="astro/client" />
 import type { AdminSession } from "@goldshore/auth";
 
-declare global {
-  namespace App {
-    interface Locals {
-      [key: string]: unknown;
-      adminSession: AdminSession & {
-        actor?: string;
-        isAuthenticated: boolean;
-      };
-      runtime: {
-        env: {
-          CLOUDFLARE_ACCESS_AUDIENCE?: string;
-          CLOUDFLARE_TEAM_DOMAIN?: string;
-          ADMIN_DEV_ROLE?: string;
-          [key: string]: string | undefined;
-        };
-      };
-    }
+declare namespace App {
+  interface Locals {
+    adminSession: AdminSession & {
+      actor?: string;
+      isAuthenticated: boolean;
+    };
   }
 }
 

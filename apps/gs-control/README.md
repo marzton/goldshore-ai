@@ -61,7 +61,7 @@ Operational checklist:
 2. Update the matching GitHub repository secrets used by the deploy jobs: `CLOUDFLARE_API_TOKEN`, optional `CLOUDFLARE_BUILD_API_TOKEN`, and confirm `CLOUDFLARE_ACCOUNT_ID`.
 3. Reconcile preview worker/service names in Cloudflare with the repo’s canonical `gs-*` naming before reruns. The repo still contains references that may need dashboard cleanup, including `gs-api-preview`, `gs-agent-preview`, and older service names such as `astro-gs-api`, `astro-gs-gateway`, and `goldshore-control-worker`.
 4. Confirm the preview DNS/routes exist for `api-preview.goldshore.ai`, `gw-preview.goldshore.ai`, and `ops-preview.goldshore.ai` before rerunning failed preview jobs.
-5. Rerun the affected GitHub Actions workflows, then run `.github/workflows/maintenance-agent-sync.yml` for the audit/sync checks while keeping `.github/workflows/maintenance.yml` inspection-only.
+5. Rerun the affected GitHub Actions workflows, then run `.github/workflows/maintenance.yml` to verify the rotated credentials can still reconcile Cloudflare state.
 
 For the full workflow/secret matrix, see `docs/ci/INFRA_SYNC_RUNBOOK.md`.
 
