@@ -74,4 +74,10 @@ When a workflow must be temporarily disabled, rename the actual existing file in
 mv .github/workflows/<real-workflow>.yml .github/workflows/<real-workflow>.yml.disabled
 ```
 
-Re-enable by renaming the same file back to `.yml` when the workflow should become active again.
+Re-enable by moving the same file back into `.github/workflows/`.
+
+## Nightly automation sweep repair
+
+- `.github/workflows/jules-nightly.yml` no longer references deleted local reusable workflows.
+- The nightly sweep now dispatches the surviving workflow files already present in `.github/workflows/`: `stabilization-task.yml`, `cleanup-workflow-runs.yml`, `palette-manual.yml` (via `repository_dispatch`), and `close-stale-prs.yml`.
+- The retired `jules-daily.yml`, `jules-nightly-clean.yml`, `palette-daily.yml`, `sentinel-nightly.yml`, and `conflict-sweeper-nightly.yml` files are no longer part of the active workflow inventory.
