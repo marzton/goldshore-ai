@@ -44,6 +44,7 @@ Cloudflare metadata:
 - Pages project name: `gs-admin` (production), `preview-admin` (preview)
 - Pages bindings config: `infra/Cloudflare/gs-admin.wrangler.toml`
 - Connected services for preview builds: `PUBLIC_API=https://api-preview.goldshore.ai`, `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
+- Standard build metadata injected by CI: `PUBLIC_BUILD_TIMESTAMP`, `PUBLIC_COMMIT_HASH`, and optional `PUBLIC_RELEASE_LABEL`
 
 Documentation:
 - [Integrations hub (docs + admin config)](../../docs/integrations.md)
@@ -84,8 +85,8 @@ pnpm --filter ./apps/gs-admin preview
 ```
 
 ## Deploy
-- Production deploy: `.github/workflows/deploy-admin.yml`
-- Preview deploy: `.github/workflows/preview-admin.yml`
+- Production deploy: `.github/workflows/deploy-gs-admin.yml`
+- Preview deploy: `.github/workflows/preview-gs-admin.yml`
 - Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
 
 ## Preview Authentication
