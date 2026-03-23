@@ -11,7 +11,6 @@ const signals = [
   { label: 'Decision loops', value: 'Human + AI' },
   { label: 'Review posture', value: 'High trust' },
 ];
-
 const trustMetrics = [
   {
     label: 'Availability',
@@ -398,10 +397,24 @@ const proofPoints = [
       animation-duration: 26s;
     }
 
-    .gs-logo-reactive {
-      width: clamp(72px, 11vw, 120px);
-      height: auto;
-      will-change: transform, filter;
+    .hero[data-hero-design='astral'] .hero-energy--x {
+      opacity: 0.68;
+      background: linear-gradient(
+        100deg,
+        transparent 10%,
+        rgba(255, 255, 255, 0.14) 34%,
+        transparent 50%,
+        rgba(90, 162, 255, 0.2) 72%,
+        transparent 92%
+      );
+    }
+
+    .hero[data-hero-design='thermal'] .hero-aurora--primary {
+      background: radial-gradient(
+        circle at 24% 30%,
+        rgba(255, 120, 88, 0.24),
+        transparent 26%
+      );
     }
 
     .hero-mark {
@@ -737,7 +750,6 @@ const proofPoints = [
         box-shadow: 0 0 0 0 rgba(71, 227, 167, 0);
       }
     }
-
     @keyframes particleDrift {
       from {
         transform: translate3d(0, 0, 0);
@@ -840,5 +852,6 @@ const proofPoints = [
         animation: none;
       }
     }
+
   </style>
 </WebLayout>
