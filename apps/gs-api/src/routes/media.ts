@@ -27,98 +27,19 @@ const ALLOWED_MIME_TYPES = new Map([
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB limit
 
-const sanitizeSvg = (input: string): string => {
-  return sanitizeHtml(input, {
-    allowedTags: [
-      'svg',
-      'g',
-      'defs',
-      'clipPath',
-      'mask',
-      'pattern',
-      'linearGradient',
-      'radialGradient',
-      'stop',
-      'path',
-      'circle',
-      'ellipse',
-      'rect',
-      'line',
-      'polyline',
-      'polygon',
-      'text',
-      'tspan',
-      'textPath',
-      'image',
-      'use',
-      'symbol',
-      'view',
-      'marker',
-      'filter',
-      'feGaussianBlur',
-      'feOffset',
-      'feBlend',
-      'feColorMatrix',
-      'feComposite',
-      'feFlood',
-      'feImage',
-      'feMerge',
-      'feMergeNode',
-      'feMorphology',
-      'feTile',
-      'feTurbulence'
-    ],
-    allowedAttributes: {
-      '*': [
-        'id',
-        'class',
-        'style',
-        'transform',
-        'x',
-        'y',
-        'x1',
-        'y1',
-        'x2',
-        'y2',
-        'cx',
-        'cy',
-        'r',
-        'rx',
-        'ry',
-        'd',
-        'points',
-        'width',
-        'height',
-        'viewBox',
-        'preserveAspectRatio',
-        'fill',
-        'fill-opacity',
-        'stroke',
-        'stroke-width',
-        'stroke-linecap',
-        'stroke-linejoin',
-        'stroke-miterlimit',
-        'stroke-dasharray',
-        'stroke-dashoffset',
-        'stroke-opacity',
-        'opacity',
-        'font-family',
-        'font-size',
-        'font-weight',
-        'text-anchor',
-        'xlink:href'
-      ]
-    },
-    allowedSchemes: ['http', 'https', 'data'],
-    allowedSchemesByTag: {
-      image: ['http', 'https', 'data'],
-      use: ['http', 'https']
-    },
-    allowProtocolRelative: false,
-    // Do not allow any unknown protocols like "javascript:" or "data:text/html"
-    enforceHtmlBoundary: true
-  });
-};
+const SVG_DANGEROUS_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)[\s\S]*?>[\s\S]*?<\/\1>/gi;
+const SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX = /<(script|iframe|object|embed|link|meta|style|foreignObject|animate|set|discard)\b[^>]*\/?>/gi;
+const SVG_EVENT_HANDLER_ATTR_REGEX = /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*("|')\s*(?:javascript:|data:text\/html)[\s\S]*?\1/gi;
+const SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX = /\s+(?:href|xlink:href|src)\s*=\s*(?:javascript:|data:text\/html)[^\s>]*/gi;
+
+const sanitizeSvg = (input: string): string =>
+  input
+    .replace(SVG_DANGEROUS_TAGS_REGEX, '')
+    .replace(SVG_DANGEROUS_SELF_CLOSING_TAGS_REGEX, '')
+    .replace(SVG_EVENT_HANDLER_ATTR_REGEX, '')
+    .replace(SVG_SCRIPTABLE_URL_ATTR_QUOTED_REGEX, '')
+    .replace(SVG_SCRIPTABLE_URL_ATTR_UNQUOTED_REGEX, '');
 
 const isUploadFileLike = (value: unknown): value is UploadFileLike => {
   if (!value || typeof value !== 'object') {
