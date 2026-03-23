@@ -21,7 +21,6 @@ Cloudflare metadata:
 - Build diagnostics exposed on `/status`:
   - `PUBLIC_BUILD_TIMESTAMP`
   - `PUBLIC_COMMIT_HASH`
-  - `PUBLIC_RELEASE_LABEL` (optional)
 
 ## Routes
 
@@ -90,8 +89,8 @@ Cloudflare Pages settings for the monorepo:
 
 Deployment workflows:
 
-- Production deploy: `.github/workflows/deploy-gs-web.yml`
-- Preview deploy: `.github/workflows/preview-gs-web.yml`
+- Production deploy: `.github/workflows/deploy-web.yml`
+- Preview deploy: `.github/workflows/preview-web.yml`
 - Domains, previews, and Access policy details: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md)
 
 ## Preview auth
