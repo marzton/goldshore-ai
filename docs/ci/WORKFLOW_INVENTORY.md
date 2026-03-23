@@ -35,8 +35,10 @@ Last audited: 2026-02-18
 | `.github/workflows/deploy-gs-api.yml` | Current production deploy for API worker with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-control.yml` | Current production deploy for control worker with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-gateway.yml` | Current production deploy for gateway worker with validation gates. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-gs-agent.yml` | Current production deploy for agent worker with validation gates. | `push` to `main` | Non-blocking |
+| `.github/workflows/deploy-gs-agent.yml` | Production deploy for agent worker with validation gates. Uses Wrangler `--env production` only. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-mail.yml` | Current production deploy for mail worker with validation gates. | `push` to `main` | Non-blocking |
+
+> `gs-agent` now has a strict split: `.github/workflows/preview-gs-agent.yml` is PR-only and deploys with `--env preview`, while `.github/workflows/deploy-gs-agent.yml` is main-only and deploys with `--env production`.
 | `.github/workflows/jules-nightly.yml` | Nightly orchestrator for automation jobs. | `schedule`, `workflow_dispatch` | Non-blocking |
 | `.github/workflows/palette-manual.yml` | Dispatch-triggered run for the Palette agent. | `repository_dispatch` | Non-blocking |
 | `.github/workflows/maintenance.yml` | Manual Cloudflare infra reconciliation workflow. | `workflow_dispatch` | Non-blocking |
