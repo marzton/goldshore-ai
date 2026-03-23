@@ -21,7 +21,7 @@ CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29
 # Sentinel: Team domain for Cloudflare Access (e.g., goldshore.cloudflareaccess.com).
 # Used to fetch JWKS for token verification.
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
-CONTROL_SYNC_TOKEN = "SECRET_MANAGED"
+CONTROL_SYNC_TOKEN = "__PROD_CONTROL_SYNC_TOKEN__"
 
 # Keep the legacy KV binding name because the API routes still read c.env.KV
 # for service status, admin state, orchestration config, and health checks.
@@ -66,7 +66,7 @@ CLOUDFLARE_ACCESS_AUDIENCE = "d303765cb1746f11a0fe37affad2d191deb18771a1d98beb29
 # Sentinel: Team domain for Cloudflare Access (e.g., goldshore.cloudflareaccess.com).
 # Used to fetch JWKS for token verification.
 CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
-CONTROL_SYNC_TOKEN = "SECRET_MANAGED"
+CONTROL_SYNC_TOKEN = "__PROD_CONTROL_SYNC_TOKEN__"
 
 # Keep the legacy KV binding name because the API routes still read c.env.KV
 # for service status, admin state, orchestration config, and health checks.
