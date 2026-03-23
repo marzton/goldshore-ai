@@ -2,8 +2,7 @@
 import Logo from '../components/brand/Logo.astro';
 import SiteNav from '../components/SiteNav.astro';
 import '../styles/global.css';
-import { WEB_CONTENT_SECURITY_POLICY } from '../utils/csp';
-import { WEB_META_CSP } from '../utils/csp';
+import { WEB_CONTENT_SECURITY_POLICY, WEB_META_CSP } from '../utils/csp';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -27,11 +26,10 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="Content-Security-Policy" content={WEB_CONTENT_SECURITY_POLICY} />
+    <meta http-equiv="Content-Security-Policy" content={WEB_META_CSP} />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0b0f18" />
-    <meta http-equiv="Content-Security-Policy" content={WEB_META_CSP} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -42,10 +40,6 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={socialImage} />
     <link rel="canonical" href={canonicalUrl} />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content={WEB_META_CSP}
-    />
     <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />
     <link rel="shortcut icon" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -56,23 +50,6 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
     <a href="#content" class="skip-link">Skip to content</a>
     <div class="gs-page-shell">
       <header class="header" data-menu-open="false">
-        <a href="/" class="gs-logo-link" aria-label="GoldShore home">
-          <Logo class="gs-logo" title="GoldShore" />
-        </a>
-
-        <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <nav id="primary-navigation" class="menu-panel" aria-label="Primary navigation">
-          <div class="menu-panel__inner">
-            {navLinks.map((link) => (
-              <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>
-                {link.label}
-              </a>
-            ))}
         <div class="header__inner">
           <a href="/" class="gs-logo-link" aria-label="GoldShore home">
             <Logo class="gs-logo" title="GoldShore" />
@@ -174,8 +151,6 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
       <footer class="gs-footer">
         <div class="gs-footer__inner">
           <div>
-            <Logo class="gs-logo gs-logo--footer" title="GoldShore" />
-            <p>Infrastructure for high-trust AI, risk tooling, and resilient operator systems.</p>
             <div class="footer-brand">
               <Logo class="gs-logo gs-logo--footer" title="GoldShore" />
               <div class="brand-lockup brand-lockup--footer">
@@ -237,7 +212,7 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
 
           if (
             target.closest('.menu-panel__links a') ||
-            target.classList.contains('menu-panel')
+            target.closest('.menu-panel')
           ) {
             setMenu(false);
           }
@@ -293,7 +268,7 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
         position: sticky;
         top: 0;
         z-index: 1100;
-        padding: 0 clamp(1rem, 3vw, 2rem);
+        padding: 0;
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         background: rgba(8, 12, 22, 0.78);
@@ -308,10 +283,6 @@ const socialImage = new URL('/logo.svg', Astro.site ?? Astro.url);
         align-items: center;
         justify-content: space-between;
         padding: 1rem clamp(1rem, 3vw, 2rem);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        background: rgba(8, 12, 22, 0.65);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         gap: 1rem;
       }
 
