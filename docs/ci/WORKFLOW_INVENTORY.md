@@ -1,6 +1,6 @@
 # Workflow Inventory
 
-Last audited: 2026-02-18
+Last audited: 2026-03-23
 
 ## Scope notes
 
@@ -37,7 +37,7 @@ Last audited: 2026-02-18
 | `.github/workflows/deploy-gs-gateway.yml` | Current production deploy for gateway worker with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-agent.yml` | Current production deploy for agent worker with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-mail.yml` | Current production deploy for mail worker with validation gates. | `push` to `main` | Non-blocking |
-| `.github/workflows/jules-nightly.yml` | Nightly orchestrator for automation jobs. | `schedule`, `workflow_dispatch` | Non-blocking |
+| `.github/workflows/jules-nightly.yml` | Nightly dispatcher for stabilization sync, workflow cleanup, Palette dispatch, and stale conflict PR cleanup. | `schedule`, `workflow_dispatch` | Non-blocking |
 | `.github/workflows/palette-manual.yml` | Dispatch-triggered run for the Palette agent. | `repository_dispatch` | Non-blocking |
 | `.github/workflows/maintenance.yml` | Manual Cloudflare infra reconciliation workflow. | `workflow_dispatch` | Non-blocking |
 | `.github/workflows/pii-scan.yml` | Manual PII scan/reporting workflow. | `workflow_dispatch` | Non-blocking |
@@ -62,3 +62,9 @@ mv .github/workflows/naming-lint.yml .github/workflows-backup/
 ```
 
 Re-enable by moving the same file back into `.github/workflows/`.
+
+## Nightly automation sweep repair
+
+- `.github/workflows/jules-nightly.yml` no longer references deleted local reusable workflows.
+- The nightly sweep now dispatches the surviving workflow files already present in `.github/workflows/`: `stabilization-task.yml`, `cleanup-workflow-runs.yml`, `palette-manual.yml` (via `repository_dispatch`), and `close-stale-prs.yml`.
+- The retired `jules-daily.yml`, `jules-nightly-clean.yml`, `palette-daily.yml`, `sentinel-nightly.yml`, and `conflict-sweeper-nightly.yml` files are no longer part of the active workflow inventory.
