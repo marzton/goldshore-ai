@@ -288,6 +288,7 @@ Unified platform for the **GoldShore** ecosystem, built with **Astro**, **Cloudf
 - `apps/gs-mail` — Mail worker
 
 ## Development
+Run top-level validation checks:
 
 ```bash
 pnpm validate
