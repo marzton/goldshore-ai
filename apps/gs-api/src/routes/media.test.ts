@@ -90,6 +90,52 @@ describe('Media Endpoint Security', () => {
     assert.strictEqual(data.filename, 'test.svg');
   });
 
+
+
+  it('sanitizes svg uploads before storing', async () => {
+    const app = new Hono();
+
+    const mockDB = {
+      prepare: (_query: string) => ({
+        bind: (..._args: any[]) => ({
+          run: async () => {},
+        }),
+      }),
+    };
+
+    let storedBody: ArrayBuffer | Uint8Array | undefined;
+    const mockAssets = {
+      put: async (_key: string, body: ArrayBuffer | Uint8Array) => {
+        storedBody = body;
+      },
+    };
+
+    app.route('/', media);
+
+    const formData = new FormData();
+    const file = new File([
+      '<svg><script>alert(1)</script><foreignObject>bad</foreignObject><rect onclick="evil()" width="10" href=javascript:alert(2)/></svg>',
+    ], 'dirty.svg', { type: 'image/svg+xml' });
+    formData.append('file', file);
+
+    const req = new Request('http://localhost/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const res = await app.fetch(req, {
+      DB: mockDB,
+      ASSETS: mockAssets,
+    });
+
+    assert.strictEqual(res.status, 200);
+    const decoded = new TextDecoder().decode(storedBody as Uint8Array);
+    assert.ok(!decoded.includes('<script>'));
+    assert.ok(!decoded.includes('onclick='));
+    assert.ok(!decoded.includes('foreignObject'));
+    assert.ok(!decoded.includes('javascript:'));
+  });
+
   it('should reject files larger than 5MB', async () => {
     const app = new Hono();
 
