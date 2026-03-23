@@ -7,6 +7,16 @@ Gold Shore web deployments must use the canonical app surface only.
 - **Root directory:** `apps/gs-web`
 - **Build output directory:** `dist`
 
+## Runtime binding roles
+
+- `GS_CONFIG` is the shared configuration namespace for `apps/gs-admin` and `apps/gs-control`.
+  - `apps/gs-control` is the control-plane orchestrator for shared runtime configuration sync.
+  - `apps/gs-admin` uses the same namespace for operational reads/writes that must stay aligned with the control plane.
+- `apps/gs-web` keeps its existing runtime storage model and does **not** use `GS_CONFIG` today.
+  - `KV` remains for edge persistence and cache-style writes.
+  - `DB` remains the D1-backed system of record for forms and submission data.
+  - If `gs-web` ever needs shared config reads, add a separate intentional read-only config binding rather than repurposing `KV`.
+
 ## Runtime config source of truth (`GS_CONFIG` KV)
 
 The authoritative contract for cross-worker config sync lives in `@goldshore/schema` at `packages/schema/src/system-sync.ts`.
