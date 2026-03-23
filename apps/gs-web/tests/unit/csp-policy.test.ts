@@ -8,7 +8,7 @@ import {
   WEB_HEADERS_CSP,
   WEB_META_CSP,
   buildContentSecurityPolicy,
-} from '../../src/utils/csp';
+} from '../../src/utils/csp.ts';
 
 test('approved API origins stay limited to the documented production and preview hosts', () => {
   assert.deepEqual(GOLDSHORE_API_ORIGINS, [
