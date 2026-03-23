@@ -36,24 +36,17 @@ Last audited: 2026-03-23
 | `.github/workflows/naming-guard.yml` | Manual guard that checks workflow naming conventions. | `workflow_dispatch` | Non-blocking |
 | `.github/workflows/naming-lint.yml` | Enforce naming conventions (`pnpm check:naming`). | `pull_request`, `push` to `main` | **Blocking** |
 | `.github/workflows/route-collision-check.yml` | Validate route ownership/collision map. | `pull_request`, `workflow_dispatch` | **Blocking** |
-| `.github/workflows/preview-web.yml` | Preview deploy for web app. | `pull_request` (path-filtered) | Non-blocking |
-| `.github/workflows/preview-admin.yml` | Preview deploy for admin app. | `pull_request` (path-filtered) | Non-blocking |
-| `.github/workflows/preview-api-worker.yml` | Preview deploy for API worker. | `pull_request` (path-filtered) | Non-blocking |
-| `.github/workflows/preview-control-worker.yml` | Preview deploy for control worker. | `pull_request` (path-filtered) | Non-blocking |
-| `.github/workflows/preview-gateway.yml` | Preview deploy for gateway worker. | `pull_request` (path-filtered) | Non-blocking |
+| `.github/workflows/preview-gs-web.yml` | Preview deploy for web app. | `pull_request` (path-filtered) | Non-blocking |
+| `.github/workflows/preview-gs-admin.yml` | Preview deploy for admin app. | `pull_request` (path-filtered) | Non-blocking |
+| `.github/workflows/preview-gs-api.yml` | Preview deploy for API worker. | `pull_request` (path-filtered) | Non-blocking |
 | `.github/workflows/preview-gs-agent.yml` | Preview deploy for agent worker. | `pull_request` (path-filtered) | Non-blocking |
-| `.github/workflows/deploy-web.yml` | Legacy production deploy for web app. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-admin.yml` | Legacy production deploy for admin app. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-api-worker.yml` | Legacy production deploy for API worker. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-control-worker.yml` | Legacy production deploy for control worker. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-gateway.yml` | Legacy production deploy for gateway worker. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-agent.yml` | Legacy production deploy for agent worker. | `push` to `main` | Non-blocking |
+| `.github/workflows/preview-gs-gateway.yml` | Preview deploy for gateway worker. | `pull_request` (path-filtered) | Non-blocking |
 | `.github/workflows/deploy-gs-web.yml` | Current production deploy for web app with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-admin.yml` | Current production deploy for admin app with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-api.yml` | Current production deploy for API worker with validation gates. | `push` to `main` | Non-blocking |
+| `.github/workflows/deploy-gs-agent.yml` | Current production deploy for agent worker with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-control.yml` | Current production deploy for control worker with validation gates. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-gateway.yml` | Current production deploy for gateway worker with validation gates. | `push` to `main` | Non-blocking |
-| `.github/workflows/deploy-gs-agent.yml` | Production deploy for agent worker with validation gates. Uses Wrangler `--env production` only. | `push` to `main` | Non-blocking |
 | `.github/workflows/deploy-gs-mail.yml` | Current production deploy for mail worker with validation gates. | `push` to `main` | Non-blocking |
 
 > `gs-agent` now has a strict split: `.github/workflows/preview-gs-agent.yml` is PR-only and deploys with `--env preview`, while `.github/workflows/deploy-gs-agent.yml` is main-only and deploys with `--env production`.
