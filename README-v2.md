@@ -234,7 +234,7 @@ Responsibilities:
 - External AI model integration
 - Workflow orchestration
 
-### 6) `apps/gs-control` — Automation Worker
+### 6) `apps/gs-control` — Privileged Infra Automation Worker
 
 ```
 Route: https://ops.goldshore.ai/*
@@ -245,6 +245,11 @@ Route: https://ops.goldshore.ai/*
 - Worker deployment orchestrator
 - Secret rotation
 - Observability sync
+- Cloudflare Pages operations
+- Access policy / infra audit workflows
+- Authoritative `GS_CONFIG` writes
+
+`gs-control` remains a separate worker on `ops.goldshore.ai`; it is the privileged control plane, while `gs-api` remains the public and app-facing API worker.
 
 ### 7) `apps/jules-bot` — GitHub Automation Bot
 
