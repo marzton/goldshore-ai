@@ -19,7 +19,7 @@ Gold Shore web deployments must use the canonical app surface only.
 
 ## Runtime config source of truth (`GS_CONFIG` KV)
 
-The authoritative contract for cross-worker config sync lives in `@goldshore/schema` at `packages/schema/src/system-sync.ts`. The current auth exception around `CONTROL_SYNC_TOKEN` should remain limited to the explicit `gs-control` ⇄ `gs-api` sync flow; do not broaden it into a general bypass.
+The authoritative contract for cross-worker config sync lives in `@goldshore/schema` at `packages/schema/src/system-sync.ts`.
 
 ### Canonical keys and ownership
 

@@ -1,28 +1,18 @@
 # apps/gs-control
 
 ## Overview
-The `gs-control` worker is the privileged infrastructure automation and control-plane worker for GoldShore. It handles DNS updates, preview environment creation, secret rotation, Access audits, Cloudflare inventory, and configuration sync operations, and it is served from `https://ops.goldshore.ai/*` on Cloudflare Workers. It is managed alongside the gateway worker as part of the Edge Workers deployment group.
+The `gs-control` worker handles infrastructure automation tasks (DNS updates, preview environment creation, secret rotation, and sync operations) and is served from `https://ops.goldshore.ai/*` on Cloudflare Workers. It is managed alongside the gateway worker as part of the Edge Workers deployment group.
 
 Cloudflare metadata (from `wrangler.toml`):
 - Worker name: `gs-control`
 - Route: `ops.goldshore.ai/*`
 - Compatibility date: `2025-01-10`
-- Bindings: `CONTROL_LOGS` (KV), `GS_CONFIG` (KV), `STATE` (R2)
+- Bindings: `CONTROL_LOGS` (KV), `STATE` (R2)
 - Service bindings: `API` (`gs-api`), `GATEWAY` (`gs-gateway`)
 - Environment variable: `ENV=production`
 
 ## Routes/Endpoints
 These are worker API endpoints implemented in `src/index.ts` and `src/routes/cloudflare.ts` (not HTML pages). The router files are the source of truth.
-
-## Privileged ownership
-`gs-control` is not interchangeable with `gs-api`. Keep it as its own worker on `ops.goldshore.ai` and treat the following capabilities as control-plane exclusive:
-- Cloudflare DNS operations (`/dns/*`, `/cloudflare/dns/*`)
-- Cloudflare Pages deploy and project inventory operations (`/pages/*`, `/cloudflare/pages/*`)
-- Access policy and infra audit endpoints (`/access/audit`, `/cloudflare/access/*`, broader `/cloudflare/*` inventory)
-- Writes to the shared `GS_CONFIG` KV via `POST /system/sync`
-
-`gs-api` may read derived state, but privileged writes and Cloudflare admin actions remain owned by `gs-control`.
-
 - `GET /` (service health)
 - `POST /dns/apply`
 - `POST /workers/reconcile`
@@ -39,10 +29,9 @@ These are worker API endpoints implemented in `src/index.ts` and `src/routes/clo
 
 Configuration highlights (from `wrangler.toml`):
 - `ENV=production`
-- KV bindings: `CONTROL_LOGS`, `GS_CONFIG`
+- KV binding: `CONTROL_LOGS`
 - R2 binding: `STATE`
 - Service bindings: `API` (`gs-api`), `GATEWAY` (`gs-gateway`)
-- Secret-managed service-to-service sync secret: `CONTROL_SYNC_TOKEN`
 
 ## Local Dev
 ```bash

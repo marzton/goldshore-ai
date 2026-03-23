@@ -64,9 +64,3 @@ This inventory is sourced from:
   - `packages/schema` (`@astro-gs/schema`) had no live references in `apps/*` or `packages/*` runtime code.
 - Migration impact:
   - No import rewrites required in active apps; references only existed in legacy snapshots/logs.
-
-## Consolidation guardrails
-
-- `gs-control` is a privileged control-plane worker on `ops.goldshore.ai`, not a candidate for absorption into `gs-api`.
-- Any proposal that combines `gs-control` responsibilities into another worker must preserve separate privileged ownership for Cloudflare DNS, Pages, Access audit, and `GS_CONFIG` writes.
-- `gs-api` should stay focused on public and app-facing API traffic.
