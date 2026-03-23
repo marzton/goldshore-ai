@@ -181,7 +181,113 @@ Run the workspace in development mode:
 pnpm dev
 ```
 
-Run top-level validation checks:
+## Shared Packages
+
+### `packages/theme`
+
+Design tokens:
+
+- `tokens.css`
+- Colors / radii / spacing
+- Astro CSS variables
+- Shared across web + admin
+
+### `packages/ui`
+
+Component library:
+
+- Typography
+- Buttons, Inputs
+- Cards, Tables
+- Navbars, Sidebars
+- Tailwind/Vanilla CSS compatible
+
+---
+
+# 🧩 Template Pages & Modules
+
+Template pages are kept alongside each app so navigation, menus, containers, and search remain pluggable.
+
+| App        | Template Location                            | Notes                           |
+| ---------- | -------------------------------------------- | ------------------------------- |
+| Web        | `apps/gs-web/src/pages/templates/index.astro`   | Marketing + search composition  |
+| Admin      | `apps/gs-admin/src/pages/templates/index.astro` | Dashboard shell + table samples |
+| API Worker | `apps/gs-api/src/routes/templates.ts`    | Module checklist for API growth |
+| Gateway    | `apps/gs-gateway/src/index.ts` (`/templates`)   | Routing + AI dispatch template  |
+| Agent      | `apps/gs-agent/src/index.ts` (`/templates`)  | HITL orchestration template     |
+
+---
+
+# 🔗 Integration Matrix (Current + Planned)
+
+GoldShore templates are designed to integrate with:
+
+- **AI Providers**: Google Gemini, OpenAI ChatGPT, Anthropic Claude (via AI Gateway).
+- **Operational Assistants**: Jules, GitHub Copilot, and custom HITL review workflows.
+- **Cloudflare**: Workers, Pages, Queues, D1, R2, and AI Gateway.
+- **DevOps**: GitHub Actions, GitHub Issues/Projects, and deploy previews.
+- **Market Data + Trading**: Alpaca, Thinkorswim, Polygon, Tradier, and FIX gateways.
+- **Ecommerce + CRM**: Stripe, Shopify, HubSpot, Salesforce, and outbound messaging.
+
+Use these integrations to expand website management, SEO automation, admin analytics,
+AI agent tooling, and market data services without rebuilding existing modules.
+
+---
+
+# 🧭 Continuity Tracking
+
+To keep issues, workflows, PRs, branches, and components aligned:
+
+- Track work in **GitHub Issues/Projects** and the templates in `.github/ISSUE_TEMPLATE/`.
+- Review deployment flow in `.github/workflows/`.
+- Use `ops/pr-playbook.md` and `ops/maintenance-playbook.md` for release continuity.
+- Document component ownership in the admin dashboard templates and UI kit README.
+
+### Contributing Naming Rules
+
+- Read `docs/conventions/naming.md` before opening a PR.
+- Prefer `feat/add-new-worker-healthcheck` over mixed-case or space-separated branch names.
+- Prefer package names like `@goldshore/api-worker` and workflow file names like `deploy-gs-api.yml`.
+- Anti-patterns to avoid: `Feature/AddThing`, `gs_api`, `Deploy API Worker.yml`, and job keys like `deploy_api`.
+- Use helper scripts:
+  - `pnpm branch:bootstrap -- <type> <slug>`
+  - `pnpm scaffold:worker -- <worker-name>`
+
+## **packages/utils**
+### `packages/utils`
+
+TypeScript utilities:
+
+- fetch wrapper
+- env loader
+- request helpers
+- error handling
+
+### `packages/auth`
+[![CodeQL](https://github.com/goldshore/goldshore-ai/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/goldshore/goldshore-ai/actions/workflows/github-code-scanning/codeql)
+
+Unified platform for the **GoldShore** ecosystem, built with **Astro**, **Cloudflare**, and shared UI/theme packages.
+
+> Looking for the full operational handbook? See [README-v2.md](./README-v2.md).
+
+## Quick links
+
+- Architecture + repo state: [`CURRENT_MONOREPO_STATE.md`](./CURRENT_MONOREPO_STATE.md)
+- Domains + auth policies: [`docs/domains-and-auth.md`](./docs/domains-and-auth.md)
+- Branch and release operations: [`docs/ops/mergeable-branches.md`](./docs/ops/mergeable-branches.md)
+- Contributor standards: [`docs/contributing.md`](./docs/contributing.md)
+
+## Core apps
+
+- `apps/gs-web` — Public website (Astro + Cloudflare Pages)
+- `apps/gs-admin` — Admin cockpit (Astro + Cloudflare Pages)
+- `apps/gs-api` — API worker (Hono + Cloudflare Workers)
+- `apps/gs-gateway` — Gateway/edge routing worker
+- `apps/gs-agent` — Background agent worker
+- `apps/gs-control` — Infra automation worker
+- `apps/gs-mail` — Mail worker
+
+## Development
 
 ```bash
 pnpm validate
