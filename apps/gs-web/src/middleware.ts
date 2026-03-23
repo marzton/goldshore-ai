@@ -4,7 +4,7 @@ import { HTML_CONTENT_SECURITY_POLICY } from './security/policy';
 export const onRequest: MiddlewareHandler = async (context, next) => {
   // Response headers are authoritative for Astro-rendered HTML. Static files
   // that can bypass middleware keep their own platform config in public/_headers.
-  (context.locals as { securityPolicySource?: 'response-header' }).securityPolicySource = 'response-header';
+  context.locals.securityPolicySource = 'response-header';
 
   const response = await next();
   response.headers.set('Content-Security-Policy', HTML_CONTENT_SECURITY_POLICY);
