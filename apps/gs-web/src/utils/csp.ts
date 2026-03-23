@@ -1,3 +1,9 @@
+export function serializeCsp(directives: ContentSecurityPolicyDirectives): string {
+  return Object.entries(directives)
+    .map(([directive, sources]) => `${directive} ${sources.join(' ')}`)
+    .join('; ');
+}
+
 const SELF = "'self'";
 const UNSAFE_INLINE = "'unsafe-inline'";
 const NONE = "'none'";
@@ -24,7 +30,6 @@ export const WEB_CSP_DIRECTIVES = {
   'font-src': [SELF, 'https://fonts.gstatic.com'],
   'img-src': [SELF, 'data:', 'https://*.cloudflare.com'],
   'connect-src': [...BROWSER_CONNECT_SRC],
-  'frame-ancestors': [NONE],
   'object-src': [NONE],
   'base-uri': [SELF],
 } as const satisfies ContentSecurityPolicyDirectives;

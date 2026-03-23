@@ -1,4 +1,8 @@
-name: Naming Guard
+# Manual operations guide:
+# - Use this workflow to confirm active workflow files still follow the gs-* naming and path conventions.
+# - Run it after workflow refactors or migrations that may reintroduce legacy filenames or paths.
+name: "Manual Guard: Workflow Naming Check"
+run-name: "Workflow naming check • @${{ github.actor }}"
 
 permissions:
   contents: read

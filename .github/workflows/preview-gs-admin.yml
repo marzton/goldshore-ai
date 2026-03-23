@@ -1,4 +1,6 @@
 name: Preview GS Admin (admin.goldshore.ai)
+# apps/gs-admin is the internal, Access-protected Pages surface. Keep preview
+# automation separate from gs-web so future cleanup preserves that boundary.
 
 permissions:
   contents: read
@@ -28,6 +30,17 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
+      - id: metadata
+        name: Resolve build metadata
+        run: |
+          set -euo pipefail
+
+          {
+            echo "deployed_sha=$(git rev-parse HEAD)"
+            echo "build_timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "release_label=pr-${{ github.event.pull_request.number }}"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Install pnpm
         run: npm install -g pnpm@9
 
@@ -53,6 +66,9 @@ jobs:
         env:
           PUBLIC_API: https://api-preview.goldshore.ai
           PUBLIC_GATEWAY: https://gw-preview.goldshore.ai
+          PUBLIC_BUILD_TIMESTAMP: ${{ steps.metadata.outputs.build_timestamp }}
+          PUBLIC_COMMIT_HASH: ${{ steps.metadata.outputs.deployed_sha }}
+          PUBLIC_RELEASE_LABEL: ${{ steps.metadata.outputs.release_label }}
         run: pnpm build
 
       - name: Deploy to Cloudflare Pages (preview)

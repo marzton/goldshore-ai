@@ -53,67 +53,67 @@ const { serviceUrl } = Astro.props;
   const kvVal = document.getElementById('kv-val');
   const dbVal = document.getElementById('db-val');
 
-  let latestCheckId = 0;
-  let activeController = null;
+  let isChecking = false;
+  let queuedCheckType = null;
 
   const updateStatus = (status) => {
     if (!dot || !text) return;
 
-    const color = status === 'ok' ? 'bg-emerald-500' : 'bg-red-500';
+    const normalizedStatus = String(status).toUpperCase();
+    const color = normalizedStatus === 'OK' ? 'bg-emerald-500' : 'bg-red-500';
     dot.className = `status-dot h-3 w-3 rounded-full ${color}`;
     text.className = 'status-text text-sm font-bold uppercase';
-    text.textContent = status;
+    text.textContent = normalizedStatus;
+  };
+
+  const setCheckingState = (checking, type = 'shallow') => {
+    if (!btn || !btnText || !spinner) return;
+
+    btn.disabled = checking;
+    btn.setAttribute('aria-busy', String(checking));
+    btnText.textContent = checking
+      ? type === 'deep'
+        ? 'Validating...'
+        : 'Checking status...'
+      : 'Perform Deep Validation';
+    spinner.classList.toggle('hidden', !checking);
   };
 
   async function checkHealth(type = 'shallow') {
-    const checkId = ++latestCheckId;
-    activeController?.abort();
-    activeController = new AbortController();
-
-    if (type === 'deep' && btn && btnText && spinner) {
-      btn.disabled = true;
-      btnText.textContent = 'Validating...';
-      spinner.classList.remove('hidden');
+    if (isChecking) {
+      queuedCheckType = type === 'deep' ? 'deep' : (queuedCheckType ?? 'shallow');
+      return;
     }
 
-    try {
-      const res = await fetch(`${serviceUrl}?type=${type}`, {
-        signal: activeController.signal
-      });
-      const data = await res.json();
+    isChecking = true;
+    setCheckingState(true, type);
 
-      if (checkId !== latestCheckId) {
-        return;
-      }
+    try {
+      const res = await fetch(`${serviceUrl}?type=${type}`);
+      const data = await res.json();
 
       updateStatus(data.status);
 
       if (apiVal) apiVal.innerText = 'CONNECTED';
       if (data.kv && kvVal) kvVal.innerText = String(data.kv).toUpperCase();
       if (data.db && dbVal) dbVal.innerText = String(data.db).toUpperCase();
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        return;
-      }
-
-      if (checkId !== latestCheckId) {
-        return;
-      }
-
+    } catch (_error) {
       updateStatus('OFFLINE');
     } finally {
-      if (checkId === latestCheckId) {
-        activeController = null;
-      }
+      isChecking = false;
+      setCheckingState(false);
 
-      if (type === 'deep' && checkId === latestCheckId && btn && btnText && spinner) {
-        btn.disabled = false;
-        btnText.textContent = 'Perform Deep Validation';
-        spinner.classList.add('hidden');
+      const nextCheckType = queuedCheckType;
+      queuedCheckType = null;
+
+      if (nextCheckType) {
+        void checkHealth(nextCheckType);
       }
     }
   }
 
-  btn?.addEventListener('click', () => checkHealth('deep'));
-  checkHealth();
+  btn?.addEventListener('click', () => {
+    void checkHealth('deep');
+  });
+  void checkHealth();
 </script>

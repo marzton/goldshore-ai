@@ -1,52 +1,18 @@
-name: Repo Maintenance & Agent Sync
-run-name: Maintenance by @${{ github.actor }} on ${{ inputs.target_branch }}
+name: Maintenance Orchestration
 
 on:
   workflow_dispatch:
     inputs:
-      target_branch:
-        description: "Branch to audit/align against"
-        required: true
-        default: "main"
-        type: string
-      run_builds:
-        description: "Run workspace builds"
-        required: true
-        default: true
+      log_ref:
+        description: 'Target ref for report'
+        default: 'origin/main'
+      log_limit:
+        description: 'Number of logs'
+        default: '20'
+      confirm_apply:
+        description: 'Set to true to run reconciliation'
         type: boolean
-      run_tests:
-        description: "Run workspace tests"
-        required: true
         default: false
-        type: boolean
-      run_service_sync:
-        description: "Run gs service-token sync checks"
-        required: true
-        default: true
-        type: boolean
-      endpoint_path:
-        description: "Endpoint path to check on each service"
-        required: false
-        default: "/api/health"
-        type: string
-      base_domain:
-        description: "Base domain for gs services"
-        required: false
-        default: "goldshore.ai"
-        type: string
-      services:
-        description: "Comma-separated services to check"
-        required: false
-        default: "gs-web,gs-admin,gs-api,gs-gateway,gs-mail,gs-agent,gs-control"
-        type: string
-      timeout_seconds:
-        description: "curl timeout in seconds"
-        required: false
-        default: "20"
-        type: string
-
-permissions:
-  contents: read
 
 concurrency:
   group: maintenance-${{ github.ref }}
@@ -56,107 +22,58 @@ jobs:
   maintenance:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
 
-      - name: Enable corepack and pin pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@9.0.0 --activate
-          pnpm --version
+      - name: Enable corepack
+        run: corepack enable
 
-      - name: Install dependencies (read-only)
+      - name: Set pnpm version
+        run: corepack prepare pnpm@9.0.0 --activate
+
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Audit target branch state
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          git fetch --all --prune
-
-          if ! git show-ref --verify --quiet "refs/remotes/origin/${{ inputs.target_branch }}"; then
-            echo "❌ Missing remote branch origin/${{ inputs.target_branch }}"
-            exit 1
-          fi
-
-          TARGET_SHA="$(git rev-parse "origin/${{ inputs.target_branch }}")"
-          echo "TARGET_SHA=$TARGET_SHA" >> "$GITHUB_ENV"
-
-          echo "### Branch Audit" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Target branch: \`${{ inputs.target_branch }}\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Target SHA: \`$TARGET_SHA\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "Recent commits on origin/${{ inputs.target_branch }}:" >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-          git log -n 10 --pretty=format:'%H - %an: %s' "origin/${{ inputs.target_branch }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Validate workspace contract and naming
-        run: pnpm validate
-
-      - name: Run repo health checks
+      - name: Repo health checks
         run: pnpm run repo:health
 
-      - name: Build workspace
-        if: ${{ inputs.run_builds }}
-        run: pnpm build
+      - name: Build all packages
+        run: pnpm -r build
 
-      - name: Run workspace tests
-        if: ${{ inputs.run_tests }}
-        run: pnpm test
-
-      - name: Run gs service-token sync checks
-        if: ${{ inputs.run_service_sync }}
+      - name: Generate branch maintenance report
         env:
-          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
-          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
-          GS_BASE_DOMAIN: ${{ inputs.base_domain }}
-          GS_SYNC_PATH: ${{ inputs.endpoint_path }}
-          GS_SERVICES: ${{ inputs.services }}
-          GS_SYNC_TIMEOUT_SECONDS: ${{ inputs.timeout_seconds }}
-        run: scripts/jules-sync.sh
+          GH_TOKEN: ${{ github.token }}
+          LOG_REF: ${{ inputs.log_ref }}
+          LOG_LIMIT: ${{ inputs.log_limit }}
+        run: bash scripts/maintenance/branch-report.sh
 
-      - name: Verify workflow remained read-only
-        shell: bash
-        run: |
-          set -euo pipefail
-          if ! git diff --quiet; then
-            echo "❌ Workflow modified tracked files unexpectedly."
-            git status --short
-            exit 1
-          fi
+      - name: Upload branch maintenance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: maintenance-branch-report
+          path: reports/maintenance/branch-report.txt
 
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "❌ Workflow left untracked/dirty files in the workspace."
-            git status --short
-            exit 1
-          fi
+  reconcile-infra:
+    needs: maintenance
+    runs-on: ubuntu-latest
+    if: ${{ inputs.confirm_apply == true }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-          echo "✅ Working tree remained clean."
+      - name: Install pnpm
+        run: npm install -g pnpm@9
 
-      - name: Publish maintenance summary
-        shell: bash
-        run: |
-          {
-            echo "### Maintenance Result"
-            echo ""
-            echo "- Actor: \`${{ github.actor }}\`"
-            echo "- Target branch: \`${{ inputs.target_branch }}\`"
-            echo "- Target SHA: \`${TARGET_SHA}\`"
-            echo "- Builds run: \`${{ inputs.run_builds }}\`"
-            echo "- Tests run: \`${{ inputs.run_tests }}\`"
-            echo "- Service sync run: \`${{ inputs.run_service_sync }}\`"
-          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
