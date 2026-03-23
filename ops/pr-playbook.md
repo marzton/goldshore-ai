@@ -209,13 +209,6 @@ Flag PRs that touch:
 - tsconfig.json, astro.config.mjs, wrangler.toml
 - shared packages/* (theme, ui, auth, utils, etc.)
 
-- package.json, pnpm-lock.yaml
-- apps/admin/\*
-- apps/web/\*
-- apps/api-worker/_, apps/gateway/_, apps/control-worker/\*
-- tsconfig.json, astro.config.mjs, wrangler.toml
-- shared packages/\* (theme, ui, auth, utils, etc.)
-
 Those are high-impact and should be cleaned/merged before small copy changes.
 
 ⸻
@@ -228,12 +221,6 @@ Recommended priority:
    - tsconfig.json
    - .github/workflows/*
    - infra/cloudflare/*
-
-1. Infra / config PRs
-   - Root package.json
-   - tsconfig.json
-   - .github/workflows/\*
-   - infra/cloudflare/\*
    - wrangler.toml changes
 2. Workers
    - apps/gs-api
@@ -243,10 +230,6 @@ Recommended priority:
    - apps/gs-web/astro.config.mjs, apps/gs-admin/astro.config.mjs
    - WebLayout, AdminLayout, NavBar, Footer
 4. Pages and content
-   - apps/web/src/pages/*
-   - apps/admin/src/pages/*
-   - apps/web/src/pages/\*
-   - apps/admin/src/pages/\*
    - apps/gs-web/src/pages/\*
    - apps/gs-admin/src/pages/\*
 5. Docs / README / comment-only PRs
@@ -291,7 +274,6 @@ Until that’s live, this playbook is the manual version of what Jules will even
 
 ⸻
 
-**Scenario B — PR touches apps/web/src/pages/index.astro and apps/admin/src/pages/index.astro**
 **Scenario B — PR touches apps/gs-web/src/pages/index.astro and apps/gs-admin/src/pages/index.astro**
 
 1. Sync branch with main (rebase origin/main)

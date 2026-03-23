@@ -53,7 +53,10 @@ const services = (await getCollection('services', ({ id }) =>
     <div class="gs-modal-bg" data-close-modal></div>
     <div class="gs-modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
       <button class="close-btn" data-close-modal aria-label="Close">×</button>
-      <div class="modal-content" id="modal-content"></div>
+      <div class="modal-content" id="modal-content">
+        <h2 id="modal-title" class="sr-only">Modal Content</h2>
+        <div id="modal-description" class="sr-only">Detailed view of the selected item</div>
+      </div>
     </div>
   </div>
 

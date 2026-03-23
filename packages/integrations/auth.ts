@@ -24,6 +24,16 @@ type StoredToken = {
 
 const DEFAULT_REFRESH_SKEW_MS = 30_000;
 
+/**
+ * Creates an OAuth2 token manager that handles the `client_credentials` and `refresh_token` flows.
+ * It automatically caches the token in memory and refreshes it before it expires.
+ *
+ * @warning This function is for **SERVER-SIDE USE ONLY**. It requires a `client_secret`,
+ * which must never be exposed in a browser or other client-side environment.
+ *
+ * @param config The configuration for the token manager.
+ * @returns An object with a `getToken` method.
+ */
 export const createAuthTokenManager = (config: AuthTokenConfig) => {
   const fetchFn = config.fetchFn ?? fetch;
   const logger = config.logger ?? console;

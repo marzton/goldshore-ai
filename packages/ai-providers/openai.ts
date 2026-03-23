@@ -20,25 +20,30 @@ export const openAIProvider: AnalysisProvider = {
     }
 
     const model = config.model ?? 'gpt-4o-mini';
-    const response = await config.fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        messages: buildMessages(input),
-      }),
-    });
+    try {
+      const response = await config.fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages: buildMessages(input),
+        }),
+      });
 
-    const payload = await response.json();
-    const output = payload?.choices?.[0]?.message?.content ?? '';
+      const payload = await response.json();
+      const output = payload?.choices?.[0]?.message?.content ?? '';
 
-    return {
-      provider: 'openai',
-      output,
-      raw: payload,
-    };
+      return {
+        provider: 'openai',
+        output,
+        raw: payload,
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`OpenAI API request failed: ${errorMessage}`);
+    }
   },
 };
