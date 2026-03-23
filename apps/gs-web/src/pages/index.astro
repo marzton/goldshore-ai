@@ -10,6 +10,8 @@ const signals = [
   { label: 'Operator latency', value: '< 45ms' },
   { label: 'Decision loops', value: 'Human + AI' },
   { label: 'Review posture', value: 'High trust' },
+];
+
 const trustMetrics = [
   {
     label: 'Availability',
@@ -130,37 +132,40 @@ const proofPoints = [
           </ul>
         </aside>
       </div>
+    </section>
 
     <section class="signal-strip gs-shell-section" aria-label="Signal strip">
       {signals.map((signal) => (
-        <div class="signal-tile">
+        <div class="signal-tile" key={signal.label}>
           <span>{signal.label}</span>
           <strong>{signal.value}</strong>
         </div>
       ))}
-      <div class="metrics-shell gs-shell-section">
-        <div class="metrics-grid" data-metrics-grid>
-          {
-            trustMetrics.map((metric) => (
-              <article
-                class="signal-tile signal-tile--loading"
-                aria-live="polite"
-              >
-                <div class="signal-tile__header">
-                  <span>{metric.label}</span>
-                  <small>{metric.context}</small>
-                </div>
-                <strong>{metric.value}</strong>
-                <p>{metric.detail}</p>
-                {metric.href && (
-                  <a href={metric.href} class="signal-link">
-                    {metric.hrefLabel} →
-                  </a>
-                )}
-              </article>
-            ))
-          }
-        </div>
+    </section>
+
+    <section class="metrics-shell gs-shell-section">
+      <div class="metrics-grid" data-metrics-grid>
+        {
+          trustMetrics.map((metric) => (
+            <article
+              class="signal-tile signal-tile--loading"
+              aria-live="polite"
+              key={metric.label}
+            >
+              <div class="signal-tile__header">
+                <span>{metric.label}</span>
+                <small>{metric.context}</small>
+              </div>
+              <strong>{metric.value}</strong>
+              <p>{metric.detail}</p>
+              {metric.href && (
+                <a href={metric.href} class="signal-link">
+                  {metric.hrefLabel} →
+                </a>
+              )}
+            </article>
+          ))
+        }
       </div>
     </section>
 
@@ -181,7 +186,7 @@ const proofPoints = [
       </div>
       <div class="capability-grid">
         {capabilities.map((capability) => (
-          <article class="capability-card">
+          <article class="capability-card" key={capability.title}>
             <h3>{capability.title}</h3>
             <p>{capability.body}</p>
           </article>
@@ -219,7 +224,7 @@ const proofPoints = [
       </div>
       <div class="proof-grid">
         {proofPoints.map((point) => (
-          <article class="proof-card">
+          <article class="proof-card" key={point.title}>
             <h3>{point.title}</h3>
             <p>{point.body}</p>
           </article>
@@ -376,11 +381,6 @@ const proofPoints = [
         transparent 80%
       );
       opacity: 0.55;
-        linear-gradient(rgba(255, 255, 255, 0.08) 2px, transparent 2px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.08) 2px, transparent 2px);
-      background-size: 72px 72px;
-      mask-image: radial-gradient(circle at 50% 30%, black 30%, transparent 80%);
-      opacity: 0.5;
     }
 
     .hero::after {
@@ -390,13 +390,6 @@ const proofPoints = [
       background:
         radial-gradient(circle at 25% 20%, rgba(90, 162, 255, 0.16), transparent 28%),
         linear-gradient(180deg, rgba(7, 11, 20, 0.15), rgba(7, 11, 20, 0.8));
-      pointer-events: none;
-        radial-gradient(
-          circle at 25% 20%,
-          rgba(90, 162, 255, 0.18),
-          transparent 28%
-        ),
-        linear-gradient(180deg, rgba(7, 11, 20, 0.18), rgba(7, 11, 20, 0.84));
       pointer-events: none;
       z-index: 0;
     }
@@ -412,6 +405,8 @@ const proofPoints = [
       height: auto;
       color: #8ec1ff;
       will-change: transform, filter;
+    }
+
     .hero[data-hero-design='astral'] .hero-energy--x {
       opacity: 0.68;
       background: linear-gradient(
@@ -436,12 +431,6 @@ const proofPoints = [
       position: absolute;
       inset: 18% auto auto clamp(1rem, 7vw, 6rem);
       z-index: 1;
-    }
-
-    .gs-logo-reactive {
-      width: clamp(72px, 11vw, 120px);
-      height: auto;
-      will-change: transform, filter;
     }
 
     .hero-shell {
@@ -604,7 +593,7 @@ const proofPoints = [
       padding-bottom: 2rem;
     }
 
-    .metrics-grid {
+    .metrics-grid,
     .signal-strip {
       margin-top: 1.25rem;
       display: grid;
@@ -763,6 +752,9 @@ const proofPoints = [
 
       100% {
         box-shadow: 0 0 0 0 rgba(71, 227, 167, 0);
+      }
+    }
+
     @keyframes particleDrift {
       from {
         transform: translate3d(0, 0, 0);
@@ -848,27 +840,16 @@ const proofPoints = [
       .hero-button,
       .status-dot,
       .signal-tile--loading::after {
+        transition: none;
+        animation: none;
+      }
+
       .hero {
         min-height: auto;
       }
 
       .hero-grid {
         background-size: 52px 52px;
-      }
-
-      .hero-lattice {
-        inset: 8% 4% 14%;
-      }
-
-      .hero-engine {
-        --engine-size: min(44vw, 188px);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .hero-button {
-        transition: none;
-        animation: none;
       }
     }
   </style>
