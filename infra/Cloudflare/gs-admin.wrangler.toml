@@ -36,3 +36,9 @@ name = "gs-admin" # Base name for Pages project
 routes = [
   { pattern = "admin.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
+
+[env.production]
+# Production bindings for Pages Functions
+routes = [
+  { pattern = "admin.goldshore.ai/*", zone_name = "goldshore.ai" }
+]

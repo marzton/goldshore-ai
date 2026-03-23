@@ -14,3 +14,7 @@ route = "admin.goldshore.ai/*"
 [[kv_namespaces]]
 binding = "GS_CONFIG"
 id = "9cc2209906a94851b704be57543987a9"
+
+[[env.production.kv_namespaces]]
+binding = "GS_CONFIG"
+id = "9cc2209906a94851b704be57543987a9"
