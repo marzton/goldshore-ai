@@ -1,28 +1,34 @@
-name: Deploy Frontend Pages
+name: Deploy Frontends
+run-name: >-
+  Deploy frontends • web=${{ inputs.deploy_gs_web }} • admin=${{ inputs.deploy_gs_admin }} • @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_gs_web:
+        description: "Deploy gs-web from the selected commit."
+        required: true
+        type: boolean
+        default: true
+      deploy_gs_admin:
+        description: "Deploy gs-admin from the selected commit."
+        required: true
+        type: boolean
+        default: true
 
 permissions:
   contents: read
 
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - "apps/gs-web/**"
-      - "apps/gs-admin/**"
-      - "packages/**"
-      - "package.json"
-      - "pnpm-lock.yaml"
-  workflow_dispatch:
-
 jobs:
-  deploy-web:
+  build-frontends:
+    name: Build shared frontend artifacts
     runs-on: ubuntu-latest
-
+    outputs:
+      source_sha: ${{ steps.metadata.outputs.source_sha }}
+      gs_web_sha: ${{ steps.metadata.outputs.gs_web_sha }}
+      gs_admin_sha: ${{ steps.metadata.outputs.gs_admin_sha }}
     steps:
-      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
-        with:
-          ref: ${{ github.sha }}
+      - uses: actions/checkout@v6
 
       - uses: pnpm/action-setup@v4
         with:
@@ -45,14 +51,16 @@ jobs:
       - name: Validate canonical worker names
         run: pnpm validate:names
 
-      - name: Build web app
+      - name: Build gs-web
+        if: ${{ inputs.deploy_gs_web }}
         working-directory: apps/gs-web
         env:
           PUBLIC_BUILD_TIMESTAMP: ${{ github.run_started_at }}
           PUBLIC_COMMIT_HASH: ${{ github.sha }}
         run: pnpm build
 
-      - name: Validate build artifacts
+      - name: Validate gs-web build artifacts
+        if: ${{ inputs.deploy_gs_web }}
         working-directory: apps/gs-web
         run: |
           set -euo pipefail
@@ -63,54 +71,177 @@ jobs:
           grep -q '<link' dist/index.html
           grep -q '/_astro/' dist/index.html
 
-      - name: Deploy to Cloudflare Pages (production)
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: gs-web
-          directory: apps/gs-web/dist
-          branch: main
-
-  deploy-admin:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-        with:
-          ref: ${{ github.sha }}
-
-      - name: Install pnpm
-        run: npm install -g pnpm@9
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Validate workspace contract
-        run: pnpm validate:workspace
-
-      - name: Validate canonical worker structure
-        run: pnpm validate:structure
-
-      - name: Validate canonical worker names
-        run: pnpm validate:names
-
-      - name: Build admin app
+      - name: Build gs-admin
+        if: ${{ inputs.deploy_gs_admin }}
         working-directory: apps/gs-admin
         env:
+          PUBLIC_BUILD_TIMESTAMP: ${{ github.run_started_at }}
           PUBLIC_COMMIT_HASH: ${{ github.sha }}
         run: pnpm build
 
-      - name: Deploy to Cloudflare Pages (production)
-        uses: cloudflare/pages-action@f0a1cd58cd66095dee69bfa18fa5efd1dde93bca
+      - name: Validate gs-admin build artifacts
+        if: ${{ inputs.deploy_gs_admin }}
+        working-directory: apps/gs-admin
+        run: |
+          set -euo pipefail
+
+          test -d dist
+          test -f dist/index.html
+
+      - name: Package frontend artifacts
+        id: metadata
+        run: |
+          set -euo pipefail
+
+          mkdir -p .artifacts
+          source_sha="${GITHUB_SHA}"
+          echo "source_sha=${source_sha}" >> "$GITHUB_OUTPUT"
+
+          if [ "${{ inputs.deploy_gs_web }}" = "true" ]; then
+            mkdir -p .artifacts/gs-web
+            cp -R apps/gs-web/dist .artifacts/gs-web/dist
+            printf '%s\n' "${source_sha}" > .artifacts/gs-web/source-sha.txt
+            echo "gs_web_sha=${source_sha}" >> "$GITHUB_OUTPUT"
+          else
+            echo "gs_web_sha=skipped" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ "${{ inputs.deploy_gs_admin }}" = "true" ]; then
+            mkdir -p .artifacts/gs-admin
+            cp -R apps/gs-admin/dist .artifacts/gs-admin/dist
+            printf '%s\n' "${source_sha}" > .artifacts/gs-admin/source-sha.txt
+            echo "gs_admin_sha=${source_sha}" >> "$GITHUB_OUTPUT"
+          else
+            echo "gs_admin_sha=skipped" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload gs-web artifact
+        if: ${{ inputs.deploy_gs_web }}
+        uses: actions/upload-artifact@v4
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: gs-admin
-          directory: apps/gs-admin/dist
+          name: gs-web-dist-${{ github.run_id }}
+          path: .artifacts/gs-web
+          if-no-files-found: error
+
+      - name: Upload gs-admin artifact
+        if: ${{ inputs.deploy_gs_admin }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: gs-admin-dist-${{ github.run_id }}
+          path: .artifacts/gs-admin
+          if-no-files-found: error
+
+  deploy-gs-web:
+    name: Deploy gs-web
+    if: ${{ inputs.deploy_gs_web }}
+    needs: build-frontends
+    runs-on: ubuntu-latest
+    environment: production-gs-web
+    concurrency:
+      group: deploy-gs-web-production
+      cancel-in-progress: false
+    outputs:
+      deployed_sha: ${{ steps.metadata.outputs.deployed_sha }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: gs-web-dist-${{ github.run_id }}
+          path: .artifacts/gs-web
+
+      - name: Read gs-web deployment metadata
+        id: metadata
+        run: |
+          set -euo pipefail
+
+          deployed_sha="$(cat .artifacts/gs-web/source-sha.txt)"
+          echo "deployed_sha=${deployed_sha}" >> "$GITHUB_OUTPUT"
+          test "${deployed_sha}" = "${{ needs.build-frontends.outputs.gs_web_sha }}"
+
+      - name: Deploy gs-web to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_GS_WEB || secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_GS_WEB || secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: gs-web
+          directory: .artifacts/gs-web/dist
           branch: main
+
+  deploy-gs-admin:
+    name: Deploy gs-admin
+    if: ${{ inputs.deploy_gs_admin }}
+    needs: build-frontends
+    runs-on: ubuntu-latest
+    environment: production-gs-admin
+    concurrency:
+      group: deploy-gs-admin-production
+      cancel-in-progress: false
+    outputs:
+      deployed_sha: ${{ steps.metadata.outputs.deployed_sha }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: gs-admin-dist-${{ github.run_id }}
+          path: .artifacts/gs-admin
+
+      - name: Read gs-admin deployment metadata
+        id: metadata
+        run: |
+          set -euo pipefail
+
+          deployed_sha="$(cat .artifacts/gs-admin/source-sha.txt)"
+          echo "deployed_sha=${deployed_sha}" >> "$GITHUB_OUTPUT"
+          test "${deployed_sha}" = "${{ needs.build-frontends.outputs.gs_admin_sha }}"
+
+      - name: Deploy gs-admin to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_GS_ADMIN || secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_GS_ADMIN || secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: gs-admin
+          directory: .artifacts/gs-admin/dist
+          branch: main
+
+  deployment-summary:
+    name: Frontend deployment summary
+    if: ${{ always() }}
+    needs:
+      - build-frontends
+      - deploy-gs-web
+      - deploy-gs-admin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish workflow summary
+        env:
+          SOURCE_SHA: ${{ needs.build-frontends.outputs.source_sha }}
+          GS_WEB_REQUESTED: ${{ inputs.deploy_gs_web }}
+          GS_ADMIN_REQUESTED: ${{ inputs.deploy_gs_admin }}
+          GS_WEB_RESULT: ${{ needs.deploy-gs-web.result }}
+          GS_ADMIN_RESULT: ${{ needs.deploy-gs-admin.result }}
+          GS_WEB_SHA: ${{ needs.deploy-gs-web.outputs.deployed_sha || needs.build-frontends.outputs.gs_web_sha }}
+          GS_ADMIN_SHA: ${{ needs.deploy-gs-admin.outputs.deployed_sha || needs.build-frontends.outputs.gs_admin_sha }}
+        run: |
+          set -euo pipefail
+
+          same_sha="not requested"
+          if [ "${GS_WEB_REQUESTED}" = "true" ] && [ "${GS_ADMIN_REQUESTED}" = "true" ]; then
+            if [ -n "${GS_WEB_SHA}" ] && [ -n "${GS_ADMIN_SHA}" ] && [ "${GS_WEB_SHA}" = "${GS_ADMIN_SHA}" ]; then
+              same_sha="yes"
+            else
+              same_sha="no"
+            fi
+          fi
+
+          {
+            echo "# Frontend deployment summary"
+            echo
+            echo "Source commit: \`${SOURCE_SHA}\`"
+            echo
+            echo "| App | Requested | Job result | Deployed SHA |"
+            echo "| --- | --- | --- | --- |"
+            echo "| gs-web | ${GS_WEB_REQUESTED} | ${GS_WEB_RESULT} | ${GS_WEB_SHA:-n/a} |"
+            echo "| gs-admin | ${GS_ADMIN_REQUESTED} | ${GS_ADMIN_RESULT} | ${GS_ADMIN_SHA:-n/a} |"
+            echo
+            echo "**gs-web and gs-admin deployed from the same SHA:** ${same_sha}"
+            echo
+            echo "Retry and rollback remain isolated per app because each Pages deploy runs in its own job, with its own environment and Cloudflare credentials."
+          } >> "$GITHUB_STEP_SUMMARY"
