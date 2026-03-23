@@ -2,6 +2,7 @@ name = "gs-control"
 main = "src/index.ts"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
+tsconfig = "tsconfig.json"
 
 workers_dev = false
 routes = [
@@ -52,3 +53,23 @@ id = "gs_control_logs_preview"
 binding = "API"
 service = "gs-api"
 environment = "preview"
+
+[env.prod]
+name = "gs-control"
+compatibility_date = "2024-11-01"
+[[env.prod.kv_namespaces]]
+binding = "CONTROL_LOGS"
+id = "gs_control_logs_001"
+[[env.prod.kv_namespaces]]
+binding = "GS_CONFIG"
+id = "9cc2209906a94851b704be57543987a9"
+
+[env.production]
+name = "gs-control"
+compatibility_date = "2024-11-01"
+[[env.production.kv_namespaces]]
+binding = "CONTROL_LOGS"
+id = "gs_control_logs_001"
+[[env.production.kv_namespaces]]
+binding = "GS_CONFIG"
+id = "9cc2209906a94851b704be57543987a9"
