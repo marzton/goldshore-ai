@@ -1,58 +1,40 @@
 # apps/gs-gateway
 
 ## Overview
-`gs-gateway` is the GoldShore ingress and proxy worker. Keep this service separate from `gs-agent`.
+The `gs-gateway` worker is the routing and queue ingress layer for GoldShore on Cloudflare Workers. It is managed alongside the control worker as part of the Edge Workers deployment group.
 
-Its responsibilities are:
-- terminate incoming edge traffic for `gw.goldshore.ai`, `gateway.goldshore.ai`, and `agent.goldshore.ai`
-- enforce shared middleware such as Access verification, CORS, and request tracing
-- proxy synchronous calls to downstream workers via direct service bindings
-- enqueue background jobs onto `goldshore-jobs` when work should continue asynchronously
+Cloudflare metadata (from `wrangler.toml`):
+- Worker name: `gs-gateway`
+- Route: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md)
+- Compatibility date: `2025-01-10`
+- Bindings: `gs-kv`, `GATEWAY_KV` (KV), `JOB_QUEUE` (Queues producer), `AI` (AI Gateway)
+- Environment variables: `ENV=production`, `API_ORIGIN=https://api.goldshore.ai`, `CLOUDFLARE_ACCESS_AUDIENCE`, `CLOUDFLARE_TEAM_DOMAIN`
 
-Queue connectivity from `gs-gateway` to `gs-agent` is intentional, but it is **not** a reason to merge the two workers. The queue is the async handoff boundary; `gs-gateway` remains the ingress/proxy surface and `gs-agent` remains the background processor.
-
-## Sync vs async flow rules
-
-### Use a direct service binding for synchronous interactions
-Use a Worker service binding when the caller needs an immediate response in the same request lifecycle.
-
-Examples:
-- `gs-gateway` → `gs-api` for `/api/*` proxy traffic
-- `gs-gateway` → `gs-agent` when the `agent.goldshore.ai` hostname should resolve to an immediate fetch response from the agent worker
-- any request path where auth, validation, and the downstream response must complete before returning to the client
-
-Current synchronous bindings in `wrangler.toml`:
-- `API` → `gs-api`
-- `AGENT` → `gs-agent`
-
-### Use queue handoff for asynchronous/background work
-Use `JOB_QUEUE` / `goldshore-jobs` when the work should continue after the HTTP request is accepted.
-
-Examples:
-- long-running AI or automation jobs
-- retries, fan-out, or batchable background processing
-- tasks where the caller only needs acknowledgement that the job was accepted
-
-Current async binding in `wrangler.toml`:
-- `JOB_QUEUE` producer → `goldshore-jobs`
-
-## Wrangler configuration notes
-The worker configuration in `apps/gs-gateway/wrangler.toml` preserves the sync-vs-async split in both production aliases (`prod` and `production`) and preview:
-- service bindings are reserved for synchronous fetch-time interactions
-- the queue producer is reserved for background handoff
-- `gs-gateway` stays the ingress layer even though it can reach `gs-agent` in both sync and async modes
-
-## Routes and endpoints
-These routes are implemented in `src/index.ts`:
-- `GET /`
+## Routes/Endpoints
+These are worker API endpoints implemented in `src/index.ts` (not HTML pages). The router file is the source of truth.
+- `https://gw.goldshore.ai/*` (proxy + routing entrypoint)
+- `GET /` (status page)
 - `GET /health`
 - `GET /templates`
 - `GET /user/login`
 - `POST /v1/chat`
-- `/api/*` proxy passthrough to `gs-api`
-- `agent.goldshore.ai/*` passthrough to `gs-agent` via service binding
+- `/api/*` (proxy passthrough to `gs-api` when no matching route)
+The `gs-gateway` worker is the routing and queue ingress layer for GoldShore, served from the gateway hostname documented in [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md). It handles proxying to the API, rate limiting, and preflight authorization checks.
 
-## Local dev
+Configuration highlights (from `wrangler.toml`):
+- `ENV=production`
+- `API_ORIGIN=https://api.goldshore.ai`
+- `CLOUDFLARE_ACCESS_AUDIENCE` (required for Access verification)
+- `CLOUDFLARE_TEAM_DOMAIN` (required for Access verification)
+- KV bindings: `gs-kv`, `GATEWAY_KV`
+- Queue producer: `JOB_QUEUE`
+- AI binding: `AI`
+
+## Routes/Endpoints
+These are worker API endpoints implemented in `src/index.ts` (not HTML pages). Route handlers are defined in `src/index.ts`.
+- `https://gw.goldshore.ai/*` (proxy + routing entrypoint)
+
+## Local Dev
 ```bash
 pnpm install
 pnpm --filter ./apps/gs-gateway dev
@@ -60,10 +42,16 @@ pnpm --filter ./apps/gs-gateway build
 ```
 
 ## Deploy
-- Production deploy workflow: `.github/workflows/deploy-gs-gateway.yml.disabled`
-- Preview deploy workflow: `.github/workflows/preview-gs-gateway.yml`
-- Deploy command: `wrangler deploy --config wrangler.toml`
-- Worker Builds should use the `gs-control` build token when configured in Cloudflare
+- Production deploy: `.github/workflows/deploy-gs-gateway.yml.disabled` (kept disabled until prod rollout)
+- Preview deploy: `.github/workflows/preview-gs-gateway.yml`
+- Uses `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` secrets
+- Domains, previews, and Access policies: see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
+
+<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-01-23 01:43 -->
+```bash
+pnpm --filter ./apps/gs-gateway deploy
+```
+
 
 ## Workflow conventions
 Gateway workflows run from the repository root for install/validation, then switch to `working-directory: apps/gs-gateway` only for `wrangler deploy`. Keep this convention for new jobs to avoid root/subdirectory drift in CI behavior.
