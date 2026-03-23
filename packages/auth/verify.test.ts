@@ -130,50 +130,6 @@ describe('verifyAccess', () => {
     });
 });
 
-describe('verifyAccess (public)', () => {
-    let jwtVerifyMock: any;
-
-    afterEach(() => {
-        if (jwtVerifyMock) jwtVerifyMock.mock.restore();
-    });
-
-    test('returns true when verification succeeds', async () => {
-        const req = new Request('http://example.com', {
-            headers: { 'CF-Access-Jwt-Assertion': 'valid-token' }
-        });
-        const env: Env = {};
-
-        jwtVerifyMock = mock.method(deps, 'jwtVerify', async () => {
-            return { payload: { sub: 'user123' } };
-        });
-
-        const result = await verifyAccess(req, env);
-        assert.strictEqual(result, true);
-    });
-
-    test('returns false when verification fails', async () => {
-        const req = new Request('http://example.com', {
-            headers: { 'CF-Access-Jwt-Assertion': 'invalid-token' }
-        });
-        const env: Env = {};
-
-        jwtVerifyMock = mock.method(deps, 'jwtVerify', async () => {
-            throw new Error('Verification failed');
-        });
-
-        const result = await verifyAccess(req, env);
-        assert.strictEqual(result, false);
-    });
-
-    test('returns false when no token is present', async () => {
-        const req = new Request('http://example.com');
-        const env: Env = {};
-
-        const result = await verifyAccess(req, env);
-        assert.strictEqual(result, false);
-    });
-});
-
 describe('verifyAccessWithClaims (public)', () => {
     let consoleErrorMock: any;
     let jwtVerifyMock: any;
