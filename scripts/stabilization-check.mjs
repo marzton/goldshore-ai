@@ -171,10 +171,6 @@ function getCiStatus(branch) {
         item.conclusion || (item.state === 'SUCCESS' ? 'SUCCESS' : item.state),
     }));
 
-    const hasFailed = hasCompletedNonSuccessCheck(checks);
-    const state = hasFailed
-      ? '❌ FAIL'
-      : checks.every((c) => isCompletedCheck(c) && isSuccessfulCheck(c))
     const hasFailed = checks.some((c) =>
       ['FAILURE', 'TIMED_OUT', 'CANCELLED'].includes(c.conclusion),
     );
@@ -212,10 +208,6 @@ function getCiStatus(branch) {
       r.conclusion || (r.status === 'completed' ? 'success' : 'pending'),
   }));
 
-  const hasFailed = hasCompletedNonSuccessCheck(commitRuns);
-  const allCompleted =
-    commitRuns.length > 0 &&
-    commitRuns.every((c) => isCompletedCheck(c) && isSuccessfulCheck(c));
   const hasFailed = commitRuns.some((c) =>
     ['failure', 'timed_out', 'cancelled'].includes(
       String(c.conclusion).toLowerCase(),
