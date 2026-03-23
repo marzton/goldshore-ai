@@ -16,7 +16,9 @@ const editableDnsRecordFields = {
   comment: z.string().optional(),
   tags: z.array(z.string()).optional(),
   priority: z.number().int().optional(),
-}).passthrough().transform((record) => ({
+};
+
+const dnsRecordTransformer = z.object(editableDnsRecordFields).passthrough().transform((record) => ({
   type: record.type,
   name: record.name,
   content: record.content,
@@ -26,20 +28,19 @@ const editableDnsRecordFields = {
   tags: record.tags,
   priority: record.priority,
 }));
-} as const;
 
 type EditableDnsRecordKey = keyof typeof editableDnsRecordFields;
 
-const editableDnsRecordKeys = Object.keys(editableDnsRecordFields) as EditableDnsRecordKey[];
+const editableDnsRecordKeys = Object.keys(
+  editableDnsRecordFields
+) as EditableDnsRecordKey[];
 
-const dnsRecordSchema = z
-  .object(editableDnsRecordFields)
-  .passthrough()
+const dnsRecordSchema = dnsRecordTransformer
   .transform((payload) =>
     Object.fromEntries(
       editableDnsRecordKeys
-        .filter((key) => payload[key] !== undefined)
-        .map((key) => [key, payload[key]])
+        .filter((key) => payload[key as keyof typeof payload] !== undefined)
+        .map((key) => [key, payload[key as keyof typeof payload]])
     ) as Partial<Record<EditableDnsRecordKey, unknown>>
   );
 
