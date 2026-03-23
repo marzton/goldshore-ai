@@ -50,22 +50,7 @@ Cloudflare applications (Pages / Workers / KV / R2 / D1 / AI / Queues).
   - `infra/Cloudflare/gs-admin.wrangler.toml`
   - `infra/Cloudflare/gs-api.wrangler.toml`
 
-## 11. Shared runtime KV (`GS_CONFIG`) topology
-
-Current bindings:
-
-- `gs-control` owns write access to `GS_CONFIG` for system sync and shared runtime state.
-- `gs-admin` has direct `GS_CONFIG` access for operator-managed reads/writes such as the hero variant control.
-- `gs-web` does **not** have a direct `GS_CONFIG` binding in repo-managed Cloudflare config today. Treat web runtime config as indirect unless code in `apps/gs-web` proves otherwise.
-
-Proposed binding policy for `gs-web`:
-
-- Do not assume `gs-web` participates in the same KV topology as `gs-control` and `gs-admin`.
-- Before adding `GS_CONFIG` to `infra/Cloudflare/gs-web.wrangler.toml`, confirm a concrete runtime consumer exists in `apps/gs-web` (for example, a Pages Function that must read live config at request time).
-- If such a consumer is added, bind `GS_CONFIG` as read-only by convention: web code may `get` shared values, but writes remain owned by `gs-control` or other operator surfaces.
-- If there is no concrete consumer, keep `gs-web` on indirect configuration paths such as API-backed fetches, generated content, or build/runtime env vars.
-
-## 12. Service Token Sync for AI Agents (gs-global-protect)
+## 11. Service Token Sync for AI Agents (gs-global-protect)
 
 When Cloudflare Access protects `gs-admin` and related operator endpoints:
 
