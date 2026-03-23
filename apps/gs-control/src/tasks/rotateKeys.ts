@@ -30,6 +30,7 @@ export async function rotateKeys(env: ControlEnv) {
     results: []
   };
 
+  // Perform rotation in parallel
   auditLog.results = await Promise.all(
     ROTATION_CONFIG.map(async (config) => {
       try {
@@ -48,6 +49,7 @@ export async function rotateKeys(env: ControlEnv) {
           name: config.name,
           timestamp: new Date().toISOString()
         });
+
         return { name: config.name, status: "success" as const };
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
