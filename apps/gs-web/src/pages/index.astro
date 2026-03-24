@@ -11,6 +11,7 @@ const signals = [
   { label: 'Decision loops', value: 'Human + AI' },
   { label: 'Review posture', value: 'High trust' },
 ];
+
 const trustMetrics = [
   {
     label: 'Availability',
@@ -97,9 +98,9 @@ const proofPoints = [
             signal.
           </p>
           <div class="hero-actions">
-            <a href="/contact" class="hero-button hero-button--primary"
-              >Request Briefing</a
-            >
+            <a href="/contact" class="hero-button hero-button--primary">
+              Request Briefing
+            </a>
             <a href="/about" class="hero-button">View operating model</a>
           </div>
         </div>
@@ -117,17 +118,9 @@ const proofPoints = [
             </div>
           </div>
           <ul>
-            <li>
-              Operational UX with clear status, escalation, and review states.
-            </li>
-            <li>
-              Decision-support tooling built for real environments, not demo
-              loops.
-            </li>
-            <li>
-              Motion that communicates energy, drift, and readiness without
-              visual noise.
-            </li>
+            <li>Operational UX with clear status, escalation, and review states.</li>
+            <li>Decision-support tooling built for real environments, not demo loops.</li>
+            <li>Motion that communicates energy, drift, and readiness without visual noise.</li>
           </ul>
         </aside>
       </div>
@@ -140,29 +133,25 @@ const proofPoints = [
           <strong>{signal.value}</strong>
         </div>
       ))}
-      <div class="metrics-shell gs-shell-section">
-        <div class="metrics-grid" data-metrics-grid>
-          {
-            trustMetrics.map((metric) => (
-              <article
-                class="signal-tile signal-tile--loading"
-                aria-live="polite"
-              >
-                <div class="signal-tile__header">
-                  <span>{metric.label}</span>
-                  <small>{metric.context}</small>
-                </div>
-                <strong>{metric.value}</strong>
-                <p>{metric.detail}</p>
-                {metric.href && (
-                  <a href={metric.href} class="signal-link">
-                    {metric.hrefLabel} →
-                  </a>
-                )}
-              </article>
-            ))
-          }
-        </div>
+    </section>
+
+    <section class="metrics-shell gs-shell-section" aria-label="Trust metrics">
+      <div class="metrics-grid" data-metrics-grid>
+        {trustMetrics.map((metric) => (
+          <article class="signal-tile signal-tile--loading" aria-live="polite">
+            <div class="signal-tile__header">
+              <span>{metric.label}</span>
+              <small>{metric.context}</small>
+            </div>
+            <strong>{metric.value}</strong>
+            <p>{metric.detail}</p>
+            {metric.href && (
+              <a href={metric.href} class="signal-link">
+                {metric.hrefLabel} →
+              </a>
+            )}
+          </article>
+        ))}
       </div>
     </section>
 
@@ -215,9 +204,7 @@ const proofPoints = [
     >
       <div class="section-copy">
         <p class="gs-eyebrow">Architecture / Proof</p>
-        <h2 id="proof-title">
-          Systems that explain themselves under pressure.
-        </h2>
+        <h2 id="proof-title">Systems that explain themselves under pressure.</h2>
       </div>
       <div class="proof-grid">
         {proofPoints.map((point) => (
@@ -257,9 +244,7 @@ const proofPoints = [
       <div class="team-row">
         <article class="team-card team-card--founder">
           <h3>Robert M.</h3>
-          <p>
-            Leads product direction, systems strategy, and applied intelligence.
-          </p>
+          <p>Leads product direction, systems strategy, and applied intelligence.</p>
         </article>
         <article class="team-card">
           <h3>Systems</h3>
@@ -282,7 +267,9 @@ const proofPoints = [
           Ready to operationalize AI with trust, control, and signal clarity?
         </h2>
       </div>
-      <a href="/contact" class="hero-button hero-button--primary">Start a conversation</a>
+      <a href="/contact" class="hero-button hero-button--primary">
+        Start a conversation
+      </a>
     </section>
   </main>
 
@@ -302,11 +289,9 @@ const proofPoints = [
       const reduceMotion = window.matchMedia(
         '(prefers-reduced-motion: reduce)',
       ).matches;
+
       window.setTimeout(
-        () =>
-          cards.forEach((card) =>
-            card.classList.remove('signal-tile--loading'),
-          ),
+        () => cards.forEach((card) => card.classList.remove('signal-tile--loading')),
         reduceMotion ? 0 : 650,
       );
     };
@@ -314,10 +299,12 @@ const proofPoints = [
     const boot = () => {
       cleanup();
       hydrateMetrics();
+
       const canvas = document.getElementById('wave-bg');
       const logo = document.querySelector('.gs-logo-reactive');
       const isReactiveLogo =
         logo instanceof HTMLElement || logo instanceof SVGElement;
+
       if (!(canvas instanceof HTMLCanvasElement) || !isReactiveLogo) return;
 
       const wave = initWave(canvas);
@@ -329,12 +316,10 @@ const proofPoints = [
       };
     };
 
-    const homeGlobal = window as typeof window & {
-      __gsHomeHeroBound?: boolean;
-    };
+    const root = document.documentElement;
 
-    if (!homeGlobal.__gsHomeHeroBound) {
-      homeGlobal.__gsHomeHeroBound = true;
+    if (root.dataset.gsHomeHeroBound !== 'true') {
+      root.dataset.gsHomeHeroBound = 'true';
       document.addEventListener('astro:before-swap', cleanup);
       document.addEventListener('astro:page-load', boot);
     }
@@ -357,7 +342,8 @@ const proofPoints = [
     }
 
     #wave-bg,
-    .hero-grid {
+    .hero-grid,
+    .hero::after {
       position: absolute;
       inset: 0;
     }
@@ -372,49 +358,17 @@ const proofPoints = [
         linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
       background-size: 72px 72px;
-      mask-image: radial-gradient(
-        circle at 50% 30%,
-        black 30%,
-        transparent 80%
-      );
-      opacity: 0.55;
+      mask-image: radial-gradient(circle at 50% 30%, black 30%, transparent 80%);
+      opacity: 0.5;
     }
 
     .hero::after {
       content: '';
-      position: absolute;
-      inset: 0;
       background:
-        radial-gradient(circle at 25% 20%, rgba(90, 162, 255, 0.16), transparent 28%),
-        linear-gradient(180deg, rgba(7, 11, 20, 0.15), rgba(7, 11, 20, 0.8));
+        radial-gradient(circle at 25% 20%, rgba(90, 162, 255, 0.18), transparent 28%),
+        linear-gradient(180deg, rgba(7, 11, 20, 0.18), rgba(7, 11, 20, 0.84));
       pointer-events: none;
       z-index: 0;
-    }
-
-    .hero[data-hero-design='astral'] .hero-particles {
-      opacity: 0.78;
-      background-size: 220px 160px;
-      animation-duration: 26s;
-    }
-
-    .hero[data-hero-design='astral'] .hero-energy--x {
-      opacity: 0.68;
-      background: linear-gradient(
-        100deg,
-        transparent 10%,
-        rgba(255, 255, 255, 0.14) 34%,
-        transparent 50%,
-        rgba(90, 162, 255, 0.2) 72%,
-        transparent 92%
-      );
-    }
-
-    .hero[data-hero-design='thermal'] .hero-aurora--primary {
-      background: radial-gradient(
-        circle at 24% 30%,
-        rgba(255, 120, 88, 0.24),
-        transparent 26%
-      );
     }
 
     .hero-mark {
@@ -426,13 +380,21 @@ const proofPoints = [
     .gs-logo-reactive {
       width: clamp(72px, 11vw, 120px);
       height: auto;
+      color: #8ec1ff;
       will-change: transform, filter;
+    }
+
+    .hero-shell,
+    .section-block,
+    .metrics-shell,
+    .signal-strip {
+      width: min(100% - 2rem, var(--gs-max-width));
+      margin: 0 auto;
     }
 
     .hero-shell {
       position: relative;
       z-index: 2;
-      width: min(100% - 2rem, var(--gs-max-width));
       padding: clamp(7rem, 12vh, 10rem) 0 1.75rem;
       display: grid;
       grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
@@ -458,7 +420,7 @@ const proofPoints = [
     .hero-content h1,
     .section-copy h2,
     .contact-cta h2 {
-      margin: 1rem 0 1rem;
+      margin: 1rem 0;
       font-size: clamp(2.7rem, 7vw, 5.4rem);
       line-height: 0.98;
       letter-spacing: -0.045em;
@@ -526,13 +488,23 @@ const proofPoints = [
       box-shadow: 0 18px 42px rgba(9, 17, 33, 0.28);
     }
 
+    .hero-panel,
+    .signal-tile,
+    .capability-card,
+    .proof-card,
+    .team-card,
+    .contact-cta {
+      padding: 1.25rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(10, 18, 36, 0.74);
+      box-shadow: var(--gs-shadow);
+    }
+
     .hero-panel {
-      padding: 1.4rem;
-      border-radius: 24px;
-      border: 1px solid var(--gs-border);
+      border-color: var(--gs-border);
       background: rgba(10, 18, 36, 0.8);
       backdrop-filter: blur(12px);
-      box-shadow: var(--gs-shadow);
     }
 
     .hero-panel__heading h2 {
@@ -583,30 +555,29 @@ const proofPoints = [
       gap: 0.85rem;
     }
 
-    .metrics-shell {
-      position: relative;
-      z-index: 2;
-      padding-bottom: 2rem;
-    }
-
+    .signal-strip,
     .metrics-grid,
-    .signal-strip {
-      margin-top: 1.25rem;
+    .capability-grid,
+    .proof-grid,
+    .team-row {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 1rem;
     }
 
-    .signal-tile,
-    .capability-card,
-    .proof-card,
-    .team-card,
-    .contact-cta {
-      padding: 1.2rem 1.25rem;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      background: rgba(10, 18, 36, 0.74);
-      box-shadow: var(--gs-shadow);
+    .signal-strip {
+      margin-top: 1.25rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .metrics-shell {
+      position: relative;
+      z-index: 2;
+      padding-top: 1rem;
+      padding-bottom: 2rem;
+    }
+
+    .metrics-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .signal-tile {
@@ -695,13 +666,6 @@ const proofPoints = [
       margin-top: 0.65rem;
     }
 
-    .capability-grid,
-    .proof-grid,
-    .team-row {
-      display: grid;
-      gap: 1rem;
-    }
-
     .capability-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -750,64 +714,32 @@ const proofPoints = [
         box-shadow: 0 0 0 0 rgba(71, 227, 167, 0);
       }
     }
-    @keyframes particleDrift {
-      from {
-        transform: translate3d(0, 0, 0);
-      }
-      to {
-        transform: translate3d(-4%, 5%, 0);
-      }
-    }
-
-    @keyframes energySweepX {
-      from {
-        transform: translateX(-8%);
-      }
-      to {
-        transform: translateX(8%);
-      }
-    }
-
-    @keyframes vibrationBars {
-      from {
-        transform: translateY(-1.2%) scaleY(1);
-      }
-      to {
-        transform: translateY(1.2%) scaleY(1.045);
-      }
-    }
-
-    @keyframes heroSheen {
-      0% {
-        transform: translateX(-170%) skewX(-18deg);
-      }
-      100% {
-        transform: translateX(170%) skewX(-18deg);
-      }
-    }
 
     @media (max-width: 960px) {
       .hero-shell,
+      .signal-strip,
+      .metrics-grid,
       .capability-grid,
       .proof-grid,
-      .team-row,
-      .metrics-grid,
-      .contact-cta {
+      .team-row {
         grid-template-columns: 1fr;
       }
 
-      .hero-shell {
-        padding-top: 7rem;
-      }
-
       .contact-cta {
+        flex-direction: column;
         align-items: flex-start;
       }
     }
 
     @media (max-width: 720px) {
-      .hero-shell {
+      .hero-shell,
+      .signal-strip,
+      .metrics-shell,
+      .section-block {
         width: min(100% - 1.5rem, var(--gs-max-width));
+      }
+
+      .hero-shell {
         padding-top: 6rem;
       }
 
@@ -816,10 +748,6 @@ const proofPoints = [
       }
 
       .hero-actions,
-      .contact-cta {
-        width: 100%;
-      }
-
       .hero-button {
         width: 100%;
       }
@@ -836,20 +764,7 @@ const proofPoints = [
       .status-dot,
       .signal-tile--loading::after {
         animation: none;
-      }
-      .hero {
-        min-height: auto;
-      }
-
-      .hero-grid {
-        background-size: 52px 52px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .hero-button {
         transition: none;
-        animation: none;
       }
     }
 

@@ -1,8 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionRenderer from '../components/sections/SectionRenderer.astro';
-import * as pageSections from '../data/sections/home.json';
-
+const pageSections = await import('../data/sections/home.json');
 const { sections } = pageSections;
 ---
 <BaseLayout
