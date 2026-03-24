@@ -41,8 +41,8 @@ pnpm --filter ./apps/gs-control run-task
 ```
 
 ## Deploy
-- Production deploy workflow in repo: `.github/workflows/deploy-gs-control.yml.disabled`
-- No dedicated preview control workflow exists in `.github/workflows` right now; treat `ops-preview.goldshore.ai` validation as a Cloudflare/dashboard verification step until one is added.
+- Production deploy workflow in repo: `.github/workflows/deploy-gs-control.yml.disabled` (currently disabled on disk)
+- No dedicated preview control workflow exists in `.github/workflows`; treat `ops-preview.goldshore.ai` validation as a Cloudflare/dashboard verification step until one is added.
 - Worker deploy jobs use `wrangler deploy` with `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`, and some jobs prefer `CLOUDFLARE_BUILD_API_TOKEN` when that override secret is present.
 - Store runtime secrets with `wrangler secret put` rather than committing env values.
 
@@ -61,11 +61,6 @@ Operational checklist:
 2. Update the matching GitHub repository secrets used by the deploy jobs: `CLOUDFLARE_API_TOKEN`, optional `CLOUDFLARE_BUILD_API_TOKEN`, and confirm `CLOUDFLARE_ACCOUNT_ID`.
 3. Reconcile preview worker/service names in Cloudflare with the repo’s canonical `gs-*` naming before reruns. The repo still contains references that may need dashboard cleanup, including `gs-api-preview`, `gs-agent-preview`, and older service names such as `astro-gs-api`, `astro-gs-gateway`, and `goldshore-control-worker`.
 4. Confirm the preview DNS/routes exist for `api-preview.goldshore.ai`, `gw-preview.goldshore.ai`, and `ops-preview.goldshore.ai` before rerunning failed preview jobs.
-5. Rerun the affected GitHub Actions workflows, then run `.github/workflows/maintenance-agent-sync.yml` for the audit/sync checks while keeping `.github/workflows/maintenance.yml` inspection-only.
+5. Rerun the affected GitHub Actions workflows, then run `.github/workflows/maintenance.yml` to verify the rotated credentials can still reconcile Cloudflare state.
 
 For the full workflow/secret matrix, see `docs/ci/INFRA_SYNC_RUNBOOK.md`.
-
-<!-- // [AUTO-UPDATE] Updated by Jules AI on 2026-03-18 00:00 -->
-```bash
-pnpm --filter ./apps/gs-control deploy
-```
