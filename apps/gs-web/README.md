@@ -13,11 +13,15 @@ Public marketing site, documentation hub, and customer-facing Astro app for Gold
 
 ## Cloudflare configuration
 
-- Pages project: `gs-web`
-- Local/app Wrangler config: `apps/gs-web/wrangler.jsonc`
-- Canonical Cloudflare manifest: `infra/Cloudflare/gs-web.wrangler.toml`
-- Preview and production deployments are driven by the live workflows under `.github/workflows/`.
-- Preview environments commonly point browser-visible runtime variables at preview services such as `https://api-preview.goldshore.ai` and `https://gw-preview.goldshore.ai`.
+- Pages project name: `gs-web` (production), `preview-web` (preview)
+- Pages bindings config: `infra/cloudflare/goldshore-web.wrangler.toml`
+- Preview runtime bindings commonly set by CI:
+  - `PUBLIC_API=https://api-preview.goldshore.ai`
+  - `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
+- Build diagnostics exposed on `/status`:
+  - `PUBLIC_BUILD_TIMESTAMP`
+  - `PUBLIC_COMMIT_HASH`
+  - `PUBLIC_RELEASE_LABEL` (optional)
 
 ## Routes and endpoints
 

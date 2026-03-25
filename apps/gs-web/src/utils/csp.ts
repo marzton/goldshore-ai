@@ -1,3 +1,9 @@
+export function serializeCsp(directives: ContentSecurityPolicyDirectives): string {
+  return Object.entries(directives)
+    .map(([directive, sources]) => `${directive} ${sources.join(' ')}`)
+    .join('; ');
+}
+
 const SELF = "'self'";
 const UNSAFE_INLINE = "'unsafe-inline'";
 const NONE = "'none'";
@@ -74,10 +80,10 @@ export function serializeCsp(directives: ContentSecurityPolicyDirectives): strin
 }
 
 export function buildContentSecurityPolicy(
-  directives?: ContentSecurityPolicyDirectives,
-): string {
+  directives: ContentSecurityPolicyDirectives,
+): string;
   return serializeCsp(directives ?? WEB_CSP_DIRECTIVES);
 }
-
+  directives?: Record<string, readonly string[]>,
 export const WEB_CONTENT_SECURITY_POLICY = buildContentSecurityPolicy();
 
