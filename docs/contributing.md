@@ -7,9 +7,9 @@ For full standards see `docs/conventions/naming.md`.
 ### Good examples
 
 - Branch: `feat/add-worker-health-endpoint`
-- Package: `@goldshore/control-worker`
+- Package: `@goldshore/gs-control`
 - Worker service (wrangler): `gs-control`
-- Workflow file: `.github/workflows/deploy-control-worker.yml`
+- Workflow file: `.github/workflows/deploy-gs-api.yml`
 - Workflow job key: `deploy`
 
 ### Anti-patterns

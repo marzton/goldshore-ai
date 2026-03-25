@@ -438,7 +438,7 @@ AI agent tooling, and market data services without rebuilding existing modules.
 To keep issues, workflows, PRs, branches, and components aligned:
 
 - Track work in **GitHub Issues/Projects** and the templates in `.github/ISSUE_TEMPLATE/`.
-- Review deployment flow in `infra/github/workflows/`.
+- Review deployment flow in `.github/workflows/` and `docs/ci/WORKER_DEPLOYMENT_STATES.md`.
 - Use `ops/pr-playbook.md` and `ops/maintenance-playbook.md` for release continuity.
 - Document component ownership in the admin dashboard templates and UI kit README.
 
@@ -552,26 +552,35 @@ Queues:     jobsQueue (optional)
 Location:
 
 ```
-infra/github/workflows/
+.github/workflows/
 ```
 
-Workflows include:
+Representative workflows include:
 
 ```
-preview-web.yml
-preview-admin.yml
-deploy-api.yml
-deploy-gateway.yml
-deploy-control.yml
+preview-gs-web.yml
+preview-gs-admin.yml
+preview-gs-api.yml
+preview-gs-agent.yml
+preview-gs-gateway.yml
+deploy-gs-web.yml
+deploy-gs-admin.yml
+deploy-gs-api.yml
 ```
+
+Worker deployment policy:
+
+- `gs-agent`: preview-only by design in GitHub Actions
+- `gs-gateway`: preview-only by design in GitHub Actions
+- `gs-control`: fully manual / no GitHub deploy automation
+- Manual deployment policy reference: `docs/ci/WORKER_DEPLOYMENT_STATES.md`
 
 Features:
 
 - pnpm install
-- Pinned SHA for all actions
 - Preview deploys for PRs
-- Automatic production deploy on main
-- Cloudflare Pages + Workers deploy
+- Production automation for the services that still use GitHub Actions as the source of truth
+- Explicit manual deployment documentation for workers that are no longer GitHub-managed
 
 ---
 
@@ -634,22 +643,24 @@ pnpm test
 
 Pages deploy automatically via GitHub Actions.
 
-Workers deploy:
+Workers that still deploy automatically via GitHub Actions:
 
 ```bash
-pnpm --filter @goldshore/api-worker deploy
-pnpm --filter @goldshore/gateway deploy
-pnpm --filter @goldshore/control-worker deploy
+pnpm --filter ./apps/gs-api deploy
+pnpm --filter ./apps/gs-mail deploy
 ```
+
+Workers with manual production deployment policy:
+
+```bash
+pnpm --filter ./apps/gs-agent deploy
+pnpm --filter ./apps/gs-gateway deploy
+pnpm --filter ./apps/gs-control deploy
+```
+
+See `docs/ci/WORKER_DEPLOYMENT_STATES.md` for which of those workers still have preview workflows in GitHub Actions.
 
 ---
-
-# 📌 Versioning Strategy
-pnpm --filter ./apps/api-worker deploy
-pnpm --filter ./apps/gateway deploy
-pnpm --filter ./apps/control-worker deploy
-pnpm --filter ./apps/gs-agent deploy
-```
 
 ## Versioning Strategy
 
@@ -860,16 +871,20 @@ pnpm test
 
 🌩 Deployment (Cloudflare)
 
-Deploy is handled by GitHub Actions:
+Active deployment workflows live in `.github/workflows/`.
 
-infra/github/workflows/deploy.yml
+GitHub Actions remains the deployment source of truth for:
 
-CI/CD steps: 1. Install dependencies 2. Build workspaces with Turbo 3. Deploy:
 • web → Cloudflare Pages
 • admin → Cloudflare Pages
-• api-worker → Workers
-• gateway → Workers
-• control-worker → Workers
+• gs-api → Cloudflare Workers
+• gs-mail → Cloudflare Workers
+
+Worker-specific exceptions are documented in `docs/ci/WORKER_DEPLOYMENT_STATES.md`:
+
+• gs-agent → preview-only by design in GitHub Actions; production deploys are manual
+• gs-gateway → preview-only by design in GitHub Actions; production deploys are manual
+• gs-control → fully manual / no GitHub deploy automation
 
 Preview branches automatically deploy to:
 
