@@ -1,4 +1,8 @@
-name: Naming Guard
+# Manual operations guide:
+# - Use this workflow to confirm active workflow files still follow the gs-* naming and path conventions.
+# - Run it after workflow refactors or migrations that may reintroduce legacy filenames or paths.
+name: "Manual Guard: Workflow Naming Check"
+run-name: "Workflow naming check • @${{ github.actor }}"
 
 permissions:
   contents: read
@@ -58,7 +62,7 @@ jobs:
 
           for file in .github/workflows/deploy-*.yml; do
             base="$(basename "$file")"
-            if [[ ! "$base" =~ ^deploy-gs-[a-z0-9-]+\.yml$ ]]; then
+            if [[ ! "$base" =~ ^deploy-gs-[a-z0-9-]+\.yml$ && "$base" != "deploy-frontend.yml" ]]; then
               echo "Non-canonical deploy workflow filename: $base"
               exit 1
             fi

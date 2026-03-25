@@ -1,4 +1,8 @@
-name: Jules Nightly
+# Manual operations guide:
+# - Use this workflow to manually trigger the same automation sweep normally started by the nightly schedule.
+# - Prefer manual runs when operators need the downstream automation jobs immediately rather than waiting for the next cron window.
+name: "Ops: Automation Sweep"
+run-name: "Automation sweep • ${{ github.event_name == 'workflow_dispatch' && format('manual • @{0}', github.actor) || 'nightly schedule' }}"
 
 on:
   schedule:
@@ -37,10 +41,65 @@ jobs:
       contents: read
       pull-requests: write
     uses: ./.github/workflows/conflict-sweeper-nightly.yml
-  noop:
+
+  maintenance-gs-sync-signal:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
+    env:
+      ENDPOINT_PATH: /health
+      BASE_DOMAIN: goldshore.ai
+      SERVICES: gs-web,gs-admin,gs-api,gs-gateway,gs-mail,gs-agent,gs-control
+      TIMEOUT_SECONDS: '20'
+      TARGET_ENVIRONMENT: production
     steps:
-      - name: Sweepers removed
-        run: echo "No sweeper jobs are configured in this workflow."
+      - name: Dispatch maintenance GS sync workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TARGET_BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          python - <<'PY' > /tmp/maintenance-gs-sync-dispatch.json
+          import json
+          import os
+
+          payload = {
+              "event_type": "maintenance_gs_sync",
+              "client_payload": {
+                  "source_workflow": "jules-nightly",
+                  "payload_path": os.environ["ENDPOINT_PATH"],
+                  "endpoint_path": os.environ["ENDPOINT_PATH"],
+                  "target_branch": os.environ["TARGET_BRANCH"],
+                  "environment": os.environ["TARGET_ENVIRONMENT"],
+                  "base_domain": os.environ["BASE_DOMAIN"],
+                  "services": os.environ["SERVICES"],
+                  "timeout_seconds": os.environ["TIMEOUT_SECONDS"],
+                  "notification_body": (
+                      "Maintenance GS sync dispatch queued for Jules/Codex.\n"
+                      f"- Payload path: {os.environ['ENDPOINT_PATH']}\n"
+                      f"- Target branch: {os.environ['TARGET_BRANCH']}\n"
+                      f"- Environment: {os.environ['TARGET_ENVIRONMENT']}\n"
+                      f"- Services: {os.environ['SERVICES']}"
+                  ),
+              },
+          }
+          print(json.dumps(payload))
+          PY
+
+          curl -fsSL \
+            -X POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GH_REPO}/dispatches" \
+            --data @/tmp/maintenance-gs-sync-dispatch.json
+
+          {
+            echo '## Maintenance GS sync dispatch'
+            echo '- Event type: `maintenance_gs_sync`'
+            echo "- Payload path: \`${ENDPOINT_PATH}\`"
+            echo "- Target branch: \`${TARGET_BRANCH}\`"
+            echo "- Environment: \`${TARGET_ENVIRONMENT}\`"
+            echo "- Services: \`${SERVICES}\`"
+          } >> "${GITHUB_STEP_SUMMARY}"
