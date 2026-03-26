@@ -48,7 +48,7 @@ cloudflare:
         rules:
           include:
             - email_domain: "goldshore.ai"
-            - email: "your.personal@email.com" # Placeholder
+            - email: "your.personal@email.com" # TODO: replace with owner email address
           require:
             - identity_provider: "github"
 
@@ -65,7 +65,7 @@ cloudflare:
         repo: "astro-goldshore"
         root_dir: "/" # Run from repo root for monorepo support
         production_branch: "main"
-        build_command: "pnpm --filter @goldshore/web build"
+        build_command: "pnpm --filter @goldshore/gs-web build"
         output_dir: "apps/gs-web/dist"
         custom_domains:
           - "goldshore.ai"
@@ -75,7 +75,7 @@ cloudflare:
         repo: "astro-goldshore"
         root_dir: "/" # Run from repo root for monorepo support
         production_branch: "main"
-        build_command: "pnpm --filter @goldshore/admin build"
+        build_command: "pnpm --filter @goldshore/gs-admin build"
         output_dir: "apps/gs-admin/dist"
         custom_domains:
           - "admin.goldshore.ai"
@@ -125,6 +125,18 @@ cloudflare:
           env_vars:
             CONTROL_SERVICE: "true"
 
+      - name: "gs-agent"
+        script_path: "apps/gs-agent/dist/index.js"
+        # No public route — queue-driven, internal only
+        bindings:
+          queues:
+            - name: "goldshore-jobs"
+              binding: "JOBS"
+          services:
+            - binding: "API"
+              service: "gs-api"
+              environment: "production"
+
       - name: "gs-mail"
         script_path: "apps/gs-mail/dist/index.js"
         routes:
@@ -141,6 +153,6 @@ cloudflare:
         destination: "inbox@goldshore.ai"
       addresses:
         - address: "ops@goldshore.ai"
-          destination: "your.personal.email@goldshore.ai"
+          destination: "your.personal.email@goldshore.ai" # TODO: replace with real forwarding address
         - address: "support@goldshore.ai"
-          destination: "your.personal.email@goldshore.ai"
+          destination: "your.personal.email@goldshore.ai" # TODO: replace with real forwarding address
