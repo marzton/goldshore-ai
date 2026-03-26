@@ -20,6 +20,12 @@ cloudflare:
         content: "gs-admin.pages.dev"
         proxied: true
 
+      # C. Preview (gs-web preview builds)
+      - name: "preview"
+        type: CNAME
+        content: "preview-web.pages.dev"
+        proxied: true
+
       # C. API Gateway Worker
       - name: "gw"
         type: CNAME
@@ -70,6 +76,15 @@ cloudflare:
         custom_domains:
           - "goldshore.ai"
           - "www.goldshore.ai"
+
+      - name: "preview-web"
+        repo: "astro-goldshore"
+        root_dir: "/"
+        production_branch: "main"
+        build_command: "pnpm --filter @goldshore/gs-web build"
+        output_dir: "apps/gs-web/dist"
+        custom_domains:
+          - "preview.goldshore.ai"
 
       - name: "gs-admin"
         repo: "astro-goldshore"
