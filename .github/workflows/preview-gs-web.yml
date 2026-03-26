@@ -6,6 +6,14 @@ permissions:
   contents: read
 
 on:
+  push:
+    branches:
+      - 'claude/**'
+    paths:
+      - "apps/gs-web/**"
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
   pull_request:
     types:
       - opened
@@ -24,6 +32,7 @@ jobs:
   preview-web:
     runs-on: ubuntu-latest
     if: |
+      github.event_name == 'push' ||
       contains(github.event.pull_request.labels.*.name, 'preview') ||
       (github.event.action == 'ready_for_review' && github.event.pull_request.base.ref == 'main')
 
@@ -35,10 +44,16 @@ jobs:
         run: |
           set -euo pipefail
 
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            release_label="pr-${{ github.event.pull_request.number }}"
+          else
+            release_label="$(echo '${{ github.ref_name }}' | tr '/' '-')"
+          fi
+
           {
             echo "deployed_sha=$(git rev-parse HEAD)"
             echo "build_timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            echo "release_label=pr-${{ github.event.pull_request.number }}"
+            echo "release_label=${release_label}"
           } >> "$GITHUB_OUTPUT"
 
       - uses: pnpm/action-setup@v4
