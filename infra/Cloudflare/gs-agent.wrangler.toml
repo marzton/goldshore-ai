@@ -1,7 +1,7 @@
 # wrangler.toml for the background Agent Worker
 
 name = "gs-agent"
-compatibility_date = "2025-01-10"
+compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
 
 # This worker is queue-driven, so we define the consumer here at top level.
