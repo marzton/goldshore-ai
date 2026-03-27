@@ -87,4 +87,6 @@ tmp/
 **/*.legacy-*.toml
 **/*.legacy-*.ts
 reports/*.txt
-\n# Claude local settings (contains secrets)\n.claude/settings.local.json
+
+# Claude local settings (contains secrets)
+.claude/settings.local.json
