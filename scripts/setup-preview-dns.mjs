@@ -2,19 +2,20 @@
 /**
  * One-shot script: configure preview.goldshore.ai DNS + Cloudflare Pages custom domain.
  *
- * Accepts either naming convention for env vars:
- *   CLOUDFLARE_API_TOKEN  or  CF_API_TOKEN
- *   CLOUDFLARE_ACCOUNT_ID or  CF_ACCOUNT_ID
- *   CLOUDFLARE_ZONE_ID    or  CF_ZONE_ID  (optional — auto-resolved from domain if omitted)
+ * Usage (from repo root):
+ *   CF_API_TOKEN=<token> CF_ACCOUNT_ID=<account_id> CF_ZONE_ID=<zone_id> node scripts/setup-preview-dns.mjs
+ *
+ * Finds zone_id in Cloudflare dashboard → goldshore.ai → Overview → right sidebar.
+ * Finds account_id in Cloudflare dashboard → top-right account menu → Account ID.
  */
 
 const API = "https://api.cloudflare.com/client/v4";
-const TOKEN = process.env.CLOUDFLARE_API_TOKEN || process.env.CF_API_TOKEN;
-const ACCOUNT = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CF_ACCOUNT_ID;
-let ZONE = process.env.CLOUDFLARE_ZONE_ID || process.env.CF_ZONE_ID;
+const TOKEN = process.env.CF_API_TOKEN;
+const ACCOUNT = process.env.CF_ACCOUNT_ID;
+const ZONE = process.env.CF_ZONE_ID;
 
-if (!TOKEN || !ACCOUNT) {
-  console.error("Missing required env vars: CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID");
+if (!TOKEN || !ACCOUNT || !ZONE) {
+  console.error("Missing required env vars: CF_API_TOKEN, CF_ACCOUNT_ID, CF_ZONE_ID");
   process.exit(1);
 }
 
@@ -34,21 +35,11 @@ async function cf(path, init = {}) {
   return json.result;
 }
 
-async function resolveZoneId(domain) {
-  console.log(`Resolving zone ID for ${domain}...`);
-  const zones = await cf(`/zones?name=${domain}`);
-  if (!zones.length) throw new Error(`No Cloudflare zone found for ${domain}`);
-  console.log(`  ✓ Zone ID: ${zones[0].id}`);
-  return zones[0].id;
-}
-
 async function main() {
-  if (!ZONE) {
-    ZONE = await resolveZoneId("goldshore.ai");
-  }
-
   // ── 1. Add CNAME: preview.goldshore.ai → preview-web.pages.dev ──────────
   console.log("1. Creating DNS CNAME record...");
+
+  // Check if record already exists
   const existing = await cf(`/zones/${ZONE}/dns_records?name=preview.goldshore.ai&type=CNAME`);
   if (existing.length > 0) {
     console.log("   ✓ CNAME already exists:", existing[0].content);
@@ -60,7 +51,7 @@ async function main() {
         name: "preview",
         content: "preview-web.pages.dev",
         proxied: true,
-        ttl: 1,
+        ttl: 1, // auto when proxied
         comment: "Preview deployments for claude/* branches",
       }),
     });
@@ -69,6 +60,7 @@ async function main() {
 
   // ── 2. Add custom domain to preview-web Pages project ───────────────────
   console.log("2. Adding custom domain to preview-web Pages project...");
+
   try {
     await cf(`/accounts/${ACCOUNT}/pages/projects/preview-web/domains`, {
       method: "POST",
@@ -79,8 +71,9 @@ async function main() {
     if (err.message.includes("already exists") || err.message.includes("taken")) {
       console.log("   ✓ Custom domain already configured");
     } else {
+      // preview-web project may not exist yet — Pages creates it on first deploy
       console.warn("   ⚠ Could not add custom domain (project may not exist yet):", err.message);
-      console.warn("   → Re-run after the first preview deploy completes.");
+      console.warn("   → Re-run this script after the first preview deploy completes.");
     }
   }
 
