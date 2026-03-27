@@ -55,10 +55,19 @@ input, select, textarea {
   font: inherit;
   transition: border-color var(--gs-transition), box-shadow var(--gs-transition), background var(--gs-transition);
 }
-input:focus, select:focus, textarea:focus {
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
   outline: none;
   border-color: var(--gs-accent);
   box-shadow: 0 0 0 3px var(--gs-accent-soft);
+}
+
+/* Global focus-visible ring — keyboard users only, no mouse noise */
+:focus-visible {
+  outline: 2px solid var(--gs-accent);
+  outline-offset: 3px;
+  border-radius: var(--gs-radius-sm);
 }
 
 ::selection { background: var(--gs-accent-soft); color: var(--gs-color-text); }
