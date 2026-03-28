@@ -12,6 +12,10 @@ const baseDirectives = [
   "img-src 'self' data:",
   "connect-src 'self'",
   "worker-src 'self'",
+  "frame-ancestors 'none'",
+  "object-src 'none'",
+  "base-uri 'self'"
+] as const;
 const HTML_CSP_DIRECTIVES = [
   "default-src 'self'",
   // WebLayout still renders inline script/style blocks, so HTML keeps the
