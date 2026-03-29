@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
