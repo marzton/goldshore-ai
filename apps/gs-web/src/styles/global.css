@@ -4,19 +4,20 @@
 
 :root {
   --font-sans:
-    Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
+    'Outfit', 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
     Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
-  --gs-bg: #0b0f18;
-  --gs-surface: rgba(10, 18, 36, 0.85);
-  --gs-surface-strong: rgba(7, 14, 30, 0.96);
-  --gs-border: rgba(90, 162, 255, 0.18);
-  --gs-primary: #5aa2ff;
-  --gs-primary-soft: rgba(90, 162, 255, 0.12);
-  --gs-text: #e9eefc;
-  --gs-text-dim: rgba(233, 238, 252, 0.6);
-  --gs-radius: 14px;
-  --gs-radius-lg: 24px;
-  --gs-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+  --gs-bg: #030612;
+  --gs-surface: rgba(16, 22, 38, 0.45);
+  --gs-surface-strong: rgba(22, 30, 50, 0.65);
+  --gs-border: rgba(100, 150, 255, 0.15);
+  --gs-primary: #6c9eff;
+  --gs-primary-soft: rgba(108, 158, 255, 0.15);
+  --gs-text: #f0f4ff;
+  --gs-text-dim: #9ba6cc;
+  --gs-accent: #b25fff;
+  --gs-radius: 16px;
+  --gs-radius-lg: 32px;
+  --gs-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
   --gs-max-width: 1200px;
 }
 
@@ -29,8 +30,10 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top, rgba(90, 162, 255, 0.12), transparent 26%),
-    linear-gradient(180deg, #0b0f18 0%, #0a1020 42%, #09111d 100%);
+    radial-gradient(circle at 80% 20%, rgba(178, 95, 255, 0.08), transparent 30%),
+    radial-gradient(circle at 10% 70%, rgba(108, 158, 255, 0.08), transparent 30%),
+    radial-gradient(circle at top, rgba(108, 158, 255, 0.12), transparent 26%),
+    var(--gs-bg);
   color: var(--gs-text);
   font-family: var(--font-sans);
   text-rendering: geometricPrecision;
