@@ -101,14 +101,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Validate workspace contract
-        run: pnpm validate:workspace
-
-      - name: Validate canonical worker structure
-        run: pnpm validate:structure
-
-      - name: Validate canonical worker names
-        run: pnpm validate:names
+      - name: Run Codebase Verification (Validate, Lint, Test)
+        run: |
+          pnpm validate
+          pnpm lint
+          pnpm test
 
       - name: Build web app
         working-directory: apps/gs-web
