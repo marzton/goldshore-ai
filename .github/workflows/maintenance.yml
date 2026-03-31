@@ -57,7 +57,7 @@ jobs:
         run: bash scripts/branch-report.sh
 
       - name: Upload branch maintenance report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: maintenance-branch-report
           path: reports/maintenance/branch-report.txt
