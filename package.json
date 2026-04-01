@@ -35,13 +35,13 @@
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.0.8",
-    "@astrojs/sitemap": "^3.6.0",
+    "@astrojs/sitemap": "^3.7.2",
     "@astrojs/tailwind": "^6.0.2",
     "@types/node": "^25.3.3",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.57.2",
     "astro": "^6.1.1",
-    "eslint": "^8.57.0",
+    "eslint": "^10.1.0",
     "eslint-plugin-astro": "^1.6.0",
     "form-data": "^4.0.5",
     "octokit": "^5.0.5",
@@ -58,7 +58,7 @@
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
     "p-limit": "^7.3.0",
-    "turbo": "^2.8.20"
+    "turbo": "^2.8.21"
   },
   "pnpm": {
     "overrides": {

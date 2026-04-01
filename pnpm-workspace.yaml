@@ -1,6 +1,5 @@
 packages:
-  - 'apps/*'
-  - '!apps/web'
-  - '!apps/admin'
+  - 'apps/gs-web'
+  - 'apps/gs-api'
   - 'packages/*'
   - 'infra/*'
