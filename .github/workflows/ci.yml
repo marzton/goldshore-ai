@@ -14,16 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v5
+        with:
+          run_install: false
+
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: "pnpm"
-
-      - name: Enable corepack
-        run: corepack enable
-
-      - name: Set pnpm version
-        run: corepack prepare pnpm@9.0.0 --activate
 
       - name: Install
         run: pnpm install --frozen-lockfile
