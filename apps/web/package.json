@@ -6,7 +6,9 @@
   },
   "dependencies": {
     "@goldshore/gs-web": "workspace:*",
-    "@astrojs/tailwind": "^6.0.2",
+    "@astrojs/tailwind": "^6.0.2"
+  },
+  "devDependencies": {
     "tailwindcss": "^4.2.2"
   }
 }
