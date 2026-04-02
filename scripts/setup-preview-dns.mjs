@@ -113,6 +113,7 @@ async function main() {
 }
 
 main().catch(err => {
-  console.error("Error:", err.message);
+  console.error("Error: setup-preview-dns script failed. See logs or rerun with debugging enabled.");
+  // Avoid logging err.message directly to prevent leaking potentially sensitive data.
   process.exit(1);
 });
