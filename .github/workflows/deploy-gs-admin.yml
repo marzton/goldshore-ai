@@ -59,12 +59,12 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
-          ref: ${{ inputs.deploy_ref != '' && inputs.deploy_ref || github.sha }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_ref || github.sha }}
 
       - id: metadata
         name: Resolve build metadata
         env:
-          INPUT_RELEASE_LABEL: ${{ inputs.release_label }}
+          INPUT_RELEASE_LABEL: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_label || '' }}
         run: |
           set -euo pipefail
 
