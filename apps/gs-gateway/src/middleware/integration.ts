@@ -58,13 +58,9 @@ export const integrationControls: MiddlewareHandler<{ Bindings: Env }> = async (
     actor: c.req.header('CF-Access-User-Email') ?? 'unknown'
   };
 
-  if (c.env.GATEWAY_KV) {
-    await c.env.GATEWAY_KV.put(`audit:${auditTraceId}`, JSON.stringify(auditEntry), {
-      expirationTtl: 60 * 60 * 24 * 30
-    });
-  } else {
-    console.warn('GATEWAY_KV is not configured for audit logging.', auditEntry);
-  }
+  await c.env.GATEWAY_KV.put(`audit:${auditTraceId}`, JSON.stringify(auditEntry), {
+    expirationTtl: 60 * 60 * 24 * 30
+  });
 
   await next();
 };
