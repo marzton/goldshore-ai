@@ -3,7 +3,6 @@
   "compilerOptions": {
     "jsx": "preserve",
     "types": ["astro/client", "node"],
-    "types": ["astro/client"],
     "moduleResolution": "bundler"
   },
   "include": [".astro/types.d.ts", "src/**/*"],
