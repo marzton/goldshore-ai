@@ -45,7 +45,7 @@ const logoSrc = '/logo.svg';
           <span class="material-symbols-rounded" aria-hidden="true">menu</span>
           <span class="sr-only">Toggle menu</span>
         </button>
-        <nav class="gs-nav" id="primary-navigation" aria-label="Primary" aria-hidden="true">
+        <nav class="gs-nav" id="primary-navigation" aria-label="Primary">
           {navLinks.map((link) => (
             <a
               href={link.href}
@@ -168,18 +168,13 @@ const logoSrc = '/logo.svg';
       } else {
         initializeHeaderInteractions();
       }
-      document.addEventListener('click', (e) => {
-        if (header?.getAttribute('data-menu-open') === 'true' && !header.contains(e.target)) {
-          closeMenu();
-        }
-      });
 
       const STAR_COUNT = 16;
 
       const initializeShootingStars = (container) => {
         if (!(container instanceof HTMLElement)) return;
 
-        const existingStars = container.querySelectorAll('.shooting-star');
+        const existingStars = container.querySelectorAll('.star');
         const isInitialized = container.dataset.starsInitialized === 'true';
 
         if (isInitialized && existingStars.length > 0) {
@@ -190,7 +185,7 @@ const logoSrc = '/logo.svg';
 
         for (let i = 0; i < STAR_COUNT; i += 1) {
           const star = document.createElement('span');
-          star.className = 'shooting-star';
+          star.className = 'star';
           container.appendChild(star);
         }
 

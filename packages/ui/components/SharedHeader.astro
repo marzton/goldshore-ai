@@ -1,0 +1,19 @@
+---
+const {
+  href = '/',
+  target,
+  rel,
+  logoSrc,
+  logoAlt = 'Logo',
+  class: className,
+  ...attrs
+} = Astro.props;
+---
+
+<header class:list={['gs-shared-header', className]} {...attrs}>
+  <a href={href} target={target} rel={rel} class="gs-shared-header__brand">
+    {logoSrc && <img src={logoSrc} alt={logoAlt} width="24" height="32" loading="lazy" decoding="async" />}
+    <span class="gs-shared-header__brand-text"><slot name="brand-text" /></span>
+  </a>
+  <slot />
+</header>

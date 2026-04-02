@@ -1,3 +1,4 @@
+@import "@goldshore/theme/reset.css";
 @import "@goldshore/theme/styles/tokens";
 @import "@goldshore/theme/styles/base";
 @import "@goldshore/theme/styles/components";
