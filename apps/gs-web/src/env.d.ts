@@ -42,6 +42,5 @@ declare namespace App {
     runtime: {
       env: Env;
     };
-    securityPolicySource?: 'response-header' | 'platform-config';
   }
 }
