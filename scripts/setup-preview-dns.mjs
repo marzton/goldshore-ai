@@ -14,7 +14,7 @@ const ACCOUNT = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CF_ACCOUNT_ID;
 let ZONE = process.env.CLOUDFLARE_ZONE_ID || process.env.CF_ZONE_ID;
 
 if (!TOKEN || !ACCOUNT) {
-  console.error("Missing required env vars: CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID");
+  console.error("Missing required env vars: set either CLOUDFLARE_API_TOKEN/CLOUDFLARE_ACCOUNT_ID or CF_API_TOKEN/CF_ACCOUNT_ID. (CLOUDFLARE_ZONE_ID/CF_ZONE_ID is optional; it will be auto-resolved if omitted.)");
   process.exit(1);
 }
 
