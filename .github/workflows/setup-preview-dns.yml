@@ -1,4 +1,6 @@
 name: Setup Preview DNS
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:
@@ -7,8 +9,6 @@ jobs:
   setup-dns:
     name: Configure preview.goldshore.ai DNS
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - uses: actions/checkout@v4
 
