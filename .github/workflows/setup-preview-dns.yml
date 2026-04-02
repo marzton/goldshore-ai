@@ -6,7 +6,7 @@ on:
       dry_run:
         description: 'Dry run (skip actual API calls)'
         required: false
-        default: 'false'
+        default: false
         type: boolean
 
 jobs:
