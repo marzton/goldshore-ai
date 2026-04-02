@@ -22,8 +22,17 @@ const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 app.use('*', secureHeaders());
 app.use('*', cors({
   origin: (origin, c) => {
-    const allowed = (c.env.ALLOWED_ORIGINS ?? "https://admin.goldshore.ai").split(",");
-    return origin && allowed.map(s => s.trim()).includes(origin) ? origin : undefined;
+    // Explicitly handle missing or "null" origins and return `null` for disallowed origins
+    if (!origin || origin === 'null') {
+      return null;
+    }
+
+    const allowed = (c.env.ALLOWED_ORIGINS ?? "https://admin.goldshore.ai")
+      .split(',')
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+
+    return allowed.includes(origin) ? origin : null;
   },
   credentials: true
 }));
