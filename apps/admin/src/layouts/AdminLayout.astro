@@ -18,6 +18,10 @@ const { title = 'GoldShore Admin' } = Astro.props;
     <title>{title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href={logo} type="image/svg+xml" />
+    <script type="module">
+      import { initTheme } from '@goldshore/theme/manager';
+      initTheme();
+    </script>
   </head>
   <body>
     <a href="#admin-content" class="skip-link">Skip to content</a>
@@ -30,9 +34,5 @@ const { title = 'GoldShore Admin' } = Astro.props;
         </main>
       </div>
     </div>
-    <script type="module">
-      import { initTheme } from '@goldshore/theme/manager';
-      initTheme();
-    </script>
   </body>
 </html>
