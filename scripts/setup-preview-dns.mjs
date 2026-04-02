@@ -102,7 +102,7 @@ async function main() {
       if (err.message.includes("already exists") || err.message.includes("taken")) {
         console.log("   ✓ Custom domain already configured");
       } else {
-        console.warn("   ⚠ Could not add custom domain (project may not exist yet):", err.message);
+        console.warn("   ⚠ Could not add custom domain (project may not exist yet).");
         console.warn("   → Re-run after the first preview deploy completes.");
       }
     }
