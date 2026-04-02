@@ -392,7 +392,7 @@ Run individual apps:
 pnpm --filter ./apps/gs-web dev
 pnpm --filter ./apps/gs-admin dev
 pnpm --filter ./apps/gs-api dev
-pnpm --filter ./apps/gateway dev
+pnpm --filter ./apps/gs-gateway dev
 pnpm --filter ./apps/gs-agent dev
 ```
 
