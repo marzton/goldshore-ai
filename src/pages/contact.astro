@@ -15,56 +15,129 @@ import Footer from '../components/Footer.astro';
   <body>
     <Header />
     <main>
-      <h1>Start the Engagement</h1>
-      <p>
-        Share your operational context and we will align next steps with your
-        constraints.
-      </p>
-      <form class="card" action="/contact/thanks" method="GET">
-        <p>
-          <label for="name">Name</label><br />
-          <input id="name" name="name" required />
+      <div class="page-header">
+        <h1>Start the Engagement</h1>
+        <p class="lead">
+          Share your operational context and we will align next steps with your
+          constraints.
         </p>
-        <p>
-          <label for="email">Email</label><br />
-          <input id="email" name="email" type="email" required />
-        </p>
-        <p>
-          <label for="timeline">Timeline (optional)</label><br />
-          <select id="timeline" name="timeline">
-            <option value="">Select one</option>
-            <option>Immediate (0–2 weeks)</option>
-            <option>Near-term (1–2 months)</option>
-            <option>Planned (quarter+)</option>
-          </select>
-        </p>
-        <p>
-          <label for="budget">Budget range (optional)</label><br />
-          <select id="budget" name="budget">
-            <option value="">Select one</option>
-            <option>&lt; $50k</option>
-            <option>$50k–$150k</option>
-            <option>$150k+</option>
-          </select>
-        </p>
-        <p>
-          <label for="focus">Primary focus area (optional)</label><br />
+      </div>
+      <form class="card contact-form" action="/contact/thanks" method="GET">
+        <div class="field-row">
+          <div class="field">
+            <label for="name">Name <span class="required" aria-hidden="true">*</span></label>
+            <input id="name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="email">Email <span class="required" aria-hidden="true">*</span></label>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="timeline">Timeline <span class="optional">(optional)</span></label>
+            <select id="timeline" name="timeline">
+              <option value="">Select one</option>
+              <option>Immediate (0–2 weeks)</option>
+              <option>Near-term (1–2 months)</option>
+              <option>Planned (quarter+)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="budget">Budget range <span class="optional">(optional)</span></label>
+            <select id="budget" name="budget">
+              <option value="">Select one</option>
+              <option>&lt; $50k</option>
+              <option>$50k–$150k</option>
+              <option>$150k+</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="focus">Primary focus area <span class="optional">(optional)</span></label>
           <select id="focus" name="focus">
             <option value="">Select one</option>
             <option>Operational AI infrastructure</option>
             <option>Observability and incident response</option>
             <option>Risk modelling and resilience</option>
           </select>
-        </p>
-        <p>
-          <label for="details">Project context</label><br />
-          <textarea id="details" name="details" rows="5" required></textarea>
-        </p>
-        <button class="button button-primary" type="submit"
-          >Start the Engagement</button
-        >
+        </div>
+        <div class="field">
+          <label for="details">Project context <span class="required" aria-hidden="true">*</span></label>
+          <textarea id="details" name="details" rows="5" placeholder="Describe the system, challenge, or goal you need help with." required></textarea>
+        </div>
+        <div class="form-footer">
+          <p class="required-note"><span class="required" aria-hidden="true">*</span> Required fields</p>
+          <button class="button button-primary" type="submit">Start the Engagement</button>
+        </div>
       </form>
     </main>
     <Footer />
+    <style>
+      .page-header {
+        margin-bottom: 1.5rem;
+      }
+      .lead {
+        color: rgba(197, 214, 235, 0.82);
+        max-width: 42rem;
+      }
+      .contact-form {
+        max-width: 52rem;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+      .field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: rgba(197, 214, 235, 0.9);
+      }
+      .required {
+        color: rgb(var(--accent));
+      }
+      .optional {
+        font-weight: 400;
+        font-size: 0.82rem;
+        color: rgba(148, 163, 184, 0.8);
+      }
+      .contact-form .field + .field,
+      .contact-form .field-row + .field,
+      .contact-form .field-row + .field-row,
+      .contact-form .field + .field-row {
+        margin-top: 1rem;
+      }
+      .form-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+      }
+      .required-note {
+        font-size: 0.82rem;
+        color: rgba(148, 163, 184, 0.7);
+        margin: 0;
+      }
+      @media (max-width: 600px) {
+        .field-row {
+          grid-template-columns: 1fr;
+        }
+        .form-footer {
+          flex-direction: column-reverse;
+          align-items: stretch;
+        }
+        .form-footer .button {
+          width: 100%;
+        }
+      }
+    </style>
   </body>
 </html>

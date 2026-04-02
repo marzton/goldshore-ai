@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/triple-slash-reference */
-/// <reference types="@goldshore/config/env" />
-
 // Type definitions for environment variables
 interface ImportMetaEnv {
   readonly PUBLIC_API: string;
@@ -8,6 +5,7 @@ interface ImportMetaEnv {
   readonly PUBLIC_AUTH_CLIENT_ID: string;
   readonly PUBLIC_BUILD_TIMESTAMP: string;
   readonly PUBLIC_COMMIT_HASH: string;
+  readonly PUBLIC_RELEASE_LABEL?: string;
   readonly PUBLIC_SUPABASE_URL: string;
   readonly PUBLIC_SUPABASE_ANON_KEY: string;
   readonly AUTH_CLIENT_SECRET: string;
