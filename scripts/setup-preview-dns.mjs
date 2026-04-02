@@ -41,6 +41,12 @@ async function resolveZoneId(domain) {
   if (!Array.isArray(zones) || zones.length === 0) {
     throw new Error(`No Cloudflare zone found for ${domain} under account ${ACCOUNT}`);
   }
+  if (zones.length > 1) {
+    throw new Error(
+      `Multiple Cloudflare zones found for ${domain} under account ${ACCOUNT}. ` +
+      `Refusing to choose arbitrarily. Please set CLOUDFLARE_ZONE_ID or CF_ZONE_ID explicitly.`
+    );
+  }
   console.log(`  ✓ Zone ID: ${zones[0].id}`);
   return zones[0].id;
 }
