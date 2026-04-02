@@ -36,8 +36,15 @@ export async function rotateKeys(env: ControlEnv) {
       // In a real system, this would update a secure store or service configuration
       await env.CONTROL_LOGS.put(`secrets:${config.name}:active`, newKey);
 
-      // 3. Archive the rotation event
-      await env.CONTROL_LOGS.put(`secrets:${config.name}:history:${timestamp}`, newKey);
+      // 3. Archive the rotation event metadata (do not store the secret value)
+      await env.CONTROL_LOGS.put(
+        `secrets:${config.name}:history:${timestamp}`,
+        JSON.stringify({
+          name: config.name,
+          rotatedAt: timestamp,
+          status: "success"
+        })
+      );
 
       console.log(`Successfully rotated key: ${config.name}`);
       auditLog.results.push({ name: config.name, status: "success" });
