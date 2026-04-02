@@ -1,0 +1,11 @@
+@import "@goldshore/theme/styles/tokens.css";
+@import "@goldshore/theme/styles/base.css";
+@import "@goldshore/theme/styles/components.css";
+@import "@goldshore/theme/styles/layout.css";
+@import "./gs-effects.css";
+
+:root {
+  font-family: var(--gs-font-body);
+}
+
+body { margin: 0; }
