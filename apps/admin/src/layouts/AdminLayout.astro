@@ -18,9 +18,30 @@ const { title = 'GoldShore Admin' } = Astro.props;
     <title>{title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href={logo} type="image/svg+xml" />
-    <script type="module">
-      import { initTheme } from '@goldshore/theme/manager';
-      initTheme();
+    <script is:inline>
+      (function () {
+        var STORAGE_KEY = 'goldshore:theme';
+        var defaults = { mode: 'dark', density: 'comfortable', accent: 'blue' };
+        var settings = defaults;
+        try {
+          var stored = localStorage.getItem(STORAGE_KEY);
+          if (stored) settings = Object.assign({}, defaults, JSON.parse(stored));
+        } catch (e) {}
+        var root = document.documentElement;
+        root.setAttribute('data-theme', settings.mode);
+        if (settings.density === 'compact') root.setAttribute('data-density', 'compact');
+        else root.removeAttribute('data-density');
+        if (settings.accent === 'gold') root.setAttribute('data-accent', 'gold');
+        else if (settings.accent === 'cyan') root.setAttribute('data-accent', 'cyan');
+        else if (settings.accent === 'violet') {
+          root.removeAttribute('data-accent');
+          root.style.setProperty('--gs-accent', '#a855f7');
+          root.style.setProperty('--gs-accent-strong', '#9333ea');
+          root.style.setProperty('--gs-accent-soft', 'rgba(168,85,247,0.18)');
+          root.style.setProperty('--gs-accent-contrast', '#0f172a');
+        } else root.removeAttribute('data-accent');
+        root.classList.add('gs-theme-ready');
+      })();
     </script>
   </head>
   <body>
