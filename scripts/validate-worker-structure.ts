@@ -11,7 +11,15 @@ let failed = false;
 for (const app of apps) {
   const wranglerPath = `apps/${app}/wrangler.toml`;
   const contents = readFileSync(wranglerPath, 'utf-8');
-  const match = contents.match(/name\s*=\s*["'](.+?)["']/);
+  const topLevelSection = contents
+    .split(/\r?\n/)
+    .filter((line, index, lines) => {
+      // Keep lines only until the first TOML table header (e.g., [env.production])
+      const firstTableIndex = lines.findIndex((l) => l.trim().startsWith('['));
+      return firstTableIndex === -1 || index < firstTableIndex;
+    })
+    .join('\n');
+  const match = topLevelSection.match(/^\s*name\s*=\s*["']([^"']+)["']/m);
 
   if (!match) {
     console.error(`❌ No worker name defined in ${app}/wrangler.toml`);
