@@ -6,6 +6,7 @@
 > - **Last updated:** 2026-02-11
 > - **Updated by:** manual
 > - **Workflow update path:** `N/A` (manual-only updates at this time)
+> - **Repository layout invariant:** This `goldshore-ai/` directory is the single monorepo root; nested `goldshore-ai/` directories that themselves contain `apps/`, `.github/`, or config trees are considered accidental and must be removed rather than committed.
 
 ## Active Workspaces
 
