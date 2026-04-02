@@ -17,7 +17,7 @@
     "verify:dist": "node ../../scripts/verify-web-dist.mjs"
   },
   "dependencies": {
-    "@astrojs/react": "^5.0.1",
+    "@astrojs/react": "^5.0.2",
     "@astrojs/tailwind": "^6.0.2",
     "@goldshore/auth": "workspace:*",
     "@goldshore/brand": "workspace:*",
