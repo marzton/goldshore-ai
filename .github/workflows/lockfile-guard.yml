@@ -14,7 +14,9 @@ on:
 jobs:
   prevent-lockfile-changes:
     runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]'
+    if: >
+      (github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]')
+      || github.event_name != 'pull_request'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
