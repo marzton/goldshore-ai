@@ -30,19 +30,29 @@ export const POST: APIRoute = async ({ request, locals }) => {
   };
 
   if (env.KV) {
-    await env.KV.put(`admin-pin:${crypto.randomUUID()}`, JSON.stringify(payload), {
-      expirationTtl: 60 * 60 * 24
-    });
+    try {
+      await env.KV.put(`admin-pin:${crypto.randomUUID()}`, JSON.stringify(payload), {
+        expirationTtl: 60 * 60 * 24
+      });
+    } catch (error) {
+      console.error('Failed to store admin pin request in KV.', error);
+      return new Response('Pin service is temporarily unavailable. Please retry shortly.', { status: 503 });
+    }
   }
 
   if (env.CLOUDFLARE_PIN_ENDPOINT) {
     try {
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json'
+      };
+
+      if (env.CLOUDFLARE_PIN_TOKEN) {
+        (headers as Record<string, string>).Authorization = `Bearer ${env.CLOUDFLARE_PIN_TOKEN}`;
+      }
+
       const response = await fetch(env.CLOUDFLARE_PIN_ENDPOINT, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: env.CLOUDFLARE_PIN_TOKEN ? `Bearer ${env.CLOUDFLARE_PIN_TOKEN}` : ''
-        },
+        headers,
         body: JSON.stringify(payload)
       });
 

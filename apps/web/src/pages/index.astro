@@ -51,8 +51,33 @@ const matrixItems = [
         <div class="shooting"></div>
       </div>
 
-      <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.04" aria-hidden="true"></div>
-      <div class="parallax-layer gs-parallax layer-shadow" data-parallax="0.08" aria-hidden="true"></div>
+      <div
+        class="parallax-layer gs-parallax layer-grid"
+        data-parallax="0.04"
+        aria-hidden="true"
+        style="
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          background-image:
+            linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+          background-size: 40px 40px;
+          mix-blend-mode: screen;
+        "
+      ></div>
+      <div
+        class="parallax-layer gs-parallax layer-shadow"
+        data-parallax="0.08"
+        aria-hidden="true"
+        style="
+          position: absolute;
+          inset: 8% 6%;
+          pointer-events: none;
+          box-shadow: 0 40px 120px rgba(0, 0, 0, 0.7);
+          border-radius: 32px;
+        "
+      ></div>
 
       <div class="hero-inner">
         <span class="status-pill"><span class="dot"></span>System Operational</span>
@@ -82,7 +107,7 @@ const matrixItems = [
         </div>
 
         <div class="pulse-grid">
-          {pulse.map((item) => (
+          {highlights.map((item) => (
             <article>
               <small>{item.label}</small>
               <strong>{item.value}</strong>
@@ -106,10 +131,10 @@ const matrixItems = [
       </header>
 
       <div class="authored-grid">
-        {authoredSections.map((entry) => (
+        {pillars.map((pillar) => (
           <article class="authored-panel reveal">
-            <h3>{entry.title}</h3>
-            <p>{entry.body}</p>
+            <h3>{pillar.title}</h3>
+            <p>{pillar.detail}</p>
           </article>
         ))}
       </div>
@@ -119,105 +144,9 @@ const matrixItems = [
       <div class="matrix-box reveal" id="matrix-box">
         <h2>Signal Matrix</h2>
         <p>White-node grid with fading links that respond to scroll depth and hover.</p>
-  description="Unified AI infrastructure for trading and intelligent operations."
->
-  <div class="cinematic-wrapper">
-    <section class="hero-shell parallax-section">
-      <div class="starscape" aria-hidden="true">
-        <div class="starfield"></div>
-        <div class="shooting-stars"></div>
-      </div>
-
-      <div class="parallax-layer gs-parallax layer-grid" data-parallax="0.06" aria-hidden="true"></div>
-      <div class="parallax-layer gs-parallax layer-glow" data-parallax="0.12" aria-hidden="true"></div>
-
-      <div class="hero-copy reveal is-visible">
-        <span class="vibe-badge"><span class="pulse-dot"></span>System online</span>
-        <h1>
-          Shaping Waves with
-          <span class="text-gradient">Applied Intelligence</span>
-        </h1>
-        <p>
-          GoldShore designs resilient products across theme, build, pages, scripts, and operations so teams can deploy
-          with confidence.
-        </p>
-        <div class="cta-group">
-          <GSButton href="/services" class="glow-button">Start now</GSButton>
-          <GSButton href="/contact" variant="secondary">Contact</GSButton>
-        </div>
-      </div>
-
-      <aside class="hero-card reveal">
-        <div class="animated-logo" aria-hidden="true">
-          <svg viewBox="0 0 120 120" role="presentation" focusable="false">
-            <defs>
-              <linearGradient id="gs-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#f4d58d" />
-                <stop offset="100%" stop-color="#22d3ee" />
-              </linearGradient>
-            </defs>
-            <path class="logo-path" d="M60 12 20 36v48l40 24 40-24V36z" fill="none" stroke="url(#gs-gradient)" stroke-width="4" />
-            <path class="logo-path" d="M60 36 40 48v24l20 12 20-12V48z" fill="none" stroke="url(#gs-gradient)" stroke-width="3" />
-          </svg>
-        </div>
-        <h2>Deployment pulse</h2>
-        <div class="kpi-grid">
-          {highlights.map((item) => (
-            <article class="kpi-tile">
-              <small>{item.label}</small>
-              <strong>{item.value}</strong>
-              <span>{item.note}</span>
-            </article>
-          ))}
-        </div>
-      </aside>
-    </section>
-
-    <section class="info-columns blueprint-section parallax-section">
-      <div class="section-heading reveal">
-        <p class="gs-badge">Operational baseline</p>
-        <h2>Aligned, responsive, informative surfaces</h2>
-      </div>
-      <div class="columns-grid">
-        {pillars.map((pillar) => (
-          <article class="panel-card reveal">
-            <h3>{pillar.title}</h3>
-            <p>{pillar.detail}</p>
-          </article>
-        ))}
-      </div>
-    </section>
-
-    <section class="matrix-section blueprint-section parallax-section">
-      <div class="matrix-box reveal" id="matrix-box">
-        <header>
-          <h2>Grid matrix</h2>
-          <p>White-dot matrix with fading semi-transparent signal lines reacting to scroll and hover.</p>
-        </header>
         <ul>
           {matrixItems.map((item) => <li>{item}</li>)}
         </ul>
-      </div>
-    </section>
-
-    <section class="subscribe-path blueprint-section parallax-section">
-      <div class="panel-card reveal">
-        <h2>Subscribe workflow</h2>
-        <p>Submit your email, confirm with GS-Mail, and receive release notes + service advisories.</p>
-        <form action="/api/contact" method="post" class="inline-form" data-async-form>
-          <input type="hidden" name="formType" value="subscribe" />
-          <input type="hidden" name="redirectTo" value="/thank-you" />
-          <label>
-            <span>Email</span>
-            <input type="email" name="email" required placeholder="you@company.com" autocomplete="email" />
-          </label>
-          <button type="submit">Subscribe</button>
-        </form>
-        <ol>
-          <li>Share email.</li>
-          <li>GS-Mail stores request in Cloudflare-backed intake.</li>
-          <li>Team follow-up is issued with confirmation details.</li>
-        </ol>
       </div>
     </section>
   </div>

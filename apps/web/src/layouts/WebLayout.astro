@@ -200,14 +200,22 @@ const logoSrc = '/favicon.svg';
           submit.disabled = true;
           submit.textContent = 'Requesting...';
 
-          const response = await fetch(adminForm.action, { method: 'POST', body: new FormData(adminForm) });
-          const message = await response.text();
-          if (feedback) {
-            feedback.textContent = message;
-            feedback.style.color = response.ok ? '#6ee7b7' : '#fca5a5';
+          try {
+            const response = await fetch(adminForm.action, { method: 'POST', body: new FormData(adminForm) });
+            const message = await response.text();
+            if (feedback) {
+              feedback.textContent = message;
+              feedback.style.color = response.ok ? '#6ee7b7' : '#fca5a5';
+            }
+          } catch (error) {
+            if (feedback) {
+              feedback.textContent = 'Network error. Please check your connection and try again.';
+              feedback.style.color = '#fca5a5';
+            }
+          } finally {
+            submit.disabled = false;
+            submit.textContent = 'Request pin';
           }
-          submit.disabled = false;
-          submit.textContent = 'Request pin';
         });
       }
 
@@ -217,15 +225,28 @@ const logoSrc = '/favicon.svg';
           event.preventDefault();
           const submit = form.querySelector('button[type="submit"]');
           if (!(submit instanceof HTMLButtonElement)) return;
+          const feedbackEl = form.querySelector('[data-subscribe-feedback]');
           submit.disabled = true;
           submit.textContent = 'Joining...';
-          const response = await fetch(form.action, { method: 'POST', body: new FormData(form) });
-          if (response.ok || response.redirected) {
-            window.location.href = response.url;
-            return;
+          try {
+            const response = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+            if (response.ok || response.redirected) {
+              window.location.href = response.url;
+              return;
+            }
+            if (feedbackEl instanceof HTMLElement) {
+              feedbackEl.textContent = 'Unable to join. Please try again.';
+              feedbackEl.style.color = '#fca5a5';
+            }
+          } catch (error) {
+            if (feedbackEl instanceof HTMLElement) {
+              feedbackEl.textContent = 'Network error. Please check your connection and try again.';
+              feedbackEl.style.color = '#fca5a5';
+            }
+          } finally {
+            submit.disabled = false;
+            submit.textContent = 'Join';
           }
-          submit.disabled = false;
-          submit.textContent = 'Join';
         });
       });
     </script>
