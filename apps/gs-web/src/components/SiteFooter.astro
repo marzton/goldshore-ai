@@ -1,13 +1,12 @@
 ---
-const { currentPath = '' } = Astro.props;
+const {
+  currentPath = '',
+  logoSrc = '/logo.svg',
+} = Astro.props;
 const legalLinks = [
   { href: '/legal/privacy', label: 'Privacy' },
   { href: '/legal/terms', label: 'Terms' }
 ];
-const {
-  currentPath,
-  logoSrc = '/logo.svg',
-} = Astro.props;
 ---
 
 <footer class="gs-footer">
