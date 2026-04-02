@@ -4,7 +4,7 @@ import {
   verifyAccessWithClaims,
   type AccessTokenPayload,
   type AdminPermission,
-} from '../../../../packages/auth/index.ts';
+} from '@goldshore/auth';
 
 type AdminAuthEnv = {
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
