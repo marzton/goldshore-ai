@@ -31,12 +31,12 @@ const permissionGroups: Array<{ label: string; permissions: AdminPermission[] }>
         </p>
 
         <Card class="gs-table-card">
-          <Table>
+          <Table ariaLabel="User permissions by role">
             <thead>
               <tr>
-                <th>Permission</th>
+                <th scope="col">Permission</th>
                 {ADMIN_ROLES.map((role) => (
-                  <th class="capitalize">{role}</th>
+                  <th scope="col" class="capitalize">{role}</th>
                 ))}
               </tr>
             </thead>
