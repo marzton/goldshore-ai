@@ -14,7 +14,7 @@ type AdminEnv = {
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
   CLOUDFLARE_TEAM_DOMAIN?: string;
   ADMIN_DEV_ROLE?: string;
-  [key: string]: any;
+  [key: string]: string | undefined;
 };
 
 type RequireAdminAccessOptions = {
