@@ -11,6 +11,6 @@ export default createAstroConfig({
   },
   site: 'https://goldshore.ai',
   redirects: {
-    '/developer-hub': '/developer',
+    '/developer': '/developer-hub',
   },
 });
