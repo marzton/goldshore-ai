@@ -81,7 +81,6 @@ Diagram source: [`docs/architecture/diagram.mmd`](docs/architecture/diagram.mmd)
 │   ├── gs-api/            # Hono API (Workers)
 │   ├── gs-gateway/        # Router + jobs (Workers)
 │   ├── gs-agent/          # Autonomous AI service (Workers)
-│   ├── gs-agent/          # Deprecated agent shim (legacy workflows)
 │   ├── gs-control/        # Infra automation
 │   ├── jules-bot/         # GitHub automation bot
 │   └── legacy/            # Legacy services
