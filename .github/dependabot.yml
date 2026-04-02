@@ -6,13 +6,10 @@
 
 version: 2
 updates:
- - package-ecosystem: "devcontainers"
-   directory: "/"
-   schedule:
-     interval: weekly
-version: 2
-
-updates:
+  - package-ecosystem: "devcontainers"
+    directory: "/"
+    schedule:
+      interval: weekly
   # ─────────────────────────────────────────────
   # 1. NPM (Monorepo: apps/* + packages/*)
   # ─────────────────────────────────────────────
