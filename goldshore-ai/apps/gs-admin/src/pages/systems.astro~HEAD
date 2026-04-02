@@ -1,3 +1,5 @@
----
-return Astro.redirect('/admin/systems');
----
+<!--
+  Legacy/merge-artifact file (systems.astro~HEAD).
+  This file should not be used; remove it from version control and
+  add a `*~HEAD` pattern to .gitignore to prevent reintroduction.
+-->
