@@ -212,12 +212,11 @@ const logoSrc = '/logo.svg';
     </script>
     <style is:global>
       :root {
-        --gs-header-height: 100px;
+        --gs-header-height: 72px;
       }
       .gs-page-content {
         padding-top: calc(var(--gs-header-height) + 2rem);
         min-height: 100vh;
-        --gs-header-height: 72px;
       }
       /* Cinematic Header Overrides */
       .gs-header {
@@ -269,17 +268,10 @@ const logoSrc = '/logo.svg';
       }
 
       .gs-logo img {
-        height: 90px; /* 2.5x larger than base ~36px */
+        height: 40px;
         width: auto;
         mix-blend-mode: normal;
         animation: glow-pulse 3s infinite ease-in-out;
-      }
-
-      .gs-logo img {
-        height: 40px;
-        width: auto;
-        /* Ensure logo blends if it has a dark bg */
-        mix-blend-mode: normal;
       }
 
       .gs-nav {

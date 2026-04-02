@@ -22,20 +22,10 @@ import '../styles/hero-stars.css';
 
 <style>
   .hero {
-    position: relative;
     overflow: hidden;
     padding: 6rem 2rem 5rem;
     border-radius: 1.5rem;
-    text-align: center;
-    isolation: isolate;
-    background: radial-gradient(circle at 50% 10%, rgba(59, 130, 246, 0.24), transparent 52%),
-      linear-gradient(160deg, #020617, #0b1120 45%, #111827);
     border: 1px solid rgba(148, 163, 184, 0.18);
-  }
-
-  .hero-content {
-    position: relative;
-    z-index: 2;
   }
 
   h1 {
@@ -47,36 +37,10 @@ import '../styles/hero-stars.css';
   }
 
   p {
-    color: #cbd5e1;
+    color: var(--gs-text-secondary);
     max-width: 580px;
     margin: 0 auto 1.75rem;
     font-size: 1.1rem;
-  }
-
-  .hero-cta {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .primary,
-  .secondary {
-    padding: 0.7rem 1.6rem;
-    border-radius: 0.6rem;
-    text-decoration: none;
-    font-size: 0.95rem;
-  }
-
-  .primary {
-    background: linear-gradient(90deg, #22c55e, #22d3ee);
-    color: #020617;
-    font-weight: 600;
-  }
-
-  .secondary {
-    border: 1px solid rgba(148, 163, 184, 0.4);
-    color: #e2e8f0;
   }
 </style>
 <script>
