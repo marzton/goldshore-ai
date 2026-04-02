@@ -15,7 +15,7 @@
     "build:mail": "turbo run build --filter=@goldshore/gs-mail-worker",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "test:integration": "pnpm --filter gs-api test && pnpm --filter @goldshore/control test && pnpm --filter @goldshore/gs-web test:e2e",
+    "test:integration": "pnpm --filter gs-api test && pnpm --filter @goldshore/control test && pnpm --filter ./apps/gs-web test:e2e",
     "validate:workers": "python3 scripts/validate-worker-configs.py",
     "test:visual": "node scripts/run-visual-gate.mjs",
     "smoke:post-merge": "tsx scripts/post-merge-smoke.ts",
