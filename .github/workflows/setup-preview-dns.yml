@@ -11,6 +11,8 @@ on:
 
 jobs:
   setup-dns:
+    permissions:
+      contents: read
     name: Configure preview.goldshore.ai DNS
     runs-on: ubuntu-latest
     steps:
