@@ -22,40 +22,57 @@ const { title = 'GoldShore Admin' } = Astro.props;
       (function () {
         var STORAGE_KEY = 'goldshore:theme';
         var defaults = { mode: 'dark', density: 'comfortable', accent: 'blue' };
-        var settings = defaults;
-        try {
-          var stored = localStorage.getItem(STORAGE_KEY);
-          if (stored) settings = Object.assign({}, defaults, JSON.parse(stored));
-        } catch (e) {}
-        var root = document.documentElement;
-        root.setAttribute('data-theme', settings.mode);
-        if (settings.density === 'compact') root.setAttribute('data-density', 'compact');
-        else root.removeAttribute('data-density');
-        if (settings.accent === 'gold') {
-          root.setAttribute('data-accent', 'gold');
-          root.style.removeProperty('--gs-accent');
-          root.style.removeProperty('--gs-accent-strong');
-          root.style.removeProperty('--gs-accent-soft');
-          root.style.removeProperty('--gs-accent-contrast');
-        } else if (settings.accent === 'cyan') {
-          root.setAttribute('data-accent', 'cyan');
-          root.style.removeProperty('--gs-accent');
-          root.style.removeProperty('--gs-accent-strong');
-          root.style.removeProperty('--gs-accent-soft');
-          root.style.removeProperty('--gs-accent-contrast');
-        } else if (settings.accent === 'violet') {
-          root.removeAttribute('data-accent');
-          root.style.setProperty('--gs-accent', '#a855f7');
-          root.style.setProperty('--gs-accent-strong', '#9333ea');
-          root.style.setProperty('--gs-accent-soft', 'rgba(168,85,247,0.18)');
-          root.style.setProperty('--gs-accent-contrast', '#0f172a');
-        } else {
-          root.removeAttribute('data-accent');
+
+        function readSettings() {
+          var settings = defaults;
+          try {
+            var stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) settings = Object.assign({}, defaults, JSON.parse(stored));
+          } catch (e) {}
+          return settings;
+        }
+
+        function removeAccentOverrides(root) {
           root.style.removeProperty('--gs-accent');
           root.style.removeProperty('--gs-accent-strong');
           root.style.removeProperty('--gs-accent-soft');
           root.style.removeProperty('--gs-accent-contrast');
         }
+
+        function applyAccent(root, accent) {
+          if (accent === 'gold') {
+            root.setAttribute('data-accent', 'gold');
+            removeAccentOverrides(root);
+          } else if (accent === 'cyan') {
+            root.setAttribute('data-accent', 'cyan');
+            removeAccentOverrides(root);
+          } else if (accent === 'violet') {
+            root.removeAttribute('data-accent');
+            root.style.setProperty('--gs-accent', '#a855f7');
+            root.style.setProperty('--gs-accent-strong', '#9333ea');
+            root.style.setProperty('--gs-accent-soft', 'rgba(168,85,247,0.18)');
+            root.style.setProperty('--gs-accent-contrast', '#0f172a');
+          } else {
+            root.removeAttribute('data-accent');
+            removeAccentOverrides(root);
+          }
+        }
+
+        var settings = readSettings();
+        var root = document.documentElement;
+        root.setAttribute('data-theme', settings.mode);
+        if (settings.density === 'compact') root.setAttribute('data-density', 'compact');
+        else root.removeAttribute('data-density');
+        applyAccent(root, settings.accent);
+
+        new MutationObserver(function (mutations) {
+          for (var i = 0; i < mutations.length; i++) {
+            if (mutations[i].attributeName === 'data-accent') {
+              applyAccent(root, readSettings().accent);
+              break;
+            }
+          }
+        }).observe(root, { attributes: true, attributeFilter: ['data-accent'] });
         root.classList.add('gs-theme-ready');
       })();
     </script>
