@@ -1,7 +1,4 @@
 import { Hono } from 'hono';
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 import {
   EmailInboxLogsSchema,
   ServiceStatusSchema,
