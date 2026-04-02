@@ -31,6 +31,6 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run Sentinel nightly sweep
-        run: node .Jules/run-sentinel.jsagent --mode=sweep
+        run: ./.Jules/run-sentinel.jsagent --mode=sweep
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
