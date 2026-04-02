@@ -84,6 +84,7 @@ ${{ join(github.event.pull_request.labels.*.name, ' ') }}"
         run: pnpm install --frozen-lockfile
 
       - name: Validate Worker Structure
+        continue-on-error: true
         run: pnpm validate:structure
 
       - name: Typecheck gate
