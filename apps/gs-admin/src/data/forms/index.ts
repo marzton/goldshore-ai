@@ -1,5 +1,5 @@
-export const formConfigs: Record<string, any> = {};
-export function getFormConfig(slug: string) {
+export const formConfigs: Record<string, unknown> = {};
+export function getFormConfig(slug: string): unknown {
   return formConfigs[slug];
 }
 export const forms = [];
