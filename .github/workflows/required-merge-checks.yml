@@ -1,0 +1,97 @@
+name: Required Merge Checks
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  workspace-install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Workspace install
+        run: pnpm install --frozen-lockfile
+
+  gs-api-build-test:
+    runs-on: ubuntu-latest
+    needs: workspace-install
+    steps:
+      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build gs-api
+        run: pnpm --filter ./apps/gs-api... build
+      - name: Test gs-api
+        run: pnpm --filter ./apps/gs-api... test
+
+  gs-web-build:
+    runs-on: ubuntu-latest
+    needs: workspace-install
+    steps:
+      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build gs-web
+        run: pnpm --dir apps/gs-web build
+
+  gs-admin-build:
+    runs-on: ubuntu-latest
+    needs: workspace-install
+    steps:
+      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build gs-admin
+        run: pnpm --dir apps/gs-admin build
+
+  deployment-dry-run:
+    runs-on: ubuntu-latest
+    needs:
+      - gs-api-build-test
+      - gs-web-build
+      - gs-admin-build
+    steps:
+      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: API deploy dry-run
+        working-directory: apps/gs-api
+        run: pnpm exec wrangler deploy --dry-run --outdir .wrangler-dry-run
+      - name: Web deploy dry-run (build)
+        run: pnpm --dir apps/gs-web build
+      - name: Admin deploy dry-run (build)
+        run: pnpm --dir apps/gs-admin build
