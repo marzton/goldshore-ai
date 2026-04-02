@@ -1,6 +1,7 @@
 ---
 import RiskRadar from '../components/RiskRadar.astro';
 import Logo from '../components/brand/Logo.astro';
+import ParallaxHero from '../components/hero/ParallaxHero.astro';
 import WebLayout from '../layouts/WebLayout.astro';
 
 export const prerender = true;
@@ -70,61 +71,13 @@ const proofPoints = [
   description="GoldShore builds resilient decision systems, risk tooling, and operator infrastructure."
 >
   <main class="home-page">
-    <section class="hero" aria-labelledby="home-hero-title">
-      <canvas
-        id="wave-bg"
-        role="img"
-        aria-label="Animated wave field representing live operational telemetry and system activity."
-      ></canvas>
-      <div class="hero-grid" aria-hidden="true"></div>
-      <div class="hero-mark" aria-hidden="true">
-        <Logo class="gs-logo-reactive" ariaHidden={true} />
-      </div>
-
-      <div class="hero-shell gs-shell-section">
-        <div class="hero-content">
-          <span class="eyebrow">Institutional-grade operational AI</span>
-          <h1 id="home-hero-title">
-            Clarity, control, and trust for live AI systems.
-          </h1>
-          <p class="hero-lead">
-            GoldShore builds resilient decision systems, risk tooling, and
-            operator infrastructure for teams that need explainable performance
-            under pressure.
-          </p>
-          <p class="hero-supporting-copy">
-            We align telemetry, governance, and release discipline so
-            engineering, operations, and leadership teams can act from the same
-            signal.
-          </p>
-          <div class="hero-actions">
-            <a href="/contact" class="hero-button hero-button--primary">
-              Request Briefing
-            </a>
-            <a href="/about" class="hero-button">View operating model</a>
-          </div>
-        </div>
-
-        <aside class="hero-panel" aria-label="Live operating posture">
-          <div class="hero-panel__heading">
-            <p class="gs-eyebrow">Control surface</p>
-            <h2>Signal over spectacle.</h2>
-          </div>
-          <div class="status-banner">
-            <span class="status-dot" aria-hidden="true"></span>
-            <div>
-              <strong>System status: Operational</strong>
-              <p>Monitoring, escalation, and response pathways are active.</p>
-            </div>
-          </div>
-          <ul>
-            <li>Operational UX with clear status, escalation, and review states.</li>
-            <li>Decision-support tooling built for real environments, not demo loops.</li>
-            <li>Motion that communicates energy, drift, and readiness without visual noise.</li>
-          </ul>
-        </aside>
-      </div>
-    </section>
+    <ParallaxHero
+      eyebrow="Institutional-grade Operational AI"
+      headline={"Clarity, Control, and\nTrust for Live AI Systems."}
+      sub="GoldShore builds resilient decision systems, risk tooling, and operator infrastructure for teams that need explainable performance under pressure."
+      ctaPrimary={{ label: 'Request Briefing', href: '/contact' }}
+      ctaSecondary={{ label: 'View Operating Model', href: '/about' }}
+    />
 
     <section class="signal-strip gs-shell-section" aria-label="Signal strip">
       {signals.map((signal) => (

@@ -55,6 +55,8 @@ async function main() {
   const existing = await cf(`/zones/${ZONE}/dns_records?name=preview.goldshore.ai&type=CNAME`);
   if (existing.length > 0) {
     console.log("   ✓ CNAME already exists:", existing[0].content);
+  } else if (DRY_RUN) {
+    console.log("   [DRY RUN] Would create CNAME: preview.goldshore.ai → preview-web.pages.dev");
   } else {
     await cf(`/zones/${ZONE}/dns_records`, {
       method: "POST",
@@ -92,6 +94,7 @@ async function main() {
 }
 
 main().catch(err => {
-  console.error("Error:", err.message);
+  console.error("Error: setup-preview-dns script failed. See logs or rerun with debugging enabled.");
+  // Avoid logging err.message directly to prevent leaking potentially sensitive data.
   process.exit(1);
 });

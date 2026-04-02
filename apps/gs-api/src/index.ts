@@ -183,9 +183,8 @@ app.route('/internal', internal);
 const v1 = new Hono<{ Bindings: Env }>();
 
 v1.route('/users', users);
-v1.get('/agents', (c) => c.json({ agents: ['agent-alpha', 'agent-beta'] }));
-v1.get('/models', (c) => c.json({ models: ['gpt-4', 'claude-3'] }));
-v1.get('/logs', (c) => c.json({ logs: ['log1', 'log2'] }));
+// Placeholder routes removed — v1/agents, v1/models, and v1/logs
+// returned hardcoded fake data. Implement with real handlers when needed.
 
 app.route('/v1', v1);
 
