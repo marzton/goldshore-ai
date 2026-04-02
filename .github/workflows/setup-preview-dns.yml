@@ -1,4 +1,6 @@
 name: Setup Preview DNS
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:
