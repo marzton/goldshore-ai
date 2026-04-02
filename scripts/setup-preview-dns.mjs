@@ -18,6 +18,31 @@ if (!TOKEN || !ACCOUNT) {
   process.exit(1);
 }
 
+function sanitizeErrorForLog(err) {
+  // Avoid logging provider-supplied messages directly, as they may contain
+  // sensitive data. Instead, log a constrained summary for debugging.
+  if (!err || typeof err !== "object") {
+    return "Unknown error";
+  }
+  const parts = [];
+  if (typeof err.status === "number") {
+    parts.push(`status=${err.status}`);
+  }
+  if (typeof err.code === "string") {
+    parts.push(`code=${err.code}`);
+  }
+  if (typeof err.name === "string") {
+    parts.push(`name=${err.name}`);
+  }
+  if (Array.isArray(err.errors) && err.errors.length > 0) {
+    const first = err.errors[0];
+    if (first && typeof first.code !== "undefined") {
+      parts.push(`cf_error_code=${first.code}`);
+    }
+  }
+  return parts.length > 0 ? parts.join(", ") : "Unspecified error (details redacted)";
+}
+
 async function cf(path, init = {}) {
   const res = await fetch(`${API}${path}`, {
     ...init,
@@ -90,7 +115,10 @@ async function main() {
       console.log("   ✓ Custom domain already configured");
     } else {
       if (process.env.DEBUG === "1") {
-        console.warn("   ⚠ Could not add custom domain (project may not exist yet):", message);
+        console.warn(
+          "   ⚠ Could not add custom domain (project may not exist yet). Debug details:",
+          sanitizeErrorForLog(err)
+        );
       } else {
         console.warn("   ⚠ Could not add custom domain (project may not exist yet). Enable DEBUG=1 for more details.");
       }
