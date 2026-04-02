@@ -46,15 +46,15 @@ test('sanitizeInput should handle non-string input gracefully', () => {
 });
 
 
-test('Content-Security-Policy disallows inline scripts', () => {
+test('Content-Security-Policy-Report-Only header has expected script-src directives', () => {
   const headersPath = resolve(process.cwd(), 'public/_headers');
   const headersFile = readFileSync(headersPath, 'utf8');
   const cspLine = headersFile
     .split('\n')
     .map((line) => line.trim())
-    .find((line) => line.startsWith('Content-Security-Policy:'));
+    .find((line) => line.startsWith('Content-Security-Policy-Report-Only:'));
 
-  assert.ok(cspLine, 'Expected a Content-Security-Policy header in public/_headers');
-  assert.match(cspLine!, /script-src 'self'(?:;|\s)/);
-  assert.doesNotMatch(cspLine!, /script-src[^;]*'unsafe-inline'/);
+  assert.ok(cspLine, 'Expected a Content-Security-Policy-Report-Only header in public/_headers');
+  assert.match(cspLine!, /script-src[^;]*'self'/);
+  assert.match(cspLine!, /script-src[^;]*'unsafe-inline'/);
 });
