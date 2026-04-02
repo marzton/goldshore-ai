@@ -16,42 +16,34 @@ import { services, caseStudies } from '../data/site-content';
   <body>
     <Header />
     <main>
-      <div class="page-header">
-        <p class="page-kicker">What we deliver</p>
-        <h1>Services</h1>
-        <p class="lead">
-          Depth, not clutter: each engagement is scoped for practical outcomes
-          and operational durability.
-        </p>
-      </div>
-      <section aria-label="Service offerings">
-        <div class="services-list">
-          {
-            services.map((service) => (
-              <details class="card service-card">
-                <summary>
-                  <h2 class="service-title">{service.name}</h2>
-                  <span class="service-timeframe">{service.timeframe}</span>
-                </summary>
-                <div class="service-body">
-                  <p>{service.objective}</p>
-                  <p class="deliverables-label">Deliverables</p>
-                  <ul>
-                    {service.deliverables.map((deliverable) => (
-                      <li>{deliverable}</li>
-                    ))}
-                  </ul>
-                </div>
-              </details>
-            ))
-          }
-        </div>
+      <h1>Services</h1>
+      <p class="small">
+        Depth, not clutter: each engagement is scoped for practical outcomes and
+        operational durability.
+      </p>
+      <section>
+        <h2>Service offerings</h2>
+        {
+          services.map((service) => (
+            <details class="card">
+              <summary>
+                <strong>{service.name}</strong>
+              </summary>
+              <p>{service.objective}</p>
+              <ul>
+                {service.deliverables.map((deliverable) => (
+                  <li>{deliverable}</li>
+                ))}
+              </ul>
+              <p class="small">
+                <strong>Typical timeframe:</strong> {service.timeframe}
+              </p>
+            </details>
+          ))
+        }
       </section>
-      <section aria-labelledby="case-studies-heading">
-        <div class="section-heading">
-          <p class="section-kicker">In practice</p>
-          <h2 id="case-studies-heading">Case studies</h2>
-        </div>
+      <section>
+        <h2>Mini case studies</h2>
         <div class="grid">
           {
             caseStudies.map((caseStudy) => (
@@ -60,7 +52,7 @@ import { services, caseStudies } from '../data/site-content';
                 <p>{caseStudy.outcome}</p>
                 <p class="metric">{caseStudy.result}</p>
                 <p class="small">
-                  <strong>Technology:</strong> {caseStudy.technology}
+                  <strong>System:</strong> {caseStudy.technology}
                 </p>
               </article>
             ))
@@ -69,98 +61,5 @@ import { services, caseStudies } from '../data/site-content';
       </section>
     </main>
     <Footer />
-    <style>
-      .page-header {
-        margin-bottom: 2rem;
-      }
-      .page-kicker {
-        margin: 0 0 0.4rem;
-        text-transform: uppercase;
-        letter-spacing: 0.13em;
-        color: rgba(120, 184, 255, 0.88);
-        font-size: 0.8rem;
-        font-weight: 700;
-      }
-      .lead {
-        color: rgba(197, 214, 235, 0.82);
-        max-width: 42rem;
-        margin: 0.5rem 0 0;
-      }
-      .section-heading {
-        margin-bottom: 1.2rem;
-      }
-      .section-kicker {
-        margin: 0 0 0.4rem;
-        text-transform: uppercase;
-        letter-spacing: 0.13em;
-        color: rgba(120, 184, 255, 0.88);
-        font-size: 0.8rem;
-        font-weight: 700;
-      }
-      .services-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-      .service-card {
-        cursor: pointer;
-      }
-      .service-card summary {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        list-style: none;
-        cursor: pointer;
-        user-select: none;
-      }
-      .service-card summary::-webkit-details-marker {
-        display: none;
-      }
-      .service-card summary::after {
-        content: '+';
-        font-size: 1.3rem;
-        color: rgba(90, 162, 255, 0.7);
-        flex-shrink: 0;
-        transition: transform 200ms ease;
-      }
-      .service-card[open] summary::after {
-        transform: rotate(45deg);
-      }
-      .service-title {
-        margin: 0;
-        font-size: clamp(1rem, 0.9rem + 0.35vw, 1.2rem);
-        font-weight: 600;
-      }
-      .service-timeframe {
-        font-size: 0.82rem;
-        color: rgba(120, 184, 255, 0.8);
-        white-space: nowrap;
-      }
-      .service-body {
-        margin-top: 0.85rem;
-        padding-top: 0.85rem;
-        border-top: 1px solid rgba(71, 102, 145, 0.3);
-      }
-      .service-body p {
-        margin: 0 0 0.7rem;
-      }
-      .deliverables-label {
-        font-size: 0.82rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: rgba(120, 184, 255, 0.75);
-        margin-bottom: 0.35rem !important;
-      }
-      .service-body ul {
-        margin: 0;
-        padding-left: 1.2rem;
-        color: rgba(197, 214, 235, 0.82);
-      }
-      .service-body li {
-        margin-bottom: 0.25rem;
-      }
-    </style>
   </body>
 </html>
