@@ -1,8 +1,9 @@
 ---
 const {
   currentPath = '',
-  logoSrc = '/logo.svg',
+  logoSrc = '/logo.svg'
 } = Astro.props;
+
 const legalLinks = [
   { href: '/legal/privacy', label: 'Privacy' },
   { href: '/legal/terms', label: 'Terms' }
@@ -31,8 +32,6 @@ const legalLinks = [
           {legalLinks.map((link) => (
             <a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>{link.label}</a>
           ))}
-          <a href="/legal/privacy" aria-current={currentPath === '/legal/privacy' ? 'page' : undefined}>Privacy</a>
-          <a href="/legal/terms" aria-current={currentPath === '/legal/terms' ? 'page' : undefined}>Terms</a>
         </div>
       </div>
     </div>
