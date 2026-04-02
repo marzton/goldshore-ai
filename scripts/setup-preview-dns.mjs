@@ -85,10 +85,15 @@ async function main() {
     });
     console.log("   ✓ Custom domain added: preview.goldshore.ai → preview-web");
   } catch (err) {
-    if (err.message.includes("already exists") || err.message.includes("taken")) {
+    const message = err && typeof err.message === "string" ? err.message : String(err);
+    if (message.includes("already exists") || message.includes("taken")) {
       console.log("   ✓ Custom domain already configured");
     } else {
-      console.warn("   ⚠ Could not add custom domain (project may not exist yet):", err.message);
+      if (process.env.DEBUG === "1") {
+        console.warn("   ⚠ Could not add custom domain (project may not exist yet):", message);
+      } else {
+        console.warn("   ⚠ Could not add custom domain (project may not exist yet). Enable DEBUG=1 for more details.");
+      }
       console.warn("   → Re-run after the first preview deploy completes.");
     }
   }
