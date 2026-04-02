@@ -74,7 +74,9 @@ CONFLICTING_BRANCHES=(
 )
 
 # Ensure we are on main and up to date
+git fetch origin main
 git checkout main
+git pull --ff-only origin main
 
 # Log successes and failures
 SUCCESS_LOG="rebase_success.log"
