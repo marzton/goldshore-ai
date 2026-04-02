@@ -56,18 +56,10 @@ run_optional_changed_package_builds() {
 }
 
 case "$PHASE" in
-  1)
-    run_phase "Phase 1: Workspace sanity" pnpm -w lint
-    ;;
-  2)
-    run_phase "Phase 2: Type checks" pnpm -w typecheck
-    ;;
-  3)
-    run_phase "Phase 3: Unit tests" pnpm -w test
-    ;;
-  4)
-    run_phase "Phase 4: Integration checks" pnpm -w test:integration
-    ;;
+  1) run_phase "Phase 1: Workspace sanity" pnpm -w lint ;;
+  2) run_phase "Phase 2: Type checks" pnpm -w typecheck ;;
+  3) run_phase "Phase 3: Unit tests" pnpm -w test ;;
+  4) run_phase "Phase 4: Integration checks" pnpm -w test:integration ;;
   5)
     # Phase 5 intentionally runs installs and package builds in explicit order so
     # failures are attributable to a single component.
@@ -75,6 +67,7 @@ case "$PHASE" in
     run_phase "Phase 5.2: Build gs-api" pnpm -C apps/gs-api build
     run_phase "Phase 5.3: Build gs-web" pnpm -C apps/gs-web build
     run_phase "Phase 5.4: Build gs-admin" pnpm -C apps/gs-admin build
+
     run_optional_changed_package_builds
     ;;
 esac
