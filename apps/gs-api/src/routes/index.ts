@@ -3,18 +3,18 @@ import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
 
 // Route Imports
-import pages from './routes/pages';
-import internal from './routes/internal';
-import ai from './routes/ai';
-import admin from './routes/admin';
-import system from './routes/system';
-import media from './routes/media';
-import health from './routes/health';
-import templates from './routes/templates';
-import user from './routes/user';
-import users from './routes/users';
+import pages from './pages';
+import internal from './internal';
+import ai from './ai';
+import admin from './admin';
+import system from './system';
+import media from './media';
+import health from './health';
+import templates from './templates';
+import user from './user';
+import users from './users';
 
-import { Env, Variables } from './types';
+import { Env, Variables } from '../types';
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
