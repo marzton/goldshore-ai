@@ -2,12 +2,6 @@ name: Setup Preview DNS
 
 on:
   workflow_dispatch:
-    inputs:
-      dry_run:
-        description: 'Dry run (skip actual API calls)'
-        required: false
-        default: false
-        type: boolean
 
 jobs:
   setup-dns:
