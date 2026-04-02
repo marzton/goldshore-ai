@@ -46,7 +46,7 @@ gs-admin | `apps/gs-admin` | Astro → Pages
 gs-api | `apps/gs-api` | CF Worker
 gs-gateway | `apps/gs-gateway` | CF Worker
 gs-control | `apps/gs-control` | CF Worker
-gs-mail | `apps/gs-mail-worker` | Email Worker
+gs-mail | `apps/gs-mail` | Email Worker
 
 Jules must use this OFFICIAL domain map:
 
