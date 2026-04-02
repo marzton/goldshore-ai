@@ -6,55 +6,100 @@ import FlowSection from '../components/FlowSection.astro';
 export const prerender = true;
 ---
 
-<BaseLayout title="Contact | GoldShore" description="Reach the GoldShore team">
+<BaseLayout
+  title="Contact | Gold Shore"
+  description="Contact the Gold Shore team."
+>
   <FlowSection variant="hero">
     <div>
-      <h1>Contact</h1>
+      <p class="gs-eyebrow">Contact</p>
+      <h1>Open a direct line with Gold Shore.</h1>
       <p>
-        Tell us about your systems, service levels, or the experiences you want
-        to build. We will respond with a tailored plan.
+        Start with the guided intake to receive a tailored service
+        recommendation and week-one engagement outline.
       </p>
       <p>
         Prefer a structured intake? Use our
         <a href="/intake">project qualification form</a>.
       </p>
     </div>
+
     <form id="contact-form" class="gs-card" action="/api/contact" method="post">
       <input type="hidden" name="formType" value="contact" />
       <input type="hidden" name="redirectTo" value="/thank-you" />
       <input type="hidden" name="formStartedAt" value="" />
+
       <div class="gs-honeypot" aria-hidden="true">
         <label for="companyWebsite">Company website</label>
-        <input id="companyWebsite" name="companyWebsite" type="text" autocomplete="off" tabindex="-1" />
+        <input
+          id="companyWebsite"
+          name="companyWebsite"
+          type="text"
+          autocomplete="off"
+          tabindex="-1"
+        />
       </div>
+
       <div class="gs-input-group">
         <label for="name">Name</label>
         <input id="name" name="name" type="text" autocomplete="name" required />
       </div>
+
       <div class="gs-input-group">
         <label for="email">Work email</label>
+        <p id="email-help" class="field-help">
+          Use the best email for project follow-up.
+        </p>
         <input
           id="email"
           name="email"
           type="email"
           autocomplete="email"
           spellcheck="false"
+          aria-describedby="email-help"
           required
         />
       </div>
+
+      <div class="gs-input-group">
+        <label for="inquiry">Inquiry type</label>
+        <p id="inquiry-help" class="field-help">
+          Choose the path that best matches the engagement you want to start.
+        </p>
+        <select id="inquiry" name="inquiry" aria-describedby="inquiry-help">
+          <option value="general">General inquiry</option>
+          <option value="strategy-call">Strategy call</option>
+          <option value="project-scope">Project scoping</option>
+          <option value="support">Support</option>
+        </select>
+      </div>
+
       <div class="gs-input-group">
         <label for="message">Project brief</label>
+        <p id="message-help" class="field-help">
+          Share a short summary of your goals, timeline, and budget. We read
+          every request, so please avoid sensitive data.
+        </p>
         <textarea
           id="message"
           name="message"
-          rows="4"
-          aria-describedby="message-helper"
+          rows="5"
+          placeholder="We need support with cloud architecture and security hardening over the next 8 weeks."
+          aria-describedby="message-help"
           required></textarea>
-        <p id="message-helper" class="gs-helper">
-          We read every request. Please avoid sensitive data.
-        </p>
       </div>
-      <GSButton type="submit">Send message</GSButton>
+
+      <div
+        id="form-status"
+        class="form-status"
+        aria-live="polite"
+        role="status"
+      >
+      </div>
+
+      <GSButton type="submit">
+        <span id="submit-text">Send message</span>
+      </GSButton>
     </form>
   </FlowSection>
 
@@ -62,18 +107,35 @@ export const prerender = true;
     <div class="gs-grid columns-2">
       <div>
         <h2>Snapshot</h2>
-        <p class="gs-text-lg">Direct, senior-led delivery that keeps programs steady and fast.</p>
-        <GSButton href="#contact-form" variant="secondary">Send your brief</GSButton>
+        <p class="gs-text-lg">
+          Direct, senior-led delivery that keeps programs steady and fast.
+        </p>
+        <GSButton href="#contact-form" variant="secondary"
+          >Send your brief</GSButton
+        >
       </div>
       <div class="gs-card">
         <h3 class="section-title"><span>◆</span>Snapshot</h3>
         <ul>
-          <li><strong>Current Focus:</strong> Automation layers, resilient infrastructure, and AI-assisted operations.</li>
-          <li><strong>What I build:</strong> End-to-end platforms, secure integrations, and operator-facing tooling.</li>
-          <li><strong>How I work:</strong> Clear scope, weekly checkpoints, and transparent delivery metrics.</li>
-          <li><strong>Availability:</strong> Full-time or contract engagements.</li>
+          <li>
+            <strong>Current Focus:</strong> Automation layers, resilient infrastructure,
+            and AI-assisted operations.
+          </li>
+          <li>
+            <strong>What I build:</strong> End-to-end platforms, secure integrations,
+            and operator-facing tooling.
+          </li>
+          <li>
+            <strong>How I work:</strong> Clear scope, weekly checkpoints, and transparent
+            delivery metrics.
+          </li>
+          <li>
+            <strong>Availability:</strong> Full-time or contract engagements.
+          </li>
         </ul>
-        <p class="gs-text-sm">Have a scope in mind? Send the brief and I’ll respond with a plan.</p>
+        <p class="gs-text-sm">
+          Have a scope in mind? Send the brief and I’ll respond with a plan.
+        </p>
       </div>
     </div>
   </FlowSection>
@@ -81,49 +143,104 @@ export const prerender = true;
   <script>
     const form = document.getElementById('contact-form');
     const button = form?.querySelector('button[type="submit"]');
+    const submitText = form?.querySelector('#submit-text');
+    const formStatus = document.getElementById('form-status');
 
-    if (form instanceof HTMLFormElement && button) {
+    const setStatus = (message, type) => {
+      if (!(formStatus instanceof HTMLElement)) return;
+      formStatus.textContent = message;
+      formStatus.classList.remove('success', 'error', 'progress');
+      if (type) {
+        formStatus.classList.add(type);
+      }
+    };
+
+    if (
+      form instanceof HTMLFormElement &&
+      button instanceof HTMLButtonElement
+    ) {
       const startedAtField = form.querySelector('[name="formStartedAt"]');
       if (startedAtField instanceof HTMLInputElement) {
         startedAtField.value = String(Date.now());
       }
 
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (button.hasAttribute('disabled')) return;
+      const inquiryField = form.querySelector('#inquiry');
+      const inquiryParam = new URLSearchParams(window.location.search).get(
+        'inquiry',
+      );
+      const allowedInquiryTypes = new Set([
+        'general',
+        'strategy-call',
+        'project-scope',
+        'support',
+      ]);
 
-        const originalText = button.innerHTML;
-        button.setAttribute('disabled', 'true');
-        button.innerHTML = '<span class="gs-loader" aria-hidden="true"></span> Sending...';
+      if (
+        inquiryField instanceof HTMLSelectElement &&
+        inquiryParam &&
+        allowedInquiryTypes.has(inquiryParam)
+      ) {
+        inquiryField.value = inquiryParam;
+      }
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (button.disabled) return;
+
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          setStatus(
+            'Please complete all required fields before submitting.',
+            'error',
+          );
+          return;
+        }
+
+        const originalText =
+          submitText instanceof HTMLElement
+            ? submitText.textContent
+            : button.textContent;
+        button.disabled = true;
+        button.setAttribute('aria-busy', 'true');
+        if (submitText instanceof HTMLElement) {
+          submitText.textContent = 'Sending...';
+        }
+        setStatus('Sending your message...', 'progress');
 
         try {
-          const formData = new FormData(form);
-          const response = await fetch(form.getAttribute('action') || '/api/contact', {
-            method: 'POST',
-            body: formData,
-          });
+          const response = await fetch(
+            form.getAttribute('action') || '/api/contact',
+            {
+              method: form.getAttribute('method') || 'POST',
+              body: new FormData(form),
+            },
+          );
 
-          if (response.ok || response.redirected) {
-             window.location.href = response.url;
-          } else {
-            throw new Error('Submission failed');
+          if (!response.ok && !response.redirected) {
+            throw new Error(`Submission failed: ${response.status}`);
           }
-        } catch (err) {
-          console.error(err);
-          button.removeAttribute('disabled');
-          button.innerHTML = originalText;
 
-          let errorMsg = form.querySelector('.gs-form-error');
-          if (!errorMsg) {
-             errorMsg = document.createElement('div');
-             errorMsg.className = 'gs-form-error';
-             form.appendChild(errorMsg);
+          const redirectToField = form.querySelector('[name="redirectTo"]');
+          const redirectTarget =
+            response.redirected && response.url
+              ? response.url
+              : redirectToField instanceof HTMLInputElement &&
+                  redirectToField.value
+                ? redirectToField.value
+                : '/thank-you';
+
+          window.location.href = redirectTarget;
+        } catch (error) {
+          console.error(error);
+          button.disabled = false;
+          button.removeAttribute('aria-busy');
+          if (submitText instanceof HTMLElement) {
+            submitText.textContent = originalText || 'Send message';
           }
-          if (errorMsg instanceof HTMLElement) {
-             errorMsg.style.marginTop = '1rem';
-             errorMsg.style.color = '#ef4444';
-             errorMsg.textContent = 'Unable to send message. System may be busy.';
-          }
+          setStatus(
+            'Unable to send message right now. Please try again or email hello@goldshore.ai.',
+            'error',
+          );
         }
       });
     }
@@ -139,22 +256,41 @@ export const prerender = true;
       overflow: hidden;
     }
 
-    .gs-loader {
-      display: inline-block;
-      width: 1em;
-      height: 1em;
-      border: 2px solid currentColor;
-      border-right-color: transparent;
-      border-radius: 50%;
-      animation: gs-spin 0.75s linear infinite;
-      margin-right: 0.5em;
-      vertical-align: text-bottom;
+    .field-help {
+      margin: 0.25rem 0 0.5rem;
+      color: var(--gs-color-text-muted, #94a3b8);
+      font-size: 0.95rem;
     }
 
-    @keyframes gs-spin {
-      to {
-        transform: rotate(360deg);
-      }
+    .form-status {
+      margin: 0.75rem 0;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid transparent;
+      min-height: 1.25rem;
+    }
+
+    .form-status.progress {
+      background: rgba(37, 52, 138, 0.12);
+      border-color: rgba(96, 116, 211, 0.45);
+      color: #c7d2fe;
+    }
+
+    .form-status.success {
+      background: rgba(10, 95, 37, 0.14);
+      border-color: rgba(110, 231, 183, 0.35);
+      color: #bbf7d0;
+    }
+
+    .form-status.error {
+      background: rgba(143, 23, 23, 0.14);
+      border-color: rgba(248, 113, 113, 0.35);
+      color: #fecaca;
+    }
+
+    #contact-form button[disabled] {
+      opacity: 0.65;
+      cursor: not-allowed;
     }
   </style>
 </BaseLayout>
