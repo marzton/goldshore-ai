@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@v6
         with:
@@ -46,4 +47,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           LOG_REF: ${{ github.event.inputs.log_ref }}
           LOG_LIMIT: ${{ github.event.inputs.log_limit }}
-        run: bash scripts/branch-report.sh
+        run: bash scripts/maintenance/branch-report.sh
