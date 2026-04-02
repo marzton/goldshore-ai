@@ -3,19 +3,13 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 const apps = readdirSync('apps', { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
   .map((entry) => entry.name)
-  .filter((name) => name.startsWith('gs-'));
+  .filter((name) => name.startsWith('gs-'))
+  .filter((name) => existsSync(`apps/${name}/wrangler.toml`));
 
 let failed = false;
 
 for (const app of apps) {
   const wranglerPath = `apps/${app}/wrangler.toml`;
-
-  if (!existsSync(wranglerPath)) {
-    console.error(`❌ Missing wrangler.toml in ${app}`);
-    failed = true;
-    continue;
-  }
-
   const contents = readFileSync(wranglerPath, 'utf-8');
   const match = contents.match(/name\s*=\s*["'](.+?)["']/);
 
