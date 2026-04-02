@@ -425,8 +425,8 @@ Workers deploy:
 
 ```bash
 pnpm --filter ./apps/gs-api deploy
-pnpm --filter ./apps/gateway deploy
-pnpm --filter ./apps/control-worker deploy
+pnpm --filter ./apps/gs-gateway deploy
+pnpm --filter ./apps/gs-control deploy
 pnpm --filter ./apps/gs-agent deploy
 ```
 
