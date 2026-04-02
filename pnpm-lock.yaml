@@ -40,10 +40,10 @@ importers:
         version: 25.5.0
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.54.0
-        version: 8.57.0(@typescript-eslint/parser@8.57.2(eslint@10.1.0(jiti@1.21.7))(typescript@5.9.3))(eslint@10.1.0(jiti@1.21.7))(typescript@5.9.3)
+        version: 8.57.0(@typescript-eslint/parser@8.57.2(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)
       '@typescript-eslint/parser':
         specifier: ^8.57.2
-        version: 8.57.2(eslint@10.1.0(jiti@1.21.7))(typescript@5.9.3)
+        version: 8.57.2(eslint@8.57.1)(typescript@5.9.3)
       astro:
         specifier: ^6.1.1
         version: 6.1.1(@types/node@25.5.0)(jiti@1.21.7)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
@@ -87,6 +87,80 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
 
+  apps/admin:
+    devDependencies:
+      '@astrojs/tailwind':
+        specifier: ^6.0.2
+        version: 6.0.2(astro@6.1.1(@types/node@25.5.0)(jiti@1.21.7)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.3))
+      tailwindcss:
+        specifier: ^3.4.17
+        version: 3.4.19(tsx@4.21.0)(yaml@2.8.3)
+
+  apps/gs-admin:
+    dependencies:
+      '@astrojs/tailwind':
+        specifier: ^6.0.2
+        version: 6.0.2(astro@6.1.1(@types/node@25.5.0)(jiti@1.21.7)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.3))
+      '@goldshore/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@goldshore/config':
+        specifier: workspace:^
+        version: link:../../packages/config
+      '@goldshore/integrations':
+        specifier: workspace:*
+        version: link:../../packages/integrations
+      '@goldshore/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
+      '@goldshore/theme':
+        specifier: workspace:*
+        version: link:../../packages/theme
+      '@goldshore/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@goldshore/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      astro:
+        specifier: ^6.1.1
+        version: 6.1.1(@types/node@25.5.0)(jiti@1.21.7)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
+      tailwindcss:
+        specifier: ^3.4.17
+        version: 3.4.19(tsx@4.21.0)(yaml@2.8.3)
+    devDependencies:
+      '@astrojs/cloudflare':
+        specifier: 12.6.12
+        version: 12.6.12(@types/node@25.5.0)(astro@6.1.1(@types/node@25.5.0)(jiti@1.21.7)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3))(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.3)
+      '@types/node':
+        specifier: ^25.3.3
+        version: 25.5.0
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
+      typescript:
+        specifier: ^5.4.2
+        version: 5.9.3
+
+  apps/gs-agent:
+    dependencies:
+      '@goldshore/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      hono:
+        specifier: ^4.12.3
+        version: 4.12.7
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260301.1
+        version: 4.20260313.1
+      typescript:
+        specifier: ^5.4.2
+        version: 5.9.3
+      wrangler:
+        specifier: ^4.63.0
+        version: 4.75.0(@cloudflare/workers-types@4.20260313.1)
+
   apps/gs-api:
     dependencies:
       '@goldshore/ai-providers':
@@ -123,6 +197,93 @@ importers:
       tsx:
         specifier: ^4.7.1
         version: 4.21.0
+      typescript:
+        specifier: ^5.4.2
+        version: 5.9.3
+      wrangler:
+        specifier: ^4.63.0
+        version: 4.75.0(@cloudflare/workers-types@4.20260313.1)
+
+  apps/gs-control:
+    dependencies:
+      '@goldshore/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@goldshore/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
+      '@goldshore/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      '@hono/zod-validator':
+        specifier: ^0.7.6
+        version: 0.7.6(hono@4.12.7)(zod@4.3.6)
+      hono:
+        specifier: ^4.12.4
+        version: 4.12.7
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260301.1
+        version: 4.20260313.1
+      tsx:
+        specifier: ^4.7.1
+        version: 4.21.0
+      typescript:
+        specifier: ^5.4.2
+        version: 5.9.3
+      wrangler:
+        specifier: ^4.63.0
+        version: 4.75.0(@cloudflare/workers-types@4.20260313.1)
+
+  apps/gs-gateway:
+    dependencies:
+      '@goldshore/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      hono:
+        specifier: ^4.12.4
+        version: 4.12.7
+      zod:
+        specifier: ^3.23.0
+        version: 3.25.76
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260301.1
+        version: 4.20260313.1
+      '@types/node':
+        specifier: ^25.2.1
+        version: 25.5.0
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
+      typescript:
+        specifier: ^5.4.2
+        version: 5.9.3
+      wrangler:
+        specifier: ^4.63.0
+        version: 4.75.0(@cloudflare/workers-types@4.20260313.1)
+
+  apps/gs-mail:
+    dependencies:
+      '@goldshore/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
+      hono:
+        specifier: ^4.12.8
+        version: 4.12.9
+      postal-mime:
+        specifier: 2.7.3
+        version: 2.7.3
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260301.1
+        version: 4.20260313.1
       typescript:
         specifier: ^5.4.2
         version: 5.9.3
@@ -202,6 +363,18 @@ importers:
       typescript:
         specifier: ^5.4.2
         version: 5.9.3
+
+  apps/web:
+    dependencies:
+      '@astrojs/tailwind':
+        specifier: ^6.0.2
+        version: 6.0.2(astro@6.1.1(@types/node@25.5.0)(jiti@1.21.7)(rollup@4.60.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.3))
+      '@goldshore/gs-web':
+        specifier: workspace:*
+        version: link:../gs-web
+      tailwindcss:
+        specifier: ^3.4.17
+        version: 3.4.19(tsx@4.21.0)(yaml@2.8.3)
 
   packages/ai-providers: {}
 
@@ -744,6 +917,12 @@ packages:
     peerDependencies:
       hono: '>=3.9.0'
       zod: ^3.19.1
+
+  '@hono/zod-validator@0.7.6':
+    resolution: {integrity: sha512-Io1B6d011Gj1KknV4rXYz4le5+5EubcWEU/speUjuw9XMMIaP3n78yXLhjd2A3PXaXaUwEAluOiAyLqhBEJgsw==}
+    peerDependencies:
+      hono: '>=3.9.0'
+      zod: ^3.25.0 || ^4.0.0
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -2648,6 +2827,10 @@ packages:
   hls.js@1.6.15:
     resolution: {integrity: sha512-E3a5VwgXimGHwpRGV+WxRTKeSp2DW5DI5MWv34ulL3t5UNmyJWCQ1KmLEHbYzcfThfXG8amBL+fCYPneGHC4VA==}
 
+  hono@4.12.7:
+    resolution: {integrity: sha512-jq9l1DM0zVIvsm3lv9Nw9nlJnMNPOcAtsbsgiUhWcFzPE99Gvo6yRTlszSLLYacMeQ6quHD6hMfId8crVHvexw==}
+    engines: {node: '>=16.9.0'}
+
   hono@4.12.9:
     resolution: {integrity: sha512-wy3T8Zm2bsEvxKZM5w21VdHDDcwVS1yUFFY6i8UobSsKfFceT7TOwhbhfKsDyx7tYQlmRM5FLpIuYvNFyjctiA==}
     engines: {node: '>=16.9.0'}
@@ -3303,6 +3486,9 @@ packages:
     resolution: {integrity: sha512-vA30H8Nvkq/cPBnNw4Q8TWz1EJyqgpuinBcHET0YVJVFldr8JDNiU9LaWAE1KqSkRYazuaBhTpB5ZzShOezQ6A==}
     engines: {node: '>=18'}
     hasBin: true
+
+  postal-mime@2.7.3:
+    resolution: {integrity: sha512-MjhXadAJaWgYzevi46+3kLak8y6gbg0ku14O1gO/LNOuay8dO+1PtcSGvAdgDR0DoIsSaiIA8y/Ddw6MnrO0Tw==}
 
   postcss-import@15.1.0:
     resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
@@ -4961,6 +5147,11 @@ snapshots:
       hono: 4.12.9
       zod: 3.25.76
 
+  '@hono/zod-validator@0.7.6(hono@4.12.7)(zod@4.3.6)':
+    dependencies:
+      hono: 4.12.7
+      zod: 4.3.6
+
   '@humanfs/core@0.19.1': {}
 
   '@humanfs/node@0.16.7':
@@ -5764,10 +5955,10 @@ snapshots:
     dependencies:
       '@types/node': 25.5.0
 
-  '@typescript-eslint/eslint-plugin@8.57.0(@typescript-eslint/parser@8.57.2(eslint@10.1.0(jiti@1.21.7))(typescript@5.9.3))(eslint@10.1.0(jiti@1.21.7))(typescript@5.9.3)':
+  '@typescript-eslint/eslint-plugin@8.57.0(@typescript-eslint/parser@8.57.2(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.2
-      '@typescript-eslint/parser': 8.57.2(eslint@10.1.0(jiti@1.21.7))(typescript@5.9.3)
+      '@typescript-eslint/parser': 8.57.2(eslint@8.57.1)(typescript@5.9.3)
       '@typescript-eslint/scope-manager': 8.57.0
       '@typescript-eslint/type-utils': 8.57.0(eslint@10.1.0(jiti@1.21.7))(typescript@5.9.3)
       '@typescript-eslint/utils': 8.57.0(eslint@10.1.0(jiti@1.21.7))(typescript@5.9.3)
@@ -5780,7 +5971,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@8.57.2(eslint@10.1.0(jiti@1.21.7))(typescript@5.9.3)':
+  '@typescript-eslint/parser@8.57.2(eslint@8.57.1)(typescript@5.9.3)':
     dependencies:
       '@typescript-eslint/scope-manager': 8.57.2
       '@typescript-eslint/types': 8.57.2
@@ -5828,14 +6019,14 @@ snapshots:
     dependencies:
       typescript: 5.9.3
 
-  '@typescript-eslint/type-utils@8.57.0(eslint@10.1.0(jiti@1.21.7))(typescript@5.9.3)':
+  '@typescript-eslint/type-utils@8.57.0(eslint@8.57.1)(typescript@5.9.3)':
     dependencies:
       '@typescript-eslint/types': 8.57.0
       '@typescript-eslint/typescript-estree': 8.57.0(typescript@5.9.3)
       '@typescript-eslint/utils': 8.57.0(eslint@10.1.0(jiti@1.21.7))(typescript@5.9.3)
       debug: 4.4.3
       eslint: 10.1.0(jiti@1.21.7)
-      ts-api-utils: 2.5.0(typescript@5.9.3)
+      ts-api-utils: 2.4.0(typescript@5.9.3)
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -5854,7 +6045,7 @@ snapshots:
       minimatch: 10.2.4
       semver: 7.7.4
       tinyglobby: 0.2.15
-      ts-api-utils: 2.5.0(typescript@5.9.3)
+      ts-api-utils: 2.4.0(typescript@5.9.3)
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -5874,7 +6065,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@8.57.0(eslint@10.1.0(jiti@1.21.7))(typescript@5.9.3)':
+  '@typescript-eslint/utils@8.57.0(eslint@8.57.1)(typescript@5.9.3)':
     dependencies:
       '@eslint-community/eslint-utils': 4.9.1(eslint@10.1.0(jiti@1.21.7))
       '@typescript-eslint/scope-manager': 8.57.0
@@ -7164,6 +7355,8 @@ snapshots:
 
   hls.js@1.6.15: {}
 
+  hono@4.12.7: {}
+
   hono@4.12.9: {}
 
   html-escaper@3.0.3: {}
@@ -7839,6 +8032,10 @@ snapshots:
     dependencies:
       brace-expansion: 5.0.5
 
+  minimatch@3.1.5:
+    dependencies:
+      brace-expansion: 1.1.12
+
   minimatch@5.1.9:
     dependencies:
       brace-expansion: 2.0.2
@@ -8033,6 +8230,8 @@ snapshots:
       playwright-core: 1.58.2
     optionalDependencies:
       fsevents: 2.3.2
+
+  postal-mime@2.7.3: {}
 
   postcss-import@15.1.0(postcss@8.5.8):
     dependencies:
