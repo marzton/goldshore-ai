@@ -1,5 +1,5 @@
 name: Repo Maintenance & Agent Sync
-run-name: Maintenance by @${{ github.actor }} on ${{ inputs.target_branch }}
+run-name: Maintenance by @${{ github.actor }} on ${{ inputs.log_ref }}
 
 on:
   schedule:
