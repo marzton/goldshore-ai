@@ -36,8 +36,11 @@ async function cf(path, init = {}) {
 
 async function resolveZoneId(domain) {
   console.log(`Resolving zone ID for ${domain}...`);
-  const zones = await cf(`/zones?name=${domain}`);
-  if (!zones.length) throw new Error(`No Cloudflare zone found for ${domain}`);
+  const path = `/zones?name=${encodeURIComponent(domain)}&account.id=${encodeURIComponent(ACCOUNT)}`;
+  const zones = await cf(path);
+  if (!Array.isArray(zones) || zones.length === 0) {
+    throw new Error(`No Cloudflare zone found for ${domain} under account ${ACCOUNT}`);
+  }
   console.log(`  ✓ Zone ID: ${zones[0].id}`);
   return zones[0].id;
 }
