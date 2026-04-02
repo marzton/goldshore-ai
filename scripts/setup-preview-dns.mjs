@@ -105,6 +105,18 @@ async function main() {
         console.warn("   ⚠ Could not add custom domain (project may not exist yet).");
         console.warn("   → Re-run after the first preview deploy completes.");
       }
+  try {
+    await cf(`/accounts/${ACCOUNT}/pages/projects/preview-web/domains`, {
+      method: "POST",
+      body: JSON.stringify({ name: "preview.goldshore.ai" }),
+    });
+    console.log("   ✓ Custom domain added: preview.goldshore.ai → preview-web");
+  } catch (err) {
+    if (err.message.includes("already exists") || err.message.includes("taken")) {
+      console.log("   ✓ Custom domain already configured");
+    } else {
+      console.warn("   ⚠ Could not add custom domain (project may not exist yet):", err.message);
+      console.warn("   → Re-run after the first preview deploy completes.");
     }
   }
 
