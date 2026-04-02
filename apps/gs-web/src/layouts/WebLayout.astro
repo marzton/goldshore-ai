@@ -19,7 +19,7 @@ const navLinks = [
 
 const { title = 'GoldShore', description = 'GoldShore AI', currentPath = Astro.url.pathname } = Astro.props;
 const logoSrc = '/logo.svg';
-const shouldRenderCspMeta = !Astro.locals.securityPolicySource;
+const shouldRenderCspMeta = !(Astro.locals as { securityPolicySource?: string }).securityPolicySource;
 ---
 <html lang="en">
   <head>
