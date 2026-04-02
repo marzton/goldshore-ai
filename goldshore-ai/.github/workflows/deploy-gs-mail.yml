@@ -47,8 +47,6 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-    name: Deploy
-    steps:
       - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
 
       - uses: pnpm/action-setup@v4
