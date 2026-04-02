@@ -444,7 +444,7 @@ Workers deploy:
 ```bash
 pnpm --filter @goldshore/gs-api-worker deploy
 pnpm --filter @goldshore/gateway deploy
-pnpm --filter @goldshore/control-worker deploy
+pnpm --filter @goldshore/control deploy
 ```
 
 ---
