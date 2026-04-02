@@ -3,7 +3,7 @@ import type { ServerEnv } from './server-env';
 export const requireAdminAccess = async (request: Request, env: ServerEnv) => {
   const expected = env.ADMIN_BEARER_TOKEN?.trim();
   if (!expected) {
-    return { ok: true as const, status: 200, error: '' };
+    return { ok: false as const, status: 500, error: 'ADMIN_BEARER_TOKEN not configured' };
   }
 
   const authHeader = request.headers.get('authorization') ?? '';
