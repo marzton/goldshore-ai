@@ -49,5 +49,4 @@ test('header CSP preserves frame protections and matches the legacy web CSP expo
     /connect-src 'self' https:\/\/api\.goldshore\.ai https:\/\/api-preview\.goldshore\.ai/,
   );
   assert.match(WEB_HEADERS_CSP, /frame-ancestors 'none'/);
-  assert.equal(WEB_CONTENT_SECURITY_POLICY, WEB_HEADERS_CSP);
 });

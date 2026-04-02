@@ -1,128 +1,135 @@
 # GoldShore Web (`apps/gs-web`)
 
-Public marketing site, documentation hub, and customer-facing Astro app for GoldShore. This app deploys to Cloudflare Pages and shares UI/theme packages with the rest of the monorepo.
+Public marketing site, documentation hub, and customer-facing Astro app for GoldShore.
 
-## App overview
+## Overview
 
 `gs-web` is the public web surface for:
 
-- marketing pages and contact flows,
-- developer documentation and API reference,
-- lightweight customer-facing routes,
-- preview environments protected with Cloudflare Access.
+- marketing and contact flows,
+- developer docs and API reference pages,
+- lightweight authenticated customer routes,
+- Cloudflare Pages Functions used by forms, search, and admin support tooling.
 
-Cloudflare metadata:
+## Cloudflare configuration
 
 - Pages project name: `gs-web` (production), `preview-web` (preview)
-- Pages bindings config: `infra/Cloudflare/gs-web.wrangler.toml`
+- Pages bindings config: `infra/cloudflare/goldshore-web.wrangler.toml`
 - Preview runtime bindings commonly set by CI:
   - `PUBLIC_API=https://api-preview.goldshore.ai`
   - `PUBLIC_GATEWAY=https://gw-preview.goldshore.ai`
 - Build diagnostics exposed on `/status`:
   - `PUBLIC_BUILD_TIMESTAMP`
   - `PUBLIC_COMMIT_HASH`
+  - `PUBLIC_RELEASE_LABEL` (optional)
+- Pages project: `gs-web`
+- Local/app Wrangler config: `apps/gs-web/wrangler.jsonc`
+- Canonical Cloudflare manifest: `infra/Cloudflare/gs-web.wrangler.toml`
+- Preview and production deployments are driven by the live workflows under `.github/workflows/`.
+- Preview environments commonly point browser-visible runtime variables at preview services such as `https://api-preview.goldshore.ai` and `https://gw-preview.goldshore.ai`.
 
-## Routes
+## Routes and endpoints
 
 Routing and access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
 
-Public routes:
+### Public pages
 
 - `/`
 - `/about`
-- `/pricing`
+- `/contact`
+- `/intake`
+- `/legal`
 - `/legal/privacy`
 - `/legal/terms`
-- `/contact`
+- `/pricing`
+- `/services`
+- `/status`
+- `/team`
+- `/thank-you`
+- `/apps/risk-radar`
+- `/templates`
+- `/developer`
+- `/developer/sdk`
 - `/developer/docs`
+- `/developer/docs/*`
 - `/developer/api/*`
+- `/*` via `src/pages/[...path].astro` for CMS-backed page slugs served from the API
 
-Authenticated or protected surfaces:
+### Protected or operator-facing pages in this app
 
 - `/app/dashboard`
-- `/app/profile`
 - `/app/logs`
+- `/app/profile`
 - `/app/settings`
-- preview hostnames documented in [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md)
+- `/admin/lead-submissions`
+- `/page-builder-preview`
 
-## CSP inventory
+### API routes served from `gs-web`
 
-Browser-side `connect-src` dependencies currently required by `gs-web`:
+- `GET /api/contact` — health/introspection response for the contact endpoint
+- `POST /api/contact` — stores and optionally emails contact submissions
+- `GET /api/docs-search` — local docs search index query endpoint
+- `GET /api/forms` — lists form configurations for authorized operators
+- `POST /api/forms` — creates a form configuration
+- `GET /api/forms/:slug` — reads one form configuration
+- `PUT /api/forms/:slug` — updates one form configuration
+- `PATCH /api/forms/:slug` — alias of the update route
+- `GET /api/admin/lead-submissions` — returns lead submissions, optionally as CSV
+- `POST /api/admin/lead-submissions` — updates lead-submission status
 
-- `'self'` for same-origin endpoints such as `/api/contact` and `/api/docs-search`
-- `https://api.goldshore.ai` for production browser calls made by `src/components/TryItConsole.astro`
-- `https://api-preview.goldshore.ai` for preview browser calls when `PUBLIC_API` points at the preview API
+## Development
 
-Current browser/runtime call inventory under `src/`:
-
-- `src/components/ContactForm.astro` → same-origin `POST /api/contact`
-- `src/components/DocsSearch.astro` → same-origin `GET /api/docs-search`
-- `src/components/ServiceStatus.astro` → browser `fetch(serviceUrl)`; keep this prop same-origin unless CSP is explicitly expanded
-- `src/components/TryItConsole.astro` → browser `fetch(${PUBLIC_API} + path)`; this is the reason external API origins remain in `connect-src`
-- `src/pages/[...path].astro` → server-side Astro fetches to `${PUBLIC_API}/pages/slug/...`; this is **not** a browser CSP dependency
-- `src/pages/developer/docs/index.astro` and content docs may display `PUBLIC_API` / `PUBLIC_GATEWAY` values in examples, but they do **not** create browser runtime network calls by themselves
-
-The shared CSP constants live in `src/utils/csp.ts`. Keep `connect-src` limited to the hosts above unless a new browser-side integration is added and reviewed.
-
-## Deployment
-
-Local development:
+Install dependencies once from the repo root, then run app-specific commands:
 
 ```bash
 pnpm install
-pnpm --filter ./apps/gs-web dev
-pnpm --filter ./apps/gs-web build
-pnpm --filter ./apps/gs-web preview
+pnpm --filter @goldshore/gs-web dev
+pnpm --filter @goldshore/gs-web build
+pnpm --filter @goldshore/gs-web preview
 ```
 
-Production build from repo root:
+Useful additional checks:
 
 ```bash
-pnpm --filter @goldshore/gs-web build
+pnpm --filter @goldshore/gs-web check
+pnpm --filter @goldshore/gs-web test:unit
+pnpm --filter @goldshore/gs-web test:e2e
 ```
 
-Cloudflare Pages settings for the monorepo:
+## Deployment
 
-- **Root directory:** `apps/gs-web`
-- **Build command:** `pnpm build`
-- **Output directory:** `dist`
+- Production workflow: `.github/workflows/deploy-gs-web.yml`
+- Preview workflow: `.github/workflows/preview-gs-web.yml`
+- Cloudflare Pages root directory: `apps/gs-web`
+- Build command: `pnpm build`
+- Output directory: `dist`
 
-Deployment workflows:
-
-- Production deploy: `.github/workflows/deploy-web.yml`
-- Preview deploy: `.github/workflows/preview-web.yml`
+- For domain, preview, and Access details, see [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
+- Production deploy: `.github/workflows/deploy-gs-web.yml`
+- Preview deploy: `.github/workflows/preview-gs-web.yml`
 - Domains, previews, and Access policy details: [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md)
 
-## Preview auth
+## Preview authentication
 
 Preview environments are not public.
 
-- Preview builds reuse the centralized GitHub App callback handler instead of registering per-branch callbacks.
-- Cloudflare Access protects preview hostnames using the shared Access application and policy set.
-- Non-interactive checks against Access-protected preview hosts should use Cloudflare Access service-token headers (`CF_ACCESS_CLIENT_ID` / `CF_ACCESS_CLIENT_SECRET`) rather than assuming anonymous access.
-- Canonical domain and Access policy details live in [`docs/domains-and-auth.md`](../../docs/domains-and-auth.md).
-
-## Runtime storage bindings
-
-`gs-web` keeps its existing runtime storage model. Do **not** reuse these bindings as shared configuration storage.
-
-- `KV`: edge persistence and cache-style writes for Pages Functions, including contact submission replicas and other edge-friendly writes.
-- `DB`: D1-backed system of record for forms, form configuration, and lead/submission data.
-- `GS_CONFIG`: **not bound in `gs-web` today**. If the web app later needs shared configuration reads, add a separate intentional **read-only** config binding instead of repurposing `KV`.
+- Preview builds reuse the centralized GitHub App callback flow instead of per-branch callbacks.
+- Cloudflare Access protects preview hostnames.
+- Non-interactive checks against preview environments should use Cloudflare Access service-token headers.
 
 ## Contact form and mail delivery
 
-`/api/contact` stores submissions in both `KV` and `DB` when available, and can send email through MailChannels from Cloudflare Pages Functions.
+`/api/contact` stores submissions in KV/D1 and can send email through MailChannels from Cloudflare Pages Functions.
 
-Set these environment variables in the `gs-web` Pages project:
+Set these environment variables in the `gs-web` Pages project as needed:
 
-- `MAILCHANNELS_SENDER_EMAIL` (required for email send)
-- `MAILCHANNELS_SENDER_NAME` (optional, defaults to `GoldShore`)
-- `CONTACT_NOTIFICATION_EMAILS` (comma-separated recipient list for new submissions)
-- `MAILCHANNELS_API_URL` (optional override, defaults to `https://api.mailchannels.net/tx/v1/send`)
+- `MAILCHANNELS_SENDER_EMAIL`
+- `MAILCHANNELS_SENDER_NAME`
+- `CONTACT_NOTIFICATION_EMAILS`
+- `MAILCHANNELS_API_URL`
 
-Keep the existing `KV` and `DB` bindings so submissions continue to persist even if email delivery is temporarily unavailable. If shared config reads are ever needed here, introduce a new read-only config binding rather than changing the purpose of `KV`.
+Keep the existing `KV` and `DB` bindings so submissions still persist if mail delivery is degraded.
 
 ## Source of truth
 
-For API behavior, treat the OpenAPI description and generated API reference as canonical. `README.md` and the prose docs in `src/content/docs/` should summarize and explain that behavior; if they diverge from the OpenAPI surface, update the docs to match the API contract.
+For API behavior exposed through the public docs, treat the OpenAPI description and the actual route files as canonical. Update this README when app routes, workspace commands, or deployment workflows change.
