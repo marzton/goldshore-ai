@@ -40,8 +40,17 @@ async function cf(path, init = {}) {
 
 async function resolveZoneId(domain) {
   console.log(`Resolving zone ID for ${domain}...`);
-  const zones = await cf(`/zones?name=${domain}`);
-  if (!zones.length) throw new Error(`No Cloudflare zone found for ${domain}`);
+  const zones = await cf(`/zones?name=${encodeURIComponent(domain)}&account.id=${encodeURIComponent(ACCOUNT)}`);
+  if (!zones.length) {
+    throw new Error(`No Cloudflare zone found for ${domain} in account ${ACCOUNT}`);
+  }
+  if (zones.length > 1) {
+    const ids = zones.map(z => z.id).join(", ");
+    throw new Error(
+      `Multiple Cloudflare zones found for ${domain} in account ${ACCOUNT}: ${ids}. ` +
+      "Refine the lookup or specify CLOUDFLARE_ZONE_ID / CF_ZONE_ID explicitly."
+    );
+  }
   console.log(`  ✓ Zone ID: ${zones[0].id}`);
   return zones[0].id;
 }
