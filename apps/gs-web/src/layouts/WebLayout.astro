@@ -62,7 +62,7 @@ const shouldRenderCspMeta = !(Astro.locals as { securityPolicySource?: string })
           <span class="material-symbols-rounded" aria-hidden="true">menu</span>
           <span class="sr-only">Toggle menu</span>
         </button>
-        <nav class="gs-nav" id="primary-navigation" aria-label="Primary" aria-hidden="true">
+        <nav class="gs-nav" id="primary-navigation" aria-label="Primary">
           {navLinks.map((link) => (
             <a
               href={link.href}
@@ -108,10 +108,12 @@ const shouldRenderCspMeta = !(Astro.locals as { securityPolicySource?: string })
           );
         };
 
+        const isMobileLayout = () => window.getComputedStyle(toggle).display !== 'none';
+
         const setMenuState = (open) => {
           header.setAttribute('data-menu-open', String(open));
           toggle.setAttribute('aria-expanded', String(open));
-          menu.setAttribute('aria-hidden', String(!open));
+          menu.setAttribute('aria-hidden', isMobileLayout() ? String(!open) : 'false');
         };
 
         const closeMenu = ({ restoreFocus = true } = {}) => {
@@ -190,7 +192,7 @@ const shouldRenderCspMeta = !(Astro.locals as { securityPolicySource?: string })
       const initializeShootingStars = (container) => {
         if (!(container instanceof HTMLElement)) return;
 
-        const existingStars = container.querySelectorAll('.shooting-star');
+        const existingStars = container.querySelectorAll('.star');
         const isInitialized = container.dataset.starsInitialized === 'true';
 
         if (isInitialized && existingStars.length > 0) {
@@ -201,7 +203,7 @@ const shouldRenderCspMeta = !(Astro.locals as { securityPolicySource?: string })
 
         for (let i = 0; i < STAR_COUNT; i += 1) {
           const star = document.createElement('span');
-          star.className = 'shooting-star';
+          star.className = 'star';
           container.appendChild(star);
         }
 

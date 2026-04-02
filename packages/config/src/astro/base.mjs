@@ -1,13 +1,14 @@
+import { fileURLToPath } from "node:url";
 import cloudflare from "@astrojs/cloudflare";
 import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
 
 const workspaceAlias = {
-  "@packages": new URL("../../../packages", import.meta.url).pathname,
-  "@apps": new URL("../../../apps", import.meta.url).pathname,
-  "@goldshore/theme": new URL("../../../packages/theme", import.meta.url).pathname,
-  "@goldshore/ui": new URL("../../../packages/ui", import.meta.url).pathname,
-  "@goldshore/auth": new URL("../../../packages/auth", import.meta.url).pathname
+  "@packages": fileURLToPath(new URL("../../../packages", import.meta.url)),
+  "@apps": fileURLToPath(new URL("../../../apps", import.meta.url)),
+  "@goldshore/theme": fileURLToPath(new URL("../../../packages/theme", import.meta.url)),
+  "@goldshore/ui": fileURLToPath(new URL("../../../packages/ui", import.meta.url)),
+  "@goldshore/auth": fileURLToPath(new URL("../../../packages/auth", import.meta.url))
 };
 
 export default defineConfig({
