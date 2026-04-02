@@ -1,4 +1,4 @@
-export const API_SCHEMA_VERSION = '2026-02-1';
+export const API_SCHEMA_VERSION = '2026-02-01';
 export const API_VERSION_HEADER = 'x-gs-api-version';
 
 export const withContractHeaders = <T>(
