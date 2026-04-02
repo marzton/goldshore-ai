@@ -15,7 +15,7 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm@9
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@60f5c5c3b3bc8803ec5e019ac7a5ad0f5bd8aeaf
         with:
           node-version: 22
           cache: pnpm
