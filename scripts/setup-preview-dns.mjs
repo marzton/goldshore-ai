@@ -55,8 +55,6 @@ async function main() {
   const existing = await cf(`/zones/${ZONE}/dns_records?name=preview.goldshore.ai&type=CNAME`);
   if (existing.length > 0) {
     console.log("   ✓ CNAME already exists:", existing[0].content);
-  } else if (DRY_RUN) {
-    console.log("   [DRY RUN] Would create CNAME: preview.goldshore.ai → preview-web.pages.dev");
   } else {
     await cf(`/zones/${ZONE}/dns_records`, {
       method: "POST",
