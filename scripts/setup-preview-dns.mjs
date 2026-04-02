@@ -12,6 +12,7 @@ const API = "https://api.cloudflare.com/client/v4";
 const TOKEN = process.env.CLOUDFLARE_API_TOKEN || process.env.CF_API_TOKEN;
 const ACCOUNT = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CF_ACCOUNT_ID;
 let ZONE = process.env.CLOUDFLARE_ZONE_ID || process.env.CF_ZONE_ID;
+const DRY_RUN = process.env.DRY_RUN === "true" || process.env.DRY_RUN === "1";
 
 if (!TOKEN || !ACCOUNT) {
   console.error(
@@ -56,6 +57,10 @@ async function resolveZoneId(domain) {
 }
 
 async function main() {
+  if (DRY_RUN) {
+    console.log("[DRY RUN] No API writes will be performed.\n");
+  }
+
   if (!ZONE) {
     ZONE = await resolveZoneId("goldshore.ai");
   }
@@ -65,6 +70,8 @@ async function main() {
   const existing = await cf(`/zones/${ZONE}/dns_records?name=preview.goldshore.ai&type=CNAME`);
   if (existing.length > 0) {
     console.log("   ✓ CNAME already exists:", existing[0].content);
+  } else if (DRY_RUN) {
+    console.log("   [DRY RUN] Would create CNAME: preview.goldshore.ai → preview-web.pages.dev");
   } else {
     await cf(`/zones/${ZONE}/dns_records`, {
       method: "POST",
@@ -82,18 +89,22 @@ async function main() {
 
   // ── 2. Add custom domain to preview-web Pages project ───────────────────
   console.log("2. Adding custom domain to preview-web Pages project...");
-  try {
-    await cf(`/accounts/${ACCOUNT}/pages/projects/preview-web/domains`, {
-      method: "POST",
-      body: JSON.stringify({ name: "preview.goldshore.ai" }),
-    });
-    console.log("   ✓ Custom domain added: preview.goldshore.ai → preview-web");
-  } catch (err) {
-    if (err.message.includes("already exists") || err.message.includes("taken")) {
-      console.log("   ✓ Custom domain already configured");
-    } else {
-      console.warn("   ⚠ Could not add custom domain (project may not exist yet):", err.message);
-      console.warn("   → Re-run after the first preview deploy completes.");
+  if (DRY_RUN) {
+    console.log("   [DRY RUN] Would add custom domain: preview.goldshore.ai → preview-web");
+  } else {
+    try {
+      await cf(`/accounts/${ACCOUNT}/pages/projects/preview-web/domains`, {
+        method: "POST",
+        body: JSON.stringify({ name: "preview.goldshore.ai" }),
+      });
+      console.log("   ✓ Custom domain added: preview.goldshore.ai → preview-web");
+    } catch (err) {
+      if (err.message.includes("already exists") || err.message.includes("taken")) {
+        console.log("   ✓ Custom domain already configured");
+      } else {
+        console.warn("   ⚠ Could not add custom domain (project may not exist yet):", err.message);
+        console.warn("   → Re-run after the first preview deploy completes.");
+      }
     }
   }
 
