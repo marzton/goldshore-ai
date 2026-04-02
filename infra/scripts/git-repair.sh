@@ -12,6 +12,23 @@ OWNER="goldshore"
 REPO="Astro-goldshore"
 BASE_BRANCH="main"
 
+ensure_local_branch() {
+    local branch="$1"
+
+    # If branch already exists locally, nothing to do.
+    if git show-ref --verify --quiet "refs/heads/${branch}"; then
+        return 0
+    fi
+
+    # Attempt to materialize a local tracking branch from origin.
+    if git ls-remote --exit-code --heads origin "${branch}" > /dev/null 2>&1; then
+        git fetch origin "${branch}:${branch}"
+        return 0
+    fi
+
+    return 1
+}
+
 echo "--- JULES AI: GITHUB CONFLICT REPAIR INITIATED ---"
 echo "Targeting repository: ${OWNER}/${REPO}"
 
@@ -48,6 +65,14 @@ for BRANCH in "${CONFLICT_BRANCHES[@]}"; do
 
     if ! git checkout "${BRANCH}"; then
         echo "  - ERROR: Cannot checkout branch ${BRANCH}"
+    if ! ensure_local_branch "${BRANCH}"; then
+        echo "  - ERROR: Branch ${BRANCH} does not exist on origin. Skipping."
+        git checkout "${BASE_BRANCH}"
+        continue
+    fi
+
+    if ! git checkout "${BRANCH}"; then
+        echo "  - ERROR: Cannot checkout local branch ${BRANCH}"
         git checkout "${BASE_BRANCH}"
         continue
     fi

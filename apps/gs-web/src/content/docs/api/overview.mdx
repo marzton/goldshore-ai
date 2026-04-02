@@ -1,0 +1,30 @@
+---
+title: "API Overview"
+description: "Overview of the GoldShore API"
+order: 100
+---
+
+# API Overview
+
+The GoldShore API is organized around resource-oriented HTTP endpoints, JSON responses, and standard HTTP status codes.
+
+## Base URL
+
+Use the API base configured for the current environment:
+
+```bash
+PUBLIC_API=https://api.goldshore.ai
+curl $PUBLIC_API/system/info
+```
+
+Preview environments typically point `PUBLIC_API` at `https://api-preview.goldshore.ai`.
+
+## Authentication
+
+Send API credentials with the `Authorization` header using a bearer token.
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+If you are calling the API through internal or preview surfaces protected by Cloudflare Access, you may also need a valid Access session for the host in addition to the API credential.

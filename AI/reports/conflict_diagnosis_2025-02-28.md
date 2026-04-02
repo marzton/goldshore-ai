@@ -42,7 +42,7 @@ The following branches were identified as containing the legacy `astro-goldshore
     ```bash
     git checkout -b feat/my-feature-v2
     ```
-3.  **Port Changes**: Manually copy *only* the unique source files (e.g., new components, logic) from your old branch to the new structure in `apps/web/`, `apps/admin/`, etc.
+3.  **Port Changes**: Manually copy *only* the unique source files (e.g., new components, logic) from your old branch to the new structure in `apps/gs-web/`, `apps/gs-admin/`, etc.
     *   *Tip:* Use `git show origin/old-branch:path/to/file > path/to/new-file` to retrieve content.
 
 ### For `astro-goldshore` Duplicate

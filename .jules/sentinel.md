@@ -25,12 +25,12 @@
 **Prevention:** Use Astro's native expression syntax `{variable}` instead of `set:html` or `Fragment` whenever possible. It automatically handles escaping.
 
 ## 2026-01-09 - Missing Security Headers in Admin App
-**Vulnerability:** The `apps/admin` application (dashboard) lacked standard HTTP security headers (`X-Frame-Options`, `HSTS`, `X-Content-Type-Options`), making it potentially vulnerable to clickjacking and MIME sniffing.
+**Vulnerability:** The `apps/gs-admin` application (dashboard) lacked standard HTTP security headers (`X-Frame-Options`, `HSTS`, `X-Content-Type-Options`), making it potentially vulnerable to clickjacking and MIME sniffing.
 **Learning:** When creating new Astro apps in a monorepo, middleware (and thus security headers) is not automatically inherited from other apps.
 **Prevention:** Enforce a standard `middleware.ts` template for all new Astro applications or move security headers to the infrastructure layer (Cloudflare `_headers` or Gateway rules) if consistent application-level enforcement is prone to oversight.
 
 ## 2026-02-13 - Unprotected Sensitive Operations Worker
-**Vulnerability:** `apps/control-worker` exposed sensitive operational endpoints (`/dns/apply`, `/workers/reconcile`) without any authentication middleware, relying solely on (potentially missing or misconfigured) network-level protection.
+**Vulnerability:** `apps/gs-control` exposed sensitive operational endpoints (`/dns/apply`, `/workers/reconcile`) without any authentication middleware, relying solely on (potentially missing or misconfigured) network-level protection.
 **Learning:** Internal automation or "worker" apps are often overlooked during security reviews because they aren't "user-facing", but they hold the "keys to the kingdom" (DNS, deployment credentials).
 **Prevention:** Treat every worker as a public API. Mandate default-deny authentication middleware for all new workers at the template level.
 
@@ -39,7 +39,7 @@
 **Learning:** Even with established patterns (like in `api-worker`), new services are susceptible to "copy-paste incomplete" errors or being started from scratch without security defaults.
 **Prevention:** Enforce a strict "Security First" template for all new services that includes authentication and security headers by default.
 ## 2026-02-15 - Exposed Client Secret via PUBLIC_ Env Var
-**Vulnerability:** The `apps/admin` application exposed `AUTH_CLIENT_SECRET` via `import.meta.env.PUBLIC_AUTH_CLIENT_SECRET`. Prefacing an environment variable with `PUBLIC_` in Astro/Vite statically replaces it in the client bundle, leaking critical credentials to anyone who inspects the code.
+**Vulnerability:** The `apps/gs-admin` application exposed `AUTH_CLIENT_SECRET` via `import.meta.env.PUBLIC_AUTH_CLIENT_SECRET`. Prefacing an environment variable with `PUBLIC_` in Astro/Vite statically replaces it in the client bundle, leaking critical credentials to anyone who inspects the code.
 **Learning:** Developers may use `PUBLIC_` out of habit to make variables "work" without realizing it bypasses server-only security boundaries, even in SSR apps.
 **Prevention:** Strictly enforce `AUTH_*` or `SECRET_*` naming conventions without `PUBLIC_` prefix for credentials. Added fallback logic with critical warnings to migrate safely.
 ## 2026-04-20 - Unprotected Agent Service
@@ -56,7 +56,7 @@
 **Learning:** Standalone Node.js scripts/bots in the monorepo often bypass the standard security middleware available to Hono/Cloudflare apps, requiring manual implementation of crypto verification.
 **Prevention:** Enforce a standard webhook verification utility or template for all Node.js-based bot integrations to ensure signature validation is never skipped.
 ## 2026-05-28 - Missing CSP in Web App
-**Vulnerability:** The `apps/web` application lacked a Content Security Policy (CSP), allowing potentially unrestricted script execution and resource loading.
+**Vulnerability:** The `apps/gs-web` application lacked a Content Security Policy (CSP), allowing potentially unrestricted script execution and resource loading.
 **Learning:** Static sites (Astro SSG) deployed to Cloudflare Pages require explicit `_headers` configuration or `<meta>` tags for security headers, as they don't run a server that can easily inject middleware headers for all responses (unlike SSR apps).
 **Prevention:** For Cloudflare Pages deployments, always include a `public/_headers` file with strict CSP and security headers as part of the initial setup.
 ## 2026-05-25 - Unverified GitHub Webhooks
@@ -70,6 +70,11 @@
 **Prevention:** Always implement HMAC signature verification for any public endpoint receiving webhooks, checking against a shared secret before parsing the payload.
 
 ## 2026-06-15 - Double Escaping Risk in Email Auto-Responder
-**Vulnerability:** The contact form API (`apps/web/src/pages/api/contact.ts`) was vulnerable to HTML injection in auto-responder emails. An initial fix attempted to sanitize input at the API layer *and* the email template layer.
+**Vulnerability:** The contact form API (`apps/gs-web/src/pages/api/contact.ts`) was vulnerable to HTML injection in auto-responder emails. An initial fix attempted to sanitize input at the API layer *and* the email template layer.
 **Learning:** Sanitizing inputs at the ingress (API) level for text fields that are later escaped again at the egress (Email) level leads to "double escaping" (e.g., `O'Neal` becomes `O&#039;Neal` in the database and `O&amp;#039;Neal` in the email).
 **Prevention:** Rely on **Contextual Output Encoding**. Store data raw in the database to preserve integrity, and escape it only when rendering it into a specific format (HTML, JSON, etc.). This avoids data corruption and ensures correct rendering across different contexts.
+
+## 2026-02-13 - SVG XSS Mitigation
+**Vulnerability:** The `apps/gs-api` media upload endpoint used a fragile regex-based sanitizer for SVG files, which could be bypassed to execute XSS (e.g., via unquoted attributes or HTML entities).
+**Learning:** Regex is insufficient for sanitizing complex structured data like HTML/XML. Attackers can often find edge cases in parsing logic to bypass filters.
+**Prevention:** Implemented strict `Content-Security-Policy` headers (`script-src 'none'`, `sandbox`) on the media delivery endpoint. This ensures that even if a malicious SVG is uploaded, the browser will refuse to execute any embedded scripts.

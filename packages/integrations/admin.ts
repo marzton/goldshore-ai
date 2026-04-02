@@ -1,7 +1,7 @@
 import type { AuthTokenConfig } from './auth';
 import { createAuthTokenManager } from './auth';
-import { createAuditLogger } from './audit';
-import { createHttpClient } from './http';
+import { type AuditLogger, createAuditLogger } from './audit';
+import { type HttpClient, createHttpClient } from './http';
 
 export type AdminServiceResult<T = unknown> = {
   ok: boolean;
@@ -14,21 +14,29 @@ export type AdminServiceConfig = {
   auditEndpoint?: string;
   actor?: string;
   logger?: Pick<Console, 'info' | 'warn' | 'error'>;
+  httpClient?: HttpClient;
+  auditLogger?: AuditLogger;
 };
 
 export const createAdminService = (config: AdminServiceConfig) => {
   const logger = config.logger ?? console;
   const authTokenManager = config.auth ? createAuthTokenManager(config.auth) : undefined;
-  const httpClient = createHttpClient({
-    baseUrl: config.apiBaseUrl,
-    authTokenManager,
-    logger
-  });
-  const auditLogger = createAuditLogger({
-    endpoint: config.auditEndpoint,
-    httpClient,
-    logger
-  });
+
+  const httpClient =
+    config.httpClient ??
+    createHttpClient({
+      baseUrl: config.apiBaseUrl,
+      authTokenManager,
+      logger
+    });
+
+  const auditLogger =
+    config.auditLogger ??
+    createAuditLogger({
+      endpoint: config.auditEndpoint,
+      httpClient,
+      logger
+    });
 
   const parseResponse = async <T>(response: Response): Promise<AdminServiceResult<T>> => {
     try {
@@ -93,6 +101,18 @@ export const createAdminService = (config: AdminServiceConfig) => {
   const getWorkersStatus = async () =>
     performAdminAction('workers.status.read', 'workers', () => httpClient.get('/workers/status', { cache: 'no-store' }));
 
+  const listPagesProjects = async () =>
+    performAdminAction('pages.projects.list', 'pages', () => httpClient.get('/pages/projects', { cache: 'no-store' }));
+
+  const listKvNamespaces = async () =>
+    performAdminAction('kv.namespaces.list', 'kv', () => httpClient.get('/kv/namespaces', { cache: 'no-store' }));
+
+  const listR2Buckets = async () =>
+    performAdminAction('r2.buckets.list', 'r2', () => httpClient.get('/r2/buckets', { cache: 'no-store' }));
+
+  const listD1Databases = async () =>
+    performAdminAction('d1.databases.list', 'd1', () => httpClient.get('/d1/databases', { cache: 'no-store' }));
+
   const listAccessPolicies = async (appId: string) =>
     performAdminAction(
       'access.policies.list',
@@ -106,6 +126,10 @@ export const createAdminService = (config: AdminServiceConfig) => {
     listDnsRecords,
     updateDnsRecord,
     getWorkersStatus,
+    listPagesProjects,
+    listKvNamespaces,
+    listR2Buckets,
+    listD1Databases,
     listAccessPolicies
   };
 };
