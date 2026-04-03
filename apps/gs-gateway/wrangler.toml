@@ -13,11 +13,17 @@ routes = [
 
 [env.prod.vars]
 ENV = "production"
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 
 [[env.prod.services]]
 binding = "API"
 service = "gs-api"
 environment = "production"
+
+[[env.prod.services]]
+binding = "AGENT"
+service = "gs-agent"
+environment = "prod"
 
 [env.preview]
 routes = [
