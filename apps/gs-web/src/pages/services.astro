@@ -76,23 +76,23 @@ const services = [
   <FlowSection variant="hero">
     <div>
       <h1>Services</h1>
-      <p>Crafted delivery engagements that combine platform engineering, AI execution, and operational rigor.</p>
-      <GSButton href="/contact">Request a scoping call</GSButton>
+      <p>Packaged engagements that combine platform engineering, AI execution, and operational rigor.</p>
+      <GSButton href="/contact?inquiry=General%20Services%20Inquiry">Request a scoping call</GSButton>
     </div>
     <div class="gs-card">
       <h3 class="section-title"><span>☍</span>Engagement highlights</h3>
       <ul>
-        <li>Architecture assessments with action plans</li>
-        <li>Deployment of shared observability foundations</li>
-        <li>Security reviews with access and automation policy updates</li>
+        <li>Defined scope with practical rollout plans</li>
+        <li>Concrete deliverables mapped to measurable outcomes</li>
+        <li>Timeline bands designed for fast execution and clear checkpoints</li>
       </ul>
     </div>
   </FlowSection>
 
   <FlowSection>
-    <div class="gs-grid columns-3">
+    <div class="gs-grid columns-2 service-grid">
       {services.map((service) => (
-        <article class="gs-card">
+        <article class="gs-card service-card">
           <h3>{service.name}</h3>
           <p>{service.overview}</p>
           <h4 class="gs-text-sm">Scope</h4>
@@ -115,23 +115,17 @@ const services = [
     </div>
   </FlowSection>
 
-  <FlowSection>
-    <div class="gs-grid columns-2">
-      <div>
-        <h2>Snapshot</h2>
-        <p class="gs-text-lg">Focused delivery for teams that need reliable systems and clear momentum.</p>
-        <GSButton href="/contact" variant="secondary">Plan the engagement</GSButton>
-      </div>
-      <div class="gs-card">
-        <h3 class="section-title"><span>◆</span>Snapshot</h3>
-        <ul>
-          <li><strong>Current Focus:</strong> High-availability automation, observability, and AI execution.</li>
-          <li><strong>What I build:</strong> Control planes, incident workflows, and operator-grade interfaces.</li>
-          <li><strong>How I work:</strong> Scoped pilots, rapid delivery, and hardening with shared KPIs.</li>
-          <li><strong>Availability:</strong> Full-time or contract, tailored to your delivery window.</li>
-        </ul>
-        <p class="gs-text-sm">If you’re ready to move fast, let’s define a delivery plan.</p>
-      </div>
-    </div>
-  </FlowSection>
+  <style>
+    .service-grid {
+      gap: 1rem;
+    }
+
+    .service-card h4 {
+      margin: 1rem 0 0.5rem;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gs-text-dim);
+    }
+  </style>
 </BaseLayout>
