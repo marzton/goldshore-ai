@@ -31,12 +31,12 @@ const permissionGroups: Array<{ label: string; permissions: AdminPermission[] }>
         </p>
 
         <Card class="gs-table-card">
-          <Table>
+          <Table ariaLabel="User permissions by role">
             <thead>
               <tr>
-                <th>Permission</th>
+                <th scope="col">Permission</th>
                 {ADMIN_ROLES.map((role) => (
-                  <th class="capitalize">{role}</th>
+                  <th scope="col" class="capitalize">{role}</th>
                 ))}
               </tr>
             </thead>
@@ -63,12 +63,5 @@ const permissionGroups: Array<{ label: string; permissions: AdminPermission[] }>
             </tbody>
           </Table>
         </Card>
----
-<AdminLayout title="User Permissions | GoldShore Admin">
-    <section class="max-w-5xl mx-auto py-24 px-6">
-        <h1 class="text-3xl gs-heading mb-4">User Permissions</h1>
-        <p class="text-[var(--gs-text-secondary)]">
-            Permission sets, access requests, and audit trails will appear here.
-        </p>
     </section>
 </AdminLayout>
