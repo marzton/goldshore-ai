@@ -4,154 +4,52 @@ import siteConfig from '../data/site-config.json';
 ---
 
 <footer>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <img
-        src="/logo/gs-penrose.svg"
-        alt="GoldShore.ai Penrose triangle logo"
-        width="160"
-        height="160"
-      />
-      <p class="footer-tagline">
-        Operational AI infrastructure for mission-critical deployments.
-      </p>
-    </div>
-    <nav class="footer-nav" aria-label="Footer navigation">
-      <div class="footer-nav-col">
-        <p class="footer-nav-heading">Company</p>
-        <a href="/about">About</a>
-        <a href="/team">Team</a>
-        <a href="/contact">Contact</a>
-      </div>
-      <div class="footer-nav-col">
-        <p class="footer-nav-heading">Product</p>
-        <a href="/services">Services</a>
-        <a href="/risk-radar">Risk Radar</a>
-        <a href="/developer-hub">Developer Hub</a>
-      </div>
-    </nav>
-    <div class="footer-cta-col">
-      <a class="button button-primary" href="/contact">{siteConfig.cta.primary}</a>
-      <a class="button button-secondary" href="/contact">{siteConfig.cta.secondary}</a>
-      <a class="button button-tertiary" href="/developer-hub#api-overview">{siteConfig.cta.tertiary}</a>
-    </div>
+  <div class="footer-cta-row">
+    <a class="button button-primary" href="/contact">{siteConfig.cta.primary}</a
+    >
+    <a class="button button-secondary" href="/contact"
+      >{siteConfig.cta.secondary}</a
+    >
+    <a class="button button-tertiary" href="/developer-hub#api-overview"
+      >{siteConfig.cta.tertiary}</a
+    >
   </div>
-  <div class="footer-bottom">
+  <div class="footer-brand">
+    <img
+      src="/logo/gs-penrose.svg"
+      alt="GoldShore.ai Penrose triangle logo"
+      width="160"
+      height="160"
+    />
     <p>&copy; {today.getFullYear()} GoldShore.ai. All rights reserved.</p>
   </div>
 </footer>
-
 <style>
   footer {
-    padding: 3rem 1.5rem 1.5rem;
+    padding: 2em 1em 3em;
     border-top: 1px solid rgba(123, 158, 204, 0.16);
-    color: rgba(197, 214, 235, 0.8);
-    background: linear-gradient(
-      180deg,
-      rgba(7, 16, 30, 0.94),
-      rgba(5, 9, 18, 0.98)
-    );
-  }
-
-  .footer-inner {
-    max-width: var(--container-max, 1080px);
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 2.5rem;
-    align-items: start;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid rgba(123, 158, 204, 0.1);
-  }
-
-  .footer-brand {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .footer-brand img {
-    width: 40px;
-    height: 40px;
-  }
-
-  .footer-tagline {
-    margin: 0;
-    font-size: 0.9rem;
-    max-width: 22rem;
-    color: rgba(171, 194, 223, 0.7);
-    line-height: 1.55;
-  }
-
-  .footer-nav {
-    display: flex;
-    gap: 2.5rem;
-  }
-
-  .footer-nav-col {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .footer-nav-heading {
-    margin: 0 0 0.35rem;
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: rgba(120, 184, 255, 0.9);
-  }
-
-  .footer-nav-col a {
-    font-size: 0.9rem;
-    text-decoration: none;
-    color: rgba(197, 214, 235, 0.75);
-    transition: color 140ms ease;
-  }
-
-  .footer-nav-col a:hover {
-    color: #a8d4ff;
-  }
-
-  .footer-cta-col {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    align-items: flex-start;
-  }
-
-  .footer-cta-col .button {
-    width: 100%;
-    white-space: nowrap;
-  }
-
-  .footer-bottom {
-    max-width: var(--container-max, 1080px);
-    margin: 1.25rem auto 0;
+    color: rgba(212, 224, 241, 0.8);
     text-align: center;
-    font-size: 0.83rem;
-    color: rgba(148, 163, 184, 0.6);
+    background:
+      linear-gradient(180deg, rgba(7, 16, 30, 0.94), rgba(5, 9, 18, 0.98)),
+      #050912;
   }
-
-  @media (max-width: 900px) {
-    .footer-inner {
-      grid-template-columns: 1fr;
-    }
-
-    .footer-nav {
-      gap: 2rem;
-    }
-
-    .footer-cta-col {
-      flex-direction: row;
-      flex-wrap: wrap;
-    }
-
-    .footer-cta-col .button {
-      width: auto;
-    }
+  .footer-cta-row {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
   }
+  .footer-brand {
+    display: grid;
+    justify-items: center;
+    gap: 0.9rem;
+  }
+  .footer-brand img {
+    width: 52px;
+    height: 52px;
+    color: #7eb8ff;
 
   @media (max-width: 560px) {
     .footer-cta-col {

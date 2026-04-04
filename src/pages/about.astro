@@ -16,88 +16,36 @@ import { team, credibility } from '../data/site-content';
   <body>
     <Header />
     <main>
-      <div class="page-header">
-        <p class="page-kicker">Who we are</p>
-        <h1>About GoldShore</h1>
-        <p class="lead">
-          A specialist team focused on operational AI systems that must remain
-          stable under pressure.
-        </p>
-      </div>
-      <section aria-labelledby="team-heading">
-        <h2 id="team-heading">Team</h2>
+      <h1>About</h1>
+      <p>
+        GoldShore.ai is a specialist team focused on operational AI systems that
+        must remain stable under pressure.
+      </p>
+      <section>
+        <h2>Team</h2>
         <div class="grid">
           {
             team.map((member) => (
-              <article class="card team-card">
+              <article class="card">
                 <h3>{member.name}</h3>
-                <p class="role">{member.role}</p>
+                <p class="small">{member.role}</p>
                 <p>{member.bio}</p>
               </article>
             ))
           }
         </div>
       </section>
-      <section aria-labelledby="credibility-heading">
-        <div class="card credibility-card">
-          <h2 id="credibility-heading">Expertise and track record</h2>
-          <p class="domains">
-            {credibility.domains.join(' · ')}
-          </p>
-          <ul>
-            {credibility.signals.map((signal) => <li>{signal}</li>)}
-          </ul>
-        </div>
+      <section class="card">
+        <h2>Credibility strip</h2>
+        <p>
+          <strong>Industry domains:</strong>
+          {credibility.domains.join(' • ')}
+        </p>
+        <ul>
+          {credibility.signals.map((signal) => <li>{signal}</li>)}
+        </ul>
       </section>
     </main>
     <Footer />
-    <style>
-      .page-header {
-        margin-bottom: 2rem;
-      }
-      .page-kicker {
-        margin: 0 0 0.4rem;
-        text-transform: uppercase;
-        letter-spacing: 0.13em;
-        color: rgba(120, 184, 255, 0.88);
-        font-size: 0.8rem;
-        font-weight: 700;
-      }
-      .lead {
-        color: rgba(197, 214, 235, 0.82);
-        max-width: 42rem;
-        margin: 0.5rem 0 0;
-      }
-      .team-card h3 {
-        margin-bottom: 0.2rem;
-      }
-      .role {
-        font-size: 0.85rem;
-        color: rgba(120, 184, 255, 0.85);
-        font-weight: 600;
-        margin: 0 0 0.65rem;
-      }
-      .credibility-card {
-        max-width: 52rem;
-      }
-      .credibility-card h2 {
-        margin-bottom: 0.75rem;
-      }
-      .domains {
-        font-size: 0.9rem;
-        color: rgba(120, 184, 255, 0.8);
-        font-weight: 600;
-        margin-bottom: 0.85rem;
-        letter-spacing: 0.02em;
-      }
-      .credibility-card ul {
-        margin: 0;
-        padding-left: 1.25rem;
-        color: rgba(197, 214, 235, 0.82);
-      }
-      .credibility-card li {
-        margin-bottom: 0.35rem;
-      }
-    </style>
   </body>
 </html>
