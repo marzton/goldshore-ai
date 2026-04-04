@@ -25,10 +25,13 @@ const {
   title = 'GoldShore',
   description = 'GoldShore AI',
   currentPath = Astro.url.pathname,
+  canonicalPath = Astro.url.pathname,
+  ogTitle = title,
+  ogDescription = description,
 } = Astro.props;
 
 const logoAssetPath = '/logo.svg';
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
+const canonicalUrl = new URL(canonicalPath, Astro.site ?? Astro.url);
 const socialImage = new URL(logoAssetPath, Astro.site ?? Astro.url);
 const mobileNavId = 'mobile-navigation';
 ---
@@ -42,13 +45,13 @@ const mobileNavId = 'mobile-navigation';
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0b0f18" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={ogDescription} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={socialImage} />
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
+    <meta property="twitter:title" content={ogTitle} />
+    <meta property="twitter:description" content={ogDescription} />
     <meta property="twitter:image" content={socialImage} />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml" />

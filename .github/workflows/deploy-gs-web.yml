@@ -118,6 +118,10 @@ jobs:
           PUBLIC_RELEASE_LABEL: ${{ steps.metadata.outputs.release_label }}
         run: pnpm build
 
+      - name: Run gs-web release quality gate
+        working-directory: apps/gs-web
+        run: pnpm check:release
+
       - name: Validate build artifacts
         working-directory: apps/gs-web
         run: |
