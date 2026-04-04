@@ -22,7 +22,12 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Dry run notice
+        if: ${{ inputs.dry_run }}
+        run: echo "Dry run enabled; skipping DNS setup script."
+
       - name: Run DNS setup script
+        if: ${{ !inputs.dry_run }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
