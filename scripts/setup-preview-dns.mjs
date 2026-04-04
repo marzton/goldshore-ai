@@ -21,25 +21,47 @@ if (!TOKEN || !ACCOUNT) {
 function sanitizeErrorForLog(err) {
   // Avoid logging provider-supplied messages directly, as they may contain
   // sensitive data. Instead, log a constrained summary for debugging.
+  //
+  // This function must be safe even if `err` is fully tainted (e.g. derived
+  // from environment variables or remote responses). Therefore, we:
+  //   - Only log a small, whitelisted set of primitive fields.
+  //   - Reject free-form or long strings.
+  //   - Never log nested objects/arrays such as `err.errors`.
   if (!err || typeof err !== "object") {
     return "Unknown error";
   }
+
   const parts = [];
-  if (typeof err.status === "number") {
+
+  // Helper to allow only short, simple identifiers (e.g. "ENOENT", "ERR123").
+  const safeString = (value) => {
+    if (typeof value !== "string") return null;
+    // Limit length to reduce risk of leaking large payloads.
+    if (value.length === 0 || value.length > 64) return null;
+    // Allow only word chars, dash, and dot.
+    if (!/^[A-Za-z0-9_.-]+$/.test(value)) return null;
+    return value;
+  };
+
+  // HTTP status code or similar numeric status.
+  if (typeof err.status === "number" && Number.isFinite(err.status)) {
     parts.push(`status=${err.status}`);
   }
-  if (typeof err.code === "string") {
-    parts.push(`code=${err.code}`);
+
+  // Generic error code / name, but only if they are short, simple identifiers.
+  const code = safeString(err.code);
+  if (code) {
+    parts.push(`code=${code}`);
   }
-  if (typeof err.name === "string") {
-    parts.push(`name=${err.name}`);
+
+  const name = safeString(err.name);
+  if (name) {
+    parts.push(`name=${name}`);
   }
-  if (Array.isArray(err.errors) && err.errors.length > 0) {
-    const first = err.errors[0];
-    if (first && typeof first.code !== "undefined") {
-      parts.push(`cf_error_code=${first.code}`);
-    }
-  }
+
+  // Do NOT log nested structures like `err.errors` as they may contain
+  // request echoes, environment data, or other sensitive information.
+
   return parts.length > 0 ? parts.join(", ") : "Unspecified error (details redacted)";
 }
 
