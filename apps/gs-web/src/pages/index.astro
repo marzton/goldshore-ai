@@ -16,26 +16,24 @@ const signals = [
 const trustMetrics = [
   {
     label: 'Availability',
-    value: '99.995%',
-    context: 'Last 30 days',
+    value: '99.98%',
+    context: 'Measured service uptime',
     detail:
-      'Measured across managed production workloads and controlled maintenance windows.',
+      'Measured across production workloads with explicit maintenance windows and rollback safeguards.',
   },
   {
-    label: 'Deploy cadence',
-    value: '48 / day',
-    context: 'Delivery velocity',
+    label: 'Time to operator response',
+    value: '< 5 min',
+    context: 'Median incident acknowledgment',
     detail:
-      'Aligned with release automation, verification steps, and rollback controls.',
-    href: '/developer',
-    hrefLabel: 'See the Developer Hub',
+      'Alerting and escalation loops are tuned for high-signal handoffs, not alert noise.',
   },
   {
-    label: 'Signal integrity',
+    label: 'Telemetry coverage',
     value: '4.8B',
-    context: 'Validated telemetry events / month',
+    context: 'Validated events / month',
     detail:
-      'Data points normalized for anomaly detection, routing, and post-incident review.',
+      'Events are normalized for anomaly detection, decision routing, and post-incident review.',
   },
 ];
 
@@ -56,12 +54,12 @@ const capabilities = [
 
 const proofPoints = [
   {
-    title: 'Architecture',
-    body: 'Structured around auditable services, operator checkpoints, and system states that explain themselves.',
+    title: 'Traceable architecture',
+    body: 'Every workflow is built around auditable services, operator checkpoints, and clear system states.',
   },
   {
-    title: 'Proof',
-    body: 'Every workflow is designed to be demonstrable in real use: logs, thresholds, review modes, and fallback paths.',
+    title: 'Proven controls',
+    body: 'Controls are demonstrated in live use with logs, thresholds, review modes, and fallback paths.',
   },
 ];
 ---
@@ -73,10 +71,10 @@ const proofPoints = [
   <main class="home-page">
     <ParallaxHero
       eyebrow="Institutional-grade Operational AI"
-      headline={"Clarity, Control, and\nTrust for Live AI Systems."}
-      sub="GoldShore builds resilient decision systems, risk tooling, and operator infrastructure for teams that need explainable performance under pressure."
-      ctaPrimary={{ label: 'Request Briefing', href: '/contact' }}
-      ctaSecondary={{ label: 'View Operating Model', href: '/about' }}
+      headline={"Operate AI Systems with\nClarity, Control, and Trust."}
+      sub="GoldShore helps teams design resilient decision systems and risk tooling that stay explainable during live operations."
+      ctaPrimary={{ label: 'Book a consultation', href: '/contact', analyticsEvent: 'homepage_cta_primary_click' }}
+      ctaSecondary={{ label: 'Explore services', href: '/services', analyticsEvent: 'homepage_cta_secondary_click' }}
     />
 
     <section class="signal-strip gs-shell-section" aria-label="Signal strip">
@@ -98,11 +96,6 @@ const proofPoints = [
             </div>
             <strong>{metric.value}</strong>
             <p>{metric.detail}</p>
-            {metric.href && (
-              <a href={metric.href} class="signal-link">
-                {metric.hrefLabel} →
-              </a>
-            )}
           </article>
         ))}
       </div>
@@ -215,13 +208,20 @@ const proofPoints = [
       aria-labelledby="contact-cta-title"
     >
       <div>
-        <p class="gs-eyebrow">Contact</p>
+        <p class="gs-eyebrow">Next Step</p>
         <h2 id="contact-cta-title">
-          Ready to operationalize AI with trust, control, and signal clarity?
+          Ready to launch a safer, faster AI delivery program?
         </h2>
+        <p>
+          Share your goals and we will send a scoped recommendation with a practical week-one plan.
+        </p>
       </div>
-      <a href="/contact" class="hero-button hero-button--primary">
-        Start a conversation
+      <a
+        href="/contact"
+        class="hero-button hero-button--primary"
+        data-analytics-event="homepage_cta_bottom_click"
+      >
+        Talk with GoldShore
       </a>
     </section>
   </main>

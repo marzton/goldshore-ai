@@ -46,14 +46,22 @@ const lines = headline.split('\n');
     <p class="gs-hero__sub">{sub}</p>
 
     <div class="gs-hero__actions">
-      <a class="gs-btn gs-btn--primary" href={ctaPrimary.href}>
+      <a
+        class="gs-btn gs-btn--primary"
+        href={ctaPrimary.href}
+        data-analytics-event={ctaPrimary.analyticsEvent}
+      >
         {ctaPrimary.label}
         <svg class="gs-btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"
                 stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
-      <a class="gs-btn gs-btn--ghost" href={ctaSecondary.href}>
+      <a
+        class="gs-btn gs-btn--ghost"
+        href={ctaSecondary.href}
+        data-analytics-event={ctaSecondary.analyticsEvent}
+      >
         {ctaSecondary.label}
       </a>
     </div>

@@ -75,15 +75,6 @@ export const prerender = true;
       </div>
 
       <div class="gs-input-group">
-        <label for="inquiry">Inquiry type</label>
-        <select id="inquiry" name="inquiry" autocomplete="off">
-          <option value="general">General inquiry</option>
-          <option value="strategy-call">Strategy call</option>
-          <option value="project-scope">Project scoping</option>
-          <option value="support">Support</option>
-        </select>
-      </div>
-      <div class="gs-input-group">
         <label for="message">Project brief</label>
         <p id="message-help" class="field-help">
           Share a short summary of your goals, timeline, and budget. We read
@@ -221,24 +212,21 @@ export const prerender = true;
             form.getAttribute('action') || '/api/contact',
             {
               method: form.getAttribute('method') || 'POST',
+              headers: {
+                'x-gs-request-mode': 'spa',
+                accept: 'application/json',
+              },
               body: new FormData(form),
             },
           );
+          const payload = await response.json().catch(() => null);
 
-          if (!response.ok && !response.redirected) {
-            throw new Error(`Submission failed: ${response.status}`);
+          if (!response.ok || !payload?.ok) {
+            throw new Error(payload?.error?.message || `Submission failed: ${response.status}`);
           }
 
-          const redirectToField = form.querySelector('[name="redirectTo"]');
-          const redirectTarget =
-            response.redirected && response.url
-              ? response.url
-              : redirectToField instanceof HTMLInputElement &&
-                  redirectToField.value
-                ? redirectToField.value
-                : '/thank-you';
-
-          window.location.href = redirectTarget;
+          setStatus('Message sent. Redirecting...', 'success');
+          window.location.href = payload.redirectTo || '/thank-you';
         } catch (error) {
           console.error(error);
           button.disabled = false;
