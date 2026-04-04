@@ -31,14 +31,30 @@ This document is the canonical reference for GoldShore domains, preview URLs, Cl
 ## Production domains
 
 - `goldshore.ai`
+- `www.goldshore.ai`
 - `api.goldshore.ai`
 - `gw.goldshore.ai` (canonical gateway hostname; not `gateway.goldshore.ai`)
 - `ops.goldshore.ai`
+- `admin.goldshore.ai`
+- `mail.goldshore.ai`
 
 ## Preview domains
 
 - `*-preview.goldshore.ai`
 - `{branch}.goldshore-pages.dev`
+
+## `goldshore.ai` domain layout
+
+The table below is the canonical public layout for customer-facing web routes on the
+`goldshore.ai` domain family.
+
+| Host | Route | Purpose | Access |
+| --- | --- | --- | --- |
+| `goldshore.ai` | `/` | Primary marketing homepage | Public |
+| `goldshore.ai` | `/apps/risk-radar` | Risk Radar product/detail page with the reusable animated system component | Public |
+| `goldshore.ai` | `/developer`, `/developer/docs/*`, `/developer/api/*` | Developer hub, docs, and API reference | Public |
+| `www.goldshore.ai` | `/*` | Canonical web mirror for public pages | Public |
+| `preview.goldshore.ai` and `*-preview.goldshore.ai` | `/*` | Preview deployments for web validation | Cloudflare Access (GoldShore-Web-Preview) |
 
 ## Cloudflare Access policies
 
@@ -47,6 +63,7 @@ Cloudflare Access is enforced on internal tooling and protected previews. The ta
 | Access application | Policy name                                                                                                  | Domains protected           | Notes                                                                                                 |
 | ------------------ | ------------------------------------------------------------------------------------------------------------ | --------------------------- | ----------------------------------------------------------------------------------------------------- |
 | Public web         | `goldshore.ai`, `www.goldshore.ai`                                                                           | No                          | Public marketing site.                                                                                |
+| Risk Radar page    | `goldshore.ai/apps/risk-radar`, `www.goldshore.ai/apps/risk-radar`                                          | No                          | Public Risk Radar experience and demo surface on the web domain family.                              |
 | Web previews       | `preview.goldshore.ai`, `*-preview.goldshore.ai`, `{branch}.goldshore-pages.dev`                             | Yes (GoldShore-Web-Preview) | Preview builds for the marketing site should remain Access gated.                                     |
 | Admin cockpit      | `admin.goldshore.ai`, `admin-preview.goldshore.ai`, `*-preview.goldshore.ai`, `{branch}.goldshore-pages.dev` | Yes (GoldShore-Admin-ZT)    | Internal admin dashboard, email allowlist + IdP/OTP.                                                  |
 | Control worker     | `ops.goldshore.ai`                                                                                           | Yes                         | Internal ops workflows and automation.                                                                |
