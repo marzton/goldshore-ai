@@ -42,7 +42,17 @@ export const prerender = true;
 
       <div class="gs-input-group">
         <label for="name">Name</label>
-        <input id="name" name="name" type="text" autocomplete="name" required />
+        <p id="name-help" class="field-help">
+          Share your full name so we can personalize the follow-up.
+        </p>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          autocomplete="name"
+          aria-describedby="name-help"
+          required
+        />
       </div>
 
       <div class="gs-input-group">
@@ -67,16 +77,6 @@ export const prerender = true;
           Choose the path that best matches the engagement you want to start.
         </p>
         <select id="inquiry" name="inquiry" aria-describedby="inquiry-help">
-          <option value="general">General inquiry</option>
-          <option value="strategy-call">Strategy call</option>
-          <option value="project-scope">Project scoping</option>
-          <option value="support">Support</option>
-        </select>
-      </div>
-
-      <div class="gs-input-group">
-        <label for="inquiry">Inquiry type</label>
-        <select id="inquiry" name="inquiry" autocomplete="off">
           <option value="general">General inquiry</option>
           <option value="strategy-call">Strategy call</option>
           <option value="project-scope">Project scoping</option>
@@ -154,6 +154,7 @@ export const prerender = true;
     const button = form?.querySelector('button[type="submit"]');
     const submitText = form?.querySelector('#submit-text');
     const formStatus = document.getElementById('form-status');
+    let hadSubmissionError = false;
 
     const setStatus = (message, type) => {
       if (!(formStatus instanceof HTMLElement)) return;
@@ -161,6 +162,11 @@ export const prerender = true;
       formStatus.classList.remove('success', 'error', 'progress');
       if (type) {
         formStatus.classList.add(type);
+      }
+      if (type === 'error') {
+        formStatus.setAttribute('aria-live', 'assertive');
+      } else {
+        formStatus.setAttribute('aria-live', 'polite');
       }
     };
 
@@ -205,16 +211,17 @@ export const prerender = true;
           return;
         }
 
-        const originalText =
-          submitText instanceof HTMLElement
-            ? submitText.textContent
-            : button.textContent;
         button.disabled = true;
         button.setAttribute('aria-busy', 'true');
         if (submitText instanceof HTMLElement) {
           submitText.textContent = 'Sending...';
         }
-        setStatus('Sending your message...', 'progress');
+        setStatus(
+          hadSubmissionError
+            ? 'Retrying your submission...'
+            : 'Sending your message...',
+          'progress',
+        );
 
         try {
           const response = await fetch(
@@ -238,16 +245,19 @@ export const prerender = true;
                 ? redirectToField.value
                 : '/thank-you';
 
+          hadSubmissionError = false;
+          setStatus('Message sent. Redirecting you now...', 'success');
           window.location.href = redirectTarget;
         } catch (error) {
           console.error(error);
+          hadSubmissionError = true;
           button.disabled = false;
           button.removeAttribute('aria-busy');
           if (submitText instanceof HTMLElement) {
-            submitText.textContent = originalText || 'Send message';
+            submitText.textContent = 'Retry sending';
           }
           setStatus(
-            'Unable to send message right now. Please try again or email hello@goldshore.ai.',
+            'We could not send your message. Please review your details and retry. If the issue persists, email hello@goldshore.ai.',
             'error',
           );
         }
