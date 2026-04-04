@@ -10,6 +10,7 @@ import '@goldshore/theme';
 import logo from '../assets/logo.svg';
 
 const { title = 'GoldShore Admin' } = Astro.props;
+const favicon = '/logo.png';
 
 ---
 <html lang="en">
@@ -17,6 +18,7 @@ const { title = 'GoldShore Admin' } = Astro.props;
     <meta charset="utf-8" />
     <title>{title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href={favicon} type="image/png" />
     <link rel="icon" href={logo} type="image/svg+xml" />
     <script is:inline>
       (function () {
@@ -28,7 +30,9 @@ const { title = 'GoldShore Admin' } = Astro.props;
           try {
             var stored = localStorage.getItem(STORAGE_KEY);
             if (stored) settings = Object.assign({}, defaults, JSON.parse(stored));
-          } catch (e) {}
+          } catch (e) {
+            // Ignore malformed or inaccessible localStorage content.
+          }
           return settings;
         }
 
