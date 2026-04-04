@@ -37,8 +37,8 @@ const dnsRecordSchema = dnsRecordTransformer
   .transform((payload) =>
     Object.fromEntries(
       editableDnsRecordKeys
-        .filter((key) => payload[key as keyof typeof payload] !== undefined)
-        .map((key) => [key, payload[key as keyof typeof payload]])
+        .filter((key) => payload[key as EditableDnsRecordKey] !== undefined)
+        .map((key) => [key, payload[key as EditableDnsRecordKey]])
     ) as Partial<Record<EditableDnsRecordKey, unknown>>
   );
 
