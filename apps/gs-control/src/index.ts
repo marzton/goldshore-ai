@@ -91,11 +91,38 @@ export const createApp = (verifyAccess: VerifyAccessWithClaims = verifyAccessWit
     return c.json({ success: true, syncedAt: timestamp });
   });
 
-  // Existing Automation Routes
-  app.post("/dns/apply", async (c) => c.json(await DNS.sync(c.env)));
-  app.post("/workers/reconcile", async (c) => c.json(await Workers.reconcile(c.env)));
-  app.post("/pages/deploy", async (c) => c.json(await Pages.deploy(c.env)));
-  app.post("/access/audit", async (c) => c.json(await Access.audit(c.env)));
+  // Existing Automation Routes — require the same roles as /system/sync
+  app.post("/dns/apply", async (c) => {
+    const claims = c.get("accessClaims");
+    if (!isAuthorizedRole(claims, getRequiredRoles(c.env))) {
+      return c.json({ error: "Forbidden" }, 403);
+    }
+    return c.json(await DNS.sync(c.env));
+  });
+
+  app.post("/workers/reconcile", async (c) => {
+    const claims = c.get("accessClaims");
+    if (!isAuthorizedRole(claims, getRequiredRoles(c.env))) {
+      return c.json({ error: "Forbidden" }, 403);
+    }
+    return c.json(await Workers.reconcile(c.env));
+  });
+
+  app.post("/pages/deploy", async (c) => {
+    const claims = c.get("accessClaims");
+    if (!isAuthorizedRole(claims, getRequiredRoles(c.env))) {
+      return c.json({ error: "Forbidden" }, 403);
+    }
+    return c.json(await Pages.deploy(c.env));
+  });
+
+  app.post("/access/audit", async (c) => {
+    const claims = c.get("accessClaims");
+    if (!isAuthorizedRole(claims, getRequiredRoles(c.env))) {
+      return c.json({ error: "Forbidden" }, 403);
+    }
+    return c.json(await Access.audit(c.env));
+  });
 
   app.route("/cloudflare", cloudflareRoutes);
   return app;
