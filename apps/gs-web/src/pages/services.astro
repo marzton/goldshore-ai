@@ -7,30 +7,68 @@ export const prerender = true;
 
 const services = [
   {
-    name: 'Operations Control',
-    detail: 'Observability dashboards, incident automation, and policy-driven safeguards.',
-    cta: '/contact'
-  },
-  {
-    name: 'AI Execution',
-    detail: 'Signal ingestion, strategy deployment, and guardrailed automation for trading.',
-    cta: '/contact'
-  },
-  {
-    name: 'Edge Intelligence',
-    detail: 'Low-latency inference and routing tuned for reliability across regions.',
-    cta: '/contact'
-  },
-  {
-    name: 'Client Intake',
-    detail: 'Capture and qualify inbound opportunities with automation-ready workflows.',
-    bullets: [
-      'Lead capture form',
-      'CRM integration (HubSpot/Salesforce)',
-      'Billing integration (Stripe/PayPal)',
-      'Opportunity ranking pipeline surfaced in admin dashboards with KPIs'
+    name: 'Foundations Sprint',
+    overview: 'Establish a stable technical baseline for teams modernizing fast-moving systems.',
+    scope: [
+      'Discovery workshop across architecture, workflows, and service dependencies',
+      'Priority matrix for reliability, security, and delivery bottlenecks'
     ],
-    cta: '/contact'
+    deliverables: [
+      'System architecture snapshot with risk annotations',
+      '90-day implementation roadmap with milestone sequencing',
+      'Executive-ready summary for technical and non-technical stakeholders'
+    ],
+    timeline: '2 to 3 weeks',
+    bestFit: 'Early-stage or scaling teams that need a practical modernization plan before investing in larger builds.',
+    cta: '/contact?intent=foundations-sprint'
+  },
+  {
+    name: 'Automation Launch',
+    overview: 'Design and deploy operational automations that reduce manual work without sacrificing control.',
+    scope: [
+      'Automation candidate selection and process mapping',
+      'Workflow orchestration design with role-based approvals'
+    ],
+    deliverables: [
+      'Production-ready workflow automations with audit trails',
+      'Alerting and incident response playbooks',
+      'Team handoff documentation and enablement session'
+    ],
+    timeline: '4 to 6 weeks',
+    bestFit: 'Operations, RevOps, or product teams buried in repetitive execution tasks and escalation overhead.',
+    cta: '/contact?intent=automation-launch'
+  },
+  {
+    name: 'AI Ops Accelerator',
+    overview: 'Implement guardrailed AI workflows that connect your data, decision logic, and action systems.',
+    scope: [
+      'Data and signal ingestion architecture for model-assisted workflows',
+      'Control policies for safe execution, fallback handling, and monitoring'
+    ],
+    deliverables: [
+      'Integrated AI workflow with governed action paths',
+      'Model and policy observability dashboard',
+      'Validation report with measurable performance outcomes'
+    ],
+    timeline: '6 to 8 weeks',
+    bestFit: 'Teams ready to move from AI prototypes to accountable, production-grade operational systems.',
+    cta: '/contact?intent=ai-ops-accelerator'
+  },
+  {
+    name: 'Embedded Delivery Partner',
+    overview: 'Provide sustained strategic and implementation support for mission-critical initiatives.',
+    scope: [
+      'Fractional leadership across architecture, operations, and automation priorities',
+      'Cross-functional execution planning with weekly implementation cadences'
+    ],
+    deliverables: [
+      'Rolling sprint plan and delivery governance rhythm',
+      'Decision logs, KPI tracking, and stakeholder reporting',
+      'Continuous optimization backlog tied to business outcomes'
+    ],
+    timeline: 'Monthly retainer (minimum 3 months)',
+    bestFit: 'Growth-stage organizations that need a hands-on partner to accelerate delivery across multiple streams.',
+    cta: '/contact?intent=embedded-delivery-partner'
   }
 ];
 ---
@@ -56,15 +94,22 @@ const services = [
       {services.map((service) => (
         <article class="gs-card">
           <h3>{service.name}</h3>
-          <p>{service.detail}</p>
-          {service.bullets ? (
-            <ul class="gs-text-sm">
-              {service.bullets.map((item) => (
-                <li>{item}</li>
-              ))}
-            </ul>
-          ) : null}
-          <GSButton href={service.cta} variant="secondary" class="gs-button--small">Talk to us</GSButton>
+          <p>{service.overview}</p>
+          <h4 class="gs-text-sm">Scope</h4>
+          <ul class="gs-text-sm">
+            {service.scope.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+          <h4 class="gs-text-sm">Key deliverables</h4>
+          <ul class="gs-text-sm">
+            {service.deliverables.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+          <p class="gs-text-sm"><strong>Timeline estimate:</strong> {service.timeline}</p>
+          <p class="gs-text-sm"><strong>Best-fit client:</strong> {service.bestFit}</p>
+          <GSButton href={service.cta} variant="secondary" class="gs-button--small">Start this service</GSButton>
         </article>
       ))}
     </div>
