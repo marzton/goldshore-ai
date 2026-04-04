@@ -87,6 +87,7 @@ export const prerender = true;
           <option value="support">Support</option>
         </select>
       </div>
+
       <div class="gs-input-group">
         <label for="message">Project brief</label>
         <p id="message-help" class="field-help">
@@ -310,12 +311,17 @@ export const prerender = true;
             form.getAttribute('action') || '/api/contact',
             {
               method: form.getAttribute('method') || 'POST',
+              headers: {
+                'x-gs-request-mode': 'spa',
+                accept: 'application/json',
+              },
               body: new FormData(form),
             },
           );
+          const payload = await response.json().catch(() => null);
 
-          if (!response.ok && !response.redirected) {
-            throw new Error(`Submission failed: ${response.status}`);
+          if (!response.ok || !payload?.ok) {
+            throw new Error(payload?.error?.message || `Submission failed: ${response.status}`);
           }
 
           trackEvent(

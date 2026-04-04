@@ -333,6 +333,62 @@ const safeRedirect = (redirectTo: string | null, origin: string) => {
   return new URL(trimmed, origin);
 };
 
+type ApiSuccessPayload = {
+  ok: true;
+  submissionId: string;
+  redirectTo: string;
+  mail: {
+    notification: 'sent' | 'failed' | 'skipped';
+    autoResponder: 'sent' | 'failed' | 'skipped';
+  };
+};
+
+type ApiErrorPayload = {
+  ok: false;
+  error: {
+    code: string;
+    message: string;
+    details?: Record<string, unknown>;
+  };
+};
+
+const jsonResponse = (payload: ApiSuccessPayload | ApiErrorPayload, status = 200) =>
+  new Response(JSON.stringify(payload), {
+    status,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-store',
+    },
+  });
+
+const buildError = (
+  status: number,
+  code: string,
+  message: string,
+  details?: Record<string, unknown>,
+) => jsonResponse({ ok: false, error: { code, message, details } }, status);
+
+const shouldReturnJson = (request: Request) =>
+  request.headers.get('x-gs-request-mode') === 'spa' ||
+  request.headers.get('accept')?.includes('application/json');
+
+const parseNotificationRecipients = (
+  configRecipients: FormRecipient[],
+  fallbackRecipients: string | undefined,
+): MailRecipient[] => {
+  const fromConfig = configRecipients
+    .filter((recipient) => isValidEmail(recipient.email))
+    .map((recipient) => ({ email: recipient.email, name: recipient.name }));
+
+  if (fromConfig.length > 0) return fromConfig;
+
+  return (fallbackRecipients ?? '')
+    .split(',')
+    .map((recipient) => recipient.trim())
+    .filter((email) => isValidEmail(email))
+    .map((email) => ({ email }));
+};
+
 export const sendMail = async (
   env: Env,
   to: MailRecipient[],
@@ -392,23 +448,17 @@ export const sendMail = async (
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  const expectsJson = requestExpectsJson(request);
+  const respondJson = shouldReturnJson(request);
 
   if (!request.headers.get('content-type')?.includes('form')) {
-    return jsonResponse(415, {
-      success: false,
-      code: 'UNSUPPORTED_PAYLOAD',
-      message: 'Unsupported payload.',
-    });
+    return buildError(415, 'unsupported_payload', 'Unsupported payload.');
   }
 
   const formData = await request.formData();
   const formType = extractString(formData.get('formType')) || 'contact';
   const redirectTo = extractString(formData.get('redirectTo'));
   const isSpam = isSpamSubmission(formData);
-  const adminErrorView =
-    request.headers.get('x-gs-admin-error-view') === '1' ||
-    request.headers.get('x-gs-admin-error-view') === 'true';
+  const env = locals.runtime?.env as Env | undefined;
 
   const submission: Submission = {
     id: crypto.randomUUID(),
@@ -435,48 +485,43 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const env = locals.runtime?.env as Env | undefined;
 
   if (isSpam) {
-    console.warn('contact_submission_spam_rejected', {
-      formType,
+    console.info('contact_submission_spam_blocked', {
       submissionId: submission.id,
+      formType,
       ipAddress: submission.ipAddress,
-      userAgent: submission.userAgent,
     });
     if (env?.DB) {
-      await logSubmissionStatus(env.DB, submission.id, formType, 'spam_rejected', 'Spam submission rejected.');
+      await logSubmissionStatus(env.DB, submission.id, formType, 'blocked_spam', 'Spam submission blocked.');
     }
     const redirectUrl = safeRedirect(redirectTo, new URL(request.url).origin);
-    if (expectsJson) {
-      return jsonResponse(202, {
-        success: true,
-        code: 'SPAM_REJECTED',
-        message: 'Submission accepted.',
+    if (respondJson) {
+      return jsonResponse({
+        ok: true,
         submissionId: submission.id,
-        redirectTo: redirectUrl.toString(),
+        redirectTo: redirectUrl.pathname,
+        mail: {
+          notification: 'skipped',
+          autoResponder: 'skipped',
+        },
       });
     }
     return Response.redirect(redirectUrl, 303);
   }
 
   if (submission.email && !isValidEmail(submission.email)) {
-    console.warn('contact_submission_validation_failed', {
-      formType,
+    console.info('contact_submission_validation_failed', {
       submissionId: submission.id,
-      error: 'invalid_email',
-      email: submission.email,
+      formType,
+      reason: 'invalid_email',
     });
-    return jsonResponse(400, {
-      success: false,
-      code: 'INVALID_EMAIL',
-      message: 'Invalid email address.',
-    });
+    if (env?.DB) {
+      await logSubmissionStatus(env.DB, submission.id, formType, 'rejected', 'Invalid email address.');
+    }
+    return buildError(400, 'invalid_email', 'Invalid email address.');
   }
 
   if (!env?.KV && !env?.DB) {
-    return jsonResponse(503, {
-      success: false,
-      code: 'STORAGE_UNAVAILABLE',
-      message: 'Storage unavailable.',
-    });
+    return buildError(503, 'storage_unavailable', 'Storage unavailable.');
   }
 
   const formConfig = env?.DB ? await fetchFormConfig(env.DB, formType) : normalizeFormConfig(null, formType);
@@ -487,11 +532,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         status: formConfig.status
       });
     }
-    return jsonResponse(403, {
-      success: false,
-      code: 'FORM_UNAVAILABLE',
-      message: 'Form is not accepting submissions.',
-    });
+    return buildError(403, 'form_inactive', 'Form is not accepting submissions.');
   }
 
   const missingFields = validateRequiredFields(normalizedSubmission, formConfig.fields);
@@ -507,10 +548,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
         fields: missingFields.map((field) => field.name)
       });
     }
-    return jsonResponse(400, {
-      success: false,
-      code: 'MISSING_REQUIRED_FIELDS',
-      message: 'Missing required fields.',
+    console.info('contact_submission_validation_failed', {
+      submissionId: submission.id,
+      formType,
+      missingFields: missingFields.map((field) => field.name),
+    });
+    return buildError(400, 'missing_required_fields', 'Missing required fields.', {
+      fields: missingFields.map((field) => field.name),
     });
   }
 
@@ -548,19 +592,16 @@ export const POST: APIRoute = async ({ request, locals }) => {
   );
 
   if (!storedSuccessfully) {
+    console.error('Contact submission storage failed.', storageResults);
     console.error('contact_submission_persistence_failed', {
-      formType,
       submissionId: submission.id,
+      formType,
       storageResults,
     });
     if (env?.DB) {
       await logSubmissionStatus(env.DB, submission.id, formType, 'storage_failed', 'Storage unavailable.');
     }
-    return jsonResponse(503, {
-      success: false,
-      code: 'PERSISTENCE_FAILED',
-      message: 'Storage unavailable.',
-    });
+    return buildError(503, 'storage_unavailable', 'Storage unavailable.');
   }
 
   if (env?.DB) {
@@ -571,126 +612,84 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
   }
 
-  const notificationRecipients =
-    formConfig.recipients
-      ?.map((recipient) => ({
-        email: recipient.email?.trim().toLowerCase(),
-        name: recipient.name?.trim(),
-      }))
-      .filter((recipient): recipient is MailRecipient => Boolean(recipient.email && isValidEmail(recipient.email))) ?? [];
+  const recipients = parseNotificationRecipients(
+    formConfig.recipients,
+    env.CONTACT_NOTIFICATION_EMAILS,
+  );
+  const notificationResult = recipients.length
+    ? await sendMail(
+        env,
+        recipients,
+        `[GoldShore] New ${submission.formType} submission`,
+        [
+          `Name: ${submission.name || 'N/A'}`,
+          `Email: ${submission.email || 'N/A'}`,
+          `Inquiry: ${extractString(formData.get('inquiry')) || 'general'}`,
+          '',
+          submission.message || 'No message provided.',
+        ].join('\n'),
+        `<p><strong>Name:</strong> ${submission.name || 'N/A'}</p>
+<p><strong>Email:</strong> ${submission.email || 'N/A'}</p>
+<p><strong>Inquiry:</strong> ${extractString(formData.get('inquiry')) || 'general'}</p>
+<p><strong>Message:</strong></p>
+<p>${submission.message || 'No message provided.'}</p>`,
+        submission.email ? { email: submission.email, name: submission.name || undefined } : undefined,
+      )
+    : { attempted: false, reason: 'no_recipients' };
 
-  if (notificationRecipients.length > 0) {
-    if (env?.DB) {
-      await logSubmissionStatus(
-        env.DB,
-        normalizedSubmission.id,
-        formType,
-        'queued',
-        'Email delivery queued.',
-        { recipients: notificationRecipients.length }
-      );
-    }
+  const autoResponderResult = submission.email
+    ? await sendMail(
+        env,
+        [{ email: submission.email, name: submission.name || undefined }],
+        autoResponder.subject,
+        autoResponder.text,
+        autoResponder.html,
+      )
+    : { attempted: false, reason: 'missing_submitter_email' };
 
-    const deliveryResult = await sendMail(
-      env,
-      notificationRecipients,
-      `[${normalizedSubmission.formType}] New contact inquiry from ${normalizedSubmission.name}`,
-      `${normalizedSubmission.name} (${normalizedSubmission.email}) submitted a new ${normalizedSubmission.inquiry} inquiry.\n\n${normalizedSubmission.message}`,
-      `<p><strong>Name:</strong> ${normalizedSubmission.name}</p><p><strong>Email:</strong> ${normalizedSubmission.email}</p><p><strong>Inquiry:</strong> ${normalizedSubmission.inquiry}</p><p><strong>Message:</strong></p><p>${normalizedSubmission.message.replace(/\n/g, '<br />')}</p>`,
-      { email: normalizedSubmission.email, name: normalizedSubmission.name }
+  console.info('contact_submission_outbound_email_result', {
+    submissionId: submission.id,
+    formType,
+    notificationResult,
+    autoResponderResult,
+  });
+  if (env?.DB) {
+    await logSubmissionStatus(
+      env.DB,
+      submission.id,
+      formType,
+      'email_attempted',
+      'Outbound email attempts completed.',
+      {
+        notification: notificationResult,
+        autoResponder: autoResponderResult,
+      },
     );
-
-    if (env?.DB) {
-      await logSubmissionStatus(
-        env.DB,
-        normalizedSubmission.id,
-        formType,
-        deliveryResult.attempted && deliveryResult.ok ? 'sent' : 'failed',
-        deliveryResult.attempted && deliveryResult.ok
-          ? 'Email delivery sent successfully.'
-          : 'Email delivery failed.',
-        {
-          attempted: deliveryResult.attempted,
-          status: 'status' in deliveryResult ? deliveryResult.status : undefined,
-          reason: 'reason' in deliveryResult ? deliveryResult.reason : undefined,
-        }
-      );
-    }
-
-    if (adminErrorView && (!deliveryResult.attempted || !deliveryResult.ok)) {
-      return new Response(
-        JSON.stringify({
-          error: 'email_delivery_failed',
-          submissionId: normalizedSubmission.id,
-          details: deliveryResult,
-        }),
-        {
-          status: 502,
-          headers: {
-            'content-type': 'application/json',
-          },
-        }
-      );
-    }
   }
 
   const redirectUrl = safeRedirect(redirectTo, new URL(request.url).origin);
-
-  const canSendAutoResponder = Boolean(submission.email && isValidEmail(submission.email));
-  const emailAttemptContext = {
-    formType,
+  const successPayload: ApiSuccessPayload = {
+    ok: true,
     submissionId: submission.id,
-    recipient: submission.email,
+    redirectTo: redirectUrl.pathname,
+    mail: {
+      notification: notificationResult.attempted
+        ? notificationResult.ok
+          ? 'sent'
+          : 'failed'
+        : 'skipped',
+      autoResponder: autoResponderResult.attempted
+        ? autoResponderResult.ok
+          ? 'sent'
+          : 'failed'
+        : 'skipped',
+    },
   };
 
-  if (!canSendAutoResponder) {
-    console.info('contact_submission_email_skipped', {
-      ...emailAttemptContext,
-      reason: 'no_valid_recipient',
-    });
-  } else {
-    console.info('contact_submission_email_attempt', emailAttemptContext);
-    const emailResult = await sendMail(
-      env,
-      [{ email: submission.email }],
-      autoResponder.subject,
-      autoResponder.text,
-      autoResponder.html,
-    );
-    console.info('contact_submission_email_result', {
-      ...emailAttemptContext,
-      ...emailResult,
-    });
-
-    if (env?.DB) {
-      await logSubmissionStatus(
-        env.DB,
-        submission.id,
-        formType,
-        emailResult.ok === true ? 'email_sent' : 'email_failed',
-        emailResult.ok === true ? 'Auto-responder email sent.' : 'Auto-responder email not sent.',
-        emailResult,
-      );
-    }
+  if (respondJson) {
+    return jsonResponse(successPayload);
   }
 
-  if (env && !env.MAILCHANNELS_SENDER_EMAIL?.trim()) {
-    console.info('contact_submission_email_fallback', {
-      ...emailAttemptContext,
-      fallback: 'submission_persisted_without_email',
-      reason: 'missing_mail_configuration',
-    });
-  }
-
-  if (expectsJson) {
-    return jsonResponse(201, {
-      success: true,
-      code: 'SUBMISSION_ACCEPTED',
-      message: 'Submission received.',
-      submissionId: submission.id,
-      redirectTo: redirectUrl.toString(),
-    });
-  }
   return Response.redirect(redirectUrl, 303);
 };
 
