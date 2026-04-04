@@ -6,16 +6,6 @@
   "scripts": {
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy --env prod",
-    "build": "wrangler deploy --env prod --dry-run --outdir=dist",
-    "lint": "eslint src/**",
-    "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/*.test.ts"
-  },
-  "dependencies": {
-    "@goldshore/schema": "workspace:*",
-    "hono": "^4.12.9",
-    "postal-mime": "^2.7.4",
-    "zod": "^4.3.6"
     "build": "wrangler deploy --env prod --dry-run --outdir=dist"
   },
   "devDependencies": {
