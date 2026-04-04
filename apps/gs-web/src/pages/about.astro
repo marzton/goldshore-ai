@@ -41,7 +41,7 @@ const sections = [
 
   <style>
     .info-page {
-      padding: 4.5rem 0 5rem;
+      padding: var(--gs-space-9) 0 calc(var(--gs-space-10) + var(--gs-space-1));
     }
 
     .info-page h1 {
@@ -66,10 +66,10 @@ const sections = [
     }
 
     .info-card {
-      padding: 1.4rem;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      background: rgba(10, 18, 36, 0.72);
+      padding: var(--gs-space-6);
+      border-radius: var(--gs-radius-lg);
+      border: 1px solid var(--gs-border);
+      background: var(--gs-surface);
       box-shadow: var(--gs-shadow);
     }
 
