@@ -5,16 +5,20 @@ export const prerender = true;
 
 const sections = [
   {
-    title: 'What we do',
-    body: 'We design high-trust systems across decision support, workflow orchestration, and applied AI.',
+    title: 'Mission',
+    body: 'Build dependable AI-enabled systems that improve decision quality, reduce operational drag, and hold up under real production pressure.',
   },
   {
-    title: 'How we work',
-    body: 'Signal over spectacle. Systems that explain themselves.',
+    title: 'Operating principles',
+    body: 'We optimize for clarity, measurable outcomes, and maintainability: explicit ownership, observable workflows, and controls that operators can trust.',
   },
   {
-    title: 'Why GoldShore',
-    body: 'Most software is optimized for demos. GoldShore is optimized for use.',
+    title: 'Delivery model',
+    body: 'Every engagement starts with scoped discovery, moves into a tightly defined build sprint, and ends with hardening, handoff, and an adoption runway.',
+  },
+  {
+    title: 'Trust & security stance',
+    body: 'Security is part of system design—not a final checklist. Least-privilege access, auditable automation, and policy-aware defaults are built in from day one.',
   },
 ];
 ---
@@ -37,7 +41,7 @@ const sections = [
 
   <style>
     .info-page {
-      padding: 4.5rem 0 5rem;
+      padding: var(--gs-space-9) 0 calc(var(--gs-space-10) + var(--gs-space-1));
     }
 
     .info-page h1 {
@@ -56,16 +60,16 @@ const sections = [
 
     .info-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1rem;
       margin-top: 2rem;
     }
 
     .info-card {
-      padding: 1.4rem;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      background: rgba(10, 18, 36, 0.72);
+      padding: var(--gs-space-6);
+      border-radius: var(--gs-radius-lg);
+      border: 1px solid var(--gs-border);
+      background: var(--gs-surface);
       box-shadow: var(--gs-shadow);
     }
 
