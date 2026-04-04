@@ -1,8 +1,10 @@
 import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { cors } from 'hono/cors';
-import { verifyAccessWithClaims, type AccessTokenPayload } from '@goldshore/auth';
-import { verifyAccess } from '@goldshore/auth';
+import {
+  verifyAccessWithClaims,
+  type AccessTokenPayload,
+} from '@goldshore/auth';
 import users from './routes/users';
 import health from './routes/health';
 import ai from './routes/ai';
@@ -12,53 +14,117 @@ import templates from './routes/templates';
 import admin from './routes/admin';
 import media from './routes/media';
 import pages from './routes/pages';
+import internal from './routes/internal';
 
 type Env = {
   KV: KVNamespace;
+  CONTROL_LOGS?: KVNamespace;
   DB: D1Database;
   ASSETS: R2Bucket;
-  AI: any;
+  AI: Ai;
   OPENAI_API_KEY?: string;
   GEMINI_API_KEY?: string;
   // Sentinel: Added support for Audience verification to prevent auth bypass
   CLOUDFLARE_ACCESS_AUDIENCE?: string;
   // Sentinel: Added support for dynamic team domain
   CLOUDFLARE_TEAM_DOMAIN?: string;
+  CONTROL_SYNC_TOKEN?: string;
+  ALLOWED_ORIGINS?: string;
+  ENV?: string;
 };
 
-const app = new Hono<{ Bindings: Env; Variables: { accessClaims: AccessTokenPayload | null } }>();
+const app = new Hono<{
+  Bindings: Env;
+  Variables: { accessClaims: AccessTokenPayload | null };
+}>();
 
-const ALLOWED_ORIGIN_PATTERNS = [
-  /^https:\/\/(www\.)?goldshore\.ai$/,
-  /^https:\/\/([a-z0-9-]+\.)+goldshore\.ai$/,
-  /^https:\/\/([a-z0-9-]+\.)+goldshore-pages\.dev$/,
-  /^http:\/\/localhost(:\d+)?$/
+const DEFAULT_ALLOWED_ORIGINS = [
+  'https://goldshore.ai',
+  'https://www.goldshore.ai',
+  'https://admin.goldshore.ai',
+  'https://ops.goldshore.ai',
+  'https://admin-preview.goldshore.ai',
+  'https://preview.goldshore.ai',
 ];
 
-const isAllowedOrigin = (origin: string) => {
-  return ALLOWED_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin));
+const PREVIEW_ORIGIN_PATTERNS = [
+  /^https:\/\/[a-z0-9-]+-preview\.goldshore\.ai$/i,
+  /^https:\/\/[a-z0-9-]+\.goldshore-pages\.dev$/i,
+];
+
+const parseAllowedOrigins = (allowedOrigins?: string) => {
+  return (allowedOrigins ? allowedOrigins.split(',') : DEFAULT_ALLOWED_ORIGINS)
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+};
+
+const isPreviewOrigin = (origin: string) => {
+  return PREVIEW_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin));
+};
+
+const isAllowedOrigin = (origin: string, allowedOrigins?: string) => {
+  const configuredOrigins = parseAllowedOrigins(allowedOrigins);
+  return configuredOrigins.includes(origin) || isPreviewOrigin(origin);
+};
+
+const isLocalDevelopmentOrigin = (origin: string) => {
+  return (
+    origin.startsWith('http://localhost') ||
+    origin.startsWith('http://127.0.0.1')
+  );
 };
 
 // Sentinel: Security Middleware
 app.use('*', secureHeaders());
 
 // Enforce CORS to allow legitimate browser clients
-app.use('*', cors({
-  origin: (origin) => (isAllowedOrigin(origin) ? origin : 'https://goldshore.ai'),
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
-  exposeHeaders: ['Content-Length'],
-  credentials: true,
-  maxAge: 600,
-}));
+app.use(
+  '*',
+  cors({
+    origin: (origin, c) => {
+      if (!origin) {
+        return null;
+      }
+
+      if (c.env.ENV !== 'production' && isLocalDevelopmentOrigin(origin)) {
+        return origin;
+      }
+
+      return isAllowedOrigin(origin, c.env.ALLOWED_ORIGINS) ? origin : null;
+    },
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization', 'CF-Access-Jwt-Assertion'],
+    exposeHeaders: ['Content-Length'],
+    credentials: true,
+    maxAge: 600,
+  }),
+);
 
 // Enforce Authentication (Defense in Depth)
 app.use('*', async (c, next) => {
   // Allow health checks, root, and CORS preflight
-  if (c.req.path === '/health' || c.req.path.startsWith('/health/') || c.req.path === '/' || c.req.method === 'OPTIONS') {
+  if (
+    c.req.path === '/health' ||
+    c.req.path.startsWith('/health/') ||
+    c.req.path === '/' ||
+    c.req.method === 'OPTIONS'
+  ) {
     c.set('accessClaims', null);
     await next();
     return;
+  }
+
+  if (c.req.path === '/internal/sync-runs' && c.req.method === 'POST') {
+    const controlToken = c.req.header('x-control-sync-token');
+    if (
+      controlToken &&
+      c.env.CONTROL_SYNC_TOKEN &&
+      controlToken === c.env.CONTROL_SYNC_TOKEN
+    ) {
+      c.set('accessClaims', null);
+      await next();
+      return;
+    }
   }
 
   // Verify Cloudflare Access JWT
@@ -67,10 +133,6 @@ app.use('*', async (c, next) => {
     return c.json({ error: 'Unauthorized' }, 401);
   }
   c.set('accessClaims', claims);
-  const authorized = await verifyAccess(c.req.raw, c.env);
-  if (!authorized) {
-    return c.json({ error: 'Unauthorized' }, 401);
-  }
   await next();
 });
 
@@ -115,15 +177,16 @@ app.route('/templates', templates);
 app.route('/admin', admin);
 app.route('/media', media);
 app.route('/pages', pages);
+app.route('/internal', internal);
 
 // V1 Routes
 const v1 = new Hono<{ Bindings: Env }>();
 
 v1.route('/users', users);
-v1.get('/agents', (c) => c.json({ agents: ['agent-alpha', 'agent-beta'] }));
-v1.get('/models', (c) => c.json({ models: ['gpt-4', 'claude-3'] }));
-v1.get('/logs', (c) => c.json({ logs: ['log1', 'log2'] }));
+// Placeholder routes removed — v1/agents, v1/models, and v1/logs
+// returned hardcoded fake data. Implement with real handlers when needed.
 
 app.route('/v1', v1);
 
+export { isAllowedOrigin, isPreviewOrigin, parseAllowedOrigins };
 export default app;
