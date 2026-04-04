@@ -116,10 +116,7 @@ export const createApp = (verifyAccess: VerifyAccessWithClaims = verifyAccessWit
 const app = createApp();
 
 export default {
-  fetch: app.fetch,
-  async scheduled(_controller, env: ControlEnv, _ctx) {
-    await env.CONTROL_LOGS.put(Date.now().toString(), "cron-scheduled-run");
-    await syncDNS(env);
-    await rotateKeys(env);
-  }
+  async fetch(request: Request, env: Record<string, unknown>): Promise<Response> {
+    return new Response("gs-control OK", { status: 200 });
+  },
 };
