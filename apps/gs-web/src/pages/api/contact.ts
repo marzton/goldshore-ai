@@ -25,6 +25,8 @@ type Submission = {
   receivedAt: string;
   ipAddress?: string;
   userAgent?: string;
+  inquiry?: string;
+  dedupeKey?: string;
 };
 
 type FormField = {
@@ -158,6 +160,55 @@ const storeInD1 = async (
 const extractString = (value: FormDataEntryValue | null) =>
   typeof value === 'string' ? value.trim() : '';
 
+const normalizeWhitespace = (value: string) => value.replace(/\s+/g, ' ').trim();
+
+const normalizeMultiline = (value: string) =>
+  value
+    .replace(/\r\n/g, '\n')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+
+const allowedInquiryTypes = new Set([
+  'general',
+  'strategy-call',
+  'project-scope',
+  'support',
+]);
+
+const normalizeContactSubmission = (submission: Submission) => {
+  const normalizedEmail = submission.email.trim().toLowerCase();
+  const normalizedInquiry = submission.inquiry?.trim().toLowerCase() || 'general';
+  return {
+    ...submission,
+    name: normalizeWhitespace(submission.name),
+    email: normalizedEmail,
+    inquiry: allowedInquiryTypes.has(normalizedInquiry) ? normalizedInquiry : '',
+    message: normalizeMultiline(submission.message),
+    dedupeKey: submission.dedupeKey?.trim().toLowerCase() || '',
+  };
+};
+
+const validateContactSubmission = (submission: Submission): string[] => {
+  const errors: string[] = [];
+  if (!submission.name || submission.name.length < 2 || submission.name.length > 120) {
+    errors.push('name');
+  }
+  if (!submission.email || !isValidEmail(submission.email)) {
+    errors.push('email');
+  }
+  if (!submission.inquiry || !allowedInquiryTypes.has(submission.inquiry)) {
+    errors.push('inquiry');
+  }
+  if (!submission.message || submission.message.length < 20 || submission.message.length > 4000) {
+    errors.push('message');
+  }
+  if (!submission.dedupeKey || !/^[a-f0-9]{64}$/.test(submission.dedupeKey)) {
+    errors.push('dedupeKey');
+  }
+  return errors;
+};
+
 const isSpamSubmission = (formData: FormData) => {
   const honeypot = extractString(formData.get('companyWebsite'));
   if (honeypot) return true;
@@ -258,6 +309,23 @@ const validateRequiredFields = (submission: Submission, fields: FormField[]) => 
   return missing;
 };
 
+const checkRecentDuplicate = async (db: D1Database, submission: Submission): Promise<boolean> => {
+  const duplicateResult = await db
+    .prepare(
+      `SELECT id
+       FROM lead_submissions
+       WHERE form_type = ?
+         AND email = ?
+         AND message = ?
+         AND received_at >= datetime('now', '-15 minutes')
+       LIMIT 1`
+    )
+    .bind(submission.formType, submission.email, submission.message)
+    .first<{ id: string }>();
+
+  return Boolean(duplicateResult?.id);
+};
+
 const safeRedirect = (redirectTo: string | null, origin: string) => {
   if (!redirectTo) return new URL('/thank-you', origin);
   const trimmed = redirectTo.trim();
@@ -338,6 +406,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const formType = extractString(formData.get('formType')) || 'contact';
   const redirectTo = extractString(formData.get('redirectTo'));
   const isSpam = isSpamSubmission(formData);
+  const adminErrorView =
+    request.headers.get('x-gs-admin-error-view') === '1' ||
+    request.headers.get('x-gs-admin-error-view') === 'true';
 
   const submission: Submission = {
     id: crypto.randomUUID(),
@@ -357,6 +428,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     receivedAt: new Date().toISOString(),
     ipAddress: request.headers.get('CF-Connecting-IP') ?? undefined,
     userAgent: request.headers.get('User-Agent') ?? undefined,
+    inquiry: extractString(formData.get('inquiry')),
+    dedupeKey: extractString(formData.get('dedupeKey')),
   };
 
   const env = locals.runtime?.env as Env | undefined;
@@ -421,7 +494,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
   }
 
-  const missingFields = validateRequiredFields(submission, formConfig.fields);
+  const missingFields = validateRequiredFields(normalizedSubmission, formConfig.fields);
   if (missingFields.length > 0) {
     console.warn('contact_submission_validation_failed', {
       formType,
@@ -444,14 +517,30 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const ttl = env?.CONTACT_TTL_SECONDS ? parseInt(env.CONTACT_TTL_SECONDS, 10) : DEFAULT_CONTACT_TTL_SECONDS;
 
   const autoResponder = buildLeadAutoResponder({
-    name: submission.name,
-    formType: submission.formType,
+    name: normalizedSubmission.name,
+    formType: normalizedSubmission.formType,
   });
+
+  if (env?.DB) {
+    const isDuplicate = await checkRecentDuplicate(env.DB, normalizedSubmission);
+    if (isDuplicate) {
+      await logSubmissionStatus(
+        env.DB,
+        normalizedSubmission.id,
+        formType,
+        'duplicate',
+        'Repeated submission detected within dedupe window.',
+        { dedupeKey: normalizedSubmission.dedupeKey }
+      );
+      const redirectUrl = safeRedirect(redirectTo, new URL(request.url).origin);
+      return Response.redirect(redirectUrl, 303);
+    }
+  }
 
   const storageTasks: Promise<unknown>[] = [];
   if (env?.KV)
-    storageTasks.push(storeInKv(env.KV, submission, autoResponder, ttl));
-  if (env?.DB) storageTasks.push(storeInD1(env.DB, submission, autoResponder));
+    storageTasks.push(storeInKv(env.KV, normalizedSubmission, autoResponder, ttl));
+  if (env?.DB) storageTasks.push(storeInD1(env.DB, normalizedSubmission, autoResponder));
 
   const storageResults = await Promise.allSettled(storageTasks);
   const storedSuccessfully = storageResults.some(
@@ -475,10 +564,74 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   if (env?.DB) {
-    await logSubmissionStatus(env.DB, submission.id, formType, 'stored', 'Submission stored successfully.', {
+    await logSubmissionStatus(env.DB, normalizedSubmission.id, formType, 'stored', 'Submission stored successfully.', {
+      dedupeKey: normalizedSubmission.dedupeKey,
       recipients: formConfig.recipients,
       integrations: formConfig.integrations
     });
+  }
+
+  const notificationRecipients =
+    formConfig.recipients
+      ?.map((recipient) => ({
+        email: recipient.email?.trim().toLowerCase(),
+        name: recipient.name?.trim(),
+      }))
+      .filter((recipient): recipient is MailRecipient => Boolean(recipient.email && isValidEmail(recipient.email))) ?? [];
+
+  if (notificationRecipients.length > 0) {
+    if (env?.DB) {
+      await logSubmissionStatus(
+        env.DB,
+        normalizedSubmission.id,
+        formType,
+        'queued',
+        'Email delivery queued.',
+        { recipients: notificationRecipients.length }
+      );
+    }
+
+    const deliveryResult = await sendMail(
+      env,
+      notificationRecipients,
+      `[${normalizedSubmission.formType}] New contact inquiry from ${normalizedSubmission.name}`,
+      `${normalizedSubmission.name} (${normalizedSubmission.email}) submitted a new ${normalizedSubmission.inquiry} inquiry.\n\n${normalizedSubmission.message}`,
+      `<p><strong>Name:</strong> ${normalizedSubmission.name}</p><p><strong>Email:</strong> ${normalizedSubmission.email}</p><p><strong>Inquiry:</strong> ${normalizedSubmission.inquiry}</p><p><strong>Message:</strong></p><p>${normalizedSubmission.message.replace(/\n/g, '<br />')}</p>`,
+      { email: normalizedSubmission.email, name: normalizedSubmission.name }
+    );
+
+    if (env?.DB) {
+      await logSubmissionStatus(
+        env.DB,
+        normalizedSubmission.id,
+        formType,
+        deliveryResult.attempted && deliveryResult.ok ? 'sent' : 'failed',
+        deliveryResult.attempted && deliveryResult.ok
+          ? 'Email delivery sent successfully.'
+          : 'Email delivery failed.',
+        {
+          attempted: deliveryResult.attempted,
+          status: 'status' in deliveryResult ? deliveryResult.status : undefined,
+          reason: 'reason' in deliveryResult ? deliveryResult.reason : undefined,
+        }
+      );
+    }
+
+    if (adminErrorView && (!deliveryResult.attempted || !deliveryResult.ok)) {
+      return new Response(
+        JSON.stringify({
+          error: 'email_delivery_failed',
+          submissionId: normalizedSubmission.id,
+          details: deliveryResult,
+        }),
+        {
+          status: 502,
+          headers: {
+            'content-type': 'application/json',
+          },
+        }
+      );
+    }
   }
 
   const redirectUrl = safeRedirect(redirectTo, new URL(request.url).origin);
