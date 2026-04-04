@@ -28,6 +28,7 @@ export const prerender = true;
       <input type="hidden" name="formType" value="contact" />
       <input type="hidden" name="redirectTo" value="/thank-you" />
       <input type="hidden" name="formStartedAt" value="" />
+      <input type="hidden" name="dedupeKey" value="" />
 
       <div class="gs-honeypot" aria-hidden="true">
         <label for="companyWebsite">Company website</label>
@@ -170,10 +171,65 @@ export const prerender = true;
       }
     };
 
+    const emitAnalytics = (eventName, payload = {}) => {
+      const eventPayload = {
+        event: eventName,
+        page: window.location.pathname,
+        ...payload,
+      };
+      window.dataLayer = window.dataLayer || [];
+      if (Array.isArray(window.dataLayer)) {
+        window.dataLayer.push(eventPayload);
+      }
+      window.dispatchEvent(
+        new CustomEvent('gs:analytics', {
+          detail: eventPayload,
+        }),
+      );
+    };
+
+    const toHex = (buffer) =>
+      Array.from(new Uint8Array(buffer))
+        .map((byte) => byte.toString(16).padStart(2, '0'))
+        .join('');
+
+    const buildDedupeKey = async (currentForm) => {
+      const name = currentForm.querySelector('#name');
+      const email = currentForm.querySelector('#email');
+      const inquiry = currentForm.querySelector('#inquiry');
+      const message = currentForm.querySelector('#message');
+      const formTypeField = currentForm.querySelector('[name="formType"]');
+
+      const normalized = [
+        formTypeField instanceof HTMLInputElement
+          ? formTypeField.value.trim().toLowerCase()
+          : 'contact',
+        name instanceof HTMLInputElement
+          ? name.value.trim().toLowerCase().replace(/\s+/g, ' ')
+          : '',
+        email instanceof HTMLInputElement
+          ? email.value.trim().toLowerCase()
+          : '',
+        inquiry instanceof HTMLSelectElement
+          ? inquiry.value.trim().toLowerCase()
+          : '',
+        message instanceof HTMLTextAreaElement
+          ? message.value.trim().replace(/\s+/g, ' ')
+          : '',
+      ].join('|');
+
+      const hash = await crypto.subtle.digest(
+        'SHA-256',
+        new TextEncoder().encode(normalized),
+      );
+      return toHex(hash);
+    };
+
     if (
       form instanceof HTMLFormElement &&
       button instanceof HTMLButtonElement
     ) {
+      let formStartedTracked = false;
       const startedAtField = form.querySelector('[name="formStartedAt"]');
       if (startedAtField instanceof HTMLInputElement) {
         startedAtField.value = String(Date.now());
@@ -197,6 +253,15 @@ export const prerender = true;
       ) {
         inquiryField.value = inquiryParam;
       }
+
+      const markFormStart = () => {
+        if (formStartedTracked) return;
+        formStartedTracked = true;
+        emitAnalytics('form_start', { form_type: 'contact' });
+      };
+
+      form.addEventListener('focusin', markFormStart, { once: true });
+      form.addEventListener('input', markFormStart, { once: true });
 
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -224,6 +289,11 @@ export const prerender = true;
         );
 
         try {
+          const dedupeKeyField = form.querySelector('[name="dedupeKey"]');
+          if (dedupeKeyField instanceof HTMLInputElement) {
+            dedupeKeyField.value = await buildDedupeKey(form);
+          }
+
           const response = await fetch(
             form.getAttribute('action') || '/api/contact',
             {
@@ -260,6 +330,7 @@ export const prerender = true;
             'We could not send your message. Please review your details and retry. If the issue persists, email hello@goldshore.ai.',
             'error',
           );
+          emitAnalytics('form_submit_error', { form_type: 'contact' });
         }
       });
     }
@@ -276,35 +347,35 @@ export const prerender = true;
     }
 
     .field-help {
-      margin: 0.25rem 0 0.5rem;
-      color: var(--gs-color-text-muted, #94a3b8);
+      margin: var(--gs-space-1) 0 var(--gs-space-2);
+      color: var(--gs-text-dim);
       font-size: 0.95rem;
     }
 
     .form-status {
-      margin: 0.75rem 0;
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
+      margin: var(--gs-space-3) 0;
+      padding: var(--gs-space-3) var(--gs-space-4);
+      border-radius: var(--gs-radius-sm);
       border: 1px solid transparent;
       min-height: 1.25rem;
     }
 
     .form-status.progress {
-      background: rgba(37, 52, 138, 0.12);
-      border-color: rgba(96, 116, 211, 0.45);
-      color: #c7d2fe;
+      background: color-mix(in srgb, var(--gs-info) 14%, transparent);
+      border-color: color-mix(in srgb, var(--gs-info) 48%, transparent);
+      color: color-mix(in srgb, var(--gs-info) 65%, white);
     }
 
     .form-status.success {
-      background: rgba(10, 95, 37, 0.14);
-      border-color: rgba(110, 231, 183, 0.35);
-      color: #bbf7d0;
+      background: color-mix(in srgb, var(--gs-success) 14%, transparent);
+      border-color: color-mix(in srgb, var(--gs-success) 42%, transparent);
+      color: color-mix(in srgb, var(--gs-success) 60%, white);
     }
 
     .form-status.error {
-      background: rgba(143, 23, 23, 0.14);
-      border-color: rgba(248, 113, 113, 0.35);
-      color: #fecaca;
+      background: color-mix(in srgb, var(--gs-danger) 14%, transparent);
+      border-color: color-mix(in srgb, var(--gs-danger) 42%, transparent);
+      color: color-mix(in srgb, var(--gs-danger) 62%, white);
     }
 
     #contact-form button[disabled] {
