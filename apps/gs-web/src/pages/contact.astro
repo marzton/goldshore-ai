@@ -28,6 +28,7 @@ export const prerender = true;
       <input type="hidden" name="formType" value="contact" />
       <input type="hidden" name="redirectTo" value="/thank-you" />
       <input type="hidden" name="formStartedAt" value="" />
+      <input type="hidden" name="dedupeKey" value="" />
 
       <div class="gs-honeypot" aria-hidden="true">
         <label for="companyWebsite">Company website</label>
@@ -42,7 +43,17 @@ export const prerender = true;
 
       <div class="gs-input-group">
         <label for="name">Name</label>
-        <input id="name" name="name" type="text" autocomplete="name" required />
+        <p id="name-help" class="field-help">
+          Share your full name so we can personalize the follow-up.
+        </p>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          autocomplete="name"
+          aria-describedby="name-help"
+          required
+        />
       </div>
 
       <div class="gs-input-group">
@@ -67,16 +78,6 @@ export const prerender = true;
           Choose the path that best matches the engagement you want to start.
         </p>
         <select id="inquiry" name="inquiry" aria-describedby="inquiry-help">
-          <option value="general">General inquiry</option>
-          <option value="strategy-call">Strategy call</option>
-          <option value="project-scope">Project scoping</option>
-          <option value="support">Support</option>
-        </select>
-      </div>
-
-      <div class="gs-input-group">
-        <label for="inquiry">Inquiry type</label>
-        <select id="inquiry" name="inquiry" autocomplete="off">
           <option value="general">General inquiry</option>
           <option value="strategy-call">Strategy call</option>
           <option value="project-scope">Project scoping</option>
@@ -156,6 +157,7 @@ export const prerender = true;
     const button = form?.querySelector('button[type="submit"]');
     const submitText = form?.querySelector('#submit-text');
     const formStatus = document.getElementById('form-status');
+    let hadSubmissionError = false;
 
     const setStatus = (message, type) => {
       if (!(formStatus instanceof HTMLElement)) return;
@@ -164,6 +166,65 @@ export const prerender = true;
       if (type) {
         formStatus.classList.add(type);
       }
+      if (type === 'error') {
+        formStatus.setAttribute('aria-live', 'assertive');
+      } else {
+        formStatus.setAttribute('aria-live', 'polite');
+      }
+    };
+
+    const emitAnalytics = (eventName, payload = {}) => {
+      const eventPayload = {
+        event: eventName,
+        page: window.location.pathname,
+        ...payload,
+      };
+      window.dataLayer = window.dataLayer || [];
+      if (Array.isArray(window.dataLayer)) {
+        window.dataLayer.push(eventPayload);
+      }
+      window.dispatchEvent(
+        new CustomEvent('gs:analytics', {
+          detail: eventPayload,
+        }),
+      );
+    };
+
+    const toHex = (buffer) =>
+      Array.from(new Uint8Array(buffer))
+        .map((byte) => byte.toString(16).padStart(2, '0'))
+        .join('');
+
+    const buildDedupeKey = async (currentForm) => {
+      const name = currentForm.querySelector('#name');
+      const email = currentForm.querySelector('#email');
+      const inquiry = currentForm.querySelector('#inquiry');
+      const message = currentForm.querySelector('#message');
+      const formTypeField = currentForm.querySelector('[name="formType"]');
+
+      const normalized = [
+        formTypeField instanceof HTMLInputElement
+          ? formTypeField.value.trim().toLowerCase()
+          : 'contact',
+        name instanceof HTMLInputElement
+          ? name.value.trim().toLowerCase().replace(/\s+/g, ' ')
+          : '',
+        email instanceof HTMLInputElement
+          ? email.value.trim().toLowerCase()
+          : '',
+        inquiry instanceof HTMLSelectElement
+          ? inquiry.value.trim().toLowerCase()
+          : '',
+        message instanceof HTMLTextAreaElement
+          ? message.value.trim().replace(/\s+/g, ' ')
+          : '',
+      ].join('|');
+
+      const hash = await crypto.subtle.digest(
+        'SHA-256',
+        new TextEncoder().encode(normalized),
+      );
+      return toHex(hash);
     };
 
     if (
@@ -220,22 +281,28 @@ export const prerender = true;
           return;
         }
 
-        const originalText =
-          submitText instanceof HTMLElement
-            ? submitText.textContent
-            : button.textContent;
         button.disabled = true;
         button.setAttribute('aria-busy', 'true');
         if (submitText instanceof HTMLElement) {
           submitText.textContent = 'Sending...';
         }
-        setStatus('Sending your message...', 'progress');
+        setStatus(
+          hadSubmissionError
+            ? 'Retrying your submission...'
+            : 'Sending your message...',
+          'progress',
+        );
 
         const submissionId =
           (window.crypto?.randomUUID && window.crypto.randomUUID()) ||
           `${Date.now()}`;
 
         try {
+          const dedupeKeyField = form.querySelector('[name="dedupeKey"]');
+          if (dedupeKeyField instanceof HTMLInputElement) {
+            dedupeKeyField.value = await buildDedupeKey(form);
+          }
+
           const response = await fetch(
             form.getAttribute('action') || '/api/contact',
             {
@@ -271,6 +338,8 @@ export const prerender = true;
                 ? redirectToField.value
                 : '/thank-you';
 
+          hadSubmissionError = false;
+          setStatus('Message sent. Redirecting you now...', 'success');
           window.location.href = redirectTarget;
         } catch (error) {
           console.error(error);
@@ -290,12 +359,13 @@ export const prerender = true;
           isSubmitting = false;
           button.removeAttribute('aria-busy');
           if (submitText instanceof HTMLElement) {
-            submitText.textContent = originalText || 'Send message';
+            submitText.textContent = 'Retry sending';
           }
           setStatus(
-            'Unable to send message right now. Please try again or email hello@goldshore.ai.',
+            'We could not send your message. Please review your details and retry. If the issue persists, email hello@goldshore.ai.',
             'error',
           );
+          emitAnalytics('form_submit_error', { form_type: 'contact' });
         }
       });
     }
@@ -312,35 +382,35 @@ export const prerender = true;
     }
 
     .field-help {
-      margin: 0.25rem 0 0.5rem;
-      color: var(--gs-color-text-muted, #94a3b8);
+      margin: var(--gs-space-1) 0 var(--gs-space-2);
+      color: var(--gs-text-dim);
       font-size: 0.95rem;
     }
 
     .form-status {
-      margin: 0.75rem 0;
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
+      margin: var(--gs-space-3) 0;
+      padding: var(--gs-space-3) var(--gs-space-4);
+      border-radius: var(--gs-radius-sm);
       border: 1px solid transparent;
       min-height: 1.25rem;
     }
 
     .form-status.progress {
-      background: rgba(37, 52, 138, 0.12);
-      border-color: rgba(96, 116, 211, 0.45);
-      color: #c7d2fe;
+      background: color-mix(in srgb, var(--gs-info) 14%, transparent);
+      border-color: color-mix(in srgb, var(--gs-info) 48%, transparent);
+      color: color-mix(in srgb, var(--gs-info) 65%, white);
     }
 
     .form-status.success {
-      background: rgba(10, 95, 37, 0.14);
-      border-color: rgba(110, 231, 183, 0.35);
-      color: #bbf7d0;
+      background: color-mix(in srgb, var(--gs-success) 14%, transparent);
+      border-color: color-mix(in srgb, var(--gs-success) 42%, transparent);
+      color: color-mix(in srgb, var(--gs-success) 60%, white);
     }
 
     .form-status.error {
-      background: rgba(143, 23, 23, 0.14);
-      border-color: rgba(248, 113, 113, 0.35);
-      color: #fecaca;
+      background: color-mix(in srgb, var(--gs-danger) 14%, transparent);
+      border-color: color-mix(in srgb, var(--gs-danger) 42%, transparent);
+      color: color-mix(in srgb, var(--gs-danger) 62%, white);
     }
 
     #contact-form button[disabled] {
