@@ -5,16 +5,20 @@ export const prerender = true;
 
 const sections = [
   {
-    title: 'What we do',
-    body: 'We design high-trust systems across decision support, workflow orchestration, and applied AI.',
+    title: 'Mission',
+    body: 'Build dependable AI-enabled systems that improve decision quality, reduce operational drag, and hold up under real production pressure.',
   },
   {
-    title: 'How we work',
-    body: 'Signal over spectacle. Systems that explain themselves.',
+    title: 'Operating principles',
+    body: 'We optimize for clarity, measurable outcomes, and maintainability: explicit ownership, observable workflows, and controls that operators can trust.',
   },
   {
-    title: 'Why GoldShore',
-    body: 'Most software is optimized for demos. GoldShore is optimized for use.',
+    title: 'Delivery model',
+    body: 'Every engagement starts with scoped discovery, moves into a tightly defined build sprint, and ends with hardening, handoff, and an adoption runway.',
+  },
+  {
+    title: 'Trust & security stance',
+    body: 'Security is part of system design—not a final checklist. Least-privilege access, auditable automation, and policy-aware defaults are built in from day one.',
   },
 ];
 ---
@@ -56,9 +60,9 @@ const sections = [
 
     .info-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: var(--gs-space-4);
-      margin-top: var(--gs-space-7);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
     }
 
     .info-card {
