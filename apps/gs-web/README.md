@@ -28,6 +28,12 @@ Public marketing site, documentation hub, and customer-facing Astro app for Gold
 - Preview and production deployments are driven by the live workflows under `.github/workflows/`.
 - Preview environments commonly point browser-visible runtime variables at preview services such as `https://api-preview.goldshore.ai` and `https://gw-preview.goldshore.ai`.
 
+### Runtime configuration store (`GS_CONFIG`)
+
+`gs-web` does not currently read `GS_CONFIG` directly. The binding is reserved for future use by workers or back-end services that need live request-time configuration reads.
+
+Do not add a `GS_CONFIG` binding to the web Pages project unless a concrete `apps/gs-web` runtime consumer needs live request-time reads.
+
 ## Routes and endpoints
 
 Routing and access policy: [`docs/security-scope.md`](../../docs/security-scope.md).
