@@ -1,9 +1,8 @@
 {
   "name": "@goldshore/gs-agent",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "src/index.ts",
   "scripts": {
     "dev": "wrangler dev src/index.ts --config ../../infra/Cloudflare/gs-agent.wrangler.toml",
     "deploy": "wrangler deploy --minify src/index.ts --config ../../infra/Cloudflare/gs-agent.wrangler.toml",
@@ -14,9 +13,12 @@
   "dependencies": {
     "@goldshore/auth": "workspace:*",
     "hono": "^4.12.9"
+    "dev": "wrangler dev src/index.ts",
+    "deploy": "wrangler deploy --env prod",
+    "build": "wrangler deploy --env prod --dry-run --outdir=dist"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260301.1",
+    "@cloudflare/workers-types": "^4.20260329.1",
     "typescript": "^5.4.0",
     "wrangler": "^4.75.0"
   }
