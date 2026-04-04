@@ -1,4 +1,6 @@
-name: Deploy Admin (admin.goldshore.ai)
+name: Deploy GS Admin (admin.goldshore.ai)
+# apps/gs-admin is the internal Cloudflare Pages surface. Keep this workflow separate
+# from gs-web so the public/private boundary is preserved.
 
 permissions:
   contents: read
@@ -12,19 +14,21 @@ on:
       - "packages/**"
       - "package.json"
       - "pnpm-lock.yaml"
+      - ".github/workflows/deploy-gs-admin.yml"
+  workflow_dispatch:
 
 jobs:
   deploy-admin:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@3df4d485d8ce6d2b61b8d12e8f44cdfffbea301e
+      - uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v5
         with:
           run_install: false
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
@@ -46,10 +50,11 @@ jobs:
         run: pnpm build
 
       - name: Deploy to Cloudflare Pages (production)
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/pages-action@f0a1cd58cd66095dee69bfa18fa5efd1dde93bca
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: gs-admin
           directory: apps/gs-admin/dist
+          workingDirectory: apps/gs-admin
           branch: main

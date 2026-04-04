@@ -1,4 +1,10 @@
 ---
+import StatusDiagnostics from '../components/StatusDiagnostics.astro';
+import {
+  getStatusLabel,
+  getStatusSummary,
+  statusSnapshot,
+} from '../data/status';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import {
   getStatusLabel,
@@ -62,6 +68,8 @@ const lastUpdated = new Intl.DateTimeFormat('en-US', {
       </ul>
     </div>
   </section>
+
+  <StatusDiagnostics />
 </BaseLayout>
 
 <style>
