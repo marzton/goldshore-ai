@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # actions/checkout@v4.1.7
 
       - name: Run PR Cleanup Script
         env:
