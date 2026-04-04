@@ -1,6 +1,8 @@
 cloudflare:
   account_name: goldshore-account
   zone: goldshore.ai
+  secondary_zones:
+    - goldshore.org
 
   dns:
     records:
@@ -10,6 +12,14 @@ cloudflare:
         content: "gs-web.pages.dev"
         proxied: true
       - name: "www"
+        type: CNAME
+        content: "gs-web.pages.dev"
+        proxied: true
+      - name: "goldshore.org"
+        type: CNAME
+        content: "gs-web.pages.dev"
+        proxied: true
+      - name: "www.goldshore.org"
         type: CNAME
         content: "gs-web.pages.dev"
         proxied: true
@@ -68,6 +78,8 @@ cloudflare:
         build_command: "pnpm --filter @goldshore/gs-web build"
         output_dir: "apps/gs-web/dist"
         custom_domains:
+          - "goldshore.org"
+          - "www.goldshore.org"
           - "goldshore.ai"
           - "www.goldshore.ai"
 
@@ -144,3 +156,16 @@ cloudflare:
           destination: "your.personal.email@goldshore.ai"
         - address: "support@goldshore.ai"
           destination: "your.personal.email@goldshore.ai"
+
+  redirects:
+    canonical_host: "goldshore.org"
+    rules:
+      - from: "www.goldshore.org/*"
+        to: "https://goldshore.org/$1"
+        status: 301
+      - from: "goldshore.ai/*"
+        to: "https://goldshore.org/$1"
+        status: 301
+      - from: "www.goldshore.ai/*"
+        to: "https://goldshore.org/$1"
+        status: 301
