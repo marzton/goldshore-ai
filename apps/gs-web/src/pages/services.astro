@@ -39,7 +39,7 @@ const services = [
     <div>
       <h1>Services</h1>
       <p>Crafted delivery engagements that combine platform engineering, AI execution, and operational rigor.</p>
-      <GSButton href="/contact">Request a scoping call</GSButton>
+      <GSButton href="/contact" data-analytics-id="services-hero-cta">Request a scoping call</GSButton>
     </div>
     <div class="gs-card">
       <h3 class="section-title"><span>☍</span>Engagement highlights</h3>
@@ -64,7 +64,14 @@ const services = [
               ))}
             </ul>
           ) : null}
-          <GSButton href={service.cta} variant="secondary" class="gs-button--small">Talk to us</GSButton>
+          <GSButton
+            href={service.cta}
+            variant="secondary"
+            class="gs-button--small"
+            data-analytics-id={`services-card-cta-${service.name.toLowerCase().replaceAll(' ', '-')}`}
+          >
+            Talk to us
+          </GSButton>
         </article>
       ))}
     </div>
@@ -75,7 +82,9 @@ const services = [
       <div>
         <h2>Snapshot</h2>
         <p class="gs-text-lg">Focused delivery for teams that need reliable systems and clear momentum.</p>
-        <GSButton href="/contact" variant="secondary">Plan the engagement</GSButton>
+        <GSButton href="/contact" variant="secondary" data-analytics-id="services-plan-cta">
+          Plan the engagement
+        </GSButton>
       </div>
       <div class="gs-card">
         <h3 class="section-title"><span>◆</span>Snapshot</h3>
@@ -89,4 +98,32 @@ const services = [
       </div>
     </div>
   </FlowSection>
+
+  <script>
+    import { trackEvent } from '../scripts/analytics';
+
+    const root = document.documentElement;
+    if (root.dataset.gsServicesAnalyticsBound !== 'true') {
+      root.dataset.gsServicesAnalyticsBound = 'true';
+      document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+
+        const cta = target.closest('[data-analytics-id]');
+        if (!(cta instanceof HTMLElement)) return;
+
+        const ctaId = cta.dataset.analyticsId;
+        if (!ctaId || !ctaId.startsWith('services-')) return;
+
+        trackEvent(
+          'services_cta_click',
+          {
+            cta_id: ctaId,
+            page_path: window.location.pathname,
+          },
+          { debounceKey: `services_cta_click:${ctaId}`, debounceMs: 1200 },
+        );
+      });
+    }
+  </script>
 </BaseLayout>

@@ -220,13 +220,18 @@ const proofPoints = [
           Ready to operationalize AI with trust, control, and signal clarity?
         </h2>
       </div>
-      <a href="/contact" class="hero-button hero-button--primary">
+      <a
+        href="/contact"
+        class="hero-button hero-button--primary"
+        data-analytics-id="homepage-contact-cta"
+      >
         Start a conversation
       </a>
     </section>
   </main>
 
   <script>
+    import { trackEvent } from '../scripts/analytics';
     import { initWave } from '../scripts/init-wave';
     import { initLogo } from '../scripts/init-logo-reactive';
 
@@ -275,6 +280,25 @@ const proofPoints = [
       root.dataset.gsHomeHeroBound = 'true';
       document.addEventListener('astro:before-swap', cleanup);
       document.addEventListener('astro:page-load', boot);
+      document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+
+        const cta = target.closest('[data-analytics-id]');
+        if (!(cta instanceof HTMLElement)) return;
+
+        const ctaId = cta.dataset.analyticsId;
+        if (!ctaId || !ctaId.startsWith('homepage-')) return;
+
+        trackEvent(
+          'homepage_cta_click',
+          {
+            cta_id: ctaId,
+            page_path: window.location.pathname,
+          },
+          { debounceKey: `homepage_cta_click:${ctaId}`, debounceMs: 1200 },
+        );
+      });
     }
 
     boot();
