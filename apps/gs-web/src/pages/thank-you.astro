@@ -19,19 +19,12 @@ export const prerender = true;
       <GSButton href="/">Back to home</GSButton>
     </div>
   </section>
+
   <script>
-    const payload = {
-      event: 'thank_you_view',
-      page: window.location.pathname,
-    };
-    window.dataLayer = window.dataLayer || [];
-    if (Array.isArray(window.dataLayer)) {
-      window.dataLayer.push(payload);
-    }
-    window.dispatchEvent(
-      new CustomEvent('gs:analytics', {
-        detail: payload,
-      }),
-    );
+    import { trackEventOnce } from '../scripts/analytics';
+
+    trackEventOnce('thank_you_page_view', 'thank_you_page_view', {
+      page_path: window.location.pathname,
+    });
   </script>
 </BaseLayout>

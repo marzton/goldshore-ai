@@ -151,6 +151,8 @@ export const prerender = true;
   </FlowSection>
 
   <script>
+    import { trackEvent, trackEventOnce } from '../scripts/analytics';
+
     const form = document.getElementById('contact-form');
     const button = form?.querySelector('button[type="submit"]');
     const submitText = form?.querySelector('#submit-text');
@@ -229,7 +231,7 @@ export const prerender = true;
       form instanceof HTMLFormElement &&
       button instanceof HTMLButtonElement
     ) {
-      let formStartedTracked = false;
+      let isSubmitting = false;
       const startedAtField = form.querySelector('[name="formStartedAt"]');
       if (startedAtField instanceof HTMLInputElement) {
         startedAtField.value = String(Date.now());
@@ -254,18 +256,20 @@ export const prerender = true;
         inquiryField.value = inquiryParam;
       }
 
-      const markFormStart = () => {
-        if (formStartedTracked) return;
-        formStartedTracked = true;
-        emitAnalytics('form_start', { form_type: 'contact' });
+      const registerStart = () => {
+        trackEventOnce('contact_form_start', 'contact_form_start', {
+          page_path: window.location.pathname,
+          form_id: 'contact-form',
+        });
       };
 
-      form.addEventListener('focusin', markFormStart, { once: true });
-      form.addEventListener('input', markFormStart, { once: true });
+      form.addEventListener('focusin', registerStart, { once: true });
+      form.addEventListener('input', registerStart, { once: true });
 
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        if (button.disabled) return;
+        if (button.disabled || isSubmitting) return;
+        isSubmitting = true;
 
         if (!form.checkValidity()) {
           form.reportValidity();
@@ -273,6 +277,7 @@ export const prerender = true;
             'Please complete all required fields before submitting.',
             'error',
           );
+          isSubmitting = false;
           return;
         }
 
@@ -287,6 +292,10 @@ export const prerender = true;
             : 'Sending your message...',
           'progress',
         );
+
+        const submissionId =
+          (window.crypto?.randomUUID && window.crypto.randomUUID()) ||
+          `${Date.now()}`;
 
         try {
           const dedupeKeyField = form.querySelector('[name="dedupeKey"]');
@@ -306,6 +315,20 @@ export const prerender = true;
             throw new Error(`Submission failed: ${response.status}`);
           }
 
+          trackEvent(
+            'contact_submit_success',
+            {
+              page_path: window.location.pathname,
+              form_id: 'contact-form',
+              submission_id: submissionId,
+              response_status: response.status,
+            },
+            {
+              debounceKey: `contact_submit_success:${submissionId}`,
+              debounceMs: 5000,
+            },
+          );
+
           const redirectToField = form.querySelector('[name="redirectTo"]');
           const redirectTarget =
             response.redirected && response.url
@@ -320,8 +343,20 @@ export const prerender = true;
           window.location.href = redirectTarget;
         } catch (error) {
           console.error(error);
-          hadSubmissionError = true;
+          trackEvent(
+            'contact_submit_failure',
+            {
+              page_path: window.location.pathname,
+              form_id: 'contact-form',
+              submission_id: submissionId,
+            },
+            {
+              debounceKey: `contact_submit_failure:${submissionId}`,
+              debounceMs: 5000,
+            },
+          );
           button.disabled = false;
+          isSubmitting = false;
           button.removeAttribute('aria-busy');
           if (submitText instanceof HTMLElement) {
             submitText.textContent = 'Retry sending';
