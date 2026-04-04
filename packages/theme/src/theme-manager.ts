@@ -34,9 +34,19 @@ export function loadThemeSettings(): ThemeSettings {
 }
 
 function applyAccent(accent: Accent, root: HTMLElement) {
-  if (accent === 'gold') root.setAttribute('data-accent', 'gold');
-  else if (accent === 'cyan') root.setAttribute('data-accent', 'cyan');
-  else if (accent === 'violet') {
+  if (accent === 'gold') {
+    root.setAttribute('data-accent', 'gold');
+    root.style.removeProperty('--gs-accent');
+    root.style.removeProperty('--gs-accent-strong');
+    root.style.removeProperty('--gs-accent-soft');
+    root.style.removeProperty('--gs-accent-contrast');
+  } else if (accent === 'cyan') {
+    root.setAttribute('data-accent', 'cyan');
+    root.style.removeProperty('--gs-accent');
+    root.style.removeProperty('--gs-accent-strong');
+    root.style.removeProperty('--gs-accent-soft');
+    root.style.removeProperty('--gs-accent-contrast');
+  } else if (accent === 'violet') {
     root.removeAttribute('data-accent');
     root.style.setProperty('--gs-accent', '#a855f7');
     root.style.setProperty('--gs-accent-strong', '#9333ea');
