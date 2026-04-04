@@ -1,14 +1,17 @@
 function sanitizeValue(value: any): any {
   if (value instanceof Error) {
-    // Avoid logging full error objects which may contain sensitive data.
+    // Avoid logging full error objects which may contain sensitive data such as
+    // environment-derived URLs, tokens, or file system paths. Only expose a
+    // generic, non-sensitive representation.
     const safe: Record<string, unknown> = {
       name: value.name,
-      message: value.message,
+      // Do not include the original error message text as it may contain
+      // secrets or environment-specific details.
+      message: "An internal error occurred",
     };
-    if (typeof value.stack === "string") {
-      // Include only the first few stack lines to reduce leakage risk.
-      const lines = value.stack.split("\n").slice(0, 5);
-      safe.stack = lines.join("\n") + (lines.length >= 5 ? "\n    [stack truncated]" : "");
+    // Indicate that a stack was present without logging its contents.
+    if (typeof value.stack === "string" && value.stack.length > 0) {
+      safe.hasStack = true;
     }
     return safe;
   }
