@@ -1,6 +1,10 @@
 packages:
-  - 'apps/*'
-  - '!apps/web'
-  - '!apps/admin'
+  - 'apps/gs-web'
+  - 'apps/gs-api'
+  - 'apps/gs-admin'
+  - 'apps/gs-control'
+  - 'apps/gs-gateway'
+  - 'apps/gs-agent'
+  - 'apps/gs-mail'
   - 'packages/*'
   - 'infra/*'
