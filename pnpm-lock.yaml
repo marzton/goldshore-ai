@@ -204,6 +204,16 @@ importers:
         version: 4.75.0(@cloudflare/workers-types@4.20260329.1)
 
   apps/gs-gateway:
+    dependencies:
+      '@goldshore/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      hono:
+        specifier: ^4.12.4
+        version: 4.12.7
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20260329.1
