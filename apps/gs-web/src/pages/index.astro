@@ -7,62 +7,65 @@ export const prerender = true;
 
 const trustMetrics = [
   {
-    label: 'Platform availability',
-    value: '99.995% uptime',
-    context: 'Rolling 30-day window',
+    label: 'Audit readiness',
+    value: '100%',
+    context: 'Control workflows mapped',
     detail:
-      'Measured across managed production workloads. Source: internal uptime monitor snapshots (Q1 2026).',
+      'Decision checkpoints, reviewer ownership, and evidence logs are defined from day one.',
   },
   {
-    label: 'Release velocity',
-    value: '48 production deploys/day',
-    context: 'Past 90 days',
+    label: 'Incident response',
+    value: '< 15 min',
+    context: 'Mean triage handoff',
     detail:
-      'Counted from CI/CD deployment logs for verified production releases. Source: release pipeline ledger (Jan-Mar 2026).',
+      'Risk, compliance, and operations teams share the same runtime timeline and escalation logic.',
   },
   {
-    label: 'Telemetry verification',
-    value: '4.8B validated events/month',
-    context: 'Average per month',
+    label: 'Decision evidence',
+    value: '7 years',
+    context: 'Trace retention policy',
     detail:
-      'Events are de-duplicated, normalized, and signed before downstream routing. Source: telemetry audit exports (Q1 2026).',
-  },
-  {
-    label: 'Case-study placeholder',
-    value: '[Pending verified KPI]',
-    context: 'Future customer outcome',
-    detail:
-      'Placeholder for a verified metric (e.g., incident MTTR reduction, false-positive reduction, or margin improvement) after publication approval.',
+      'Every critical AI action is preserved for regulatory review and internal post-incident analysis.',
   },
 ];
 
 const capabilities = [
   {
-    title: 'Reduce incident response time',
-    body: 'Deploy operator-assisted decision workflows that route high-risk events in under 60 seconds with review trails.',
+    title: 'Model oversight workflows',
+    body: 'Route high-risk model outputs to human review with clear ownership, service levels, and escalation paths.',
   },
   {
-    title: 'Improve risk and compliance readiness',
-    body: 'Use explainable scoring, threshold policies, and audit-ready logs to support risk committees and internal controls.',
+    title: 'Real-time risk operations',
+    body: 'Monitor production behavior, detect drift, and trigger playbooks before edge-case failures become incidents.',
   },
   {
-    title: 'Increase delivery reliability',
-    body: 'Run resilient infrastructure patterns with rollback safeguards, observability baselines, and deterministic release gates.',
+    title: 'Audit-ready evidence trails',
+    body: 'Capture decisions, thresholds, and interventions in a format compliance teams can review without translation.',
+  },
+  {
+    title: 'Built for regulated teams',
+    body: 'Designed for financial services organizations where every model decision must be explainable, reviewable, and defensible.',
+  },
+  {
+    title: 'Proven in live operations',
+    body: 'Production workflows include thresholds, fallback states, and escalation rules that hold up during real incidents.',
   },
 ];
 ---
 
 <WebLayout
-  title="GoldShore | Infrastructure for High-Trust AI"
-  description="GoldShore builds resilient decision systems, risk tooling, and operator infrastructure."
+  title="GoldShore | AI Risk Operations for Financial Services"
+  description="GoldShore helps risk and compliance teams control live AI systems with audit-ready oversight."
 >
   <main class="home-page">
     <ParallaxHero
-      eyebrow="Institutional-grade Operational AI"
-      headline={"Operate AI Systems\nwith Measurable Confidence."}
-      sub="GoldShore helps teams reduce operational risk, speed up high-stakes decisions, and maintain audit-ready control over live AI workflows."
-      ctaPrimary={{ label: 'Request Briefing', href: '/contact' }}
-      ctaSecondary={{ label: 'How briefing works', href: '/contact' }}
+      eyebrow="AI risk operations for financial services"
+      headline={"Control AI Decisions.\nPass Every Review."}
+      sub="GoldShore gives risk and compliance leaders a single operating layer to monitor model behavior, escalate exceptions, and prove governance in every audit."
+      ctaPrimary={{ label: 'Book a risk review', href: '/contact' }}
+      ctaSecondary={{ label: 'See services', href: '/services' }}
+      ctaPrimaryEventName="hero_primary_contact_click"
+      ctaSecondaryEventName="hero_secondary_services_click"
     />
 
     <section class="metrics-shell gs-shell-section" aria-label="Proof metrics">
@@ -98,11 +101,11 @@ const capabilities = [
       <div class="section-copy">
         <p class="gs-eyebrow">Capabilities</p>
         <h2 id="capabilities-title">
-          Capabilities grouped by business outcome.
+          One platform for risk, compliance, and model operations.
         </h2>
         <p class="section-intro">
-          Choose the outcome you need first, then map implementation scope with
-          GoldShore. One action path: align on target KPI and rollout plan.
+          Replace fragmented monitoring and manual follow-up with governed AI
+          workflows your control functions can trust.
         </p>
         <a href="/contact" class="hero-button hero-button--primary">
           Map capabilities to your KPI
@@ -119,23 +122,103 @@ const capabilities = [
     </section>
 
     <section
+      class="section-block gs-shell-section"
+      aria-labelledby="risk-radar-title"
+    >
+      <div class="section-copy">
+        <p class="gs-eyebrow">Risk Radar</p>
+        <h2 id="risk-radar-title">
+          A shared risk picture for operations and governance teams.
+        </h2>
+        <p class="section-intro">
+          Surface model drift, policy breaches, and escalation status in one
+          live view so reviewers can act quickly and consistently.
+        </p>
+      </div>
+      <RiskRadar />
+    </section>
+
+    <section
+      class="section-block gs-shell-section architecture-section"
+      aria-labelledby="proof-title"
+    >
+      <div class="section-copy">
+        <p class="gs-eyebrow">Architecture / Proof</p>
+        <h2 id="proof-title">Governance that works in real production pressure.</h2>
+      </div>
+      <div class="proof-grid">
+        {proofPoints.map((point) => (
+          <article class="proof-card">
+            <h3>{point.title}</h3>
+            <p>{point.body}</p>
+          </article>
+        ))}
+        <article class="proof-card proof-card--metrics">
+          <div>
+            <span>Review posture</span>
+            <strong>Human oversight by default</strong>
+          </div>
+          <div>
+            <span>Observability</span>
+            <strong>Events, thresholds, evidence</strong>
+          </div>
+          <div>
+            <span>Deployment tone</span>
+            <strong>Controlled, audit-ready</strong>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section
+      class="section-block gs-shell-section compact-team"
+      aria-labelledby="team-title"
+    >
+      <div class="section-copy">
+        <p class="gs-eyebrow">Team</p>
+        <h2 id="team-title">
+          Built by operators focused on resilient systems and applied
+          intelligence.
+        </h2>
+      </div>
+      <div class="team-row">
+        <article class="team-card team-card--founder">
+          <h3>Robert M.</h3>
+          <p>Leads product direction, systems strategy, and applied intelligence.</p>
+        </article>
+        <article class="team-card">
+          <h3>Systems</h3>
+          <p>Infrastructure, execution, observability.</p>
+        </article>
+        <article class="team-card">
+          <h3>Risk</h3>
+          <p>Monitoring, analytics, decision systems.</p>
+        </article>
+      </div>
+    </section>
+
+    <footer
       class="section-block gs-shell-section contact-cta"
       aria-labelledby="contact-cta-title"
     >
       <div>
-        <p class="gs-eyebrow">Final step</p>
+        <p class="gs-eyebrow">Next step</p>
         <h2 id="contact-cta-title">
-          Bring one operational KPI and get a practical rollout briefing.
+          Need a deeper implementation view? Visit our services overview.
         </h2>
         <p>
           We will translate your current workflow into a measured implementation
           plan with instrumentation requirements and review checkpoints.
         </p>
       </div>
-      <a href="/contact" class="hero-button hero-button--primary">
-        Request your rollout briefing
+      <a
+        href="/services"
+        class="hero-button"
+        data-cta-event="footer_secondary_services_click"
+      >
+        Explore services
       </a>
-    </section>
+    </footer>
   </main>
 
   <script>
@@ -182,14 +265,40 @@ const capabilities = [
     };
 
     const root = document.documentElement;
+    const ctaEventNames = {
+      heroPrimary: 'hero_primary_contact_click',
+      heroSecondary: 'hero_secondary_services_click',
+      footerSecondary: 'footer_secondary_services_click',
+    };
+
+    const bindCtaEvents = () => {
+      const ctaNodes = document.querySelectorAll('[data-cta-event]');
+      ctaNodes.forEach((node) => {
+        if (!(node instanceof HTMLElement) || node.dataset.ctaBound === 'true') return;
+        const eventName = node.dataset.ctaEvent;
+        if (!eventName) return;
+
+        node.dataset.ctaBound = 'true';
+        node.addEventListener('click', () => {
+          window.dispatchEvent(
+            new CustomEvent('gs:cta-click', {
+              detail: { eventName, location: node.closest('footer') ? 'footer' : 'hero' },
+            }),
+          );
+        });
+      });
+    };
 
     if (root.dataset.gsHomeHeroBound !== 'true') {
       root.dataset.gsHomeHeroBound = 'true';
       document.addEventListener('astro:before-swap', cleanup);
       document.addEventListener('astro:page-load', boot);
+      document.addEventListener('astro:page-load', bindCtaEvents);
     }
 
     boot();
+    bindCtaEvents();
+    void ctaEventNames;
   </script>
 
   <style>
