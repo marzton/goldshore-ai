@@ -28,6 +28,7 @@ export const prerender = true;
       <input type="hidden" name="formType" value="contact" />
       <input type="hidden" name="redirectTo" value="/thank-you" />
       <input type="hidden" name="formStartedAt" value="" />
+      <input type="hidden" name="dedupeKey" value="" />
 
       <div class="gs-honeypot" aria-hidden="true">
         <label for="companyWebsite">Company website</label>
@@ -74,15 +75,6 @@ export const prerender = true;
         </select>
       </div>
 
-      <div class="gs-input-group">
-        <label for="inquiry">Inquiry type</label>
-        <select id="inquiry" name="inquiry" autocomplete="off">
-          <option value="general">General inquiry</option>
-          <option value="strategy-call">Strategy call</option>
-          <option value="project-scope">Project scoping</option>
-          <option value="support">Support</option>
-        </select>
-      </div>
       <div class="gs-input-group">
         <label for="message">Project brief</label>
         <p id="message-help" class="field-help">
@@ -164,10 +156,65 @@ export const prerender = true;
       }
     };
 
+    const emitAnalytics = (eventName, payload = {}) => {
+      const eventPayload = {
+        event: eventName,
+        page: window.location.pathname,
+        ...payload,
+      };
+      window.dataLayer = window.dataLayer || [];
+      if (Array.isArray(window.dataLayer)) {
+        window.dataLayer.push(eventPayload);
+      }
+      window.dispatchEvent(
+        new CustomEvent('gs:analytics', {
+          detail: eventPayload,
+        }),
+      );
+    };
+
+    const toHex = (buffer) =>
+      Array.from(new Uint8Array(buffer))
+        .map((byte) => byte.toString(16).padStart(2, '0'))
+        .join('');
+
+    const buildDedupeKey = async (currentForm) => {
+      const name = currentForm.querySelector('#name');
+      const email = currentForm.querySelector('#email');
+      const inquiry = currentForm.querySelector('#inquiry');
+      const message = currentForm.querySelector('#message');
+      const formTypeField = currentForm.querySelector('[name="formType"]');
+
+      const normalized = [
+        formTypeField instanceof HTMLInputElement
+          ? formTypeField.value.trim().toLowerCase()
+          : 'contact',
+        name instanceof HTMLInputElement
+          ? name.value.trim().toLowerCase().replace(/\s+/g, ' ')
+          : '',
+        email instanceof HTMLInputElement
+          ? email.value.trim().toLowerCase()
+          : '',
+        inquiry instanceof HTMLSelectElement
+          ? inquiry.value.trim().toLowerCase()
+          : '',
+        message instanceof HTMLTextAreaElement
+          ? message.value.trim().replace(/\s+/g, ' ')
+          : '',
+      ].join('|');
+
+      const hash = await crypto.subtle.digest(
+        'SHA-256',
+        new TextEncoder().encode(normalized),
+      );
+      return toHex(hash);
+    };
+
     if (
       form instanceof HTMLFormElement &&
       button instanceof HTMLButtonElement
     ) {
+      let formStartedTracked = false;
       const startedAtField = form.querySelector('[name="formStartedAt"]');
       if (startedAtField instanceof HTMLInputElement) {
         startedAtField.value = String(Date.now());
@@ -191,6 +238,15 @@ export const prerender = true;
       ) {
         inquiryField.value = inquiryParam;
       }
+
+      const markFormStart = () => {
+        if (formStartedTracked) return;
+        formStartedTracked = true;
+        emitAnalytics('form_start', { form_type: 'contact' });
+      };
+
+      form.addEventListener('focusin', markFormStart, { once: true });
+      form.addEventListener('input', markFormStart, { once: true });
 
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -217,6 +273,11 @@ export const prerender = true;
         setStatus('Sending your message...', 'progress');
 
         try {
+          const dedupeKeyField = form.querySelector('[name="dedupeKey"]');
+          if (dedupeKeyField instanceof HTMLInputElement) {
+            dedupeKeyField.value = await buildDedupeKey(form);
+          }
+
           const response = await fetch(
             form.getAttribute('action') || '/api/contact',
             {
@@ -238,6 +299,7 @@ export const prerender = true;
                 ? redirectToField.value
                 : '/thank-you';
 
+          emitAnalytics('form_submit_success', { form_type: 'contact' });
           window.location.href = redirectTarget;
         } catch (error) {
           console.error(error);
@@ -250,6 +312,7 @@ export const prerender = true;
             'Unable to send message right now. Please try again or email hello@goldshore.ai.',
             'error',
           );
+          emitAnalytics('form_submit_error', { form_type: 'contact' });
         }
       });
     }
