@@ -10,6 +10,16 @@ function redactSensitive(value: any): any {
   // Redact simple query-style secrets: api_key=..., token=..., secret=...
   redacted = redacted.replace(/\b(api_key|apikey|token|secret|passwd|password)=([^&\s]+)/gi, "$1=***");
 
+  // Redact common ID-style query params and fields that may contain environment-derived IDs
+  redacted = redacted.replace(/\b(account_id|zone_id|project_id|user_id|id)=([^&\s]+)/gi, "$1=***");
+
+  // Redact ID-like segments in well-known URL paths (e.g., Cloudflare API paths)
+  // Examples:
+  //   /accounts/1234567890abcdef/pages/projects/my-project
+  //   /zones/0987654321fedcba/dns_records
+  redacted = redacted.replace(/(\/accounts\/)([^\/\s]+)(\/)/gi, "$1***$3");
+  redacted = redacted.replace(/(\/zones\/)([^\/\s]+)(\/)/gi, "$1***$3");
+
   return redacted;
 }
 
