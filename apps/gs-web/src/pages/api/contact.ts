@@ -65,6 +65,28 @@ type FormConfig = {
   updatedAt: string;
 };
 
+type ApiResponseBody = {
+  success: boolean;
+  code: string;
+  message: string;
+  submissionId?: string;
+  redirectTo?: string;
+};
+
+const jsonResponse = (status: number, body: ApiResponseBody) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+    },
+  });
+
+const requestExpectsJson = (request: Request) => {
+  const accept = request.headers.get('accept') ?? '';
+  const requestedWith = request.headers.get('x-requested-with') ?? '';
+  return accept.includes('application/json') || requestedWith === 'XMLHttpRequest';
+};
+
 const storeInKv = async (
   kv: KVNamespace,
   submission: Submission,
@@ -370,8 +392,14 @@ export const sendMail = async (
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {
+  const expectsJson = requestExpectsJson(request);
+
   if (!request.headers.get('content-type')?.includes('form')) {
-    return new Response('Unsupported payload.', { status: 415 });
+    return jsonResponse(415, {
+      success: false,
+      code: 'UNSUPPORTED_PAYLOAD',
+      message: 'Unsupported payload.',
+    });
   }
 
   const formData = await request.formData();
@@ -404,22 +432,51 @@ export const POST: APIRoute = async ({ request, locals }) => {
     dedupeKey: extractString(formData.get('dedupeKey')),
   };
 
-  const normalizedSubmission = normalizeContactSubmission(submission);
+  const env = locals.runtime?.env as Env | undefined;
 
   if (isSpam) {
+    console.warn('contact_submission_spam_rejected', {
+      formType,
+      submissionId: submission.id,
+      ipAddress: submission.ipAddress,
+      userAgent: submission.userAgent,
+    });
+    if (env?.DB) {
+      await logSubmissionStatus(env.DB, submission.id, formType, 'spam_rejected', 'Spam submission rejected.');
+    }
     const redirectUrl = safeRedirect(redirectTo, new URL(request.url).origin);
+    if (expectsJson) {
+      return jsonResponse(202, {
+        success: true,
+        code: 'SPAM_REJECTED',
+        message: 'Submission accepted.',
+        submissionId: submission.id,
+        redirectTo: redirectUrl.toString(),
+      });
+    }
     return Response.redirect(redirectUrl, 303);
   }
 
-  const validationErrors = validateContactSubmission(normalizedSubmission);
-  if (validationErrors.length > 0) {
-    return new Response('Invalid form fields.', { status: 400 });
+  if (submission.email && !isValidEmail(submission.email)) {
+    console.warn('contact_submission_validation_failed', {
+      formType,
+      submissionId: submission.id,
+      error: 'invalid_email',
+      email: submission.email,
+    });
+    return jsonResponse(400, {
+      success: false,
+      code: 'INVALID_EMAIL',
+      message: 'Invalid email address.',
+    });
   }
 
-  const env = locals.runtime?.env as Env | undefined;
-
   if (!env?.KV && !env?.DB) {
-    return new Response('Storage unavailable.', { status: 503 });
+    return jsonResponse(503, {
+      success: false,
+      code: 'STORAGE_UNAVAILABLE',
+      message: 'Storage unavailable.',
+    });
   }
 
   const formConfig = env?.DB ? await fetchFormConfig(env.DB, formType) : normalizeFormConfig(null, formType);
@@ -430,17 +487,31 @@ export const POST: APIRoute = async ({ request, locals }) => {
         status: formConfig.status
       });
     }
-    return new Response('Form is not accepting submissions.', { status: 403 });
+    return jsonResponse(403, {
+      success: false,
+      code: 'FORM_UNAVAILABLE',
+      message: 'Form is not accepting submissions.',
+    });
   }
 
   const missingFields = validateRequiredFields(normalizedSubmission, formConfig.fields);
   if (missingFields.length > 0) {
+    console.warn('contact_submission_validation_failed', {
+      formType,
+      submissionId: submission.id,
+      error: 'missing_required_fields',
+      fields: missingFields.map((field) => field.name),
+    });
     if (env?.DB) {
       await logSubmissionStatus(env.DB, submission.id, formType, 'rejected', 'Missing required fields.', {
         fields: missingFields.map((field) => field.name)
       });
     }
-    return new Response('Missing required fields.', { status: 400 });
+    return jsonResponse(400, {
+      success: false,
+      code: 'MISSING_REQUIRED_FIELDS',
+      message: 'Missing required fields.',
+    });
   }
 
   const ttl = env?.CONTACT_TTL_SECONDS ? parseInt(env.CONTACT_TTL_SECONDS, 10) : DEFAULT_CONTACT_TTL_SECONDS;
@@ -477,11 +548,19 @@ export const POST: APIRoute = async ({ request, locals }) => {
   );
 
   if (!storedSuccessfully) {
-    console.error('Contact submission storage failed.', storageResults);
+    console.error('contact_submission_persistence_failed', {
+      formType,
+      submissionId: submission.id,
+      storageResults,
+    });
     if (env?.DB) {
       await logSubmissionStatus(env.DB, submission.id, formType, 'storage_failed', 'Storage unavailable.');
     }
-    return new Response('Storage unavailable.', { status: 503 });
+    return jsonResponse(503, {
+      success: false,
+      code: 'PERSISTENCE_FAILED',
+      message: 'Storage unavailable.',
+    });
   }
 
   if (env?.DB) {
@@ -556,8 +635,68 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   const redirectUrl = safeRedirect(redirectTo, new URL(request.url).origin);
+
+  const canSendAutoResponder = Boolean(submission.email && isValidEmail(submission.email));
+  const emailAttemptContext = {
+    formType,
+    submissionId: submission.id,
+    recipient: submission.email,
+  };
+
+  if (!canSendAutoResponder) {
+    console.info('contact_submission_email_skipped', {
+      ...emailAttemptContext,
+      reason: 'no_valid_recipient',
+    });
+  } else {
+    console.info('contact_submission_email_attempt', emailAttemptContext);
+    const emailResult = await sendMail(
+      env,
+      [{ email: submission.email }],
+      autoResponder.subject,
+      autoResponder.text,
+      autoResponder.html,
+    );
+    console.info('contact_submission_email_result', {
+      ...emailAttemptContext,
+      ...emailResult,
+    });
+
+    if (env?.DB) {
+      await logSubmissionStatus(
+        env.DB,
+        submission.id,
+        formType,
+        emailResult.ok === true ? 'email_sent' : 'email_failed',
+        emailResult.ok === true ? 'Auto-responder email sent.' : 'Auto-responder email not sent.',
+        emailResult,
+      );
+    }
+  }
+
+  if (env && !env.MAILCHANNELS_SENDER_EMAIL?.trim()) {
+    console.info('contact_submission_email_fallback', {
+      ...emailAttemptContext,
+      fallback: 'submission_persisted_without_email',
+      reason: 'missing_mail_configuration',
+    });
+  }
+
+  if (expectsJson) {
+    return jsonResponse(201, {
+      success: true,
+      code: 'SUBMISSION_ACCEPTED',
+      message: 'Submission received.',
+      submissionId: submission.id,
+      redirectTo: redirectUrl.toString(),
+    });
+  }
   return Response.redirect(redirectUrl, 303);
 };
 
 export const GET: APIRoute = async () =>
-  new Response('Method not allowed.', { status: 405 });
+  jsonResponse(405, {
+    success: false,
+    code: 'METHOD_NOT_ALLOWED',
+    message: 'Method not allowed.',
+  });
