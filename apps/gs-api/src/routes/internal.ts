@@ -1,5 +1,8 @@
 import { Hono } from 'hono';
-import { EmailInboxLogsSchema, ServiceStatusSchema } from '@goldshore/schema';
+import {
+  EmailInboxLogsSchema,
+  ServiceStatusSchema,
+} from '@goldshore/schema';
 import { Env } from '../types';
 
 const internal = new Hono<{ Bindings: Env }>();
@@ -27,15 +30,14 @@ type DnsSyncRun = {
 
 const parseDnsSyncRun = (value: unknown): DnsSyncRun | null => {
   if (!value || typeof value !== 'object') return null;
+
   const run = value as DnsSyncRun;
+
   if (!run.runId || !Array.isArray(run.results)) return null;
+
   return run;
 };
 
-/**
- * [SOP] Internal Status Endpoint
- * Aggregates system health and mail logs for the Admin Dashboard.
- */
 internal.get('/inbox-status', async (c) => {
   try {
     const [rawLogs, rawStatus] = await Promise.all([
@@ -44,21 +46,27 @@ internal.get('/inbox-status', async (c) => {
     ]);
 
     const logsResult = EmailInboxLogsSchema.safeParse(rawLogs);
-    const statusResult = ServiceStatusSchema.safeParse(rawStatus);
+    const statusResult = ServiceStatusSchema.partial().safeParse(rawStatus ?? {});
+
+    const logs = logsResult.success ? logsResult.data : [];
 
     return c.json({
       success: true,
       timestamp: new Date().toISOString(),
       services: statusResult.success
         ? statusResult.data
-        : { maintenance_mode: false, active_services: [], version: 'unknown' },
+        : {
+            maintenance_mode: false,
+            active_services: [],
+            version: 'unknown',
+          },
       inbox: {
         count: logsResult.success ? logsResult.data.length : 0,
         recent: logsResult.success ? logsResult.data.slice(0, 5) : [],
       },
     });
   } catch (error) {
-    console.error('Internal API Error:', error);
+    console.error('Internal API error while retrieving inbox status:', error);
     return c.json({ success: false, error: 'Failed to retrieve internal system state' }, 500);
   }
 });
@@ -74,7 +82,9 @@ internal.get('/dns-sync-status', async (c) => {
   const runKeys = Array.isArray(runIndexRaw)
     ? runIndexRaw.filter((key): key is string => typeof key === 'string')
     : [];
-  const runsRaw = await Promise.all(runKeys.slice(0, 20).map((key) => controlLogs.get(key, 'json')));
+  const runsRaw = await Promise.all(
+    runKeys.slice(0, 20).map((key) => controlLogs.get(key, 'json')),
+  );
   const runs = runsRaw
     .map(parseDnsSyncRun)
     .filter((run): run is DnsSyncRun => Boolean(run))

@@ -1,10 +1,15 @@
 import { Hono } from "hono";
+import { buildAdminSession } from "@goldshore/auth";
 import { withContractHeaders } from "./contract";
 
 type SystemEnv = {
   KV: KVNamespace;
   API_VERSION?: string;
   DEPLOY_SHA?: string;
+};
+
+type SystemVariables = {
+  accessClaims: import("@goldshore/auth").AccessTokenPayload | null;
 };
 
 type SystemConfig = {
@@ -41,7 +46,7 @@ const readConfig = async (kv: KVNamespace) => {
   return parseConfig(stored);
 };
 
-const system = new Hono<{ Bindings: SystemEnv }>();
+const system = new Hono<{ Bindings: SystemEnv; Variables: SystemVariables }>();
 
 system.get("/info", (c) => {
   return c.json(withContractHeaders({
@@ -74,6 +79,11 @@ system.get("/config", async (c) => {
 });
 
 system.put("/config", async (c) => {
+  const adminSession = buildAdminSession(c.get("accessClaims"));
+  if (!adminSession.roles.includes("admin")) {
+    return c.json({ error: "Forbidden" }, 403);
+  }
+
   const payload = await c.req.json<Partial<SystemConfig>>().catch(() => null);
   const config = parseConfig(payload);
   await c.env.KV.put(CONFIG_KEY, JSON.stringify(config));

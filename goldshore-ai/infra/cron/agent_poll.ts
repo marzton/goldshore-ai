@@ -94,4 +94,4 @@ async function main() {
   logger.info("Agent poll completed.");
 }
 
-main().catch(e => { logger.error(e.stack || e); process.exit(1); });
+main().catch(e => { logger.error(e); process.exit(1); });

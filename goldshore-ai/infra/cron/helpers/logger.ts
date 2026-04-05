@@ -1,38 +1,53 @@
-function redactSensitive(value: any): any {
-  if (typeof value !== "string") return value;
-
-  let redacted = value;
-
-  // Redact common bearer tokens, e.g., "Authorization: Bearer <token>" or "Bearer <token>"
-  redacted = redacted.replace(/(Authorization:\s*Bearer\s+)([A-Za-z0-9\-\._~\+\/]+=*|\S+)/gi, "$1***");
-  redacted = redacted.replace(/\b(Bearer\s+)([A-Za-z0-9\-\._~\+\/]+=*|\S+)/gi, "$1***");
-
-  // Redact simple query-style secrets: api_key=..., token=..., secret=...
-  redacted = redacted.replace(/\b(api_key|apikey|token|secret|passwd|password)=([^&\s]+)/gi, "$1=***");
-
-  // Redact common ID-style query params and fields that may contain environment-derived IDs
-  redacted = redacted.replace(/\b(account_id|zone_id|project_id|user_id|id)=([^&\s]+)/gi, "$1=***");
-
-  // Redact ID-like segments in well-known URL paths (e.g., Cloudflare API paths)
-  // Examples:
-  //   /accounts/1234567890abcdef/pages/projects/my-project
-  //   /zones/0987654321fedcba/dns_records
-  redacted = redacted.replace(/(\/accounts\/)([^\/\s]+)(\/)/gi, "$1***$3");
-  redacted = redacted.replace(/(\/zones\/)([^\/\s]+)(\/)/gi, "$1***$3");
-
-  return redacted;
+function sanitizeValue(value: any): any {
+  if (value instanceof Error) {
+    // Avoid logging full error objects which may contain sensitive data such as
+    // environment-derived URLs, tokens, or file system paths. Only expose a
+    // generic, non-sensitive representation.
+    const safe: Record<string, unknown> = {
+      name: value.name,
+      // Do not include the original error message text as it may contain
+      // secrets or environment-specific details.
+      message: "An internal error occurred",
+    };
+    // Indicate that a stack was present without logging its contents.
+    if (typeof value.stack === "string" && value.stack.length > 0) {
+      safe.hasStack = true;
+    }
+    return safe;
+  }
+  return value;
 }
 
-function sanitizeErrorArg(arg: any): any {
-  if (arg instanceof Error) {
-    const base = `${arg.name}: ${arg.message}`;
-    const stack = arg.stack ? `\n${arg.stack}` : "";
-    return redactSensitive(base + stack);
-  }
-  if (typeof arg === "string") {
-    return redactSensitive(arg);
-  }
-  return arg;
+function sanitizeArgs(args: any[]): any[] {
+  const redactionPatterns: { re: RegExp; replacement: string }[] = [
+    // Common secret-like key names
+    { re: /(token|secret|password)\s*[:=]\s*["']?([A-Za-z0-9_\-\.]{4,})["']?/gi, replacement: "$1: [REDACTED]" },
+    // Bearer tokens and long opaque values
+    { re: /\bBearer\s+[A-Za-z0-9_\-\.+=\/]{8,}\b/gi, replacement: "Bearer [REDACTED]" },
+  ];
+
+  return args.map((arg) => {
+    const sanitized = sanitizeValue(arg);
+    if (typeof sanitized === "string") {
+      let out = sanitized;
+      for (const { re, replacement } of redactionPatterns) {
+        out = out.replace(re, replacement);
+      }
+      return out;
+    }
+    if (sanitized && typeof sanitized === "object") {
+      try {
+        let json = JSON.stringify(sanitized);
+        for (const { re, replacement } of redactionPatterns) {
+          json = json.replace(re, replacement);
+        }
+        return json;
+      } catch {
+        return "[Unserializable object]";
+      }
+    }
+    return sanitized;
+  });
 }
 
 export function createLogger(context: string) {
@@ -47,8 +62,8 @@ export function createLogger(context: string) {
     info: (...args: any[]) => console.log(...format("INFO", ...args)),
     warn: (...args: any[]) => console.warn(...format("WARN", ...args)),
     error: (...args: any[]) => {
-      const safeArgs = args.map(sanitizeErrorArg);
-      return console.error(...format("ERROR", ...safeArgs));
+      const safeArgs = sanitizeArgs(args);
+      console.error(...format("ERROR", ...safeArgs));
     },
   };
 }
