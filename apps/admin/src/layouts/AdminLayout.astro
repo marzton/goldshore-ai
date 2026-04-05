@@ -43,21 +43,29 @@ const favicon = '/logo.png';
           root.style.removeProperty('--gs-accent-contrast');
         }
 
+        function setDataAccent(root, accent) {
+          if (root.getAttribute('data-accent') !== accent) root.setAttribute('data-accent', accent);
+        }
+
+        function clearDataAccent(root) {
+          if (root.hasAttribute('data-accent')) root.removeAttribute('data-accent');
+        }
+
         function applyAccent(root, accent) {
           if (accent === 'gold') {
-            root.setAttribute('data-accent', 'gold');
+            setDataAccent(root, 'gold');
             removeAccentOverrides(root);
           } else if (accent === 'cyan') {
-            root.setAttribute('data-accent', 'cyan');
+            setDataAccent(root, 'cyan');
             removeAccentOverrides(root);
           } else if (accent === 'violet') {
-            root.removeAttribute('data-accent');
+            clearDataAccent(root);
             root.style.setProperty('--gs-accent', '#a855f7');
             root.style.setProperty('--gs-accent-strong', '#9333ea');
             root.style.setProperty('--gs-accent-soft', 'rgba(168,85,247,0.18)');
             root.style.setProperty('--gs-accent-contrast', '#0f172a');
           } else {
-            root.removeAttribute('data-accent');
+            clearDataAccent(root);
             removeAccentOverrides(root);
           }
         }
@@ -72,7 +80,11 @@ const favicon = '/logo.png';
         new MutationObserver(function (mutations) {
           for (var i = 0; i < mutations.length; i++) {
             if (mutations[i].attributeName === 'data-accent') {
-              applyAccent(root, readSettings().accent);
+              var accent = readSettings().accent;
+              var currentAccent = root.getAttribute('data-accent');
+              if ((accent === 'gold' || accent === 'cyan') && currentAccent === accent) break;
+              if (accent !== 'gold' && accent !== 'cyan' && currentAccent === null) break;
+              applyAccent(root, accent);
               break;
             }
           }
