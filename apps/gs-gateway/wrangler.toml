@@ -1,36 +1,34 @@
 name = "gs-gateway"
 main = "src/index.ts"
-compatibility_date = "2024-01-01"
-compatibility_date = "2025-01-10"
+compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
 
 workers_dev = false
+
+[env.prod]
 routes = [
-  { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" }
+  { pattern = "gw.goldshore.ai/*", zone_name = "goldshore.ai" },
+  { pattern = "agent.goldshore.ai/*", zone_name = "goldshore.ai" }
 ]
 
-[vars]
+[env.prod.vars]
 ENV = "production"
-API_ORIGIN = "https://api.goldshore.ai"
-CLOUDFLARE_ACCESS_AUDIENCE = ""
-CLOUDFLARE_TEAM_DOMAIN = ""
+CLOUDFLARE_TEAM_DOMAIN = "goldshore.cloudflareaccess.com"
 
-[[kv_namespaces]]
-binding = "gs-kv"
-id = "gs_api_kv_prod_001"
-
-[[queues.producers]]
-binding = "JOB_QUEUE"
-queue = "goldshore-jobs"
-
-[[kv_namespaces]]
-binding = "GATEWAY_KV"
-id = "goldshore-gw-kv"
-
-[[services]]
+[[env.prod.services]]
 binding = "API"
 service = "gs-api"
+environment = "production"
+
+[[env.prod.services]]
+binding = "AGENT"
+service = "gs-agent"
 environment = "prod"
 
-[ai]
-binding = "AI"
+[env.preview]
+routes = [
+  { pattern = "gw-preview.goldshore.ai/*", zone_name = "goldshore.ai" }
+]
+
+[env.preview.vars]
+ENV = "preview"
