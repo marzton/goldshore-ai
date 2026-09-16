@@ -116,12 +116,14 @@ export abstract class BaseIntegration {
   /**
    * Parse webhook signature
    */
-  protected verifyWebhookSignature(
+  protected async verifyWebhookSignature(
     payload: string,
     signature: string,
     secret: string
-  ): boolean {
-    // Override in subclasses for provider-specific verification
-    return true;
+  ): Promise<boolean> {
+    // Base class has no shared provider format to verify against; every
+    // subclass that accepts inbound webhooks MUST override this with a real
+    // HMAC check (see FacebookPixel.ts) rather than relying on this default.
+    return false;
   }
 }

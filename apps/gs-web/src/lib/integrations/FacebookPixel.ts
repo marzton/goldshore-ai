@@ -42,7 +42,7 @@ export class FacebookPixelIntegration extends BaseIntegration {
   async authenticate(): Promise<boolean> {
     try {
       const response = await fetch(
-        `https://graph.instagram.com/v18.0/${this.pixelId}?access_token=${this.accessToken}`
+        `https://graph.facebook.com/v18.0/${this.pixelId}?access_token=${this.accessToken}`
       );
       this.config.status = response.ok ? 'connected' : 'disconnected';
       return response.ok;
@@ -60,7 +60,7 @@ export class FacebookPixelIntegration extends BaseIntegration {
   async trackEvent(event: PixelEvent, testCode?: string): Promise<boolean> {
     try {
       const response = await fetch(
-        `https://graph.instagram.com/v18.0/${this.pixelId}/events?access_token=${this.accessToken}`,
+        `https://graph.facebook.com/v18.0/${this.pixelId}/events?access_token=${this.accessToken}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -93,7 +93,7 @@ export class FacebookPixelIntegration extends BaseIntegration {
   async getInsights(startDate: string, endDate: string) {
     try {
       const response = await fetch(
-        `https://graph.instagram.com/v18.0/${this.pixelId}/insights?` +
+        `https://graph.facebook.com/v18.0/${this.pixelId}/insights?` +
         `fields=event_name,event_count,event_value&` +
         `date_start=${startDate}&date_end=${endDate}&` +
         `access_token=${this.accessToken}`
@@ -145,11 +145,11 @@ export class FacebookPixelIntegration extends BaseIntegration {
   async handleWebhook(event: Record<string, unknown>): Promise<void> {
     // Verify webhook signature
     const signature = event.header?.['X-Hub-Signature-256'] as string;
-    if (!this.verifyWebhookSignature(
+    if (!(await this.verifyWebhookSignature(
       JSON.stringify(event),
       signature,
       this.config.webhookSecret || ''
-    )) {
+    ))) {
       throw new Error('Invalid webhook signature');
     }
 
@@ -198,15 +198,32 @@ export class FacebookPixelIntegration extends BaseIntegration {
   }
 
   /**
-   * Verify Facebook webhook signature (SHA256)
+   * Verify Facebook/Meta webhook signature: HMAC-SHA256 over the raw payload
+   * using the app secret, compared against the `sha256=<hex>` header value.
    */
-  protected verifyWebhookSignature(
+  protected async verifyWebhookSignature(
     payload: string,
     signature: string,
     secret: string
-  ): boolean {
-    // Implementation would use crypto.subtle.digest('SHA-256', ...)
-    // Placeholder for signature verification
-    return true;
+  ): Promise<boolean> {
+    if (!signature || !secret) return false;
+    const expectedHex = signature.startsWith('sha256=') ? signature.slice(7) : signature;
+    const key = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+    const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload));
+    const actualHex = Array.from(new Uint8Array(mac))
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('');
+    if (actualHex.length !== expectedHex.length) return false;
+    let diff = 0;
+    for (let i = 0; i < actualHex.length; i += 1) {
+      diff |= actualHex.charCodeAt(i) ^ expectedHex.charCodeAt(i);
+    }
+    return diff === 0;
   }
 }

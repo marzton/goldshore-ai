@@ -70,7 +70,7 @@ export class FacebookPixelIntegration extends BaseIntegration {
                 event_name: event.eventName,
                 event_time: event.eventTime,
                 event_id: event.eventId,
-                user_data: event.userData ? this.hashUserData(event.userData) : {},
+                user_data: event.userData ? await this.hashUserData(event.userData) : {},
                 custom_data: event.customData,
               },
             ],
@@ -145,11 +145,11 @@ export class FacebookPixelIntegration extends BaseIntegration {
   async handleWebhook(event: Record<string, unknown>): Promise<void> {
     // Verify webhook signature
     const signature = event.header?.['X-Hub-Signature-256'] as string;
-    if (!this.verifyWebhookSignature(
+    if (!(await this.verifyWebhookSignature(
       JSON.stringify(event),
       signature,
       this.config.webhookSecret || ''
-    )) {
+    ))) {
       throw new Error('Invalid webhook signature');
     }
 
@@ -158,32 +158,75 @@ export class FacebookPixelIntegration extends BaseIntegration {
   }
 
   /**
-   * Hash user data for privacy (SHA-256)
+   * Hash user data for privacy per Meta's Conversions API spec: each PII
+   * field is normalized (trimmed/lowercased; phone digits-only) then
+   * SHA-256 hashed. Unset fields are omitted rather than sent as
+   * `undefined`/plaintext.
    */
-  private hashUserData(userData: Record<string, unknown>): Record<string, unknown> {
-    // In production, implement SHA-256 hashing
-    return {
-      em: userData.email,
-      ph: userData.phone,
-      fn: userData.firstName,
-      ln: userData.lastName,
-      ct: userData.city,
-      st: userData.state,
-      zp: userData.zipCode,
-      country: userData.country,
+  private async hashUserData(userData: Record<string, unknown>): Promise<Record<string, string>> {
+    const normalizeText = (value: unknown): string | undefined =>
+      typeof value === 'string' && value.trim() ? value.trim().toLowerCase() : undefined;
+    const normalizePhone = (value: unknown): string | undefined => {
+      if (typeof value !== 'string') return undefined;
+      const normalized = value.replace(/[^0-9]/g, '');
+      return normalized || undefined;
     };
+
+    const fields: Record<string, string | undefined> = {
+      em: normalizeText(userData.email),
+      ph: normalizePhone(userData.phone),
+      fn: normalizeText(userData.firstName),
+      ln: normalizeText(userData.lastName),
+      ct: normalizeText(userData.city),
+      st: normalizeText(userData.state),
+      zp: normalizeText(userData.zipCode),
+      country: normalizeText(userData.country),
+    };
+
+    const hashedEntries = await Promise.all(
+      Object.entries(fields)
+        .filter((entry): entry is [string, string] => Boolean(entry[1]))
+        .map(async ([key, value]) => [key, await this.sha256(value)] as const)
+    );
+
+    return Object.fromEntries(hashedEntries);
+  }
+
+  private async sha256(value: string): Promise<string> {
+    const data = new TextEncoder().encode(value);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(digest))
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('');
   }
 
   /**
-   * Verify Facebook webhook signature (SHA256)
+   * Verify Facebook/Meta webhook signature: HMAC-SHA256 over the raw payload
+   * using the app secret, compared against the `sha256=<hex>` header value.
    */
-  protected verifyWebhookSignature(
+  protected async verifyWebhookSignature(
     payload: string,
     signature: string,
     secret: string
-  ): boolean {
-    // Implementation would use crypto.subtle.digest('SHA-256', ...)
-    // Placeholder for signature verification
-    return true;
+  ): Promise<boolean> {
+    if (!signature || !secret) return false;
+    const expectedHex = signature.startsWith('sha256=') ? signature.slice(7) : signature;
+    const key = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+    const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload));
+    const actualHex = Array.from(new Uint8Array(mac))
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('');
+    if (actualHex.length !== expectedHex.length) return false;
+    let diff = 0;
+    for (let i = 0; i < actualHex.length; i += 1) {
+      diff |= actualHex.charCodeAt(i) ^ expectedHex.charCodeAt(i);
+    }
+    return diff === 0;
   }
 }
