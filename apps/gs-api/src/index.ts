@@ -37,6 +37,7 @@ import mcp from './routes/mcp';
 import invitations from './routes/invitations';
 import account from './routes/account';
 import webhooks from './routes/webhooks';
+import events from './routes/events';
 import { getRuntimeVersion, withContractHeaders } from './routes/contract';
 import { assertSecuritySecrets } from './securitySecrets';
 import type { Env, Variables } from './types';
@@ -109,6 +110,10 @@ const isPublicPath = (path: string, method: string) => {
   // signed webhook paths.
   if (method === 'POST' && /^\/webhooks\/github\/[^/]+\/?$/i.test(path)) return true;
   if (method === 'POST' && /^\/v1\/forms\/[a-z0-9-]+\/submissions$/i.test(path)) return true;
+  // The marketing/measurement event bus is called directly from anonymous
+  // browser sessions on every Gold Shore property. CORS (APPROVED_API_ORIGINS)
+  // is the access boundary here, not an Access JWT.
+  if (method === 'POST' && path === '/v1/events') return true;
   if (path === '/v1/forms/newsletter/confirm' && (method === 'GET' || method === 'POST')) return true;
   if (path === '/v1/forms/newsletter/preferences' && (method === 'GET' || method === 'PUT')) return true;
   if (path === '/v1/forms/newsletter/unsubscribe' && method === 'GET') return true;
@@ -363,6 +368,7 @@ v1.route('/forms', forms);
 v1.route('/deployments', deployments);
 v1.route('/gearswipe', gearswipe);
 v1.route('/services', services);
+v1.route('/events', events);
 v1.get('/leads', (c) => c.json({ leads: [] }));
 
 app.route('/v1', v1);
