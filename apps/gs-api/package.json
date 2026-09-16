@@ -22,18 +22,18 @@
     "@goldshore/utils": "workspace:^",
     "@modelcontextprotocol/server": "^2.0.0",
     "@types/sanitize-html": "^2.16.0",
-    "hono": "^4.13.5",
-    "mysql2": "3.24.3",
-    "openai": "^7.9.0",
+    "hono": "^4.13.7",
+    "mysql2": "3.24.4",
+    "openai": "^7.13.0",
     "postal-mime": "^3.0.0",
     "safe-stable-stringify": "^2.5.0",
     "sanitize-html": "^2.17.7",
-    "zod": "^4.5.4"
+    "zod": "^4.6.1"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260903.1",
+    "@cloudflare/workers-types": "^5.20260910.1",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
-    "wrangler": "^4.128.0"
+    "wrangler": "^4.131.0"
   }
 }
